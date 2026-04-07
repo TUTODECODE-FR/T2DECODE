@@ -374,6 +374,10 @@ jobs:
     if: always() && (github.event_name == 'workflow_dispatch' || github.ref_type == 'tag' || startsWith(github.ref, 'refs/tags/v')) && needs.build.result == 'success'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: ${{ github.ref }}
+
       - name: Download all artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
@@ -398,6 +402,7 @@ jobs:
           cp -f artifacts/TUTODECODE-Linux.tar.gz.sig release_assets/TUTODECODE-Linux.tar.gz.sig || true
           cp -f artifacts/TUTODECODE-Linux.deb.sig release_assets/TUTODECODE-Linux.deb.sig || true
           cp -f artifacts/*.ipa release_assets/TUTODECODE-iOS.ipa || true
+          cp -f assets/TDC.png release_assets/TDC.png || cp -f assets/logo.png release_assets/TDC.png || true
           ls -la release_assets
 
       - name: Create or update release
