@@ -4,10 +4,10 @@
 
 # TUTODECODE — Écosystème IT & Cybersécurité Souverain
 
-[![Offline First](https://img.shields.io/badge/Offline-100%25-0f1218?style=for-the-badge&label=MODE)](https://github.com/TUTODECODE-FR/TUTODECODE)
-[![Zero Cloud](https://img.shields.io/badge/Z%C3%A9ro-Cloud-0f1218?style=for-the-badge&label=SOUVERAINET%C3%89)](https://github.com/TUTODECODE-FR/TUTODECODE)
-[![Local AI](https://img.shields.io/badge/IA-Locale-00D9C0?style=for-the-badge&label=GHOST%20AI)](https://github.com/TUTODECODE-FR/TUTODECODE)
-[![Cross Platform](https://img.shields.io/badge/Cross--Platform-Android%20%7C%20iOS%20%7C%20Windows%20%7C%20macOS%20%7C%20Linux-0f1218?style=for-the-badge)](https://github.com/TUTODECODE-FR/TUTODECODE)
+[![Air-Gapped Ready](https://img.shields.io/badge/Air--Gapped-Ready-0f1218?style=for-the-badge)](https://github.com/TUTODECODE-FR/TUTODECODE)
+[![Z%C3%A9ro Tracking](https://img.shields.io/badge/Z%C3%A9ro-Tracking-0f1218?style=for-the-badge)](https://github.com/TUTODECODE-FR/TUTODECODE)
+[![Ollama Compatible](https://img.shields.io/badge/Ollama-Compatible-00D9C0?style=for-the-badge)](https://github.com/TUTODECODE-FR/TUTODECODE)
+[![Open Source GPLv3](https://img.shields.io/badge/Open%20Source-GPLv3-0f1218?style=for-the-badge)](https://github.com/TUTODECODE-FR/TUTODECODE)
 
 > **"Le savoir technique ne devrait jamais dépendre d'une connexion."**
 
