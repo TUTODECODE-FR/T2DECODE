@@ -4,10 +4,10 @@
 
 # TUTODECODE — Écosystème IT & Cybersécurité Souverain
 
-[![Version](https://img.shields.io/github/v/release/TUTODECODE-FR/TUTODECODE?style=for-the-badge&color=indigo&label=STABLE)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/TUTODECODE/build_release.yml?branch=main&style=for-the-badge&label=BUILD)](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/build_release.yml)
-[![Licence](https://img.shields.io/github/license/TUTODECODE-FR/TUTODECODE?style=for-the-badge&color=blue)](https://github.com/TUTODECODE-FR/TUTODECODE/blob/main/LICENSE)
-[![Website](https://img.shields.io/badge/Site-tutodecode.org-000000?style=for-the-badge&logo=google-chrome&logoColor=white)](https://www.tutodecode.org)
+[![Offline First](https://img.shields.io/badge/Offline-100%25-0f1218?style=for-the-badge&label=MODE)](https://github.com/TUTODECODE-FR/TUTODECODE)
+[![Zero Cloud](https://img.shields.io/badge/Z%C3%A9ro-Cloud-0f1218?style=for-the-badge&label=SOUVERAINET%C3%89)](https://github.com/TUTODECODE-FR/TUTODECODE)
+[![Local AI](https://img.shields.io/badge/IA-Locale-00D9C0?style=for-the-badge&label=GHOST%20AI)](https://github.com/TUTODECODE-FR/TUTODECODE)
+[![Cross Platform](https://img.shields.io/badge/Cross--Platform-Android%20%7C%20iOS%20%7C%20Windows%20%7C%20macOS%20%7C%20Linux-0f1218?style=for-the-badge)](https://github.com/TUTODECODE-FR/TUTODECODE)
 
 > **"Le savoir technique ne devrait jamais dépendre d'une connexion."**
 
