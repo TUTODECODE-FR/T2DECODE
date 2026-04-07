@@ -293,7 +293,16 @@ jobs:
           STAGE_APPIMAGE="$RUNNER_TEMP/AppDir"
           mkdir -p "$STAGE_APPIMAGE"
           cp -R build/linux/x64/release/bundle/* "$STAGE_APPIMAGE/"
-          cp "$STAGE/usr/share/applications/tutodecode.desktop" "$STAGE_APPIMAGE/"
+          cat > "$STAGE_APPIMAGE/tutodecode.desktop" <<'EOF'
+          [Desktop Entry]
+          Name=TUTODECODE
+          Comment=TUTODECODE learning platform
+          Exec=AppRun
+          Icon=tutodecode
+          Terminal=false
+          Type=Application
+          Categories=Education;Development;
+          EOF
           cp "assets/logo.png" "$STAGE_APPIMAGE/tutodecode.png"
           ln -s tutodecode_flutter "$STAGE_APPIMAGE/AppRun"
           APPIMAGETOOL=./appimagetool-x86_64.AppImage
