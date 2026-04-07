@@ -4,6 +4,7 @@
 APP_NAME="TUTODECODE"
 BUNDLE_ID="com.tutodecode.app"
 APP_BUNDLE_NAME="TUTODECODE.app"
+APP_VERSION="${APP_VERSION:-1.0.0}"
 BUILD_DIR="build/macos/Build/Products/Release"
 RESOURCES_DIR="macos/installer_resources"
 COMPONENT_PKG="$BUILD_DIR/TUTODECODE_Component.pkg"
@@ -23,7 +24,7 @@ echo "🏗 Création du composant de base..."
 pkgbuild --component "$BUILD_DIR/$APP_BUNDLE_NAME" \
          --install-location "/Applications" \
          --identifier "$BUNDLE_ID" \
-         --version "1.0.3" \
+         --version "$APP_VERSION" \
          "$COMPONENT_PKG"
 
 # 3. Créer le package produit (avec UI)

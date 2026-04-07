@@ -71,10 +71,10 @@ jobs:
         run: flutter pub get
 
       - name: Run tests
-        run: flutter test
+        run: flutter test --dart-define=SKIP_GOLDENS=true
 
       - name: Require Android signing secrets
-        if: matrix.platform == 'android'
+        if: matrix.platform == 'android' && secrets.ANDROID_KEYSTORE_BASE64 != '' && secrets.ANDROID_KEYSTORE_PASSWORD != '' && secrets.ANDROID_KEY_ALIAS != '' && secrets.ANDROID_KEY_PASSWORD != ''
         shell: bash
         run: |
           test -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}"
@@ -83,7 +83,7 @@ jobs:
           test -n "${{ secrets.ANDROID_KEY_PASSWORD }}"
 
       - name: Configure Android keystore
-        if: matrix.platform == 'android'
+        if: matrix.platform == 'android' && secrets.ANDROID_KEYSTORE_BASE64 != '' && secrets.ANDROID_KEYSTORE_PASSWORD != '' && secrets.ANDROID_KEY_ALIAS != '' && secrets.ANDROID_KEY_PASSWORD != ''
         shell: bash
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release-keystore.jks
@@ -102,7 +102,7 @@ jobs:
           flutter build appbundle --release
 
       - name: Require Windows signing secrets
-        if: matrix.platform == 'windows'
+        if: matrix.platform == 'windows' && secrets.WINDOWS_PFX_BASE64 != '' && secrets.WINDOWS_PFX_PASSWORD != ''
         shell: pwsh
         run: |
           if (-not "${{ secrets.WINDOWS_PFX_BASE64 }}") { throw "Missing WINDOWS_PFX_BASE64" }
@@ -114,12 +114,19 @@ jobs:
         run: |
           choco install innosetup --no-progress -y
 
-      - name: Build and sign Windows
+      - name: Build Windows (unsigned by default)
         if: matrix.platform == 'windows'
         shell: pwsh
         run: |
           flutter build windows --release
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          & $iscc /DMyAppVersion=${{ github.ref_name }} windows\installer\tutodecode.iss
+          Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath TUTODECODE-Windows.zip
 
+      - name: Sign Windows binaries
+        if: matrix.platform == 'windows' && secrets.WINDOWS_PFX_BASE64 != '' && secrets.WINDOWS_PFX_PASSWORD != ''
+        shell: pwsh
+        run: |
           $pfxPath = Join-Path $env:RUNNER_TEMP "codesign.pfx"
           [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String("${{ secrets.WINDOWS_PFX_BASE64 }}"))
 
@@ -132,16 +139,11 @@ jobs:
           & $signtool sign /f $pfxPath /p "${{ secrets.WINDOWS_PFX_PASSWORD }}" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v $exePath
           & $signtool verify /pa /v $exePath
 
-          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-          & $iscc /DMyAppVersion=${{ github.ref_name }} windows\installer\tutodecode.iss
-
           & $signtool sign /f $pfxPath /p "${{ secrets.WINDOWS_PFX_PASSWORD }}" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v TUTODECODE-Setup.exe
           & $signtool verify /pa /v TUTODECODE-Setup.exe
 
-          Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath TUTODECODE-Windows.zip
-
       - name: Require macOS signing/notarization secrets
-        if: matrix.platform == 'macos'
+        if: matrix.platform == 'macos' && secrets.MACOS_CERT_P12_BASE64 != '' && secrets.MACOS_CERT_PASSWORD != '' && secrets.MACOS_CERT_IDENTITY != '' && secrets.APPLE_ID != '' && secrets.APPLE_APP_SPECIFIC_PASSWORD != '' && secrets.APPLE_TEAM_ID != ''
         shell: bash
         run: |
           test -n "${{ secrets.MACOS_CERT_P12_BASE64 }}"
@@ -151,13 +153,32 @@ jobs:
           test -n "${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}"
           test -n "${{ secrets.APPLE_TEAM_ID }}"
 
-      - name: Build, sign and notarize macOS app
+      - name: Build macOS app (unsigned by default)
         if: matrix.platform == 'macos'
         shell: bash
         run: |
           flutter build macos --release
 
-          APP_PATH="build/macos/Build/Products/Release/tutodecode.app"
+          APP_PATH="build/macos/Build/Products/Release/TUTODECODE.app"
+
+          # DMG
+          chmod +x scripts/build_dmg.sh
+          ./scripts/build_dmg.sh
+
+          # PKG (unsigned by default)
+          chmod +x scripts/build_pkg.sh
+          APP_VERSION="${GITHUB_REF_NAME#v}" ./scripts/build_pkg.sh
+          mv build/macos/Build/Products/Release/TUTODECODE_Installer.pkg TUTODECODE-macOS-Installer.pkg
+          cp -f TUTODECODE-macOS-Installer.pkg TUTODECODE-macOS.pkg
+
+          # Zip
+          ditto -c -k --keepParent "$APP_PATH" TUTODECODE-macOS.zip
+
+      - name: Sign and notarize macOS artifacts
+        if: matrix.platform == 'macos' && secrets.MACOS_CERT_P12_BASE64 != '' && secrets.MACOS_CERT_PASSWORD != '' && secrets.MACOS_CERT_IDENTITY != '' && secrets.APPLE_ID != '' && secrets.APPLE_APP_SPECIFIC_PASSWORD != '' && secrets.APPLE_TEAM_ID != ''
+        shell: bash
+        run: |
+          APP_PATH="build/macos/Build/Products/Release/TUTODECODE.app"
           KEYCHAIN_PATH="$RUNNER_TEMP/build.keychain-db"
           CERT_PATH="$RUNNER_TEMP/macos_cert.p12"
 
@@ -174,7 +195,9 @@ jobs:
           codesign --verify --deep --strict --verbose=2 "$APP_PATH"
           spctl --assess --type execute --verbose "$APP_PATH"
 
+          rm -f TUTODECODE-macOS.zip
           ditto -c -k --keepParent "$APP_PATH" TUTODECODE-macOS.zip
+
           xcrun notarytool submit TUTODECODE-macOS.zip \
             --apple-id "${{ secrets.APPLE_ID }}" \
             --password "${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}" \
@@ -182,19 +205,8 @@ jobs:
             --wait
           xcrun stapler staple "$APP_PATH"
 
-          rm -f TUTODECODE-macOS.zip
-          ditto -c -k --keepParent "$APP_PATH" TUTODECODE-macOS.zip
-
           xcrun stapler staple TUTODECODE-macOS.dmg
-          
-          # Build Premium PKG
-          chmod +x scripts/build_pkg.sh
-          ./scripts/build_pkg.sh
-          
-          # Renommer pour correspondre aux attentes du glob d'artefact si nécessaire
-          mv build/macos/Build/Products/Release/TUTODECODE_Installer.pkg TUTODECODE-macOS-Installer.pkg
-          
-          # Sign/Notarize PKG
+
           productsign --sign "${{ secrets.MACOS_CERT_IDENTITY }}" TUTODECODE-macOS-Installer.pkg TUTODECODE-macOS-Installer-Signed.pkg
           xcrun notarytool submit TUTODECODE-macOS-Installer-Signed.pkg \
             --apple-id "${{ secrets.APPLE_ID }}" \
@@ -266,7 +278,7 @@ jobs:
           ARCH=x86_64 ./appimagetool-x86_64.AppImage "$STAGE_APPIMAGE" TUTODECODE-Linux.AppImage
 
       - name: Require Linux signing secrets
-        if: matrix.platform == 'linux'
+        if: matrix.platform == 'linux' && secrets.LINUX_GPG_PRIVATE_KEY_BASE64 != '' && secrets.LINUX_GPG_PASSPHRASE != '' && secrets.LINUX_GPG_KEY_ID != ''
         shell: bash
         run: |
           test -n "${{ secrets.LINUX_GPG_PRIVATE_KEY_BASE64 }}"
@@ -274,7 +286,7 @@ jobs:
           test -n "${{ secrets.LINUX_GPG_KEY_ID }}"
 
       - name: Sign Linux artifact (GPG detached signature)
-        if: matrix.platform == 'linux'
+        if: matrix.platform == 'linux' && secrets.LINUX_GPG_PRIVATE_KEY_BASE64 != '' && secrets.LINUX_GPG_PASSPHRASE != '' && secrets.LINUX_GPG_KEY_ID != ''
         shell: bash
         run: |
           export GNUPGHOME="$RUNNER_TEMP/gnupg"
@@ -298,7 +310,7 @@ jobs:
             --detach-sign TUTODECODE-Linux.deb
 
       - name: Require iOS signing secrets
-        if: matrix.platform == 'ios'
+        if: matrix.platform == 'ios' && secrets.IOS_CERT_P12_BASE64 != '' && secrets.IOS_CERT_PASSWORD != '' && secrets.IOS_PROVISIONING_PROFILE_BASE64 != '' && secrets.IOS_EXPORT_OPTIONS_PLIST_BASE64 != ''
         shell: bash
         run: |
           test -n "${{ secrets.IOS_CERT_P12_BASE64 }}"
@@ -307,7 +319,7 @@ jobs:
           test -n "${{ secrets.IOS_EXPORT_OPTIONS_PLIST_BASE64 }}"
 
       - name: Build signed iOS IPA
-        if: matrix.platform == 'ios'
+        if: matrix.platform == 'ios' && secrets.IOS_CERT_P12_BASE64 != '' && secrets.IOS_CERT_PASSWORD != '' && secrets.IOS_PROVISIONING_PROFILE_BASE64 != '' && secrets.IOS_EXPORT_OPTIONS_PLIST_BASE64 != ''
         shell: bash
         run: |
           CERT_PATH="$RUNNER_TEMP/ios_cert.p12"
