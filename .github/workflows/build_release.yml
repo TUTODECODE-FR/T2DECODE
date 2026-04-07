@@ -241,7 +241,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev gnupg ruby ruby-dev build-essential
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev gnupg ruby ruby-dev build-essential
           sudo gem install --no-document fpm
           flutter build linux --release
           tar -czvf TUTODECODE-Linux.tar.gz -C build/linux/x64/release/bundle/ .
