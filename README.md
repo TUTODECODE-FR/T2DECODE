@@ -44,12 +44,12 @@ Fonctionnalités actuellement disponibles :
 
 | Plateforme | Build CI | Test manuel | Distribution |
 | :--- | :---: | :---: | :---: |
-| Android | ⚠️ | ⚠️ | ⚠️ |
-| Windows | ⚠️ | ⚠️ | ⚠️ |
-| macOS | ⚠️ | ⚠️ | ✅ |
-| Linux | ⚠️ | ⚠️ | ⚠️ |
-| Web | ⚠️ | ⚠️ | ⚠️ |
-| iOS | ⚠️ | ⚠️ | ⚠️ |
+| Android | En cours | Non testé | Non disponible (v1.0.1) |
+| Windows | En cours | Non testé | Non disponible (v1.0.1) |
+| macOS | En cours | Non testé | Disponible (v1.0.1) |
+| Linux | En cours | Non testé | Non disponible (v1.0.1) |
+| Web | En cours | Non testé | Non disponible |
+| iOS | En cours | Non testé | Non disponible |
 
 > Les statuts sont mis à jour à chaque release. Si un artefact manque, il n'est pas marqué ✅.
 
