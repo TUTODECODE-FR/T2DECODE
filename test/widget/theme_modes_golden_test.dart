@@ -94,7 +94,7 @@ void main() {
       find.byType(ThemePreview),
       matchesGoldenFile('goldens/theme_light.png'),
     );
-  }, skip: kSkipGoldens ? 'Goldens skipped on CI' : false);
+  }, skip: kSkipGoldens);
 
   testWidgets('Dark theme golden', (WidgetTester tester) async {
     await _pumpPreview(
@@ -107,5 +107,5 @@ void main() {
       find.byType(ThemePreview),
       matchesGoldenFile('goldens/theme_dark.png'),
     );
-  }, skip: kSkipGoldens ? 'Goldens skipped on CI' : false);
+  }, skip: kSkipGoldens);
 }
