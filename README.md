@@ -9,6 +9,18 @@
 [![License](https://img.shields.io/github/license/TUTODECODE-FR/TUTODECODE?style=for-the-badge)](https://github.com/TUTODECODE-FR/TUTODECODE/blob/main/LICENSE)
 [![Flutter](https://img.shields.io/badge/Flutter-multi--platform-blue?style=for-the-badge)](https://flutter.dev)
 
+<p align="center">
+  <strong>Plateforme locale d'apprentissage technique et d'outils cybersécurité.</strong><br/>
+  <em>Air‑gapped ready · Zéro tracking · IA locale (Ollama)</em>
+</p>
+
+<p align="center">
+  <a href="https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest">Téléchargements</a> ·
+  <a href="docs/build.md">Build</a> ·
+  <a href="docs/architecture.md">Architecture</a> ·
+  <a href="docs/privacy.md">Confidentialité</a>
+</p>
+
 > **"Le savoir technique ne devrait jamais dépendre d'une connexion."**
 
 TUTODECODE est une plateforme d'apprentissage technique et une boîte à outils de cybersécurité conçue pour les étudiants et professionnels de l'IT. L'écosystème fonctionne de manière **100% isolée** (Air-Gapped ready) pour garantir une souveraineté numérique totale.
@@ -59,6 +71,14 @@ Les binaires sont publiés sur la page des releases GitHub :
 ### Vérification d'intégrité
 
 Un fichier `SHA256SUMS.txt` est publié dans chaque release pour vérifier l'intégrité des binaires.
+
+---
+
+## ⚡ Aperçu en 30 secondes
+
+| 🧠 IA locale | 🧪 Labs | 🧰 Outils | 🧩 Modules | 🛡️ Sécurité |
+| :--- | :--- | :--- | :--- | :--- |
+| Ollama intégré | 8 simulateurs | 15+ offline | Markdown/JSON | Vérif assets |
 
 ---
 
