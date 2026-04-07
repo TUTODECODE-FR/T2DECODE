@@ -287,7 +287,7 @@ jobs:
             .
 
           # Build AppImage
-          curl -LO https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+          curl -L -o appimagetool-x86_64.AppImage https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
           STAGE_APPIMAGE="$RUNNER_TEMP/AppDir"
           mkdir -p "$STAGE_APPIMAGE"
