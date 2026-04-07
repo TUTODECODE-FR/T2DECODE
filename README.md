@@ -23,7 +23,6 @@ TUTODECODE est une plateforme d'apprentissage technique et une boîte à outils 
 | ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | [**Installer PKG**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | `Signé` |
 | ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | [**Installeur EXE**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | `Disponible` |
 | ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | [**AppImage**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | `FOSS` |
-| 🧩 **Logo** | [**TDC.png**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TDC.png) | `Branding` |
 
 ---
 
