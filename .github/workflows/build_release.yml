@@ -395,8 +395,10 @@ jobs:
         shell: bash
         run: |
           mkdir -p release_assets
-          cp -f artifacts/app-release.apk release_assets/TUTODECODE-Android.apk || true
-          cp -f artifacts/app-release.aab release_assets/TUTODECODE-Android.aab || true
+          APK_SRC="$(find artifacts -name 'app-release.apk' -print -quit || true)"
+          if [ -n "$APK_SRC" ]; then cp -f "$APK_SRC" release_assets/TUTODECODE-Android.apk; fi
+          AAB_SRC="$(find artifacts -name 'app-release.aab' -print -quit || true)"
+          if [ -n "$AAB_SRC" ]; then cp -f "$AAB_SRC" release_assets/TUTODECODE-Android.aab; fi
           cp -f artifacts/TUTODECODE-Windows.zip release_assets/TUTODECODE-Windows.zip || true
           cp -f artifacts/TUTODECODE-Setup.exe release_assets/TUTODECODE-Setup.exe || true
           cp -f artifacts/TUTODECODE-macOS.zip release_assets/TUTODECODE-macOS.zip || true
