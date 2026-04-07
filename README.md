@@ -17,12 +17,14 @@ TUTODECODE est une plateforme d'apprentissage technique et une boîte à outils 
 
 ### 📥 Téléchargements (dernière version)
 
-| Plateforme | Binaire | Statut |
+Choisissez votre plateforme — tous les fichiers sont publiés sur la release GitHub.
+
+| Plateforme | Paquet principal | Alternatives (si dispo) |
 | :--- | :--- | :--- |
-| ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | [**Fichier APK**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | `Stable` |
-| ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | [**Installer PKG**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | `Signé` |
-| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | [**Installeur EXE**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | `Disponible` |
-| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | [**AppImage**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | `FOSS` |
+| ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | [**APK**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | **AAB** |
+| ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | [**PKG**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | **DMG**, **ZIP** |
+| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | [**EXE**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | **ZIP** |
+| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | [**AppImage**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | **DEB**, **TAR.GZ** |
 
 ---
 
