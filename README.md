@@ -49,6 +49,10 @@ TUTODECODE est une application Flutter multi-plateforme conçue pour l’apprent
 
 > Les statuts sont mis à jour à chaque release. Si un artefact manque, il n'est pas marqué ✅.
 
+**Pourquoi Web/iOS sont désactivés ?**  
+Web n’est pas prioritaire : TUTODECODE est pensé comme une suite d’apps natives.  
+iOS nécessite un compte Apple Developer actif (abonnement annuel), sinon la distribution est désactivée.
+
 ---
 
 ## 📥 Téléchargements
