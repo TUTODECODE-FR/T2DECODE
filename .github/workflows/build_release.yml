@@ -409,6 +409,9 @@ jobs:
           cp -f artifacts/TUTODECODE-Linux.deb.sig release_assets/TUTODECODE-Linux.deb.sig || true
           cp -f artifacts/*.ipa release_assets/TUTODECODE-iOS.ipa || true
           cp -f assets/TDC.png release_assets/TDC.png || cp -f assets/logo.png release_assets/TDC.png || true
+          if ls -A release_assets >/dev/null 2>&1; then
+            (cd release_assets && sha256sum * > SHA256SUMS.txt)
+          fi
           ls -la release_assets
 
       - name: Create or update release
