@@ -29,4 +29,4 @@ jobs:
       - name: Secrets Scan
         run: |
           # Simple check for common credential patterns (skip binary files and build artifacts)
-          grep -rE "(AKIA|GH[A-Z0-9]{38}|SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}|sk_live_[0-9a-zA-Z]{24})" . --exclude-dir=".git" --exclude-dir=".dart_tool" --exclude-dir="build" --binary-files=without-match && exit 1 || exit 0
+          grep -rE "(AKIA|GH[A-Z0-9]{38}|SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}|sk_live_[0-9a-zA-Z]{24})" . --exclude-dir=".git" --exclude-dir=".dart_tool" --exclude-dir="build" --exclude=".github/workflows/ci.yml" --binary-files=without-match && exit 1 || exit 0
