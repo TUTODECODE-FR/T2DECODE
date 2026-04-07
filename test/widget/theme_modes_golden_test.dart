@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
@@ -60,7 +62,9 @@ class ThemePreview extends StatelessWidget {
   }
 }
 
-const bool kSkipGoldens = bool.fromEnvironment('SKIP_GOLDENS', defaultValue: false);
+final bool kSkipGoldens =
+    const bool.fromEnvironment('SKIP_GOLDENS', defaultValue: false) ||
+    (Platform.environment['CI'] == 'true');
 
 void main() {
   const surfaceSize = Size(1280, 800);
