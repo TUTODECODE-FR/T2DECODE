@@ -32,10 +32,10 @@ Fonctionnalités actuellement disponibles :
 
 | Plateforme | Build CI | Test manuel | Distribution |
 | :--- | :---: | :---: | :---: |
-| Android | ⚠️ | ⚠️ | ✅ |
-| Windows | ⚠️ | ⚠️ | ✅ |
+| Android | ⚠️ | ⚠️ | ⚠️ |
+| Windows | ⚠️ | ⚠️ | ⚠️ |
 | macOS | ⚠️ | ⚠️ | ✅ |
-| Linux | ⚠️ | ⚠️ | ✅ |
+| Linux | ⚠️ | ⚠️ | ⚠️ |
 | Web | ⚠️ | ⚠️ | ⚠️ |
 | iOS | ⚠️ | ⚠️ | ⚠️ |
 
@@ -51,10 +51,10 @@ Les binaires sont publiés sur la page des releases GitHub :
 
 | Plateforme | Fichier recommandé | Alternatives | Notes |
 | :--- | :--- | :--- | :--- |
-| ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | **APK** | AAB | Installation manuelle possible |
-| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | **EXE** | ZIP | Installation classique |
-| ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | **PKG** | DMG, ZIP | Signature selon release |
-| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | **AppImage** | DEB, TAR.GZ | FUSE peut être requis |
+| ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | **APK** | AAB | Non disponible dans `v1.0.1` |
+| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | **EXE** | ZIP | Non disponible dans `v1.0.1` |
+| ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | **PKG** | ZIP | Disponible dans `v1.0.1` |
+| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | **AppImage** | DEB, TAR.GZ | Non disponible dans `v1.0.1` |
 
 ### Vérification d'intégrité
 
