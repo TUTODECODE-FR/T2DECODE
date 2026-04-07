@@ -40,10 +40,10 @@ TUTODECODE est une application Flutter multi-plateforme conçue pour l’apprent
 
 | Plateforme | CI | Test manuel | Distribution |
 | :--- | :---: | :---: | :---: |
-| Android | Partiel | Non validé | Non disponible (v1.0.1) |
-| Windows | Partiel | Non validé | Non disponible (v1.0.1) |
+| Android | Partiel | Non validé | Disponible (v1.0.1) |
+| Windows | Partiel | Non validé | Disponible (v1.0.1) |
 | macOS | Configuré | Non validé | Disponible (v1.0.1) |
-| Linux | Partiel | Non validé | Non disponible (v1.0.1) |
+| Linux | Partiel | Non validé | Disponible (v1.0.1) |
 | Web | Non activé | Non validé | Non disponible |
 | iOS | Non activé | Non validé | Non disponible |
 
@@ -59,10 +59,10 @@ Les binaires sont publiés sur la page des releases GitHub :
 
 | Plateforme | Fichier recommandé | Alternatives | Notes |
 | :--- | :--- | :--- | :--- |
-| ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | **APK** | AAB | Non disponible (v1.0.1) |
-| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | **EXE** | ZIP | Non disponible (v1.0.1) |
+| ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | **APK** | AAB | Disponible (v1.0.1) |
+| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | **EXE** | ZIP | Disponible (v1.0.1) |
 | ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | **PKG** | ZIP | Disponible (v1.0.1) |
-| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | **AppImage** | DEB, TAR.GZ | Non disponible (v1.0.1) |
+| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | **AppImage** | DEB, TAR.GZ | Disponible (v1.0.1) |
 
 ### Vérification d'intégrité
 
