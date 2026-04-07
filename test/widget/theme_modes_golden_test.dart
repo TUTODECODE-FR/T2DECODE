@@ -60,6 +60,8 @@ class ThemePreview extends StatelessWidget {
   }
 }
 
+const bool kSkipGoldens = bool.fromEnvironment('SKIP_GOLDENS', defaultValue: false);
+
 void main() {
   const surfaceSize = Size(1280, 800);
 
@@ -92,7 +94,7 @@ void main() {
       find.byType(ThemePreview),
       matchesGoldenFile('goldens/theme_light.png'),
     );
-  });
+  }, skip: kSkipGoldens ? 'Goldens skipped on CI' : false);
 
   testWidgets('Dark theme golden', (WidgetTester tester) async {
     await _pumpPreview(
@@ -105,5 +107,5 @@ void main() {
       find.byType(ThemePreview),
       matchesGoldenFile('goldens/theme_dark.png'),
     );
-  });
+  }, skip: kSkipGoldens ? 'Goldens skipped on CI' : false);
 }
