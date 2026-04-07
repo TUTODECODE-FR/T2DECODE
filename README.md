@@ -40,10 +40,10 @@ TUTODECODE est une application Flutter multi-plateforme conçue pour l’apprent
 
 | Plateforme | CI | Test manuel | Distribution |
 | :--- | :---: | :---: | :---: |
-| Android | Partiel | Non validé | Disponible (v1.0.1) |
-| Windows | Partiel | Non validé | Disponible (v1.0.1) |
-| macOS | Configuré | Non validé | Disponible (v1.0.1) |
-| Linux | Partiel | Non validé | Disponible (v1.0.1) |
+| Android | Partiel | Validé | Disponible (v1.0.1) |
+| Windows | Partiel | Validé | Disponible (v1.0.1) |
+| macOS | Configuré | Validé | Disponible (v1.0.1) |
+| Linux | Partiel | Validé | Disponible (v1.0.1) |
 | Web | Non activé | Non validé | Non disponible |
 | iOS | Non activé | Non validé | Non disponible |
 
