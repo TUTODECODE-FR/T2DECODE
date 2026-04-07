@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: subosito/flutter-action@0ca7a949e71ae44c8e688a51c5e7e93b2c87e295
+        with:
+          flutter-version: '3.41.4'
+          channel: 'stable'
+          cache: true
+      - name: Get dependencies
+        run: flutter pub get
+      - name: Check outdated
+        run: flutter pub outdated
+        continue-on-error: true
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+        continue-on-error: true
+      - name: Test
+        run: flutter test
+      # Scanning secrets in the codebase
+      - name: Secrets Scan
+        run: |
+          # Simple check for common credential patterns (skip binary files and build artifacts)
+          grep -rE "(AKIA|GH[A-Z0-9]{38}|SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}|sk_live_[0-9a-zA-Z]{24})" . --exclude-dir=".git" --exclude-dir=".dart_tool" --exclude-dir="build" --binary-files=without-match && exit 1 || exit 0

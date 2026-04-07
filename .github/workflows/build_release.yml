@@ -1,0 +1,379 @@
+name: Build, Sign and Release Multi-Platform
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags: [ "v*" ]
+  workflow_dispatch:
+    inputs:
+      target_tag:
+        description: "Tag de la release a mettre a jour (ex: v1.0.3)"
+        required: false
+        default: ""
+
+jobs:
+  build:
+    name: Build and sign ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: android
+            os: ubuntu-latest
+            artifact_glob: |
+              build/app/outputs/flutter-apk/app-release.apk
+              build/app/outputs/bundle/release/app-release.aab
+          - platform: windows
+            os: windows-latest
+            artifact_glob: |
+              TUTODECODE-Windows.zip
+              TUTODECODE-Setup.exe
+          - platform: macos
+            os: macos-latest
+            artifact_glob: |
+              TUTODECODE-macOS.zip
+              TUTODECODE-macOS.dmg
+              TUTODECODE-macOS.pkg
+          - platform: linux
+            os: ubuntu-latest
+            artifact_glob: |
+              TUTODECODE-Linux.tar.gz
+              TUTODECODE-Linux.deb
+              TUTODECODE-Linux.AppImage
+              TUTODECODE-Linux.tar.gz.sig
+              TUTODECODE-Linux.deb.sig
+          - platform: ios
+            os: macos-latest
+            artifact_glob: |
+              build/ios/ipa/*.ipa
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Setup Java
+        if: matrix.platform == 'android'
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@0ca7a949e71ae44c8e688a51c5e7e93b2c87e295
+        with:
+          flutter-version: "3.41.4"
+          channel: "stable"
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Require Android signing secrets
+        if: matrix.platform == 'android'
+        shell: bash
+        run: |
+          test -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}"
+          test -n "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+          test -n "${{ secrets.ANDROID_KEY_ALIAS }}"
+          test -n "${{ secrets.ANDROID_KEY_PASSWORD }}"
+
+      - name: Configure Android keystore
+        if: matrix.platform == 'android'
+        shell: bash
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release-keystore.jks
+          cat > android/key.properties <<'EOF'
+          storeFile=app/release-keystore.jks
+          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
+          EOF
+
+      - name: Build signed Android artifacts
+        if: matrix.platform == 'android'
+        shell: bash
+        run: |
+          flutter build apk --release
+          flutter build appbundle --release
+
+      - name: Require Windows signing secrets
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: |
+          if (-not "${{ secrets.WINDOWS_PFX_BASE64 }}") { throw "Missing WINDOWS_PFX_BASE64" }
+          if (-not "${{ secrets.WINDOWS_PFX_PASSWORD }}") { throw "Missing WINDOWS_PFX_PASSWORD" }
+
+      - name: Install Inno Setup
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+
+      - name: Build and sign Windows
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: |
+          flutter build windows --release
+
+          $pfxPath = Join-Path $env:RUNNER_TEMP "codesign.pfx"
+          [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String("${{ secrets.WINDOWS_PFX_BASE64 }}"))
+
+          $signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter "signtool.exe" -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -like "*x64*" } |
+            Select-Object -First 1 -ExpandProperty FullName
+          if (-not $signtool) { throw "signtool.exe introuvable" }
+
+          $exePath = "build\windows\x64\runner\Release\tutodecode_flutter.exe"
+          & $signtool sign /f $pfxPath /p "${{ secrets.WINDOWS_PFX_PASSWORD }}" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v $exePath
+          & $signtool verify /pa /v $exePath
+
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          & $iscc /DMyAppVersion=${{ github.ref_name }} windows\installer\tutodecode.iss
+
+          & $signtool sign /f $pfxPath /p "${{ secrets.WINDOWS_PFX_PASSWORD }}" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v TUTODECODE-Setup.exe
+          & $signtool verify /pa /v TUTODECODE-Setup.exe
+
+          Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath TUTODECODE-Windows.zip
+
+      - name: Require macOS signing/notarization secrets
+        if: matrix.platform == 'macos'
+        shell: bash
+        run: |
+          test -n "${{ secrets.MACOS_CERT_P12_BASE64 }}"
+          test -n "${{ secrets.MACOS_CERT_PASSWORD }}"
+          test -n "${{ secrets.MACOS_CERT_IDENTITY }}"
+          test -n "${{ secrets.APPLE_ID }}"
+          test -n "${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}"
+          test -n "${{ secrets.APPLE_TEAM_ID }}"
+
+      - name: Build, sign and notarize macOS app
+        if: matrix.platform == 'macos'
+        shell: bash
+        run: |
+          flutter build macos --release
+
+          APP_PATH="build/macos/Build/Products/Release/tutodecode.app"
+          KEYCHAIN_PATH="$RUNNER_TEMP/build.keychain-db"
+          CERT_PATH="$RUNNER_TEMP/macos_cert.p12"
+
+          echo "${{ secrets.MACOS_CERT_P12_BASE64 }}" | base64 --decode > "$CERT_PATH"
+
+          security create-keychain -p "" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "" "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
+          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "${{ secrets.MACOS_CERT_PASSWORD }}" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "$KEYCHAIN_PATH"
+
+          codesign --force --deep --options runtime --timestamp --sign "${{ secrets.MACOS_CERT_IDENTITY }}" "$APP_PATH"
+          codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+          spctl --assess --type execute --verbose "$APP_PATH"
+
+          ditto -c -k --keepParent "$APP_PATH" TUTODECODE-macOS.zip
+          xcrun notarytool submit TUTODECODE-macOS.zip \
+            --apple-id "${{ secrets.APPLE_ID }}" \
+            --password "${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}" \
+            --team-id "${{ secrets.APPLE_TEAM_ID }}" \
+            --wait
+          xcrun stapler staple "$APP_PATH"
+
+          rm -f TUTODECODE-macOS.zip
+          ditto -c -k --keepParent "$APP_PATH" TUTODECODE-macOS.zip
+
+          xcrun stapler staple TUTODECODE-macOS.dmg
+          
+          # Build Premium PKG
+          chmod +x scripts/build_pkg.sh
+          ./scripts/build_pkg.sh
+          
+          # Renommer pour correspondre aux attentes du glob d'artefact si nécessaire
+          mv build/macos/Build/Products/Release/TUTODECODE_Installer.pkg TUTODECODE-macOS-Installer.pkg
+          
+          # Sign/Notarize PKG
+          productsign --sign "${{ secrets.MACOS_CERT_IDENTITY }}" TUTODECODE-macOS-Installer.pkg TUTODECODE-macOS-Installer-Signed.pkg
+          xcrun notarytool submit TUTODECODE-macOS-Installer-Signed.pkg \
+            --apple-id "${{ secrets.APPLE_ID }}" \
+            --password "${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}" \
+            --team-id "${{ secrets.APPLE_TEAM_ID }}" \
+            --wait
+          xcrun stapler staple TUTODECODE-macOS-Installer-Signed.pkg
+          mv TUTODECODE-macOS-Installer-Signed.pkg TUTODECODE-macOS.pkg
+
+      - name: Build Linux artifact
+        if: matrix.platform == 'linux'
+        shell: bash
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev gnupg ruby ruby-dev build-essential
+          sudo gem install --no-document fpm
+          flutter build linux --release
+          tar -czvf TUTODECODE-Linux.tar.gz -C build/linux/x64/release/bundle/ .
+
+          VERSION_RAW="${GITHUB_REF_NAME#v}"
+          if [ -z "$VERSION_RAW" ] || [ "$VERSION_RAW" = "$GITHUB_REF_NAME" ]; then
+            VERSION_RAW="1.0.0"
+          fi
+          VERSION="${VERSION_RAW//-/_}"
+
+          STAGE="$RUNNER_TEMP/linuxpkg"
+          mkdir -p "$STAGE/opt/tutodecode"
+          mkdir -p "$STAGE/usr/share/applications"
+          mkdir -p "$STAGE/usr/bin"
+
+          cp -R build/linux/x64/release/bundle/* "$STAGE/opt/tutodecode/"
+
+          cat > "$STAGE/usr/share/applications/tutodecode.desktop" <<'EOF'
+          [Desktop Entry]
+          Name=TUTODECODE
+          Comment=TUTODECODE learning platform
+          Exec=/opt/tutodecode/tutodecode_flutter
+          Icon=/opt/tutodecode/data/flutter_assets/assets/logo.png
+          Terminal=false
+          Type=Application
+          Categories=Education;Development;
+          EOF
+
+          cat > "$STAGE/usr/bin/tutodecode" <<'EOF'
+          #!/usr/bin/env bash
+          exec /opt/tutodecode/tutodecode_flutter "$@"
+          EOF
+          chmod +x "$STAGE/usr/bin/tutodecode"
+
+          fpm -s dir -t deb \
+            -n tutodecode \
+            -v "$VERSION" \
+            --architecture amd64 \
+            --description "TUTODECODE learning platform" \
+            --maintainer "TUTODECODE <contact@tutodecode.org>" \
+            -C "$STAGE" \
+            -p TUTODECODE-Linux.deb \
+            .
+
+          # Build AppImage
+          curl -LO https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+          STAGE_APPIMAGE="$RUNNER_TEMP/AppDir"
+          mkdir -p "$STAGE_APPIMAGE"
+          cp -R build/linux/x64/release/bundle/* "$STAGE_APPIMAGE/"
+          cp "$STAGE/usr/share/applications/tutodecode.desktop" "$STAGE_APPIMAGE/"
+          cp "assets/logo.png" "$STAGE_APPIMAGE/tutodecode.png"
+          ln -s tutodecode_flutter "$STAGE_APPIMAGE/AppRun"
+          ARCH=x86_64 ./appimagetool-x86_64.AppImage "$STAGE_APPIMAGE" TUTODECODE-Linux.AppImage
+
+      - name: Require Linux signing secrets
+        if: matrix.platform == 'linux'
+        shell: bash
+        run: |
+          test -n "${{ secrets.LINUX_GPG_PRIVATE_KEY_BASE64 }}"
+          test -n "${{ secrets.LINUX_GPG_PASSPHRASE }}"
+          test -n "${{ secrets.LINUX_GPG_KEY_ID }}"
+
+      - name: Sign Linux artifact (GPG detached signature)
+        if: matrix.platform == 'linux'
+        shell: bash
+        run: |
+          export GNUPGHOME="$RUNNER_TEMP/gnupg"
+          mkdir -p "$GNUPGHOME"
+          chmod 700 "$GNUPGHOME"
+
+          echo "${{ secrets.LINUX_GPG_PRIVATE_KEY_BASE64 }}" | base64 --decode > "$RUNNER_TEMP/linux.key"
+          gpg --batch --import "$RUNNER_TEMP/linux.key"
+
+          printf '%s' "${{ secrets.LINUX_GPG_PASSPHRASE }}" > "$RUNNER_TEMP/gpg.pass"
+          gpg --batch --yes --pinentry-mode loopback \
+            --passphrase-file "$RUNNER_TEMP/gpg.pass" \
+            --local-user "${{ secrets.LINUX_GPG_KEY_ID }}" \
+            --output TUTODECODE-Linux.tar.gz.sig \
+            --detach-sign TUTODECODE-Linux.tar.gz
+
+          gpg --batch --yes --pinentry-mode loopback \
+            --passphrase-file "$RUNNER_TEMP/gpg.pass" \
+            --local-user "${{ secrets.LINUX_GPG_KEY_ID }}" \
+            --output TUTODECODE-Linux.deb.sig \
+            --detach-sign TUTODECODE-Linux.deb
+
+      - name: Require iOS signing secrets
+        if: matrix.platform == 'ios'
+        shell: bash
+        run: |
+          test -n "${{ secrets.IOS_CERT_P12_BASE64 }}"
+          test -n "${{ secrets.IOS_CERT_PASSWORD }}"
+          test -n "${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}"
+          test -n "${{ secrets.IOS_EXPORT_OPTIONS_PLIST_BASE64 }}"
+
+      - name: Build signed iOS IPA
+        if: matrix.platform == 'ios'
+        shell: bash
+        run: |
+          CERT_PATH="$RUNNER_TEMP/ios_cert.p12"
+          PROFILE_PATH="$RUNNER_TEMP/profile.mobileprovision"
+          KEYCHAIN_PATH="$RUNNER_TEMP/ios.keychain-db"
+
+          echo "${{ secrets.IOS_CERT_P12_BASE64 }}" | base64 --decode > "$CERT_PATH"
+          echo "${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}" | base64 --decode > "$PROFILE_PATH"
+          echo "${{ secrets.IOS_EXPORT_OPTIONS_PLIST_BASE64 }}" | base64 --decode > ios/ExportOptions.plist
+
+          security create-keychain -p "" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "" "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
+          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "${{ secrets.IOS_CERT_PASSWORD }}" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "$KEYCHAIN_PATH"
+
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/Runner.mobileprovision"
+
+          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
+
+      - name: Upload platform artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: build-${{ matrix.platform }}
+          path: ${{ matrix.artifact_glob }}
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    if: always() && (github.event_name == 'workflow_dispatch' || github.ref_type == 'tag' || startsWith(github.ref, 'refs/tags/v')) && needs.build.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          path: artifacts
+          pattern: build-*
+          merge-multiple: true
+
+      - name: Prepare release assets
+        shell: bash
+        run: |
+          mkdir -p release_assets
+          cp -f artifacts/app-release.apk release_assets/TUTODECODE-Android.apk || true
+          cp -f artifacts/app-release.aab release_assets/TUTODECODE-Android.aab || true
+          cp -f artifacts/TUTODECODE-Windows.zip release_assets/TUTODECODE-Windows.zip || true
+          cp -f artifacts/TUTODECODE-Setup.exe release_assets/TUTODECODE-Setup.exe || true
+          cp -f artifacts/TUTODECODE-macOS.zip release_assets/TUTODECODE-macOS.zip || true
+          cp -f artifacts/TUTODECODE-macOS.dmg release_assets/TUTODECODE-macOS.dmg || true
+          cp -f artifacts/TUTODECODE-macOS.pkg release_assets/TUTODECODE-macOS.pkg || true
+          cp -f artifacts/TUTODECODE-Linux.tar.gz release_assets/TUTODECODE-Linux.tar.gz || true
+          cp -f artifacts/TUTODECODE-Linux.deb release_assets/TUTODECODE-Linux.deb || true
+          cp -f artifacts/TUTODECODE-Linux.AppImage release_assets/TUTODECODE-Linux.AppImage || true
+          cp -f artifacts/TUTODECODE-Linux.tar.gz.sig release_assets/TUTODECODE-Linux.tar.gz.sig || true
+          cp -f artifacts/TUTODECODE-Linux.deb.sig release_assets/TUTODECODE-Linux.deb.sig || true
+          cp -f artifacts/*.ipa release_assets/TUTODECODE-iOS.ipa || true
+          ls -la release_assets
+
+      - name: Create or update release
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe
+        with:
+          tag_name: ${{ github.event.inputs.target_tag || github.ref_name }}
+          files: release_assets/*
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: false
