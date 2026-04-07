@@ -2,6 +2,8 @@ name: Build, Sign and Release Multi-Platform
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
 
 on:
   push:
@@ -388,6 +390,10 @@ jobs:
     needs: build
     if: always() && (github.event_name == 'workflow_dispatch' || github.ref_type == 'tag' || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
+    env:
+      LINUX_GPG_PRIVATE_KEY_BASE64: ${{ secrets.LINUX_GPG_PRIVATE_KEY_BASE64 }}
+      LINUX_GPG_PASSPHRASE: ${{ secrets.LINUX_GPG_PASSPHRASE }}
+      LINUX_GPG_KEY_ID: ${{ secrets.LINUX_GPG_KEY_ID }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
@@ -424,6 +430,29 @@ jobs:
             (cd release_assets && sha256sum * > SHA256SUMS.txt)
           fi
           ls -la release_assets
+
+      - name: Sign release checksums (optional)
+        if: env.LINUX_GPG_PRIVATE_KEY_BASE64 != '' && env.LINUX_GPG_PASSPHRASE != '' && env.LINUX_GPG_KEY_ID != ''
+        shell: bash
+        run: |
+          export GNUPGHOME="$RUNNER_TEMP/gnupg-release"
+          mkdir -p "$GNUPGHOME"
+          chmod 700 "$GNUPGHOME"
+
+          echo "${{ env.LINUX_GPG_PRIVATE_KEY_BASE64 }}" | base64 --decode > "$RUNNER_TEMP/release.key"
+          gpg --batch --import "$RUNNER_TEMP/release.key"
+
+          printf '%s' "${{ env.LINUX_GPG_PASSPHRASE }}" > "$RUNNER_TEMP/release.pass"
+          gpg --batch --yes --pinentry-mode loopback \
+            --passphrase-file "$RUNNER_TEMP/release.pass" \
+            --local-user "${{ env.LINUX_GPG_KEY_ID }}" \
+            --output release_assets/SHA256SUMS.txt.sig \
+            --detach-sign release_assets/SHA256SUMS.txt
+
+      - name: Attest release assets provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'release_assets/*'
 
       - name: Create or update release
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe
