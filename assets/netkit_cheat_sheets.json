@@ -1,0 +1,72 @@
+[
+  {
+    "command": "ip link show",
+    "description": "Lister les interfaces réseau physiques",
+    "category": "INTERFACE",
+    "detailedExplanation": "Affiche l'état des interfaces réseau (up/down), les adresses MAC et l'état de la couche physique.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "ip route show",
+    "description": "Afficher la table de routage IP",
+    "category": "ROUTING",
+    "detailedExplanation": "Montre comment les paquets sont acheminés hors du système et quelle est la passerelle (Gateway) par défaut.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "ss -tunlp",
+    "description": "Lister les sockets réseau (remplace netstat)",
+    "category": "PORTS",
+    "detailedExplanation": "Affiche les statistiques des sockets TCP/UDP, les ports d'écoute et les processus associés.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "tcpdump -i any icmp",
+    "description": "Capturer uniquement le trafic ICMP (Ping)",
+    "category": "DIAGNOSTIC",
+    "detailedExplanation": "Capture en temps réel les paquets Ping entrant et sortant pour débugger la connectivité.",
+    "dangerLevel": 2
+  },
+  {
+    "command": "dig +trace [domain]",
+    "description": "Suivre la résolution DNS étape par étape",
+    "category": "DNS",
+    "detailedExplanation": "Parcourt toute la hiérarchie DNS (Root, TLD, Autoritaire) pour trouver l'IP d'un domaine.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "nmap -Pn -F [IP]",
+    "description": "Scan de ports rapide sans ping initial",
+    "category": "SCAN",
+    "detailedExplanation": "Scan les 100 ports les plus courants sans vérifier si l'hôte répond au ping (utile si firewall).",
+    "dangerLevel": 2
+  },
+  {
+    "command": "mtr --report [host]",
+    "description": "Rapport combiné Ping et Traceroute",
+    "category": "DIAGNOSTIC",
+    "detailedExplanation": "Génère un rapport de latence et de perte de paquets pour chaque saut sur le chemin réseau.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "arp -a",
+    "description": "Afficher la table ARP (Cache IP/MAC)",
+    "category": "INTERFACE",
+    "detailedExplanation": "Liste les correspondances entre adresses IP locales et adresses MAC physiques connues.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "iwconfig",
+    "description": "Configuration des interfaces WiFi",
+    "category": "WIRELESS",
+    "detailedExplanation": "Affiche le SSID, la fréquence, la qualité du signal et la puissance d'émission du WiFi.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "nmcli device wifi list",
+    "description": "Lister les réseaux WiFi disponibles",
+    "category": "WIRELESS",
+    "detailedExplanation": "Interface en ligne de commande pour NetworkManager affichant les hotspots à portée.",
+    "dangerLevel": 1
+  }
+]

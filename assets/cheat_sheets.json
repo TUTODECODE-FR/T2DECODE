@@ -1,0 +1,173 @@
+[
+  {
+    "command": "nmap -sS -A -T4 [IP]",
+    "description": "Scan furtif complet (Recon)",
+    "category": "Red Team",
+    "iconName": "bug_report",
+    "colorHex": "EF4444",
+    "detailedExplanation": "Exécute un scan SYN furtif, détecte l'OS, les versions de services, et exécute les scripts par défaut en mode agressif (T4).",
+    "options": ["-sS : Stealth SYN scan", "-A : OS detection, version detection, script scanning"],
+    "examples": ["nmap -sS -A -T4 10.0.0.1"],
+    "dangerLevel": 3
+  },
+  {
+    "command": "sqlmap -u \"[URL]\" --dbs --random-agent",
+    "description": "Exploitation SQLi",
+    "category": "Red Team",
+    "iconName": "bug_report",
+    "colorHex": "EF4444",
+    "detailedExplanation": "Détecte et exploite automatiquement les vulnérabilités d'injection SQL sur l'URL cible, en masquant l'User-Agent.",
+    "dangerLevel": 3
+  },
+  {
+    "command": "msfconsole -x \"use exploit/multi/handler; set PAYLOAD generic/shell_reverse_tcp; run\"",
+    "description": "Lancer un listener Metasploit",
+    "category": "Red Team",
+    "iconName": "bug_report",
+    "colorHex": "DC2626",
+    "detailedExplanation": "Lance un listener Metasploit prêt à recevoir un reverse shell depuis une cible compromise.",
+    "options": ["set LHOST [IP] : adresse d'écoute", "set LPORT [PORT] : port d'écoute"],
+    "examples": ["msfconsole -q -x \"use exploit/multi/handler; set PAYLOAD windows/x64/meterpreter/reverse_tcp; set LHOST 192.168.1.100; set LPORT 4444; run\""],
+    "dangerLevel": 3
+  },
+  {
+    "command": "gobuster dir -u [URL] -w /usr/share/wordlists/dirb/common.txt",
+    "description": "Brute-force de répertoires web",
+    "category": "Red Team",
+    "iconName": "search",
+    "colorHex": "F97316",
+    "detailedExplanation": "Tente de découvrir des répertoires et fichiers cachés sur un serveur web en testant une liste de noms communs.",
+    "options": ["-u : URL cible", "-w : chemin vers la wordlist", "-t : nombre de threads"],
+    "examples": ["gobuster dir -u https://example.com -w /usr/share/wordlists/rockyou.txt -t 50"],
+    "dangerLevel": 3
+  },
+  {
+    "command": "journalctl -p err..emerg --since \"1 hour ago\"",
+    "description": "Analyse Logs Critiques",
+    "category": "Blue Team",
+    "iconName": "security",
+    "colorHex": "3B82F6",
+    "detailedExplanation": "Affiche les erreurs système critiques de la dernière heure pour détecter une compromission en cours.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "netstat -tulpen | grep LISTEN",
+    "description": "Audit ports d'écoute",
+    "category": "Blue Team",
+    "iconName": "network",
+    "colorHex": "3B82F6",
+    "detailedExplanation": "Liste tous les ports en écoute avec le PID et l'utilisateur associé pour vérifier les portes dérobées.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "ss -antp | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n",
+    "description": "Détection dangereuse / DDoS",
+    "category": "Blue Team",
+    "iconName": "security",
+    "colorHex": "3B82F6",
+    "detailedExplanation": "Compte le nombre de connexions par adresse IP source pour identifier un potentiel déni de service (DDoS) ou bruteforce.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "auditctl -w /etc/passwd -p wa -k passwd_changes",
+    "description": "Surveiller les modifs /etc/passwd",
+    "category": "Blue Team",
+    "iconName": "lock",
+    "colorHex": "2563EB",
+    "detailedExplanation": "Place un audit sur le fichier /etc/passwd pour détecter toute tentative d'écriture ou d'accès. Toute modification sera journalisée dans auditd.",
+    "options": ["-w : chemin du fichier", "-p wa : surveille écriture+accès", "-k : tag de l'événement"],
+    "examples": ["auditctl -w /etc/shadow -p wa -k shadow_access"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "Get-ADUser -Filter * -Properties PasswordLastSet, PasswordNeverExpires",
+    "description": "Audit mots de passe AD",
+    "category": "Admin Sys",
+    "iconName": "admin_panel_settings",
+    "colorHex": "8B5CF6",
+    "detailedExplanation": "Liste tous les utilisateurs Active Directory et vérifie si leurs mots de passe expirent, essentiel pour la conformité.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "rsync -avz --delete -e ssh /source/ user@remote:/backup/",
+    "description": "Backup sécurisé distant",
+    "category": "Admin Sys",
+    "iconName": "storage",
+    "colorHex": "8B5CF6",
+    "detailedExplanation": "Synchronise un dossier local vers un serveur distant via tunnel chiffré SSH, en supprimant les fichiers obsolètes.",
+    "dangerLevel": 2
+  },
+  {
+    "command": "Get-EventLog -LogName Security -InstanceId 4625 -Newest 50",
+    "description": "Echecs d'auth Windows (EventID 4625)",
+    "category": "Admin Sys",
+    "iconName": "admin_panel_settings",
+    "colorHex": "7C3AED",
+    "detailedExplanation": "Récupère les 50 derniers échecs de connexion Windows. Utile pour détecter un bruteforce ou des tentatives d'accès non autorisées.",
+    "options": ["InstanceId 4625 : LoginFailure", "Newest 50 : limite les résultats"],
+    "examples": ["Get-EventLog -LogName Security -InstanceId 4625 | Select TimeGenerated, Message"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "aws s3api get-bucket-versioning --bucket [nom]",
+    "description": "Vérif Versioning S3",
+    "category": "Cloud",
+    "iconName": "cloud",
+    "colorHex": "06B6D4",
+    "detailedExplanation": "Vérifie si le versioning est activé sur un bucket S3 pour se prémunir contre les suppressions accidentelles ou ransomwares.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "az role assignment list --all",
+    "description": "Audit RBAC complet Azure",
+    "category": "Cloud",
+    "iconName": "cloud",
+    "colorHex": "06B6D4",
+    "detailedExplanation": "Liste toutes les assignations de rôles au sein de la souscription Azure pour s'assurer du principe de moindre privilège.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "kubectl get pods --all-namespaces -o wide",
+    "description": "Lister tous les pods Kubernetes",
+    "category": "Cloud",
+    "iconName": "cloud",
+    "colorHex": "0891B2",
+    "detailedExplanation": "Affiche l'état de tous les pods sur tous les namespaces Kubernetes avec les IPs et les nœuds associés.",
+    "options": ["--all-namespaces : inclure tout les NS", "-o wide : affichage étendu"],
+    "examples": ["kubectl get pods -n production -o wide"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "terraform plan -out=tfplan && terraform apply tfplan",
+    "description": "Déploiement IaC sécurisé Terraform",
+    "category": "Cloud",
+    "iconName": "api",
+    "colorHex": "7C3AED",
+    "detailedExplanation": "Génère un plan d'exécution Terraform valide (tfplan) puis applique les changements, garantissant la cohérence du déploiement.",
+    "options": ["-out=tfplan : sauvegarde du plan", "apply tfplan : exécute le plan approuvé"],
+    "examples": ["terraform plan -out=tfplan -var-file=prod.tfvars"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes",
+    "description": "Générer un cert TLS auto-signé",
+    "category": "SÉCURITÉ",
+    "iconName": "lock",
+    "colorHex": "EF4444",
+    "detailedExplanation": "Crée un certificat X.509 auto-signé RSA 4096 bits valable 1 an. Utile pour les serveurs de test ou les communications internes.",
+    "options": ["-newkey rsa:4096 : clé RSA de 4096 bits", "-nodes : pas de passphrase sur la clé privée", "-days 365 : durée de validité"],
+    "examples": ["openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -days 730 -nodes -subj \"/CN=localhost\""],
+    "dangerLevel": 2
+  },
+  {
+    "command": "openssl s_client -connect [host]:443 -tls1_2",
+    "description": "Vérifier la config TLS d'un serveur",
+    "category": "SÉCURITÉ",
+    "iconName": "lock",
+    "colorHex": "DC2626",
+    "detailedExplanation": "Établit une connexion TLS 1.2 vers le serveur cible et affiche les détails du certificat, le cipher négocié et la chaîne de confiance.",
+    "options": ["-tls1_2 : forcer TLS 1.2", "-tls1_3 : forcer TLS 1.3", "| openssl x509 -text : afficher le cert"],
+    "examples": ["openssl s_client -connect example.com:443 2>/dev/null | openssl x509 -noout -dates"],
+    "dangerLevel": 1
+  }
+]

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUTODECODE — L'Académie IT 100% Locale & Souveraine</title>
+    <meta name="description" content="Maîtrisez Linux, Python, Docker, SQL et la Sécurité Web avec TUTODECODE. Apprentissage hors-ligne propulsé by Ghost AI.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+    
+    <header id="main-header">
+        <div class="container nav">
+            <a href="#" class="logo-wrapper">
+                <img src="logo.png" alt="TUTODECODE Logo" style="width: 32px; height: 32px; border-radius: 8px;">
+                <span class="gradient-text">TUTODECODE</span>
+            </a>
+            <div class="nav-links">
+                <a href="#vision">Manifeste</a>
+                <a href="#curriculum">Académie</a>
+                <a href="#ghost-ai">Ghost AI</a>
+                <a href="#download">Installer</a>
+                <a href="https://github.com/TUTODECODE-ORG/TUTODECODE_APP" target="_blank" class="github-link">Repo GitHub</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <h1 class="gradient-text">Dominez l'Informatique sans Cloud.</h1>
+                    <p>Apprenez le développement, le système et le réseau avec une plateforme 100% locale. Pas de connexion, pas de tracking, juste du code pur.</p>
+                    <div class="hero-btns">
+                        <a href="https://github.com/TUTODECODE-ORG/TUTODECODE_APP" class="btn btn-primary">Explorer le Repo</a>
+                        <a href="#curriculum" class="btn btn-outline">Voir l'Académie</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="terminal-mock glass">
+                        <div class="terminal-header">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                            <span class="terminal-title">ghost@tutodecode: ~</span>
+                        </div>
+                        <div class="terminal-body font-mono">
+                            <p class="cursor">_</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="vision" class="container">
+            <div class="section-header">
+                <span class="section-label">Notre Engagement</span>
+                <h2>Souveraineté Numérique Totale</h2>
+            </div>
+            <div class="vision-grid">
+                <div class="vision-card glass">
+                    <div class="icon-box">🛡️</div>
+                    <h3>Zéro Cloud</h3>
+                    <p>Vos cours et votre progression ne sont JAMAIS envoyés sur un serveur. Vous possédez vos données à 100%.</p>
+                </div>
+                <div class="vision-card glass">
+                    <div class="icon-box">🗝️</div>
+                    <h3>Open Knowledge</h3>
+                    <p>Tout notre curriculum est public sur GitHub (AGPL-3.0). Vous pouvez l'auditer, le modifier et le fork.</p>
+                </div>
+                <div class="vision-card glass">
+                    <div class="icon-box">🔋</div>
+                    <h3>Autonomie Mode Avion</h3>
+                    <p>Conçu pour fonctionner sur un laptop au milieu du désert ou dans un bunker. L'internet est une option, pas un prérequis.</p>
+                </div>
+                <div class="vision-card glass" style="border-color: var(--accent-secondary);">
+                    <div class="icon-box">✍️</div>
+                    <h3>Éditeur Souverain</h3>
+                    <p>Utilisez l'outil <strong>CourseEditor.exe</strong> inclus pour créer et partager vos propres modules techniques.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="curriculum">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-label">Le Programme Officiel</span>
+                    <h2>Une Académie de +190 Heures</h2>
+                    <p style="color: var(--text-secondary); max-width: 600px;">Directement extrait de notre curriculum <code>courses.json</code>. Chaque module est conçu pour être suivi 100% hors-ligne.</p>
+                </div>
+                <div class="stats-bar glass">
+                    <div class="stat-item">
+                        <span class="stat-value">17</span>
+                        <span class="stat-label">Cours Maîtres</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">195h</span>
+                        <span class="stat-label">Formation Intensive</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">∞</span>
+                        <span class="stat-label">Souveraineté</span>
+                    </div>
+                </div>
+                <div class="curriculum-grid">
+                    <div class="course-item glass">
+                        <div class="course-meta">
+                            <span class="cat">Système</span>
+                            <span class="dur">8h</span>
+                        </div>
+                        <h3>Bases de Linux</h3>
+                        <p>Terminal, Bash, Permissions et Administration Système Unix.</p>
+                        <ul class="keywords">
+                            <li>#bash</li>
+                            <li>#cli</li>
+                            <li>#linux</li>
+                        </ul>
+                    </div>
+                    <div class="course-item glass">
+                        <div class="course-meta">
+                            <span class="cat">Développement</span>
+                            <span class="dur">20h</span>
+                        </div>
+                        <h3>Python Masterclass</h3>
+                        <p>De la syntaxe aux objets, automatisation et IA avec Python.</p>
+                        <ul class="keywords">
+                            <li>#python</li>
+                            <li>#poo</li>
+                            <li>#scripts</li>
+                        </ul>
+                    </div>
+                    <div class="course-item glass" style="border-color: rgba(247, 76, 0, 0.2);">
+                        <div class="course-meta">
+                            <span class="cat" style="color: #f74c00;">Système</span>
+                            <span class="dur">16h</span>
+                        </div>
+                        <h3>Rust — Performance</h3>
+                        <p>Ownership, Borrowing et Sécurité Mémoire sans GC.</p>
+                        <ul class="keywords">
+                            <li>#rust</li>
+                            <li>#native</li>
+                            <li>#safe</li>
+                        </ul>
+                    </div>
+                    <div class="course-item glass" style="border-color: rgba(97, 218, 251, 0.2);">
+                        <div class="course-meta">
+                            <span class="cat" style="color: #61DAFB;">Frontend</span>
+                            <span class="dur">14h</span>
+                        </div>
+                        <h3>React Moderne</h3>
+                        <p>Hooks, Context API, Performance et Patterns Avancés.</p>
+                        <ul class="keywords">
+                            <li>#react</li>
+                            <li>#hooks</li>
+                            <li>#spa</li>
+                        </ul>
+                    </div>
+                    <div class="course-item glass">
+                        <div class="course-meta">
+                            <span class="cat">Cloud/DevOps</span>
+                            <span class="dur">15h</span>
+                        </div>
+                        <h3>Kubernetes (K8s)</h3>
+                        <p>Orchestration à grande échelle, Pods, Services et Helm.</p>
+                        <ul class="keywords">
+                            <li>#k8s</li>
+                            <li>#helm</li>
+                            <li>#cloud</li>
+                        </ul>
+                    </div>
+                    <div class="course-item glass">
+                        <div class="course-meta">
+                            <span class="cat">Data</span>
+                            <span class="dur">12h</span>
+                        </div>
+                        <h3>SQL Avancé</h3>
+                        <p>Modélisation relationnelle, requêtes complexes et performance.</p>
+                        <ul class="keywords">
+                            <li>#sql</li>
+                            <li>#database</li>
+                            <li>#postgre</li>
+                        </ul>
+                    </div>
+                    <div class="course-item glass" style="border-color: rgba(239, 68, 68, 0.2);">
+                        <div class="course-meta">
+                            <span class="cat" style="color: var(--danger);">Sécurité</span>
+                            <span class="dur">10h</span>
+                        </div>
+                        <h3>Sécurité Web Pro</h3>
+                        <p>OWASP Top 10, Injections SQL et protection d'APIs.</p>
+                        <ul class="keywords">
+                            <li>#security</li>
+                            <li>#jwt</li>
+                            <li>#audit</li>
+                        </ul>
+                    </div>
+                    <div class="course-item glass">
+                        <div class="course-meta">
+                            <span class="cat">Web</span>
+                            <span class="dur">15h</span>
+                        </div>
+                        <h3>JS Moderne (ES6+)</h3>
+                        <p>Async/Await, Promises, et patterns JavaScript modernes.</p>
+                        <ul class="keywords">
+                            <li>#js</li>
+                            <li>#es6</li>
+                            <li>#async</li>
+                        </ul>
+                    </div>
+                    <div class="course-item glass">
+                        <div class="course-meta">
+                            <span class="cat">Réseau</span>
+                            <span class="dur">10h</span>
+                        </div>
+                        <h3>Réseaux IT</h3>
+                        <p>TCP/IP, DNS, HTTP, Wireshark et Protocoles Internet.</p>
+                        <ul class="keywords">
+                            <li>#network</li>
+                            <li>#dns</li>
+                            <li>#packet</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="academy-more glass">
+                    <p>+ modules inclus : Git & GitHub, HTML/CSS, Node.js API, TypeScript, CI/CD Actions, Bash Avancé, et REST Design.</p>
+                </div>
+                <div class="tech-stack-banner glass">
+                    <span>Propulsé par :</span>
+                    <div class="tech-icons">
+                        <span title="Flutter">Flutter</span>
+                        <span title="Dart">Dart</span>
+                        <span title="Ollama">Ollama</span>
+                        <span title="Linux">Linux</span>
+                        <span title="AGPL-3.0">AGPLv3</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ghost-ai" class="ghost-ai-section">
+            <div class="container ghost-grid">
+                <div class="ghost-content">
+                    <span class="section-label" style="color: var(--accent-secondary);">Local Intelligence</span>
+                    <h2 class="gradient-text">Rencontrez Ghost AI</h2>
+                    <p>Un tuteur IA qui ne vous espionne pas. Ghost AI tourne directement sur VOTRE machine via <strong>Ollama</strong>. Il répond à vos questions sur les cours, analyse votre code et vous guide sans jamais quitter votre réseau local.</p>
+                    <div class="ai-specs glass">
+                        <div class="spec">
+                            <strong>Confidentialité</strong>
+                            <span>100% Hors-ligne</span>
+                        </div>
+                        <div class="spec">
+                            <strong>Moteur</strong>
+                            <span>Ollama / Qwen2.5</span>
+                        </div>
+                        <div class="spec">
+                            <strong>Prérequis</strong>
+                            <span>8GB RAM / GPU</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ghost-visual">
+                    <div class="ai-orb"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="download" class="container">
+            <div class="dl-hub glass">
+                <div class="dl-info">
+                    <h2>Libérez votre station de travail.</h2>
+                    <p>Pas d'installateur MSIX douteux, pas de certificats racine intrusifs. Juste un ZIP propre et portable pour Windows, et des binaires natifs pour Linux et Android.</p>
+                    <div class="platform-list">
+                        <div class="platform glass">
+                            <span class="name">Windows</span>
+                            <span class="type">Portable ZIP</span>
+                            <span class="status-dot green"></span>
+                        </div>
+                        <div class="platform glass">
+                            <span class="name">Linux</span>
+                            <span class="type">tar.gz</span>
+                            <span class="status-dot green"></span>
+                        </div>
+                        <div class="platform glass">
+                            <span class="name">Android</span>
+                            <span class="type">APK</span>
+                            <span class="status-dot green"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dl-cta">
+                    <a href="https://github.com/TUTODECODE-ORG/TUTODECODE_APP" class="btn btn-primary big">Accéder au Code Source</a>
+                    <p style="font-size: 0.8rem; margin-top: 1rem; opacity: 0.6;">Dernière release stable via GitHub Actions</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="roadmap">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-label">Évolutions</span>
+                    <h2>Horizon 2026</h2>
+                </div>
+                <div class="roadmap-flex">
+                    <div class="step glass done">
+                        <span class="dot"></span>
+                        <div class="step-content">
+                            <h4>Phase 1 : Socle Native</h4>
+                            <p>Migration Flutter, moteur de cours JSON, IA locale intégrée.</p>
+                            <span class="label">TERMINÉ</span>
+                        </div>
+                    </div>
+                    <div class="step glass current">
+                        <span class="dot"></span>
+                        <div class="step-content">
+                            <h4>Phase 2 : Souveraineté</h4>
+                            <p>Signature OV pour Windows, Infrastructure CI/CD publique.</p>
+                            <span class="label">EN COURS</span>
+                        </div>
+                    </div>
+                    <div class="step glass">
+                        <span class="dot"></span>
+                        <div class="step-content">
+                            <h4>Phase 3 : Écosystème</h4>
+                            <p>Éditeur de cours collaboratif, Grounding IA avancé.</p>
+                            <span class="label">PLANNIFIÉ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-logo">
+                    <img src="logo.png" alt="TUTODECODE Logo" style="width: 32px; height: 32px; border-radius: 8px;">
+                    <span class="gradient-text">TUTODECODE</span>
+                </div>
+                <div class="footer-social">
+                    <a href="https://github.com/TUTODECODE-ORG" target="_blank">Repo Organization</a>
+                    <a href="mailto:contact@tutodecode.org">Contact Association</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Association TUTODECODE. Code sous licence AGPL-3.0.</p>
+                <p style="font-size: 0.75rem; opacity: 0.5; margin-top: 0.5rem;">Vivre l'informatique en toute liberté.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Header Scroll
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('main-header');
+            header.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Typing Effect for Terminal
+        const terminalBody = document.querySelector('.terminal-body');
+        const lines = [
+            { text: "> tutodecode --status", class: "cmd" },
+            { text: "Modules chargés : 12", class: "res" },
+            { text: "IA Locale (Ollama) : OPÉRATIONNELLE", class: "res" },
+            { text: "Souveraineté : 100%", class: "res" },
+            { text: "> tutodecode --help", class: "cmd" },
+            { text: "Vivre l'informatique en toute liberté.", class: "res text-accent" }
+        ];
+
+        let lineIdx = 0;
+        function typeLine() {
+            if (lineIdx < lines.length) {
+                const line = lines[lineIdx];
+                const p = document.createElement('p');
+                p.className = line.class;
+                terminalBody.insertBefore(p, terminalBody.querySelector('.cursor'));
+
+                let charIdx = 0;
+                const typing = setInterval(() => {
+                    p.innerHTML += line.text[charIdx];
+                    charIdx++;
+                    if (charIdx === line.text.length) {
+                        clearInterval(typing);
+                        lineIdx++;
+                        setTimeout(typeLine, 600);
+                    }
+                }, 40);
+            }
+        }
+
+        // Clear initial static content before starting
+        terminalBody.querySelectorAll('p:not(.cursor)').forEach(p => p.remove());
+        setTimeout(typeLine, 1000);
+
+        // Simple Reveal on Scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.glass, section, .course-item').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

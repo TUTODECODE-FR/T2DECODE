@@ -1,0 +1,41 @@
+# Flutter/Dart
+.dart_tool/
+**/build/
+.packages
+.pub/
+.pub-cache/
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+**/ios/Pods/
+
+# Visual Studio Code
+.vscode/
+
+# Misc
+.idea/
+*.iml
+.DS_Store
+
+# ── Fichiers de signature (NE JAMAIS COMMITTER) ──────────────
+# Android keystore
+android/key.properties
+**/*.jks
+**/*.keystore
+
+# Windows code signing
+windows/*.pfx
+windows/*.p12
+
+# iOS / macOS provisioning
+*.mobileprovision
+*.provisionprofile
+ExportOptions.plist
+
+# ── Fichiers temporaires et Logs ─────────────────────────────
+*.log
+*analysis*.txt
+*output*.txt
+tooling/
+analysis.txt
+.flutter-plugins-dependencies
+*.zip

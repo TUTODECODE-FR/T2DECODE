@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="1">
+    <title>TUTODECODE</title>
+    <options customize="never" require-scripts="false"/>
+    
+    <welcome file="welcome.html"/>
+    <readme file="readme.html"/>
+    <license file="license.txt"/>
+    <conclusion file="conclusion.html"/>
+    
+    <background file="background.png" alignment="bottomleft" scaling="proportional"/>
+    
+    <choices-outline>
+        <line choice="default"/>
+    </choices-outline>
+    
+    <choice id="default" visible="true" title="TUTODECODE Application">
+        <pkg-ref id="com.tutodecode.app"/>
+    </choice>
+    
+    <pkg-ref id="com.tutodecode.app" version="1.0.3" onConclusion="none">TUTODECODE_Component.pkg</pkg-ref>
+</installer-gui-script>
