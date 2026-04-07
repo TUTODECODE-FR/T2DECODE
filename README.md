@@ -18,6 +18,8 @@ Plateforme locale d'apprentissage technique et boîte à outils cybersécurité.
 
 TUTODECODE est une application Flutter multi-plateforme conçue pour l’apprentissage technique et l’expérimentation cybersécurité en environnement local, y compris hors connexion.
 
+**Statut** : projet en phase `early-stage` (démarré en 2026), en stabilisation active.
+
 ---
 
 ## ✅ État actuel du projet
@@ -40,18 +42,29 @@ TUTODECODE est une application Flutter multi-plateforme conçue pour l’apprent
 
 | Plateforme | CI | Test manuel | Distribution |
 | :--- | :---: | :---: | :---: |
-| Android | Partiel | Validé | Disponible (v1.0.1) |
-| Windows | Partiel | Validé | Disponible (v1.0.1) |
-| macOS | Configuré | Validé | Disponible (v1.0.1) |
-| Linux | Partiel | Validé | Disponible (v1.0.1) |
-| Web | Non activé | Non validé | Non disponible |
-| iOS | Non activé | Non validé | Non disponible |
+| Android | Actif | Validé | Disponible (v1.0.1) |
+| Windows | Actif | Validé | Disponible (v1.0.1) |
+| macOS | Actif | Validé | Disponible (v1.0.1) |
+| Linux | Actif | Validé | Disponible (v1.0.1) |
+| Web | Non activé | Non applicable | Non disponible |
+| iOS | Non activé | Non applicable | Non disponible |
 
 > Les statuts sont mis à jour à chaque release. Si un artefact manque, il n'est pas marqué ✅.
 
 **Pourquoi Web/iOS sont désactivés ?**  
 Web n’est pas prioritaire : TUTODECODE est pensé comme une suite d’apps natives.  
 iOS nécessite un compte Apple Developer actif (abonnement annuel), sinon la distribution est désactivée.
+
+---
+
+## 🔎 Preuves vérifiables
+
+- CI continue : [workflow CI](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/ci.yml)
+- Build/release multi-plateforme : [workflow release](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/build_release.yml)
+- Artefacts publiés : [release latest](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest)
+- Intégrité binaire : `SHA256SUMS.txt` inclus dans chaque release
+- Signature binaire Linux : fichiers `.sig` publiés quand la clé GPG release est configurée
+- Gouvernance des modifications : [CODEOWNERS](.github/CODEOWNERS)
 
 ---
 
@@ -64,13 +77,14 @@ Les binaires sont publiés sur la page des releases GitHub :
 | Plateforme | Fichier recommandé | Alternatives | Notes |
 | :--- | :--- | :--- | :--- |
 | ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | **APK** | AAB | Disponible (v1.0.1) |
-| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | **EXE** | ZIP | Disponible (v1.0.1) |
+| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | **ZIP** | EXE | Disponible (v1.0.1) |
 | ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | **PKG** | ZIP | Disponible (v1.0.1) |
 | ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | **AppImage** | DEB, TAR.GZ | Disponible (v1.0.1) |
 
 ### Vérification d'intégrité
 
-Un fichier `SHA256SUMS.txt` est publié dans chaque release pour vérifier l'intégrité des binaires.
+Un fichier `SHA256SUMS.txt` est publié dans chaque release pour vérifier l'intégrité des binaires.  
+Des signatures `.sig` Linux sont également publiées quand la clé GPG release est disponible.
 
 ---
 
@@ -82,7 +96,7 @@ Un fichier `SHA256SUMS.txt` est publié dans chaque release pour vérifier l'int
 | Laboratoires | Simulations documentées dans [docs/labs.md](docs/labs.md) |
 | Outils | Boîte à outils offline documentée dans [docs/tools.md](docs/tools.md) |
 | Modules | Support de contenus Markdown/JSON ([docs/modules.md](docs/modules.md)) |
-| Sécurité | Fonctionnement local et modèle documenté ([docs/security-model.md](docs/security-model.md)) |
+| Sécurité | Modèle et menaces documentés ([docs/security-model.md](docs/security-model.md), [docs/threat-model.md](docs/threat-model.md)) |
 
 ---
 
@@ -161,6 +175,7 @@ make build-dmg      # Création DMG (macOS)
 - [Intégration Ollama](docs/ollama.md)
 - [Architecture](docs/architecture.md)
 - [Modèle de sécurité](docs/security-model.md)
+- [Threat model](docs/threat-model.md)
 
 ---
 

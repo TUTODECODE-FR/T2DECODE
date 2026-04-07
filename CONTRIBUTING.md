@@ -6,6 +6,11 @@
 - Make
 - Git
 
+## Gouvernance
+- Les propriétaires de zones sont définis dans `.github/CODEOWNERS`.
+- Toute contribution doit passer par une revue explicite avant merge.
+- Les changements sécurité/CI doivent inclure une justification technique dans la PR.
+
 ## Installation
 ```bash
 git clone https://github.com/TUTODECODE-FR/TUTODECODE.git
@@ -20,6 +25,12 @@ flutter analyze
 flutter test
 ```
 
+## Checklist PR minimale
+- Description claire du problème et de la solution.
+- Impact sécurité/confidentialité documenté (si concerné).
+- Tests exécutés localement (ou raison explicite si non exécutés).
+- Mise à jour de la documentation (`README`/`docs`) si comportement modifié.
+
 ## Convention de commits
 - feat:
 - fix:
@@ -33,6 +44,7 @@ flutter test
 - `main` : stable
 - `feature/*` : nouvelles fonctionnalités
 - `fix/*` : corrections
+- `chore/*` : maintenance CI/docs/outillage
 
 ## Captures d’écran
 - Nommez les fichiers clairement
@@ -45,3 +57,4 @@ flutter test
 ## Builds multi-plateformes
 - Testez localement si possible
 - Décrivez les limites connues dans la PR
+- Pour une release, vérifiez la présence de `SHA256SUMS.txt` dans les assets

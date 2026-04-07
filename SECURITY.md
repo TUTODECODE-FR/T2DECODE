@@ -1,33 +1,74 @@
-# Politique de Sécurité (Security Policy)
+# Security Policy
 
-L'association TUTODECODE s'engage à fournir un environnement d'apprentissage sécurisé, respectueux de la vie privée et sans compromis sur l'intégrité de ses utilisateurs. Ce projet est géré avec bienveillance vis-à-vis de sa communauté naissante.
+## Scope
 
-## Intégrité de la Distribution
+This policy covers:
 
-Pour garantir que chaque version officielle de TUTODECODE est exempte de code malveillant, l'association gère la branche principale (`main`) comme une **chaîne de confiance fermée**. 
+- Source code hosted in this repository.
+- Official release artifacts published on GitHub Releases.
+- Local-only runtime behavior (offline-first, no cloud telemetry by design).
 
-*   **Pas de PR directes** : Nous n'acceptons pas d'intégration automatique de code via Pull Requests.
-*   **Vérification Manuelle** : Toute suggestion de code (envoyée par mail) est auditée, testée et intégrée manuellement par nos bénévoles de confiance avant d'être signée avec nos clés privées.
+See also:
 
-## Versions supportées
+- `docs/security-model.md`
+- `docs/threat-model.md`
+- `docs/privacy.md`
 
-Nous maintenons activement la dernière version stable de l'application :
+## Supported Versions
 
-| Version  | Actuellement Supportée |
-| -------- | ---------------------- |
-| Actuelle | :white_check_mark:     |
-| Ancienne | :x:                    |
+Only the latest stable release is considered supported for security fixes.
 
-## Signaler une vulnérabilité
+| Version | Supported |
+| :-- | :--: |
+| Latest stable | ✅ |
+| Older versions | ❌ |
 
-> **⚠️ AVERTISSEMENT : Veuillez ne pas signaler les problèmes de sécurité dans la section publique des "Issues" de GitHub.**
+## Security Controls (Current)
 
-Le projet TUTODECODE étant développé par une association à but non lucratif, une faille publiée publiquement pourrait être exploitée avant que nos équipes bénévoles n'aient eu le temps de publier un correctif.
+- SHA-256 checksums (`SHA256SUMS.txt`) are published for release assets.
+- Linux detached signatures (`.sig`) are produced when release GPG secrets are configured.
+- Asset integrity checks are executed at app startup.
+- CI and release pipelines are versioned in `.github/workflows/`.
+- Ownership policy is declared in `.github/CODEOWNERS`.
 
-Si vous identifiez une faille de sécurité, ou un problème lié au certificat d'installation :
+## Responsible Disclosure
 
-1. **Signalez-le de manière privée** via les outils sécurisés de GitHub (*Security Advisory* privé) ou envoyez directement un message à **contact@tutodecode.org**.
-2. **Délai de réponse** : L'association accusera réception de votre signalement sous 72 heures.
-3. **Transparence après la correction** : Dès le correctif appliqué, nous publierons une nouvelle "Release" et fournirons un rapport post-mortem avec les crédits au chercheur ayant découvert la faille.
+Do not open public GitHub issues for vulnerabilities.
 
-Nous remercions vivement la communauté open-source pour son aide dans la sécurisation de nos outils éducatifs.
+Use one of these private channels:
+
+- GitHub private security advisory.
+- Email: `contact@tutodecode.org`.
+
+When reporting, include:
+
+- Affected version/tag.
+- Reproduction steps.
+- Impact summary.
+- Suggested remediation (if available).
+
+## Response Targets
+
+- Acknowledgement target: within 72 hours.
+- Triage target: within 7 business days.
+- Fix timeline: depends on severity and platform impact.
+
+After a fix:
+
+- A patched release is published.
+- Changelog/release notes mention the correction scope.
+
+## Trust and Verification
+
+Before installing binaries, verify checksums:
+
+```bash
+sha256sum -c SHA256SUMS.txt
+```
+
+If `.sig` files are present, verify signatures with the public key distributed by maintainers.
+
+## Known Limitations
+
+- Project is still early-stage and maintained by a small team.
+- Some signing/notarization paths are conditional on secrets availability in CI.
