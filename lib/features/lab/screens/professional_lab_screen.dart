@@ -5,108 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
-import 'package:tutodecode/features/lab/simulators/network_simulator.dart';
-import 'package:tutodecode/features/lab/simulators/security_simulator.dart';
-import 'package:tutodecode/features/lab/simulators/system_simulator.dart';
-import 'package:tutodecode/features/lab/simulators/cloud_simulator.dart';
-import 'package:tutodecode/features/lab/simulators/cryptography_simulator.dart';
-import 'package:tutodecode/features/lab/simulators/how_internet_works_simulator.dart';
-import 'package:tutodecode/features/lab/simulators/linux_simulator.dart';
-import 'package:tutodecode/features/lab/simulators/algorithms_simulator.dart';
-
-// ── Définition des labs ─────────────────────────────────────
-
-class _LabEntry {
-  final String id;
-  final String label;
-  final String subtitle;
-  final IconData icon;
-  final Color color;
-  final Widget Function() build;
-  /// true = le simulateur gère son propre header/tabbar, on ne double pas
-  final bool hasOwnHeader;
-  const _LabEntry({
-    required this.id,
-    required this.label,
-    required this.subtitle,
-    required this.icon,
-    required this.color,
-    required this.build,
-    this.hasOwnHeader = false,
-  });
-}
-
-final _labs = <_LabEntry>[
-  _LabEntry(
-    id: 'network',
-    label: 'Réseau',
-    subtitle: 'Ping · Scan · Traceroute',
-    icon: Icons.lan,
-    color: Colors.blue,
-    hasOwnHeader: true,
-    build: () => const NetworkSimulator(),
-  ),
-  _LabEntry(
-    id: 'security',
-    label: 'Sécurité',
-    subtitle: 'Attaques · Défense · CTF',
-    icon: Icons.shield,
-    color: Colors.red,
-    hasOwnHeader: true,
-    build: () => const SecuritySimulator(),
-  ),
-  _LabEntry(
-    id: 'system',
-    label: 'Système',
-    subtitle: 'CPU · RAM · Processus',
-    icon: Icons.memory,
-    color: Colors.orange,
-    hasOwnHeader: true,
-    build: () => const SystemSimulator(),
-  ),
-  _LabEntry(
-    id: 'cloud',
-    label: 'Cloud',
-    subtitle: 'Conteneurs · K8s · CI/CD',
-    icon: Icons.cloud,
-    color: Colors.cyan,
-    hasOwnHeader: true,
-    build: () => const CloudSimulator(),
-  ),
-  _LabEntry(
-    id: 'crypto',
-    label: 'Cryptographie',
-    subtitle: 'AES · RSA · Hashes',
-    icon: Icons.lock,
-    color: Colors.purple,
-    hasOwnHeader: true,
-    build: () => const CryptographySimulator(),
-  ),
-  _LabEntry(
-    id: 'theory',
-    label: 'Théorie Internet',
-    subtitle: 'Ping · DNS · TCP · SSH',
-    icon: Icons.public,
-    color: Colors.teal,
-    build: () => const HowInternetWorksSimulator(),
-  ),
-  _LabEntry(
-    id: 'linux',
-    label: 'Linux',
-    subtitle: 'Boot · FS · Processus · Bash',
-    icon: Icons.terminal,
-    color: Colors.green,
-    build: () => const LinuxSimulator(),
-  ),
-  _LabEntry(
-    id: 'algorithms',
-    label: 'Algorithmes',
-    subtitle: 'Tri · Graphes · Crypto · DP',
-    icon: Icons.account_tree,
-    color: Colors.amber,
-    build: () => const AlgorithmsSimulator(),
-  ),
-];
+import 'package:tutodecode/features/lab/lab_catalog.dart';
 
 // ── Widget principal ─────────────────────────────────────────
 
@@ -133,7 +32,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
       final args = ModalRoute.of(context)?.settings.arguments;
       if (args is Map<String, dynamic> && args['sim'] is String) {
         final simId = args['sim'] as String;
-        final idx = _labs.indexWhere((l) => l.id == simId);
+        final idx = labCatalog.indexWhere((l) => l.id == simId);
         if (idx >= 0) setState(() => _selectedIndex = idx);
       }
     });
@@ -175,7 +74,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.science, color: Colors.blue.shade400, size: 20),
+                        Icon(Icons.science,
+                            color: Colors.blue.shade400, size: 20),
                         const SizedBox(width: 8),
                         const Text(
                           'SIMULATION CORE',
@@ -190,7 +90,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${_labs.length} laboratoires',
+                      '${labCatalog.length} laboratoires',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.4),
                         fontSize: 11,
@@ -204,8 +104,9 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
               // Liste des labs
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  itemCount: _labs.length,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  itemCount: labCatalog.length,
                   itemBuilder: (context, i) => _buildSidebarItem(i),
                 ),
               ),
@@ -238,7 +139,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
   }
 
   Widget _buildSidebarItem(int i) {
-    final lab = _labs[i];
+    final lab = labCatalog[i];
     final isSelected = i == _selectedIndex;
 
     return GestureDetector(
@@ -248,14 +149,10 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
         margin: const EdgeInsets.symmetric(vertical: 2),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected
-              ? lab.color.withOpacity(0.15)
-              : Colors.transparent,
+          color: isSelected ? lab.color.withOpacity(0.15) : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected
-                ? lab.color.withOpacity(0.4)
-                : Colors.transparent,
+            color: isSelected ? lab.color.withOpacity(0.4) : Colors.transparent,
           ),
         ),
         child: Row(
@@ -279,7 +176,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     style: TextStyle(
                       color: isSelected ? Colors.white : Colors.white70,
                       fontSize: 13,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.w700 : FontWeight.w500,
                     ),
                   ),
                   Text(
@@ -313,16 +211,17 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            itemCount: _labs.length,
+            itemCount: labCatalog.length,
             itemBuilder: (context, i) {
-              final lab = _labs[i];
+              final lab = labCatalog[i];
               final isSelected = i == _selectedIndex;
               return GestureDetector(
                 onTap: () => setState(() => _selectedIndex = i),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
                   margin: const EdgeInsets.only(right: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? lab.color.withOpacity(0.2)
@@ -337,14 +236,17 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(lab.icon, color: isSelected ? lab.color : Colors.white54, size: 14),
+                      Icon(lab.icon,
+                          color: isSelected ? lab.color : Colors.white54,
+                          size: 14),
                       const SizedBox(width: 6),
                       Text(
                         lab.label,
                         style: TextStyle(
                           color: isSelected ? Colors.white : Colors.white54,
                           fontSize: 12,
-                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                          fontWeight:
+                              isSelected ? FontWeight.w700 : FontWeight.w400,
                         ),
                       ),
                     ],
@@ -363,7 +265,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
   // ── Panneau simulateur ────────────────────────────────────
 
   Widget _buildSimulatorPane() {
-    final lab = _labs[_selectedIndex];
+    final lab = labCatalog[_selectedIndex];
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
       transitionBuilder: (child, anim) => FadeTransition(
@@ -384,7 +286,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
             // Barre de titre — uniquement pour les simulateurs sans header propre
             if (!lab.hasOwnHeader)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(color: Colors.white.withOpacity(0.07)),
@@ -426,7 +329,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     ),
                     const Spacer(),
                     Text(
-                      '${_selectedIndex + 1} / ${_labs.length}',
+                      '${_selectedIndex + 1} / ${labCatalog.length}',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.25),
                         fontSize: 11,

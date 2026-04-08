@@ -194,7 +194,10 @@ Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 ## 🏛️ Association
 
 Projet porté par l'**Association TUTODECODE** (ESS).  
-SIREN : 102 763 133 · Site : [tutodecode.org](https://www.tutodecode.org)
+L'objectif de l'association est de rendre l'apprentissage technique accessible sans dépendance au cloud, en favorisant des outils libres, locaux et auditables.  
+Projet à but non lucratif orienté partage de connaissances techniques et cybersécurité accessible.  
+SIREN : 102 763 133  
+Site : [https://tutodecode.org](https://tutodecode.org)
 
 ---
 

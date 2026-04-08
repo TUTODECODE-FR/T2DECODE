@@ -4,6 +4,8 @@ import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/core/services/storage_service.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/widgets/tdc_widgets.dart';
+import 'package:tutodecode/features/lab/lab_catalog.dart';
+import 'package:tutodecode/features/tools/tool_catalog.dart';
 
 class ToolboxScreen extends StatefulWidget {
   const ToolboxScreen({super.key});
@@ -17,146 +19,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
   final Set<String> _favoriteRoutes = <String>{};
   bool _favoritesLoaded = false;
 
-  static const List<_ToolDef> _tools = [
-    _ToolDef(
-        'Multi-Tools Sécurisés',
-        'Diagnostic réseau/système/stockage avec sandbox et logs (sans commandes arbitraires).',
-        Icons.security,
-        Color(0xFF22C55E),
-        '/tools/safe-tools'),
-    _ToolDef(
-        'Calculateur IP',
-        'Calculez vos sous-réseaux, masques et plages d\'adresses rapidement.',
-        Icons.settings_ethernet,
-        TdcColors.accent,
-        '/tools/ip-calc'),
-    _ToolDef(
-        'Guides de Survie',
-        'Fiches de secours pour résoudre les pannes critiques (Windows, Mac, Linux).',
-        Icons.medication,
-        Color(0xFFEF4444),
-        '/tools/survival'),
-    _ToolDef(
-        'Glossaire Tech',
-        'Définitions simples et claires pour comprendre tout le jargon informatique.',
-        Icons.menu_book,
-        Color(0xFF8B5CF6),
-        '/tools/glossary'),
-    _ToolDef(
-        'Scripts Utiles',
-        'Bibliothèque de scripts Batch, PowerShell et Bash pour automatiser vos tâches.',
-        Icons.terminal,
-        Color(0xFF10B981),
-        '/tools/scripts'),
-    _ToolDef(
-        'Référence Matérielle',
-        'Codes de bips BIOS, liste des ports communs et connectique.',
-        Icons.memory,
-        Color(0xFFF59E0B),
-        '/tools/hardware'),
-    _ToolDef(
-        'Générateur de MDP',
-        'Créez des mots de passe ultra-sécurisés et personnalisés en un clic.',
-        Icons.password,
-        Color(0xFF6366F1),
-        '/tools/password-gen'),
-    _ToolDef(
-        'Convertisseur de Données',
-        'Convertissez vos unités de stockage (Octets, Mo, Go) sans erreur.',
-        Icons.analytics,
-        Color(0xFFEC4899),
-        '/tools/data-converter'),
-    _ToolDef(
-        'Encodeur Base64',
-        'Encodez et décodez instantanément vos textes en Base64.',
-        Icons.code,
-        Color(0xFF14B8A6),
-        '/tools/base64'),
-    _ToolDef(
-        'Générateur de Hash',
-        'Générez des empreintes MD5, SHA-1 et SHA-256 en toute simplicité.',
-        Icons.fingerprint,
-        Color(0xFFEF4444),
-        '/tools/hash'),
-    _ToolDef(
-        'Calculateur Chmod',
-        'Calculez et convertissez les permissions Unix (755, rwxr-xr-x).',
-        Icons.rule,
-        Color(0xFF3B82F6),
-        '/tools/chmod'),
-    _ToolDef(
-        'Formateur JSON',
-        'Validez, formatez et minifiez votre code JSON instantanément.',
-        Icons.settings_overscan,
-        Color(0xFFFACC15),
-        '/tools/json'),
-    _ToolDef(
-        'ASCII / Hex / Bin',
-        'Convertisseur universel entre texte, hexadécimal, binaire et décimal.',
-        Icons.swap_horiz,
-        Color(0xFF6366F1),
-        '/tools/ascii'),
-    _ToolDef(
-        'Calculateur RAID',
-        'Calculez la capacité utile et la tolérance aux pannes de vos serveurs.',
-        Icons.storage,
-        Color(0xFF10B981),
-        '/tools/raid'),
-    _ToolDef(
-        'Codes HTTP',
-        'Explorateur complet des codes d\'état HTTP et conseils de dépannage.',
-        Icons.http,
-        Color(0xFFF43F5E),
-        '/tools/http-status'),
-    _ToolDef(
-        'Annuaire des Ports',
-        'Référence rapide des ports TCP/UDP les plus courants par service.',
-        Icons.lan,
-        Color(0xFF8B5CF6),
-        '/tools/ports'),
-    _ToolDef(
-        'Débit & Télécharg.',
-        'Calculez le temps de transfert selon la vitesse et la taille de vos fichiers.',
-        Icons.speed,
-        Color(0xFFF59E0B),
-        '/tools/bandwidth'),
-    _ToolDef(
-        'Expression Cron',
-        'Décodez et testez vos expressions de planification système (Cron).',
-        Icons.schedule,
-        Color(0xFF14B8A6),
-        '/tools/cron'),
-    _ToolDef(
-        'Niveaux Syslog',
-        'Référence des sévérités RFC 5424 pour le filtrage des logs serveur.',
-        Icons.list_alt,
-        Color(0xFFEF4444),
-        '/tools/syslog'),
-    _ToolDef(
-        'Aide-émémoire Archivage',
-        'Commandes rapides pour tar, rsync et zip (sauvegarde et transfert).',
-        Icons.inventory_2,
-        Color(0xFFF59E0B),
-        '/tools/archive'),
-    _ToolDef(
-        'Assistant SSH',
-        'Guide de configuration ~/.ssh/config et bonnes pratiques de sécurité.',
-        Icons.terminal,
-        Color(0xFF3B82F6),
-        '/tools/ssh'),
-    _ToolDef(
-        'Référence DNS',
-        'Types d\'enregistrements DNS (A, MX, TXT, etc.) et leur utilité.',
-        Icons.dns,
-        Color(0xFF8B5CF6),
-        '/tools/dns'),
-    _ToolDef(
-        'Anonymat & Identité Réseau',
-        'Commandes pour changer hostname, MAC, nom utilisateur. ⚠ L\'IP publique reste visible.',
-        Icons.manage_accounts,
-        Color(0xFF8B5CF6),
-        '/tools/anonymity'),
-  ];
+  List<ToolCatalogEntry> get _tools => toolCatalog;
 
   @override
   void initState() {
@@ -297,46 +160,8 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
             crossAxisSpacing: 20,
             childAspectRatio: 1.2,
             children: [
-              _buildSimCard(
-                  context,
-                  0,
-                  'Simulateur Réseau',
-                  'Ping · Scan · Traceroute · Sniffer · Monitoring',
-                  Icons.lan,
-                  const Color(0xFF3B82F6),
-                  'network'),
-              _buildSimCard(
-                  context,
-                  1,
-                  'Simulateur Sécurité',
-                  'Scan Vulnérabilités · Pentest · IDS/IPS · Forensics',
-                  Icons.shield,
-                  const Color(0xFFEF4444),
-                  'security'),
-              _buildSimCard(
-                  context,
-                  2,
-                  'Simulateur Système',
-                  'Processus · Services · Disques · Performance',
-                  Icons.memory,
-                  const Color(0xFFF97316),
-                  'system'),
-              _buildSimCard(
-                  context,
-                  3,
-                  'Simulateur Cloud',
-                  'Instances · Load Balancer · Déploiements · Coûts',
-                  Icons.cloud,
-                  const Color(0xFF06B6D4),
-                  'cloud'),
-              _buildSimCard(
-                  context,
-                  4,
-                  'Simulateur Crypto',
-                  'AES/RSA · Hashage · Signature · SSL/TLS',
-                  Icons.lock,
-                  const Color(0xFF8B5CF6),
-                  'crypto'),
+              for (var i = 0; i < labCatalog.length; i++)
+                _buildSimCard(context, i, labCatalog[i]),
             ],
           ),
           const SizedBox(height: 32),
@@ -345,13 +170,12 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
     );
   }
 
-  Widget _buildSimCard(BuildContext context, int index, String title,
-      String desc, IconData icon, Color color, String simId) {
+  Widget _buildSimCard(BuildContext context, int index, LabCatalogEntry lab) {
     return TdcFadeSlide(
-      delay: Duration(milliseconds: 60 * (22 + index)),
+      delay: Duration(milliseconds: 60 * (_tools.length + index)),
       child: TdcCard(
         onTap: () =>
-            Navigator.pushNamed(context, '/lab', arguments: {'sim': simId}),
+            Navigator.pushNamed(context, '/lab', arguments: {'sim': lab.id}),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -360,27 +184,27 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
+                    color: lab.color.withValues(alpha: 0.12),
                     borderRadius: TdcRadius.md,
                   ),
-                  child: Icon(icon, color: color, size: 22),
+                  child: Icon(lab.icon, color: lab.color, size: 22),
                 ),
                 const Spacer(),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
+                    color: lab.color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.science, color: color, size: 10),
+                      Icon(Icons.science, color: lab.color, size: 10),
                       const SizedBox(width: 3),
                       Text('LAB',
                           style: TextStyle(
-                              color: color,
+                              color: lab.color,
                               fontSize: 9,
                               fontWeight: FontWeight.bold)),
                     ],
@@ -390,13 +214,13 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
             ),
             const Spacer(),
             const SizedBox(height: 12),
-            Text(title,
+            Text('Simulateur ${lab.label}',
                 style: const TextStyle(
                     color: TdcColors.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            Text(desc,
+            Text(lab.subtitle,
                 style: const TextStyle(
                     color: TdcColors.textSecondary, fontSize: 11),
                 maxLines: 2,
@@ -407,7 +231,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
     );
   }
 
-  Widget _buildToolCard(BuildContext context, int index, _ToolDef tool,
+  Widget _buildToolCard(BuildContext context, int index, ToolCatalogEntry tool,
       {required bool isFavorite}) {
     return TdcFadeSlide(
       delay: Duration(milliseconds: 60 * index),
@@ -467,15 +291,4 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
       ),
     );
   }
-}
-
-class _ToolDef {
-  final String title;
-  final String description;
-  final IconData icon;
-  final Color color;
-  final String route;
-
-  const _ToolDef(
-      this.title, this.description, this.icon, this.color, this.route);
 }

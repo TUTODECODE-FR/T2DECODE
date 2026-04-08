@@ -15,6 +15,7 @@ import '../core/providers/shell_provider.dart';
 import '../core/navigation/nav_keys.dart';
 import '../core/providers/search_provider.dart';
 import '../core/providers/settings_provider.dart';
+import '../features/tools/tool_catalog.dart';
 
 class AppShell extends StatefulWidget {
   final Widget child;
@@ -77,9 +78,11 @@ class _AppShellState extends State<AppShell> {
   }
 
   Widget _buildBreadcrumbs(BuildContext context, String activeRoute) {
+    final toolRouteNames = buildToolBreadcrumbMap();
     final Map<String, String> routeNames = {
       '/': 'Accueil',
       '/tools': 'Outils',
+      ...toolRouteNames,
       '/cheat-sheets': 'Cheat Sheets',
       '/netkit': 'NetKit',
       '/ai': 'Chat IA',
@@ -87,10 +90,6 @@ class _AppShellState extends State<AppShell> {
       '/roadmap': 'Roadmap',
       '/lab': 'Laboratoire',
       '/dashboard': 'Diagnostic',
-      '/tools/scripts': 'Scripts',
-      '/tools/hardware': 'Matériel',
-      '/tools/survival': 'SOS Dépannage',
-      '/tools/glossary': 'Glossaire',
       '/chapter': 'Cours',
       '/settings': 'Paramètres',
     };
@@ -183,8 +182,8 @@ class _AppShellState extends State<AppShell> {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       decoration: BoxDecoration(
         color: TdcColors.bg,
-        border: const Border(
-            bottom: BorderSide(color: TdcColors.border, width: 1)),
+        border:
+            const Border(bottom: BorderSide(color: TdcColors.border, width: 1)),
       ),
       child: Row(
         children: [
@@ -471,9 +470,7 @@ class _AppShellState extends State<AppShell> {
             color: TdcColors.bg,
             border: insideDrawer
                 ? null
-                : Border(
-                    right: BorderSide(
-                        color: TdcColors.border)),
+                : Border(right: BorderSide(color: TdcColors.border)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
