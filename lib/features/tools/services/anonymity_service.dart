@@ -23,7 +23,8 @@ class AnonResult {
   final String message;
   final String? output;
   final String? error;
-  const AnonResult({required this.success, required this.message, this.output, this.error});
+  const AnonResult(
+      {required this.success, required this.message, this.output, this.error});
 }
 
 /// Sauvegarde des valeurs originales avant modification.
@@ -43,32 +44,151 @@ class AnonBackup {
   });
 
   Map<String, dynamic> toMap() => {
-    'hostname': hostname,
-    'mac': macAddress,
-    'interface': interface,
-    'username': username,
-    'savedAt': savedAt.toIso8601String(),
-  };
+        'hostname': hostname,
+        'mac': macAddress,
+        'interface': interface,
+        'username': username,
+        'savedAt': savedAt.toIso8601String(),
+      };
 
   factory AnonBackup.fromMap(Map<String, dynamic> m) => AnonBackup(
-    hostname: m['hostname'] as String?,
-    macAddress: m['mac'] as String?,
-    interface: m['interface'] as String?,
-    username: m['username'] as String?,
-    savedAt: DateTime.parse(m['savedAt'] as String),
-  );
+        hostname: m['hostname'] as String?,
+        macAddress: m['mac'] as String?,
+        interface: m['interface'] as String?,
+        username: m['username'] as String?,
+        savedAt: DateTime.parse(m['savedAt'] as String),
+      );
+}
+
+/// Profil de capacité réel de l'appareil pour l'outil d'anonymisation.
+class AnonDeviceProfile {
+  final String platformLabel;
+  final bool isPrivilegedSession;
+  final bool canChangeHostname;
+  final bool canChangeMac;
+  final bool canCreateUser;
+  final bool canTuneNetwork;
+  final String privilegeHint;
+  final String notes;
+
+  const AnonDeviceProfile({
+    required this.platformLabel,
+    required this.isPrivilegedSession,
+    required this.canChangeHostname,
+    required this.canChangeMac,
+    required this.canCreateUser,
+    required this.canTuneNetwork,
+    required this.privilegeHint,
+    required this.notes,
+  });
 }
 
 class AnonymityService {
   static const _backupKey = 'anon_backup_v1';
 
+  // ── Capacites reelles appareil ───────────────────────────
+
+  static Future<AnonDeviceProfile> getDeviceProfile() async {
+    try {
+      if (Platform.isLinux || Platform.isMacOS) {
+        final isRoot = await _isUnixRoot();
+        final sudoNoPassword = await _canSudoWithoutPassword();
+        final privileged = isRoot || sudoNoPassword;
+        final platformLabel = Platform.isLinux ? 'Linux' : 'macOS';
+        final hint = isRoot
+            ? 'Session root detectee'
+            : (sudoNoPassword
+                ? 'sudo sans mot de passe disponible'
+                : 'sudo avec mot de passe requis');
+        return AnonDeviceProfile(
+          platformLabel: platformLabel,
+          isPrivilegedSession: privileged,
+          canChangeHostname: true,
+          canChangeMac: true,
+          canCreateUser: true,
+          canTuneNetwork: true,
+          privilegeHint: hint,
+          notes:
+              'Les commandes sont executees en reel. Certains pilotes/interfaces peuvent refuser le changement MAC.',
+        );
+      }
+      if (Platform.isWindows) {
+        final isAdmin = await _isWindowsAdmin();
+        return AnonDeviceProfile(
+          platformLabel: 'Windows',
+          isPrivilegedSession: isAdmin,
+          canChangeHostname: true,
+          canChangeMac: true,
+          canCreateUser: true,
+          canTuneNetwork: true,
+          privilegeHint: isAdmin
+              ? 'Session administrateur detectee'
+              : 'Session standard (admin recommande)',
+          notes:
+              'Certaines operations demandent elevation UAC et/ou redemarrage. Le changement MAC depend du pilote reseau.',
+        );
+      }
+    } catch (_) {}
+
+    return const AnonDeviceProfile(
+      platformLabel: 'Plateforme non supportee',
+      isPrivilegedSession: false,
+      canChangeHostname: false,
+      canChangeMac: false,
+      canCreateUser: false,
+      canTuneNetwork: false,
+      privilegeHint: 'Aucune capacite systeme disponible',
+      notes: 'Cet outil fonctionne uniquement sur Linux, macOS et Windows.',
+    );
+  }
+
   // ── Générateurs sécurisés ──────────────────────────────────
 
   static String generateHostname() {
-    const adj = ['swift','quiet','dark','cold','plain','blank','still','grey','neutral','spare',
-                  'amber','static','hollow','muted','calm','dense','flat','inert','latent','void'];
-    const noun = ['node','host','unit','box','rack','desk','term','station','client','machine',
-                   'relay','bridge','probe','sensor','agent','router','switch','endpoint','socket','daemon'];
+    const adj = [
+      'swift',
+      'quiet',
+      'dark',
+      'cold',
+      'plain',
+      'blank',
+      'still',
+      'grey',
+      'neutral',
+      'spare',
+      'amber',
+      'static',
+      'hollow',
+      'muted',
+      'calm',
+      'dense',
+      'flat',
+      'inert',
+      'latent',
+      'void'
+    ];
+    const noun = [
+      'node',
+      'host',
+      'unit',
+      'box',
+      'rack',
+      'desk',
+      'term',
+      'station',
+      'client',
+      'machine',
+      'relay',
+      'bridge',
+      'probe',
+      'sensor',
+      'agent',
+      'router',
+      'switch',
+      'endpoint',
+      'socket',
+      'daemon'
+    ];
     final r = Random.secure();
     final suffix = r.nextInt(9000) + 1000;
     return '${adj[r.nextInt(adj.length)]}-${noun[r.nextInt(noun.length)]}-$suffix';
@@ -79,11 +199,22 @@ class AnonymityService {
     final r = Random.secure();
     final bytes = Uint8List.fromList(List.generate(6, (_) => r.nextInt(256)));
     bytes[0] = (bytes[0] & 0xFE) | 0x02; // multicast=0, local=1
-    return bytes.map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase()).join(':');
+    return bytes
+        .map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase())
+        .join(':');
   }
 
   static String generateUsername() {
-    const prefixes = ['user','sysop','netuser','localop','workuser','admin','op','host'];
+    const prefixes = [
+      'user',
+      'sysop',
+      'netuser',
+      'localop',
+      'workuser',
+      'admin',
+      'op',
+      'host'
+    ];
     final r = Random.secure();
     final suffix = r.nextInt(9000) + 1000;
     return '${prefixes[r.nextInt(prefixes.length)]}$suffix';
@@ -102,9 +233,9 @@ class AnonymityService {
   static Future<String> getCurrentUsername() async {
     try {
       return Platform.environment['USER'] ??
-             Platform.environment['USERNAME'] ??
-             Platform.environment['LOGNAME'] ??
-             'inconnu';
+          Platform.environment['USERNAME'] ??
+          Platform.environment['LOGNAME'] ??
+          'inconnu';
     } catch (_) {
       return 'inconnu';
     }
@@ -129,7 +260,9 @@ class AnonymityService {
           final ifaceRe = RegExp(r'^(\S+):', multiLine: true);
           for (final m in ifaceRe.allMatches(out)) {
             final name = m.group(1)!;
-            if (!name.startsWith('lo') && !name.startsWith('utun') && !name.startsWith('ipsec')) {
+            if (!name.startsWith('lo') &&
+                !name.startsWith('utun') &&
+                !name.startsWith('ipsec')) {
               ifaceName = name;
               break;
             }
@@ -182,18 +315,28 @@ class AnonymityService {
 
   static Future<void> clearBackup() async {
     final prefs = await SharedPreferences.getInstance();
-    for (final key in ['_hostname', '_mac', '_interface', '_username', '_savedAt']) {
+    for (final key in [
+      '_hostname',
+      '_mac',
+      '_interface',
+      '_username',
+      '_savedAt'
+    ]) {
       await prefs.remove(_backupKey + key);
     }
   }
 
   // ── HOSTNAME ──────────────────────────────────────────────
 
-  static Future<AnonResult> changeHostname(String newHostname, {String? sudoPassword}) async {
+  static Future<AnonResult> changeHostname(String newHostname,
+      {String? sudoPassword}) async {
     // Validation : alphanumérique + tirets, 1-63 chars
     final valid = RegExp(r'^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?$');
     if (!valid.hasMatch(newHostname)) {
-      return const AnonResult(success: false, message: 'Hostname invalide. Utiliser uniquement lettres, chiffres et tirets.');
+      return const AnonResult(
+          success: false,
+          message:
+              'Hostname invalide. Utiliser uniquement lettres, chiffres et tirets.');
     }
 
     try {
@@ -204,13 +347,16 @@ class AnonymityService {
       } else if (Platform.isWindows) {
         return await _changeHostnameWindows(newHostname);
       }
-      return const AnonResult(success: false, message: 'Plateforme non supportée.');
+      return const AnonResult(
+          success: false, message: 'Plateforme non supportée.');
     } catch (e) {
-      return AnonResult(success: false, message: 'Erreur inattendue', error: e.toString());
+      return AnonResult(
+          success: false, message: 'Erreur inattendue', error: e.toString());
     }
   }
 
-  static Future<AnonResult> _changeHostnameLinux(String name, String? pass) async {
+  static Future<AnonResult> _changeHostnameLinux(
+      String name, String? pass) async {
     final lines = <String>[];
     // hostnamectl (systemd) — plus fiable
     final r1 = await _sudo(['hostnamectl', 'set-hostname', name], pass);
@@ -228,10 +374,14 @@ class AnonymityService {
 sed -i "s/127.0.1.1.*/127.0.1.1\\t$name/" /etc/hosts
 ''', pass);
     lines.add('/etc/hosts: mis à jour');
-    return AnonResult(success: true, message: 'Hostname changé en "$name"', output: lines.join('\n'));
+    return AnonResult(
+        success: true,
+        message: 'Hostname changé en "$name"',
+        output: lines.join('\n'));
   }
 
-  static Future<AnonResult> _changeHostnameMacOS(String name, String? pass) async {
+  static Future<AnonResult> _changeHostnameMacOS(
+      String name, String? pass) async {
     final cmds = [
       ['scutil', '--set', 'HostName', name],
       ['scutil', '--set', 'LocalHostName', name],
@@ -240,7 +390,8 @@ sed -i "s/127.0.1.1.*/127.0.1.1\\t$name/" /etc/hosts
     final lines = <String>[];
     for (final cmd in cmds) {
       final r = await _sudo(cmd, pass);
-      lines.add('${cmd[2]}: ${r.exitCode == 0 ? "OK" : "Erreur (${r.stderr})"}');
+      lines
+          .add('${cmd[2]}: ${r.exitCode == 0 ? "OK" : "Erreur (${r.stderr})"}');
     }
     final allOk = lines.every((l) => l.contains('OK'));
     return AnonResult(
@@ -259,7 +410,9 @@ sed -i "s/127.0.1.1.*/127.0.1.1\\t$name/" /etc/hosts
     final ok = r.exitCode == 0;
     return AnonResult(
       success: ok,
-      message: ok ? 'Hostname changé. Redémarrage requis.' : 'Échec changement hostname',
+      message: ok
+          ? 'Hostname changé. Redémarrage requis.'
+          : 'Échec changement hostname',
       output: r.stdout as String,
       error: ok ? null : r.stderr as String,
     );
@@ -267,15 +420,19 @@ sed -i "s/127.0.1.1.*/127.0.1.1\\t$name/" /etc/hosts
 
   // ── MAC ADDRESS ───────────────────────────────────────────
 
-  static Future<AnonResult> changeMac(String interface, String newMac, {String? sudoPassword}) async {
+  static Future<AnonResult> changeMac(String interface, String newMac,
+      {String? sudoPassword}) async {
     // Validation MAC format XX:XX:XX:XX:XX:XX
     final macRe = RegExp(r'^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$');
     if (!macRe.hasMatch(newMac)) {
-      return const AnonResult(success: false, message: 'Format MAC invalide. Attendu: XX:XX:XX:XX:XX:XX');
+      return const AnonResult(
+          success: false,
+          message: 'Format MAC invalide. Attendu: XX:XX:XX:XX:XX:XX');
     }
     // Validation interface : pas de path traversal
     if (!RegExp(r'^[a-zA-Z0-9_\-\.]{1,20}$').hasMatch(interface)) {
-      return const AnonResult(success: false, message: 'Nom d\'interface invalide.');
+      return const AnonResult(
+          success: false, message: 'Nom d\'interface invalide.');
     }
 
     try {
@@ -286,15 +443,19 @@ sed -i "s/127.0.1.1.*/127.0.1.1\\t$name/" /etc/hosts
       } else if (Platform.isWindows) {
         return await _changeMacWindows(interface, newMac);
       }
-      return const AnonResult(success: false, message: 'Plateforme non supportée.');
+      return const AnonResult(
+          success: false, message: 'Plateforme non supportée.');
     } catch (e) {
-      return AnonResult(success: false, message: 'Erreur inattendue', error: e.toString());
+      return AnonResult(
+          success: false, message: 'Erreur inattendue', error: e.toString());
     }
   }
 
-  static Future<AnonResult> _changeMacLinux(String iface, String mac, String? pass) async {
+  static Future<AnonResult> _changeMacLinux(
+      String iface, String mac, String? pass) async {
     final r1 = await _sudo(['ip', 'link', 'set', 'dev', iface, 'down'], pass);
-    final r2 = await _sudo(['ip', 'link', 'set', 'dev', iface, 'address', mac], pass);
+    final r2 =
+        await _sudo(['ip', 'link', 'set', 'dev', iface, 'address', mac], pass);
     final r3 = await _sudo(['ip', 'link', 'set', 'dev', iface, 'up'], pass);
     final ok = r1.exitCode == 0 && r2.exitCode == 0 && r3.exitCode == 0;
     return AnonResult(
@@ -305,15 +466,19 @@ sed -i "s/127.0.1.1.*/127.0.1.1\\t$name/" /etc/hosts
     );
   }
 
-  static Future<AnonResult> _changeMacMacOS(String iface, String mac, String? pass) async {
+  static Future<AnonResult> _changeMacMacOS(
+      String iface, String mac, String? pass) async {
     // macOS : ifconfig ether — nécessite sudo et interface down/up
     final r1 = await _sudo(['ifconfig', iface, 'down'], pass);
     final r2 = await _sudo(['ifconfig', iface, 'ether', mac], pass);
     final r3 = await _sudo(['ifconfig', iface, 'up'], pass);
-    final ok = r2.exitCode == 0; // down/up peuvent retourner 1 sur certains ifaces
+    final ok =
+        r2.exitCode == 0; // down/up peuvent retourner 1 sur certains ifaces
     return AnonResult(
       success: ok,
-      message: ok ? 'MAC changée en $mac sur $iface' : 'Échec. Sur Apple Silicon la MAC Wi-Fi peut être verrouillée.',
+      message: ok
+          ? 'MAC changée en $mac sur $iface'
+          : 'Échec. Sur Apple Silicon la MAC Wi-Fi peut être verrouillée.',
       output: [r1.stdout, r2.stdout, r3.stdout].join('\n'),
       error: ok ? null : r2.stderr as String,
     );
@@ -339,7 +504,9 @@ if (\$adapter) {
     final ok = r.exitCode == 0;
     return AnonResult(
       success: ok,
-      message: ok ? 'MAC changée en $mac' : 'Échec. Certains pilotes ne supportent pas le changement de MAC.',
+      message: ok
+          ? 'MAC changée en $mac'
+          : 'Échec. Certains pilotes ne supportent pas le changement de MAC.',
       output: r.stdout as String,
       error: ok ? null : r.stderr as String,
     );
@@ -347,9 +514,13 @@ if (\$adapter) {
 
   // ── UTILISATEUR (crée un nouveau compte) ─────────────────
 
-  static Future<AnonResult> createNewUser(String newUser, {String? sudoPassword}) async {
+  static Future<AnonResult> createNewUser(String newUser,
+      {String? sudoPassword}) async {
     if (!RegExp(r'^[a-z_][a-z0-9_\-]{0,30}$').hasMatch(newUser)) {
-      return const AnonResult(success: false, message: 'Nom d\'utilisateur invalide. Minuscules, chiffres, tirets uniquement.');
+      return const AnonResult(
+          success: false,
+          message:
+              'Nom d\'utilisateur invalide. Minuscules, chiffres, tirets uniquement.');
     }
 
     try {
@@ -360,9 +531,11 @@ if (\$adapter) {
       } else if (Platform.isWindows) {
         return await _createUserWindows(newUser);
       }
-      return const AnonResult(success: false, message: 'Plateforme non supportée.');
+      return const AnonResult(
+          success: false, message: 'Plateforme non supportée.');
     } catch (e) {
-      return AnonResult(success: false, message: 'Erreur inattendue', error: e.toString());
+      return AnonResult(
+          success: false, message: 'Erreur inattendue', error: e.toString());
     }
   }
 
@@ -370,7 +543,8 @@ if (\$adapter) {
     // Vérifier si l'utilisateur existe déjà
     final check = await Process.run('id', [name]);
     if (check.exitCode == 0) {
-      return AnonResult(success: false, message: 'L\'utilisateur "$name" existe déjà.');
+      return AnonResult(
+          success: false, message: 'L\'utilisateur "$name" existe déjà.');
     }
     final r = await _sudo(['useradd', '-m', '-s', '/bin/bash', name], pass);
     final ok = r.exitCode == 0;
@@ -386,7 +560,8 @@ if (\$adapter) {
 
   static Future<AnonResult> _createUserMacOS(String name, String? pass) async {
     // Trouver un UID disponible >= 501
-    final uidResult = await Process.run('dscl', ['.', '-list', '/Users', 'UniqueID']);
+    final uidResult =
+        await Process.run('dscl', ['.', '-list', '/Users', 'UniqueID']);
     final usedUids = (uidResult.stdout as String)
         .split('\n')
         .map((l) => int.tryParse(l.trim().split(RegExp(r'\s+')).last) ?? 0)
@@ -400,14 +575,25 @@ if (\$adapter) {
       ['dscl', '.', '-create', '/Users/$name', 'RealName', name],
       ['dscl', '.', '-create', '/Users/$name', 'UniqueID', '$uid'],
       ['dscl', '.', '-create', '/Users/$name', 'PrimaryGroupID', '20'],
-      ['dscl', '.', '-create', '/Users/$name', 'NFSHomeDirectory', '/Users/$name'],
+      [
+        'dscl',
+        '.',
+        '-create',
+        '/Users/$name',
+        'NFSHomeDirectory',
+        '/Users/$name'
+      ],
     ];
     final lines = <String>[];
     bool allOk = true;
     for (final cmd in cmds) {
       final r = await _sudo(cmd, pass);
-      if (r.exitCode != 0) { allOk = false; lines.add('Erreur: ${r.stderr}'); }
-      else { lines.add('${cmd[3]}: OK'); }
+      if (r.exitCode != 0) {
+        allOk = false;
+        lines.add('Erreur: ${r.stderr}');
+      } else {
+        lines.add('${cmd[3]}: OK');
+      }
     }
     // Créer le dossier home
     await _sudo(['createhomedir', '-c', '-u', name], pass);
@@ -423,7 +609,8 @@ if (\$adapter) {
   static Future<AnonResult> _createUserWindows(String name) async {
     final check = await Process.run('net', ['user', name], runInShell: true);
     if (check.exitCode == 0) {
-      return AnonResult(success: false, message: 'L\'utilisateur "$name" existe déjà.');
+      return AnonResult(
+          success: false, message: 'L\'utilisateur "$name" existe déjà.');
     }
     // Crée sans mot de passe, force le changement à la prochaine connexion
     final r = await Process.run(
@@ -453,7 +640,8 @@ if (\$adapter) {
       } else if (Platform.isWindows) {
         return await _disableIPv6Windows();
       }
-      return const AnonResult(success: false, message: 'Plateforme non supportée.');
+      return const AnonResult(
+          success: false, message: 'Plateforme non supportée.');
     } catch (e) {
       return AnonResult(success: false, message: 'Erreur', error: e.toString());
     }
@@ -466,7 +654,10 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
 ''';
     final r = await _sudoScript(script, pass);
     final ok = r.exitCode == 0;
-    return AnonResult(success: ok, message: ok ? 'IPv6 désactivé (jusqu\'au prochain reboot)' : 'Échec', error: ok ? null : r.stderr as String);
+    return AnonResult(
+        success: ok,
+        message: ok ? 'IPv6 désactivé (jusqu\'au prochain reboot)' : 'Échec',
+        error: ok ? null : r.stderr as String);
   }
 
   static Future<AnonResult> _disableIPv6MacOS(String? pass) async {
@@ -476,27 +667,46 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
       final r = await Process.run('networksetup', ['-setv6off', iface]);
       lines.add('$iface: ${r.exitCode == 0 ? "OK" : r.stderr}');
     }
-    return AnonResult(success: true, message: 'IPv6 désactivé sur ${ifaces.length} interface(s)', output: lines.join('\n'));
+    return AnonResult(
+        success: true,
+        message: 'IPv6 désactivé sur ${ifaces.length} interface(s)',
+        output: lines.join('\n'));
   }
 
   static Future<AnonResult> _disableIPv6Windows() async {
-    final r = await Process.run('powershell', [
-      '-Command',
-      'Get-NetAdapterBinding -ComponentID ms_tcpip6 | Disable-NetAdapterBinding -ComponentID ms_tcpip6 -Confirm:\$false'
-    ], runInShell: true);
-    return AnonResult(success: r.exitCode == 0, message: r.exitCode == 0 ? 'IPv6 désactivé' : 'Échec', error: r.exitCode == 0 ? null : r.stderr as String);
+    final r = await Process.run(
+        'powershell',
+        [
+          '-Command',
+          'Get-NetAdapterBinding -ComponentID ms_tcpip6 | Disable-NetAdapterBinding -ComponentID ms_tcpip6 -Confirm:\$false'
+        ],
+        runInShell: true);
+    return AnonResult(
+        success: r.exitCode == 0,
+        message: r.exitCode == 0 ? 'IPv6 désactivé' : 'Échec',
+        error: r.exitCode == 0 ? null : r.stderr as String);
   }
 
   static Future<AnonResult> disableMdns({String? sudoPassword}) async {
     try {
       if (Platform.isLinux) {
-        final r = await _sudo(['systemctl', 'stop', 'avahi-daemon'], sudoPassword);
-        final r2 = await _sudo(['systemctl', 'disable', 'avahi-daemon'], sudoPassword);
+        final r =
+            await _sudo(['systemctl', 'stop', 'avahi-daemon'], sudoPassword);
+        final r2 =
+            await _sudo(['systemctl', 'disable', 'avahi-daemon'], sudoPassword);
         final ok = r.exitCode == 0;
-        return AnonResult(success: ok, message: ok ? 'mDNS/Avahi désactivé' : 'Avahi non trouvé ou déjà désactivé');
+        return AnonResult(
+            success: ok,
+            message: ok
+                ? 'mDNS/Avahi désactivé'
+                : 'Avahi non trouvé ou déjà désactivé');
       } else if (Platform.isMacOS) {
-        final r = await _sudo(['launchctl', 'unload', '-w',
-            '/System/Library/LaunchDaemons/com.apple.mDNSResponder.plist'], sudoPassword);
+        final r = await _sudo([
+          'launchctl',
+          'unload',
+          '-w',
+          '/System/Library/LaunchDaemons/com.apple.mDNSResponder.plist'
+        ], sudoPassword);
         return AnonResult(
           success: r.exitCode == 0,
           message: r.exitCode == 0
@@ -504,35 +714,56 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
               : 'Échec. Utilisez: sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist',
         );
       } else if (Platform.isWindows) {
-        final r = await Process.run('powershell', [
-          '-Command',
-          'Set-Service -Name "Bonjour Service" -StartupType Disabled; Stop-Service -Name "Bonjour Service" -Force -ErrorAction SilentlyContinue'
-        ], runInShell: true);
-        return AnonResult(success: true, message: 'Service Bonjour désactivé (si installé)');
+        final r = await Process.run(
+            'powershell',
+            [
+              '-Command',
+              'Set-Service -Name "Bonjour Service" -StartupType Disabled; Stop-Service -Name "Bonjour Service" -Force -ErrorAction SilentlyContinue'
+            ],
+            runInShell: true);
+        return AnonResult(
+            success: true, message: 'Service Bonjour désactivé (si installé)');
       }
-      return const AnonResult(success: false, message: 'Plateforme non supportée.');
+      return const AnonResult(
+          success: false, message: 'Plateforme non supportée.');
     } catch (e) {
       return AnonResult(success: false, message: 'Erreur', error: e.toString());
     }
   }
 
   static Future<AnonResult> changeTTL(int ttl, {String? sudoPassword}) async {
-    if (ttl < 1 || ttl > 255) return const AnonResult(success: false, message: 'TTL doit être entre 1 et 255');
+    if (ttl < 1 || ttl > 255)
+      return const AnonResult(
+          success: false, message: 'TTL doit être entre 1 et 255');
     try {
       if (Platform.isLinux) {
-        final r = await _sudo(['sysctl', '-w', 'net.ipv4.ip_default_ttl=$ttl'], sudoPassword);
-        return AnonResult(success: r.exitCode == 0, message: r.exitCode == 0 ? 'TTL défini à $ttl' : 'Échec');
+        final r = await _sudo(
+            ['sysctl', '-w', 'net.ipv4.ip_default_ttl=$ttl'], sudoPassword);
+        return AnonResult(
+            success: r.exitCode == 0,
+            message: r.exitCode == 0 ? 'TTL défini à $ttl' : 'Échec');
       } else if (Platform.isMacOS) {
-        final r = await _sudo(['sysctl', '-w', 'net.inet.ip.ttl=$ttl'], sudoPassword);
-        return AnonResult(success: r.exitCode == 0, message: r.exitCode == 0 ? 'TTL défini à $ttl' : 'Échec');
+        final r =
+            await _sudo(['sysctl', '-w', 'net.inet.ip.ttl=$ttl'], sudoPassword);
+        return AnonResult(
+            success: r.exitCode == 0,
+            message: r.exitCode == 0 ? 'TTL défini à $ttl' : 'Échec');
       } else if (Platform.isWindows) {
-        final r = await Process.run('powershell', [
-          '-Command',
-          'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters" -Name "DefaultTTL" -Value $ttl -Type DWord'
-        ], runInShell: true);
-        return AnonResult(success: r.exitCode == 0, message: r.exitCode == 0 ? 'TTL défini à $ttl (redémarrage requis)' : 'Échec');
+        final r = await Process.run(
+            'powershell',
+            [
+              '-Command',
+              'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters" -Name "DefaultTTL" -Value $ttl -Type DWord'
+            ],
+            runInShell: true);
+        return AnonResult(
+            success: r.exitCode == 0,
+            message: r.exitCode == 0
+                ? 'TTL défini à $ttl (redémarrage requis)'
+                : 'Échec');
       }
-      return const AnonResult(success: false, message: 'Plateforme non supportée.');
+      return const AnonResult(
+          success: false, message: 'Plateforme non supportée.');
     } catch (e) {
       return AnonResult(success: false, message: 'Erreur', error: e.toString());
     }
@@ -540,14 +771,19 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
 
   // ── RESTAURATION ──────────────────────────────────────────
 
-  static Future<List<AnonResult>> restoreAll(AnonBackup backup, {String? sudoPassword}) async {
+  static Future<List<AnonResult>> restoreAll(AnonBackup backup,
+      {String? sudoPassword}) async {
     final results = <AnonResult>[];
     if (backup.hostname != null && backup.hostname!.isNotEmpty) {
-      results.add(await changeHostname(backup.hostname!, sudoPassword: sudoPassword));
+      results.add(
+          await changeHostname(backup.hostname!, sudoPassword: sudoPassword));
     }
-    if (backup.macAddress != null && backup.interface != null &&
-        backup.macAddress!.isNotEmpty && backup.macAddress != 'inconnu') {
-      results.add(await changeMac(backup.interface!, backup.macAddress!, sudoPassword: sudoPassword));
+    if (backup.macAddress != null &&
+        backup.interface != null &&
+        backup.macAddress!.isNotEmpty &&
+        backup.macAddress != 'inconnu') {
+      results.add(await changeMac(backup.interface!, backup.macAddress!,
+          sudoPassword: sudoPassword));
     }
     return results;
   }
@@ -571,8 +807,10 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
       );
       proc.stdin.writeln(password);
       await proc.stdin.close();
-      final stdout = await proc.stdout.transform(const SystemEncoding().decoder).join();
-      final stderr = await proc.stderr.transform(const SystemEncoding().decoder).join();
+      final stdout =
+          await proc.stdout.transform(const SystemEncoding().decoder).join();
+      final stderr =
+          await proc.stderr.transform(const SystemEncoding().decoder).join();
       final exitCode = await proc.exitCode;
       return ProcessResult(proc.pid, exitCode, stdout, stderr);
     } else {
@@ -582,8 +820,10 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
   }
 
   /// Exécute un script shell multiligne avec sudo.
-  static Future<ProcessResult> _sudoScript(String script, String? password) async {
-    final tmp = await File('/tmp/_tdc_anon_script.sh').writeAsString('#!/bin/sh\n$script');
+  static Future<ProcessResult> _sudoScript(
+      String script, String? password) async {
+    final tmp = await File('/tmp/_tdc_anon_script.sh')
+        .writeAsString('#!/bin/sh\n$script');
     await Process.run('chmod', ['+x', tmp.path]);
     final result = await _sudo(['sh', tmp.path], password);
     await tmp.delete().catchError((_) => tmp);
@@ -594,8 +834,46 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
     final r = await Process.run('networksetup', ['-listallnetworkservices']);
     return (r.stdout as String)
         .split('\n')
-        .where((l) => l.isNotEmpty && !l.startsWith('*') && !l.startsWith('An asterisk'))
+        .where((l) =>
+            l.isNotEmpty && !l.startsWith('*') && !l.startsWith('An asterisk'))
         .map((l) => l.trim())
         .toList();
+  }
+
+  static Future<bool> _isUnixRoot() async {
+    try {
+      final r = await Process.run('id', ['-u']);
+      if (r.exitCode != 0) return false;
+      return (r.stdout as String).trim() == '0';
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static Future<bool> _canSudoWithoutPassword() async {
+    try {
+      final r = await Process.run('sudo', ['-n', 'true']);
+      return r.exitCode == 0;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static Future<bool> _isWindowsAdmin() async {
+    try {
+      final r = await Process.run(
+        'powershell',
+        [
+          '-NoProfile',
+          '-Command',
+          '([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)'
+        ],
+        runInShell: true,
+      );
+      if (r.exitCode != 0) return false;
+      return (r.stdout as String).toLowerCase().contains('true');
+    } catch (_) {
+      return false;
+    }
   }
 }

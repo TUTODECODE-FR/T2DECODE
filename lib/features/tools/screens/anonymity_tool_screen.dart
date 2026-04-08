@@ -23,6 +23,7 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
   String _curInterface = 'eth0';
   String _curUsername = '…';
   bool _loading = true;
+  AnonDeviceProfile? _deviceProfile;
 
   // Valeurs générées / saisies
   final _hostnameCtrl = TextEditingController();
@@ -47,7 +48,7 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
-        title: 'Anonymat & Identité Réseau',
+        title: 'Anonymisation locale & Identite reseau',
         showBackButton: true,
         actions: [],
       );
@@ -69,6 +70,7 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
     final hn = await AnonymityService.getCurrentHostname();
     final user = await AnonymityService.getCurrentUsername();
     final macInfo = await AnonymityService.getCurrentMac(); // MacInfo
+    final profile = await AnonymityService.getDeviceProfile();
     final backup = await AnonymityService.loadBackup();
     if (!mounted) return;
     setState(() {
@@ -76,6 +78,7 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
       _curMac = macInfo.mac;
       _curInterface = macInfo.interface;
       _curUsername = user;
+      _deviceProfile = profile;
       _hostnameCtrl.text = AnonymityService.generateHostname();
       _macCtrl.text = AnonymityService.generateMac();
       _usernameCtrl.text = AnonymityService.generateUsername();
@@ -93,7 +96,8 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
     });
   }
 
-  String? get _sudoPassword => _sudoCtrl.text.trim().isEmpty ? null : _sudoCtrl.text.trim();
+  String? get _sudoPassword =>
+      _sudoCtrl.text.trim().isEmpty ? null : _sudoCtrl.text.trim();
 
   Future<void> _saveBackupIfNeeded() async {
     if (_backupExists) return;
@@ -105,18 +109,25 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
       savedAt: DateTime.now(),
     );
     await AnonymityService.saveBackup(b);
-    setState(() { _backup = b; _backupExists = true; });
+    setState(() {
+      _backup = b;
+      _backupExists = true;
+    });
   }
 
   void _addLog(String title, AnonResult result) {
     setState(() {
-      _logs.insert(0, _OpLog(
-        title: title,
-        success: result.success,
-        message: result.message,
-        detail: [result.output, result.error].where((s) => s != null && s.isNotEmpty).join('\n'),
-        time: DateTime.now(),
-      ));
+      _logs.insert(
+          0,
+          _OpLog(
+            title: title,
+            success: result.success,
+            message: result.message,
+            detail: [result.output, result.error]
+                .where((s) => s != null && s.isNotEmpty)
+                .join('\n'),
+            time: DateTime.now(),
+          ));
     });
   }
 
@@ -138,10 +149,13 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
   Widget build(BuildContext context) {
     return TdcPageWrapper(
       child: _loading
-          ? const Center(child: CircularProgressIndicator(color: TdcColors.accent))
+          ? const Center(
+              child: CircularProgressIndicator(color: TdcColors.accent))
           : ListView(
               children: [
                 _buildWarningBanner(),
+                const SizedBox(height: 16),
+                _buildCapabilityBanner(),
                 const SizedBox(height: 16),
                 _buildCurrentState(),
                 const SizedBox(height: 20),
@@ -151,9 +165,11 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
                 const SizedBox(height: 16),
                 _buildSection('MAC Address', Icons.wifi, _buildMacCard()),
                 const SizedBox(height: 16),
-                _buildSection('Créer un nouvel utilisateur', Icons.person_add, _buildUserCard()),
+                _buildSection('Créer un nouvel utilisateur', Icons.person_add,
+                    _buildUserCard()),
                 const SizedBox(height: 16),
-                _buildSection('Réseau : IPv6 / mDNS / TTL', Icons.settings_ethernet, _buildNetCard()),
+                _buildSection('Réseau : IPv6 / mDNS / TTL',
+                    Icons.settings_ethernet, _buildNetCard()),
                 if (_backupExists) ...[
                   const SizedBox(height: 20),
                   _buildRestoreCard(),
@@ -181,9 +197,15 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
         children: [
           const Row(
             children: [
-              Icon(Icons.warning_amber_rounded, color: Color(0xFFEF4444), size: 16),
+              Icon(Icons.warning_amber_rounded,
+                  color: Color(0xFFEF4444), size: 16),
               SizedBox(width: 8),
-              Text('CE QUE CET OUTIL NE PEUT PAS FAIRE', style: TextStyle(color: Color(0xFFEF4444), fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
+              Text('CE QUE CET OUTIL NE PEUT PAS FAIRE',
+                  style: TextStyle(
+                      color: Color(0xFFEF4444),
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.1)),
             ],
           ),
           const SizedBox(height: 10),
@@ -200,6 +222,77 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
     );
   }
 
+  Widget _buildCapabilityBanner() {
+    final p = _deviceProfile;
+    if (p == null) return const SizedBox.shrink();
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF3B82F6).withOpacity(0.08),
+        borderRadius: TdcRadius.md,
+        border: Border.all(color: const Color(0xFF3B82F6).withOpacity(0.35)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.verified_user, color: Color(0xFF3B82F6), size: 16),
+              SizedBox(width: 8),
+              Text(
+                'CAPACITES REELLES DE CET APPAREIL',
+                style: TextStyle(
+                    color: Color(0xFF3B82F6),
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.1),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          _capRow('Plateforme', p.platformLabel, true),
+          _capRow('Privileges', p.privilegeHint, p.isPrivilegedSession),
+          _capRow('Changer hostname', 'Operation systeme reelle',
+              p.canChangeHostname),
+          _capRow(
+              'Changer MAC', 'Possible selon pilote/interface', p.canChangeMac),
+          _capRow('Creer utilisateur', 'Compte OS reel', p.canCreateUser),
+          _capRow('IPv6/mDNS/TTL', 'Reglages reseau reels', p.canTuneNetwork),
+          const SizedBox(height: 8),
+          Text(
+            p.notes,
+            style: const TextStyle(
+                color: TdcColors.textSecondary, fontSize: 11, height: 1.35),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _capRow(String label, String value, bool ok) {
+    final color = ok ? const Color(0xFF10B981) : const Color(0xFFEF4444);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          Icon(ok ? Icons.check_circle : Icons.cancel, color: color, size: 13),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 130,
+            child: Text(label,
+                style: const TextStyle(
+                    color: TdcColors.textSecondary, fontSize: 12)),
+          ),
+          Expanded(
+            child: Text(value,
+                style: const TextStyle(
+                    color: TdcColors.textPrimary, fontSize: 12)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _warnRow(String title, String detail) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
@@ -207,8 +300,13 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
         text: TextSpan(
           style: const TextStyle(fontSize: 12, height: 1.4),
           children: [
-            TextSpan(text: '⚠ $title ', style: const TextStyle(color: Color(0xFFEF4444), fontWeight: FontWeight.w600)),
-            TextSpan(text: detail, style: const TextStyle(color: TdcColors.textSecondary)),
+            TextSpan(
+                text: '⚠ $title ',
+                style: const TextStyle(
+                    color: Color(0xFFEF4444), fontWeight: FontWeight.w600)),
+            TextSpan(
+                text: detail,
+                style: const TextStyle(color: TdcColors.textSecondary)),
           ],
         ),
       ),
@@ -218,18 +316,29 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
   Widget _buildCurrentState() {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(color: TdcColors.border)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Text('ÉTAT ACTUEL', style: TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+              const Text('ÉTAT ACTUEL',
+                  style: TextStyle(
+                      color: TdcColors.accent,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2)),
               const Spacer(),
               InkWell(
                 onTap: _loadCurrentValues,
                 borderRadius: TdcRadius.sm,
-                child: const Padding(padding: EdgeInsets.all(4), child: Icon(Icons.refresh, size: 16, color: TdcColors.accent)),
+                child: const Padding(
+                    padding: EdgeInsets.all(4),
+                    child:
+                        Icon(Icons.refresh, size: 16, color: TdcColors.accent)),
               ),
             ],
           ),
@@ -257,11 +366,25 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
         children: [
           Icon(icon, size: 13, color: TdcColors.textMuted),
           const SizedBox(width: 8),
-          SizedBox(width: 120, child: Text(label, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12))),
-          Expanded(child: Text(value, style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 12, fontWeight: FontWeight.bold))),
+          SizedBox(
+              width: 120,
+              child: Text(label,
+                  style: const TextStyle(
+                      color: TdcColors.textSecondary, fontSize: 12))),
+          Expanded(
+              child: Text(value,
+                  style: const TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontFamily: 'monospace',
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold))),
           InkWell(
-            onTap: () { Clipboard.setData(ClipboardData(text: value)); },
-            child: const Padding(padding: EdgeInsets.all(4), child: Icon(Icons.copy, size: 12, color: TdcColors.textMuted)),
+            onTap: () {
+              Clipboard.setData(ClipboardData(text: value));
+            },
+            child: const Padding(
+                padding: EdgeInsets.all(4),
+                child: Icon(Icons.copy, size: 12, color: TdcColors.textMuted)),
           ),
         ],
       ),
@@ -272,13 +395,23 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
     if (Platform.isWindows) return const SizedBox.shrink();
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(color: TdcColors.border)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('MOT DE PASSE SUDO', style: TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+          const Text('MOT DE PASSE SUDO',
+              style: TextStyle(
+                  color: TdcColors.accent,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2)),
           const SizedBox(height: 8),
-          const Text('Requis pour les opérations système. Non sauvegardé — utilisé uniquement lors de l\'exécution.', style: TextStyle(color: TdcColors.textMuted, fontSize: 11)),
+          const Text(
+              'Requis pour les opérations système. Non sauvegardé — utilisé uniquement lors de l\'exécution.',
+              style: TextStyle(color: TdcColors.textMuted, fontSize: 11)),
           const SizedBox(height: 10),
           TextField(
             controller: _sudoCtrl,
@@ -289,9 +422,12 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
               hintStyle: const TextStyle(color: TdcColors.textMuted),
               filled: true,
               fillColor: TdcColors.surfaceAlt,
-              border: OutlineInputBorder(borderRadius: TdcRadius.sm, borderSide: const BorderSide(color: TdcColors.border)),
+              border: OutlineInputBorder(
+                  borderRadius: TdcRadius.sm,
+                  borderSide: const BorderSide(color: TdcColors.border)),
               suffixIcon: IconButton(
-                icon: Icon(_showSudo ? Icons.visibility_off : Icons.visibility, size: 18, color: TdcColors.textMuted),
+                icon: Icon(_showSudo ? Icons.visibility_off : Icons.visibility,
+                    size: 18, color: TdcColors.textMuted),
                 onPressed: () => setState(() => _showSudo = !_showSudo),
               ),
             ),
@@ -308,7 +444,12 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
         Row(children: [
           Icon(icon, size: 14, color: TdcColors.textMuted),
           const SizedBox(width: 8),
-          Text(title.toUpperCase(), style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
+          Text(title.toUpperCase(),
+              style: const TextStyle(
+                  color: TdcColors.textSecondary,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.1)),
         ]),
         const SizedBox(height: 8),
         content,
@@ -319,24 +460,33 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
   Widget _buildHostnameCard() {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(color: TdcColors.border)),
       child: Column(
         children: [
           Row(children: [
             Expanded(
               child: TextField(
                 controller: _hostnameCtrl,
-                style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 13),
+                style: const TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontFamily: 'monospace',
+                    fontSize: 13),
                 decoration: const InputDecoration(
                   labelText: 'Nouveau hostname',
-                  filled: true, fillColor: TdcColors.surfaceAlt,
-                  border: OutlineInputBorder(borderSide: BorderSide(color: TdcColors.border)),
+                  filled: true,
+                  fillColor: TdcColors.surfaceAlt,
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: TdcColors.border)),
                 ),
               ),
             ),
             const SizedBox(width: 8),
             IconButton(
-              onPressed: () => setState(() => _hostnameCtrl.text = AnonymityService.generateHostname()),
+              onPressed: () => setState(() =>
+                  _hostnameCtrl.text = AnonymityService.generateHostname()),
               icon: const Icon(Icons.casino, color: TdcColors.accent, size: 20),
               tooltip: 'Générer',
             ),
@@ -344,8 +494,10 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
           const SizedBox(height: 12),
           _buildApplyBtn('Appliquer le hostname', Icons.check, () async {
             await _saveBackupIfNeeded();
-            await _run('Hostname → ${_hostnameCtrl.text}', () =>
-                AnonymityService.changeHostname(_hostnameCtrl.text.trim(), sudoPassword: _sudoPassword));
+            await _run(
+                'Hostname → ${_hostnameCtrl.text}',
+                () => AnonymityService.changeHostname(_hostnameCtrl.text.trim(),
+                    sudoPassword: _sudoPassword));
           }),
         ],
       ),
@@ -355,38 +507,53 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
   Widget _buildMacCard() {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(color: TdcColors.border)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Interface : $_curInterface', style: const TextStyle(color: TdcColors.textMuted, fontSize: 11)),
+          Text('Interface : $_curInterface',
+              style: const TextStyle(color: TdcColors.textMuted, fontSize: 11)),
           const SizedBox(height: 8),
           Row(children: [
             Expanded(
               child: TextField(
                 controller: _macCtrl,
-                style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 13),
+                style: const TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontFamily: 'monospace',
+                    fontSize: 13),
                 decoration: const InputDecoration(
                   labelText: 'Nouvelle MAC (XX:XX:XX:XX:XX:XX)',
-                  filled: true, fillColor: TdcColors.surfaceAlt,
-                  border: OutlineInputBorder(borderSide: BorderSide(color: TdcColors.border)),
+                  filled: true,
+                  fillColor: TdcColors.surfaceAlt,
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: TdcColors.border)),
                 ),
               ),
             ),
             const SizedBox(width: 8),
             IconButton(
-              onPressed: () => setState(() => _macCtrl.text = AnonymityService.generateMac()),
+              onPressed: () => setState(
+                  () => _macCtrl.text = AnonymityService.generateMac()),
               icon: const Icon(Icons.casino, color: TdcColors.accent, size: 20),
               tooltip: 'Générer',
             ),
           ]),
           const SizedBox(height: 8),
-          const Text('⚠ Temporaire : restauré au reboot. La MAC ne sort pas du réseau local.', style: TextStyle(color: Color(0xFFF59E0B), fontSize: 11)),
+          const Text(
+              '⚠ Temporaire : restauré au reboot. La MAC ne sort pas du réseau local.',
+              style: TextStyle(color: Color(0xFFF59E0B), fontSize: 11)),
           const SizedBox(height: 12),
           _buildApplyBtn('Appliquer la MAC', Icons.wifi, () async {
             await _saveBackupIfNeeded();
-            await _run('MAC → ${_macCtrl.text}', () =>
-                AnonymityService.changeMac(_curInterface, _macCtrl.text.trim(), sudoPassword: _sudoPassword));
+            await _run(
+                'MAC → ${_macCtrl.text}',
+                () => AnonymityService.changeMac(
+                    _curInterface, _macCtrl.text.trim(),
+                    sudoPassword: _sudoPassword));
           }),
         ],
       ),
@@ -396,35 +563,48 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
   Widget _buildUserCard() {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(color: TdcColors.border)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Un nouveau compte utilisateur sera créé. Le compte actuel reste intact.', style: TextStyle(color: TdcColors.textMuted, fontSize: 11)),
+          const Text(
+              'Un nouveau compte utilisateur sera créé. Le compte actuel reste intact.',
+              style: TextStyle(color: TdcColors.textMuted, fontSize: 11)),
           const SizedBox(height: 10),
           Row(children: [
             Expanded(
               child: TextField(
                 controller: _usernameCtrl,
-                style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 13),
+                style: const TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontFamily: 'monospace',
+                    fontSize: 13),
                 decoration: const InputDecoration(
                   labelText: 'Nom du nouveau compte',
-                  filled: true, fillColor: TdcColors.surfaceAlt,
-                  border: OutlineInputBorder(borderSide: BorderSide(color: TdcColors.border)),
+                  filled: true,
+                  fillColor: TdcColors.surfaceAlt,
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: TdcColors.border)),
                 ),
               ),
             ),
             const SizedBox(width: 8),
             IconButton(
-              onPressed: () => setState(() => _usernameCtrl.text = AnonymityService.generateUsername()),
+              onPressed: () => setState(() =>
+                  _usernameCtrl.text = AnonymityService.generateUsername()),
               icon: const Icon(Icons.casino, color: TdcColors.accent, size: 20),
               tooltip: 'Générer',
             ),
           ]),
           const SizedBox(height: 12),
           _buildApplyBtn('Créer l\'utilisateur', Icons.person_add, () async {
-            await _run('Créer user ${_usernameCtrl.text}', () =>
-                AnonymityService.createNewUser(_usernameCtrl.text.trim(), sudoPassword: _sudoPassword));
+            await _run(
+                'Créer user ${_usernameCtrl.text}',
+                () => AnonymityService.createNewUser(_usernameCtrl.text.trim(),
+                    sudoPassword: _sudoPassword));
           }),
         ],
       ),
@@ -434,62 +614,127 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
   Widget _buildNetCard() {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(color: TdcColors.border)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // IPv6
           Row(children: [
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('Désactiver IPv6', style: TextStyle(color: TdcColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600)),
-              const Text('Réduit l\'empreinte réseau. Réversible.', style: TextStyle(color: TdcColors.textMuted, fontSize: 11)),
-            ])),
+            Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  const Text('Désactiver IPv6',
+                      style: TextStyle(
+                          color: TdcColors.textPrimary,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600)),
+                  const Text('Réduit l\'empreinte réseau. Réversible.',
+                      style:
+                          TextStyle(color: TdcColors.textMuted, fontSize: 11)),
+                ])),
             ElevatedButton(
-              onPressed: _anyRunning ? null : () => _run('Désactiver IPv6', () => AnonymityService.disableIPv6(sudoPassword: _sudoPassword)),
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1E293B), foregroundColor: TdcColors.textPrimary, padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8)),
+              onPressed: _anyRunning
+                  ? null
+                  : () => _run(
+                      'Désactiver IPv6',
+                      () => AnonymityService.disableIPv6(
+                          sudoPassword: _sudoPassword)),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1E293B),
+                  foregroundColor: TdcColors.textPrimary,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8)),
               child: const Text('Désactiver', style: TextStyle(fontSize: 12)),
             ),
           ]),
           const Divider(height: 20, color: TdcColors.border),
           // mDNS
           Row(children: [
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('Désactiver mDNS/Bonjour', style: TextStyle(color: TdcColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600)),
-              const Text('⚠ Désactive AirDrop/AirPlay sur macOS.', style: TextStyle(color: Color(0xFFF59E0B), fontSize: 11)),
-            ])),
+            Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  const Text('Désactiver mDNS/Bonjour',
+                      style: TextStyle(
+                          color: TdcColors.textPrimary,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600)),
+                  const Text('⚠ Désactive AirDrop/AirPlay sur macOS.',
+                      style: TextStyle(color: Color(0xFFF59E0B), fontSize: 11)),
+                ])),
             ElevatedButton(
-              onPressed: _anyRunning ? null : () => _run('Désactiver mDNS', () => AnonymityService.disableMdns(sudoPassword: _sudoPassword)),
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1E293B), foregroundColor: TdcColors.textPrimary, padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8)),
+              onPressed: _anyRunning
+                  ? null
+                  : () => _run(
+                      'Désactiver mDNS',
+                      () => AnonymityService.disableMdns(
+                          sudoPassword: _sudoPassword)),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1E293B),
+                  foregroundColor: TdcColors.textPrimary,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8)),
               child: const Text('Désactiver', style: TextStyle(fontSize: 12)),
             ),
           ]),
           const Divider(height: 20, color: TdcColors.border),
           // TTL
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Changer le TTL réseau', style: TextStyle(color: TdcColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600)),
-            const Text('Modifie l\'empreinte OS (fingerprinting). 64=Linux, 128=Windows, 255=macOS/Cisco.', style: TextStyle(color: TdcColors.textMuted, fontSize: 11)),
+            const Text('Changer le TTL réseau',
+                style: TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600)),
+            const Text(
+                'Modifie l\'empreinte OS (fingerprinting). 64=Linux, 128=Windows, 255=macOS/Cisco.',
+                style: TextStyle(color: TdcColors.textMuted, fontSize: 11)),
             const SizedBox(height: 10),
             Row(children: [
               ...[64, 128, 255].map((v) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: InkWell(
-                  onTap: () => setState(() => _ttl = v),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 120),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                    decoration: BoxDecoration(
-                      color: _ttl == v ? TdcColors.accent.withOpacity(0.15) : Colors.transparent,
-                      borderRadius: TdcRadius.sm,
-                      border: Border.all(color: _ttl == v ? TdcColors.accent : TdcColors.border),
+                    padding: const EdgeInsets.only(right: 8),
+                    child: InkWell(
+                      onTap: () => setState(() => _ttl = v),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 120),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: _ttl == v
+                              ? TdcColors.accent.withOpacity(0.15)
+                              : Colors.transparent,
+                          borderRadius: TdcRadius.sm,
+                          border: Border.all(
+                              color: _ttl == v
+                                  ? TdcColors.accent
+                                  : TdcColors.border),
+                        ),
+                        child: Text('$v',
+                            style: TextStyle(
+                                color: _ttl == v
+                                    ? TdcColors.accent
+                                    : TdcColors.textMuted,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold)),
+                      ),
                     ),
-                    child: Text('$v', style: TextStyle(color: _ttl == v ? TdcColors.accent : TdcColors.textMuted, fontSize: 13, fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              )),
+                  )),
               const Spacer(),
               ElevatedButton(
-                onPressed: _anyRunning ? null : () => _run('TTL → $_ttl', () => AnonymityService.changeTTL(_ttl, sudoPassword: _sudoPassword)),
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1E293B), foregroundColor: TdcColors.textPrimary, padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8)),
+                onPressed: _anyRunning
+                    ? null
+                    : () => _run(
+                        'TTL → $_ttl',
+                        () => AnonymityService.changeTTL(_ttl,
+                            sudoPassword: _sudoPassword)),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1E293B),
+                    foregroundColor: TdcColors.textPrimary,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 8)),
                 child: const Text('Appliquer', style: TextStyle(fontSize: 12)),
               ),
             ]),
@@ -514,35 +759,61 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
           const Row(children: [
             Icon(Icons.restore, color: Color(0xFF10B981), size: 16),
             SizedBox(width: 8),
-            Text('RESTAURATION DES VALEURS ORIGINALES', style: TextStyle(color: Color(0xFF10B981), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
+            Text('RESTAURATION DES VALEURS ORIGINALES',
+                style: TextStyle(
+                    color: Color(0xFF10B981),
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.1)),
           ]),
           const SizedBox(height: 10),
-          if (b.hostname != null) Text('Hostname original : ${b.hostname}', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12)),
-          if (b.macAddress != null) Text('MAC originale : ${b.macAddress}', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12)),
-          Text('Sauvegardé le : ${_fmtDate(b.savedAt)}', style: const TextStyle(color: TdcColors.textMuted, fontSize: 11)),
+          if (b.hostname != null)
+            Text('Hostname original : ${b.hostname}',
+                style: const TextStyle(
+                    color: TdcColors.textSecondary, fontSize: 12)),
+          if (b.macAddress != null)
+            Text('MAC originale : ${b.macAddress}',
+                style: const TextStyle(
+                    color: TdcColors.textSecondary, fontSize: 12)),
+          Text('Sauvegardé le : ${_fmtDate(b.savedAt)}',
+              style: const TextStyle(color: TdcColors.textMuted, fontSize: 11)),
           const SizedBox(height: 12),
           Row(children: [
             ElevatedButton.icon(
-              onPressed: _anyRunning ? null : () async {
-                await _run('Restauration', () async {
-                  final results = await AnonymityService.restoreAll(_backup!, sudoPassword: _sudoPassword);
-                  if (results.isEmpty) return const AnonResult(success: true, message: 'Rien à restaurer');
-                  final allOk = results.every((r) => r.success);
-                  final msgs = results.map((r) => r.message).join(' | ');
-                  return AnonResult(success: allOk, message: msgs);
-                });
-              },
+              onPressed: _anyRunning
+                  ? null
+                  : () async {
+                      await _run('Restauration', () async {
+                        final results = await AnonymityService.restoreAll(
+                            _backup!,
+                            sudoPassword: _sudoPassword);
+                        if (results.isEmpty)
+                          return const AnonResult(
+                              success: true, message: 'Rien à restaurer');
+                        final allOk = results.every((r) => r.success);
+                        final msgs = results.map((r) => r.message).join(' | ');
+                        return AnonResult(success: allOk, message: msgs);
+                      });
+                    },
               icon: const Icon(Icons.restore, size: 16),
               label: const Text('Restaurer', style: TextStyle(fontSize: 12)),
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8)),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF10B981),
+                  foregroundColor: Colors.black,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8)),
             ),
             const SizedBox(width: 10),
             TextButton(
               onPressed: () async {
                 await AnonymityService.clearBackup();
-                setState(() { _backup = null; _backupExists = false; });
+                setState(() {
+                  _backup = null;
+                  _backupExists = false;
+                });
               },
-              child: const Text('Supprimer la sauvegarde', style: TextStyle(color: TdcColors.textMuted, fontSize: 12)),
+              child: const Text('Supprimer la sauvegarde',
+                  style: TextStyle(color: TdcColors.textMuted, fontSize: 12)),
             ),
           ]),
         ],
@@ -555,9 +826,17 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(children: [
-          const Text('JOURNAL DES OPÉRATIONS', style: TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
+          const Text('JOURNAL DES OPÉRATIONS',
+              style: TextStyle(
+                  color: TdcColors.textSecondary,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.1)),
           const Spacer(),
-          TextButton(onPressed: () => setState(() => _logs.clear()), child: const Text('Effacer', style: TextStyle(color: TdcColors.textMuted, fontSize: 11))),
+          TextButton(
+              onPressed: () => setState(() => _logs.clear()),
+              child: const Text('Effacer',
+                  style: TextStyle(color: TdcColors.textMuted, fontSize: 11))),
         ]),
         const SizedBox(height: 8),
         ..._logs.take(10).map((log) => _buildLogEntry(log)),
@@ -570,24 +849,47 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: log.success ? const Color(0xFF10B981).withOpacity(0.07) : const Color(0xFFEF4444).withOpacity(0.07),
+        color: log.success
+            ? const Color(0xFF10B981).withOpacity(0.07)
+            : const Color(0xFFEF4444).withOpacity(0.07),
         borderRadius: TdcRadius.sm,
-        border: Border.all(color: (log.success ? const Color(0xFF10B981) : const Color(0xFFEF4444)).withOpacity(0.3)),
+        border: Border.all(
+            color: (log.success
+                    ? const Color(0xFF10B981)
+                    : const Color(0xFFEF4444))
+                .withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            Icon(log.success ? Icons.check_circle : Icons.error, size: 14, color: log.success ? const Color(0xFF10B981) : const Color(0xFFEF4444)),
+            Icon(log.success ? Icons.check_circle : Icons.error,
+                size: 14,
+                color: log.success
+                    ? const Color(0xFF10B981)
+                    : const Color(0xFFEF4444)),
             const SizedBox(width: 6),
-            Expanded(child: Text(log.title, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 12, fontWeight: FontWeight.bold))),
-            Text(_fmtTime(log.time), style: const TextStyle(color: TdcColors.textMuted, fontSize: 10)),
+            Expanded(
+                child: Text(log.title,
+                    style: const TextStyle(
+                        color: TdcColors.textPrimary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold))),
+            Text(_fmtTime(log.time),
+                style:
+                    const TextStyle(color: TdcColors.textMuted, fontSize: 10)),
           ]),
           const SizedBox(height: 4),
-          Text(log.message, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12)),
+          Text(log.message,
+              style: const TextStyle(
+                  color: TdcColors.textSecondary, fontSize: 12)),
           if (log.detail.isNotEmpty) ...[
             const SizedBox(height: 4),
-            Text(log.detail, style: const TextStyle(color: TdcColors.textMuted, fontFamily: 'monospace', fontSize: 11)),
+            Text(log.detail,
+                style: const TextStyle(
+                    color: TdcColors.textMuted,
+                    fontFamily: 'monospace',
+                    fontSize: 11)),
           ],
         ],
       ),
@@ -600,7 +902,11 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
       child: ElevatedButton.icon(
         onPressed: _anyRunning ? null : onTap,
         icon: _anyRunning
-            ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+            ? const SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: Colors.white))
             : Icon(icon, size: 16),
         label: Text(label, style: const TextStyle(fontSize: 13)),
         style: ElevatedButton.styleFrom(
@@ -613,8 +919,10 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
     );
   }
 
-  String _fmtDate(DateTime dt) => '${dt.day.toString().padLeft(2,'0')}/${dt.month.toString().padLeft(2,'0')}/${dt.year} ${_fmtTime(dt)}';
-  String _fmtTime(DateTime dt) => '${dt.hour.toString().padLeft(2,'0')}:${dt.minute.toString().padLeft(2,'0')}:${dt.second.toString().padLeft(2,'0')}';
+  String _fmtDate(DateTime dt) =>
+      '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year} ${_fmtTime(dt)}';
+  String _fmtTime(DateTime dt) =>
+      '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}';
 }
 
 class _OpLog {
@@ -623,5 +931,10 @@ class _OpLog {
   final String message;
   final String detail;
   final DateTime time;
-  _OpLog({required this.title, required this.success, required this.message, required this.detail, required this.time});
+  _OpLog(
+      {required this.title,
+      required this.success,
+      required this.message,
+      required this.detail,
+      required this.time});
 }
