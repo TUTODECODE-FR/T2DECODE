@@ -187,7 +187,9 @@ Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## 🖼️ Captures d’écran
 
-À venir (documentation visuelle en cours).
+Capture réelle de l'application (build macOS v1.0.1) :
+
+![TUTODECODE - aperçu application](docs/images/screenshots/app-home-full.png)
 
 ---
 
