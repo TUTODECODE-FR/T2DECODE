@@ -217,13 +217,13 @@ const List<ToolCatalogEntry> toolCatalog = [
     breadcrumb: 'DNS',
   ),
   ToolCatalogEntry(
-    title: 'Anonymat & Identite Reseau',
+    title: 'Anonymisation locale & Identite reseau',
     description:
-        'Commandes pour changer hostname, MAC, nom utilisateur. IP publique toujours visible.',
+        'Operations systeme reelles: hostname, MAC, utilisateur, IPv6/mDNS/TTL. IP publique toujours visible.',
     icon: Icons.manage_accounts,
     color: Color(0xFF8B5CF6),
     route: '/tools/anonymity',
-    breadcrumb: 'Anonymat',
+    breadcrumb: 'Anonymisation',
   ),
 ];
 
