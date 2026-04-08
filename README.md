@@ -187,9 +187,18 @@ Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## 🖼️ Captures d’écran
 
-Capture réelle de l'application (build macOS v1.0.1) :
+Captures réelles de l’application (build macOS v1.0.1), pour montrer les sections principales :
 
-![TUTODECODE - aperçu application](docs/images/screenshots/app-home-full.png)
+| Section | Aperçu |
+| :--- | :--- |
+| Vue complète | ![Vue complète](docs/images/screenshots/app-home-full.png) |
+| Accueil | ![Accueil](docs/images/screenshots/section-home.png) |
+| Outils | ![Outils](docs/images/screenshots/section-tools.png) |
+| Cheat Sheets | ![Cheat Sheets](docs/images/screenshots/section-cheat-sheets.png) |
+| Ghost AI | ![Ghost AI](docs/images/screenshots/section-chat-ia.png) |
+| Paramètres | ![Paramètres](docs/images/screenshots/section-settings.png) |
+| Ghost Link | ![Ghost Link](docs/images/screenshots/section-ghost-link.png) |
+| Roadmap | ![Roadmap](docs/images/screenshots/section-roadmap.png) |
 
 ---
 
