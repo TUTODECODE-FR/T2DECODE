@@ -53,7 +53,7 @@ class _AppShellState extends State<AppShell> {
         const _NavItem(Icons.smart_toy, 'Chat IA', '/ai'),
         const _NavItem(Icons.settings, 'Paramètres', '/settings'),
         const _NavItem(Icons.map, 'Roadmap', '/roadmap'),
-        const _NavItem(Icons.science, 'Laboratoire', '/lab'),
+        const _NavItem(Icons.science, 'Simulations', '/lab'),
         const _NavItem(Icons.wifi_tethering, 'Ghost Link', '/ghost-link'),
       ];
 
@@ -88,7 +88,7 @@ class _AppShellState extends State<AppShell> {
       '/ai': 'Chat IA',
       '/ai-config': 'Config IA',
       '/roadmap': 'Roadmap',
-      '/lab': 'Laboratoire',
+      '/lab': 'Simulations',
       '/dashboard': 'Diagnostic',
       '/chapter': 'Cours',
       '/settings': 'Paramètres',
