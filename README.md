@@ -214,7 +214,7 @@ Site : [https://tutodecode.org](https://tutodecode.org)
 
 ## 🗺️ Roadmap
 
-### v1.0.x
+### v1.0.0
 - Stabilisation multi-plateforme
 - Finalisation des packages de distribution
 - Durcissement CI/CD
@@ -225,13 +225,34 @@ Site : [https://tutodecode.org](https://tutodecode.org)
 - UX améliorée des laboratoires
 - Catalogue d’outils offline enrichi
 
-### v1.2
-- Signatures et vérifications renforcées
-- Meilleure intégration locale Ollama
-- Documentation utilisateur complète
+---
+
+## ❤️ Participer au projet
+
+TUTODECODE est un projet open source porté par une association à but non lucratif.
+
+Si le projet vous parle, vous pouvez:
+- ⭐ Mettre une étoile sur le repo
+- 🧪 Tester l’application et partager vos retours
+- 📚 Proposer des modules (Markdown/JSON)
+- 🛠️ Contribuer au code ou aux outils
+
+Toute aide est la bienvenue 🙏
+
+---
+
+## 💬 Vision
+
+Construire une alternative locale, libre et accessible pour apprendre et expérimenter sans dépendre du cloud.
+
+"Le savoir technique ne devrait jamais dépendre d'une connexion."
 
 ---
 
 ## 📄 Licence
 
 GPLv3
+
+---
+
+Merci à toutes celles et ceux qui prennent le temps de tester, contribuer ou partager le projet ❤️
