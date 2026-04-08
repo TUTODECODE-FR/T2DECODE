@@ -66,12 +66,52 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
   }
 
   Future<void> _loadCurrentValues() async {
+    if (!mounted) return;
     setState(() => _loading = true);
-    final hn = await AnonymityService.getCurrentHostname();
-    final user = await AnonymityService.getCurrentUsername();
-    final macInfo = await AnonymityService.getCurrentMac(); // MacInfo
-    final profile = await AnonymityService.getDeviceProfile();
-    final backup = await AnonymityService.loadBackup();
+
+    String hn = 'inconnu';
+    String user = 'inconnu';
+    MacInfo macInfo = const MacInfo(interface: 'eth0', mac: 'inconnu');
+    AnonDeviceProfile profile = const AnonDeviceProfile(
+      platformLabel: 'Plateforme non supportee',
+      isPrivilegedSession: false,
+      canChangeHostname: false,
+      canChangeMac: false,
+      canCreateUser: false,
+      canTuneNetwork: false,
+      privilegeHint: 'Session non privilegiee',
+      notes:
+          'Lecture partielle. Certaines operations peuvent etre indisponibles.',
+    );
+    AnonBackup? backup;
+    final loadErrors = <String>[];
+
+    try {
+      hn = await AnonymityService.getCurrentHostname();
+    } catch (_) {
+      loadErrors.add('hostname');
+    }
+    try {
+      user = await AnonymityService.getCurrentUsername();
+    } catch (_) {
+      loadErrors.add('username');
+    }
+    try {
+      macInfo = await AnonymityService.getCurrentMac();
+    } catch (_) {
+      loadErrors.add('mac');
+    }
+    try {
+      profile = await AnonymityService.getDeviceProfile();
+    } catch (_) {
+      loadErrors.add('capabilites');
+    }
+    try {
+      backup = await AnonymityService.loadBackup();
+    } catch (_) {
+      loadErrors.add('backup');
+    }
+
     if (!mounted) return;
     setState(() {
       _curHostname = hn;
@@ -86,14 +126,17 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
       _backupExists = backup != null;
       _loading = false;
     });
-  }
 
-  void _regenerateAll() {
-    setState(() {
-      _hostnameCtrl.text = AnonymityService.generateHostname();
-      _macCtrl.text = AnonymityService.generateMac();
-      _usernameCtrl.text = AnonymityService.generateUsername();
-    });
+    if (loadErrors.isNotEmpty) {
+      _addLog(
+        'Chargement de l\'outil',
+        AnonResult(
+          success: false,
+          message:
+              'Lecture partielle du systeme (${loadErrors.join(', ')}). L\'outil reste ouvert et propose le mode manuel.',
+        ),
+      );
+    }
   }
 
   String? get _sudoPassword =>
@@ -131,16 +174,39 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
     });
   }
 
-  Future<void> _run(String title, Future<AnonResult> Function() action) async {
+  Future<void> _run(
+    String title,
+    Future<AnonResult> Function() action, {
+    List<AnonManualCommand> fallbackCommands = const [],
+  }) async {
     if (_anyRunning) return;
     setState(() => _anyRunning = true);
     try {
       final result = await action();
-      _addLog(title, result);
+      final enrichedResult = _attachFallbackIfNeeded(result, fallbackCommands);
+      _addLog(title, enrichedResult);
       if (result.success) await _loadCurrentValues();
     } finally {
       if (mounted) setState(() => _anyRunning = false);
     }
+  }
+
+  AnonResult _attachFallbackIfNeeded(
+      AnonResult result, List<AnonManualCommand> fallbackCommands) {
+    if (result.success || fallbackCommands.isEmpty) return result;
+    final commandsText = _manualCommandsToText(fallbackCommands);
+    final outputParts = <String>[
+      if (result.output != null && result.output!.isNotEmpty) result.output!,
+      '--- MODE MANUEL RECOMMANDE ---',
+      commandsText,
+    ];
+    return AnonResult(
+      success: false,
+      message:
+          '${result.message}. L\'operation automatique a echoue: utilisez les commandes manuelles ci-dessous.',
+      output: outputParts.join('\n'),
+      error: result.error,
+    );
   }
 
   // ── UI ────────────────────────────────────────────────────
@@ -170,6 +236,9 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
                 const SizedBox(height: 16),
                 _buildSection('Réseau : IPv6 / mDNS / TTL',
                     Icons.settings_ethernet, _buildNetCard()),
+                const SizedBox(height: 16),
+                _buildSection('Mode manuel pas a pas', Icons.terminal,
+                    _buildManualGuideCard()),
                 if (_backupExists) ...[
                   const SizedBox(height: 20),
                   _buildRestoreCard(),
@@ -497,7 +566,11 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
             await _run(
                 'Hostname → ${_hostnameCtrl.text}',
                 () => AnonymityService.changeHostname(_hostnameCtrl.text.trim(),
-                    sudoPassword: _sudoPassword));
+                    sudoPassword: _sudoPassword),
+                fallbackCommands: AnonymityService.buildManualCommands(
+                  topic: AnonManualTopic.hostname,
+                  hostname: _hostnameCtrl.text.trim(),
+                ));
           }),
         ],
       ),
@@ -553,7 +626,12 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
                 'MAC → ${_macCtrl.text}',
                 () => AnonymityService.changeMac(
                     _curInterface, _macCtrl.text.trim(),
-                    sudoPassword: _sudoPassword));
+                    sudoPassword: _sudoPassword),
+                fallbackCommands: AnonymityService.buildManualCommands(
+                  topic: AnonManualTopic.mac,
+                  interfaceName: _curInterface,
+                  mac: _macCtrl.text.trim(),
+                ));
           }),
         ],
       ),
@@ -604,7 +682,11 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
             await _run(
                 'Créer user ${_usernameCtrl.text}',
                 () => AnonymityService.createNewUser(_usernameCtrl.text.trim(),
-                    sudoPassword: _sudoPassword));
+                    sudoPassword: _sudoPassword),
+                fallbackCommands: AnonymityService.buildManualCommands(
+                  topic: AnonManualTopic.user,
+                  username: _usernameCtrl.text.trim(),
+                ));
           }),
         ],
       ),
@@ -642,7 +724,10 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
                   : () => _run(
                       'Désactiver IPv6',
                       () => AnonymityService.disableIPv6(
-                          sudoPassword: _sudoPassword)),
+                          sudoPassword: _sudoPassword),
+                      fallbackCommands: AnonymityService.buildManualCommands(
+                        topic: AnonManualTopic.ipv6,
+                      )),
               style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1E293B),
                   foregroundColor: TdcColors.textPrimary,
@@ -672,7 +757,10 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
                   : () => _run(
                       'Désactiver mDNS',
                       () => AnonymityService.disableMdns(
-                          sudoPassword: _sudoPassword)),
+                          sudoPassword: _sudoPassword),
+                      fallbackCommands: AnonymityService.buildManualCommands(
+                        topic: AnonManualTopic.mdns,
+                      )),
               style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1E293B),
                   foregroundColor: TdcColors.textPrimary,
@@ -729,7 +817,11 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
                     : () => _run(
                         'TTL → $_ttl',
                         () => AnonymityService.changeTTL(_ttl,
-                            sudoPassword: _sudoPassword)),
+                            sudoPassword: _sudoPassword),
+                        fallbackCommands: AnonymityService.buildManualCommands(
+                          topic: AnonManualTopic.ttl,
+                          ttl: _ttl,
+                        )),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1E293B),
                     foregroundColor: TdcColors.textPrimary,
@@ -742,6 +834,169 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildManualGuideCard() {
+    final hostname = _hostnameCtrl.text.trim();
+    final mac = _macCtrl.text.trim();
+    final user = _usernameCtrl.text.trim();
+
+    final sections = <MapEntry<String, List<AnonManualCommand>>>[
+      MapEntry(
+        'Hostname',
+        AnonymityService.buildManualCommands(
+          topic: AnonManualTopic.hostname,
+          hostname: hostname,
+        ),
+      ),
+      MapEntry(
+        'MAC',
+        AnonymityService.buildManualCommands(
+          topic: AnonManualTopic.mac,
+          interfaceName: _curInterface,
+          mac: mac,
+        ),
+      ),
+      MapEntry(
+        'Utilisateur',
+        AnonymityService.buildManualCommands(
+          topic: AnonManualTopic.user,
+          username: user,
+        ),
+      ),
+      MapEntry(
+        'IPv6',
+        AnonymityService.buildManualCommands(topic: AnonManualTopic.ipv6),
+      ),
+      MapEntry(
+        'mDNS',
+        AnonymityService.buildManualCommands(topic: AnonManualTopic.mdns),
+      ),
+      MapEntry(
+        'TTL',
+        AnonymityService.buildManualCommands(
+          topic: AnonManualTopic.ttl,
+          ttl: _ttl,
+        ),
+      ),
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: TdcColors.surface,
+        borderRadius: TdcRadius.md,
+        border: Border.all(color: TdcColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Si une operation automatique echoue, copiez ces commandes et executez-les dans votre terminal (ou PowerShell) en mode administrateur.',
+            style: TextStyle(color: TdcColors.textMuted, fontSize: 11),
+          ),
+          const SizedBox(height: 12),
+          ...sections.map((entry) => _buildManualTopic(entry.key, entry.value)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildManualTopic(String label, List<AnonManualCommand> commands) {
+    if (commands.isEmpty) return const SizedBox.shrink();
+    final fullText = _manualCommandsToText(commands);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: TdcColors.surfaceAlt,
+        borderRadius: TdcRadius.sm,
+        border: Border.all(color: TdcColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  color: TdcColors.textPrimary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              TextButton.icon(
+                onPressed: () =>
+                    Clipboard.setData(ClipboardData(text: fullText)),
+                icon: const Icon(Icons.copy, size: 14),
+                label: const Text('Copier', style: TextStyle(fontSize: 11)),
+                style: TextButton.styleFrom(
+                  foregroundColor: TdcColors.accent,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          ...commands.map((cmd) => _buildManualBlock(cmd)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildManualBlock(AnonManualCommand command) {
+    final block = command.commands.join('\n');
+    return Container(
+      margin: const EdgeInsets.only(top: 6),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0B1220),
+        borderRadius: TdcRadius.sm,
+        border: Border.all(color: TdcColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            command.title,
+            style: const TextStyle(
+              color: TdcColors.textSecondary,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 6),
+          SelectableText(
+            block,
+            style: const TextStyle(
+              color: TdcColors.textPrimary,
+              fontFamily: 'monospace',
+              fontSize: 11,
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            command.note,
+            style: const TextStyle(color: TdcColors.textMuted, fontSize: 10),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _manualCommandsToText(List<AnonManualCommand> commands) {
+    final lines = <String>[];
+    for (final command in commands) {
+      lines.add(command.title);
+      lines.addAll(command.commands);
+      lines.add('Note: ${command.note}');
+      lines.add('');
+    }
+    return lines.join('\n').trim();
   }
 
   Widget _buildRestoreCard() {
