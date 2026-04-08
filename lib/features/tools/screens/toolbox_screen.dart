@@ -148,7 +148,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
           ),
           const SizedBox(height: 6),
           const Text(
-            'Accès rapide aux simulateurs du Laboratoire pour pratiquer et tester en temps réel.',
+            'Acces rapide aux simulations pour pratiquer et tester en temps reel.',
             style: TextStyle(color: TdcColors.textSecondary, fontSize: 14),
           ),
           const SizedBox(height: 20),
@@ -202,10 +202,10 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
                     children: [
                       Icon(Icons.science, color: lab.color, size: 10),
                       const SizedBox(width: 3),
-                      Text('LAB',
+                      Text('SIMULATION',
                           style: TextStyle(
                               color: lab.color,
-                              fontSize: 9,
+                              fontSize: 8,
                               fontWeight: FontWeight.bold)),
                     ],
                   ),
@@ -214,7 +214,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
             ),
             const Spacer(),
             const SizedBox(height: 12),
-            Text('Simulateur ${lab.label}',
+            Text('Simulation ${lab.label}',
                 style: const TextStyle(
                     color: TdcColors.textPrimary,
                     fontSize: 16,

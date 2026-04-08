@@ -24,7 +24,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
-        title: 'Laboratoires Professionnels',
+        title: 'Simulations Professionnelles',
         showBackButton: true,
         actions: [],
       );
@@ -90,7 +90,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${labCatalog.length} laboratoires',
+                      '${labCatalog.length} simulations',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.4),
                         fontSize: 11,
