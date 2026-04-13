@@ -9,7 +9,7 @@ env:
   # Unifies push-tag and workflow_dispatch builds. On workflow_dispatch, this is the tag we rebuild.
   TARGET_TAG: ${{ github.event.inputs.target_tag != '' && github.event.inputs.target_tag || github.ref_name }}
 
-on:
+'on':
   push:
     tags: [ "v*" ]
   workflow_dispatch:
