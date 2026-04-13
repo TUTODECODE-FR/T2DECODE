@@ -168,11 +168,7 @@ jobs:
           if (Test-Path $iss) {
             $txt = Get-Content -Raw $iss
             if ($txt -match '#define\\s+MyAppVersion\\s+\"' -and $txt -notmatch '#ifndef\\s+MyAppVersion') {
-              $replacement = @'
-#ifndef MyAppVersion
-  #define MyAppVersion "0.0.0"
-#endif
-'@
+              $replacement = "#ifndef MyAppVersion`n  #define MyAppVersion ""0.0.0""`n#endif"
               $txt = $txt -replace '#define\\s+MyAppVersion\\s+\"[^\"]*\"', $replacement
               Set-Content -NoNewline -Encoding UTF8 $iss $txt
             }
