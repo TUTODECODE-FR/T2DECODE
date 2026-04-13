@@ -168,7 +168,12 @@ jobs:
           if (Test-Path $iss) {
             $txt = Get-Content -Raw $iss
             if ($txt -match '#define\\s+MyAppVersion\\s+\"' -and $txt -notmatch '#ifndef\\s+MyAppVersion') {
-              $txt = $txt -replace '#define\\s+MyAppVersion\\s+\"[^\"]*\"', "#ifndef MyAppVersion`r`n  #define MyAppVersion `\"0.0.0`\"`r`n#endif"
+              $replacement = @'
+#ifndef MyAppVersion
+  #define MyAppVersion "0.0.0"
+#endif
+'@
+              $txt = $txt -replace '#define\\s+MyAppVersion\\s+\"[^\"]*\"', $replacement
               Set-Content -NoNewline -Encoding UTF8 $iss $txt
             }
           }
@@ -502,25 +507,9 @@ jobs:
             exit 0
           fi
 
-          # Delete only the assets we re-upload to avoid duplicates on reruns.
-          ASSETS_TO_REPLACE=(
-            "SHA256SUMS.txt"
-            "SHA256SUMS.txt.sig"
-            "TUTODECODE-Android.apk"
-            "TUTODECODE-Android.aab"
-            "TUTODECODE-Windows.zip"
-            "TUTODECODE-Setup.exe"
-            "TUTODECODE-macOS.zip"
-            "TUTODECODE-macOS.dmg"
-            "TUTODECODE-macOS.pkg"
-            "TUTODECODE-Linux.tar.gz"
-            "TUTODECODE-Linux.deb"
-            "TUTODECODE-Linux.AppImage"
-            "TUTODECODE-Linux.tar.gz.sig"
-            "TUTODECODE-Linux.deb.sig"
-            "TUTODECODE-iOS.ipa"
-            "TDC.png"
-          )
+          # Safety: delete only what we are actually about to re-upload.
+          # This prevents wiping existing assets when a platform build fails.
+          mapfile -t ASSETS_TO_REPLACE < <(cd release_assets && ls -1)
 
           EXISTING="$(gh release view "$TAG" --json assets --jq '.assets[].name' || true)"
           for name in "${ASSETS_TO_REPLACE[@]}"; do
