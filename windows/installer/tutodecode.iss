@@ -2,7 +2,9 @@
 ; To be used with GitHub Actions or Manual Build
 
 #define MyAppName "TUTODECODE"
-#define MyAppVersion "1.0.3"
+#ifndef MyAppVersion
+  #define MyAppVersion "0.0.0"
+#endif
 #define MyAppPublisher "Association TUTODECODE"
 #define MyAppURL "https://www.tutodecode.org"
 #define MyAppExeName "tutodecode_flutter.exe"

@@ -5,6 +5,10 @@ permissions:
   id-token: write
   attestations: write
 
+env:
+  # Unifies push-tag and workflow_dispatch builds. On workflow_dispatch, this is the tag we rebuild.
+  TARGET_TAG: ${{ github.event.inputs.target_tag != '' && github.event.inputs.target_tag || github.ref_name }}
+
 on:
   push:
     tags: [ "v*" ]
@@ -74,6 +78,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          # On workflow_dispatch, build the exact tag the user asked for (avoid uploading main builds to an older tag release).
+          ref: ${{ env.TARGET_TAG }}
 
       - name: Setup Java
         if: matrix.platform == 'android'
@@ -142,7 +149,27 @@ jobs:
         run: |
           flutter build windows --release
           $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-          & $iscc /DMyAppVersion=${{ github.ref_name }} windows\installer\tutodecode.iss
+          $ver = "${{ env.TARGET_TAG }}"
+          if ($ver.StartsWith("v")) { $ver = $ver.Substring(1) }
+
+          # Backward-compatible: older tags hardcode `#define MyAppVersion "x.y.z"`,
+          # which breaks `/DMyAppVersion=...`. Patch the file in-place when needed.
+          $iss = "windows\\installer\\tutodecode.iss"
+          if (Test-Path $iss) {
+            $txt = Get-Content -Raw $iss
+            if ($txt -match '#define\\s+MyAppVersion\\s+\"' -and $txt -notmatch '#ifndef\\s+MyAppVersion') {
+              $txt = $txt -replace '#define\\s+MyAppVersion\\s+\"[^\"]*\"', "#ifndef MyAppVersion`r`n  #define MyAppVersion `\"0.0.0`\"`r`n#endif"
+              Set-Content -NoNewline -Encoding UTF8 $iss $txt
+            }
+          }
+          & $iscc /DMyAppVersion=$ver windows\installer\tutodecode.iss
+          # Inno Setup outputs relative to the script directory (windows/installer).
+          # Normalize to repo root so artifacts + signing steps can find it reliably.
+          $setupSrc = Join-Path "windows\\installer" "TUTODECODE-Setup.exe"
+          if (-not (Test-Path $setupSrc)) {
+            throw "Setup EXE introuvable: $setupSrc"
+          }
+          Copy-Item -Force $setupSrc "TUTODECODE-Setup.exe"
           Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath TUTODECODE-Windows.zip
 
       - name: Sign Windows binaries
@@ -189,7 +216,7 @@ jobs:
 
           # PKG (unsigned by default)
           chmod +x scripts/build_pkg.sh
-          APP_VERSION="${GITHUB_REF_NAME#v}" ./scripts/build_pkg.sh
+          APP_VERSION="${TARGET_TAG#v}" ./scripts/build_pkg.sh
           mv build/macos/Build/Products/Release/TUTODECODE_Installer.pkg TUTODECODE-macOS-Installer.pkg
           cp -f TUTODECODE-macOS-Installer.pkg TUTODECODE-macOS.pkg
 
@@ -249,7 +276,7 @@ jobs:
           flutter build linux --release
           tar -czvf TUTODECODE-Linux.tar.gz -C build/linux/x64/release/bundle/ .
 
-          VERSION_RAW="${GITHUB_REF_NAME#v}"
+          VERSION_RAW="${TARGET_TAG#v}"
           if [ -z "$VERSION_RAW" ] || [ "$VERSION_RAW" = "$GITHUB_REF_NAME" ]; then
             VERSION_RAW="1.0.0"
           fi
@@ -397,7 +424,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.event.inputs.target_tag != '' && github.event.inputs.target_tag || github.ref }}
 
       - name: Download all artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -453,6 +480,45 @@ jobs:
         uses: actions/attest-build-provenance@v2
         with:
           subject-path: 'release_assets/*'
+
+      - name: Remove existing release assets (idempotent)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          TAG="${{ github.event.inputs.target_tag || github.ref_name }}"
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            echo "No existing release for $TAG (nothing to delete)."
+            exit 0
+          fi
+
+          # Delete only the assets we re-upload to avoid duplicates on reruns.
+          ASSETS_TO_REPLACE=(
+            "SHA256SUMS.txt"
+            "SHA256SUMS.txt.sig"
+            "TUTODECODE-Android.apk"
+            "TUTODECODE-Android.aab"
+            "TUTODECODE-Windows.zip"
+            "TUTODECODE-Setup.exe"
+            "TUTODECODE-macOS.zip"
+            "TUTODECODE-macOS.dmg"
+            "TUTODECODE-macOS.pkg"
+            "TUTODECODE-Linux.tar.gz"
+            "TUTODECODE-Linux.deb"
+            "TUTODECODE-Linux.AppImage"
+            "TUTODECODE-Linux.tar.gz.sig"
+            "TUTODECODE-Linux.deb.sig"
+            "TUTODECODE-iOS.ipa"
+            "TDC.png"
+          )
+
+          EXISTING="$(gh release view "$TAG" --json assets --jq '.assets[].name' || true)"
+          for name in "${ASSETS_TO_REPLACE[@]}"; do
+            if printf '%s\n' "$EXISTING" | grep -Fxq "$name"; then
+              echo "Deleting $name"
+              gh release delete-asset "$TAG" "$name" -y
+            fi
+          done
 
       - name: Create or update release
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe
