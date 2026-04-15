@@ -38,7 +38,7 @@ if ! command -v flutter >/dev/null 2>&1; then
   export PATH="$FLUTTER_DIR/bin:$PATH"
 fi
 
-flutter --version | head -n 1 || true
+flutter --version || true
 
 FLUTTER_BIN="$(command -v flutter)"
 FLUTTER_ROOT="$(cd "$(dirname "$FLUTTER_BIN")/.." && pwd)"
@@ -85,7 +85,9 @@ EOF
 }
 
 write_flutter_ios_configs
-flutter build ios --config-only
+if ! flutter build ios --config-only --no-codesign; then
+  echo "[ci_post_clone] WARNING: flutter config-only failed; continuing with generated fallback xcconfigs" >&2
+fi
 write_flutter_ios_configs
 
 echo "[ci_post_clone] ios/Flutter files:"
