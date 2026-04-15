@@ -11,8 +11,8 @@ cd "$ROOT"
 echo "[ci_post_clone] repo: $ROOT"
 
 if ! command -v flutter >/dev/null 2>&1; then
-  echo "[ci_post_clone] flutter not found; installing Flutter SDK (stable)..." >&2
-  FLUTTER_DIR="$HOME/flutter"
+  echo "[ci_post_clone] flutter not found; installing Flutter SDK (stable) into repo/flutter ..." >&2
+  FLUTTER_DIR="$ROOT/flutter"
   if [ ! -d "$FLUTTER_DIR/.git" ]; then
     git clone --depth 1 -b stable https://github.com/flutter/flutter.git "$FLUTTER_DIR"
   fi
