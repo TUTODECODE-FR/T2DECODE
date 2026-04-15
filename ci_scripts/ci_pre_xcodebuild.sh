@@ -84,7 +84,9 @@ EOF
 # Write once before config-only (in case it fails)...
 write_flutter_ios_configs
 
-flutter build ios --config-only
+if ! flutter build ios --config-only --no-codesign; then
+  echo "[ci_pre_xcodebuild] WARNING: flutter config-only failed; continuing with generated fallback xcconfigs" >&2
+fi
 
 # ...and once after, because config-only may rewrite paths we don't want in CI.
 write_flutter_ios_configs
