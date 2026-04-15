@@ -86,7 +86,13 @@ ensure_pod() {
   fi
 
   gem install --no-document --user-install cocoapods
-  export PATH="$HOME/.gem/ruby/"*/bin:$PATH
+  if command -v ruby >/dev/null 2>&1; then
+    GEM_USER_DIR="$(ruby -e 'require \"rubygems\"; print Gem.user_dir' 2>/dev/null || true)"
+    if [ -n "${GEM_USER_DIR:-}" ]; then
+      export PATH="$GEM_USER_DIR/bin:$PATH"
+    fi
+  fi
+  export PATH="$HOME/Library/Ruby/Gems/"*/bin:"$HOME/.gem/ruby/"*/bin:$PATH
   command -v pod >/dev/null 2>&1
 }
 
