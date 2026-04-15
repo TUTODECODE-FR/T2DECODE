@@ -72,8 +72,27 @@ write_flutter_ios_configs
 echo "[ci_post_clone] ios/Flutter files:"
 ls -la ios/Flutter | sed -n '1,200p' || true
 
-if command -v pod >/dev/null 2>&1; then
-  (cd ios && pod install)
-else
-  echo "[ci_post_clone] WARN: CocoaPods (pod) not found; skipping pod install" >&2
+ensure_pod() {
+  if command -v pod >/dev/null 2>&1; then
+    return 0
+  fi
+
+  echo "[ci_post_clone] CocoaPods (pod) not found; installing (user-install)..." >&2
+  if ! command -v gem >/dev/null 2>&1; then
+    echo "[ci_post_clone] ERROR: RubyGems (gem) not available; cannot install CocoaPods" >&2
+    return 1
+  fi
+
+  gem install --no-document --user-install cocoapods
+  # Add user gem bin path to PATH (Ruby version varies on runners).
+  export PATH="$HOME/.gem/ruby/"*/bin:$PATH
+
+  command -v pod >/dev/null 2>&1
+}
+
+if ! ensure_pod; then
+  echo "[ci_post_clone] ERROR: CocoaPods unavailable; iOS build cannot proceed" >&2
+  exit 1
 fi
+
+(cd ios && pod install)
