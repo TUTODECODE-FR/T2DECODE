@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+set -x
+trap 'code=$?; echo "[ci_pre_xcodebuild] ERROR: exit=$code line=$LINENO cmd=${BASH_COMMAND}" >&2; exit $code' ERR
+
 # Optional Xcode Cloud hook before xcodebuild.
 # Keep it idempotent: some workflows re-run steps.
 
@@ -8,12 +11,27 @@ ROOT="${CI_PRIMARY_REPOSITORY_PATH:-$(pwd)}"
 cd "$ROOT"
 
 echo "[ci_pre_xcodebuild] Ensuring Flutter iOS config exists"
+echo "[ci_pre_xcodebuild] repo: $ROOT"
+echo "[ci_pre_xcodebuild] pwd: $(pwd)"
+
+retry() {
+  local max="${1:-3}"
+  shift || true
+  local n=1
+  until "$@"; do
+    if [ "$n" -ge "$max" ]; then
+      return 1
+    fi
+    n=$((n + 1))
+    sleep 3
+  done
+}
 
 if ! command -v flutter >/dev/null 2>&1; then
   echo "[ci_pre_xcodebuild] flutter not found; installing Flutter SDK (stable)..." >&2
   FLUTTER_DIR="$ROOT/flutter"
   if [ ! -d "$FLUTTER_DIR/.git" ]; then
-    git clone --depth 1 -b stable https://github.com/flutter/flutter.git "$FLUTTER_DIR"
+    retry 3 git clone --depth 1 -b stable https://github.com/flutter/flutter.git "$FLUTTER_DIR"
   fi
   export PATH="$FLUTTER_DIR/bin:$PATH"
 fi
@@ -101,4 +119,5 @@ if ! ensure_pod; then
   exit 1
 fi
 
-(cd ios && pod install)
+pod --version || true
+(cd ios && retry 3 pod install)
