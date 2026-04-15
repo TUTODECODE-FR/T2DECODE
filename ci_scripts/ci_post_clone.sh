@@ -1,6 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
+# Make failures actionable in Xcode Cloud logs.
+set -x
+trap 'code=$?; echo "[ci_post_clone] ERROR: exit=$code line=$LINENO cmd=${BASH_COMMAND}" >&2; exit $code' ERR
+
 # Xcode Cloud runs this script right after cloning the repo.
 # Goal: generate Flutter iOS xcconfig files ignored by git (Generated.xcconfig, flutter_export_environment.sh),
 # and ensure CocoaPods is installed for the iOS workspace build.
@@ -9,12 +13,27 @@ ROOT="${CI_PRIMARY_REPOSITORY_PATH:-$(pwd)}"
 cd "$ROOT"
 
 echo "[ci_post_clone] repo: $ROOT"
+echo "[ci_post_clone] pwd: $(pwd)"
+echo "[ci_post_clone] uname: $(uname -a)"
+
+retry() {
+  local max="${1:-3}"
+  shift || true
+  local n=1
+  until "$@"; do
+    if [ "$n" -ge "$max" ]; then
+      return 1
+    fi
+    n=$((n + 1))
+    sleep 3
+  done
+}
 
 if ! command -v flutter >/dev/null 2>&1; then
   echo "[ci_post_clone] flutter not found; installing Flutter SDK (stable) into repo/flutter ..." >&2
   FLUTTER_DIR="$ROOT/flutter"
   if [ ! -d "$FLUTTER_DIR/.git" ]; then
-    git clone --depth 1 -b stable https://github.com/flutter/flutter.git "$FLUTTER_DIR"
+    retry 3 git clone --depth 1 -b stable https://github.com/flutter/flutter.git "$FLUTTER_DIR"
   fi
   export PATH="$FLUTTER_DIR/bin:$PATH"
 fi
@@ -102,4 +121,6 @@ if ! ensure_pod; then
   exit 1
 fi
 
-(cd ios && pod install)
+pod --version || true
+
+(cd ios && retry 3 pod install)
