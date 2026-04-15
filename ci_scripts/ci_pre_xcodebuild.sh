@@ -11,7 +11,7 @@ echo "[ci_pre_xcodebuild] Ensuring Flutter iOS config exists"
 
 if ! command -v flutter >/dev/null 2>&1; then
   echo "[ci_pre_xcodebuild] flutter not found; installing Flutter SDK (stable)..." >&2
-  FLUTTER_DIR="$HOME/flutter"
+  FLUTTER_DIR="$ROOT/flutter"
   if [ ! -d "$FLUTTER_DIR/.git" ]; then
     git clone --depth 1 -b stable https://github.com/flutter/flutter.git "$FLUTTER_DIR"
   fi

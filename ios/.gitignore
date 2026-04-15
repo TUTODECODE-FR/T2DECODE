@@ -18,12 +18,15 @@ xcuserdata
 Flutter/App.framework
 Flutter/Flutter.framework
 Flutter/Flutter.podspec
-Flutter/Generated.xcconfig
+# NOTE: We keep Generated.xcconfig tracked for Xcode Cloud (it must exist at checkout).
+# It can still be regenerated locally/CI by `flutter build ios --config-only`.
+# Flutter/Generated.xcconfig
 Flutter/ephemeral/
 Flutter/app.flx
 Flutter/app.zip
 Flutter/flutter_assets/
-Flutter/flutter_export_environment.sh
+# Same rationale as Generated.xcconfig.
+# Flutter/flutter_export_environment.sh
 ServiceDefinitions.json
 Runner/GeneratedPluginRegistrant.*
 
