@@ -21,13 +21,17 @@ fi
 
 flutter --version | head -n 1 || true
 
+FLUTTER_BIN="$(command -v flutter)"
+FLUTTER_ROOT="$(cd "$(dirname "$FLUTTER_BIN")/.." && pwd)"
+export PATH="$FLUTTER_ROOT/bin:$PATH"
+
 flutter precache --ios
 flutter pub get
 
-# Ensure iOS Flutter config files exist with CI-absolute paths (Xcode Cloud needs them at build time).
-cat > ios/Flutter/Generated.xcconfig <<EOF
+write_flutter_ios_configs() {
+  cat > ios/Flutter/Generated.xcconfig <<EOF
 // Generated for Xcode Cloud. Local builds may overwrite via: flutter build ios --config-only
-FLUTTER_ROOT=$ROOT/flutter
+FLUTTER_ROOT=$FLUTTER_ROOT
 FLUTTER_APPLICATION_PATH=$ROOT
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_TARGET=lib/main.dart
@@ -42,11 +46,11 @@ TREE_SHAKE_ICONS=false
 PACKAGE_CONFIG=.dart_tool/package_config.json
 EOF
 
-cat > ios/Flutter/flutter_export_environment.sh <<EOF
+  cat > ios/Flutter/flutter_export_environment.sh <<EOF
 #!/bin/sh
 set -e
 # Generated for Xcode Cloud. Local builds may overwrite via: flutter build ios --config-only
-export "FLUTTER_ROOT=$ROOT/flutter"
+export "FLUTTER_ROOT=$FLUTTER_ROOT"
 export "FLUTTER_APPLICATION_PATH=$ROOT"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=lib/main.dart"
@@ -58,13 +62,15 @@ export "TRACK_WIDGET_CREATION=true"
 export "TREE_SHAKE_ICONS=false"
 export "PACKAGE_CONFIG=.dart_tool/package_config.json"
 EOF
-chmod +x ios/Flutter/flutter_export_environment.sh
+  chmod +x ios/Flutter/flutter_export_environment.sh
+}
+
+write_flutter_ios_configs
+flutter build ios --config-only
+write_flutter_ios_configs
 
 echo "[ci_post_clone] ios/Flutter files:"
 ls -la ios/Flutter | sed -n '1,200p' || true
-
-# Generates ios/Flutter/Generated.xcconfig and ios/Flutter/flutter_export_environment.sh
-flutter build ios --config-only
 
 if command -v pod >/dev/null 2>&1; then
   (cd ios && pod install)
