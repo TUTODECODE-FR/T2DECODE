@@ -12,6 +12,7 @@ val keyProperties = Properties()
 if (keyPropertiesFile.exists()) {
     keyProperties.load(FileInputStream(keyPropertiesFile))
 }
+val isFdroidBuild = (System.getenv("FDROID_BUILD") ?: "false").equals("true", ignoreCase = true)
 
 android {
     namespace = "com.tutodecode.app"
@@ -52,10 +53,10 @@ android {
             isDebuggable  = true
         }
         release {
-            signingConfig = if (keyPropertiesFile.exists()) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
+            if (keyPropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            } else if (!isFdroidBuild) {
+                signingConfig = signingConfigs.getByName("debug")
             }
             // For troubleshooting, let's disable minification temporarily
             isMinifyEnabled = false

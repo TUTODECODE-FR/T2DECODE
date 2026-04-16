@@ -3,7 +3,7 @@
 FLUTTER = flutter
 PUB = $(FLUTTER) pub
 
-.PHONY: help setup get build-android build-ios build-macos build-windows build-linux build-all clean test
+.PHONY: help setup get build-android build-android-fdroid build-ios build-macos build-windows build-linux build-all clean test
 
 help:
 	@echo "Usage: make [target]"
@@ -13,6 +13,7 @@ help:
 	@echo "  get            Install dependencies"
 	@echo "  test           Run unit tests"
 	@echo "  build-android  Build Android APK"
+	@echo "  build-android-fdroid  Build Android APK (F-Droid mode)"
 	@echo "  build-ios      Build iOS IPA (Requires macOS)"
 	@echo "  build-macos    Build macOS App (Requires macOS)"
 	@echo "  build-windows  Build Windows EXE (Requires Windows)"
@@ -33,11 +34,15 @@ test:
 build-android:
 	$(FLUTTER) build apk --release
 
+build-android-fdroid:
+	FDROID_BUILD=true $(FLUTTER) build apk --release --no-tree-shake-icons
+
 build-ios:
 	$(FLUTTER) build ipa --release
 
 build-macos:
-	$(FLUTTER) build macos --release
+	@chmod +x scripts/build_macos_local.sh
+	@./scripts/build_macos_local.sh
 
 build-dmg: build-macos
 	@chmod +x scripts/build_dmg.sh

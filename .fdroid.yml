@@ -1,0 +1,59 @@
+Categories:
+  - Education
+  - Security
+License: GPL-3.0-or-later
+AuthorName: Association TUTODECODE
+AuthorWebSite: https://tutodecode.org
+WebSite: https://tutodecode.org
+SourceCode: https://github.com/TUTODECODE-FR/TUTODECODE
+IssueTracker: https://github.com/TUTODECODE-FR/TUTODECODE/issues
+Changelog: https://github.com/TUTODECODE-FR/TUTODECODE/releases
+AutoName: TUTODECODE
+Summary: Offline-first technical learning and cybersecurity toolbox with local AI.
+Description: |-
+  TUTODECODE is an offline-first technical learning platform and cybersecurity toolbox.
+
+  Core principles:
+  * zero cloud dependency
+  * no analytics and no tracking
+  * local AI with Ollama
+  * auditable educational content and tools
+
+  Main features:
+  * local courses rendered from Markdown and JSON
+  * cybersecurity and system tools usable without internet access
+  * interactive labs for networking, security, Linux, cloud and cryptography basics
+  * LAN-only peer communication with GhostLink
+
+  Networking behavior:
+  * localhost access for local Ollama models
+  * LAN access for peer discovery and local messaging
+  * no third-party telemetry endpoints
+RepoType: git
+Repo: https://github.com/TUTODECODE-FR/TUTODECODE.git
+Builds:
+  - versionName: 1.0.1
+    versionCode: 1
+    commit: v1.0.1
+    sudo:
+      - apt-get update
+      - apt-get install -y curl git unzip xz-utils zip openjdk-17-jdk
+      - curl -fsSL https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.29.3-stable.tar.xz -o /tmp/flutter.tar.xz
+      - tar -C /opt -xf /tmp/flutter.tar.xz
+    init:
+      - export PATH=/opt/flutter/bin:$PATH
+      - flutter config --no-analytics
+      - flutter precache --android
+      - flutter pub get
+    gradle:
+      - yes
+    build:
+      - export PATH=/opt/flutter/bin:$PATH
+      - export FDROID_BUILD=true
+      - flutter build apk --release --no-tree-shake-icons
+    output: build/app/outputs/flutter-apk/app-release.apk
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9]+\.[0-9]+\.[0-9]+$
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.0.1
+CurrentVersionCode: 1

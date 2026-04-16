@@ -10,7 +10,8 @@ import '../service/ghost_link_service.dart';
 
 class GhostLinkScreen extends StatefulWidget {
   const GhostLinkScreen({super.key});
-  @override State<GhostLinkScreen> createState() => _GhostLinkScreenState();
+  @override
+  State<GhostLinkScreen> createState() => _GhostLinkScreenState();
 }
 
 class _GhostLinkScreenState extends State<GhostLinkScreen> {
@@ -32,8 +33,13 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
           ),
           Consumer<GhostLinkService>(
             builder: (context, gl, _) => IconButton(
-              icon: Icon(gl.isRunning ? Icons.wifi_tethering : Icons.wifi_tethering_off, color: gl.isRunning ? _color : TdcColors.textMuted),
-              tooltip: gl.isRunning ? 'Arrêter Ghost Link' : 'Démarrer Ghost Link',
+              icon: Icon(
+                  gl.isRunning
+                      ? Icons.wifi_tethering
+                      : Icons.wifi_tethering_off,
+                  color: gl.isRunning ? _color : TdcColors.textMuted),
+              tooltip:
+                  gl.isRunning ? 'Arrêter Ghost Link' : 'Démarrer Ghost Link',
               onPressed: () => _toggle(gl),
             ),
           ),
@@ -51,32 +57,39 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: TdcColors.surface,
-        title: const Text('Ajouter un pair', style: TextStyle(color: TdcColors.textPrimary)),
+        title: const Text('Ajouter un pair',
+            style: TextStyle(color: TdcColors.textPrimary)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: ipController,
-              decoration: const InputDecoration(labelText: 'Adresse IP', hintText: 'ex: 192.168.1.50'),
+              decoration: const InputDecoration(
+                  labelText: 'Adresse IP', hintText: 'ex: 192.168.1.50'),
               style: const TextStyle(color: TdcColors.textPrimary),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(labelText: 'Nom (optionnel)', hintText: 'ex: Mon PC'),
+              decoration: const InputDecoration(
+                  labelText: 'Nom (optionnel)', hintText: 'ex: Mon PC'),
               style: const TextStyle(color: TdcColors.textPrimary),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Annuler')),
           ElevatedButton(
             onPressed: () {
               if (ipController.text.isNotEmpty) {
-                gl.addManualPeer(ipController.text.trim(), nameController.text.trim());
+                gl.addManualPeer(
+                    ipController.text.trim(), nameController.text.trim());
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Recherche de ${ipController.text}...')),
+                  SnackBar(
+                      content: Text('Recherche de ${ipController.text}...')),
                 );
               }
             },
@@ -95,8 +108,16 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
       setState(() => _starting = true);
       final ok = await gl.start();
       if (!ok && mounted) {
+        final detail = gl.lastStartError?.trim();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Impossible de démarrer Ghost Link. Vérifiez vos permissions réseau.'), backgroundColor: TdcColors.danger),
+          SnackBar(
+            content: Text(
+              detail == null || detail.isEmpty
+                  ? 'Impossible de démarrer Ghost Link. Vérifiez vos permissions réseau.'
+                  : 'Impossible de démarrer Ghost Link. $detail',
+            ),
+            backgroundColor: TdcColors.warning,
+          ),
         );
       }
       if (mounted) setState(() => _starting = false);
@@ -123,46 +144,51 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
 
   Widget _buildHeader(GhostLinkService gl) {
     final isMobile = MediaQuery.of(context).size.width < 500;
-    
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(isMobile ? 16 : 20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [_color.withOpacity(0.15), _color.withOpacity(0.05)]),
+        gradient: LinearGradient(
+            colors: [_color.withOpacity(0.15), _color.withOpacity(0.05)]),
         borderRadius: TdcRadius.lg,
         border: Border.all(color: _color.withOpacity(0.3)),
       ),
-      child: isMobile 
-        ? Column(
-            children: [
-              Row(
-                children: [
-                  _buildHeaderIcon(gl),
-                  const SizedBox(width: 12),
-                  Expanded(child: _buildHeaderInfo(gl)),
-                ],
-              ),
-              const SizedBox(height: 16),
-              SizedBox(width: double.infinity, child: _buildHeaderAction(gl)),
-            ],
-          )
-        : Row(
-            children: [
-              _buildHeaderIcon(gl),
-              const SizedBox(width: 16),
-              Expanded(child: _buildHeaderInfo(gl)),
-              const SizedBox(width: 16),
-              _buildHeaderAction(gl),
-            ],
-          ),
+      child: isMobile
+          ? Column(
+              children: [
+                Row(
+                  children: [
+                    _buildHeaderIcon(gl),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildHeaderInfo(gl)),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(width: double.infinity, child: _buildHeaderAction(gl)),
+              ],
+            )
+          : Row(
+              children: [
+                _buildHeaderIcon(gl),
+                const SizedBox(width: 16),
+                Expanded(child: _buildHeaderInfo(gl)),
+                const SizedBox(width: 16),
+                _buildHeaderAction(gl),
+              ],
+            ),
     );
   }
 
   Widget _buildHeaderIcon(GhostLinkService gl) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: _color.withOpacity(0.2), shape: BoxShape.circle),
-      child: Icon(gl.isRunning ? Icons.wifi_tethering : Icons.wifi_tethering_off, color: _color, size: 24),
+      decoration:
+          BoxDecoration(color: _color.withOpacity(0.2), shape: BoxShape.circle),
+      child: Icon(
+          gl.isRunning ? Icons.wifi_tethering : Icons.wifi_tethering_off,
+          color: _color,
+          size: 24),
     );
   }
 
@@ -171,7 +197,11 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(children: [
-          const Text('Ghost Link', style: TextStyle(color: TdcColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text('Ghost Link',
+              style: TextStyle(
+                  color: TdcColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(width: 8),
           _StatusBadge(running: gl.isRunning),
         ]),
@@ -190,8 +220,12 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
               activeColor: _color,
             ),
           ),
-          Text(gl.stealthMode ? 'Mode Stealth ACTIF' : 'Mode Découverte PUBLIC', 
-            style: TextStyle(color: gl.stealthMode ? TdcColors.success : TdcColors.textMuted, fontSize: 10, fontWeight: FontWeight.bold)),
+          Text(gl.stealthMode ? 'Mode Stealth ACTIF' : 'Mode Découverte PUBLIC',
+              style: TextStyle(
+                  color:
+                      gl.stealthMode ? TdcColors.success : TdcColors.textMuted,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold)),
         ]),
       ],
     );
@@ -204,7 +238,7 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
         icon: const Icon(Icons.stop, size: 14),
         label: const Text('Arrêter'),
         style: OutlinedButton.styleFrom(
-          foregroundColor: TdcColors.danger, 
+          foregroundColor: TdcColors.danger,
           side: const BorderSide(color: TdcColors.danger),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         ),
@@ -212,9 +246,13 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
     }
     return ElevatedButton.icon(
       onPressed: _starting ? null : () => _toggle(gl),
-      icon: _starting 
-        ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) 
-        : const Icon(Icons.play_arrow, size: 14),
+      icon: _starting
+          ? const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                  strokeWidth: 2, color: Colors.white))
+          : const Icon(Icons.play_arrow, size: 14),
       label: Text(_starting ? 'Démarrage...' : 'Démarrer'),
       style: ElevatedButton.styleFrom(
         backgroundColor: _color,
@@ -229,17 +267,29 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 40),
-          Icon(Icons.wifi_off, size: 64, color: TdcColors.textMuted.withOpacity(0.5)),
+          Icon(Icons.wifi_off,
+              size: 64, color: TdcColors.textMuted.withOpacity(0.5)),
           const SizedBox(height: 20),
-          const Text('Ghost Link est arrêté', style: TextStyle(color: TdcColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text('Ghost Link est arrêté',
+              style: TextStyle(
+                  color: TdcColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          const Text('Démarrez Ghost Link pour découvrir\nles appareils sur votre réseau local.', textAlign: TextAlign.center, style: TextStyle(color: TdcColors.textSecondary, fontSize: 14, height: 1.5)),
+          const Text(
+              'Démarrez Ghost Link pour découvrir\nles appareils sur votre réseau local.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: TdcColors.textSecondary, fontSize: 14, height: 1.5)),
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: _starting ? null : () => _toggle(gl),
             icon: const Icon(Icons.wifi_tethering),
             label: const Text('Démarrer Ghost Link'),
-            style: ElevatedButton.styleFrom(backgroundColor: _color, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: _color,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 14)),
           ),
         ],
       ),
@@ -257,15 +307,24 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
               TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0, end: 1),
                 duration: const Duration(seconds: 2),
-                builder: (_, v, child) => Opacity(opacity: 0.4 + 0.6 * v, child: child),
-                child: Icon(Icons.radar, size: 64, color: _color.withOpacity(0.7)),
+                builder: (_, v, child) =>
+                    Opacity(opacity: 0.4 + 0.6 * v, child: child),
+                child:
+                    Icon(Icons.radar, size: 64, color: _color.withOpacity(0.7)),
               ),
               const SizedBox(height: 20),
-              const Text('Recherche de pairs...', style: TextStyle(color: TdcColors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text('Recherche de pairs...',
+                  style: TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              const Text('Les appareils sur votre WiFi apparaîtront ici.', style: TextStyle(color: TdcColors.textSecondary, fontSize: 13)),
+              const Text('Les appareils sur votre WiFi apparaîtront ici.',
+                  style:
+                      TextStyle(color: TdcColors.textSecondary, fontSize: 13)),
               const SizedBox(height: 4),
-              const Text('Lancez Ghost Link sur un autre appareil.', style: TextStyle(color: TdcColors.textMuted, fontSize: 12)),
+              const Text('Lancez Ghost Link sur un autre appareil.',
+                  style: TextStyle(color: TdcColors.textMuted, fontSize: 12)),
             ],
           ),
         ),
@@ -276,13 +335,16 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('${gl.peers.length} pair(s) détecté(s)', style: const TextStyle(color: TdcColors.textMuted, fontSize: 12, letterSpacing: 1)),
+          Text('${gl.peers.length} pair(s) détecté(s)',
+              style: const TextStyle(
+                  color: TdcColors.textMuted, fontSize: 12, letterSpacing: 1)),
           const SizedBox(height: 12),
           Expanded(
             child: ListView.separated(
               itemCount: gl.peers.length,
               separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (context, i) => _PeerCard(peer: gl.peers[i], accentColor: _color),
+              itemBuilder: (context, i) =>
+                  _PeerCard(peer: gl.peers[i], accentColor: _color),
             ),
           ),
         ],
@@ -299,7 +361,8 @@ class _PeerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TdcCard(
-      onTap: () => Navigator.pushNamed(context, '/ghost-link/chat', arguments: peer),
+      onTap: () =>
+          Navigator.pushNamed(context, '/ghost-link/chat', arguments: peer),
       child: Row(
         children: [
           CircleAvatar(
@@ -307,7 +370,10 @@ class _PeerCard extends StatelessWidget {
             backgroundColor: accentColor.withOpacity(0.15),
             child: Text(
               peer.name.isNotEmpty ? peer.name[0].toUpperCase() : '?',
-              style: TextStyle(color: accentColor, fontWeight: FontWeight.bold, fontSize: 18),
+              style: TextStyle(
+                  color: accentColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
             ),
           ),
           const SizedBox(width: 16),
@@ -317,27 +383,44 @@ class _PeerCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(peer.name, style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 15)),
+                    Text(peer.name,
+                        style: const TextStyle(
+                            color: TdcColors.textPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     if (peer.isManual) ...[
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(color: accentColor.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
-                        child: Text('MANUEL', style: TextStyle(color: accentColor, fontSize: 9, fontWeight: FontWeight.bold)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                            color: accentColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(4)),
+                        child: Text('MANUEL',
+                            style: TextStyle(
+                                color: accentColor,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold)),
                       ),
                     ],
                     if (peer.protocolVersion >= 2) ...[
                       const SizedBox(width: 6),
-                      Icon(Icons.lock, color: TdcColors.success.withOpacity(0.7), size: 12),
+                      Icon(Icons.lock,
+                          color: TdcColors.success.withOpacity(0.7), size: 12),
                     ],
                   ],
                 ),
                 Row(
                   children: [
-                    Text(peer.ip, style: const TextStyle(color: TdcColors.textMuted, fontFamily: 'monospace', fontSize: 12)),
+                    Text(peer.ip,
+                        style: const TextStyle(
+                            color: TdcColors.textMuted,
+                            fontFamily: 'monospace',
+                            fontSize: 12)),
                     if (peer.isPinned) ...[
                       const SizedBox(width: 6),
-                      Icon(Icons.push_pin, color: accentColor.withOpacity(0.5), size: 10),
+                      Icon(Icons.push_pin,
+                          color: accentColor.withOpacity(0.5), size: 10),
                     ],
                   ],
                 ),
@@ -351,14 +434,25 @@ class _PeerCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: Icon(peer.isPinned ? Icons.push_pin : Icons.push_pin_outlined, 
-                      size: 16, color: peer.isPinned ? accentColor : TdcColors.textMuted),
-                    onPressed: () => context.read<GhostLinkService>().togglePin(peer.id),
+                    icon: Icon(
+                        peer.isPinned
+                            ? Icons.push_pin
+                            : Icons.push_pin_outlined,
+                        size: 16,
+                        color:
+                            peer.isPinned ? accentColor : TdcColors.textMuted),
+                    onPressed: () =>
+                        context.read<GhostLinkService>().togglePin(peer.id),
                     visualDensity: VisualDensity.compact,
                   ),
                   Container(
-                    width: 8, height: 8,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: peer.isOnline ? TdcColors.success : TdcColors.danger),
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: peer.isOnline
+                            ? TdcColors.success
+                            : TdcColors.danger),
                   ),
                 ],
               ),
@@ -381,14 +475,26 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: (running ? TdcColors.success : TdcColors.danger).withOpacity(0.1),
+        color:
+            (running ? TdcColors.success : TdcColors.danger).withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: (running ? TdcColors.success : TdcColors.danger).withOpacity(0.3)),
+        border: Border.all(
+            color: (running ? TdcColors.success : TdcColors.danger)
+                .withOpacity(0.3)),
       ),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
-        Container(width: 6, height: 6, decoration: BoxDecoration(shape: BoxShape.circle, color: running ? TdcColors.success : TdcColors.danger)),
+        Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: running ? TdcColors.success : TdcColors.danger)),
         const SizedBox(width: 5),
-        Text(running ? 'En ligne' : 'Hors ligne', style: TextStyle(color: running ? TdcColors.success : TdcColors.danger, fontSize: 11, fontWeight: FontWeight.bold)),
+        Text(running ? 'En ligne' : 'Hors ligne',
+            style: TextStyle(
+                color: running ? TdcColors.success : TdcColors.danger,
+                fontSize: 11,
+                fontWeight: FontWeight.bold)),
       ]),
     );
   }

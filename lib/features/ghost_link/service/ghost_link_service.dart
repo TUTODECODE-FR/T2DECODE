@@ -43,7 +43,9 @@ class GhostPeer {
   final String ip;
   final bool isManual;
   DateTime lastSeen;
-  bool get isOnline => isManual ? _isManualOnline : DateTime.now().difference(lastSeen) < _peerTimeout;
+  bool get isOnline => isManual
+      ? _isManualOnline
+      : DateTime.now().difference(lastSeen) < _peerTimeout;
   bool _isManualOnline = false;
   final bool isPinned;
   final int protocolVersion;
@@ -59,16 +61,23 @@ class GhostPeer {
   });
 
   Map<String, dynamic> toMap() => {
-    'id': id, 'name': name, 'ip': ip, 'isManual': isManual, 'isPinned': isPinned, 'v': protocolVersion,
-  };
+        'id': id,
+        'name': name,
+        'ip': ip,
+        'isManual': isManual,
+        'isPinned': isPinned,
+        'v': protocolVersion,
+      };
 
   factory GhostPeer.fromMap(Map<String, dynamic> map) => GhostPeer(
-    id: map['id'], name: map['name'], ip: map['ip'],
-    lastSeen: DateTime.now(),
-    isManual: map['isManual'] ?? false,
-    isPinned: map['isPinned'] ?? false,
-    protocolVersion: map['v'] ?? 1,
-  );
+        id: map['id'],
+        name: map['name'],
+        ip: map['ip'],
+        lastSeen: DateTime.now(),
+        isManual: map['isManual'] ?? false,
+        isPinned: map['isPinned'] ?? false,
+        protocolVersion: map['v'] ?? 1,
+      );
 }
 
 class GhostMessage {
@@ -109,6 +118,8 @@ class GhostLinkService extends ChangeNotifier {
   // State
   bool _running = false;
   bool get isRunning => _running;
+  String? _lastStartError;
+  String? get lastStartError => _lastStartError;
 
   bool _stealthMode = true;
   bool get stealthMode => _stealthMode;
@@ -125,11 +136,13 @@ class GhostLinkService extends ChangeNotifier {
   }
 
   final Map<String, GhostPeer> _peers = {};
-  List<GhostPeer> get peers => _peers.values.toList()..sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
+  List<GhostPeer> get peers =>
+      _peers.values.toList()..sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
 
   // Messages groupés par IP du pair
   final Map<String, List<GhostMessage>> _conversations = {};
-  List<GhostMessage> getConversation(String peerIp) => _conversations[peerIp] ?? [];
+  List<GhostMessage> getConversation(String peerIp) =>
+      _conversations[peerIp] ?? [];
 
   // Sockets
   RawDatagramSocket? _udpSocket;
@@ -144,27 +157,10 @@ class GhostLinkService extends ChangeNotifier {
   // ─── Démarrage ──────────────────────────────────────────────
   Future<bool> start({String? name}) async {
     if (_running) return true;
+    _lastStartError = null;
     try {
-      // Récupérer IP locale
-      final info = NetworkInfo();
-      _localIp = await info.getWifiIP() ?? '127.0.0.1';
-
-      // Nom de l'appareil
-      final di = DeviceInfoPlugin();
-      if (Platform.isMacOS) {
-        final mac = await di.macOsInfo;
-        _localName = name ?? mac.computerName;
-      } else if (Platform.isWindows) {
-        final win = await di.windowsInfo;
-        _localName = name ?? win.computerName;
-      } else if (Platform.isAndroid) {
-        _localName = name ?? 'Android';
-      } else if (Platform.isIOS) {
-        final ios = await di.iosInfo;
-        _localName = name ?? ios.name;
-      } else {
-        _localName = name ?? 'GhostUser';
-      }
+      _localIp = await _resolveLocalIp();
+      _localName = await _resolveLocalName(name);
 
       // Charger état persistant
       final prefs = await SharedPreferences.getInstance();
@@ -180,19 +176,25 @@ class GhostLinkService extends ChangeNotifier {
       // Si aucun mot de passe n'a jamais été défini, générer un mot de passe
       // aléatoire unique par appareil et le persister (évite le mot de passe
       // partagé entre tous les appareils).
-      var savedPassword = await _secureStorage.read(key: _kRoomPasswordKey);
+      var savedPassword = await _readRoomPassword();
       if (savedPassword == null || savedPassword.isEmpty) {
         savedPassword = _generateSecureId('room');
-        await _secureStorage.write(key: _kRoomPasswordKey, value: savedPassword);
+        await _persistRoomPassword(savedPassword);
       }
       _roomPassword = savedPassword;
       _roomHash = _computeRoomHash(_roomPassword);
 
-      // Socket UDP pour discovery
-      _udpSocket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, _discoveryPort,
-          reuseAddress: true, reusePort: true);
-      _udpSocket!.broadcastEnabled = true;
-      _udpSocket!.listen(_onUdpData);
+      // Socket UDP pour discovery (optionnel selon OS/politiques réseau).
+      try {
+        _udpSocket = await _bindDiscoverySocket();
+        _udpSocket!.broadcastEnabled = true;
+        _udpSocket!.listen(_onUdpData);
+      } catch (e) {
+        _udpSocket = null;
+        _lastStartError =
+            'Découverte LAN limitée sur cet OS. Ajoutez des pairs via IP manuelle.';
+        if (kDebugMode) debugPrint('[GhostLink] UDP discovery disabled: $e');
+      }
 
       // Serveur TCP pour recevoir les messages
       _tcpServer = await ServerSocket.bind(InternetAddress.anyIPv4, _tcpPort);
@@ -209,10 +211,14 @@ class GhostLinkService extends ChangeNotifier {
         _cleanupMessages();
       });
 
-      if (kDebugMode) debugPrint('[GhostLink] Started. IP=$_localIp Name=$_localName');
+      if (kDebugMode)
+        debugPrint('[GhostLink] Started. IP=$_localIp Name=$_localName');
       return true;
     } catch (e) {
-      if (kDebugMode) debugPrint('[GhostLink] Start failed: $e');
+      await stop();
+      _lastStartError = _formatStartupError(e);
+      if (kDebugMode) debugPrint('[GhostLink] Start failed: $_lastStartError');
+      notifyListeners();
       return false;
     }
   }
@@ -233,10 +239,13 @@ class GhostLinkService extends ChangeNotifier {
 
   // ─── Persistence ──────────────────────────────────────────────
   static const String _prefKey = 'ghost_link_pinned_peers';
-  
+
   Future<void> _savePeers() async {
     final prefs = await SharedPreferences.getInstance();
-    final pinned = _peers.values.where((p) => p.isPinned == true).map((p) => jsonEncode(p.toMap())).toList();
+    final pinned = _peers.values
+        .where((p) => p.isPinned == true)
+        .map((p) => jsonEncode(p.toMap()))
+        .toList();
     await prefs.setStringList(_prefKey, pinned);
   }
 
@@ -258,21 +267,52 @@ class GhostLinkService extends ChangeNotifier {
   // L'utilisateur peut rejoindre une salle privée avec un mot de passe personnalisé.
   static const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   static const String _kRoomPasswordKey = 'ghost_link_room_password_v1';
+  static const String _kRoomPasswordFallbackPrefKey =
+      'ghost_link_room_password_fallback_v1';
 
   final _cipher = AesGcm.with256bits();
 
   // Salt fixe et connu — pas un secret, la sécurité vient du mot de passe.
   // Encodé en UTF-8 de 'TUTODECODE_GHOSTLINK_V2_SALT'
   static const List<int> _kRoomKeySalt = [
-    0x54, 0x55, 0x54, 0x4F, 0x44, 0x45, 0x43, 0x4F,
-    0x44, 0x45, 0x5F, 0x47, 0x48, 0x4F, 0x53, 0x54,
-    0x4C, 0x49, 0x4E, 0x4B, 0x5F, 0x56, 0x32, 0x5F,
-    0x53, 0x41, 0x4C, 0x54, 0x00, 0x00, 0x00, 0x00,
+    0x54,
+    0x55,
+    0x54,
+    0x4F,
+    0x44,
+    0x45,
+    0x43,
+    0x4F,
+    0x44,
+    0x45,
+    0x5F,
+    0x47,
+    0x48,
+    0x4F,
+    0x53,
+    0x54,
+    0x4C,
+    0x49,
+    0x4E,
+    0x4B,
+    0x5F,
+    0x56,
+    0x32,
+    0x5F,
+    0x53,
+    0x41,
+    0x4C,
+    0x54,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
   ];
 
-  String _roomPassword = '';   // Initialisé dans start() depuis le stockage sécurisé
-  String _roomHash = '';        // Identifiant de salle (SHA-256 tronqué, non-secret)
-  SecretKey? _derivedKey;  // Cache de la clé dérivée
+  String _roomPassword =
+      ''; // Initialisé dans start() depuis le stockage sécurisé
+  String _roomHash = ''; // Identifiant de salle (SHA-256 tronqué, non-secret)
+  SecretKey? _derivedKey; // Cache de la clé dérivée
 
   String get roomPassword => _roomPassword;
   String get roomHash => _roomHash;
@@ -303,12 +343,116 @@ class GhostLinkService extends ChangeNotifier {
   /// Change le mot de passe de la salle et re-dérive la clé.
   /// Si le champ est laissé vide, un nouveau mot de passe aléatoire est généré.
   Future<void> setRoomPassword(String password) async {
-    final p = password.trim().isEmpty ? _generateSecureId('room') : password.trim();
+    final p =
+        password.trim().isEmpty ? _generateSecureId('room') : password.trim();
     _roomPassword = p;
     _derivedKey = null; // Invalider le cache
     _roomHash = _computeRoomHash(p);
-    await _secureStorage.write(key: _kRoomPasswordKey, value: p);
+    await _persistRoomPassword(p);
     notifyListeners();
+  }
+
+  Future<String> _resolveLocalIp() async {
+    try {
+      final info = NetworkInfo();
+      final wifiIp = await info.getWifiIP();
+      if (wifiIp != null && wifiIp.isNotEmpty) return wifiIp;
+    } catch (_) {
+      // Fallback via interfaces réseau natives si plugin indisponible.
+    }
+
+    try {
+      final interfaces = await NetworkInterface.list(
+        includeLoopback: false,
+        type: InternetAddressType.IPv4,
+      );
+      for (final iface in interfaces) {
+        for (final addr in iface.addresses) {
+          if (!addr.isLoopback &&
+              !addr.address.startsWith('169.254.') &&
+              addr.address.isNotEmpty) {
+            return addr.address;
+          }
+        }
+      }
+    } catch (_) {}
+    return '127.0.0.1';
+  }
+
+  Future<String> _resolveLocalName(String? preferredName) async {
+    if (preferredName != null && preferredName.trim().isNotEmpty) {
+      return preferredName.trim();
+    }
+    try {
+      final di = DeviceInfoPlugin();
+      if (Platform.isMacOS) return (await di.macOsInfo).computerName;
+      if (Platform.isWindows) return (await di.windowsInfo).computerName;
+      if (Platform.isIOS) return (await di.iosInfo).name;
+      if (Platform.isAndroid) return (await di.androidInfo).model;
+    } catch (_) {
+      // Fallback si plugin non disponible sur la cible.
+    }
+    return Platform.localHostname;
+  }
+
+  Future<String?> _readRoomPassword() async {
+    try {
+      final value = await _secureStorage.read(key: _kRoomPasswordKey);
+      if (value != null && value.isNotEmpty) return value;
+    } catch (_) {
+      // Linux/Windows peuvent ne pas avoir de keychain configurée.
+    }
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_kRoomPasswordFallbackPrefKey);
+  }
+
+  Future<void> _persistRoomPassword(String value) async {
+    try {
+      await _secureStorage.write(key: _kRoomPasswordKey, value: value);
+      return;
+    } catch (_) {
+      // Fallback persistant hors secure storage.
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kRoomPasswordFallbackPrefKey, value);
+  }
+
+  Future<RawDatagramSocket> _bindDiscoverySocket() async {
+    Object? lastError;
+    final attempts = <Map<String, bool>>[
+      {'reuseAddress': true, 'reusePort': true},
+      {'reuseAddress': true, 'reusePort': false},
+      {'reuseAddress': false, 'reusePort': false},
+    ];
+
+    for (final options in attempts) {
+      try {
+        return await RawDatagramSocket.bind(
+          InternetAddress.anyIPv4,
+          _discoveryPort,
+          reuseAddress: options['reuseAddress']!,
+          reusePort: options['reusePort']!,
+        );
+      } catch (e) {
+        lastError = e;
+      }
+    }
+    throw lastError ?? Exception('Impossible de créer le socket UDP');
+  }
+
+  String _formatStartupError(Object error) {
+    if (error is SocketException) {
+      final msg = error.message.toLowerCase();
+      if (msg.contains('address already in use')) {
+        return 'Port Ghost Link déjà utilisé (UDP $_discoveryPort / TCP $_tcpPort).';
+      }
+      if (msg.contains('operation not permitted') ||
+          msg.contains('permission denied')) {
+        return 'Permission réseau refusée par le système.';
+      }
+      return 'Erreur socket: ${error.message}';
+    }
+    return error.toString();
   }
 
   Future<String> _encrypt(String text) async {
@@ -404,7 +548,8 @@ class GhostLinkService extends ChangeNotifier {
       if (_peers.containsKey(id)) {
         _peers[id]!.lastSeen = DateTime.now();
       } else {
-        _peers[id] = GhostPeer(id: id, name: name ?? 'Inconnu', ip: ip, lastSeen: DateTime.now());
+        _peers[id] = GhostPeer(
+            id: id, name: name ?? 'Inconnu', ip: ip, lastSeen: DateTime.now());
       }
       notifyListeners();
     } catch (_) {}
@@ -431,7 +576,9 @@ class GhostLinkService extends ChangeNotifier {
     if (_peers.containsKey(peerId)) {
       final p = _peers[peerId]!;
       _peers[peerId] = GhostPeer(
-        id: p.id, name: p.name, ip: p.ip,
+        id: p.id,
+        name: p.name,
+        ip: p.ip,
         lastSeen: p.lastSeen,
         isManual: p.isManual,
         isPinned: !p.isPinned,
@@ -444,9 +591,10 @@ class GhostLinkService extends ChangeNotifier {
   Future<bool> verifyPeerConnection(String ip) async {
     final id = 'manual_$ip';
     if (!_peers.containsKey(id)) return false;
-    
+
     try {
-      final socket = await Socket.connect(ip, _tcpPort, timeout: const Duration(seconds: 2));
+      final socket = await Socket.connect(ip, _tcpPort,
+          timeout: const Duration(seconds: 2));
       await socket.close();
       _peers[id]!._isManualOnline = true;
       _peers[id]!.lastSeen = DateTime.now();
@@ -464,7 +612,7 @@ class GhostLinkService extends ChangeNotifier {
     _peers.removeWhere((_, peer) => !peer.isManual && !peer.isOnline);
     // For manual peers, we just update status periodically
     for (final p in _peers.values.where((p) => p.isManual)) {
-       verifyPeerConnection(p.ip);
+      verifyPeerConnection(p.ip);
     }
     if (_peers.length != before) notifyListeners();
   }
@@ -504,8 +652,12 @@ class GhostLinkService extends ChangeNotifier {
           if (lines.last.isNotEmpty) buffer.write(lines.last);
         }
       },
-      onDone: () { _activeSockets.remove(remoteIp); },
-      onError: (_) { _activeSockets.remove(remoteIp); },
+      onDone: () {
+        _activeSockets.remove(remoteIp);
+      },
+      onError: (_) {
+        _activeSockets.remove(remoteIp);
+      },
       cancelOnError: false,
     );
   }
@@ -520,7 +672,8 @@ class GhostLinkService extends ChangeNotifier {
     socket.write('${jsonEncode(packet)}\n');
   }
 
-  Future<void> _handleIncomingPacket(String raw, String senderIp, Socket socket) async {
+  Future<void> _handleIncomingPacket(
+      String raw, String senderIp, Socket socket) async {
     try {
       final data = jsonDecode(raw) as Map<String, dynamic>;
       final type = data['type'] as String;
@@ -531,7 +684,12 @@ class GhostLinkService extends ChangeNotifier {
           final name = data['name'] as String;
           final version = data['v'] as int? ?? 1;
           if (id != _localId) {
-            _peers[id] = GhostPeer(id: id, name: name, ip: senderIp, lastSeen: DateTime.now(), protocolVersion: version);
+            _peers[id] = GhostPeer(
+                id: id,
+                name: name,
+                ip: senderIp,
+                lastSeen: DateTime.now(),
+                protocolVersion: version);
             notifyListeners();
           }
           break;
@@ -540,16 +698,17 @@ class GhostLinkService extends ChangeNotifier {
           if (encrypted == null || encrypted.isEmpty) break;
           final decrypted = await _decrypt(encrypted);
           if (decrypted != null && decrypted.isNotEmpty) {
-             _handleDecryptedMessage(decrypted, senderIp);
-             // Send ACK
-             final msgId = (jsonDecode(decrypted) as Map<String, dynamic>)['id'];
-             if (msgId != null) {
-               _sendPacket(socket, {'type': 'ack', 'id': msgId}, encrypt: false);
-             }
+            _handleDecryptedMessage(decrypted, senderIp);
+            // Send ACK
+            final msgId = (jsonDecode(decrypted) as Map<String, dynamic>)['id'];
+            if (msgId != null) {
+              _sendPacket(socket, {'type': 'ack', 'id': msgId}, encrypt: false);
+            }
           }
           break;
         case 'ack':
-          if (kDebugMode) debugPrint('[GhostLink] ACK received for msg ${data['id']}');
+          if (kDebugMode)
+            debugPrint('[GhostLink] ACK received for msg ${data['id']}');
           break;
         case 'req_info':
           _sendSystemInfo(socket);
@@ -581,21 +740,21 @@ class GhostLinkService extends ChangeNotifier {
   }
 
   void _handleSystemInfoResponse(dynamic data, String senderIp) {
-     // Notify UI with system info
-     if (kDebugMode) debugPrint('[GhostLink] System info from $senderIp: $data');
+    // Notify UI with system info
+    if (kDebugMode) debugPrint('[GhostLink] System info from $senderIp: $data');
   }
 
   void _handleFileMeta(Map<String, dynamic> data, String senderIp) {
     _conversations.putIfAbsent(senderIp, () => []).add(GhostMessage(
-      id: data['id'],
-      fromId: data['fromId'],
-      fromName: data['fromName'],
-      peerIp: senderIp,
-      text: 'Fichier entrant : ${data['name']} (${data['size']} octets)',
-      timestamp: DateTime.now(),
-      isOwn: false,
-      fileName: data['name'],
-    ));
+          id: data['id'],
+          fromId: data['fromId'],
+          fromName: data['fromName'],
+          peerIp: senderIp,
+          text: 'Fichier entrant : ${data['name']} (${data['size']} octets)',
+          timestamp: DateTime.now(),
+          isOwn: false,
+          fileName: data['name'],
+        ));
     notifyListeners();
   }
 
@@ -616,7 +775,9 @@ class GhostLinkService extends ChangeNotifier {
         text: data['text'] as String,
         timestamp: DateTime.fromMillisecondsSinceEpoch(data['ts'] as int),
         isOwn: false,
-        expiry: data.containsKey('expiry') ? DateTime.fromMillisecondsSinceEpoch(data['expiry'] as int) : null,
+        expiry: data.containsKey('expiry')
+            ? DateTime.fromMillisecondsSinceEpoch(data['expiry'] as int)
+            : null,
         fileName: data['fileName'] as String?,
       );
       // Éviter les doublons
@@ -628,24 +789,28 @@ class GhostLinkService extends ChangeNotifier {
     } catch (_) {}
   }
 
-  Future<void> _sendPacket(Socket socket, Map<String, dynamic> packet, {bool encrypt = true}) async {
+  Future<void> _sendPacket(Socket socket, Map<String, dynamic> packet,
+      {bool encrypt = true}) async {
     if (encrypt) {
       final raw = jsonEncode(packet);
       final encrypted = await _encrypt(raw);
-      socket.write('${jsonEncode({'type': 'secure_msg', 'data': encrypted})}\n');
+      socket
+          .write('${jsonEncode({'type': 'secure_msg', 'data': encrypted})}\n');
     } else {
       socket.write('${jsonEncode(packet)}\n');
     }
   }
 
-  Future<bool> sendMessage(GhostPeer peer, String text, {Duration? expiry}) async {
+  Future<bool> sendMessage(GhostPeer peer, String text,
+      {Duration? expiry}) async {
     try {
       Socket? socket = _activeSockets[peer.ip];
       if (socket == null) {
-        socket = await Socket.connect(peer.ip, _tcpPort, timeout: const Duration(seconds: 4));
+        socket = await Socket.connect(peer.ip, _tcpPort,
+            timeout: const Duration(seconds: 4));
         _setupSocket(socket, peer.ip);
         await _sendHandshake(socket);
-        await Future.delayed(const Duration(milliseconds: 200)); 
+        await Future.delayed(const Duration(milliseconds: 200));
       }
 
       // ID cryptographiquement aléatoire — évite l'énumération et les replays.
@@ -659,7 +824,8 @@ class GhostLinkService extends ChangeNotifier {
         'fromName': _localName,
         'text': text,
         'ts': DateTime.now().millisecondsSinceEpoch,
-        if (expiry != null) 'expiry': DateTime.now().add(expiry).millisecondsSinceEpoch,
+        if (expiry != null)
+          'expiry': DateTime.now().add(expiry).millisecondsSinceEpoch,
       };
 
       await _sendPacket(socket, packet);
@@ -724,15 +890,15 @@ class GhostLinkService extends ChangeNotifier {
     }
 
     _conversations.putIfAbsent(peer.ip, () => []).add(GhostMessage(
-      id: msgId,
-      fromId: _localId,
-      fromName: _localName,
-      peerIp: peer.ip,
-      text: 'Fichier envoyé : ${file.name}',
-      timestamp: DateTime.now(),
-      isOwn: true,
-      fileName: file.name,
-    ));
+          id: msgId,
+          fromId: _localId,
+          fromName: _localName,
+          peerIp: peer.ip,
+          text: 'Fichier envoyé : ${file.name}',
+          timestamp: DateTime.now(),
+          isOwn: true,
+          fileName: file.name,
+        ));
     notifyListeners();
   }
 }
