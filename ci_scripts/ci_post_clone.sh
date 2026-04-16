@@ -12,9 +12,15 @@ trap 'code=$?; echo "[ci_post_clone] ERROR: exit=$code line=$LINENO cmd=${BASH_C
 ROOT="${CI_PRIMARY_REPOSITORY_PATH:-$(pwd)}"
 cd "$ROOT"
 
+# Keep build metadata in sync with Xcode Cloud run numbers to avoid
+# duplicate uploads rejected by App Store Connect.
+BUILD_NAME="${FLUTTER_BUILD_NAME_OVERRIDE:-1.0.1}"
+BUILD_NUMBER="${CI_BUILD_NUMBER:-1}"
+
 echo "[ci_post_clone] repo: $ROOT"
 echo "[ci_post_clone] pwd: $(pwd)"
 echo "[ci_post_clone] uname: $(uname -a)"
+echo "[ci_post_clone] build_name=$BUILD_NAME build_number=$BUILD_NUMBER"
 
 retry() {
   local max="${1:-3}"
@@ -55,8 +61,8 @@ FLUTTER_APPLICATION_PATH=$ROOT
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_TARGET=lib/main.dart
 FLUTTER_BUILD_DIR=build
-FLUTTER_BUILD_NAME=1.0.1
-FLUTTER_BUILD_NUMBER=1
+FLUTTER_BUILD_NAME=$BUILD_NAME
+FLUTTER_BUILD_NUMBER=$BUILD_NUMBER
 EXCLUDED_ARCHS[sdk=iphonesimulator*]=i386
 EXCLUDED_ARCHS[sdk=iphoneos*]=armv7
 DART_OBFUSCATION=false
@@ -74,8 +80,8 @@ export "FLUTTER_APPLICATION_PATH=$ROOT"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=lib/main.dart"
 export "FLUTTER_BUILD_DIR=build"
-export "FLUTTER_BUILD_NAME=1.0.1"
-export "FLUTTER_BUILD_NUMBER=1"
+export "FLUTTER_BUILD_NAME=$BUILD_NAME"
+export "FLUTTER_BUILD_NUMBER=$BUILD_NUMBER"
 export "DART_OBFUSCATION=false"
 export "TRACK_WIDGET_CREATION=true"
 export "TREE_SHAKE_ICONS=false"
