@@ -16,3 +16,8 @@
 ## Provenance CI/CD
 - La release est produite par `.github/workflows/build_release.yml`
 - Les workflows sont versionnés dans le repo pour audit
+
+## Préparation F-Droid
+- Le dépôt inclut `.fdroid.yml` à la racine
+- Les métadonnées Android sont disponibles dans `fastlane/metadata/android/en-US/`
+- Build locale dédiée : `make build-android-fdroid`

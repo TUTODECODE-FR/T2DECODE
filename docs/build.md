@@ -20,6 +20,7 @@ make test
 ## Builds
 ```bash
 make build-android
+make build-android-fdroid
 make build-macos
 make build-linux
 make build-dmg
