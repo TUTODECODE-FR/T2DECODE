@@ -16,6 +16,15 @@
 *.iml
 .DS_Store
 
+# Continue (local editor agent state)
+.continue/
+
+# Local backup/garbage folders created during builds or experiments
+build.backup-*/
+/build 2/
+/~
+/section-*.png
+
 # ── Fichiers de signature (NE JAMAIS COMMITTER) ──────────────
 # Android keystore
 android/key.properties
