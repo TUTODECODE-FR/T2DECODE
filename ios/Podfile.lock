@@ -11,27 +11,27 @@ PODS:
     - DKImagePickerController/Core
     - DKPhotoGallery
   - DKImagePickerController/Resource (4.3.9)
-  - DKPhotoGallery (0.0.19):
-    - DKPhotoGallery/Core (= 0.0.19)
-    - DKPhotoGallery/Model (= 0.0.19)
-    - DKPhotoGallery/Preview (= 0.0.19)
-    - DKPhotoGallery/Resource (= 0.0.19)
+  - DKPhotoGallery (0.0.18):
+    - DKPhotoGallery/Core (= 0.0.18)
+    - DKPhotoGallery/Model (= 0.0.18)
+    - DKPhotoGallery/Preview (= 0.0.18)
+    - DKPhotoGallery/Resource (= 0.0.18)
     - SDWebImage
     - SwiftyGif
-  - DKPhotoGallery/Core (0.0.19):
+  - DKPhotoGallery/Core (0.0.18):
     - DKPhotoGallery/Model
     - DKPhotoGallery/Preview
     - SDWebImage
     - SwiftyGif
-  - DKPhotoGallery/Model (0.0.19):
+  - DKPhotoGallery/Model (0.0.18):
     - SDWebImage
     - SwiftyGif
-  - DKPhotoGallery/Preview (0.0.19):
+  - DKPhotoGallery/Preview (0.0.18):
     - DKPhotoGallery/Model
     - DKPhotoGallery/Resource
     - SDWebImage
     - SwiftyGif
-  - DKPhotoGallery/Resource (0.0.19):
+  - DKPhotoGallery/Resource (0.0.18):
     - SDWebImage
     - SwiftyGif
   - file_picker (0.0.1):
@@ -47,6 +47,9 @@ PODS:
     - FlutterMacOS
   - network_info_plus (0.0.1):
     - Flutter
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - SDWebImage (5.21.7):
     - SDWebImage/Core (= 5.21.7)
   - SDWebImage/Core (5.21.7)
@@ -58,12 +61,14 @@ PODS:
 DEPENDENCIES:
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
+  - DKPhotoGallery (= 0.0.18)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - file_selector_ios (from `.symlinks/plugins/file_selector_ios/ios`)
   - Flutter (from `Flutter`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - flutter_secure_storage_darwin (from `.symlinks/plugins/flutter_secure_storage_darwin/darwin`)
   - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 SPEC REPOS:
@@ -90,6 +95,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_secure_storage_darwin/darwin"
   network_info_plus:
     :path: ".symlinks/plugins/network_info_plus/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
@@ -97,17 +104,18 @@ SPEC CHECKSUMS:
   connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
-  DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
+  DKPhotoGallery: acbd8a3bab19cf6e5fe64a853fc07bfbd247a8f6
   file_picker: a0560bc09d61de87f12d246fc47d2119e6ef37be
   file_selector_ios: ec57ec07954363dd730b642e765e58f199bb621a
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_native_splash: c32d145d68aeda5502d5f543ee38c192065986cf
   flutter_secure_storage_darwin: acdb3f316ed05a3e68f856e0353b133eec373a23
   network_info_plus: cf61925ab5205dce05a4f0895989afdb6aade5fc
+  path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
 
-PODFILE CHECKSUM: 3c63482e143d1b91d2d2560aee9fb04ecc74ac7e
+PODFILE CHECKSUM: e86afb9a1b74462906e3352cb1b451a3cbeda864
 
 COCOAPODS: 1.16.2

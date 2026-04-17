@@ -22,6 +22,8 @@ import 'package:tutodecode/core/services/asset_integrity_service.dart';
 import 'package:tutodecode/core/navigation/nav_keys.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -135,6 +137,8 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             _buildMainHeader(context, prov),
             SizedBox(height: TdcAdaptive.space(context, TdcSpacing.xl)),
+            _buildQuickStatusRow(context, prov),
+            SizedBox(height: TdcAdaptive.space(context, TdcSpacing.xl)),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -191,6 +195,8 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             _buildMainHeader(context, prov),
             SizedBox(height: TdcAdaptive.space(context, TdcSpacing.xl)),
+            _buildQuickStatusRow(context, prov),
+            SizedBox(height: TdcAdaptive.space(context, TdcSpacing.xl)),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -227,6 +233,10 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildMobileHeader(context, prov),
             SizedBox(height: TdcAdaptive.space(context, TdcSpacing.lg)),
             _buildProgressBar(prov),
+            SizedBox(height: TdcAdaptive.space(context, TdcSpacing.lg)),
+            _buildContinueLearningCard(context, prov, compact: true),
+            SizedBox(height: TdcAdaptive.space(context, TdcSpacing.md)),
+            _buildMobileServicePanels(context),
             SizedBox(height: TdcAdaptive.space(context, TdcSpacing.lg)),
             Row(children: [
               Icon(Icons.menu_book,
@@ -317,6 +327,226 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: TdcColors.textMuted, fontSize: TdcText.caption(context))),
       ],
     );
+  }
+
+  Widget _buildQuickStatusRow(BuildContext context, CoursesProvider prov) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: _buildContinueLearningCard(context, prov)),
+        SizedBox(width: TdcAdaptive.space(context, TdcSpacing.md)),
+        Expanded(
+          child: Wrap(
+            spacing: TdcAdaptive.space(context, TdcSpacing.sm),
+            runSpacing: TdcAdaptive.space(context, TdcSpacing.sm),
+            children: [
+              _buildInsightChip(
+                context,
+                icon: Icons.menu_book_outlined,
+                label: '${prov.courses.length} parcours',
+                tone: TdcColors.info,
+              ),
+              _buildInsightChip(
+                context,
+                icon: Icons.check_circle_outline,
+                label: '${prov.completedCount} chapitres terminés',
+                tone: TdcColors.success,
+              ),
+              _buildInsightChip(
+                context,
+                icon: Icons.smart_toy_outlined,
+                label: _aiStatus?.running == true
+                    ? '${_aiStatus!.models.length} modeles IA'
+                    : 'IA locale optionnelle',
+                tone:
+                    _aiStatus?.running == true ? TdcColors.info : TdcColors.textMuted,
+              ),
+              _buildInsightChip(
+                context,
+                icon: Icons.search,
+                label: 'Recherche globale integree',
+                tone: TdcColors.accent,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContinueLearningCard(BuildContext context, CoursesProvider prov,
+      {bool compact = false}) {
+    final course = _preferredCourse(prov);
+    final chapter = _preferredChapter(prov, course);
+    final done = course == null ? 0 : prov.courseCompletedCount(course.id);
+    final total = course?.chapters.length ?? 0;
+    final progress = total == 0 ? 0.0 : done / total;
+
+    return Container(
+      padding: EdgeInsets.all(TdcAdaptive.padding(
+          context, compact ? TdcSpacing.md : TdcSpacing.lg)),
+      decoration: BoxDecoration(
+        color: TdcColors.surface,
+        borderRadius: TdcRadius.lg,
+        border: Border.all(color: TdcColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(TdcAdaptive.padding(context, 8)),
+                decoration: BoxDecoration(
+                  color: TdcColors.accent.withValues(alpha: 0.1),
+                  borderRadius: TdcRadius.sm,
+                ),
+                child: Icon(Icons.play_circle_fill,
+                    color: TdcColors.accent, size: TdcAdaptive.icon(context, 18)),
+              ),
+              SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
+              Expanded(
+                child: Text(
+                  course == null ? 'Pret a commencer' : 'Reprendre la progression',
+                  style: TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: compact ? TdcText.body(context) : TdcText.h3(context),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: TdcAdaptive.space(context, TdcSpacing.sm)),
+          Text(
+            course == null
+                ? 'Choisis un parcours et commence directement depuis l accueil.'
+                : course.title,
+            style: TextStyle(
+              color: TdcColors.textPrimary,
+              fontWeight: FontWeight.w700,
+              fontSize: compact ? TdcText.body(context) : TdcText.h3(context),
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: TdcAdaptive.space(context, 6)),
+          Text(
+            chapter == null
+                ? 'Accede a tes outils, cours et simulations en quelques secondes.'
+                : 'Prochain chapitre : ${chapter.title}',
+            style: TextStyle(
+              color: TdcColors.textMuted,
+              fontSize: TdcText.bodySmall(context),
+              height: 1.4,
+            ),
+          ),
+          SizedBox(height: TdcAdaptive.space(context, TdcSpacing.md)),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: TdcAdaptive.space(context, compact ? 6 : 7),
+              backgroundColor: TdcColors.surfaceAlt,
+              valueColor: const AlwaysStoppedAnimation(TdcColors.accent),
+            ),
+          ),
+          SizedBox(height: TdcAdaptive.space(context, 8)),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  course == null
+                      ? '0 parcours demarre'
+                      : '$done sur $total chapitres',
+                  style: TextStyle(
+                    color: TdcColors.textSecondary,
+                    fontSize: TdcText.caption(context),
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => _resumeCourse(context, prov, course, chapter),
+                child: Text(course == null ? 'Explorer' : 'Continuer'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInsightChip(BuildContext context,
+      {required IconData icon, required String label, required Color tone}) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: TdcAdaptive.padding(context, 12),
+        vertical: TdcAdaptive.padding(context, 10),
+      ),
+      decoration: BoxDecoration(
+        color: TdcColors.surface,
+        borderRadius: TdcRadius.sm,
+        border: Border.all(color: TdcColors.border),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: TdcAdaptive.icon(context, 14), color: tone),
+          SizedBox(width: TdcAdaptive.space(context, 8)),
+          Text(
+            label,
+            style: TextStyle(
+              color: TdcColors.textSecondary,
+              fontSize: TdcText.caption(context),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileServicePanels(BuildContext context) {
+    return Column(
+      children: [
+        _buildAIPanel(context),
+        SizedBox(height: TdcAdaptive.space(context, TdcSpacing.md)),
+        _buildGhostLinkPanel(context),
+      ],
+    );
+  }
+
+  Course? _preferredCourse(CoursesProvider prov) {
+    if (prov.courses.isEmpty) return null;
+    if (prov.currentCourse != null) return prov.currentCourse;
+    for (final course in prov.courses) {
+      if (prov.courseCompletedCount(course.id) < course.chapters.length) {
+        return course;
+      }
+    }
+    return prov.courses.first;
+  }
+
+  CourseChapter? _preferredChapter(CoursesProvider prov, Course? course) {
+    if (course == null || course.chapters.isEmpty) return null;
+    if (prov.currentCourseId == course.id && prov.currentChapter != null) {
+      return prov.currentChapter;
+    }
+    for (final chapter in course.chapters) {
+      final key = '${course.id}:${chapter.id}';
+      if (!prov.completed.contains(key)) return chapter;
+    }
+    return course.chapters.first;
+  }
+
+  void _resumeCourse(BuildContext context, CoursesProvider prov, Course? course,
+      CourseChapter? chapter) {
+    if (course == null || chapter == null) {
+      AppNavigator.pushNamed('/tools');
+      return;
+    }
+    prov.selectChapter(course.id, chapter.id);
+    AppNavigator.pushNamed('/chapter');
   }
 
   Widget _buildProgressBar(CoursesProvider prov) {
@@ -1156,26 +1386,44 @@ class _HomeScreenState extends State<HomeScreen> {
     final title = course.title.toLowerCase();
     if (cat.contains('linux') ||
         title.contains('linux') ||
-        title.contains('bash')) return Icons.terminal;
-    if (cat.contains('docker') || title.contains('docker'))
+        title.contains('bash')) {
+      return Icons.terminal;
+    }
+    if (cat.contains('docker') || title.contains('docker')) {
       return Icons.view_in_ar;
+    }
     if (cat.contains('network') ||
         title.contains('réseau') ||
-        title.contains('cisco')) return Icons.hub;
+        title.contains('cisco')) {
+      return Icons.hub;
+    }
     if (cat.contains('security') ||
         title.contains('sécurité') ||
-        title.contains('hack')) return Icons.security;
-    if (cat.contains('web') || title.contains('html') || title.contains('css'))
+        title.contains('hack')) {
+      return Icons.security;
+    }
+    if (cat.contains('web') || title.contains('html') || title.contains('css')) {
       return Icons.language;
-    if (cat.contains('python') || title.contains('python')) return Icons.code;
-    if (cat.contains('database') || title.contains('sql')) return Icons.storage;
-    if (cat.contains('git') || title.contains('git')) return Icons.merge_type;
+    }
+    if (cat.contains('python') || title.contains('python')) {
+      return Icons.code;
+    }
+    if (cat.contains('database') || title.contains('sql')) {
+      return Icons.storage;
+    }
+    if (cat.contains('git') || title.contains('git')) {
+      return Icons.merge_type;
+    }
     if (cat.contains('cloud') ||
         title.contains('aws') ||
-        title.contains('kubernetes')) return Icons.cloud;
+        title.contains('kubernetes')) {
+      return Icons.cloud;
+    }
     if (cat.contains('ai') ||
         cat.contains('ia') ||
-        title.contains('intelligence')) return Icons.smart_toy;
+        title.contains('intelligence')) {
+      return Icons.smart_toy;
+    }
     return Icons.school;
   }
 
@@ -1184,29 +1432,43 @@ class _HomeScreenState extends State<HomeScreen> {
     final title = course.title.toLowerCase();
     if (cat.contains('linux') ||
         title.contains('linux') ||
-        title.contains('bash')) return const Color(0xFFB39A76);
-    if (cat.contains('docker') || title.contains('docker'))
+        title.contains('bash')) {
+      return const Color(0xFFB39A76);
+    }
+    if (cat.contains('docker') || title.contains('docker')) {
       return const Color(0xFF8A98A1);
+    }
     if (cat.contains('network') ||
         title.contains('réseau') ||
-        title.contains('cisco')) return const Color(0xFF8DA2A6);
+        title.contains('cisco')) {
+      return const Color(0xFF8DA2A6);
+    }
     if (cat.contains('security') ||
         title.contains('sécurité') ||
-        title.contains('hack')) return const Color(0xFF9A7C7A);
-    if (cat.contains('web') || title.contains('html') || title.contains('css'))
+        title.contains('hack')) {
+      return const Color(0xFF9A7C7A);
+    }
+    if (cat.contains('web') || title.contains('html') || title.contains('css')) {
       return const Color(0xFF9B8E81);
-    if (title.contains('javascript') || title.contains('react'))
+    }
+    if (title.contains('javascript') || title.contains('react')) {
       return const Color(0xFFB09A7A);
-    if (cat.contains('python') || title.contains('python'))
+    }
+    if (cat.contains('python') || title.contains('python')) {
       return const Color(0xFF7C92A8);
-    if (cat.contains('database') || title.contains('sql'))
+    }
+    if (cat.contains('database') || title.contains('sql')) {
       return const Color(0xFF8C8196);
-    if (cat.contains('git') || title.contains('git'))
+    }
+    if (cat.contains('git') || title.contains('git')) {
       return const Color(0xFFB07F76);
-    if (cat.contains('cloud') || title.contains('kubernetes'))
+    }
+    if (cat.contains('cloud') || title.contains('kubernetes')) {
       return const Color(0xFF7A8EA1);
-    if (cat.contains('ai') || cat.contains('ia'))
+    }
+    if (cat.contains('ai') || cat.contains('ia')) {
       return const Color(0xFF8C8196);
+    }
     return TdcColors.accent;
   }
 }
