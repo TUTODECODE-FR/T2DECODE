@@ -124,9 +124,6 @@ class SearchProvider extends ChangeNotifier {
     final q = query.trim();
     if (q.isEmpty || !_ready) return const [];
 
-    _storage.pushSearchHistory(q);
-    _history = [q, ..._history.where((x) => x != q)].take(20).toList();
-
     final qTokens = _tokenize(q);
     final results = <SearchResult>[];
 
@@ -144,6 +141,14 @@ class SearchProvider extends ChangeNotifier {
     results.sort((a, b) => b.score.compareTo(a.score));
     if (results.length > limit) return results.sublist(0, limit);
     return results;
+  }
+
+  Future<void> recordQuery(String query) async {
+    final q = query.trim();
+    if (q.isEmpty) return;
+    await _storage.pushSearchHistory(q);
+    _history = [q, ..._history.where((x) => x != q)].take(20).toList();
+    notifyListeners();
   }
 
   Future<void> toggleFavorite(String docId) async {

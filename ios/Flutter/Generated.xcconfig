@@ -1,25 +1,16 @@
-// Checked-in fallback for CI/Xcode Cloud.
-// Local and CI builds may overwrite this file via: `flutter build ios --config-only`.
-//
-// This file must exist at checkout, otherwise Xcode fails early when parsing
-// ios/Flutter/Release.xcconfig (#include "Generated.xcconfig").
-FLUTTER_APPLICATION_PATH=$(SRCROOT)/..
-
-// Xcode Cloud scripts install Flutter under repo root: <repo>/flutter
+// Checked-in fallback for CI/Xcode Cloud and sanitized local builds.
+// Local tooling may overwrite this file, but it must never contain machine-specific paths.
 FLUTTER_ROOT=$(SRCROOT)/../flutter
-
+FLUTTER_APPLICATION_PATH=$(SRCROOT)/..
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_TARGET=lib/main.dart
 FLUTTER_BUILD_DIR=build
-
-// These values are usually set from pubspec by Flutter tooling.
 FLUTTER_BUILD_NAME=1.0.1
-FLUTTER_BUILD_NUMBER=1
-
+FLUTTER_BUILD_NUMBER=25
 EXCLUDED_ARCHS[sdk=iphonesimulator*]=i386
 EXCLUDED_ARCHS[sdk=iphoneos*]=armv7
-
+DART_DEFINES=
 DART_OBFUSCATION=false
-TRACK_WIDGET_CREATION=true
-TREE_SHAKE_ICONS=false
+TRACK_WIDGET_CREATION=false
+TREE_SHAKE_ICONS=true
 PACKAGE_CONFIG=.dart_tool/package_config.json

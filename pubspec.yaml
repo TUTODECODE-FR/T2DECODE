@@ -95,6 +95,7 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
+  remove_alpha_ios: true
   web:
     generate: true
     image_path: "assets/logo.png"
@@ -114,3 +115,6 @@ flutter_native_splash:
   android: true
   ios: true
   fullscreen: true
+
+dependency_overrides:
+  path_provider_foundation: 2.5.1

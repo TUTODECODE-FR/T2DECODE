@@ -50,7 +50,7 @@ class _AppShellState extends State<AppShell> {
         const _NavItem(Icons.build, 'Outils', '/tools'),
         const _NavItem(Icons.description, 'Cheat Sheets', '/cheat-sheets'),
         const _NavItem(Icons.network_check, 'NetKit', '/netkit'),
-        const _NavItem(Icons.smart_toy, 'Chat IA', '/ai'),
+        _NavItem(Icons.smart_toy, 'Chat IA', '/ai', trailing: _aiDot()),
         const _NavItem(Icons.settings, 'Paramètres', '/settings'),
         const _NavItem(Icons.map, 'Roadmap', '/roadmap'),
         const _NavItem(Icons.science, 'Simulations', '/lab'),
@@ -301,7 +301,7 @@ class _AppShellState extends State<AppShell> {
                 insideDrawer: true,
                 activeRoute: shell.activeRoute)),
       ),
-      appBar: _buildAppBar(context, shell),
+      appBar: _buildAppBar(context, shell, showMenuButton: true),
       body: SafeArea(child: widget.child),
       bottomNavigationBar:
           _buildBottomNav(context, mobileItems, activeIndex, shell.activeRoute),
@@ -315,10 +315,12 @@ class _AppShellState extends State<AppShell> {
       elevation: 0,
       surfaceTintColor: Colors.transparent,
       leading: showMenuButton
-          ? IconButton(
-              icon: const Icon(Icons.menu, color: TdcColors.textPrimary),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-              tooltip: 'Menu',
+          ? Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu, color: TdcColors.textPrimary),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                tooltip: 'Menu',
+              ),
             )
           : null,
       title: Row(children: [
@@ -767,6 +769,7 @@ class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
                 autofocus: true,
                 style: const TextStyle(color: TdcColors.textPrimary),
                 onChanged: (v) => setState(() => _query = v),
+                onSubmitted: (value) => search.recordQuery(value),
                 decoration: const InputDecoration(
                   hintText: 'Pages, cours ou commandes...',
                   prefixIcon: Icon(Icons.search, color: TdcColors.accent),
@@ -799,7 +802,10 @@ class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
                             icon: Icons.history,
                             title: q,
                             subtitle: 'Rechercher',
-                            onTap: () => setState(() => _query = q),
+                            onTap: () {
+                              search.recordQuery(q);
+                              setState(() => _query = q);
+                            },
                           )),
                     ],
                     if (_query.isNotEmpty && filteredPages.isNotEmpty) ...[
@@ -897,8 +903,9 @@ class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
         onPressed: () => search.toggleFavorite(r.doc.id),
       ),
       onTap: () {
+        search.recordQuery(r.doc.title);
         AppNavigator.pop();
-        final route = r.doc.nav['route'] as String?;
+        final route = r.doc.nav['route'];
         if (route == '/chapter') {
           final courseId = r.doc.nav['courseId'];
           final chapterId = r.doc.nav['chapterId'];
