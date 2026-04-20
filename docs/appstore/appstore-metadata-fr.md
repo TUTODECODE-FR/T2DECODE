@@ -7,7 +7,7 @@
   https://github.com/TUTODECODE-FR/T2DECODE/blob/main/docs/appstore/support-fr.md
 
 ## Nom
-TUTODECODE
+T2DECODE
 
 ## Sous-titre (<= 30)
 Apprendre l'informatique
@@ -31,8 +31,9 @@ L'application est pensée pour aider à apprendre, pratiquer et progresser de fa
 informatique,programmation,cybersécurité,réseau,linux,outils,apprentissage,offline
 
 ## Copyright
-© 2026 TUTODECODE
+© 2026 Association TUTODECODE
 
 ## Notes de vérification (Review notes)
 Aucun compte requis pour utiliser les fonctionnalités principales.
 Si une fonctionnalité locale (ex: IA via Ollama) n'est pas configurée, l'application reste utilisable.
+Publication iOS : en cours de vérification Apple (App Store) — disponibilité prochaine.

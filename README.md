@@ -22,6 +22,26 @@ T2DECODE est une application Flutter multi-plateforme conçue pour l’apprentis
 
 ---
 
+## 🎯 À quoi sert T2DECODE ?
+
+T2DECODE est une **suite pédagogique et pratique** pour apprendre et expérimenter **sans dépendre d’un cloud** :
+
+- **Apprendre** : cours (Markdown/JSON), cheat sheets, parcours structurés.
+- **Pratiquer** : outils offline (réseau, crypto, système, dev…), simulateurs/labs.
+- **Travailler en environnement contraint** : offline-first, air‑gapped, sans télémétrie.
+
+Ce que T2DECODE **ne fait pas** :
+- Pas d’API externe obligatoire.
+- Pas d’analytics/trackers.
+- Pas d’envoi automatique de données vers des services tiers.
+
+## 👥 Pour qui ?
+
+- Étudiants / autodidactes IT & cybersécurité
+- Admins système / réseau (checklists, outils offline)
+- Interventions en environnement restreint (zones blanches, datacenters, air‑gapped)
+- Formateurs (support local, reproductible, auditabilité)
+
 ## ✅ État actuel du projet
 
 ### Disponible
@@ -47,13 +67,13 @@ T2DECODE est une application Flutter multi-plateforme conçue pour l’apprentis
 | macOS | Actif | Validé | Disponible (v1.0.1) |
 | Linux | Actif | Validé | Disponible (v1.0.1) |
 | Web | Non activé | Non applicable | Non disponible |
-| iOS | Non activé | Non applicable | Non disponible |
+| iOS | Non activé | Non applicable | **En cours de vérification Apple (App Store) — publication prochaine** |
 
 > Les statuts sont mis à jour à chaque release. Si un artefact manque, il n'est pas marqué ✅.
 
 **Pourquoi Web/iOS sont désactivés ?**  
 Web n’est pas prioritaire : T2DECODE est pensé comme une suite d’apps natives.  
-iOS nécessite un compte Apple Developer actif (abonnement annuel), sinon la distribution est désactivée.
+iOS : la publication sur l’App Store est **en cours de vérification Apple**. Les builds iOS restent possibles côté dev, mais la distribution App Store arrive prochainement.
 
 ---
 
@@ -113,6 +133,15 @@ Tout le traitement IA est local : aucune donnée n'est envoyée vers un service 
 Guide : [docs/ollama.md](docs/ollama.md).
 
 ---
+
+## 🔒 Confidentialité & réseau (résumé)
+
+T2DECODE suit une approche **privacy-by-design** :
+- Stockage **local** (préférences, progression, configuration).
+- Réseau **limité** et **désactivable** (mode zéro réseau).
+- Aucun tracking / aucun SDK analytics.
+
+Détails : [docs/privacy.md](docs/privacy.md) et politique App Store : [docs/appstore/privacy-policy-fr.md](docs/appstore/privacy-policy-fr.md).
 
 ## ✨ Fonctionnalités
 
