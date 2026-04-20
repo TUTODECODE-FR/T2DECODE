@@ -15,5 +15,14 @@
 - Des signatures GPG Linux (`.sig`) sont publiées si la clé release est configurée.
 - La gouvernance des zones critiques est définie dans `.github/CODEOWNERS`.
 
+## Confiance & vérifiabilité
+T2DECODE vise une sécurité **vérifiable** (pas basée sur la confiance).
+
+- État actuel et preuves : checksums, workflows, contrôles d’intégrité.
+- Améliorations visées : audit indépendant, builds reproductibles, validation par les pairs,
+  programme de recherche de vulnérabilités, transparence associative.
+
+Détails : `docs/trust.md`.
+
 ## Menaces et contrôles
 Le détail des menaces, hypothèses et contrôles est documenté dans `docs/threat-model.md`.

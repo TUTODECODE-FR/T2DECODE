@@ -68,6 +68,12 @@ sha256sum -c SHA256SUMS.txt
 
 If `.sig` files are present, verify signatures with the public key distributed by maintainers.
 
+## Trust Roadmap
+
+For a structured view of how the project can strengthen verifiability over time (independent audit,
+reproducible builds, community validation, vulnerability research program, association transparency),
+see `docs/trust.md`.
+
 ## Known Limitations
 
 - Project is still early-stage and maintained by a small team.
