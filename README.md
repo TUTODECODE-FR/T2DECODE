@@ -165,23 +165,21 @@ Détails : [docs/privacy.md](docs/privacy.md).
 
 ## 👨‍💻 Développement
 
-### Installation
+### Démarrage rapide
 
 ```bash
 git clone https://github.com/TUTODECODE-FR/T2DECODE.git
 cd T2DECODE
+make setup
 make get
-flutter pub get
+make test
 ```
 
-### Vérification
+Notes :
+- Le premier `make get` peut télécharger des dépendances (normal).
+- Les commandes `make test` / `make build-*` évitent de relancer `pub get` quand ce n’est pas nécessaire.
 
-```bash
-flutter analyze
-flutter test
-```
-
-### Exécution
+### Exécution (dev)
 
 ```bash
 flutter run

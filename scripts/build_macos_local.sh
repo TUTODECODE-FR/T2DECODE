@@ -13,8 +13,10 @@ if [ -e "$ROOT_DIR/build" ] && [ ! -L "$ROOT_DIR/build" ]; then
 fi
 ln -sfn "$TMP_BUILD_ROOT" "$ROOT_DIR/build"
 
-flutter pub get >/dev/null
-flutter build macos --config-only >/dev/null || true
+if [ "${SKIP_PUB_GET:-0}" != "1" ]; then
+  flutter pub get >/dev/null
+fi
+flutter build macos --config-only --no-pub >/dev/null || true
 
 HOOK_BUILD_DIR="$ROOT_DIR/.dart_tool/hooks_runner/shared/objective_c/build"
 NATIVE_DST_DIR="$ROOT_DIR/build/native_assets/macos/objective_c.framework"
@@ -74,7 +76,7 @@ cat > "$NATIVE_DST_DIR/Versions/A/Resources/Info.plist" <<'PLIST'
 PLIST
 
 set +e
-flutter build macos --release
+flutter build macos --release --no-pub
 rc=$?
 set -e
 
