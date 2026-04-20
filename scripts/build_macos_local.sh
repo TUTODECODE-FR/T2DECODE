@@ -80,7 +80,7 @@ flutter build macos --release --no-pub
 rc=$?
 set -e
 
-APP_PATH="$ROOT_DIR/build/macos/Build/Products/Release/TUTODECODE.app"
+APP_PATH="$ROOT_DIR/build/macos/Build/Products/Release/T2DECODE.app"
 if [ ! -d "$APP_PATH" ]; then
   # Fallback: pick the first .app found in Release.
   APP_PATH_FOUND="$(find "$ROOT_DIR/build/macos/Build/Products/Release" -maxdepth 1 -name '*.app' -print -quit 2>/dev/null || true)"
