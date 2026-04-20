@@ -2,8 +2,9 @@
 
 Merci d'utiliser T2DECODE.
 
-## Statut App Store (iOS)
-La version iOS est **en cours de vérification Apple (App Store)** et arrivera prochainement.
+## Statut App Store (Apple)
+- iOS : **en cours de vérification Apple (App Store)**, disponibilité prochaine.
+- macOS : les binaires sont déjà publiés sur GitHub Releases, et une version **Mac App Store** est également prévue (mise en ligne après vérification Apple).
 
 ## Besoin d'aide
 - Ouvrir un ticket : https://github.com/TUTODECODE-FR/T2DECODE/issues
