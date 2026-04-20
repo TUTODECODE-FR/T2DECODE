@@ -151,7 +151,7 @@ class BuildVerification {
 
   static String _generateBuildQRCode(BuildVerificationResult v) {
     return jsonEncode({
-      'app': 'TUTODECODE',
+      'app': 'T2CODE',
       'version': v.buildInfo.version,
       'platform': v.buildInfo.platform,
       'isOfficial': v.isOfficial,

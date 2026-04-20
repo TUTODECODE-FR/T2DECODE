@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import '../core/theme/app_theme.dart';
 import '../core/responsive/responsive.dart';
 import '../features/courses/providers/courses_provider.dart';
-import '../features/ghost_ai/service/ollama_service.dart';
+import '../features/ghost_ai/providers/ai_tutor_provider.dart';
 import '../core/providers/shell_provider.dart';
 import '../core/navigation/nav_keys.dart';
 import '../core/providers/search_provider.dart';
@@ -30,17 +30,9 @@ class AppShell extends StatefulWidget {
 }
 
 class _AppShellState extends State<AppShell> {
-  OllamaStatus? _aiStatus;
-
   @override
   void initState() {
     super.initState();
-    _checkAI();
-  }
-
-  Future<void> _checkAI() async {
-    final s = await OllamaService.checkStatus();
-    if (mounted) setState(() => _aiStatus = s);
   }
 
   // ── Items de navigation ───────────────────────────────────
@@ -50,7 +42,14 @@ class _AppShellState extends State<AppShell> {
         const _NavItem(Icons.build, 'Outils', '/tools'),
         const _NavItem(Icons.description, 'Cheat Sheets', '/cheat-sheets'),
         const _NavItem(Icons.network_check, 'NetKit', '/netkit'),
-        _NavItem(Icons.smart_toy, 'Chat IA', '/ai', trailing: _aiDot()),
+        _NavItem(
+          Icons.smart_toy,
+          'Chat IA',
+          '/ai',
+          trailing: Consumer<AiTutorProvider>(
+            builder: (context, ai, _) => _aiDot(ai),
+          ),
+        ),
         const _NavItem(Icons.settings, 'Paramètres', '/settings'),
         const _NavItem(Icons.map, 'Roadmap', '/roadmap'),
         const _NavItem(Icons.science, 'Simulations', '/lab'),
@@ -58,8 +57,8 @@ class _AppShellState extends State<AppShell> {
       ];
 
   // ── Petites icônes de statut IA ───────────────────────────
-  Widget _aiDot() {
-    if (_aiStatus == null) {
+  Widget _aiDot(AiTutorProvider ai) {
+    if (!ai.hasCheckedOllama) {
       return SizedBox(
         width: 8,
         height: 8,
@@ -72,7 +71,7 @@ class _AppShellState extends State<AppShell> {
       height: 8,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: _aiStatus!.running ? TdcColors.info : TdcColors.textMuted,
+        color: ai.isConnected ? TdcColors.info : TdcColors.textMuted,
       ),
     );
   }
@@ -483,7 +482,7 @@ class _AppShellState extends State<AppShell> {
                 child: Row(children: [
                   Image.asset('assets/logo.png', width: 32, height: 32),
                   const SizedBox(width: TdcSpacing.sm),
-                  const Text('TUTODECODE',
+                  const Text('T2CODE',
                       style: TextStyle(
                         color: TdcColors.textPrimary,
                         fontWeight: FontWeight.w900,
@@ -555,35 +554,37 @@ class _AppShellState extends State<AppShell> {
                       border: Border.all(color: TdcColors.border),
                     ),
                     child: Row(children: [
-                      Icon(Icons.memory,
+                      Consumer<AiTutorProvider>(
+                        builder: (context, ai, _) => Icon(
+                          Icons.memory,
                           size: 16,
-                          color: _aiStatus?.running == true
-                              ? TdcColors.info
-                              : TdcColors.textMuted),
+                          color: ai.isConnected ? TdcColors.info : TdcColors.textMuted,
+                        ),
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _aiStatus == null
-                                  ? 'Vérification…'
-                                  : (_aiStatus!.running
-                                      ? 'Ollama actif'
-                                      : 'Ollama hors-ligne'),
-                              style: const TextStyle(
-                                  color: TdcColors.textPrimary,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            Text(
-                              _aiStatus?.running == true
-                                  ? '${_aiStatus!.models.length} modèle(s)'
-                                  : 'Cliquer pour configurer',
-                              style: const TextStyle(
-                                  color: TdcColors.textMuted, fontSize: 10),
-                            ),
-                          ],
+                        child: Consumer<AiTutorProvider>(
+                          builder: (context, ai, _) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                !ai.hasCheckedOllama
+                                    ? 'Vérification…'
+                                    : (ai.isConnected ? 'IA locale prête' : 'IA locale optionnelle'),
+                                style: const TextStyle(
+                                    color: TdcColors.textPrimary,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                ai.isConnected
+                                    ? '${ai.availableModels.length} modèle(s)'
+                                    : 'Cliquer pour configurer Ollama',
+                                style: const TextStyle(
+                                    color: TdcColors.textMuted, fontSize: 10),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ]),

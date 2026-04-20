@@ -1,10 +1,10 @@
-# Support — TUTODECODE
+# Support — T2CODE
 
-Merci d'utiliser TUTODECODE.
+Merci d'utiliser T2CODE.
 
 ## Besoin d'aide
-- Ouvrir un ticket : https://github.com/TUTODECODE-FR/TUTODECODE/issues
-- Documentation : https://github.com/TUTODECODE-FR/TUTODECODE/tree/main/docs
+- Ouvrir un ticket : https://github.com/TUTODECODE-FR/T2DECODE/issues
+- Documentation : https://github.com/TUTODECODE-FR/T2DECODE/tree/main/docs
 
 ## Informations à fournir pour un bug
 1. Plateforme (iOS, Android, macOS, Windows, Linux)
@@ -15,4 +15,4 @@ Merci d'utiliser TUTODECODE.
 
 ## Sécurité
 Pour signaler une faille de sécurité :
-https://github.com/TUTODECODE-FR/TUTODECODE/security/policy
+https://github.com/TUTODECODE-FR/T2DECODE/security/policy

@@ -1,4 +1,4 @@
-# Politique de confidentialité — TUTODECODE
+# Politique de confidentialité — T2CODE
 
 Dernière mise à jour : 17 avril 2026
 
@@ -47,7 +47,7 @@ Vous pouvez :
 - Nous contacter pour toute question liée à la confidentialité.
 
 ## 9. Contact
-Support : https://github.com/TUTODECODE-FR/TUTODECODE/issues
+Support : https://github.com/TUTODECODE-FR/T2DECODE/issues
 
 ---
 Si cette politique évolue, la version mise à jour sera publiée à cette même URL.

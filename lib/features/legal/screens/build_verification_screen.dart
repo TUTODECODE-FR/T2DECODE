@@ -646,7 +646,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
 RAPPORT DE VÉRIFICATION DE BUILD
 ==================================
 
-Application: TUTODECODE
+Application: T2CODE
 Date de vérification: ${_formatDate(result.verificationDate)}
 
 STATUT: ${result.isOfficial ? 'OFFICIEL' : 'NON OFFICIEL'}
@@ -678,7 +678,7 @@ RECOMMANDATION
 --------------
 ${result.isOfficial ? 'Build officiel - Utilisation sécurisée' : 'Téléchargez la version officielle depuis tutodecode.org'}
 
-Ce rapport confirme l'authenticité et l'intégrité du build TUTODECODE.
+Ce rapport confirme l'authenticité et l'intégrité du build T2CODE.
 ''';
   }
 

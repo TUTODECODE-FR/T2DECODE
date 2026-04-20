@@ -40,13 +40,17 @@ class OllamaService {
   }
 
   // Vérifie si Ollama tourne
-  static Future<OllamaStatus> checkStatus() async {
+  static Future<OllamaStatus> checkStatus({
+    bool includeModels = true,
+    Duration versionTimeout = const Duration(seconds: 15),
+    Duration tagsTimeout = const Duration(seconds: 15),
+  }) async {
     try {
       await _ensureAllowed();
       final baseUrl = await _base;
       // Timeout plus long pour les réseaux distants/VPN
       final res = await http.get(Uri.parse('$baseUrl/api/version'))
-          .timeout(const Duration(seconds: 15));
+          .timeout(versionTimeout);
       
       if (res.statusCode != 200) {
         return OllamaStatus(
@@ -60,14 +64,16 @@ class OllamaService {
         version = (jsonDecode(res.body) as Map)['version']?.toString(); 
       } catch (_) {}
 
-      final mRes = await http.get(Uri.parse('$baseUrl/api/tags'))
-          .timeout(const Duration(seconds: 15));
-      
       List<String> models = [];
-      if (mRes.statusCode == 200) {
-        final list = ((jsonDecode(mRes.body) as Map)['models'] as List?) ?? [];
-        models = list.map((m) => m['name']?.toString() ?? '').where((s) => s.isNotEmpty).toList();
+      if (includeModels) {
+        final mRes = await http.get(Uri.parse('$baseUrl/api/tags'))
+            .timeout(tagsTimeout);
+        if (mRes.statusCode == 200) {
+          final list = ((jsonDecode(mRes.body) as Map)['models'] as List?) ?? [];
+          models = list.map((m) => m['name']?.toString() ?? '').where((s) => s.isNotEmpty).toList();
+        }
       }
+
       return OllamaStatus(running: true, version: version, models: models);
     } on SocketException {
       return const OllamaStatus(

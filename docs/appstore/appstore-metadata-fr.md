@@ -2,9 +2,9 @@
 
 ## URLs à coller
 - URL de la Politique de confidentialité :
-  https://github.com/TUTODECODE-FR/TUTODECODE/blob/main/docs/appstore/privacy-policy-fr.md
+  https://github.com/TUTODECODE-FR/T2DECODE/blob/main/docs/appstore/privacy-policy-fr.md
 - URL de l'assistance :
-  https://github.com/TUTODECODE-FR/TUTODECODE/blob/main/docs/appstore/support-fr.md
+  https://github.com/TUTODECODE-FR/T2DECODE/blob/main/docs/appstore/support-fr.md
 
 ## Nom
 TUTODECODE
@@ -16,7 +16,7 @@ Apprendre l'informatique
 Plateforme d'apprentissage technique offline-first avec outils intégrés, laboratoires interactifs et IA locale via Ollama.
 
 ## Description
-TUTODECODE est une application d'apprentissage technique conçue pour fonctionner en local, avec une approche offline-first.
+T2CODE est une application d'apprentissage technique conçue pour fonctionner en local, avec une approche offline-first.
 
 Fonctionnalités principales :
 - Cours et contenus pédagogiques lisibles directement dans l'application

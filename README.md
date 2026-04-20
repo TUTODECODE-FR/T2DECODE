@@ -1,22 +1,22 @@
 <p align="center">
-  <img src="assets/TDC.png" width="96" height="96" alt="TUTODECODE Logo">
+  <img src="assets/TDC.png" width="96" height="96" alt="T2CODE Logo">
 </p>
 
-# TUTODECODE
+# T2CODE
 
-[![CI](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/ci.yml/badge.svg)](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/TUTODECODE?style=for-the-badge)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest)
-[![License](https://img.shields.io/github/license/TUTODECODE-FR/TUTODECODE?style=for-the-badge)](https://github.com/TUTODECODE-FR/TUTODECODE/blob/main/LICENSE)
+[![CI](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml/badge.svg)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
+[![License](https://img.shields.io/github/license/TUTODECODE-FR/T2DECODE?style=for-the-badge)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
 [![Flutter](https://img.shields.io/badge/Flutter-multi--platform-blue?style=for-the-badge)](https://flutter.dev)
 
 Plateforme locale d'apprentissage technique et boîte à outils cybersécurité.  
 **Air‑gapped ready · Zéro tracking · IA locale (Ollama)**
 
-[Releases](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) · [Build](docs/build.md) · [Architecture](docs/architecture.md) · [Confidentialité](docs/privacy.md) · [Contribution](CONTRIBUTING.md)
+[Releases](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) · [Build](docs/build.md) · [Architecture](docs/architecture.md) · [Confidentialité](docs/privacy.md) · [Contribution](CONTRIBUTING.md)
 
 > **"Le savoir technique ne devrait jamais dépendre d'une connexion."**
 
-TUTODECODE est une application Flutter multi-plateforme conçue pour l’apprentissage technique et l’expérimentation cybersécurité en environnement local, y compris hors connexion.
+T2CODE est une application Flutter multi-plateforme conçue pour l’apprentissage technique et l’expérimentation cybersécurité en environnement local, y compris hors connexion.
 
 **Statut** : projet en phase `early-stage` (démarré en 2026), en stabilisation active.
 
@@ -52,16 +52,16 @@ TUTODECODE est une application Flutter multi-plateforme conçue pour l’apprent
 > Les statuts sont mis à jour à chaque release. Si un artefact manque, il n'est pas marqué ✅.
 
 **Pourquoi Web/iOS sont désactivés ?**  
-Web n’est pas prioritaire : TUTODECODE est pensé comme une suite d’apps natives.  
+Web n’est pas prioritaire : T2CODE est pensé comme une suite d’apps natives.  
 iOS nécessite un compte Apple Developer actif (abonnement annuel), sinon la distribution est désactivée.
 
 ---
 
 ## 🔎 Preuves vérifiables
 
-- CI continue : [workflow CI](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/ci.yml)
-- Build/release multi-plateforme : [workflow release](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/build_release.yml)
-- Artefacts publiés : [release latest](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest)
+- CI continue : [workflow CI](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
+- Build/release multi-plateforme : [workflow release](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/build_release.yml)
+- Artefacts publiés : [release latest](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
 - Intégrité binaire : `SHA256SUMS.txt` inclus dans chaque release
 - Signature binaire Linux : fichiers `.sig` publiés quand la clé GPG release est configurée
 - Gouvernance des modifications : [CODEOWNERS](.github/CODEOWNERS)
@@ -72,7 +72,7 @@ iOS nécessite un compte Apple Developer actif (abonnement annuel), sinon la dis
 
 Les binaires sont publiés sur la page des releases GitHub :
 
-➡️ [Télécharger la dernière version](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest)
+➡️ [Télécharger la dernière version](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
 
 | Plateforme | Fichier recommandé | Alternatives | Notes |
 | :--- | :--- | :--- | :--- |
@@ -100,7 +100,7 @@ Des signatures `.sig` Linux sont également publiées quand la clé GPG release 
 
 ---
 
-## ⚡ Pourquoi TUTODECODE ?
+## ⚡ Pourquoi T2CODE ?
 
 * **🛡️ Souveraineté Totale** : Aucune dépendance à des services tiers ou au Cloud. Tout est stocké et exécuté localement.
 * **📂 Système de Modules** : Importez vos propres cours au format Markdown/JSON en les glissant dans le dossier `modules`.
@@ -126,7 +126,7 @@ Guide : [docs/ollama.md](docs/ollama.md).
 
 ## 🔒 Confidentialité
 
-TUTODECODE n'envoie aucune télémétrie, aucun analytics et aucune donnée utilisateur vers un service tiers.  
+T2CODE n'envoie aucune télémétrie, aucun analytics et aucune donnée utilisateur vers un service tiers.  
 Détails : [docs/privacy.md](docs/privacy.md).
 
 ---
@@ -136,8 +136,8 @@ Détails : [docs/privacy.md](docs/privacy.md).
 ### Installation
 
 ```bash
-git clone https://github.com/TUTODECODE-FR/TUTODECODE.git
-cd TUTODECODE
+git clone https://github.com/TUTODECODE-FR/T2DECODE.git
+cd T2DECODE
 make get
 flutter pub get
 ```
@@ -229,7 +229,7 @@ Site : [https://tutodecode.org](https://tutodecode.org)
 
 ## ❤️ Participer au projet
 
-TUTODECODE est un projet open source porté par une association à but non lucratif.
+T2CODE est un projet open source porté par une association à but non lucratif.
 
 Si le projet vous parle, vous pouvez:
 - ⭐ Mettre une étoile sur le repo

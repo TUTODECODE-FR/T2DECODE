@@ -7,7 +7,7 @@ import './storage_service.dart';
 
 class GithubService {
   final String repoOwner = 'TUTODECODE-FR';
-  final String repoName = 'TUTODECODE';
+  final String repoName = 'T2DECODE';
   final String modulesPath = 'modules'; // Folder in the repo containing .json files
   final ModuleService _moduleService = ModuleService();
 
@@ -18,7 +18,7 @@ class GithubService {
   // PINNING: Utiliser un tag stable plutôt que 'main' pour le contenu distant
   static const String _repoRef = 'v1.0.3'; 
 
-  static const String officialRepoUrl = 'https://github.com/TUTODECODE-FR/TUTODECODE';
+  static const String officialRepoUrl = 'https://github.com/TUTODECODE-FR/T2DECODE';
 
   /// Fetches the list of files in the modules directory and downloads new/updated ones.
   Future<int> syncModules() async {
@@ -114,7 +114,7 @@ class GithubService {
           url,
           headers: const {
             'Accept': 'application/vnd.github+json',
-            'User-Agent': 'TUTODECODE',
+            'User-Agent': 'T2CODE',
           },
         )
         .timeout(_timeout);
@@ -165,10 +165,10 @@ class GithubService {
 
   Future<String> _downloadText(Uri uri) async {
     await _ensureNetworkAllowed();
-    final client = http.Client();
+      final client = http.Client();
     try {
       final req = http.Request('GET', uri);
-      req.headers['User-Agent'] = 'TUTODECODE';
+      req.headers['User-Agent'] = 'T2CODE';
       final streamed = await client.send(req).timeout(_timeout);
 
       if (streamed.statusCode != 200) {
