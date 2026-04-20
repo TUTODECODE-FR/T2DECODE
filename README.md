@@ -75,6 +75,9 @@ Ce que T2DECODE **ne fait pas** :
 Web n’est pas prioritaire : T2DECODE est pensé comme une suite d’apps natives.  
 iOS : la publication sur l’App Store est **en cours de vérification Apple**. Les builds iOS restent possibles côté dev, mais la distribution App Store arrive prochainement.
 
+**macOS (Apple)**  
+Même si les binaires macOS sont déjà disponibles via les Releases GitHub, une publication **Mac App Store** est également prévue et suit le même principe : **vérification Apple** puis mise en ligne dès validation.
+
 ---
 
 ## 🔎 Preuves vérifiables
