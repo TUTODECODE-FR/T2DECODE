@@ -1,7 +1,7 @@
 # Confidentialité
 
 T2DECODE est conçu pour fonctionner **sans cloud**, avec une approche **offline-first** et **zéro tracking**.
-L’application ne transfère pas vos données personnelles vers un serveur tiers.
+L’application ne transfère **aucune donnée personnelle** vers **Internet** ou un **serveur tiers**.
 
 ## Garanties
 - **Aucune télémétrie / analytics** : pas de tracking publicitaire, pas de profilage.
@@ -9,6 +9,13 @@ L’application ne transfère pas vos données personnelles vers un serveur tier
 - **Aucune API distante obligatoire** pour utiliser l’app.
 - **Fonctionnement possible hors-ligne** (cours, outils, labs, préférences).
 - **IA optionnelle** : l’IA locale via Ollama est un plus, jamais un prérequis.
+
+## Ce que T2DECODE ne fait jamais
+
+- Pas de compte obligatoire.
+- Pas d’identifiant publicitaire.
+- Pas de collecte d’événements d’usage.
+- Pas de monétisation ni revente de données.
 
 ## Données traitées et stockage
 
@@ -21,7 +28,7 @@ Ces données sont stockées localement sur l’appareil (ex : `SharedPreferences
 
 ## Réseau : quand et pourquoi ?
 
-T2DECODE peut effectuer des communications réseau **dans des cas limités** et **compréhensibles** :
+T2DECODE peut effectuer des communications réseau **uniquement** dans des cas limités et compréhensibles :
 
 1) **Ollama (IA locale)**  
 - connexion à `localhost` ou à une adresse du réseau local (LAN) **configurée par l’utilisateur**
@@ -29,6 +36,8 @@ T2DECODE peut effectuer des communications réseau **dans des cas limités** et 
 
 2) **Ghost Link (LAN)**  
 - communication sur le réseau local (LAN) pour découverte/échange entre appareils
+
+En dehors de ces usages, l’application n’a pas besoin d’Internet : pas d’appels à des API publiques, pas de tracking, pas de services externes.
 
 ## Contrôle utilisateur
 
@@ -42,6 +51,11 @@ Selon les fonctionnalités utilisées, l’application peut demander :
 - photothèque (si vous choisissez d’importer/exporter des images)
 
 Les permissions sont utilisées uniquement pour la fonctionnalité demandée.
+
+## Sauvegardes (OS)
+
+Selon votre plateforme et vos réglages système, les données locales peuvent être incluses dans des mécanismes de sauvegarde gérés par l’OS (ex : sauvegarde appareil).
+T2DECODE n’envoie pas ces données : elles restent sous le contrôle de votre système.
 
 ## Sécurité
 

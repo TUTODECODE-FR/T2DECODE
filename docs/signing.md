@@ -4,11 +4,11 @@ Ce projet signe les releases dans `/.github/workflows/build_release.yml`.
 Les jobs release echouent si les secrets de signature ne sont pas fournis.
 
 ## Artefacts publies
-- Android: `TUTODECODE-Android.apk`, `TUTODECODE-Android.aab`
-- Windows: `TUTODECODE-Setup.exe` (installeur), `TUTODECODE-Windows.zip`
-- macOS: `TUTODECODE-macOS.dmg` (installeur), `TUTODECODE-macOS.zip`
-- Linux: `TUTODECODE-Linux.deb`, `TUTODECODE-Linux.tar.gz` + signatures `.sig`
-- iOS: `TUTODECODE-iOS.ipa`
+- Android: `T2DECODE-Android.apk`, `T2DECODE-Android.aab`
+- Windows: `T2DECODE-Setup.exe` (installeur), `T2DECODE-Windows.zip`
+- macOS: `T2DECODE-macOS.dmg` (installeur), `T2DECODE-macOS.zip`
+- Linux: `T2DECODE-Linux.deb`, `T2DECODE-Linux.tar.gz` + signatures `.sig`
+- iOS: `T2DECODE-iOS.ipa`
 
 ## Secrets GitHub obligatoires
 

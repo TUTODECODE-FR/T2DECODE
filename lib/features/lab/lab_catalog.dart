@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tutodecode/features/lab/simulators/algorithms_simulator.dart';
 import 'package:tutodecode/features/lab/simulators/cloud_simulator.dart';
 import 'package:tutodecode/features/lab/simulators/cryptography_simulator.dart';
+import 'package:tutodecode/features/lab/simulators/ctf_prep_simulator.dart';
 import 'package:tutodecode/features/lab/simulators/how_internet_works_simulator.dart';
 import 'package:tutodecode/features/lab/simulators/linux_simulator.dart';
 import 'package:tutodecode/features/lab/simulators/network_simulator.dart';
@@ -46,6 +47,14 @@ final List<LabCatalogEntry> labCatalog = <LabCatalogEntry>[
     color: Colors.red,
     hasOwnHeader: true,
     build: () => const SecuritySimulator(),
+  ),
+  LabCatalogEntry(
+    id: 'ctf_prep',
+    label: 'CTF Prep',
+    subtitle: 'Offline · Vulnérable · Contrôlé',
+    icon: Icons.flag,
+    color: Colors.yellow,
+    build: () => const CtfPrepSimulator(),
   ),
   LabCatalogEntry(
     id: 'system',

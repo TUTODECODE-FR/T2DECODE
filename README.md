@@ -12,7 +12,7 @@
 Plateforme locale d'apprentissage technique et boîte à outils cybersécurité.  
 **Air‑gapped ready · Zéro tracking · IA locale (Ollama)**
 
-[Releases](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) · [Build](docs/build.md) · [Architecture](docs/architecture.md) · [Confidentialité](docs/privacy.md) · [Contribution](CONTRIBUTING.md)
+[Releases](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) · [Build](docs/build.md) · [Architecture](docs/architecture.md) · [Offline‑first](docs/offline-first.md) · [Confidentialité](docs/privacy.md) · [Contribution](CONTRIBUTING.md)
 
 > **"Le savoir technique ne devrait jamais dépendre d'une connexion."**
 
@@ -34,6 +34,17 @@ Ce que T2DECODE **ne fait pas** :
 - Pas d’API externe obligatoire.
 - Pas d’analytics/trackers.
 - Pas d’envoi automatique de données vers des services tiers.
+
+## ⚠️ Limites & compromis (offline‑first)
+
+Être 100% local a des avantages, mais aussi des compromis :
+
+- pas de données “temps réel” (threat intel, flux live) sans import manuel
+- contenus à préparer/mettre à jour soi‑même (packs offline, modules importés)
+- moins de “cloud‑native” en air‑gapped (mais beaucoup se simule localement)
+
+Détails + bonnes pratiques : [docs/offline-first.md](docs/offline-first.md)  
+CTF/vulnérable (local, isolé) : [docs/ctf-prep.md](docs/ctf-prep.md)
 
 ## 👥 Pour qui ?
 
@@ -119,7 +130,7 @@ Des signatures `.sig` Linux sont également publiées quand la clé GPG release 
 | Domaine | Résumé |
 | :--- | :--- |
 | IA locale | Intégration Ollama sans service tiers ([docs/ollama.md](docs/ollama.md)) |
-| Laboratoires | Simulations documentées dans [docs/labs.md](docs/labs.md) |
+| Laboratoires | Simulations + **CTF Prep offline** documentés dans [docs/labs.md](docs/labs.md) |
 | Outils | Boîte à outils offline documentée dans [docs/tools.md](docs/tools.md) |
 | Modules | Support de contenus Markdown/JSON ([docs/modules.md](docs/modules.md)) |
 | Sécurité | Modèle et menaces documentés ([docs/security-model.md](docs/security-model.md), [docs/threat-model.md](docs/threat-model.md)) |
