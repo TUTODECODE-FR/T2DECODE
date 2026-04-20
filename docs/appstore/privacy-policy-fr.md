@@ -13,7 +13,7 @@ T2DECODE est conçu avec une approche **offline-first** et **zéro tracking**.
 - Aucune télémétrie vers des services tiers.
 
 ## 3. Données collectées
-Par défaut, l'application **ne collecte pas** de données personnelles sur des serveurs distants.
+L'application **ne collecte pas** de données personnelles sur des serveurs distants.
 
 Les données fonctionnelles (préférences, progression, configuration locale) sont stockées localement sur l'appareil de l'utilisateur.
 

@@ -1,7 +1,7 @@
 # Confidentialité
 
 T2DECODE est conçu pour fonctionner **sans cloud**, avec une approche **offline-first** et **zéro tracking**.
-Par défaut, l’application ne transfère pas vos données personnelles vers un serveur tiers.
+L’application ne transfère pas vos données personnelles vers un serveur tiers.
 
 ## Garanties
 - **Aucune télémétrie / analytics** : pas de tracking publicitaire, pas de profilage.
