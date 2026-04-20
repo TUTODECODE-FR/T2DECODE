@@ -4,7 +4,7 @@ FLUTTER = flutter
 PUB = $(FLUTTER) pub
 PUBSTAMP = .dart_tool/package_config.json
 
-.PHONY: help setup get build-android build-android-fdroid build-ios build-macos build-windows build-linux build-all clean test
+.PHONY: help setup get build-android build-android-fdroid build-ios build-macos build-windows build-linux build-all clean clean-macos test
 
 help:
 	@echo "Usage: make [target]"
@@ -21,6 +21,7 @@ help:
 	@echo "  build-linux    Build Linux Binary (Requires Linux)"
 	@echo "  build-all      Build for all platforms (if supported by OS)"
 	@echo "  clean          Remove build artifacts"
+	@echo "  clean-macos    Deep clean macOS (Pods/ephemeral)"
 
 setup:
 	@chmod +x scripts/setup.sh
@@ -75,3 +76,6 @@ build-all: build-android build-macos build-linux
 clean:
 	$(FLUTTER) clean
 	rm -rf build/
+
+clean-macos: clean
+	rm -rf macos/Pods macos/Podfile.lock macos/Flutter/ephemeral

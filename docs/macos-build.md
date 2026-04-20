@@ -113,6 +113,22 @@ xcrun stapler staple "$APP_PATH"
 
 ## Depannage
 
+### Warnings: "Stale file ... is located outside of the allowed root paths"
+
+Ce warning apparaît souvent quand vous avez **déplacé/cloné** le repo dans un
+autre dossier, et que Xcode garde des références vers un ancien build.
+
+Fix rapide :
+
+```bash
+make clean-macos
+make get
+make build-macos
+```
+
+Si le warning persiste, supprimez le cache Xcode (DerivedData) pour `Runner`
+(option “nuke” côté machine), puis rebuild.
+
 ### Erreur codesign: "resource fork / Finder information ... not allowed"
 
 Cause: attributs etendus (xattr).
