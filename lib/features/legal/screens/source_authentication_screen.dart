@@ -878,7 +878,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
 RAPPORT D'AUTHENTIFICATION DU CODE SOURCE
 ==========================================
 
-Application: T2CODE
+Application: T2DECODE
 Date de vérification: ${_formatDate(result.verificationDate)}
 
 STATUT: ${result.isAuthentic ? 'AUTHENTIFIÉ' : 'NON AUTHENTIFIÉ'}
@@ -920,7 +920,7 @@ RECOMMANDATION
 --------------
 ${result.isAuthentic ? 'Code source officiel - Utilisation sécurisée' : 'Téléchargez le code source officiel depuis github.com/TUTODECODE-FR/T2DECODE'}
 
-Ce rapport certifie l'authenticité et l'intégrité du code source T2CODE.
+Ce rapport certifie l'authenticité et l'intégrité du code source T2DECODE.
 ''';
   }
 

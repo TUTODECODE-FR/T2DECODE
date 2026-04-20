@@ -315,7 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('T2CODE',
+        Text('T2DECODE',
             style: TextStyle(
                 color: TdcColors.textPrimary,
                 fontSize: TdcText.h2(context),

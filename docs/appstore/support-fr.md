@@ -1,6 +1,6 @@
-# Support — T2CODE
+# Support — T2DECODE
 
-Merci d'utiliser T2CODE.
+Merci d'utiliser T2DECODE.
 
 ## Besoin d'aide
 - Ouvrir un ticket : https://github.com/TUTODECODE-FR/T2DECODE/issues

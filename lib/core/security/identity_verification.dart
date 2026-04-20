@@ -68,7 +68,7 @@ class IdentityVerification {
 
     return AuthenticityCertificate(
       certificateId: _generateCertificateId(),
-      applicationName: 'T2CODE',
+      applicationName: 'T2DECODE',
       version: version,
       associationName: ASSOCIATION_NAME,
       associationSIREN: ASSOCIATION_SIREN,
@@ -160,7 +160,7 @@ class IdentityVerification {
 
   static String _generateQRCodeData(VerificationResult verification) {
     return jsonEncode({
-      'app': 'T2CODE',
+      'app': 'T2DECODE',
       'association': ASSOCIATION_NAME,
       'verified': verification.isAuthentic,
       'date': verification.verificationDate.toIso8601String(),

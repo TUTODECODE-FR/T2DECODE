@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/TDC.png" width="96" height="96" alt="T2CODE Logo">
+  <img src="assets/TDC.png" width="96" height="96" alt="T2DECODE Logo">
 </p>
 
-# T2CODE
+# T2DECODE
 
 [![CI](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml/badge.svg)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
@@ -16,7 +16,7 @@ Plateforme locale d'apprentissage technique et boîte à outils cybersécurité.
 
 > **"Le savoir technique ne devrait jamais dépendre d'une connexion."**
 
-T2CODE est une application Flutter multi-plateforme conçue pour l’apprentissage technique et l’expérimentation cybersécurité en environnement local, y compris hors connexion.
+T2DECODE est une application Flutter multi-plateforme conçue pour l’apprentissage technique et l’expérimentation cybersécurité en environnement local, y compris hors connexion.
 
 **Statut** : projet en phase `early-stage` (démarré en 2026), en stabilisation active.
 
@@ -52,7 +52,7 @@ T2CODE est une application Flutter multi-plateforme conçue pour l’apprentissa
 > Les statuts sont mis à jour à chaque release. Si un artefact manque, il n'est pas marqué ✅.
 
 **Pourquoi Web/iOS sont désactivés ?**  
-Web n’est pas prioritaire : T2CODE est pensé comme une suite d’apps natives.  
+Web n’est pas prioritaire : T2DECODE est pensé comme une suite d’apps natives.  
 iOS nécessite un compte Apple Developer actif (abonnement annuel), sinon la distribution est désactivée.
 
 ---
@@ -100,7 +100,7 @@ Des signatures `.sig` Linux sont également publiées quand la clé GPG release 
 
 ---
 
-## ⚡ Pourquoi T2CODE ?
+## ⚡ Pourquoi T2DECODE ?
 
 * **🛡️ Souveraineté Totale** : Aucune dépendance à des services tiers ou au Cloud. Tout est stocké et exécuté localement.
 * **📂 Système de Modules** : Importez vos propres cours au format Markdown/JSON en les glissant dans le dossier `modules`.
@@ -126,7 +126,7 @@ Guide : [docs/ollama.md](docs/ollama.md).
 
 ## 🔒 Confidentialité
 
-T2CODE n'envoie aucune télémétrie, aucun analytics et aucune donnée utilisateur vers un service tiers.  
+T2DECODE n'envoie aucune télémétrie, aucun analytics et aucune donnée utilisateur vers un service tiers.  
 Détails : [docs/privacy.md](docs/privacy.md).
 
 ---
@@ -229,7 +229,7 @@ Site : [https://tutodecode.org](https://tutodecode.org)
 
 ## ❤️ Participer au projet
 
-T2CODE est un projet open source porté par une association à but non lucratif.
+T2DECODE est un projet open source porté par une association à but non lucratif.
 
 Si le projet vous parle, vous pouvez:
 - ⭐ Mettre une étoile sur le repo

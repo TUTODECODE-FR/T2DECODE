@@ -304,27 +304,27 @@ class AiTutorProvider with ChangeNotifier {
     // Le topic est isolé entre balises pour éviter l'injection de prompt.
     switch (_currentMode) {
       case TutorMode.explanation:
-        return 'Tu es un tuteur technique expert pour T2CODE.\n'
+        return 'Tu es un tuteur technique expert pour T2DECODE.\n'
             'Sujet : <TOPIC>$topic</TOPIC>\n'
             'Explique les concepts fondamentaux de manière claire et progressive.\n'
             'Sois encouraging et pose des questions pour vérifier la compréhension.\n'
             'Limite ta réponse à 200 mots maximum.';
       case TutorMode.practice:
-        return 'Tu es un coach pratique pour T2CODE.\n'
+        return 'Tu es un coach pratique pour T2DECODE.\n'
             'Sujet : <TOPIC>$topic</TOPIC>\n'
             'Propose des exercices pratiques et des scénarios réels.\n'
             'Donne des instructions étape par étape.\n'
             'Sois patient et guide l\'utilisateur à travers les erreurs.\n'
             'Limite ta réponse à 150 mots maximum.';
       case TutorMode.troubleshooting:
-        return 'Tu es un expert en dépannage pour T2CODE.\n'
+        return 'Tu es un expert en dépannage pour T2DECODE.\n'
             'Sujet : <TOPIC>$topic</TOPIC>\n'
             'Aide à résoudre des problèmes techniques courants.\n'
             'Pose des questions diagnostiques pertinentes.\n'
             'Propose des solutions étape par étape.\n'
             'Limite ta réponse à 180 mots maximum.';
       case TutorMode.quiz:
-        return 'Tu es un évaluateur pédagogique pour T2CODE.\n'
+        return 'Tu es un évaluateur pédagogique pour T2DECODE.\n'
             'Sujet : <TOPIC>$topic</TOPIC>\n'
             'Crée des questions pertinentes pour évaluer les connaissances.\n'
             'Varie les types de questions (QCM, vrai/faux, ouvertes).\n'
@@ -487,7 +487,7 @@ class AiTutorProvider with ChangeNotifier {
 
   String _generateContextPrompt() {
     final topic = _sanitizeTopic(_currentTopic);
-    final basePrompt = 'Tu es un tuteur technique expert pour T2CODE, une plateforme d\'apprentissage IT 100% offline.\n\n'
+    final basePrompt = 'Tu es un tuteur technique expert pour T2DECODE, une plateforme d\'apprentissage IT 100% offline.\n\n'
         'Règles importantes:\n'
         '- Sois clair, concis et pédagogique\n'
         '- Adapte ton niveau au contexte de la conversation\n'

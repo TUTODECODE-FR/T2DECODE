@@ -12,7 +12,7 @@ import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 // ─── Prompt système ──────────────────────────────────────────────────────────
-const _kSystem = '''Tu es Ghost, assistant technique de T2CODE. Regles strictes :
+const _kSystem = '''Tu es Ghost, assistant technique de T2DECODE. Regles strictes :
 - Reponds en francais, TOUJOURS court et direct (3-5 lignes max pour une question simple)
 - PAS d\'introduction, PAS de recapitulatif, PAS de "Bien sur !"
 - Va droit au but : reponds uniquement a ce qui est demande
