@@ -6,7 +6,7 @@ Dernière mise à jour : 17 avril 2026
 TUTODECODE (Association TUTODECODE)
 
 ## 2. Principe général
-TUTODECODE est conçu avec une approche **offline-first** et **zéro tracking**.
+T2DECODE est conçu avec une approche **offline-first** et **zéro tracking**.
 
 - Aucune collecte de données personnelles à des fins publicitaires.
 - Aucune vente de données.
@@ -17,6 +17,11 @@ Par défaut, l'application **ne collecte pas** de données personnelles sur des 
 
 Les données fonctionnelles (préférences, progression, configuration locale) sont stockées localement sur l'appareil de l'utilisateur.
 
+Exemples de données locales :
+- préférences (thème, options, tailles de police)
+- états de progression
+- configuration de fonctionnalités locales (ex : URL Ollama si activée)
+
 ## 4. Réseau et connexions
 L'application peut effectuer des communications réseau limitées dans les cas suivants :
 
@@ -24,6 +29,8 @@ L'application peut effectuer des communications réseau limitées dans les cas s
 - **Ghost Link** : communication sur réseau local (LAN) entre appareils.
 
 Aucune API cloud tierce obligatoire n'est utilisée pour le fonctionnement principal.
+
+Certains composants peuvent effectuer des vérifications/téléchargements optionnels (ex : contenu de modules) depuis le dépôt officiel si et seulement si l’utilisateur laisse le réseau activé et utilise cette fonctionnalité.
 
 ## 5. Permissions iOS
 Selon les fonctionnalités utilisées, l'application peut demander :
