@@ -28,9 +28,8 @@ L'application peut effectuer des communications réseau limitées dans les cas s
 - **Ollama local** : connexion à `localhost` ou à une adresse locale configurée par l'utilisateur.
 - **Ghost Link** : communication sur réseau local (LAN) entre appareils.
 
-Aucune API cloud tierce obligatoire n'est utilisée pour le fonctionnement principal.
-
-Certains composants peuvent effectuer des vérifications/téléchargements optionnels (ex : contenu de modules) depuis le dépôt officiel si et seulement si l’utilisateur laisse le réseau activé et utilise cette fonctionnalité.
+Aucune API cloud tierce n'est utilisée pour le fonctionnement principal.
+En dehors d’Ollama (local) et Ghost Link (LAN), T2DECODE n’effectue pas de connexions vers des services externes.
 
 ## 5. Permissions iOS
 Selon les fonctionnalités utilisées, l'application peut demander :

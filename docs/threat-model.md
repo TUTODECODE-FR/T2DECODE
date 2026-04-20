@@ -2,7 +2,7 @@
 
 ## Scope
 
-TUTODECODE is designed for local-first usage in offline or constrained environments.  
+T2DECODE is designed for local-first usage in offline or constrained environments.  
 The threat model focuses on:
 
 - Integrity of distributed binaries.

@@ -51,7 +51,7 @@ flutter build macos --release
 ```
 
 Sortie:
-- `build/macos/Build/Products/Release/TUTODECODE.app`
+- `build/macos/Build/Products/Release/T2DECODE.app`
 
 ---
 
@@ -60,8 +60,8 @@ Sortie:
 ### ZIP (recommande pour GitHub Releases)
 
 ```bash
-APP_PATH="build/macos/Build/Products/Release/TUTODECODE.app"
-ditto -c -k --keepParent "$APP_PATH" TUTODECODE-macOS.zip
+APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
+ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
 ```
 
 ### DMG / PKG
@@ -83,7 +83,7 @@ Sans signature/notarisation, macOS peut afficher des alertes Gatekeeper.
 ### 1) Signer (Developer ID Application)
 
 ```bash
-APP_PATH="build/macos/Build/Products/Release/TUTODECODE.app"
+APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
 codesign --force --deep --options runtime --timestamp --sign "Developer ID Application: ..." "$APP_PATH"
 codesign --verify --deep --strict --verbose=2 "$APP_PATH"
 spctl --assess --type execute --verbose "$APP_PATH"
@@ -92,11 +92,11 @@ spctl --assess --type execute --verbose "$APP_PATH"
 ### 2) Notariser (notarytool)
 
 ```bash
-APP_PATH="build/macos/Build/Products/Release/TUTODECODE.app"
-rm -f TUTODECODE-macOS.zip
-ditto -c -k --keepParent "$APP_PATH" TUTODECODE-macOS.zip
+APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
+rm -f T2DECODE-macOS.zip
+ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
 
-xcrun notarytool submit TUTODECODE-macOS.zip \
+xcrun notarytool submit T2DECODE-macOS.zip \
   --apple-id "email@domain.tld" \
   --password "app-specific-password" \
   --team-id "TEAMID" \
@@ -118,7 +118,7 @@ xcrun stapler staple "$APP_PATH"
 Cause: attributs etendus (xattr).
 
 ```bash
-APP_PATH="build/macos/Build/Products/Release/TUTODECODE.app"
+APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
 xattr -cr "$APP_PATH"
 codesign --verify --deep --strict --verbose=2 "$APP_PATH"
 ```
@@ -131,4 +131,3 @@ Actions:
 - `flutter clean`
 - `flutter pub get`
 - rebuild `flutter build macos --release`
-

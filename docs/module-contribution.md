@@ -1,6 +1,6 @@
 # Proposer un module pédagogique
 
-Ce guide décrit le minimum attendu pour proposer un module compatible TUTODECODE.
+Ce guide décrit le minimum attendu pour proposer un module compatible T2DECODE.
 
 ## 1) Préparer le contenu
 

@@ -6,6 +6,7 @@ Source de vérité code: `lib/features/lab/lab_catalog.dart`.
 ## Liste des labs disponibles
 - Réseau: Ping, scan, traceroute
 - Sécurité: Attaques, défense, CTF
+- CTF Prep: Guide offline pour préparer un lab volontairement vulnérable (isolé)
 - Système: CPU, RAM, processus
 - Cloud: Conteneurs, K8s, CI/CD
 - Cryptographie: AES, RSA, hashes

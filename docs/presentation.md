@@ -1,22 +1,22 @@
 ================================================================================
-🚀 TUTODECODE — PRÉSENTATION OFFICIELLE & CAPACITÉS RÉELLES
+🚀 T2DECODE — PRÉSENTATION OFFICIELLE & CAPACITÉS RÉELLES
 ================================================================================
 
-TUTODECODE est un écosystème technique et pédagogique robuste conçu pour les 
-experts IT et les apprenants. Contrairement aux solutions Cloud, tout ici est 
-exécuté LOCALEMENT pour une confidentialité absolue et une performance maximale.
+T2DECODE est une application technique et pédagogique conçue pour apprendre et
+pratiquer **localement**, sans dépendre d’un cloud. L’objectif : rendre un
+environnement offline‑first **utile**, **sérieux** et **rejouable**.
 
-DÉPÔT : [ROOT_DIRECTORY]/TUTODECODE_APP-main
-DERNIÈRE MISE À JOUR : 17 Mars 2026
+DÉPÔT : https://github.com/TUTODECODE-FR/T2DECODE
+DERNIÈRE MISE À JOUR : 20 Avril 2026
 
 --------------------------------------------------------------------------------
 🛠️ FONCTIONNALITÉS RÉELLES ET COMPATIBILITÉ OS
 --------------------------------------------------------------------------------
 
 1. GHOST AI (Intelligence Artificielle Locale) - [OPÉRATIONNEL]
-   - Technologie : Intégration native avec le serveur local Ollama.
-   - Usage : Chat privé sans aucune fuite de données vers l'extérieur.
-   - Statut : Réel. Nécessite Ollama installé sur la machine hôte.
+   - Technologie : Intégration avec Ollama **local** (aucun cloud requis).
+   - Usage : assistant technique privé (IA locale optionnelle).
+   - Statut : Réel. Nécessite Ollama lancé sur la machine ou sur le LAN (config utilisateur).
 
 2. NETKIT : DIAGNOSTIC RÉSEAU EN DIRECT - [OPÉRATIONNEL]
    - Info Système : Lecture en temps réel (Hostname, CPU, IPs locales). 
@@ -38,6 +38,8 @@ DERNIÈRE MISE À JOUR : 17 Mars 2026
    - Simulations visuelles : Ping ICMP, DNS Recursion, TCP Three-way Handshake.
    - Sécurité : Simulateur d'injection SQL interactif pour l'entraînement.
    - But : Visualiser ce qui est normalement invisible dans les câbles.
+
+   - CTF Prep (offline) : guide intégré pour préparer un lab volontairement vulnérable, mais isolé.
 
 6. BOÎTE À OUTILS SAV
    - Calculateur IP / Masques : Logiciel de calcul intégré.
@@ -66,14 +68,14 @@ DERNIÈRE MISE À JOUR : 17 Mars 2026
    - Recherche intelligente et niveaux de risque (Sécurisé/Critique) intégrés.
 
 --------------------------------------------------------------------------------
-💡 POURQUOI TUTODECODE ?
+💡 POURQUOI T2DECODE ?
 --------------------------------------------------------------------------------
 
 - 100% OFFLINE : Indispensable pour les interventions en datacenter ou zones blanches.
-- SÉCURITÉ : Aucune clé API cloud, aucun compte requis, aucune donnée partagée.
+- SÉCURITÉ : Aucun compte requis, aucun tracker, aucune télémétrie.
 - PRAGMATISME : Mélange d'outils de diagnostic pur et de documentation technique.
 - PREMIUM : Design fluide, animations micro-interactives et UX optimisée Desktop.
 
 ================================================================================
-Document certifié conforme à l'implémentation de la branche MAIN — 2026-03-17
+Document aligné sur l'implémentation de la branche MAIN — 2026-04-20
 ================================================================================

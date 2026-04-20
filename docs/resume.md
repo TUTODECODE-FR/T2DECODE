@@ -1,8 +1,8 @@
 ================================================================================
-📘 TUTODECODE — RÉSUMÉ COMPLET DE L'APPLICATION
+📘 T2DECODE — RÉSUMÉ COMPLET DE L'APPLICATION
 ================================================================================
 
-TUTODECODE est un écosystème pédagogique et technique "All-in-One" conçu pour les
+T2DECODE est une suite pédagogique et technique "All-in-One" conçue pour les
 professionnels de l'IT, les étudiants et les passionnés de cybersécurité. 
 L'application se distingue par son approche 100% Offline, Privacy-First et 
 propulsée par l'Intelligence Artificielle locale.
@@ -14,7 +14,7 @@ propulsée par l'Intelligence Artificielle locale.
 - SOUVERAINETÉ NUMÉRIQUE : Aucune dépendance au Cloud. Tout fonctionne en local.
 - CONFIDENTIALITÉ ABSOLUE : Pas de tracking, pas de compte, pas de fuite de données.
 - ACCESSIBILITÉ : Indispensable en zone blanche, datacenter ou en déplacement.
-- OPEN SOURCE : Projet porté par l'Association TUTODECODE (Licence AGPL v3).
+- OPEN SOURCE : Projet porté par l'Association TUTODECODE (Licence GPLv3).
 
 --------------------------------------------------------------------------------
 🚀 FONCTIONNALITÉS MAÎTRESSES
