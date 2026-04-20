@@ -482,7 +482,7 @@ class _AppShellState extends State<AppShell> {
                 child: Row(children: [
                   Image.asset('assets/logo.png', width: 32, height: 32),
                   const SizedBox(width: TdcSpacing.sm),
-                  const Text('T2CODE',
+                  const Text('T2DECODE',
                       style: TextStyle(
                         color: TdcColors.textPrimary,
                         fontWeight: FontWeight.w900,

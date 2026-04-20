@@ -1,4 +1,4 @@
-# Politique de confidentialité — T2CODE
+# Politique de confidentialité — T2DECODE
 
 Dernière mise à jour : 17 avril 2026
 

@@ -114,7 +114,7 @@ class GithubService {
           url,
           headers: const {
             'Accept': 'application/vnd.github+json',
-            'User-Agent': 'T2CODE',
+            'User-Agent': 'T2DECODE',
           },
         )
         .timeout(_timeout);
@@ -168,7 +168,7 @@ class GithubService {
       final client = http.Client();
     try {
       final req = http.Request('GET', uri);
-      req.headers['User-Agent'] = 'T2CODE';
+      req.headers['User-Agent'] = 'T2DECODE';
       final streamed = await client.send(req).timeout(_timeout);
 
       if (streamed.statusCode != 200) {

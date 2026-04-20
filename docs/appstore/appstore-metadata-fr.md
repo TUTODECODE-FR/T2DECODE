@@ -16,7 +16,7 @@ Apprendre l'informatique
 Plateforme d'apprentissage technique offline-first avec outils intégrés, laboratoires interactifs et IA locale via Ollama.
 
 ## Description
-T2CODE est une application d'apprentissage technique conçue pour fonctionner en local, avec une approche offline-first.
+T2DECODE est une application d'apprentissage technique conçue pour fonctionner en local, avec une approche offline-first.
 
 Fonctionnalités principales :
 - Cours et contenus pédagogiques lisibles directement dans l'application

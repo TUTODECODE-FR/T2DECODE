@@ -1,6 +1,6 @@
 # Confidentialité
 
-T2CODE n'envoie aucune télémétrie et ne dépend d'aucun service tiers.
+T2DECODE n'envoie aucune télémétrie et ne dépend d'aucun service tiers.
 
 ## Garanties
 - Aucune dépendance Firebase/Sentry/Mixpanel
