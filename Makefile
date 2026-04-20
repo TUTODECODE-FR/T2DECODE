@@ -1,7 +1,8 @@
-# Makefile for TUTODECODE Development
+# Makefile for T2DECODE Development
 
 FLUTTER = flutter
 PUB = $(FLUTTER) pub
+PUBSTAMP = .dart_tool/package_config.json
 
 .PHONY: help setup get build-android build-android-fdroid build-ios build-macos build-windows build-linux build-all clean test
 
@@ -25,24 +26,28 @@ setup:
 	@chmod +x scripts/setup.sh
 	@./scripts/setup.sh
 
-get:
-	$(PUB) get
+$(PUBSTAMP): pubspec.yaml pubspec.lock
+	@echo "→ Dépendances Dart/Flutter (pub get)…"
+	@tmp=$$(mktemp); $(PUB) get >"$$tmp" 2>&1 || (cat "$$tmp"; rm -f "$$tmp"; exit 1); rm -f "$$tmp"
+	@test -f $(PUBSTAMP)
 
-test:
-	$(FLUTTER) test
+get: $(PUBSTAMP)
 
-build-android:
-	$(FLUTTER) build apk --release
+test: $(PUBSTAMP)
+	$(FLUTTER) test --no-pub
 
-build-android-fdroid:
-	FDROID_BUILD=true $(FLUTTER) build apk --release --no-tree-shake-icons
+build-android: $(PUBSTAMP)
+	$(FLUTTER) build apk --release --no-pub
 
-build-ios:
-	$(FLUTTER) build ipa --release
+build-android-fdroid: $(PUBSTAMP)
+	FDROID_BUILD=true $(FLUTTER) build apk --release --no-tree-shake-icons --no-pub
 
-build-macos:
+build-ios: $(PUBSTAMP)
+	$(FLUTTER) build ipa --release --no-pub
+
+build-macos: $(PUBSTAMP)
 	@chmod +x scripts/build_macos_local.sh
-	@./scripts/build_macos_local.sh
+	@SKIP_PUB_GET=1 ./scripts/build_macos_local.sh
 
 build-dmg: build-macos
 	@chmod +x scripts/build_dmg.sh
@@ -59,11 +64,11 @@ build-linux-appimage: build-linux
 	@chmod +x scripts/build_linux_appimage.sh
 	@./scripts/build_linux_appimage.sh
 
-build-windows:
-	$(FLUTTER) build windows --release
+build-windows: $(PUBSTAMP)
+	$(FLUTTER) build windows --release --no-pub
 
-build-linux:
-	$(FLUTTER) build linux --release
+build-linux: $(PUBSTAMP)
+	$(FLUTTER) build linux --release --no-pub
 
 build-all: build-android build-macos build-linux
 
