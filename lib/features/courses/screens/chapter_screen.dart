@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
-import 'package:flutter_highlight/flutter_highlight.dart';
-import 'package:flutter_highlight/themes/atom-one-dark.dart';
 import 'package:tutodecode/features/courses/providers/courses_provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
-import 'package:tutodecode/core/responsive/responsive.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 import '../widgets/qcm_widget.dart';
+import 'package:tutodecode/features/courses/practice/course_practice_engine.dart';
+import 'package:tutodecode/features/courses/data/course_repository.dart';
+import 'package:tutodecode/features/courses/practice/widgets/practice_flow.dart';
 
 class ChapterScreen extends StatefulWidget {
   const ChapterScreen({super.key});
@@ -67,6 +66,8 @@ class _ChapterScreenState extends State<ChapterScreen> {
               Text(chapter.title, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 24),
               _markdown(chapter.content),
+              const SizedBox(height: 28),
+              _practiceSection(course, chapter),
               if (chapter.quiz != null) ...[
                 const SizedBox(height: 32),
                 const TdcSectionTitle('QUIZ'),
@@ -83,6 +84,104 @@ class _ChapterScreenState extends State<ChapterScreen> {
         _nav(course, chapter, prov),
       ],
     );
+  }
+
+  Widget _practiceSection(Course course, CourseChapter chapter) {
+    final links = CoursePracticeEngine.recommend(course, chapter);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const TdcSectionTitle('PRATIQUE (VIRTUEL)'),
+        const SizedBox(height: 12),
+        Text(
+          "Teste le concept dans un environnement contrôlé (simulation locale) ou ouvre directement un lab.",
+          style: const TextStyle(color: TdcColors.textMuted, fontSize: 12, height: 1.35),
+        ),
+        const SizedBox(height: 14),
+        ...links.map((l) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: TdcCard(
+                padding: const EdgeInsets.all(14),
+                onTap: l.labArgs != null ? () => _openLab(l.labArgs!) : null,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(l.icon, size: 18, color: l.tint),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l.title,
+                                style: const TextStyle(
+                                  color: TdcColors.textPrimary,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                l.subtitle,
+                                style: const TextStyle(
+                                  color: TdcColors.textMuted,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (l.labArgs != null)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: l.tint.withOpacity(0.10),
+                              border: Border.all(color: l.tint.withOpacity(0.25)),
+                            ),
+                            child: Text(
+                              'Ouvrir le lab',
+                              style: TextStyle(color: l.tint, fontSize: 11, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    PracticeFlowDiagram(nodes: l.flow),
+                    if (l.embeddedSandbox != null) ...[
+                      const SizedBox(height: 12),
+                      l.embeddedSandbox!,
+                    ],
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        if (l.labArgs != null)
+                          OutlinedButton.icon(
+                            onPressed: () => _openLab(l.labArgs!),
+                            icon: const Icon(Icons.science_outlined, size: 16),
+                            label: const Text('Lab'),
+                          ),
+                        if (l.toolRoute != null)
+                          OutlinedButton.icon(
+                            onPressed: () => Navigator.pushNamed(context, l.toolRoute!),
+                            icon: const Icon(Icons.handyman_outlined, size: 16),
+                            label: const Text('Outil'),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            )),
+      ],
+    );
+  }
+
+  void _openLab(Map<String, dynamic> args) {
+    Navigator.pushNamed(context, '/lab', arguments: args);
   }
 
   Widget _markdown(String content) {
