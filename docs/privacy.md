@@ -30,9 +30,6 @@ T2DECODE peut effectuer des communications réseau **dans des cas limités** et 
 2) **Ghost Link (LAN)**  
 - communication sur le réseau local (LAN) pour découverte/échange entre appareils
 
-3) **Mises à jour de modules (optionnel)**  
-- l’app peut vérifier/télécharger des modules depuis le dépôt officiel (HTTPS) si la fonctionnalité est activée et si le réseau n’est pas bloqué par les réglages
-
 ## Contrôle utilisateur
 
 T2DECODE inclut des réglages pour limiter/désactiver le réseau (ex : “mode zéro réseau”).
