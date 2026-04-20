@@ -681,20 +681,44 @@ class _HomeScreenState extends State<HomeScreen> {
     final progress = total > 0 ? done / total : 0.0;
     final icon = _courseIcon(course);
     final iconColor = _courseIconColor(course);
+    final isImported = course.keywords.contains('EXTERNAL');
 
     return TdcCard(
       onTap: () => _openCourseSheet(context, course, prov),
       padding: EdgeInsets.all(TdcAdaptive.padding(context, TdcSpacing.md)),
       child: horizontal
           ? _buildHorizontalCard(
-              context, course, icon, iconColor, color, done, total, progress)
+              context,
+              course,
+              icon,
+              iconColor,
+              color,
+              done,
+              total,
+              progress,
+              isImported)
           : _buildVerticalCard(
-              context, course, icon, iconColor, color, done, total, progress),
+              context,
+              course,
+              icon,
+              iconColor,
+              color,
+              done,
+              total,
+              progress,
+              isImported),
     );
   }
 
   Widget _buildVerticalCard(BuildContext context, Course course, IconData icon,
-      Color iconColor, Color color, int done, int total, double progress) {
+      Color iconColor, Color color, int done, int total, double progress, bool isImported) {
+    final sourceColor = isImported ? TdcColors.coral : TdcColors.info;
+    final sourceIcon = isImported ? Icons.file_upload_outlined : Icons.verified_outlined;
+    final sourceLabel = isImported ? 'Importé (local)' : 'Officiel';
+    final sourceTooltip = isImported
+        ? 'Cours importé depuis un fichier local. T2DECODE n’en revendique pas la paternité.'
+        : 'Cours fourni avec T2DECODE.';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -709,16 +733,26 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Icon(icon,
                   color: iconColor, size: TdcAdaptive.icon(context, 22)),
             ),
-            if (course.keywords.contains('EXTERNAL'))
-              const TdcStatusBadge(
-                  label: 'Module Externe',
-                  color: TdcColors.accent,
-                  icon: Icons.extension)
-            else if (done == total && total > 0)
-              const TdcStatusBadge(
-                  label: 'Terminé',
-                  color: TdcColors.success,
-                  icon: Icons.check_circle),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (done == total && total > 0) ...[
+                  const TdcStatusBadge(
+                      label: 'Terminé',
+                      color: TdcColors.success,
+                      icon: Icons.check_circle),
+                  const SizedBox(width: 8),
+                ],
+                Tooltip(
+                  message: sourceTooltip,
+                  child: TdcStatusBadge(
+                    label: sourceLabel,
+                    color: sourceColor,
+                    icon: sourceIcon,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
         const Spacer(),
@@ -782,7 +816,14 @@ class _HomeScreenState extends State<HomeScreen> {
       Color color,
       int done,
       int total,
-      double progress) {
+      double progress,
+      bool isImported) {
+    final sourceColor = isImported ? TdcColors.coral : TdcColors.info;
+    final sourceIcon = isImported ? Icons.file_upload_outlined : Icons.verified_outlined;
+    final sourceTooltip = isImported
+        ? 'Cours importé depuis un fichier local. T2DECODE n’en revendique pas la paternité.'
+        : 'Cours fourni avec T2DECODE.';
+
     return Row(
       children: [
         Container(
@@ -840,6 +881,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: color,
                     fontSize: TdcText.label(context),
                     fontWeight: FontWeight.w600)),
+          ),
+          SizedBox(height: TdcAdaptive.space(context, 6)),
+          Tooltip(
+            message: sourceTooltip,
+            child: Icon(sourceIcon,
+                size: TdcAdaptive.icon(context, 16), color: sourceColor),
           ),
           SizedBox(height: TdcAdaptive.space(context, 6)),
           Icon(Icons.chevron_right,
@@ -903,6 +950,34 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: TdcColors.textPrimary,
                     fontSize: TdcText.h2(context),
                     fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Row(children: [
+              Tooltip(
+                message: course.keywords.contains('EXTERNAL')
+                    ? 'Cours importé depuis un fichier local. T2DECODE n’en revendique pas la paternité.'
+                    : 'Cours fourni avec T2DECODE.',
+                child: TdcStatusBadge(
+                  label: course.keywords.contains('EXTERNAL') ? 'Importé (local)' : 'Officiel',
+                  color: course.keywords.contains('EXTERNAL') ? TdcColors.coral : TdcColors.info,
+                  icon: course.keywords.contains('EXTERNAL')
+                      ? Icons.file_upload_outlined
+                      : Icons.verified_outlined,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  course.keywords.contains('EXTERNAL')
+                      ? 'Ajouté par vous (import).'
+                      : 'Créé et fourni par T2DECODE.',
+                  style: TextStyle(
+                      color: TdcColors.textMuted,
+                      fontSize: TdcText.bodySmall(context)),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ]),
             SizedBox(height: 6),
             Text(course.description,
                 style: TextStyle(
