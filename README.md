@@ -89,6 +89,9 @@ Même si les binaires macOS sont déjà disponibles via les Releases GitHub, une
 - Signature binaire Linux : fichiers `.sig` publiés quand la clé GPG release est configurée
 - Gouvernance des modifications : [CODEOWNERS](.github/CODEOWNERS)
 
+Pour aller plus loin (audit, builds reproductibles, bug bounty, transparence) :
+`docs/trust.md`.
+
 ---
 
 ## 📥 Téléchargements
