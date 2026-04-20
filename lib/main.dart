@@ -85,7 +85,7 @@ class TutoDeCodeApp extends StatelessWidget {
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, _) => MaterialApp(
-          title: 'TUTODECODE',
+          title: 'T2CODE',
           debugShowCheckedModeBanner: false,
           theme: buildAppLightTheme(),
           darkTheme: buildAppTheme(),

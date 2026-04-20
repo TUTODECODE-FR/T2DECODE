@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ShellProvider extends ChangeNotifier {
-  String _title = 'TutoDeCode';
+  String _title = 'T2CODE';
   List<Widget>? _actions;
   bool _showBackButton = false;
   VoidCallback? _onBack;

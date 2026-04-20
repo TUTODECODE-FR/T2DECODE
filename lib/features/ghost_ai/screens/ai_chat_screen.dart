@@ -12,13 +12,16 @@ import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 // ─── Prompt système ──────────────────────────────────────────────────────────
-const _kSystem = '''Tu es Ghost, assistant technique de TutoDeCode. Regles strictes :
+const _kSystem = '''Tu es Ghost, assistant technique de T2CODE. Regles strictes :
 - Reponds en francais, TOUJOURS court et direct (3-5 lignes max pour une question simple)
 - PAS d\'introduction, PAS de recapitulatif, PAS de "Bien sur !"
 - Va droit au but : reponds uniquement a ce qui est demande
 - Code uniquement si la question porte sur du code, sinon texte simple
 - Si la reponse necessite un exemple, 1 seul exemple concis suffit
-- Jamais de listes a puces si une phrase suffit''';
+- Jamais de listes a puces si une phrase suffit
+- Si la demande est ambigue, pose 1-2 questions de clarification AVANT de conclure
+- Si tu n\'es pas certain, dis-le clairement et propose une verification/une methode
+- Fais un effort de comprehension: reformule en 1 phrase ce que l\'utilisateur veut faire''';
 
 class AIChatScreen extends StatefulWidget {
   const AIChatScreen({super.key});
@@ -36,6 +39,8 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   bool          _checking = true;
   bool          _streaming = false;
   StreamSubscription? _sub;
+  Timer? _pollTimer;
+  bool _polling = false;
 
   late final AnimationController _pulseCtrl;
 
@@ -45,6 +50,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900))
       ..repeat(reverse: true);
     _init();
+    _pollTimer = Timer.periodic(const Duration(seconds: 10), (_) => _pollStatus());
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateShell();
@@ -72,6 +78,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   @override
   void dispose() {
     _sub?.cancel();
+    _pollTimer?.cancel();
     _pulseCtrl.dispose();
     _inputCtrl.dispose();
     _scrollCtrl.dispose();
@@ -88,6 +95,46 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       if (s.running && s.models.isNotEmpty) _model = s.models.first;
     });
     _updateShell();
+  }
+
+  Future<void> _pollStatus() async {
+    if (_polling || !mounted) return;
+    _polling = true;
+    try {
+      final prevRunning = _status?.running;
+      final s = await OllamaService.checkStatus(
+        includeModels: false,
+        versionTimeout: const Duration(seconds: 3),
+        tagsTimeout: const Duration(seconds: 5),
+      );
+
+      if (!mounted) return;
+      final runningChanged = prevRunning != s.running;
+      if (runningChanged || (_status == null)) {
+        setState(() {
+          _status = OllamaStatus(running: s.running, version: s.version, models: _status?.models ?? const [], error: s.error);
+          if (!s.running) _model = null;
+        });
+        _updateShell();
+      }
+
+      // Si Ollama vient de revenir, charger la liste de modèles une fois.
+      if (runningChanged && s.running) {
+        final full = await OllamaService.checkStatus(
+          includeModels: true,
+          versionTimeout: const Duration(seconds: 8),
+          tagsTimeout: const Duration(seconds: 10),
+        );
+        if (!mounted) return;
+        setState(() {
+          _status = full;
+          if (full.models.isNotEmpty) _model ??= full.models.first;
+        });
+        _updateShell();
+      }
+    } finally {
+      _polling = false;
+    }
   }
 
   void _scrollBottom() {
@@ -154,9 +201,12 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
         onError: (e) {
           if (!mounted) return;
           setState(() {
-            _msgs[_msgs.length - 1] = _Msg(role: 'error', text: '**Erreur de connexion**\n\n${e.toString()}');
+            _msgs[_msgs.length - 1] = _Msg(role: 'error', text: '**Connexion interrompue**\n\nOllama ne répond plus. Lancez-le (ou réessayez plus tard).');
+            _status = const OllamaStatus(running: false, error: 'Ollama indisponible');
+            _model = null;
             _streaming = false;
           });
+          _updateShell();
         },
         cancelOnError: true,
       );
@@ -209,14 +259,14 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
           width: 8, height: 8,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: running ? TdcColors.success : TdcColors.textMuted,
+            color: running ? TdcColors.info : TdcColors.textMuted,
           ),
         ),
         const SizedBox(width: 8),
         Text(
-          running ? 'Moteur IA prêt' : 'Ollama non détecté',
+          running ? 'IA locale disponible' : 'IA locale indisponible (Ollama)',
           style: TextStyle(
-            color: running ? TdcColors.success : TdcColors.textSecondary,
+            color: running ? TdcColors.info : TdcColors.textSecondary,
             fontSize: 10,
             fontWeight: FontWeight.bold,
           ),
@@ -227,6 +277,15 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
             onPressed: _init,
             icon: const Icon(Icons.refresh, size: 14),
             label: const Text('Réessayer', style: TextStyle(fontSize: 10)),
+            style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
+          ),
+        ],
+        if (!running && !_checking) ...[
+          const SizedBox(width: 8),
+          TextButton.icon(
+            onPressed: () => Navigator.pushNamed(context, '/ai-config'),
+            icon: const Icon(Icons.tune, size: 14),
+            label: const Text('Configurer', style: TextStyle(fontSize: 10)),
             style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
           ),
         ],
@@ -286,9 +345,64 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
         const Text('Ghost AI', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Text(
-          _status?.running == true ? 'Prêt à vous aider avec votre code.' : 'Lancez Ollama sur votre machine.',
+          _status?.running == true
+              ? 'Prêt à vous aider (IA 100% locale).'
+              : 'Ollama est optionnel. Sans lui, l’application reste 100% utilisable.',
           style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 14),
         ),
+        if (_status?.running != true) ...[
+          const SizedBox(height: 20),
+          Container(
+            constraints: const BoxConstraints(maxWidth: 520),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: TdcColors.surfaceAlt,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: TdcColors.border),
+            ),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: const [
+                Icon(Icons.info_outline, size: 16, color: TdcColors.info),
+                SizedBox(width: 8),
+                Text('IA locale (optionnelle)', style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
+              ]),
+              const SizedBox(height: 8),
+              Text(
+                'Activez Ollama pour débloquer le chat IA. Sinon, ignorez cette section: rien n’est bloquant.',
+                style: TextStyle(color: Colors.white.withOpacity(0.55), fontSize: 12, height: 1.4),
+              ),
+              if ((_status?.error ?? '').isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Text(
+                  'Détail: ${_status?.error}',
+                  style: TextStyle(color: Colors.white.withOpacity(0.35), fontSize: 11, height: 1.3),
+                ),
+              ],
+              const SizedBox(height: 12),
+              Row(children: [
+                OutlinedButton.icon(
+                  onPressed: _init,
+                  icon: const Icon(Icons.refresh, size: 16),
+                  label: const Text('Détecter'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: TdcColors.textPrimary,
+                    side: BorderSide(color: TdcColors.border),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.pushNamed(context, '/ai-config'),
+                  icon: const Icon(Icons.tune, size: 16),
+                  label: const Text('Configurer'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: TdcColors.textPrimary,
+                    side: BorderSide(color: TdcColors.border),
+                  ),
+                ),
+              ]),
+            ]),
+          ),
+        ],
       ]),
     );
   }
@@ -326,7 +440,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
               Text(msg.thinking, style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12)),
               const Divider(height: 16),
             ],
-            Text(msg.text, style: TextStyle(color: isError ? TdcColors.danger : Colors.white, fontSize: 14, height: 1.5)),
+            Text(msg.text, style: TextStyle(color: isError ? TdcColors.info : Colors.white, fontSize: 14, height: 1.5)),
           ],
         ),
       ),

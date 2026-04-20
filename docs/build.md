@@ -7,8 +7,8 @@
 
 ## Installation
 ```bash
-git clone https://github.com/TUTODECODE-FR/TUTODECODE.git
-cd TUTODECODE
+git clone https://github.com/TUTODECODE-FR/T2DECODE.git
+cd T2DECODE
 make get
 ```
 

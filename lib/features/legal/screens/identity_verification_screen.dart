@@ -946,7 +946,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
 RAPPORT DE VÉRIFICATION D'AUTHENTICITÉ
 ==========================================
 
-Application: TUTODECODE
+Application: T2CODE
 Date de vérification: ${_formatDate(result.verificationDate)}
 
 STATUT: ${result.isAuthentic ? 'AUTHENTIFIÉ' : 'NON AUTHENTIFIÉ'}

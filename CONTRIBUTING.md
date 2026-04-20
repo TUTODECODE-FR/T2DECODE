@@ -13,7 +13,7 @@
 
 ## Installation
 ```bash
-git clone https://github.com/TUTODECODE-FR/TUTODECODE.git
+git clone https://github.com/TUTODECODE-FR/T2DECODE.git
 cd TUTODECODE
 make get
 ```

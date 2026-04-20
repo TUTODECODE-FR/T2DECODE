@@ -1,7 +1,7 @@
 ; Professional Inno Setup File for TUTODECODE
 ; To be used with GitHub Actions or Manual Build
 
-#define MyAppName "TUTODECODE"
+#define MyAppName "T2CODE"
 #ifndef MyAppVersion
   #define MyAppVersion "0.0.0"
 #endif
@@ -27,7 +27,7 @@ LicenseFile=..\..\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=.
-OutputBaseFilename=TUTODECODE-Setup
+OutputBaseFilename=T2CODE-Setup
 SetupIconFile=..\runner\resources\app_icon.ico
 Compression=lzma
 SolidCompression=yes

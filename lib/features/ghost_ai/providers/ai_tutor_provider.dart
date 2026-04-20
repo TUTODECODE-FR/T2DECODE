@@ -13,6 +13,8 @@ class AiTutorProvider with ChangeNotifier {
   bool _isConnected = false;
   bool _isLoading = false;
   bool _isStreaming = false;
+  bool _hasCheckedOllama = false;
+  bool _checkingOllama = false;
   StreamSubscription<OllamaChunk>? _streamSub;
   String? _errorMessage;
   List<String> _availableModels = [];
@@ -67,6 +69,8 @@ class AiTutorProvider with ChangeNotifier {
   bool get isConnected => _isConnected;
   bool get isLoading => _isLoading;
   bool get isStreaming => _isStreaming;
+  bool get hasCheckedOllama => _hasCheckedOllama;
+  bool get isCheckingOllama => _checkingOllama;
   String? get errorMessage => _errorMessage;
   List<String> get availableModels => _availableModels;
   String get selectedModel => _selectedModel;
@@ -121,26 +125,82 @@ class AiTutorProvider with ChangeNotifier {
   }
 
   void _startConnectionCheck() {
-    _connectionCheckTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
-      checkOllamaConnection();
+    // Ping léger pour détecter rapidement un arrêt/redémarrage d'Ollama.
+    // - Quand Ollama est dispo: on veut un feedback rapide (UX).
+    // - Quand il est indispo: on évite une charge inutile (timeouts courts + pas de /api/tags).
+    _connectionCheckTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      checkOllamaConnection(silent: true, includeModels: false);
     });
   }
 
-  Future<void> checkOllamaConnection() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+  Future<void> checkOllamaConnection({bool silent = false, bool includeModels = true}) async {
+    if (_checkingOllama) return;
+    _checkingOllama = true;
 
-    final status = await OllamaService.checkStatus();
-    _isConnected = status.running;
-    _availableModels = status.models;
-    if (!status.running) _errorMessage = status.error;
-    if (_availableModels.isNotEmpty && !_availableModels.contains(_selectedModel)) {
-      _selectedModel = _availableModels.first;
+    final prevConnected = _isConnected;
+    final prevError = _errorMessage;
+    final prevModels = List<String>.from(_availableModels);
+    final prevSelected = _selectedModel;
+
+    if (!silent) {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
     }
 
-    _isLoading = false;
-    notifyListeners();
+    try {
+      final status = await OllamaService.checkStatus(
+        includeModels: includeModels,
+        versionTimeout: silent ? const Duration(seconds: 3) : const Duration(seconds: 15),
+        tagsTimeout: silent ? const Duration(seconds: 5) : const Duration(seconds: 15),
+      );
+
+      _hasCheckedOllama = true;
+      _isConnected = status.running;
+      if (!status.running) {
+        _availableModels = const [];
+        _errorMessage = status.error;
+      } else {
+        _errorMessage = null;
+        if (includeModels) {
+          _availableModels = status.models;
+          if (_availableModels.isNotEmpty && !_availableModels.contains(_selectedModel)) {
+            _selectedModel = _availableModels.first;
+          }
+        } else {
+          // Si on vient de repasser en ligne, récupérer les modèles une fois.
+          if (!prevConnected) {
+            final full = await OllamaService.checkStatus(
+              includeModels: true,
+              versionTimeout: const Duration(seconds: 8),
+              tagsTimeout: const Duration(seconds: 10),
+            );
+            if (full.running) {
+              _availableModels = full.models;
+              if (_availableModels.isNotEmpty && !_availableModels.contains(_selectedModel)) {
+                _selectedModel = _availableModels.first;
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      _hasCheckedOllama = true;
+      _isConnected = false;
+      _availableModels = const [];
+      _errorMessage = e.toString();
+    } finally {
+      _checkingOllama = false;
+      _isLoading = false;
+    }
+
+    final changed = prevConnected != _isConnected ||
+        prevError != _errorMessage ||
+        prevSelected != _selectedModel ||
+        prevModels.length != _availableModels.length ||
+        !_availableModels.asMap().entries.every((e) => e.value == (prevModels.length > e.key ? prevModels[e.key] : null));
+
+    if (changed || !silent) notifyListeners();
   }
 
   Future<void> loadAvailableModels() async {
@@ -244,27 +304,27 @@ class AiTutorProvider with ChangeNotifier {
     // Le topic est isolé entre balises pour éviter l'injection de prompt.
     switch (_currentMode) {
       case TutorMode.explanation:
-        return 'Tu es un tuteur technique expert pour TUTODECODE.\n'
+        return 'Tu es un tuteur technique expert pour T2CODE.\n'
             'Sujet : <TOPIC>$topic</TOPIC>\n'
             'Explique les concepts fondamentaux de manière claire et progressive.\n'
             'Sois encouraging et pose des questions pour vérifier la compréhension.\n'
             'Limite ta réponse à 200 mots maximum.';
       case TutorMode.practice:
-        return 'Tu es un coach pratique pour TUTODECODE.\n'
+        return 'Tu es un coach pratique pour T2CODE.\n'
             'Sujet : <TOPIC>$topic</TOPIC>\n'
             'Propose des exercices pratiques et des scénarios réels.\n'
             'Donne des instructions étape par étape.\n'
             'Sois patient et guide l\'utilisateur à travers les erreurs.\n'
             'Limite ta réponse à 150 mots maximum.';
       case TutorMode.troubleshooting:
-        return 'Tu es un expert en dépannage pour TUTODECODE.\n'
+        return 'Tu es un expert en dépannage pour T2CODE.\n'
             'Sujet : <TOPIC>$topic</TOPIC>\n'
             'Aide à résoudre des problèmes techniques courants.\n'
             'Pose des questions diagnostiques pertinentes.\n'
             'Propose des solutions étape par étape.\n'
             'Limite ta réponse à 180 mots maximum.';
       case TutorMode.quiz:
-        return 'Tu es un évaluateur pédagogique pour TUTODECODE.\n'
+        return 'Tu es un évaluateur pédagogique pour T2CODE.\n'
             'Sujet : <TOPIC>$topic</TOPIC>\n'
             'Crée des questions pertinentes pour évaluer les connaissances.\n'
             'Varie les types de questions (QCM, vrai/faux, ouvertes).\n'
@@ -381,6 +441,10 @@ class AiTutorProvider with ChangeNotifier {
               timestamp: aiMsg.timestamp,
             );
           }
+          // Forcer un refresh immédiat pour que l'UI repasse en "Ollama indisponible"
+          _isConnected = false;
+          _errorMessage = 'Ollama indisponible (connexion interrompue)';
+          checkOllamaConnection(silent: true, includeModels: false);
           _isStreaming = false;
           _isLoading = false;
           notifyListeners();
@@ -423,13 +487,16 @@ class AiTutorProvider with ChangeNotifier {
 
   String _generateContextPrompt() {
     final topic = _sanitizeTopic(_currentTopic);
-    final basePrompt = 'Tu es un tuteur technique expert pour TUTODECODE, une plateforme d\'apprentissage IT 100% offline.\n\n'
+    final basePrompt = 'Tu es un tuteur technique expert pour T2CODE, une plateforme d\'apprentissage IT 100% offline.\n\n'
         'Règles importantes:\n'
         '- Sois clair, concis et pédagogique\n'
         '- Adapte ton niveau au contexte de la conversation\n'
         '- Utilise des exemples pratiques quand possible\n'
         '- Sois encouraging et constructif\n'
         '- Évite le jargon excessif\n'
+        '- Fais un effort de compréhension : reformule en 1 phrase la demande avant de répondre\n'
+        '- Si la demande est ambiguë, pose 1-2 questions de clarification avant de conclure\n'
+        '- Si tu n\'es pas sûr, dis-le et propose une méthode de vérification (ne pas inventer)\n'
         '- Limite tes réponses à 200 mots maximum\n\n'
         'Sujet actuel : <TOPIC>$topic</TOPIC>\n'
         'Mode : ${_currentMode.name}';

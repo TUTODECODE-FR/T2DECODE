@@ -34,7 +34,7 @@ APK attendu :
 
 1. Ouvrir une demande de packaging sur le tracker F-Droid (RFP).
 2. Fournir l’Application ID : `com.tutodecode.app`.
-3. Fournir l’URL du dépôt source : `https://github.com/TUTODECODE-FR/TUTODECODE`.
+3. Fournir l’URL du dépôt source : `https://github.com/TUTODECODE-FR/T2DECODE`.
 4. Mentionner que le dépôt contient déjà `.fdroid.yml` et les métadonnées Fastlane.
 5. Répondre aux retours de l’équipe F-Droid (ajustements éventuels sur build/reproductibilité).
 
@@ -44,4 +44,3 @@ APK attendu :
 2. Mettre à jour `fastlane/metadata/android/en-US/changelogs/N.txt`.
 3. Créer le tag Git `vX.Y.Z`.
 4. Vérifier localement : `make build-android-fdroid`.
-

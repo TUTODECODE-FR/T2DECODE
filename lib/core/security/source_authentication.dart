@@ -17,7 +17,7 @@ const Map<String, dynamic> officialDeveloper = {
   'country': 'France',
   'website': 'https://www.tutodecode.org',
   'contact': 'contact@tutodecode.org',
-  'github': 'https://github.com/TUTODECODE-FR/TUTODECODE',
+  'github': 'https://github.com/TUTODECODE-FR/T2DECODE',
   'license': 'AGPL-3.0',
   'developer_id': 'TUTODECODE_OFFICIAL_DEV_001',
 };
