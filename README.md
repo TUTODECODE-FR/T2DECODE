@@ -1,24 +1,25 @@
-<p align="center">
-  <img src="assets/TDC.png" width="96" height="96" alt="T2DECODE Logo">
-</p>
+<div align="center">
+  <img src="assets/TDC.png" width="150" height="150" alt="T2DECODE Logo">
 
-# T2DECODE
+  # T2DECODE
+  
+  **Le savoir technique ne devrait jamais dépendre d'une connexion.**
 
-[![CI](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml/badge.svg)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
-[![License](https://img.shields.io/github/license/TUTODECODE-FR/T2DECODE?style=for-the-badge)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
-[![Flutter](https://img.shields.io/badge/Flutter-multi--platform-blue?style=for-the-badge)](https://flutter.dev)
+  [![CI](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml/badge.svg)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
+  [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=flat-square&color=blue)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
+  [![License](https://img.shields.io/github/license/TUTODECODE-FR/T2DECODE?style=flat-square&color=green)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
+  [![Flutter](https://img.shields.io/badge/Flutter-multi--platform-02569B?style=flat-square&logo=flutter&logoColor=white)](https://flutter.dev)
+  [![Privacy By Design](https://img.shields.io/badge/Privacy-By_Design-ff69b4?style=flat-square)](RGPD.md)
+  
+  <br>
+  <p>
+    <b>Plateforme locale d’apprentissage technique (réseau · systèmes · sécurité défensive) avec outils utilitaires intégrés.</b><br>
+    <i>Offline‑first · Air‑gapped ready · Zéro tracking · IA locale (Ollama)</i>
+  </p>
+  <br>
 
-Plateforme locale d'apprentissage technique et boîte à outils cybersécurité.  
-**Air‑gapped ready · Zéro tracking · IA locale (Ollama)**
-
-[Releases](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) · [Build](docs/build.md) · [Architecture](docs/architecture.md) · [Offline‑first](docs/offline-first.md) · [Confidentialité](docs/privacy.md) · [Contribution](CONTRIBUTING.md)
-
-> **"Le savoir technique ne devrait jamais dépendre d'une connexion."**
-
-T2DECODE est une application Flutter multi-plateforme conçue pour l’apprentissage technique et l’expérimentation cybersécurité en environnement local, y compris hors connexion.
-
-**Statut** : projet en phase `early-stage` (démarré en 2026), en stabilisation active.
+  [Releases](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) · [Build](docs/build.md) · [Architecture](docs/architecture.md) · [Confidentialité & RGPD](RGPD.md) · [Contribution](CONTRIBUTING.md)
+</div>
 
 ---
 
@@ -26,158 +27,81 @@ T2DECODE est une application Flutter multi-plateforme conçue pour l’apprentis
 
 T2DECODE est une **suite pédagogique et pratique** pour apprendre et expérimenter **sans dépendre d’un cloud** :
 
-- **Apprendre** : cours (Markdown/JSON), cheat sheets, parcours structurés.
-- **Pratiquer** : outils offline (réseau, crypto, système, dev…), simulateurs/labs.
-- **Travailler en environnement contraint** : offline-first, air‑gapped, sans télémétrie.
+- 📚 **Apprendre** : Cours interactifs, cheat sheets, parcours structurés (Markdown/JSON).
+- 🛠️ **Pratiquer** : Outils utilitaires (diagnostic, conversions, références), simulateurs/labs virtuels.
+- 🛡️ **Travailler en environnement contraint** : Parfait pour le mode offline-first, les systèmes air-gapped, sans aucune télémétrie.
 
-Ce que T2DECODE **ne fait pas** :
-- Pas d’API externe obligatoire.
-- Pas d’analytics/trackers.
-- Pas d’envoi automatique de données vers des services tiers.
+### Nos Engagements (Privacy by Design)
 
-## ⚠️ Limites & compromis (offline‑first)
+T2DECODE est conçu pour un usage **éducatif et défensif** (apprentissage, diagnostic, hygiène, durcissement). 
 
-Être 100% local a des avantages, mais aussi des compromis :
+| Ce que nous faisons ✅ | Ce que nous ne faisons PAS ❌ |
+| :--- | :--- |
+| Exécution 100% Locale | Pas d’API externe obligatoire |
+| Respect de la vie privée ([RGPD](RGPD.md)) | Pas d’analytics / trackers |
+| Modèle de sécurité robuste | Pas d’envoi de données vers des tiers |
 
-- pas de données “temps réel” (threat intel, flux live) sans import manuel
-- contenus à préparer/mettre à jour soi‑même (packs offline, modules importés)
-- moins de “cloud‑native” en air‑gapped (mais beaucoup se simule localement)
-
-Détails + bonnes pratiques : [docs/offline-first.md](docs/offline-first.md)  
-CTF/vulnérable (local, isolé) : [docs/ctf-prep.md](docs/ctf-prep.md)
+---
 
 ## 👥 Pour qui ?
 
-- Étudiants / autodidactes IT & cybersécurité
-- Admins système / réseau (checklists, outils offline)
-- Interventions en environnement restreint (zones blanches, datacenters, air‑gapped)
-- Formateurs (support local, reproductible, auditabilité)
-
-## ✅ État actuel du projet
-
-### Disponible
-
-- Application Flutter multi-plateforme
-- Exécution locale sans cloud
-- Intégration Ollama locale
-- Modules de contenu Markdown/JSON
-- Outils offline intégrés
-
-### En développement
-
-- Import/export avancé des modules
-- Synchronisation de contenus signés
-- Distribution communautaire offline-first
-
-## 🧭 Plateformes (CI / tests / distribution)
-
-| Plateforme | CI | Test manuel | Distribution |
-| :--- | :---: | :---: | :---: |
-| Android | Actif | Validé | Disponible (v1.0.1) |
-| Windows | Actif | Validé | Disponible (v1.0.1) |
-| macOS | Actif | Validé | Disponible (v1.0.1) |
-| Linux | Actif | Validé | Disponible (v1.0.1) |
-| Web | Non activé | Non applicable | Non disponible |
-| iOS | Non activé | Non applicable | **En cours de vérification Apple (App Store) — publication prochaine** |
-
-> Les statuts sont mis à jour à chaque release. Si un artefact manque, il n'est pas marqué ✅.
-
-**Pourquoi Web/iOS sont désactivés ?**  
-Web n’est pas prioritaire : T2DECODE est pensé comme une suite d’apps natives.  
-iOS : la publication sur l’App Store est **en cours de vérification Apple**. Les builds iOS restent possibles côté dev, mais la distribution App Store arrive prochainement.
-
-**macOS (Apple)**  
-Même si les binaires macOS sont déjà disponibles via les Releases GitHub, une publication **Mac App Store** est également prévue et suit le même principe : **vérification Apple** puis mise en ligne dès validation.
+- 🎓 **Étudiants & Autodidactes** : IT & sécurité informatique.
+- 🧑‍💻 **Admins Système / Réseau** : Checklists, outils offline.
+- 🕵️ **Auditeurs & Experts Sécurité** : Interventions en environnement restreint (zones blanches, datacenters, air‑gapped).
+- 👨‍🏫 **Formateurs** : Support local, reproductible, auditabilité.
 
 ---
 
-## 🔎 Preuves vérifiables
+## ⚡ Fonctionnalités Phares
 
-- CI continue : [workflow CI](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
-- Build/release multi-plateforme : [workflow release](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/build_release.yml)
-- Artefacts publiés : [release latest](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
-- Intégrité binaire : `SHA256SUMS.txt` inclus dans chaque release
-- Signature binaire Linux : fichiers `.sig` publiés quand la clé GPG release est configurée
-- Gouvernance des modifications : [CODEOWNERS](.github/CODEOWNERS)
-
-Pour aller plus loin (audit, builds reproductibles, bug bounty, transparence) :
-`docs/trust.md`.
+| Fonctionnalité | Description | Document |
+| :--- | :--- | :--- |
+| 🧠 **IA Locale** | Intégration Ollama sans service tiers pour une assistance LLM hors ligne. | [docs/ollama.md](docs/ollama.md) |
+| 🔬 **Laboratoires** | Simulateurs (Réseau, Sécurité, Système, Cloud, Crypto, etc.). | [docs/labs.md](docs/labs.md) |
+| 🛠️ **Multi-Outils** | +15 Outils utilitaires offline (Hash, CIDR, Chmod, CRON, Ports, etc.). | [docs/tools.md](docs/tools.md) |
+| 📚 **Modules** | Support de contenus riches Markdown/JSON. | [docs/modules.md](docs/modules.md) |
+| 🔒 **Sécurité** | Anti-tampering, vérification d'intégrité (SHA-256), isolation. | [docs/security-model.md](docs/security-model.md) |
 
 ---
 
-## 📥 Téléchargements
+## 📥 Téléchargements & Plateformes
 
-Les binaires sont publiés sur la page des releases GitHub :
+➡️ [**Télécharger la dernière version (Releases)**](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
 
-➡️ [Télécharger la dernière version](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
+| Plateforme | Fichier recommandé | CI | Distribution |
+| :--- | :--- | :---: | :---: |
+| ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | **APK** / AAB | Actif | Disponible (v1.0.1) |
+| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | **ZIP** / EXE | Actif | Disponible (v1.0.1) |
+| ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | **PKG** / ZIP | Actif | Disponible (v1.0.1) |
+| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | **AppImage** / DEB | Actif | Disponible (v1.0.1) |
 
-| Plateforme | Fichier recommandé | Alternatives | Notes |
-| :--- | :--- | :--- | :--- |
-| ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | **APK** | AAB | Disponible (v1.0.1) |
-| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | **ZIP** | EXE | Disponible (v1.0.1) |
-| ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | **PKG** | ZIP | Disponible (v1.0.1) |
-| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | **AppImage** | DEB, TAR.GZ | Disponible (v1.0.1) |
-
-### Vérification d'intégrité
-
-Un fichier `SHA256SUMS.txt` est publié dans chaque release pour vérifier l'intégrité des binaires.  
-Des signatures `.sig` Linux sont également publiées quand la clé GPG release est disponible.
+> **Vérification d'intégrité** : Un fichier `SHA256SUMS.txt` est publié dans chaque release pour vérifier l'intégrité des binaires. Des signatures `.sig` Linux sont également publiées.
 
 ---
 
-## ⚡ Aperçu
+## 🖼️ Aperçu de l'Interface
 
-| Domaine | Résumé |
+Voici quelques captures d'écran de l'application (build macOS v1.0.1) :
+
+<details>
+<summary><b>👉 Cliquez pour voir les captures d'écran de l'application</b></summary>
+
+| Section | Aperçu |
 | :--- | :--- |
-| IA locale | Intégration Ollama sans service tiers ([docs/ollama.md](docs/ollama.md)) |
-| Laboratoires | Simulations + **CTF Prep offline** documentés dans [docs/labs.md](docs/labs.md) |
-| Outils | Boîte à outils offline documentée dans [docs/tools.md](docs/tools.md) |
-| Modules | Support de contenus Markdown/JSON ([docs/modules.md](docs/modules.md)) |
-| Sécurité | Modèle et menaces documentés ([docs/security-model.md](docs/security-model.md), [docs/threat-model.md](docs/threat-model.md)) |
+| **Vue complète** | ![Vue complète](docs/images/screenshots/app-home-full.png) |
+| **Accueil** | ![Accueil](docs/images/screenshots/section-home.png) |
+| **Outils** | ![Outils](docs/images/screenshots/section-tools.png) |
+| **Cheat Sheets** | ![Cheat Sheets](docs/images/screenshots/section-cheat-sheets.png) |
+| **Ghost AI** | ![Ghost AI](docs/images/screenshots/section-chat-ia.png) |
+| **Ghost Link** | ![Ghost Link](docs/images/screenshots/section-ghost-link.png) |
+| **Paramètres** | ![Paramètres](docs/images/screenshots/section-settings.png) |
+| **Roadmap** | ![Roadmap](docs/images/screenshots/section-roadmap.png) |
+
+</details>
 
 ---
 
-## ⚡ Pourquoi T2DECODE ?
-
-* **🛡️ Souveraineté Totale** : Aucune dépendance à des services tiers ou au Cloud. Tout est stocké et exécuté localement.
-* **📂 Système de Modules** : Importez vos propres cours au format Markdown/JSON en les glissant dans le dossier `modules`.
-* **🎨 Interface Moderne** : Une expérience fluide développée avec **Flutter**, optimisée pour la lisibilité du code.
-* **📜 Mode Air-Gapped** : Idéal pour les interventions en zone sécurisée, datacenters ou zones blanches.
-
-## 🤖 IA locale (Ollama)
-
-Tout le traitement IA est local : aucune donnée n'est envoyée vers un service tiers.  
-Guide : [docs/ollama.md](docs/ollama.md).
-
----
-
-## 🔒 Confidentialité & réseau (résumé)
-
-T2DECODE suit une approche **privacy-by-design** :
-- Stockage **local** (préférences, progression, configuration).
-- Réseau **limité** et **désactivable** (mode zéro réseau).
-- Aucun tracking / aucun SDK analytics.
-
-Détails : [docs/privacy.md](docs/privacy.md) et politique App Store : [docs/appstore/privacy-policy-fr.md](docs/appstore/privacy-policy-fr.md).
-
-## ✨ Fonctionnalités
-
-- [Laboratoires interactifs](docs/labs.md)
-- [Outils offline](docs/tools.md)
-- [Modules pédagogiques](docs/modules.md)
-- [Architecture technique](docs/architecture.md)
-- [Modèle de sécurité](docs/security-model.md)
-
----
-
-## 🔒 Confidentialité
-
-T2DECODE n'envoie aucune télémétrie, aucun analytics et aucune donnée utilisateur vers un service tiers.  
-Détails : [docs/privacy.md](docs/privacy.md).
-
----
-
-## 👨‍💻 Développement
+## 👨‍💻 Développement & Compilation
 
 ### Démarrage rapide
 
@@ -187,19 +111,10 @@ cd T2DECODE
 make setup
 make get
 make test
-```
-
-Notes :
-- Le premier `make get` peut télécharger des dépendances (normal).
-- Les commandes `make test` / `make build-*` évitent de relancer `pub get` quand ce n’est pas nécessaire.
-
-### Exécution (dev)
-
-```bash
 flutter run
 ```
 
-### 🔧 Commandes utiles
+### 🔧 Commandes utiles (Makefile)
 
 ```bash
 make setup          # Vérifie l’environnement (Flutter, Dart, Ollama)
@@ -212,91 +127,29 @@ make build-dmg      # Création DMG (macOS)
 
 ---
 
-## 📚 Documentation
-
-- [Guide de build](docs/build.md)
-- [Processus de release](docs/release.md)
-- [Intégration Ollama](docs/ollama.md)
-- [Architecture](docs/architecture.md)
-- [Modèle de sécurité](docs/security-model.md)
-- [Threat model](docs/threat-model.md)
-
----
-
 ## 🤝 Contribuer
 
-Voir [CONTRIBUTING.md](CONTRIBUTING.md).
+T2DECODE est un projet open source. Les contributions sont les bienvenues ! Que ce soit pour ajouter un outil, corriger un bug, ou créer un nouveau module de cours.
+
+Veuillez consulter le fichier [CONTRIBUTING.md](CONTRIBUTING.md) pour les détails.
+- ⭐️ Mettez une étoile sur le repo GitHub
+- 🐛 Signalez les bugs
+- 📝 Proposez des modules (Markdown/JSON)
 
 ---
 
-## 🖼️ Captures d’écran
+## 🏛️ L'Association TUTODECODE
 
-Captures réelles de l’application (build macOS v1.0.1), pour montrer les sections principales :
+Le projet est fièrement porté par l'**Association TUTODECODE** (ESS).  
+Notre objectif est de rendre l'apprentissage technique accessible sans dépendance au cloud, en favorisant des outils libres, locaux et auditables. Projet à but non lucratif orienté partage de connaissances techniques et sécurité informatique accessible.
 
-| Section | Aperçu |
-| :--- | :--- |
-| Vue complète | ![Vue complète](docs/images/screenshots/app-home-full.png) |
-| Accueil | ![Accueil](docs/images/screenshots/section-home.png) |
-| Outils | ![Outils](docs/images/screenshots/section-tools.png) |
-| Cheat Sheets | ![Cheat Sheets](docs/images/screenshots/section-cheat-sheets.png) |
-| Ghost AI | ![Ghost AI](docs/images/screenshots/section-chat-ia.png) |
-| Paramètres | ![Paramètres](docs/images/screenshots/section-settings.png) |
-| Ghost Link | ![Ghost Link](docs/images/screenshots/section-ghost-link.png) |
-| Roadmap | ![Roadmap](docs/images/screenshots/section-roadmap.png) |
-
----
-
-## 🏛️ Association
-
-Projet porté par l'**Association TUTODECODE** (ESS).  
-L'objectif de l'association est de rendre l'apprentissage technique accessible sans dépendance au cloud, en favorisant des outils libres, locaux et auditables.  
-Projet à but non lucratif orienté partage de connaissances techniques et cybersécurité accessible.  
-SIREN : 102 763 133  
-Site : [https://tutodecode.org](https://tutodecode.org)
-
----
-
-## 🗺️ Roadmap
-
-### v1.0.0
-- Stabilisation multi-plateforme
-- Finalisation des packages de distribution
-- Durcissement CI/CD
-- Documentation technique
-
-### v1.1
-- Gestion avancée des modules pédagogiques
-- UX améliorée des laboratoires
-- Catalogue d’outils offline enrichi
-
----
-
-## ❤️ Participer au projet
-
-T2DECODE est un projet open source porté par une association à but non lucratif.
-
-Si le projet vous parle, vous pouvez:
-- ⭐ Mettre une étoile sur le repo
-- 🧪 Tester l’application et partager vos retours
-- 📚 Proposer des modules (Markdown/JSON)
-- 🛠️ Contribuer au code ou aux outils
-
-Toute aide est la bienvenue 🙏
-
----
-
-## 💬 Vision
-
-Construire une alternative locale, libre et accessible pour apprendre et expérimenter sans dépendre du cloud.
-
-"Le savoir technique ne devrait jamais dépendre d'une connexion."
+- **SIREN** : 102 763 133  
+- **Site** : [https://tutodecode.org](https://tutodecode.org)
+- **Politique RGPD** : [Consulter ici](RGPD.md)
 
 ---
 
 ## 📄 Licence
 
-GPLv3
-
----
-
-Merci à toutes celles et ceux qui prennent le temps de tester, contribuer ou partager le projet ❤️
+Ce projet est sous licence **[GPLv3](LICENSE)**.  
+Merci à toutes celles et ceux qui prennent le temps de tester, contribuer ou partager le projet ! 🌟
