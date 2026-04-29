@@ -1,5 +1,5 @@
 ---
-name: "Bug report"
+name: "Rapport de bug"
 about: "Signaler un bug reproductible"
 title: "[BUG] "
 labels: ["bug"]

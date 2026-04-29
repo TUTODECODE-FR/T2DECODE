@@ -1,80 +1,78 @@
-# Security Policy
+# Politique de Sécurité
 
-## Scope
+## Périmètre
 
-This policy covers:
+Cette politique couvre :
 
-- Source code hosted in this repository.
-- Official release artifacts published on GitHub Releases.
-- Local-only runtime behavior (offline-first, no cloud telemetry by design).
+- Le code source hébergé dans ce dépôt.
+- Les artefacts officiels des versions publiées sur GitHub Releases.
+- Le comportement d'exécution local (conception offline-first, aucune télémétrie cloud par conception).
 
-See also:
+Voir aussi :
 
 - `docs/security-model.md`
 - `docs/threat-model.md`
 - `docs/privacy.md`
 
-## Supported Versions
+## Versions Supportées
 
-Only the latest stable release is considered supported for security fixes.
+Seule la dernière version stable est considérée comme supportée pour les correctifs de sécurité.
 
-| Version | Supported |
+| Version | Supportée |
 | :-- | :--: |
-| Latest stable | ✅ |
-| Older versions | ❌ |
+| Dernière version stable | ✅ |
+| Anciennes versions | ❌ |
 
-## Security Controls (Current)
+## Contrôles de Sécurité (Actuels)
 
-- SHA-256 checksums (`SHA256SUMS.txt`) are published for release assets.
-- Linux detached signatures (`.sig`) are produced when release GPG secrets are configured.
-- Asset integrity checks are executed at app startup.
-- CI and release pipelines are versioned in `.github/workflows/`.
-- Ownership policy is declared in `.github/CODEOWNERS`.
+- Les sommes de contrôle SHA-256 (`SHA256SUMS.txt`) sont publiées pour les assets de la release.
+- Les signatures détachées Linux (`.sig`) sont générées lorsque les secrets GPG de release sont configurés.
+- Les contrôles d'intégrité des assets sont exécutés au démarrage de l'application.
+- Les pipelines d'intégration continue (CI) et de release sont versionnés dans `.github/workflows/`.
+- La politique de propriété est déclarée dans `.github/CODEOWNERS`.
 
-## Responsible Disclosure
+## Divulgation Responsable
 
-Do not open public GitHub issues for vulnerabilities.
+N'ouvrez pas d'issues GitHub publiques pour signaler des vulnérabilités.
 
-Use one of these private channels:
+Utilisez l'un de ces canaux privés :
 
-- GitHub private security advisory.
-- Email: `contact@tutodecode.org`.
+- Avis de sécurité privé GitHub.
+- Email : `contact@tutodecode.org`.
 
-When reporting, include:
+Lors de votre signalement, veuillez inclure :
 
-- Affected version/tag.
-- Reproduction steps.
-- Impact summary.
-- Suggested remediation (if available).
+- La version/le tag affecté(e).
+- Les étapes pour reproduire.
+- Un résumé de l'impact.
+- Une suggestion de remédiation (si disponible).
 
-## Response Targets
+## Objectifs de Réponse
 
-- Acknowledgement target: within 72 hours.
-- Triage target: within 7 business days.
-- Fix timeline: depends on severity and platform impact.
+- Délai d'accusé de réception : dans les 72 heures.
+- Délai de tri : dans les 7 jours ouvrables.
+- Délai de correction : dépend de la sévérité et de l'impact sur la plateforme.
 
-After a fix:
+Après un correctif :
 
-- A patched release is published.
-- Changelog/release notes mention the correction scope.
+- Une version corrigée est publiée.
+- Le journal des modifications (changelog) / les notes de version mentionnent la portée de la correction.
 
-## Trust and Verification
+## Confiance et Vérification
 
-Before installing binaries, verify checksums:
+Avant d'installer des binaires, vérifiez les sommes de contrôle :
 
 ```bash
 sha256sum -c SHA256SUMS.txt
 ```
 
-If `.sig` files are present, verify signatures with the public key distributed by maintainers.
+Si des fichiers `.sig` sont présents, vérifiez les signatures avec la clé publique distribuée par les mainteneurs.
 
-## Trust Roadmap
+## Feuille de Route de Confiance
 
-For a structured view of how the project can strengthen verifiability over time (independent audit,
-reproducible builds, community validation, vulnerability research program, association transparency),
-see `docs/trust.md`.
+Pour une vue structurée sur la manière dont le projet peut renforcer sa vérifiabilité au fil du temps (audit indépendant, builds reproductibles, validation communautaire, programme de recherche de vulnérabilités, transparence associative), consultez `docs/trust.md`.
 
-## Known Limitations
+## Limitations Connues
 
-- Project is still early-stage and maintained by a small team.
-- Some signing/notarization paths are conditional on secrets availability in CI.
+- Le projet est encore à un stade précoce et est maintenu par une petite équipe.
+- Certains chemins de signature/notarisation dépendent de la disponibilité des secrets dans la CI.
