@@ -83,9 +83,6 @@ T2DECODE est conçu pour un usage **éducatif et défensif** (apprentissage, dia
 
 Voici quelques captures d'écran de l'application (build macOS v1.0.1) :
 
-<details>
-<summary><b>👉 Cliquez pour voir les captures d'écran de l'application</b></summary>
-
 | Section | Aperçu |
 | :--- | :--- |
 | **Vue complète** | ![Vue complète](docs/images/screenshots/app-home-full.png) |
@@ -96,8 +93,6 @@ Voici quelques captures d'écran de l'application (build macOS v1.0.1) :
 | **Ghost Link** | ![Ghost Link](docs/images/screenshots/section-ghost-link.png) |
 | **Paramètres** | ![Paramètres](docs/images/screenshots/section-settings.png) |
 | **Roadmap** | ![Roadmap](docs/images/screenshots/section-roadmap.png) |
-
-</details>
 
 ---
 
