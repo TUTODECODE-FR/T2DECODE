@@ -83,16 +83,20 @@ T2DECODE est conçu pour un usage **éducatif et défensif** (apprentissage, dia
 
 Voici quelques captures d'écran de l'application (build macOS v1.0.1) :
 
-| Section | Aperçu |
-| :--- | :--- |
-| **Vue complète** | ![Vue complète](docs/images/screenshots/app-home-full.png) |
-| **Accueil** | ![Accueil](docs/images/screenshots/section-home.png) |
-| **Outils** | ![Outils](docs/images/screenshots/section-tools.png) |
-| **Cheat Sheets** | ![Cheat Sheets](docs/images/screenshots/section-cheat-sheets.png) |
-| **Ghost AI** | ![Ghost AI](docs/images/screenshots/section-chat-ia.png) |
-| **Ghost Link** | ![Ghost Link](docs/images/screenshots/section-ghost-link.png) |
-| **Paramètres** | ![Paramètres](docs/images/screenshots/section-settings.png) |
-| **Roadmap** | ![Roadmap](docs/images/screenshots/section-roadmap.png) |
+<div align="center">
+  <img src="docs/images/screenshots/app-home-full.png" width="98%" alt="Vue complète">
+  <br><br>
+  <img src="docs/images/screenshots/section-home.png" width="49%" alt="Accueil">
+  <img src="docs/images/screenshots/section-tools.png" width="49%" alt="Outils">
+  <br><br>
+  <img src="docs/images/screenshots/section-cheat-sheets.png" width="49%" alt="Cheat Sheets">
+  <img src="docs/images/screenshots/section-chat-ia.png" width="49%" alt="Ghost AI">
+  <br><br>
+  <img src="docs/images/screenshots/section-ghost-link.png" width="49%" alt="Ghost Link">
+  <img src="docs/images/screenshots/section-settings.png" width="49%" alt="Paramètres">
+  <br><br>
+  <img src="docs/images/screenshots/section-roadmap.png" width="49%" alt="Roadmap">
+</div>
 
 ---
 
