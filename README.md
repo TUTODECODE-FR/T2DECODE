@@ -3,7 +3,8 @@
 
   # T2DECODE
   
-  **Le savoir technique ne devrait jamais dépendre d'une connexion.**
+  **« Le savoir ne devrait pas toujours dépendre d'une connexion. »**<br>
+  — *Maxime MARTIN CIVET*
 
   [![CI](https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=222222)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
   [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=000000&labelColor=222222)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
