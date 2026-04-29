@@ -103,7 +103,20 @@ Voici quelques captures d'écran de l'application (build macOS v1.0.1) :
 
 ## 👨‍💻 Développement & Compilation
 
-### Démarrage rapide
+### 1. Prérequis Système (OS Dependencies)
+
+Avant de cloner ou de compiler, installez les dépendances natives requises :
+
+- **Linux (Debian/Ubuntu)** :
+  ```bash
+  sudo apt-get update && sudo apt-get install -y clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+  ```
+- **macOS** : `xcode-select --install`
+- **Windows** : Installer **Git** et **Visual Studio 2022** (avec "Développement Desktop en C++").
+
+> ℹ️ *Pour plus de détails, consultez le fichier **[OS_DEPENDENCIES.md](OS_DEPENDENCIES.md)**.*
+
+### 2. Démarrage rapide
 
 ```bash
 git clone https://github.com/TUTODECODE-FR/T2DECODE.git
