@@ -5,11 +5,11 @@
   
   **Le savoir technique ne devrait jamais dépendre d'une connexion.**
 
-  [![CI](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml/badge.svg)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
-  [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=flat-square&color=blue)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
-  [![License](https://img.shields.io/github/license/TUTODECODE-FR/T2DECODE?style=flat-square&color=green)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
-  [![Flutter](https://img.shields.io/badge/Flutter-multi--platform-02569B?style=flat-square&logo=flutter&logoColor=white)](https://flutter.dev)
-  [![Privacy By Design](https://img.shields.io/badge/Privacy-By_Design-ff69b4?style=flat-square)](RGPD.md)
+  [![CI](https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
+  [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=000000)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
+  [![License](https://img.shields.io/github/license/TUTODECODE-FR/T2DECODE?style=for-the-badge&color=000000)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
+  [![Flutter](https://img.shields.io/badge/Flutter-multi--platform-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
+  [![Privacy By Design](https://img.shields.io/badge/Privacy_By_Design-000000?style=for-the-badge&logo=shield&logoColor=F5EBDA)](RGPD.md)
   
   <br>
   <p>
@@ -70,10 +70,10 @@ T2DECODE est conçu pour un usage **éducatif et défensif** (apprentissage, dia
 
 | Plateforme | Fichier recommandé | CI | Distribution |
 | :--- | :--- | :---: | :---: |
-| ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | **APK** / AAB | Actif | Disponible (v1.0.1) |
-| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | **ZIP** / EXE | Actif | Disponible (v1.0.1) |
-| ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | **PKG** / ZIP | Actif | Disponible (v1.0.1) |
-| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | **AppImage** / DEB | Actif | Disponible (v1.0.1) |
+| ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white) | **APK** / AAB | Actif | Disponible (v1.0.1) |
+| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white) | **ZIP** / EXE | Actif | Disponible (v1.0.1) |
+| ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) | **PKG** / ZIP | Actif | Disponible (v1.0.1) |
+| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | **AppImage** / DEB | Actif | Disponible (v1.0.1) |
 
 > **Vérification d'intégrité** : Un fichier `SHA256SUMS.txt` est publié dans chaque release pour vérifier l'intégrité des binaires. Des signatures `.sig` Linux sont également publiées.
 
