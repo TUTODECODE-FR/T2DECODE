@@ -5,11 +5,11 @@
   
   **Le savoir technique ne devrait jamais dépendre d'une connexion.**
 
-  [![CI](https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
-  [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=000000)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
-  [![License](https://img.shields.io/github/license/TUTODECODE-FR/T2DECODE?style=for-the-badge&color=000000)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
-  [![Flutter](https://img.shields.io/badge/Flutter-multi--platform-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
-  [![Privacy By Design](https://img.shields.io/badge/Privacy_By_Design-000000?style=for-the-badge&logo=shield&logoColor=F5EBDA)](RGPD.md)
+  [![CI](https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=222222)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
+  [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=000000&labelColor=222222)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
+  [![License](https://img.shields.io/badge/License-GPLv3-000000?style=for-the-badge&labelColor=222222)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
+  [![Flutter](https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=222222)](https://flutter.dev)
+  [![Privacy By Design](https://img.shields.io/badge/Privacy-By%20Design-000000?style=for-the-badge&labelColor=222222)](RGPD.md)
   
   <br>
   <p>
