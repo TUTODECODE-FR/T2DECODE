@@ -21,7 +21,7 @@
   [Releases](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) · [Build](docs/build.md) · [Architecture](docs/architecture.md) · [Confidentialité & RGPD](RGPD.md) · [Contribution](CONTRIBUTING.md)
 </div>
 
----
+<img src="assets/separator.svg" width="100%" height="4">
 
 ## 🎯 À quoi sert T2DECODE ?
 
@@ -41,7 +41,7 @@ T2DECODE est conçu pour un usage **éducatif et défensif** (apprentissage, dia
 | Respect de la vie privée ([RGPD](RGPD.md)) | Pas d’analytics / trackers |
 | Modèle de sécurité robuste | Pas d’envoi de données vers des tiers |
 
----
+<img src="assets/separator.svg" width="100%" height="4">
 
 ## 👥 Pour qui ?
 
@@ -50,7 +50,7 @@ T2DECODE est conçu pour un usage **éducatif et défensif** (apprentissage, dia
 - 🕵️ **Auditeurs & Experts Sécurité** : Interventions en environnement restreint (zones blanches, datacenters, air‑gapped).
 - 👨‍🏫 **Formateurs** : Support local, reproductible, auditabilité.
 
----
+<img src="assets/separator.svg" width="100%" height="4">
 
 ## ⚡ Fonctionnalités Phares
 
@@ -62,7 +62,7 @@ T2DECODE est conçu pour un usage **éducatif et défensif** (apprentissage, dia
 | 📚 **Modules** | Support de contenus riches Markdown/JSON. | [docs/modules.md](docs/modules.md) |
 | 🔒 **Sécurité** | Anti-tampering, vérification d'intégrité (SHA-256), isolation. | [docs/security-model.md](docs/security-model.md) |
 
----
+<img src="assets/separator.svg" width="100%" height="4">
 
 ## 📥 Téléchargements & Plateformes
 
@@ -77,7 +77,7 @@ T2DECODE est conçu pour un usage **éducatif et défensif** (apprentissage, dia
 
 > **Vérification d'intégrité** : Un fichier `SHA256SUMS.txt` est publié dans chaque release pour vérifier l'intégrité des binaires. Des signatures `.sig` Linux sont également publiées.
 
----
+<img src="assets/separator.svg" width="100%" height="4">
 
 ## 🖼️ Aperçu de l'Interface
 
@@ -98,7 +98,7 @@ Voici quelques captures d'écran de l'application (build macOS v1.0.1) :
   <img src="docs/images/screenshots/section-roadmap.png" width="49%" alt="Roadmap">
 </div>
 
----
+<img src="assets/separator.svg" width="100%" height="4">
 
 ## 👨‍💻 Développement & Compilation
 
@@ -137,7 +137,7 @@ make build-linux    # Build Linux binary
 make build-dmg      # Création DMG (macOS)
 ```
 
----
+<img src="assets/separator.svg" width="100%" height="4">
 
 ## 🤝 Contribuer
 
@@ -148,7 +148,7 @@ Veuillez consulter le fichier [CONTRIBUTING.md](CONTRIBUTING.md) pour les détai
 - 🐛 Signalez les bugs
 - 📝 Proposez des modules (Markdown/JSON)
 
----
+<img src="assets/separator.svg" width="100%" height="4">
 
 ## 🏛️ L'Association TUTODECODE
 
@@ -159,7 +159,7 @@ Notre objectif est de rendre l'apprentissage technique accessible sans dépendan
 - **Site** : [https://tutodecode.org](https://tutodecode.org)
 - **Politique RGPD** : [Consulter ici](RGPD.md)
 
----
+<img src="assets/separator.svg" width="100%" height="4">
 
 ## 📄 Licence
 
