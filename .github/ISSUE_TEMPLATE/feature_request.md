@@ -1,5 +1,5 @@
 ---
-name: "Feature request"
+name: "Demande de fonctionnalité"
 about: "Proposer une amélioration produit"
 title: "[FEATURE] "
 labels: ["enhancement", "help wanted"]
