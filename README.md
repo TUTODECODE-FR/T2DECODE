@@ -84,20 +84,27 @@ T2DECODE est conçu pour un usage **éducatif et défensif** (apprentissage, dia
 
 Voici quelques captures d'écran de l'application (build macOS v1.0.1) :
 
-<div align="center">
-  <img src="docs/images/screenshots/app-home-full.png" width="98%" alt="Vue complète">
-  <br><br>
-  <img src="docs/images/screenshots/section-home.png" width="49%" alt="Accueil">
-  <img src="docs/images/screenshots/section-tools.png" width="49%" alt="Outils">
-  <br><br>
-  <img src="docs/images/screenshots/section-cheat-sheets.png" width="49%" alt="Cheat Sheets">
-  <img src="docs/images/screenshots/section-chat-ia.png" width="49%" alt="Ghost AI">
-  <br><br>
-  <img src="docs/images/screenshots/section-ghost-link.png" width="49%" alt="Ghost Link">
-  <img src="docs/images/screenshots/section-settings.png" width="49%" alt="Paramètres">
-  <br><br>
-  <img src="docs/images/screenshots/section-roadmap.png" width="49%" alt="Roadmap">
-</div>
+<table width="100%" style="border: none;">
+  <tr>
+    <td colspan="2" align="center"><b>Vue complète</b><br><img src="docs/images/screenshots/app-home-full.png" width="100%" alt="Vue complète"></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><b>Accueil</b><br><img src="docs/images/screenshots/section-home.png" width="100%" alt="Accueil"></td>
+    <td width="50%" align="center"><b>Outils</b><br><img src="docs/images/screenshots/section-tools.png" width="100%" alt="Outils"></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><b>Cheat Sheets</b><br><img src="docs/images/screenshots/section-cheat-sheets.png" width="100%" alt="Cheat Sheets"></td>
+    <td width="50%" align="center"><b>Ghost AI</b><br><img src="docs/images/screenshots/section-chat-ia.png" width="100%" alt="Ghost AI"></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><b>Ghost Link</b><br><img src="docs/images/screenshots/section-ghost-link.png" width="100%" alt="Ghost Link"></td>
+    <td width="50%" align="center"><b>Paramètres</b><br><img src="docs/images/screenshots/section-settings.png" width="100%" alt="Paramètres"></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><b>Roadmap</b><br><img src="docs/images/screenshots/section-roadmap.png" width="100%" alt="Roadmap"></td>
+    <td width="50%"></td>
+  </tr>
+</table>
 
 <img src="assets/separator.svg" width="100%" height="4">
 
