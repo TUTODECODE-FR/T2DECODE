@@ -23,11 +23,11 @@ make build-dmg       # Create DMG installer (macOS)
 
 **Entry point**: `lib/main.dart` — initializes providers, routes, and `IdentityVerificationService` (asset integrity check on startup).
 
-**State management**: `provider` package. Core providers live in `lib/core/providers/`:
-- `SettingsProvider` — offline mode, Ollama URL/model, theme, security flags
-- `CoursesProvider` — course data, progress tracking, module updates
-- `ShellProvider` — active route, title, breadcrumbs (updated by `AppRouteObserver`)
-- `SearchProvider` — global search state
+**State management**: `provider` package. Core providers:
+- `SettingsProvider` (`lib/core/providers/`) — offline mode, Ollama URL/model, theme, security flags
+- `CoursesProvider` (`lib/features/courses/providers/`) — course data, progress tracking, module updates
+- `ShellProvider` (`lib/core/providers/`) — active route, title, breadcrumbs (updated by `AppRouteObserver`)
+- `SearchProvider` (`lib/core/providers/`) — global search state
 
 **Navigation**: Named routes defined in `main.dart` `onGenerateRoute`. `AppNavigator` holds a `GlobalKey<NavigatorState>`. `AppRouteObserver` hooks into route changes to update `ShellProvider`. Page transitions use `FadeThroughTransition`.
 
@@ -36,20 +36,20 @@ make build-dmg       # Create DMG installer (macOS)
 **Features** (`lib/features/`):
 - `ghost_ai/` — Local LLM tutor via Ollama HTTP API (streaming). Default URL `http://localhost:11434`. Supports Phi-3, Llama 3.2, Qwen, Mistral, CodeLlama.
 - `ghost_link/` — P2P LAN chat (UDP broadcast for peer discovery, encrypted messaging).
-- `lab/` — 8 interactive simulators (Network, Security, System, Cloud, Cryptography, Internet, Linux, Algorithms). Each simulator is a self-contained widget in `lib/features/lab/simulators/`.
+- `lab/` — 9 interactive simulators (Network, Security, System, Cloud, Cryptography, Internet, Linux, Algorithms, CTF Prep). Each simulator is a self-contained widget in `lib/features/lab/simulators/`.
 - `tools/` — 15+ offline utility tools (hash, CIDR, ports, chmod, CRON, JSON formatter, etc.).
 - `courses/` — Markdown-rendered courses with QCM, XP/badge gamification, RAG service, custom module import.
 - `legal/` — Build verification and identity verification screens (SHA-256 asset checksums).
 
-**Core services** (`lib/core/services/`):
-- `StorageService` — wraps `shared_preferences`
-- `OllamaService` — HTTP streaming client for local LLM
-- `ModuleService` / `GithubService` — custom course module loading and update checks
-- `AssetIntegrityService` — verifies `assets/asset_checksums.json` on startup
+**Core services**:
+- `StorageService` (`lib/core/services/`) — wraps `shared_preferences`
+- `OllamaService` (`lib/features/ghost_ai/service/`) — HTTP streaming client for local LLM
+- `ModuleService` / `GithubService` (`lib/core/services/`) — custom course module loading and update checks
+- `AssetIntegrityService` (`lib/core/services/`) — verifies `assets/asset_checksums.json` on startup
 
 **Security** (`lib/core/security/`): `IdentityVerification`, `BuildVerification`, `AntiTampering`, `SourceAuthentication`, `PlagiarismProtection`. These run at startup and protect asset/code integrity — do not remove or bypass them.
 
-**Theme** (`lib/core/theme/app_theme.dart`): "Deep Ocean Tech" dark palette. Primary background `#080A0F`, surface `#0F1218`, accent turquoise `#00D9C0`. Category colors are defined per domain (Network=blue, Security=pink, System=teal, Cloud=cyan, Crypto=orange).
+**Theme** (`lib/core/theme/app_theme.dart`): "Noir & Beige" (TutoDeCode.org). Primary background `#000000`, surface `#000000`, accent beige `#F5EBDA`. Category colors are neutral/muted (Network=tan, Security=gray, System=beige, Cloud=silver, Crypto=sand).
 
 ## Key Design Constraints
 

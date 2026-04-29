@@ -72,4 +72,3 @@ Les données restent sur votre appareil jusqu’à suppression manuelle :
 ## Contact
 
 - Support : https://github.com/TUTODECODE-FR/T2DECODE/issues
-- Politique App Store : `docs/appstore/privacy-policy-fr.md`

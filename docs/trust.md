@@ -30,10 +30,10 @@ et des protections anti-altération (locales, sans réseau).
 
 ## 🚀 Ce que nous voulons renforcer (roadmap “fiabilité”)
 
-### 1) Audit de sécurité indépendant (pentest / audit code)
+### 1) Audit de sécurité indépendant (revue de code / audit applicatif)
 
-Objectif : faire réaliser un audit par un tiers spécialisé (pentest et/ou audit
-du code source), puis publier un rapport de synthèse.
+Objectif : faire réaliser un audit par un tiers spécialisé (revue de code et/ou
+audit applicatif), puis publier un rapport de synthèse.
 
 Pourquoi : c’est l’un des signaux les plus forts pour prouver l’absence de
 comportements cachés (trackers, exfiltration, etc.) et réduire les risques
@@ -48,8 +48,8 @@ Pourquoi : cela réduit le risque “code public propre” vs “binaire officie
 
 Note : atteindre la reproductibilité “bit‑pour‑bit” sur toutes plateformes
 demande une chaîne de build strictement déterministe (toolchains, timestamps,
-notarization/signature, etc.). Dans certains écosystèmes (ex : App Store),
-le binaire final peut être re-signé côté Apple, ce qui peut limiter l’égalité
+notarization/signature, etc.). Dans certains écosystèmes,
+le binaire final peut subir des modifications de métadonnées ou de signature, ce qui peut limiter l’égalité
 bit‑pour‑bit mais on peut conserver une vérifiabilité forte (hash du binaire
 pré‑signature, provenance CI, attestations, etc.).
 
@@ -87,4 +87,3 @@ qui le rend crédible dans la durée.
 - Confidentialité : `docs/privacy.md`
 - Modèle de sécurité : `docs/security-model.md`
 - Threat model : `docs/threat-model.md`
-

@@ -14,7 +14,7 @@ Source de vérité code: `lib/features/tools/tool_catalog.dart`.
 - Générateur de MDP
 - Générateur de Hash
 - Assistant SSH
-- Anonymat & Identité Réseau
+- Identité réseau & confidentialité
 - Codes HTTP
 
 ## Système & Ops
