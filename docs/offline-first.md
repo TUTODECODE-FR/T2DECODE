@@ -56,15 +56,14 @@ environnement autorisé existe.
 - **Réseau isolé** : host‑only / VLAN dédié / pas d’exposition WAN (UPnP off).
 - **Snapshots** : avant/après chaque exercice.
 - **Journalisation locale** : Windows Event Logs/Sysmon, journald, Suricata…
-- **Séparation des rôles** : “attaquant”, “cible”, “observateur” (SIEM) en VMs.
+- **Séparation des rôles** : poste de test, cible, observateur (SIEM) en VMs.
 - **Traçabilité** : notes + objectifs + preuve (timeline d’alertes / retest).
 
 ---
 
-## 🔥 Entraînement CTF / vulnérable (local)
+## 🔥 Lab de sécurité volontairement vulnérable (local)
 
 Un environnement volontairement vulnérable est l’une des méthodes les plus
 efficaces pour progresser en sécurité, **à condition qu’il reste isolé**.
 
 Guide pratique : `docs/ctf-prep.md`.
-

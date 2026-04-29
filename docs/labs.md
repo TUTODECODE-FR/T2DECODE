@@ -4,11 +4,11 @@ Ce document reflète les laboratoires exposés dans l'app.
 Source de vérité code: `lib/features/lab/lab_catalog.dart`.
 
 ## Liste des labs disponibles
-- Réseau: Ping, scan, traceroute
-- Sécurité: Attaques, défense, CTF
-- CTF Prep: Guide offline pour préparer un lab volontairement vulnérable (isolé)
+- Réseau: Ping, découverte, traceroute (simulations et repères)
+- Sécurité: scénarios de défense, audit et bonnes pratiques (pédagogique)
+- Lab isolé (offline): guide pour préparer un environnement volontairement vulnérable (local, contrôlé)
 - Système: CPU, RAM, processus
-- Cloud: Conteneurs, K8s, CI/CD
+- Cloud: Conteneurs, K8s, CI/CD (concepts simulés en local)
 - Cryptographie: AES, RSA, hashes
 - Théorie Internet: DNS, TCP, SSH
 - Linux: Boot, filesystem, bash

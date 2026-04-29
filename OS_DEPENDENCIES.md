@@ -31,7 +31,7 @@ xcode-select --install
 sudo gem install cocoapods
 # ou via Homebrew : brew install cocoapods
 ```
-*(Remarque : L'application complète Xcode depuis le Mac App Store est recommandée pour les builds de production).*
+*(Remarque : L'installation complète d'Xcode depuis le site développeur Apple est recommandée pour les builds de production macOS/iOS).*
 
 ## 🪟 Windows
 

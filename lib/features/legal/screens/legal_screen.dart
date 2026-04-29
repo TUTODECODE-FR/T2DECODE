@@ -19,12 +19,47 @@ class LegalScreen extends StatelessWidget {
             fontSize: TdcText.h2(context), 
             fontWeight: FontWeight.bold)),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(TdcAdaptive.padding(context, 20)),
-        child: Text('Informations légales et politique de confidentialité (version locale).', 
-          style: TextStyle(
-            color: TdcColors.textSecondary, 
-            fontSize: TdcText.body(context))),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Association TUTODECODE', 
+              style: TextStyle(
+                color: TdcColors.textPrimary, 
+                fontSize: TdcText.h2(context), 
+                fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('Organisation à but non lucratif (Loi 1901)', 
+              style: TextStyle(
+                color: TdcColors.textMuted, 
+                fontSize: TdcText.caption(context))),
+            const SizedBox(height: 24),
+            Text('Application : T2DECODE', 
+              style: TextStyle(
+                color: TdcColors.textSecondary, 
+                fontSize: TdcText.body(context),
+                fontWeight: FontWeight.w600)),
+            const SizedBox(height: 16),
+            Text('Politique de confidentialité', 
+              style: TextStyle(
+                color: TdcColors.textPrimary, 
+                fontSize: TdcText.h3(context),
+                fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('T2DECODE est conçu avec une approche offline-first et zéro tracking. Aucune donnée personnelle n’est collectée sur des serveurs distants.', 
+              style: TextStyle(
+                color: TdcColors.textSecondary, 
+                fontSize: TdcText.bodySmall(context))),
+            const SizedBox(height: 32),
+            const Divider(color: TdcColors.border),
+            const SizedBox(height: 16),
+            Text('© 2026 Association TUTODECODE. Tous droits réservés.', 
+              style: TextStyle(
+                color: TdcColors.textMuted, 
+                fontSize: 10)),
+          ],
+        ),
       ),
     );
   }

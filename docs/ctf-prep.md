@@ -1,8 +1,8 @@
-# CTF Prep (offline) — préparer un lab volontairement vulnérable
+# Lab de sécurité local (offline) — préparer un environnement isolé (volontairement vulnérable)
 
 Ce guide explique comment préparer un environnement **100% local**, **contrôlé**
-et **rejouable** pour pratiquer sérieusement (CTF, pentest, blue team) sans
-exposer de services vulnérables à Internet.
+et **rejouable** pour apprendre l’**audit**, la **détection** et le **durcissement**
+sans exposer de services vulnérables à Internet.
 
 T2DECODE ne “déploie” pas automatiquement des cibles vulnérables : il fournit
 des outils, des cours, des simulateurs, et une base méthodologique. Le lab reste
@@ -22,7 +22,7 @@ votre responsabilité.
 
 ### Option A — 3 VMs (recommandé)
 
-- **VM Attaquant** : outils d’analyse/pentest
+- **VM Poste de test** : outils d’analyse / audit
 - **VM Cible** : service/app volontairement vulnérable
 - **VM Observateur** : collecte logs / IDS / dashboards (local)
 
@@ -47,7 +47,7 @@ Si vous utilisez Docker/Podman : binder sur `127.0.0.1` quand c’est suffisant.
 
 ## 3) Scénarios structurés (exemples)
 
-### Scénario 1 — Web vulnérable (red vs blue)
+### Scénario 1 — Web vulnérable (analyse → correction)
 
 - Cible : application web vulnérable
 - Exercice : XSS/SQLi → détection → correction → retest
@@ -72,4 +72,3 @@ Si vous utilisez Docker/Podman : binder sur `127.0.0.1` quand c’est suffisant.
 - Documenter le scénario dans un module (Markdown/JSON) et l’importer.
 - Conserver les preuves localement (captures, extraits de logs, résultats).
 - Utiliser les outils offline et les labs pour réviser / simuler.
-

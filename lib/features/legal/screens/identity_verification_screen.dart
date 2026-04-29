@@ -971,7 +971,7 @@ DÉTAILS
 -------
 ${result.details ?? 'Aucun détail disponible'}
 
-Ce rapport confirme que l'application TUTODECODE est officiellement créée et signée par l'Association TUTODECODE (Loi 1901, France).
+Ce rapport confirme que l'application T2DECODE est officiellement créée et signée par l'Association TUTODECODE (Loi 1901, France).
 ''';
   }
 

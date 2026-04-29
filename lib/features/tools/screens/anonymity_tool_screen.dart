@@ -1,5 +1,5 @@
 // ============================================================
-// Outil Anonymat & Identité Réseau — Exécution réelle
+// Network Identity & Privacy Tool — Real system actions
 // ============================================================
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -48,7 +48,7 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
-        title: 'Anonymisation locale & Identite reseau',
+        title: 'Identite reseau & Confidentialite',
         showBackButton: true,
         actions: [],
       );

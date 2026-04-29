@@ -50,4 +50,4 @@ flutter run
 
 - **`flutter pub get` lent** : vérifier proxy/VPN, ou relancer `make get`.
 - **Tests golden** : certains tests UI peuvent dépendre de l’environnement CI.
-- **iOS App Store** : la publication App Store est en cours de vérification Apple ; côté dev, utilisez les builds iOS locaux (voir `docs/ios-build.md`).
+- **iOS** : utilisez les builds iOS locaux (voir `docs/ios-build.md`).

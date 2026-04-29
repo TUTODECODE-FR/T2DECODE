@@ -3,8 +3,8 @@
 ================================================================================
 
 T2DECODE est une suite pédagogique et technique "All-in-One" conçue pour les
-professionnels de l'IT, les étudiants et les passionnés de cybersécurité. 
-L'application se distingue par son approche 100% Offline, Privacy-First et 
+professionnels de l'IT, les étudiants et les passionnés de sécurité informatique. 
+L'application se distingue par son approche offline-first, Privacy-First et 
 propulsée par l'Intelligence Artificielle locale.
 
 --------------------------------------------------------------------------------
@@ -25,13 +25,13 @@ propulsée par l'Intelligence Artificielle locale.
    - Assistant technique privé pour le code, le debug et l'administration système.
 
 2. ACADÉMIE (Cours & Formations)
-   Plus de 11 modules complets couvrant l'essentiel de l'IT moderne :
-   - Systèmes : Linux (Bases, Bash), Docker, Kubernetes (Avancé).
-   - Développement : Python, JavaScript ES6+, TypeScript, Node.js & API REST.
+   Modules couvrant l'essentiel de l'IT moderne :
+   - Systèmes : Linux (Bases, Bash), Docker, Kubernetes.
+   - Développement : Python, JavaScript, TypeScript, Node.js & API REST.
    - Réseaux : Modèle OSI, TCP/IP, DNS, HTTP/HTTPS.
-   - Sécurité : OWASP Top 10, Injections SQL, Authentification JWT.
+   - Sécurité : bonnes pratiques, vulnérabilités web courantes (pédagogique).
    - Web : HTML5 Sémantique, CSS Moderne (Flexbox, Grid, Animations).
-   - Outils : Git & GitHub Professionnel.
+   - Outils : Git & GitHub.
 
 3. NETKIT (Outils de Diagnostic)
    - Port Checker : Testez la connectivité réelle sur n'importe quel hôte.
@@ -41,7 +41,7 @@ propulsée par l'Intelligence Artificielle locale.
 
 4. LABORATOIRE DE SIMULATION
    - Simulations interactives visuelles (Ping ICMP, Handshake TCP, DNS).
-   - Simulateur d'injection SQL : Entraînement à la sécurité offensive contrôlée.
+   - Simulateurs de vulnérabilités web : entraînement pédagogique et contrôlé.
 
 5. BIBLIOTHÈQUE TECHNIQUE
    - Cheat Sheets : Mémos de commandes (Windows, Mac, Linux, Git, Docker).
