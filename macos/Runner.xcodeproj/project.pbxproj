@@ -68,7 +68,7 @@
 		331C80D7294CF71000263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		333000ED22D3DE5D00554162 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
 		335BBD1A22A9A15E00E9071D /* GeneratedPluginRegistrant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneratedPluginRegistrant.swift; sourceTree = "<group>"; };
-		33CC10ED2044A3C60003C045 /* tutodecode_flutter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tutodecode_flutter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		33CC10ED2044A3C60003C045 /* T2DECODE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = T2DECODE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33CC10F02044A3C60003C045 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		33CC10F22044A3C60003C045 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Runner/Assets.xcassets; sourceTree = "<group>"; };
 		33CC10F52044A3C60003C045 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -144,7 +144,7 @@
 		33CC10EE2044A3C60003C045 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				33CC10ED2044A3C60003C045 /* tutodecode_flutter.app */,
+				33CC10ED2044A3C60003C045 /* T2DECODE.app */,
 				331C80D5294CF71000263BE5 /* RunnerTests.xctest */,
 			);
 			name = Products;
@@ -195,7 +195,6 @@
 				181F48FB30972C8C5710C2FF /* Pods-RunnerTests.release.xcconfig */,
 				E70D70631486BAB665697907 /* Pods-RunnerTests.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -251,7 +250,7 @@
 			);
 			name = Runner;
 			productName = Runner;
-			productReference = 33CC10ED2044A3C60003C045 /* tutodecode_flutter.app */;
+			productReference = 33CC10ED2044A3C60003C045 /* T2DECODE.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -407,44 +406,9 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9C5DDD1D6DA3353E4FFC9F03 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8A0C7D9B4A5F4C1E9C8B2D11 /* Prepare Native Assets (objective_c) */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Prepare Native Assets (objective_c)";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-				shellScript = "set -e\nROOT_DIR=\"${SRCROOT}/..\"\nHOOK_DIR=\"$ROOT_DIR/.dart_tool/hooks_runner/shared/objective_c/build\"\nDST_DIR=\"$ROOT_DIR/build/native_assets/macos/objective_c.framework\"\n\n# NOTE: Flutter/Dart native-assets internals can change across versions.\n# If the hook output directory is missing, do not fail the whole build.\nif [ ! -d \"$HOOK_DIR\" ]; then\n  echo \"objective_c hook output not found (skipping): $HOOK_DIR\" >&2\n  exit 0\nfi\n\nARM=\"\"\nX64=\"\"\nfor f in \"$HOOK_DIR\"/*/objective_c.dylib; do\n  [ -f \"$f\" ] || continue\n  info=\"$(/usr/bin/lipo -info \"$f\" 2>/dev/null || true)\"\n  case \"$info\" in\n    *\"architecture: arm64\"*|*\"are: arm64\"*) ARM=\"$f\" ;;\n    *\"architecture: x86_64\"*|*\"are: x86_64\"*) X64=\"$f\" ;;\n  esac\ndone\n\nif [ -z \"$ARM\" ] && [ -z \"$X64\" ]; then\n  echo \"objective_c.dylib not found under (skipping): $HOOK_DIR\" >&2\n  exit 0\nfi\n\n# macOS expects a versioned framework (non-shallow bundle).\nrm -rf \"$DST_DIR\"\nmkdir -p \"$DST_DIR/Versions/A/Resources\"\n\nBIN_OUT=\"$DST_DIR/Versions/A/objective_c\"\nif [ -n \"$ARM\" ] && [ -n \"$X64\" ]; then\n  /usr/bin/lipo -create \"$ARM\" \"$X64\" -output \"$BIN_OUT\"\nelif [ -n \"$ARM\" ]; then\n  /bin/cp -f \"$ARM\" \"$BIN_OUT\"\nelse\n  /bin/cp -f \"$X64\" \"$BIN_OUT\"\nfi\nchmod +x \"$BIN_OUT\" || true\n\n# Standard symlinks\nln -sfn A \"$DST_DIR/Versions/Current\"\nln -sfn Versions/Current/objective_c \"$DST_DIR/objective_c\"\nln -sfn Versions/Current/Resources \"$DST_DIR/Resources\"\n\ncat > \"$DST_DIR/Versions/A/Resources/Info.plist\" <<'PLIST'\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n  <key>CFBundleIdentifier</key>\n  <string>package.objective_c</string>\n  <key>CFBundleName</key>\n  <string>objective_c</string>\n  <key>CFBundlePackageType</key>\n  <string>FMWK</string>\n  <key>CFBundleShortVersionString</key>\n  <string>1.0</string>\n  <key>CFBundleVersion</key>\n  <string>1</string>\n  <key>CFBundleExecutable</key>\n  <string>objective_c</string>\n</dict>\n</plist>\nPLIST\n";
-			showEnvVarsInLog = 0;
-		};
 		7F2A6B1C9E0D4F8A9C1B2D3E /* Strip Extended Attributes */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -460,6 +424,47 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "APP_PATH=\"${TARGET_BUILD_DIR}/${FULL_PRODUCT_NAME}\"\nif ! command -v xattr >/dev/null 2>&1 || [ ! -d \"$APP_PATH\" ]; then\n  exit 0\nfi\n\n# Clear xattrs on the app and each embedded framework/bundle (frameworks contain symlinks, so treat each root explicitly).\n/usr/bin/xattr -cr \"$APP_PATH\" 2>/dev/null || true\n/usr/bin/xattr -d com.apple.FinderInfo \"$APP_PATH\" 2>/dev/null || true\n/usr/bin/xattr -d 'com.apple.fileprovider.fpfs#P' \"$APP_PATH\" 2>/dev/null || true\n\nFW_DIR=\"$APP_PATH/Contents/Frameworks\"\nif [ -d \"$FW_DIR\" ]; then\n  for item in \"$FW_DIR\"/*; do\n    [ -e \"$item\" ] || continue\n    /usr/bin/xattr -cr \"$item\" 2>/dev/null || true\n    /usr/bin/xattr -d com.apple.FinderInfo \"$item\" 2>/dev/null || true\n    /usr/bin/xattr -d 'com.apple.fileprovider.fpfs#P' \"$item\" 2>/dev/null || true\n  done\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		8A0C7D9B4A5F4C1E9C8B2D11 /* Prepare Native Assets (objective_c) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Prepare Native Assets (objective_c)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nROOT_DIR=\"${SRCROOT}/..\"\nHOOK_DIR=\"$ROOT_DIR/.dart_tool/hooks_runner/shared/objective_c/build\"\nDST_DIR=\"$ROOT_DIR/build/native_assets/macos/objective_c.framework\"\n\n# NOTE: Flutter/Dart native-assets internals can change across versions.\n# If the hook output directory is missing, do not fail the whole build.\nif [ ! -d \"$HOOK_DIR\" ]; then\n  echo \"objective_c hook output not found (skipping): $HOOK_DIR\" >&2\n  exit 0\nfi\n\nARM=\"\"\nX64=\"\"\nfor f in \"$HOOK_DIR\"/*/objective_c.dylib; do\n  [ -f \"$f\" ] || continue\n  info=\"$(/usr/bin/lipo -info \"$f\" 2>/dev/null || true)\"\n  case \"$info\" in\n    *\"architecture: arm64\"*|*\"are: arm64\"*) ARM=\"$f\" ;;\n    *\"architecture: x86_64\"*|*\"are: x86_64\"*) X64=\"$f\" ;;\n  esac\ndone\n\nif [ -z \"$ARM\" ] && [ -z \"$X64\" ]; then\n  echo \"objective_c.dylib not found under (skipping): $HOOK_DIR\" >&2\n  exit 0\nfi\n\n# macOS expects a versioned framework (non-shallow bundle).\nrm -rf \"$DST_DIR\"\nmkdir -p \"$DST_DIR/Versions/A/Resources\"\n\nBIN_OUT=\"$DST_DIR/Versions/A/objective_c\"\nif [ -n \"$ARM\" ] && [ -n \"$X64\" ]; then\n  /usr/bin/lipo -create \"$ARM\" \"$X64\" -output \"$BIN_OUT\"\nelif [ -n \"$ARM\" ]; then\n  /bin/cp -f \"$ARM\" \"$BIN_OUT\"\nelse\n  /bin/cp -f \"$X64\" \"$BIN_OUT\"\nfi\nchmod +x \"$BIN_OUT\" || true\n\n# Standard symlinks\nln -sfn A \"$DST_DIR/Versions/Current\"\nln -sfn Versions/Current/objective_c \"$DST_DIR/objective_c\"\nln -sfn Versions/Current/Resources \"$DST_DIR/Resources\"\n\ncat > \"$DST_DIR/Versions/A/Resources/Info.plist\" <<'PLIST'\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n  <key>CFBundleIdentifier</key>\n  <string>package.objective_c</string>\n  <key>CFBundleName</key>\n  <string>objective_c</string>\n  <key>CFBundlePackageType</key>\n  <string>FMWK</string>\n  <key>CFBundleShortVersionString</key>\n  <string>1.0</string>\n  <key>CFBundleVersion</key>\n  <string>1</string>\n  <key>CFBundleExecutable</key>\n  <string>objective_c</string>\n</dict>\n</plist>\nPLIST\n";
+			showEnvVarsInLog = 0;
+		};
+		9C5DDD1D6DA3353E4FFC9F03 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
