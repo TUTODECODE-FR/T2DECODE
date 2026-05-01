@@ -75,8 +75,13 @@ cat > "$NATIVE_DST_DIR/Versions/A/Resources/Info.plist" <<'PLIST'
 </plist>
 PLIST
 
+DART_DEFINES=""
+if [ "${TUTODECODE_OFFICIAL_BUILD:-}" = "true" ]; then
+  DART_DEFINES="--dart-define=OFFICIAL_BUILD=true"
+fi
+
 set +e
-flutter build macos --release --dart-define=OFFICIAL_BUILD=true --no-pub
+flutter build macos --release $DART_DEFINES --no-pub
 rc=$?
 set -e
 
