@@ -45,6 +45,8 @@ import 'features/roadmap/screens/roadmap_screen.dart';
 import 'features/lab/screens/professional_lab_screen.dart';
 import 'features/admin/screens/admin_screen.dart';
 import 'features/legal/screens/legal_screen.dart';
+import 'features/legal/screens/mentions_legales_screen.dart';
+import 'features/legal/screens/build_verification_screen.dart';
 import 'features/settings/screens/settings_screen.dart'; // To be moved later if needed
 import 'features/ghost_link/screens/ghost_link_screen.dart';
 import 'features/ghost_link/screens/ghost_chat_screen.dart';
@@ -145,6 +147,8 @@ class TutoDeCodeApp extends StatelessWidget {
 
                   case '/admin':                return AdminScreen();
                   case '/legal':                return LegalScreen();
+                  case '/legal/build-verification': return const BuildVerificationScreen();
+                  case '/mentions-legales':     return const MentionsLegalesScreen();
                   case '/settings':             return const SettingsScreen();
                   case '/ghost-link':            return const GhostLinkScreen();
                   case '/ghost-link/chat':
