@@ -137,7 +137,6 @@ class _SystemSimulatorState extends State<SystemSimulator>
           _diskUsage = (Random().nextDouble() * 5 + 45).clamp(0.0, 100.0);
           _networkUsage = (Random().nextDouble() * 100).clamp(0.0, 100.0);
           _temperature = (Random().nextDouble() * 20 + 40).clamp(30.0, 85.0);
-          _uptime += 1;
         });
         _startRealTimeMonitoring();
       }
