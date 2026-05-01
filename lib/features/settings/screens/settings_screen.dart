@@ -386,7 +386,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const Text('Structure à but non lucratif dédiée à l\'éducation numérique.'),
         TextButton(onPressed: () {}, child: const Text('Visiter tutodecode.org')),
         const SizedBox(height: 12),
-        ElevatedButton(onPressed: () {}, child: const Text('Lire la Security Policy')),
+        Row(
+          children: [
+            ElevatedButton(onPressed: () {}, child: const Text('Security Policy')),
+            const SizedBox(width: 12),
+            OutlinedButton(onPressed: () => Navigator.pushNamed(context, '/mentions-legales'), child: const Text('Mentions Légales (JO)')),
+          ],
+        ),
         const SizedBox(height: 12),
         const Text('Licence : AGPL-3.0', style: TextStyle(color: TdcColors.textSecondary)),
         const SizedBox(height: 12),
