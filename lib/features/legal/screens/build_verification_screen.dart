@@ -8,6 +8,7 @@ import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:tutodecode/core/security/build_verification.dart';
+import 'package:tutodecode/core/services/github_service.dart';
 
 class BuildVerificationScreen extends StatefulWidget {
   const BuildVerificationScreen({super.key});
@@ -21,6 +22,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
   BuildVerificationResult? _verificationResult;
   BuildCertificate? _certificate;
   bool _showTechnicalDetails = false;
+  bool _isCheckingOnline = false;
 
   @override
   void initState() {
@@ -47,6 +49,65 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
         _certificate = certificate;
       });
     } catch (_) {}
+  }
+
+  Future<void> _verifyOnlineVersion() async {
+    if (_verificationResult == null) return;
+    setState(() => _isCheckingOnline = true);
+    
+    try {
+      final github = GithubService();
+      final onlineVersion = await github.fetchOfficialAppVersion();
+      
+      if (!mounted) return;
+      setState(() => _isCheckingOnline = false);
+
+      if (onlineVersion == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Impossible de vérifier en ligne. Vérifiez votre Wi-Fi ou désactivez le mode hors-ligne.', style: TextStyle(color: Colors.white)), 
+            backgroundColor: TdcColors.warning
+          ),
+        );
+        return;
+      }
+
+      final localVersion = BuildVerification.APP_VERSION.split('+')[0]; // Comparer ex: 1.0.3
+      final fetchedVersion = onlineVersion.split('+')[0];
+      
+      if (fetchedVersion == localVersion) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('✅ App Officielle à jour'),
+            content: Text('L\'application correspond parfaitement à la version officielle sur GitHub ($localVersion).'),
+            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+          ),
+        );
+      } else if (fetchedVersion.compareTo(localVersion) > 0) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('🔄 Mise à jour disponible'),
+            content: Text('Une nouvelle version officielle ($fetchedVersion) est disponible sur GitHub. Vous avez la version $localVersion.'),
+            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('⚠️ Version Non-Officielle / Fork Modifié'),
+            content: Text('Votre version ($localVersion) ne correspond pas au registre officiel en ligne ($fetchedVersion). Prudence !'),
+            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isCheckingOnline = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur: $e')));
+    }
   }
 
   @override
@@ -110,6 +171,19 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
                   ),
                   textAlign: TextAlign.center,
                 ),
+                const SizedBox(height: 16),
+                if (_isCheckingOnline)
+                  const CircularProgressIndicator()
+                else
+                  ElevatedButton.icon(
+                    onPressed: _verifyOnlineVersion,
+                    icon: const Icon(Icons.cloud_sync, size: 18),
+                    label: const Text('Vérifier avec les serveurs (GitHub)'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: TdcColors.surfaceElevated,
+                      foregroundColor: TdcColors.textPrimary,
+                    ),
+                  ),
               ],
             ),
           ),
