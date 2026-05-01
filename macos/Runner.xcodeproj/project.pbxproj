@@ -271,7 +271,6 @@
 					33CC10EC2044A3C60003C045 = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1100;
-						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 1;
@@ -443,7 +442,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nROOT_DIR=\"${SRCROOT}/..\"\nHOOK_DIR=\"$ROOT_DIR/.dart_tool/hooks_runner/shared/objective_c/build\"\nDST_DIR=\"$ROOT_DIR/build/native_assets/macos/objective_c.framework\"\n\n# NOTE: Flutter/Dart native-assets internals can change across versions.\n# If the hook output directory is missing, do not fail the whole build.\nif [ ! -d \"$HOOK_DIR\" ]; then\n  echo \"objective_c hook output not found (skipping): $HOOK_DIR\" >&2\n  exit 0\nfi\n\nARM=\"\"\nX64=\"\"\nfor f in \"$HOOK_DIR\"/*/objective_c.dylib; do\n  [ -f \"$f\" ] || continue\n  info=\"$(/usr/bin/lipo -info \"$f\" 2>/dev/null || true)\"\n  case \"$info\" in\n    *\"architecture: arm64\"*|*\"are: arm64\"*) ARM=\"$f\" ;;\n    *\"architecture: x86_64\"*|*\"are: x86_64\"*) X64=\"$f\" ;;\n  esac\ndone\n\nif [ -z \"$ARM\" ] && [ -z \"$X64\" ]; then\n  echo \"objective_c.dylib not found under (skipping): $HOOK_DIR\" >&2\n  exit 0\nfi\n\n# macOS expects a versioned framework (non-shallow bundle).\nrm -rf \"$DST_DIR\"\nmkdir -p \"$DST_DIR/Versions/A/Resources\"\n\nBIN_OUT=\"$DST_DIR/Versions/A/objective_c\"\nif [ -n \"$ARM\" ] && [ -n \"$X64\" ]; then\n  /usr/bin/lipo -create \"$ARM\" \"$X64\" -output \"$BIN_OUT\"\nelif [ -n \"$ARM\" ]; then\n  /bin/cp -f \"$ARM\" \"$BIN_OUT\"\nelse\n  /bin/cp -f \"$X64\" \"$BIN_OUT\"\nfi\nchmod +x \"$BIN_OUT\" || true\n\n# Standard symlinks\nln -sfn A \"$DST_DIR/Versions/Current\"\nln -sfn Versions/Current/objective_c \"$DST_DIR/objective_c\"\nln -sfn Versions/Current/Resources \"$DST_DIR/Resources\"\n\ncat > \"$DST_DIR/Versions/A/Resources/Info.plist\" <<'PLIST'\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n  <key>CFBundleIdentifier</key>\n  <string>package.objective_c</string>\n  <key>CFBundleName</key>\n  <string>objective_c</string>\n  <key>CFBundlePackageType</key>\n  <string>FMWK</string>\n  <key>CFBundleShortVersionString</key>\n  <string>1.0</string>\n  <key>CFBundleVersion</key>\n  <string>1</string>\n  <key>CFBundleExecutable</key>\n  <string>objective_c</string>\n</dict>\n</plist>\nPLIST\n";
+			shellScript = "set -e\nROOT_DIR=\"${SRCROOT}/..\"\nHOOK_DIR=\"$ROOT_DIR/.dart_tool/hooks_runner/shared/objective_c/build\"\nDST_DIR=\"$ROOT_DIR/build/native_assets/macos/objective_c.framework\"\n\n# NOTE: Flutter/Dart native-assets internals can change across versions.\n# If the hook output directory is missing, do not fail the whole build.\nif [ ! -d \"$HOOK_DIR\" ]; then\n  echo \"objective_c hook output not found (skipping): $HOOK_DIR\" >&2\n  exit 0\nfi\n\nARM=\"\"\nX64=\"\"\nfor f in \"$HOOK_DIR\"/*/objective_c.dylib; do\n  [ -f \"$f\" ] || continue\n  info=\"$(/usr/bin/lipo -info \"$f\" 2>/dev/null || true)\"\n  case \"$info\" in\n    *\"architecture: arm64\"*|*\"are: arm64\"*) ARM=\"$f\" ;;\n    *\"architecture: x86_64\"*|*\"are: x86_64\"*) X64=\"$f\" ;;\n  esac\ndone\n\nif [ -z \"$ARM\" ] && [ -z \"$X64\" ]; then\n  echo \"objective_c.dylib not found under (skipping): $HOOK_DIR\" >&2\n  exit 0\nfi\n\n# macOS expects a versioned framework (non-shallow bundle).\nrm -rf \"$DST_DIR\"\nmkdir -p \"$DST_DIR/Versions/A/Resources\"\n\nBIN_OUT=\"$DST_DIR/Versions/A/objective_c\"\nif [ -n \"$ARM\" ] && [ -n \"$X64\" ]; then\n  /usr/bin/lipo -create \"$ARM\" \"$X64\" -output \"$BIN_OUT\"\nelif [ -n \"$ARM\" ]; then\n  /bin/cp -f \"$ARM\" \"$BIN_OUT\"\nelse\n  /bin/cp -f \"$X64\" \"$BIN_OUT\"\nfi\nchmod +x \"$BIN_OUT\" || true\n\n# Standard symlinks\nln -sfn A \"$DST_DIR/Versions/Current\"\nln -sfn Versions/Current/objective_c \"$DST_DIR/objective_c\"\nln -sfn Versions/Current/Resources \"$DST_DIR/Resources\"\n\ncat > \"$DST_DIR/Versions/A/Resources/Info.plist\" <<'PLIST'\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n  <key>CFBundleIdentifier</key>\n  <string>package.objective_c</string>\n  <key>CFBundleName</key>\n  <string>objective_c</string>\n  <key>CFBundlePackageType</key>\n  <string>FMWK</string>\n  <key>CFBundleShortVersionString</key>\n  <string>1.0</string>\n  <key>CFBundleVersion</key>\n  <string>1</string>\n  <key>CFBundleExecutable</key>\n  <string>objective_c</string>\n</dict>\n</plist>\nPLIST\n\n# Generate dSYM for App Store archive validation\n/usr/bin/dsymutil \"$BIN_OUT\" -o \"$DST_DIR.dSYM\" || true\n";
 			showEnvVarsInLog = 0;
 		};
 		9C5DDD1D6DA3353E4FFC9F03 /* [CP] Embed Pods Frameworks */ = {
@@ -617,8 +616,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = TS97M57BJV;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -749,8 +751,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = TS97M57BJV;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -769,8 +774,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Release.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = TS97M57BJV;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
