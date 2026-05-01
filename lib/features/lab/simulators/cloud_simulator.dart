@@ -20,14 +20,11 @@ class _CloudSimulatorState extends State<CloudSimulator>
   
   // États des simulations
   bool _isDeploying = false;
-  bool _isScaling = false;
-  bool _isMonitoring = false;
   
   // Données cloud
   List<CloudInstance> _instances = [];
   List<CloudService> _services = [];
   List<DeploymentJob> _deployments = [];
-  List<CloudMetric> _metrics = [];
   
   // Métriques cloud
   double _totalCost = 0.0;
@@ -935,24 +932,6 @@ class _CloudSimulatorState extends State<CloudSimulator>
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildMonitoringTab() {
-    return const Center(
-      child: Text(
-        'Monitoring Cloud - En développement',
-        style: TextStyle(color: TdcColors.textSecondary),
-      ),
-    );
-  }
-
-  Widget _buildCostsTab() {
-    return const Center(
-      child: Text(
-        'Analyse des Coûts - En développement',
-        style: TextStyle(color: TdcColors.textSecondary),
       ),
     );
   }

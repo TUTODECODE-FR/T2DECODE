@@ -3,7 +3,6 @@
 // ============================================================
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:animations/animations.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/features/courses/providers/gamification_provider.dart';
@@ -19,7 +18,6 @@ class GamificationDashboardScreen extends StatefulWidget {
 class _GamificationDashboardScreenState extends State<GamificationDashboardScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  int _selectedTabIndex = 0;
 
   @override
   void initState() {

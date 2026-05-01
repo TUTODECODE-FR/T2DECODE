@@ -42,8 +42,8 @@ class OllamaService {
   // Vérifie si Ollama tourne
   static Future<OllamaStatus> checkStatus({
     bool includeModels = true,
-    Duration versionTimeout = const Duration(seconds: 15),
-    Duration tagsTimeout = const Duration(seconds: 15),
+    Duration versionTimeout = const Duration(seconds: 5),
+    Duration tagsTimeout = const Duration(seconds: 7),
   }) async {
     try {
       await _ensureAllowed();
@@ -129,8 +129,11 @@ class OllamaService {
 
     final client = http.Client();
     try {
-      // Timeout porté à 60s pour les connexions distantes
-      final response = await client.send(req).timeout(const Duration(seconds: 60));
+      // Timeout strict à 8s — Ollama est local, un délai > 8s = service absent.
+      final response = await client.send(req).timeout(
+        const Duration(seconds: 8),
+        onTimeout: () => throw TimeoutException('Ollama ne répond pas (timeout 8s). Vérifiez qu\'il est bien lancé.'),
+      );
       if (response.statusCode != 200) {
         // Lire le corps d'erreur
         final errBody = await response.stream.bytesToString();

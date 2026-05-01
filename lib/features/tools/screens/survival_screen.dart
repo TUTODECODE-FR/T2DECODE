@@ -10,8 +10,6 @@ class SurvivalScreen extends StatefulWidget {
 }
 
 class _SurvivalScreenState extends State<SurvivalScreen> {
-  int _selectedOS = 0;
-
   final List<Map<String, dynamic>> _guides = [
     {
       'category': 'SYSTÈME & BOOT',

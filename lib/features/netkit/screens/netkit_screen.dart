@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
-import 'package:tutodecode/core/responsive/responsive.dart';
 import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/features/courses/screens/cheat_sheet_screen.dart';

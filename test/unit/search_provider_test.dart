@@ -1,10 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tutodecode/core/providers/search_provider.dart';
-import 'package:tutodecode/features/courses/providers/courses_provider.dart';
-import 'package:mockito/annotations.dart';
-import 'search_provider_test.mocks.dart';
 
-@GenerateMocks([CoursesProvider])
 void main() {
   group('SearchProvider Tests', () {
     late SearchProvider searchProvider;

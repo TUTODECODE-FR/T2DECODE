@@ -692,8 +692,7 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
       if (Platform.isLinux) {
         final r =
             await _sudo(['systemctl', 'stop', 'avahi-daemon'], sudoPassword);
-        final r2 =
-            await _sudo(['systemctl', 'disable', 'avahi-daemon'], sudoPassword);
+        await _sudo(['systemctl', 'disable', 'avahi-daemon'], sudoPassword);
         final ok = r.exitCode == 0;
         return AnonResult(
             success: ok,
@@ -714,7 +713,7 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
               : 'Échec. Utilisez: sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist',
         );
       } else if (Platform.isWindows) {
-        final r = await Process.run(
+        await Process.run(
             'powershell',
             [
               '-Command',

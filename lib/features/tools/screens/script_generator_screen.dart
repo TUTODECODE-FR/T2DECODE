@@ -2,7 +2,6 @@
 // Script Generator Screen — Générateur de scripts et automation
 // ============================================================
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';

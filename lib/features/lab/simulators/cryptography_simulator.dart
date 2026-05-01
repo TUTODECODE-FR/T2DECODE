@@ -985,24 +985,6 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
     );
   }
 
-  Widget _buildSslTlsTab() {
-    return const Center(
-      child: Text(
-        'Simulation SSL/TLS - En développement',
-        style: TextStyle(color: TdcColors.textSecondary),
-      ),
-    );
-  }
-
-  Widget _buildPkiTab() {
-    return const Center(
-      child: Text(
-        'Infrastructure PKI - En développement',
-        style: TextStyle(color: TdcColors.textSecondary),
-      ),
-    );
-  }
-
   // Méthodes de simulation
   Future<void> _encryptText() async {
     setState(() => _isEncrypting = true);

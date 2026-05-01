@@ -9,6 +9,7 @@ class SettingsProvider with ChangeNotifier {
   bool _zeroNetworkMode = false;
   bool _securityUpdates = true;
   bool _contentUpdates = true;
+  bool _demoMode = false;
   String _ollamaUrl = 'http://localhost:11434';
   String _ollamaModel = 'qwen2.5:1.5b';
   String _tutorPersonality = 'Socratique';
@@ -27,6 +28,7 @@ class SettingsProvider with ChangeNotifier {
   bool get zeroNetworkMode => _zeroNetworkMode;
   bool get securityUpdates => _securityUpdates;
   bool get contentUpdates => _contentUpdates;
+  bool get demoMode => _demoMode;
   String get ollamaUrl => _ollamaUrl;
   String get ollamaModel => _ollamaModel;
   String get tutorPersonality => _tutorPersonality;
@@ -50,6 +52,7 @@ class SettingsProvider with ChangeNotifier {
     _zeroNetworkMode = await _storage.getZeroNetworkMode();
     _securityUpdates = await _storage.getSecurityUpdates();
     _contentUpdates = await _storage.getContentUpdates();
+    _demoMode = await _storage.getDemoMode();
     _ollamaUrl = await _storage.getOllamaHost();
     _ollamaModel = await _storage.getOllamaModel();
     _tutorPersonality = await _storage.getTutorPersonality();
@@ -81,6 +84,12 @@ class SettingsProvider with ChangeNotifier {
   Future<void> setContentUpdates(bool value) async {
     _contentUpdates = value;
     await _storage.setContentUpdates(value);
+    notifyListeners();
+  }
+
+  Future<void> setDemoMode(bool value) async {
+    _demoMode = value;
+    await _storage.setDemoMode(value);
     notifyListeners();
   }
 

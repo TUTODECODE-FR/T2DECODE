@@ -5,10 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 import 'package:tutodecode/features/courses/service/rag_service.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
-import 'package:tutodecode/core/theme/premium_ui.dart';
-import 'package:tutodecode/core/responsive/responsive.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
-import 'package:tutodecode/core/widgets/tdc_widgets.dart';
+import 'package:tutodecode/core/providers/settings_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 // ─── Prompt système ──────────────────────────────────────────────────────────
@@ -38,6 +36,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   String?       _model;
   bool          _checking = true;
   bool          _streaming = false;
+  bool          _demoMode = false;
   StreamSubscription? _sub;
   Timer? _pollTimer;
   bool _polling = false;
@@ -54,6 +53,9 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateShell();
+      // Lire le mode démo depuis le provider
+      final settings = context.read<SettingsProvider>();
+      setState(() => _demoMode = settings.demoMode);
     });
   }
 
@@ -151,7 +153,9 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
 
   Future<void> _send() async {
     final text = _inputCtrl.text.trim();
-    if (text.isEmpty || _streaming || _model == null) return;
+    if (text.isEmpty || _streaming) return;
+    // En mode démo, on n'a pas besoin d'un modèle réel.
+    if (!_demoMode && _model == null) return;
 
     _inputCtrl.clear();
     _inputFocus.requestFocus();
@@ -162,8 +166,26 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       _streaming = true;
     });
     _scrollBottom();
-    _updateShell(); // Update to show clear button if first message
+    _updateShell();
 
+    // ── Mode Démo : réponse mock après 2 secondes ─────────────────────────
+    if (_demoMode) {
+      await Future.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
+      setState(() {
+        _msgs[_msgs.length - 1] = _Msg(
+          role: 'assistant',
+          text: '🧪 **Mode Démo actif** — Ceci est une réponse simulée.\n\n'
+              'En production, Ghost AI utilise Ollama (moteur IA 100% local) '
+              'pour répondre à vos questions techniques en temps réel. '
+              'Aucune donnée ne quitte votre appareil.',
+        );
+        _streaming = false;
+      });
+      return;
+    }
+
+    // ── Mode Normal : appel à Ollama ─────────────────────────────────────
     final history = _msgs
         .where((m) => m.role != 'error' && m.text.isNotEmpty)
         .map((m) => {'role': m.role, 'content': m.text})
@@ -201,7 +223,12 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
         onError: (e) {
           if (!mounted) return;
           setState(() {
-            _msgs[_msgs.length - 1] = _Msg(role: 'error', text: '**Connexion interrompue**\n\nOllama ne répond plus. Lancez-le (ou réessayez plus tard).');
+            _msgs[_msgs.length - 1] = _Msg(
+              role: 'error',
+              text: '⚠️ **Impossible de se connecter à l\'IA.**\n\n'
+                  'Vérifiez qu\'Ollama est bien installé et en cours d\'exécution sur votre Mac.\n'
+                  '_Commande : `ollama serve`_',
+            );
             _status = const OllamaStatus(running: false, error: 'Ollama indisponible');
             _model = null;
             _streaming = false;
@@ -212,7 +239,11 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       );
     } catch (e) {
       setState(() {
-        _msgs[_msgs.length - 1] = _Msg(role: 'error', text: '**Erreur :** ${e.toString()}');
+        _msgs[_msgs.length - 1] = _Msg(
+          role: 'error',
+          text: '⚠️ **Impossible de se connecter à l\'IA.**\n\n'
+              'Vérifiez qu\'Ollama est bien installé et en cours d\'exécution sur votre Mac.',
+        );
         _streaming = false;
       });
     }
@@ -237,6 +268,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       color: TdcColors.bg,
       child: Column(children: [
         if (_checking) const LinearProgressIndicator(color: TdcColors.accent, backgroundColor: Colors.transparent, minHeight: 1),
+        if (_demoMode) _buildDemoBanner(),
         _buildStatusHeader(),
         if (courseTitle != null) _buildContextBadge(context, courseTitle),
         Expanded(child: _msgs.isEmpty ? _buildEmpty(context) : _buildMessages(context)),
@@ -246,8 +278,34 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     );
   }
 
+  Widget _buildDemoBanner() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      color: const Color(0xFF2A1F00),
+      child: Row(children: [
+        const Icon(Icons.science_outlined, size: 14, color: Color(0xFFFFB300)),
+        const SizedBox(width: 8),
+        const Expanded(
+          child: Text(
+            'MODE DÉMO ACTIF — Les réponses sont simulées. Aucun appel réseau.',
+            style: TextStyle(color: Color(0xFFFFB300), fontSize: 10, fontWeight: FontWeight.bold),
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            final settings = context.read<SettingsProvider>();
+            settings.setDemoMode(false);
+            setState(() => _demoMode = false);
+          },
+          child: const Icon(Icons.close, size: 14, color: Color(0xFFFFB300)),
+        ),
+      ]),
+    );
+  }
+
   Widget _buildStatusHeader() {
-    final running = _status?.running ?? false;
+    final running = _demoMode || (_status?.running ?? false);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -264,14 +322,16 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
         ),
         const SizedBox(width: 8),
         Text(
-          running ? 'IA locale disponible' : 'IA locale indisponible (Ollama)',
+          _demoMode
+              ? 'Mode Démo — Réponses simulées'
+              : running ? 'IA locale disponible' : 'IA locale indisponible (Ollama)',
           style: TextStyle(
             color: running ? TdcColors.info : TdcColors.textSecondary,
             fontSize: 10,
             fontWeight: FontWeight.bold,
           ),
         ),
-        if (!running && !_checking) ...[
+        if (!running && !_checking && !_demoMode) ...[
           const Spacer(),
           TextButton.icon(
             onPressed: _init,
@@ -280,7 +340,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
             style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
           ),
         ],
-        if (!running && !_checking) ...[
+        if (!running && !_checking && !_demoMode) ...[
           const SizedBox(width: 8),
           TextButton.icon(
             onPressed: () => Navigator.pushNamed(context, '/ai-config'),
@@ -460,7 +520,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   }
 
   Widget _buildInput(BuildContext context) {
-    final canSend = (_status?.running == true) && (_model != null) && !_streaming;
+    final canSend = (_demoMode || (_status?.running == true && _model != null)) && !_streaming;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -475,7 +535,10 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
             enabled: canSend,
             onSubmitted: (_) => _send(),
             style: const TextStyle(color: Colors.white),
-            decoration: const InputDecoration(hintText: 'Posez une question...', border: InputBorder.none),
+            decoration: InputDecoration(
+              hintText: _demoMode ? 'Posez une question (mode démo)...' : 'Posez une question...',
+              border: InputBorder.none,
+            ),
           ),
         ),
         IconButton(

@@ -823,8 +823,6 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
   // ── Bash terminal ─────────────────────────────────────────
   final List<String> _bashLines = [];
   final TextEditingController _bashCtrl = TextEditingController();
-  bool _bashRunning = false;
-  final Map<String, String> _bashVars = {'USER': 'user', 'HOME': '/home/user', 'PATH': '/usr/bin:/bin'};
 
   _Scenario get _scenario => _linuxScenarios[_scenarioIndex];
 

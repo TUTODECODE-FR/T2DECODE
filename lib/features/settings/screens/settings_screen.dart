@@ -18,7 +18,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   OllamaStatus? _status;
-  bool _checking = false;
   final TextEditingController _hostController = TextEditingController();
   final BackupService _backup = BackupService();
 
@@ -31,12 +30,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _checkOllama() async {
-    setState(() => _checking = true);
     final status = await OllamaService.checkStatus();
-    setState(() {
-      _status = status;
-      _checking = false;
-    });
+    setState(() => _status = status);
   }
 
   @override

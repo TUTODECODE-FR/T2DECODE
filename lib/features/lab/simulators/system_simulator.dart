@@ -19,16 +19,10 @@ class _SystemSimulatorState extends State<SystemSimulator>
   late TabController _tabController;
   late AnimationController _performanceController;
   
-  // États des simulations
-  bool _isMonitoring = false;
-  bool _isBenchmarking = false;
-  bool _isStressing = false;
-  
   // Données système
   List<SystemProcess> _processes = [];
   List<DiskPartition> _partitions = [];
   List<SystemService> _services = [];
-  List<PerformanceMetric> _metrics = [];
   
   // Métriques simulées
   double _cpuUsage = 0.0;
@@ -36,7 +30,6 @@ class _SystemSimulatorState extends State<SystemSimulator>
   double _diskUsage = 0.0;
   double _networkUsage = 0.0;
   double _temperature = 45.0;
-  int _uptime = 0;
 
   @override
   void initState() {
@@ -905,33 +898,6 @@ class _SystemSimulatorState extends State<SystemSimulator>
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildPerformanceTab() {
-    return const Center(
-      child: Text(
-        'Analyse de performance - En développement',
-        style: TextStyle(color: TdcColors.textSecondary),
-      ),
-    );
-  }
-
-  Widget _buildMonitoringTab() {
-    return const Center(
-      child: Text(
-        'Monitoring système - En développement',
-        style: TextStyle(color: TdcColors.textSecondary),
-      ),
-    );
-  }
-
-  Widget _buildBenchmarkTab() {
-    return const Center(
-      child: Text(
-        'Benchmark système - En développement',
-        style: TextStyle(color: TdcColors.textSecondary),
       ),
     );
   }
