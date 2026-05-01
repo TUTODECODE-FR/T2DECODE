@@ -147,6 +147,21 @@ make build-dmg      # Création DMG (macOS)
 
 <img src="assets/separator.svg" width="100%" height="4">
 
+## 🏛️ Légalité & Transparence (Mentions Légales)
+
+**T2DECODE** est un projet édité et maintenu par l'association Loi 1901 à but non lucratif **TUTO DECODE**. 
+Contrairement aux applications anonymes, nous garantissons l'authenticité de notre démarche Open Source en affichant nos informations légales de manière transparente :
+
+- **Éditeur** : Association TUTO DECODE
+- **Directeur de Publication** : Maxime MARTIN CIVET
+- **Enregistrement RNA** : `[VOTRE_RNA_ICI]`
+- **Enregistrement SIREN** : `[VOTRE_SIREN_ICI]`
+- **Preuve Légale** : [Publication au Journal Officiel de la République Française (JOAFE)](#)
+
+> 💡 *Ces mentions légales sont également consultables directement depuis les Paramètres de l'application (Section "Mentions Légales (JO)").*
+
+<img src="assets/separator.svg" width="100%" height="4">
+
 ## 🤝 Contribuer
 
 T2DECODE est un projet open source. Les contributions sont les bienvenues ! Que ce soit pour ajouter un outil, corriger un bug, ou créer un nouveau module de cours.
