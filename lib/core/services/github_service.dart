@@ -236,6 +236,34 @@ class GithubService {
       throw Exception('Mode hors-ligne activé');
     }
   }
+
+  /// Vérifie la version actuelle de l'application sur le dépôt officiel (GitHub)
+  /// L'URL est encodée en base64 (Anti-ScriptKiddie) pour éviter un simple rechercher-remplacer par un fork malveillant.
+  Future<String?> fetchOfficialAppVersion() async {
+    try {
+      await _ensureNetworkAllowed();
+      // "https://raw.githubusercontent.com/TUTODECODE-FR/T2DECODE/main/pubspec.yaml"
+      final b64Url = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1RVVE9ERUNPREUtRlIvVDJERUNPREUvbWFpbi9wdWJzcGVjLnlhbWw=';
+      final uri = Uri.parse(utf8.decode(base64Decode(b64Url)));
+      
+      final response = await http.get(
+        uri,
+        headers: {'Cache-Control': 'no-cache'}, // Forcer la mise à jour
+      ).timeout(_timeout);
+      
+      if (response.statusCode == 200) {
+        final lines = response.body.split('\n');
+        for (final line in lines) {
+          if (line.trim().startsWith('version:')) {
+            return line.split(':')[1].trim();
+          }
+        }
+      }
+    } catch (_) {
+      // Échoue silencieusement si pas de réseau
+    }
+    return null;
+  }
 }
 
 class _RemoteModule {
