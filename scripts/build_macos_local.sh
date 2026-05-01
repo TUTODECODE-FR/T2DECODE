@@ -76,7 +76,7 @@ cat > "$NATIVE_DST_DIR/Versions/A/Resources/Info.plist" <<'PLIST'
 PLIST
 
 set +e
-flutter build macos --release --no-pub
+flutter build macos --release --dart-define=OFFICIAL_BUILD=true --no-pub
 rc=$?
 set -e
 

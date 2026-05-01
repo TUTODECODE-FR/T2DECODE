@@ -38,13 +38,13 @@ test: $(PUBSTAMP)
 	$(FLUTTER) test --no-pub
 
 build-android: $(PUBSTAMP)
-	$(FLUTTER) build apk --release --no-pub
+	$(FLUTTER) build apk --release --dart-define=OFFICIAL_BUILD=true --no-pub
 
 build-android-fdroid: $(PUBSTAMP)
-	FDROID_BUILD=true $(FLUTTER) build apk --release --no-tree-shake-icons --no-pub
+	FDROID_BUILD=true $(FLUTTER) build apk --release --dart-define=OFFICIAL_BUILD=true --no-tree-shake-icons --no-pub
 
 build-ios: $(PUBSTAMP)
-	$(FLUTTER) build ipa --release --no-pub
+	$(FLUTTER) build ipa --release --dart-define=OFFICIAL_BUILD=true --no-pub
 
 build-macos: $(PUBSTAMP)
 	@chmod +x scripts/build_macos_local.sh
@@ -66,10 +66,10 @@ build-linux-appimage: build-linux
 	@./scripts/build_linux_appimage.sh
 
 build-windows: $(PUBSTAMP)
-	$(FLUTTER) build windows --release --no-pub
+	$(FLUTTER) build windows --release --dart-define=OFFICIAL_BUILD=true --no-pub
 
 build-linux: $(PUBSTAMP)
-	$(FLUTTER) build linux --release --no-pub
+	$(FLUTTER) build linux --release --dart-define=OFFICIAL_BUILD=true --no-pub
 
 build-all: build-android build-macos build-linux
 
