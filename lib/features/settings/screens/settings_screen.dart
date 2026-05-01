@@ -392,12 +392,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: TdcRadius.sm),
+          decoration: const BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: TdcRadius.sm),
           child: const Row(
             children: [
-              Icon(Icons.verified, color: TdcColors.success, size: 16),
+              Icon(
+                bool.fromEnvironment('OFFICIAL_BUILD') ? Icons.verified : Icons.warning_amber_rounded, 
+                color: bool.fromEnvironment('OFFICIAL_BUILD') ? TdcColors.success : TdcColors.warning, 
+                size: 16
+              ),
               SizedBox(width: 8),
-              Expanded(child: Text('Signature : v1.0.2-official-asso-release', style: TextStyle(fontFamily: 'monospace', fontSize: 11))),
+              Expanded(
+                child: Text(
+                  bool.fromEnvironment('OFFICIAL_BUILD') 
+                      ? 'Signature : v1.0.3-official-asso-release' 
+                      : 'Version Non-Officielle (Code Source Modifié/GitHub)', 
+                  style: TextStyle(fontFamily: 'monospace', fontSize: 11)
+                )
+              ),
             ],
           ),
         ),
