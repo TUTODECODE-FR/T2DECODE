@@ -89,29 +89,20 @@ if [ ! -d "$APP_PATH" ]; then
   fi
 fi
 
+# Always strip Sandbox entitlement for local CLI builds so the app launches from Finder
+# (macOS kills Sandboxed apps missing an embedded provisioning profile).
+codesign -d --entitlements :- "$APP_PATH" > "$TMP_BUILD_ROOT/entitlements.xml" 2>/dev/null || true
+if grep -q "com.apple.security.app-sandbox" "$TMP_BUILD_ROOT/entitlements.xml" 2>/dev/null; then
+  /usr/libexec/PlistBuddy -c "Delete :com.apple.security.app-sandbox" "$TMP_BUILD_ROOT/entitlements.xml" >/dev/null 2>&1 || true
+  xattr -cr "$APP_PATH" 2>/dev/null || true
+  xattr -cr "$APP_PATH/Contents/Frameworks" 2>/dev/null || true
+  /usr/bin/codesign --force --sign - --entitlements "$TMP_BUILD_ROOT/entitlements.xml" --timestamp=none --generate-entitlement-der "$APP_PATH" >/dev/null 2>&1 || true
+fi
+
 if [ "$rc" -eq 0 ]; then
   echo "macOS build OK: $APP_PATH"
   exit 0
-fi
-
-if [ ! -d "$APP_PATH" ]; then
-  echo "macOS build failed and .app not found under build outputs." >&2
+else
+  echo "macOS build failed." >&2
   exit "$rc"
 fi
-
-ENT_PATH="$(find "$ROOT_DIR/build/macos/Build/Intermediates.noindex/Runner.build" -path '*/Release/Runner.build/*.app.xcent' -print -quit 2>/dev/null || true)"
-if [ -z "${ENT_PATH:-}" ]; then
-  echo "macOS build failed; entitlements (.xcent) not found for re-sign." >&2
-  exit "$rc"
-fi
-
-# Fix: remove FinderInfo/resource fork xattrs that make codesign fail, then re-run codesign.
-xattr -cr "$APP_PATH" 2>/dev/null || true
-xattr -cr "$APP_PATH/Contents/Frameworks" 2>/dev/null || true
-xattr -r -d com.apple.FinderInfo "$APP_PATH" 2>/dev/null || true
-xattr -r -d 'com.apple.fileprovider.fpfs#P' "$APP_PATH" 2>/dev/null || true
-
-/usr/bin/codesign --force --sign - --entitlements "$ENT_PATH" --timestamp=none --generate-entitlement-der "$APP_PATH"
-/usr/bin/codesign --verify --deep --strict --verbose=2 "$APP_PATH" >/dev/null
-
-echo "macOS build repaired (xattr + codesign): $APP_PATH"
