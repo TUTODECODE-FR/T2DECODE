@@ -1109,24 +1109,6 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
     );
   }
 
-  Widget _buildAnalysisTab() {
-    return const Center(
-      child: Text(
-        'Analyse réseau - En développement',
-        style: TextStyle(color: TdcColors.textSecondary),
-      ),
-    );
-  }
-
-  Widget _buildMonitoringTab() {
-    return const Center(
-      child: Text(
-        'Monitoring réseau - En développement',
-        style: TextStyle(color: TdcColors.textSecondary),
-      ),
-    );
-  }
-
   // Méthodes de simulation
   Future<void> _performNetworkScan() async {
     setState(() => _isScanning = true);
@@ -1189,7 +1171,6 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
   Future<void> _performTraceroute() async {
     setState(() => _isTracing = true);
     
-    final target = _domainController.text.isEmpty ? 'google.com' : _domainController.text;
     final hops = [
       TraceHop(hop: 1, hostname: 'router.local', ip: '192.168.1.1', times: [2, 2, 3]),
       TraceHop(hop: 2, hostname: 'gw-isp.local', ip: '85.10.20.1', times: [15, 16, 14]),

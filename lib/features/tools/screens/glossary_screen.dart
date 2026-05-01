@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
-import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 
 class GlossaryEntry {
   final String term, definition, category;

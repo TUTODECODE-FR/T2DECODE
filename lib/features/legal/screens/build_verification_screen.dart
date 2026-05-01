@@ -20,7 +20,6 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
     with TickerProviderStateMixin {
   BuildVerificationResult? _verificationResult;
   BuildCertificate? _certificate;
-  bool _isVerifying = false;
   bool _showTechnicalDetails = false;
 
   @override
@@ -39,8 +38,6 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
   }
 
   Future<void> _performBuildVerification() async {
-    setState(() => _isVerifying = true);
-    
     try {
       final result = await BuildVerificationService.verifyBuild();
       final certificate = await BuildVerification.generateBuildCertificate();
@@ -48,11 +45,8 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
       setState(() {
         _verificationResult = result;
         _certificate = certificate;
-        _isVerifying = false;
       });
-    } catch (e) {
-      setState(() => _isVerifying = false);
-    }
+    } catch (_) {}
   }
 
   @override

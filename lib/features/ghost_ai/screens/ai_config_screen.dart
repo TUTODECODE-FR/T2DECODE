@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/responsive/responsive.dart';
 import 'package:tutodecode/core/services/storage_service.dart';
 import 'package:tutodecode/core/security/ollama_host.dart';
+import 'package:tutodecode/core/providers/settings_provider.dart';
 
 class AIConfigScreen extends StatefulWidget {
   const AIConfigScreen({super.key});
@@ -15,6 +17,7 @@ class AIConfigScreen extends StatefulWidget {
 class _AIConfigScreenState extends State<AIConfigScreen> {
   OllamaStatus? _status;
   bool _checking = false;
+  bool _demoMode = false;
   String? _pullingModel;
   final _hostController = TextEditingController();
   final _storage = StorageService();
@@ -29,6 +32,9 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
     final host = await _storage.getOllamaHost();
     setState(() => _hostController.text = host);
     _checkOllama();
+    // Lire le mode démo actuel
+    final dm = await _storage.getDemoMode();
+    if (mounted) setState(() => _demoMode = dm);
   }
 
   Future<void> _saveHost() async {
@@ -147,6 +153,10 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
 
                 // ── Commandes utiles
                 _buildUsefulCommands(context),
+                SizedBox(height: TdcAdaptive.space(context, TdcSpacing.lg)),
+
+                // ── Mode Démo (Apple Review)
+                _buildDemoModeSection(context),
                 SizedBox(height: TdcAdaptive.space(context, TdcSpacing.lg)),
 
                 // ── Accès à distance
@@ -661,6 +671,119 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+
+  // ── Mode Démo (Apple Review) ───────────────────────────────
+  Widget _buildDemoModeSection(BuildContext context) {
+    return _buildSection(
+      context: context,
+      icon: Icons.science_outlined,
+      title: 'Mode Démo (Test sans Ollama)',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Activez ce mode pour tester l\'interface du chat IA sans avoir Ollama installé. '
+            'Les réponses sont simulées (mock) — aucun appel réseau n\'est effectué.',
+            style: TextStyle(
+              color: TdcColors.textSecondary,
+              fontSize: TdcText.bodySmall(context),
+              height: 1.5,
+            ),
+          ),
+          SizedBox(height: TdcAdaptive.space(context, 16)),
+          Container(
+            padding: EdgeInsets.all(TdcAdaptive.padding(context, TdcSpacing.md)),
+            decoration: BoxDecoration(
+              color: _demoMode
+                  ? const Color(0xFF2A1F00)
+                  : TdcColors.surfaceAlt,
+              borderRadius: TdcRadius.md,
+              border: Border.all(
+                color: _demoMode
+                    ? const Color(0xFFFFB300).withOpacity(0.5)
+                    : TdcColors.border,
+              ),
+            ),
+            child: Row(children: [
+              Icon(
+                Icons.science_outlined,
+                size: TdcAdaptive.icon(context, 20),
+                color: _demoMode
+                    ? const Color(0xFFFFB300)
+                    : TdcColors.textMuted,
+              ),
+              SizedBox(width: TdcAdaptive.space(context, 12)),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Mode Démo',
+                      style: TextStyle(
+                        color: _demoMode
+                            ? const Color(0xFFFFB300)
+                            : TdcColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: TdcText.body(context),
+                      ),
+                    ),
+                    SizedBox(height: TdcAdaptive.space(context, 2)),
+                    Text(
+                      _demoMode
+                          ? 'Actif — Réponses simulées, zéro appel réseau'
+                          : 'Inactif — Ollama requis pour le chat IA',
+                      style: TextStyle(
+                        color: TdcColors.textSecondary,
+                        fontSize: TdcText.label(context),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Switch(
+                value: _demoMode,
+                activeThumbColor: const Color(0xFFFFB300),
+                onChanged: (value) async {
+                  final settings = context.read<SettingsProvider>();
+                  await settings.setDemoMode(value);
+                  setState(() => _demoMode = value);
+                },
+              ),
+            ]),
+          ),
+          if (_demoMode) ...[
+            SizedBox(height: TdcAdaptive.space(context, 12)),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: TdcAdaptive.padding(context, 14),
+                vertical: TdcAdaptive.padding(context, 10),
+              ),
+              decoration: BoxDecoration(
+                color: TdcColors.surface,
+                borderRadius: TdcRadius.sm,
+                border: Border.all(color: const Color(0xFFFFB300).withOpacity(0.3)),
+              ),
+              child: Row(children: [
+                const Icon(Icons.info_outline, size: 14, color: Color(0xFFFFB300)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Le mode démo est destiné aux tests (ex: Apple Review). '
+                    'Désactivez-le pour retrouver le chat IA complet avec Ollama.',
+                    style: TextStyle(
+                      color: TdcColors.textSecondary,
+                      fontSize: TdcText.label(context),
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ]),
+            ),
+          ],
+        ],
       ),
     );
   }

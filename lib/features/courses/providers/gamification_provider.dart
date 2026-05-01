@@ -4,7 +4,6 @@
 import 'package:flutter/material.dart';
 import 'package:tutodecode/core/services/storage_service.dart';
 import 'package:tutodecode/features/courses/models/gamification_models.dart';
-import 'package:tutodecode/features/courses/providers/courses_provider.dart';
 
 class GamificationProvider with ChangeNotifier {
   final StorageService _storage = StorageService();

@@ -20,7 +20,6 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
     with TickerProviderStateMixin {
   SourceAuthResult? _authResult;
   CodeSignature? _codeSignature;
-  bool _isAuthenticating = false;
   bool _showTechnicalDetails = false;
   bool _showWatermarkInfo = false;
 
@@ -40,8 +39,6 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
   }
 
   Future<void> _performSourceAuthentication() async {
-    setState(() => _isAuthenticating = true);
-    
     try {
       final result = await SourceAuthService.verifySource();
       final signature = await SourceAuthentication.generateCodeSignature();
@@ -49,11 +46,8 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
       setState(() {
         _authResult = result;
         _codeSignature = signature;
-        _isAuthenticating = false;
       });
-    } catch (e) {
-      setState(() => _isAuthenticating = false);
-    }
+    } catch (_) {}
   }
 
   @override

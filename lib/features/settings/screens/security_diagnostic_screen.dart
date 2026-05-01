@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tutodecode/core/services/storage_service.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
-import 'package:tutodecode/core/responsive/responsive.dart';
 
 class SecurityDiagnosticScreen extends StatefulWidget {
   const SecurityDiagnosticScreen({super.key});

@@ -20,7 +20,6 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
     with TickerProviderStateMixin {
   ProjectPlagiarismAnalysis? _analysis;
   OriginalityCertificate? _certificate;
-  bool _isAnalyzing = false;
 
   @override
   void initState() {
@@ -38,8 +37,6 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
   }
 
   Future<void> _performAnalysis() async {
-    setState(() => _isAnalyzing = true);
-    
     try {
       final analysis = await PlagiarismProtectionService.analyzeProject();
       final certificate = await PlagiarismProtection.generateOriginalityCertificate();
@@ -47,11 +44,8 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
       setState(() {
         _analysis = analysis;
         _certificate = certificate;
-        _isAnalyzing = false;
       });
-    } catch (e) {
-      setState(() => _isAnalyzing = false);
-    }
+    } catch (_) {}
   }
 
   @override

@@ -24,14 +24,11 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
   // États des simulations
   bool _isScanning = false;
   bool _isBruteForcing = false;
-  bool _isSniffing = false;
   bool _isAnalyzing = false;
   
   // Données de simulation
   List<Vulnerability> _vulnerabilities = [];
   List<LogEntry> _logEntries = [];
-  List<NetworkConnection> _connections = [];
-  List<SecurityEvent> _securityEvents = [];
   
   // Métriques de sécurité
   int _threatLevel = 0;
@@ -844,33 +841,6 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
             ),
           ],
         ],
-      ),
-    );
-  }
-
-  Widget _buildForensicsTab() {
-    return const Center(
-      child: Text(
-        'Forensics - En développement',
-        style: TextStyle(color: TdcColors.textSecondary),
-      ),
-    );
-  }
-
-  Widget _buildCryptoTab() {
-    return const Center(
-      child: Text(
-        'Cryptographie - En développement',
-        style: TextStyle(color: TdcColors.textSecondary),
-      ),
-    );
-  }
-
-  Widget _buildSecurityMonitoringTab() {
-    return const Center(
-      child: Text(
-        'Monitoring Sécurité - En développement',
-        style: TextStyle(color: TdcColors.textSecondary),
       ),
     );
   }
