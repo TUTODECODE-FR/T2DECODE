@@ -45,8 +45,7 @@ class _MentionsLegalesScreenState extends State<MentionsLegalesScreen> {
             title: 'Enregistrement & Preuves Légales',
             icon: Icons.gavel,
             content: [
-              _buildRow('Numéro RNA', '[VOTRE NUMÉRO RNA ICI]'),
-              _buildRow('Numéro SIREN', '[VOTRE SIREN ICI (si applicable)]'),
+              _buildRow('Numéro SIREN', '102 763 133'),
               _buildRow('Déclaration Officielle', 'Publiée au Journal Officiel de la République Française (JOAFE)'),
               const SizedBox(height: 16),
               const Text('Lien du Journal Officiel :', style: TextStyle(color: TdcColors.textSecondary, fontSize: 13)),
@@ -60,7 +59,7 @@ class _MentionsLegalesScreenState extends State<MentionsLegalesScreen> {
                   border: Border.all(color: TdcColors.border),
                 ),
                 child: const SelectableText(
-                  '[VOTRE LIEN VERS LE JOURNAL OFFICIEL ICI]',
+                  'https://www.journal-officiel.gouv.fr/pages/associations-detail-annonce/?q.id=id:202600110336',
                   style: TextStyle(color: TdcColors.accent, fontFamily: 'monospace', fontSize: 12),
                 ),
               ),

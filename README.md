@@ -158,7 +158,7 @@ Contrairement aux applications anonymes, nous garantissons l'authenticité de no
 - **Directeur de Publication** : Maxime MARTIN CIVET
 - **SIREN** : 102 763 133
 - **Site Web** : [https://tutodecode.org](https://tutodecode.org)
-- **Preuve Légale** : [Publication au Journal Officiel de la République Française (JOAFE)](#)
+- **Preuve Légale** : [Publication au Journal Officiel de la République Française (JOAFE)](https://www.journal-officiel.gouv.fr/pages/associations-detail-annonce/?q.id=id:202600110336)
 - **Politique RGPD** : [Consulter ici](RGPD.md)
 
 > 💡 *Ces mentions légales sont également consultables directement depuis les Paramètres de l'application (Section "Mentions Légales (JO)").*
