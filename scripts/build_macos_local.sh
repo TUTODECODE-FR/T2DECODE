@@ -80,10 +80,8 @@ if [ "${TUTODECODE_OFFICIAL_BUILD:-}" = "true" ]; then
   DART_DEFINES="--dart-define=OFFICIAL_BUILD=true"
 fi
 
-OBFUSCATE_FLAGS="--obfuscate --split-debug-info=$ROOT_DIR/build/symbols"
-
 set +e
-flutter build macos --release $DART_DEFINES $OBFUSCATE_FLAGS --no-pub
+flutter build macos --release $DART_DEFINES --no-pub
 rc=$?
 set -e
 
