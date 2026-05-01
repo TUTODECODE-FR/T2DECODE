@@ -147,16 +147,19 @@ make build-dmg      # Création DMG (macOS)
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🏛️ Légalité & Transparence (Mentions Légales)
+## 🏛️ L'Association TUTODECODE (Mentions Légales)
 
-**T2DECODE** est un projet édité et maintenu par l'association Loi 1901 à but non lucratif **TUTO DECODE**. 
+Le projet est fièrement porté par l'**Association TUTODECODE** (ESS).  
+Notre objectif est de rendre l'apprentissage technique accessible sans dépendance au cloud, en favorisant des outils libres, locaux et auditables. Projet à but non lucratif orienté partage de connaissances techniques et sécurité informatique accessible.
+
 Contrairement aux applications anonymes, nous garantissons l'authenticité de notre démarche Open Source en affichant nos informations légales de manière transparente :
 
-- **Éditeur** : Association TUTO DECODE
+- **Éditeur** : Association Loi 1901 TUTO DECODE
 - **Directeur de Publication** : Maxime MARTIN CIVET
-- **Enregistrement RNA** : `[VOTRE_RNA_ICI]`
-- **Enregistrement SIREN** : `[VOTRE_SIREN_ICI]`
+- **SIREN** : 102 763 133
+- **Site Web** : [https://tutodecode.org](https://tutodecode.org)
 - **Preuve Légale** : [Publication au Journal Officiel de la République Française (JOAFE)](#)
+- **Politique RGPD** : [Consulter ici](RGPD.md)
 
 > 💡 *Ces mentions légales sont également consultables directement depuis les Paramètres de l'application (Section "Mentions Légales (JO)").*
 
@@ -170,17 +173,6 @@ Veuillez consulter le fichier [CONTRIBUTING.md](CONTRIBUTING.md) pour les détai
 - ⭐️ Mettez une étoile sur le repo GitHub
 - 🐛 Signalez les bugs
 - 📝 Proposez des modules (Markdown/JSON)
-
-<img src="assets/separator.svg" width="100%" height="4">
-
-## 🏛️ L'Association TUTODECODE
-
-Le projet est fièrement porté par l'**Association TUTODECODE** (ESS).  
-Notre objectif est de rendre l'apprentissage technique accessible sans dépendance au cloud, en favorisant des outils libres, locaux et auditables. Projet à but non lucratif orienté partage de connaissances techniques et sécurité informatique accessible.
-
-- **SIREN** : 102 763 133  
-- **Site** : [https://tutodecode.org](https://tutodecode.org)
-- **Politique RGPD** : [Consulter ici](RGPD.md)
 
 <img src="assets/separator.svg" width="100%" height="4">
 
