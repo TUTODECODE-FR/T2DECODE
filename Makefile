@@ -5,8 +5,6 @@ PUB = $(FLUTTER) pub
 PUBSTAMP = .dart_tool/package_config.json
 
 DART_DEFINES =
-OBFUSCATE_FLAGS = --obfuscate --split-debug-info=build/symbols
-
 ifeq ($(TUTODECODE_OFFICIAL_BUILD),true)
 	DART_DEFINES = --dart-define=OFFICIAL_BUILD=true
 endif
@@ -45,13 +43,13 @@ test: $(PUBSTAMP)
 	$(FLUTTER) test --no-pub
 
 build-android: $(PUBSTAMP)
-	$(FLUTTER) build apk --release $(DART_DEFINES) $(OBFUSCATE_FLAGS) --no-pub
+	$(FLUTTER) build apk --release $(DART_DEFINES) --no-pub
 
 build-android-fdroid: $(PUBSTAMP)
 	FDROID_BUILD=true $(FLUTTER) build apk --release $(DART_DEFINES) --no-tree-shake-icons --no-pub
 
 build-ios: $(PUBSTAMP)
-	$(FLUTTER) build ipa --release $(DART_DEFINES) $(OBFUSCATE_FLAGS) --no-pub
+	$(FLUTTER) build ipa --release $(DART_DEFINES) --no-pub
 
 build-macos: $(PUBSTAMP)
 	@chmod +x scripts/build_macos_local.sh
@@ -73,10 +71,10 @@ build-linux-appimage: build-linux
 	@./scripts/build_linux_appimage.sh
 
 build-windows: $(PUBSTAMP)
-	$(FLUTTER) build windows --release $(DART_DEFINES) $(OBFUSCATE_FLAGS) --no-pub
+	$(FLUTTER) build windows --release $(DART_DEFINES) --no-pub
 
 build-linux: $(PUBSTAMP)
-	$(FLUTTER) build linux --release $(DART_DEFINES) $(OBFUSCATE_FLAGS) --no-pub
+	$(FLUTTER) build linux --release $(DART_DEFINES) --no-pub
 
 build-all: build-android build-macos build-linux
 
