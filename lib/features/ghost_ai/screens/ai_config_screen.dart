@@ -924,15 +924,21 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
           Row(
             children: [
               Expanded(
-                child: TextField(
-                  controller: _hostController,
-                  style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 14),
-                  decoration: InputDecoration(
-                    hintText: 'http://localhost:11434',
-                    filled: true,
-                    fillColor: TdcColors.surfaceAlt,
-                    border: OutlineInputBorder(borderRadius: TdcRadius.sm, borderSide: const BorderSide(color: TdcColors.border)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.text,
+                  child: TextField(
+                    controller: _hostController,
+                    style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 14),
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                      hintText: 'http://localhost:11434',
+                      filled: true,
+                      fillColor: TdcColors.surfaceAlt,
+                      border: OutlineInputBorder(borderRadius: TdcRadius.sm, borderSide: const BorderSide(color: TdcColors.border)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    onSubmitted: (_) => _saveHost(),
+                    onTap: () => FocusScope.of(context).requestFocus(),
                   ),
                 ),
               ),
