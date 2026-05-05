@@ -20,6 +20,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
   final _messageController = TextEditingController();
   final _topicController = TextEditingController();
   final _scrollController = ScrollController();
+  final _inputFocusNode = FocusNode();
   bool _isComposing = false;
 
   @override
@@ -33,7 +34,27 @@ class _AiTutorScreenState extends State<AiTutorScreen>
         showBackButton: true,
         actions: [],
       );
+      
+      // Fix focus macOS : plusieurs tentatives
+      _requestInputFocus();
     });
+  }
+
+  void _requestInputFocus() {
+    if (!mounted) return;
+    // Tenter de donner le focus au champ actif (sujet ou message)
+    final provider = context.read<AiTutorProvider>();
+    final focusNode = provider.isTutoring ? _inputFocusNode : null; 
+    
+    if (focusNode != null) {
+      focusNode.requestFocus();
+      Future.delayed(const Duration(milliseconds: 400), () {
+        if (mounted) focusNode.requestFocus();
+      });
+      Future.delayed(const Duration(milliseconds: 900), () {
+        if (mounted && !focusNode.hasFocus) focusNode.requestFocus();
+      });
+    }
   }
 
   @override
@@ -43,6 +64,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
     _topicController.dispose();
     _bridgeIpController.dispose();
     _scrollController.dispose();
+    _inputFocusNode.dispose();
     super.dispose();
   }
 
@@ -50,17 +72,22 @@ class _AiTutorScreenState extends State<AiTutorScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AiTutorProvider>(
-      builder: (context, provider, child) {
-        return Column(
-          children: [
-            // Barre de statut discrète — uniquement visible quand connecté
-            if (provider.isConnected) _buildConnectedBar(provider),
-            if (!provider.isTutoring) _buildWelcomeScreen(provider),
-            if (provider.isTutoring) _buildTutorInterface(provider),
-          ],
-        );
-      },
+    return Material(
+      color: TdcColors.bg,
+      child: Consumer<AiTutorProvider>(
+        builder: (context, provider, child) {
+          return SelectionArea(
+            child: Column(
+              children: [
+                // Barre de statut discrète — uniquement visible quand connecté
+                if (provider.isConnected) _buildConnectedBar(provider),
+                if (!provider.isTutoring) _buildWelcomeScreen(provider),
+                if (provider.isTutoring) _buildTutorInterface(provider),
+              ],
+            ),
+          );
+        },
+    ),
     );
   }
 
@@ -174,14 +201,18 @@ class _AiTutorScreenState extends State<AiTutorScreen>
             style: TextStyle(color: TdcColors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          TextField(
-            controller: _topicController,
-            style: const TextStyle(color: TdcColors.textPrimary),
-            decoration: const InputDecoration(
-              hintText: 'Ex: Linux, Réseaux, Sécurité...',
-              prefixIcon: Icon(Icons.topic, size: 20),
+          MouseRegion(
+            cursor: SystemMouseCursors.text,
+            child: TextField(
+              controller: _topicController,
+              style: const TextStyle(color: TdcColors.textPrimary),
+              decoration: const InputDecoration(
+                hintText: 'Ex: Linux, Réseaux, Sécurité...',
+                prefixIcon: Icon(Icons.topic, size: 20),
+              ),
+              onChanged: (_) => setState(() {}),
+              onTap: () => FocusScope.of(context).requestFocus(), 
             ),
-            onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: 14),
           Wrap(
@@ -1026,22 +1057,30 @@ class _AiTutorScreenState extends State<AiTutorScreen>
           child: Row(
             children: [
               Expanded(
-                child: TextField(
-                  controller: _messageController,
-                  enabled: !provider.isStreaming,
-                  style: const TextStyle(color: TdcColors.textPrimary),
-                  decoration: InputDecoration(
-                    hintText: 'Posez votre question...',
-                    filled: true,
-                    fillColor: TdcColors.surfaceAlt.withOpacity(0.3),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
-                      borderSide: BorderSide.none,
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.text,
+                  child: TextField(
+                    controller: _messageController,
+                    focusNode: _inputFocusNode,
+                    enabled: true, // Fix Apple Review : doit toujours être interactif
+                    readOnly: provider.isStreaming, // Mais protégé pendant le stream
+                    autofocus: true,
+                    style: const TextStyle(color: TdcColors.textPrimary),
+                    textInputAction: TextInputAction.send,
+                    decoration: InputDecoration(
+                      hintText: 'Posez votre question...',
+                      filled: true,
+                      fillColor: TdcColors.surfaceAlt.withOpacity(0.3),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    onChanged: (value) => setState(() => _isComposing = value.isNotEmpty),
+                    onSubmitted: (_) => _sendMessage(provider),
+                    onTap: _requestInputFocus,
                   ),
-                  onChanged: (value) => setState(() => _isComposing = value.isNotEmpty),
-                  onSubmitted: (_) => _sendMessage(provider),
                 ),
               ),
               const SizedBox(width: 8),
@@ -1075,6 +1114,10 @@ class _AiTutorScreenState extends State<AiTutorScreen>
     if (message.isNotEmpty) {
       provider.sendMessage(message);
       _messageController.clear();
+      
+      // Fix Focus for macOS
+      _requestInputFocus();
+
       setState(() => _isComposing = false);
       
       // Scroll vers le bas

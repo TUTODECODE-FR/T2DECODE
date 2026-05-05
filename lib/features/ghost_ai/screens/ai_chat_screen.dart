@@ -53,9 +53,23 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateShell();
-      // Lire le mode démo depuis le provider
       final settings = context.read<SettingsProvider>();
       setState(() => _demoMode = settings.demoMode);
+      
+      // Fix focus macOS : plusieurs tentatives pour garantir la capture
+      _requestInputFocus();
+    });
+  }
+
+  void _requestInputFocus() {
+    if (!mounted) return;
+    _inputFocus.requestFocus();
+    // Deuxième tentative après un court délai pour contrer les animations de transition
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _inputFocus.requestFocus();
+    });
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (mounted && !_inputFocus.hasFocus) _inputFocus.requestFocus();
     });
   }
 
@@ -154,15 +168,32 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   Future<void> _send() async {
     final text = _inputCtrl.text.trim();
     if (text.isEmpty || _streaming) return;
-    // En mode démo, on n'a pas besoin d'un modèle réel.
-    if (!_demoMode && _model == null) return;
 
     _inputCtrl.clear();
-    _inputFocus.requestFocus();
+    
+    // Fix Focus macOS : redemander le focus immédiatement après l'envoi
+    _requestInputFocus();
+
+    // En mode normal (sans mode démo), si l'IA locale n'est pas connectée
+    if (!_demoMode && _model == null) {
+      setState(() {
+        _msgs.add(_Msg(role: 'user', text: text));
+        _msgs.add(const _Msg(
+          role: 'assistant',
+          text: 'Bonjour ! Je suis Ghost AI. 🤖\n\n'
+              'Il semble que l\'IA locale (Ollama) ne soit pas encore configurée ou active. '
+              'Pour une réponse complète et intelligente, allez dans **Paramètres > IA** pour l\'activer, '
+              'ou lancez `ollama serve` sur votre Mac.',
+        ));
+      });
+      _scrollBottom();
+      _updateShell();
+      return;
+    }
 
     setState(() {
       _msgs.add(_Msg(role: 'user', text: text));
-      _msgs.add(_Msg(role: 'assistant', text: ''));
+      _msgs.add(const _Msg(role: 'assistant', text: ''));
       _streaming = true;
     });
     _scrollBottom();
@@ -173,7 +204,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       await Future.delayed(const Duration(seconds: 2));
       if (!mounted) return;
       setState(() {
-        _msgs[_msgs.length - 1] = _Msg(
+        _msgs[_msgs.length - 1] = const _Msg(
           role: 'assistant',
           text: '🧪 **Mode Démo actif** — Ceci est une réponse simulée.\n\n'
               'En production, Ghost AI utilise Ollama (moteur IA 100% local) '
@@ -223,7 +254,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
         onError: (e) {
           if (!mounted) return;
           setState(() {
-            _msgs[_msgs.length - 1] = _Msg(
+            _msgs[_msgs.length - 1] = const _Msg(
               role: 'error',
               text: '⚠️ **Impossible de se connecter à l\'IA.**\n\n'
                   'Vérifiez qu\'Ollama est bien installé et en cours d\'exécution sur votre Mac.\n'
@@ -239,7 +270,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       );
     } catch (e) {
       setState(() {
-        _msgs[_msgs.length - 1] = _Msg(
+        _msgs[_msgs.length - 1] = const _Msg(
           role: 'error',
           text: '⚠️ **Impossible de se connecter à l\'IA.**\n\n'
               'Vérifiez qu\'Ollama est bien installé et en cours d\'exécution sur votre Mac.',
@@ -264,17 +295,19 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final courseTitle = args?['title'] as String?;
 
-    return Container(
+    return Material(
       color: TdcColors.bg,
-      child: Column(children: [
-        if (_checking) const LinearProgressIndicator(color: TdcColors.accent, backgroundColor: Colors.transparent, minHeight: 1),
+      child: SelectionArea( // Permet la sélection de texte sur Desktop
+        child: Column(children: [
+          if (_checking) const LinearProgressIndicator(color: TdcColors.accent, backgroundColor: Colors.transparent, minHeight: 1),
         if (_demoMode) _buildDemoBanner(),
         _buildStatusHeader(),
         if (courseTitle != null) _buildContextBadge(context, courseTitle),
         Expanded(child: _msgs.isEmpty ? _buildEmpty(context) : _buildMessages(context)),
         if (_streaming) _buildStreamingBar(context),
-        _buildInput(context),
-      ]),
+          _buildInput(context),
+        ]),
+      ),
     );
   }
 
@@ -520,7 +553,6 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   }
 
   Widget _buildInput(BuildContext context) {
-    final canSend = (_demoMode || (_status?.running == true && _model != null)) && !_streaming;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -529,21 +561,31 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       ),
       child: Row(children: [
         Expanded(
-          child: TextField(
-            controller: _inputCtrl,
-            focusNode: _inputFocus,
-            enabled: canSend,
-            onSubmitted: (_) => _send(),
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              hintText: _demoMode ? 'Posez une question (mode démo)...' : 'Posez une question...',
-              border: InputBorder.none,
+          child: MouseRegion(
+            cursor: SystemMouseCursors.text,
+            child: TextField(
+              controller: _inputCtrl,
+              focusNode: _inputFocus,
+              enabled: true,
+              autofocus: true,
+              onSubmitted: (_) => _send(),
+              onTap: _requestInputFocus, // Forcer le focus au clic
+              onTapOutside: (_) => FocusScope.of(context).unfocus(),
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+              cursorColor: TdcColors.accent,
+              decoration: InputDecoration(
+                hintText: _demoMode ? 'Posez une question (mode démo)...' : 'Posez une question...',
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+              ),
             ),
           ),
         ),
         IconButton(
-          onPressed: canSend ? _send : null,
-          icon: Icon(Icons.send, color: canSend ? TdcColors.accent : TdcColors.textMuted),
+          onPressed: _streaming ? null : _send,
+          icon: Icon(Icons.send, color: _streaming ? TdcColors.textMuted : TdcColors.accent),
         ),
       ]),
     );

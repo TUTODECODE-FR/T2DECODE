@@ -334,7 +334,7 @@ class AiTutorProvider with ChangeNotifier {
   }
 
   Future<void> sendMessage(String userMessage) async {
-    if (!_isConnected || _currentSession == null) return;
+    if (_currentSession == null) return;
 
     try {
       _isLoading = true;
@@ -349,6 +349,23 @@ class AiTutorProvider with ChangeNotifier {
       );
       
       _currentMessages.add(userMsg);
+
+      // Si non connecté, ajouter une réponse d'information
+      if (!_isConnected) {
+        final offlineMsg = TutorMessage(
+          id: (DateTime.now().millisecondsSinceEpoch + 1).toString(),
+          content: 'Bonjour ! Je suis votre tuteur Ghost AI. 🤖\n\n'
+              'Il semble que je sois hors-ligne pour le moment car Ollama n\'est pas détecté. '
+              'Pour démarrer notre session d\'apprentissage, assurez-vous qu\'Ollama est lancé sur votre Mac (avec `ollama serve`) '
+              'ou configuré dans les réglages du tuteur.',
+          isFromUser: false,
+          timestamp: DateTime.now(),
+        );
+        _currentMessages.add(offlineMsg);
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
       
       // Mettre à jour la session
       final updatedSession = _currentSession!.copyWith(

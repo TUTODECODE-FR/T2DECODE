@@ -105,7 +105,14 @@ if grep -q "com.apple.security.app-sandbox" "$TMP_BUILD_ROOT/entitlements.xml" 2
 fi
 
 if [ "$rc" -eq 0 ]; then
-  echo "macOS build OK: $APP_PATH"
+  # Copy to project root for easy access
+  DIST_DIR="$ROOT_DIR/dist/macos"
+  mkdir -p "$DIST_DIR"
+  rm -rf "$DIST_DIR/T2DECODE.app"
+  cp -R "$APP_PATH" "$DIST_DIR/"
+  xattr -cr "$DIST_DIR/T2DECODE.app" 2>/dev/null || true
+  
+  echo "macOS build OK: $DIST_DIR/T2DECODE.app"
   exit 0
 else
   echo "macOS build failed." >&2
