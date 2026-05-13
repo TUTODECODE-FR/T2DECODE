@@ -11,6 +11,8 @@
   [![Mac App Store](https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=222222)](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)
   [![License](https://img.shields.io/badge/License-GPLv3-000000?style=for-the-badge&labelColor=222222)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
   [![Flutter](https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=222222)](https://flutter.dev)
+  [![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white&labelColor=222222)](https://dart.dev)
+  [![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-000000?style=for-the-badge&logo=ollama&logoColor=white&labelColor=222222)](https://ollama.com/)
   [![Privacy By Design](https://img.shields.io/badge/Privacy-By%20Design-000000?style=for-the-badge&labelColor=222222)](RGPD.md)
   
   <br>
@@ -42,6 +44,17 @@ T2DECODE est conçu pour un usage **éducatif et défensif** (apprentissage, dia
 | Exécution 100% Locale | Pas d’API externe obligatoire |
 | Respect de la vie privée ([RGPD](RGPD.md)) | Pas d’analytics / trackers |
 | Modèle de sécurité robuste | Pas d’envoi de données vers des tiers |
+
+### 🔒 Architecture Locale (Privacy by Design)
+
+```mermaid
+graph LR
+    A[Interface T2DECODE<br/>Flutter] -->|Pas d'API externe| B(Stockage Local<br/>Chiffré)
+    A -->|Requêtes HTTP Locales| C{Service Ollama<br/>Localhost}
+    C -->|Génération| D[Modèles IA<br/>Llama / Phi-3 / Mistral]
+    style C fill:#000000,stroke:#F5EBDA,stroke-width:2px,color:#FFF
+    style A fill:#02569B,stroke:#FFF,stroke-width:2px,color:#FFF
+```
 
 <img src="assets/separator.svg" width="100%" height="4">
 
@@ -75,7 +88,7 @@ T2DECODE est conçu pour un usage **éducatif et défensif** (apprentissage, dia
 | ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white) | **APK** / AAB | Actif | Disponible (v1.0.1) |
 | ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white) | **ZIP** / EXE | Actif | Disponible (v1.0.1) |
 | ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) | **[App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)** / PKG / ZIP | Actif | Disponible (v1.0.1) |
-| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | **AppImage** / DEB | Actif | Disponible (v1.0.1) |
+| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | **AppImage** / DEB / [Flathub (En attente)](https://flathub.org) | Actif | Disponible (v1.0.1) |
 
 > **Vérification d'intégrité** : Un fichier `SHA256SUMS.txt` est publié dans chaque release pour vérifier l'intégrité des binaires. Des signatures `.sig` Linux sont également publiées.
 
@@ -174,6 +187,10 @@ Veuillez consulter le fichier [CONTRIBUTING.md](CONTRIBUTING.md) pour les détai
 - ⭐️ Mettez une étoile sur le repo GitHub
 - 🐛 Signalez les bugs
 - 📝 Proposez des modules (Markdown/JSON)
+
+### 💖 Soutenir le projet (Dons)
+Si T2DECODE vous est utile, vous pouvez soutenir financièrement l'association TUTODECODE. Vos dons permettent de couvrir les frais d'hébergement, le nom de domaine, et de nous aider à maintenir cette solution 100% libre et gratuite.
+- **[Faire un don via HelloAsso (Sécurisé)](https://www.helloasso.com/associations/tutodecode)**
 
 <img src="assets/separator.svg" width="100%" height="4">
 
