@@ -34,7 +34,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     _performanceController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
@@ -271,6 +271,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
               Tab(text: 'Processus'),
               Tab(text: 'Services'),
               Tab(text: 'Disques'),
+              Tab(text: 'Applications'),
               Tab(text: '🤖 IA'),
             ],
           ),
@@ -284,19 +285,22 @@ class _SystemSimulatorState extends State<SystemSimulator>
               _buildProcessesTab(),
               _buildServicesTab(),
               _buildDisksTab(),
+              _buildApplicationsTab(),
               const SimulatorAIAssistant(
-                topic: 'Système & OS',
+                topic: 'Système & Architecture',
                 accentColor: TdcColors.system,
                 systemPrompt:
-                    'Tu es un expert Linux/Unix et administration système. Réponds en français, de façon concise. '
-                    'Domaines couverts : gestion des processus, signaux, services systemd, gestion disques/partitions, '
-                    'monitoring CPU/RAM/I-O, benchmarks, tuning kernel, gestion mémoire virtuelle, cron jobs.',
+                    'Tu es Ghost, l\'expert T2DECODE spécialisé en architecture PC et OS. '
+                    'Ton but est d\'expliquer comment la magie opère entre le silicium et l\'écran. '
+                    'Sois pédagogue, sympa et utilise des analogies concrètes. Ne sois pas sec. '
+                    'Expertise : Les 7 couches informatiques (Hardware, Kernel, Drivers, OS, Libs, Software, App), '
+                    'ordonnancement CPU, gestion mémoire (MMU/Swap), services systemd, VFS et monitoring.',
                 suggestedQuestions: [
-                  'C\'est quoi un processus zombie ?',
-                  'Comment libérer de la RAM ?',
-                  'Différence swap vs RAM ?',
-                  'Qu\'est-ce que systemd ?',
-                  'Comment surveiller les I/O disque ?',
+                  'Explique les 7 couches de l\'informatique ?',
+                  'Comment retenir ces couches facilement ?',
+                  'C\'est quoi exactement le Kernel ?',
+                  'Comment le CPU gère plusieurs tâches ?',
+                  'Pourquoi mon PC chauffe quand je compile ?',
                 ],
               ),
             ],
@@ -406,7 +410,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: TdcColors.surfaceAlt.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.zero,
         border: Border.all(color: TdcColors.border),
       ),
       child: Column(
@@ -460,7 +464,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
                   color: process.status == 'Running' 
                       ? TdcColors.system.withOpacity(0.1)
                       : TdcColors.security.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.zero,
                   border: Border.all(
                     color: process.status == 'Running' 
                         ? TdcColors.system.withOpacity(0.3)
@@ -504,7 +508,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: TdcColors.surface,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.zero,
         border: Border.all(color: TdcColors.border),
       ),
       child: Column(
@@ -623,7 +627,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
         color: service.status == 'Active' 
             ? TdcColors.system.withOpacity(0.1)
             : TdcColors.security.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.zero,
         border: Border.all(
           color: service.status == 'Active' 
               ? TdcColors.system.withOpacity(0.3)
@@ -670,7 +674,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
                       color: service.status == 'Active' 
                           ? TdcColors.system.withOpacity(0.1)
                           : TdcColors.security.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.zero,
                       border: Border.all(
                         color: service.status == 'Active' 
                             ? TdcColors.system.withOpacity(0.3)
@@ -799,6 +803,149 @@ class _SystemSimulatorState extends State<SystemSimulator>
     );
   }
 
+  Widget _buildApplicationsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const LabNotice(
+            title: 'La 7ème Couche : L\'Application',
+            message: 'Visualisation de la hiérarchie informatique complète, du silicium à l\'utilisateur.',
+            icon: Icons.layers,
+          ),
+          const SizedBox(height: 32),
+          _buildLayerCard(
+            '7. USER APPLICATION',
+            'T2DECODE, Navigateur, Jeux',
+            'Interface avec l\'utilisateur final.',
+            TdcColors.accent,
+            Icons.phonelink,
+          ),
+          _buildLayerConnector(),
+          _buildLayerCard(
+            '6. SOFTWARE / MIDDLEWARE',
+            'Bases de données, Serveurs Web',
+            'Services applicatifs de haut niveau.',
+            TdcColors.network,
+            Icons.dns,
+          ),
+          _buildLayerConnector(),
+          _buildLayerCard(
+            '5. LIBRARIES (LIBS)',
+            'Frameworks, DLL, Shared Objects',
+            'Code réutilisable par les applications.',
+            TdcColors.crypto,
+            Icons.auto_stories,
+          ),
+          _buildLayerConnector(),
+          _buildLayerCard(
+            '4. OPERATING SYSTEM (OS)',
+            'Ubuntu, macOS, Windows',
+            'Gestion globale de l\'environnement.',
+            TdcColors.system,
+            Icons.window,
+          ),
+          _buildLayerConnector(),
+          _buildLayerCard(
+            '3. DRIVERS (PILOTES)',
+            'Pilotes GPU, Wi-Fi, USB',
+            'Traduction entre OS et Matériel.',
+            TdcColors.security,
+            Icons.settings_input_component,
+          ),
+          _buildLayerConnector(),
+          _buildLayerCard(
+            '2. KERNEL (NOYAU)',
+            'Linux, XNU, NT',
+            'Gestionnaire central des ressources.',
+            TdcColors.danger,
+            Icons.hub,
+          ),
+          _buildLayerConnector(),
+          _buildLayerCard(
+            '1. HARDWARE (MATÉRIEL)',
+            'CPU, RAM, Disque, GPU',
+            'La base physique de l\'informatique.',
+            Colors.grey,
+            Icons.memory,
+          ),
+          const SizedBox(height: 40),
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: TdcColors.surface,
+                border: Border.all(color: TdcColors.border),
+              ),
+              child: const Text(
+                'MÉMO : "Hé, Kevin ! Donne-Os Le Super Ananas."',
+                style: TextStyle(
+                  color: TdcColors.accent,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'monospace',
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLayerCard(String title, String subtitle, String desc, Color color, IconData icon) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: TdcColors.surface,
+        border: Border.all(color: color.withOpacity(0.5)),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 24),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: 1.1),
+                ),
+                Text(
+                  subtitle,
+                  style: const TextStyle(color: TdcColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  desc,
+                  style: const TextStyle(color: TdcColors.textMuted, fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLayerConnector() {
+    return Center(
+      child: Container(
+        width: 2,
+        height: 20,
+        color: TdcColors.border,
+      ),
+    );
+  }
+
   Widget _buildPartitionCard(DiskPartition partition) {
     final usagePercentage = (partition.used / partition.size) * 100;
     
@@ -807,7 +954,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: TdcColors.surfaceAlt.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.zero,
         border: Border.all(color: TdcColors.border),
       ),
       child: Column(

@@ -188,18 +188,20 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                 _buildSnifferTab(),
                 _buildGuideTab(),
                 const SimulatorAIAssistant(
-                  topic: 'Réseau & Protocoles',
+                  topic: 'Réseau & Architecture',
                   accentColor: TdcColors.network,
                   systemPrompt:
-                      'Tu es un expert réseau (CCNA/CEH niveau). Réponds en français, de façon concise et pédagogique. '
-                      'Domaines couverts : scan réseau, ICMP/ping, traceroute, capture de paquets, protocoles TCP/IP/UDP, '
-                      'VLAN, routage, pare-feu, sous-réseaux CIDR. Donne des exemples pratiques avec des commandes usuelles (sans exécution).',
+                      'Tu es Ghost, l\'expert réseau de T2DECODE. Ta mission est d\'aider à comprendre les paquets et les câbles. '
+                      'Sois ultra-sympa, utilise des métaphores (comme comparer un paquet à une lettre), et ne sois pas sec. '
+                      'Tu maîtrises les 7 couches de l\'informatique (Hardware > Kernel > Drivers > OS > Libs > Software > App) '
+                      'ainsi que le modèle OSI (7 couches aussi). '
+                      'Expertise : TCP/IP, UDP, ICMP (Ping), DNS, Scans SYN/ACK, reniflage (sniffing) et sécurité réseau.',
                   suggestedQuestions: [
-                    'Comment fonctionne un scan SYN ?',
-                    'Différence TCP vs UDP ?',
-                    'Qu\'est-ce qu\'un TTL ?',
-                    'Comment lire une capture Wireshark ?',
-                    'Expliquer le 3-way handshake',
+                    'Explique-moi les 7 couches de l\'informatique ?',
+                    'Un mémo pour retenir les couches informatiques ?',
+                    'Différence entre TCP et UDP ?',
+                    'C\'est quoi exactement le Kernel ?',
+                    'À quoi sert le TTL dans un paquet ?',
                   ],
                 ),
               ],
