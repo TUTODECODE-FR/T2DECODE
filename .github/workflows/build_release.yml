@@ -55,8 +55,8 @@ jobs:
           - platform: windows
             os: windows-latest
             artifact_glob: |
-              TUTODECODE-Windows.zip
-              TUTODECODE-Setup.exe
+              T2DECODE-Windows.zip
+              T2DECODE-Setup.exe
           - platform: macos
             os: macos-latest
             artifact_glob: |
@@ -176,12 +176,12 @@ jobs:
           & $iscc /DMyAppVersion=$ver windows\installer\tutodecode.iss
           # Inno Setup outputs relative to the script directory (windows/installer).
           # Normalize to repo root so artifacts + signing steps can find it reliably.
-          $setupSrc = Join-Path "windows\\installer" "TUTODECODE-Setup.exe"
+          $setupSrc = Join-Path "windows\\installer" "T2DECODE-Setup.exe"
           if (-not (Test-Path $setupSrc)) {
             throw "Setup EXE introuvable: $setupSrc"
           }
-          Copy-Item -Force $setupSrc "TUTODECODE-Setup.exe"
-          Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath TUTODECODE-Windows.zip
+          Copy-Item -Force $setupSrc "T2DECODE-Setup.exe"
+          Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath T2DECODE-Windows.zip
 
       - name: Sign Windows binaries
         if: matrix.platform == 'windows' && env.WINDOWS_PFX_BASE64 != '' && env.WINDOWS_PFX_PASSWORD != ''
@@ -199,8 +199,8 @@ jobs:
           & $signtool sign /f $pfxPath /p "${{ env.WINDOWS_PFX_PASSWORD }}" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v $exePath
           & $signtool verify /pa /v $exePath
 
-          & $signtool sign /f $pfxPath /p "${{ env.WINDOWS_PFX_PASSWORD }}" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v TUTODECODE-Setup.exe
-          & $signtool verify /pa /v TUTODECODE-Setup.exe
+          & $signtool sign /f $pfxPath /p "${{ env.WINDOWS_PFX_PASSWORD }}" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v T2DECODE-Setup.exe
+          & $signtool verify /pa /v T2DECODE-Setup.exe
 
       - name: Require macOS signing/notarization secrets
         if: matrix.platform == 'macos' && env.MACOS_CERT_P12_BASE64 != '' && env.MACOS_CERT_PASSWORD != '' && env.MACOS_CERT_IDENTITY != '' && env.APPLE_ID != '' && env.APPLE_APP_SPECIFIC_PASSWORD != '' && env.APPLE_TEAM_ID != ''
