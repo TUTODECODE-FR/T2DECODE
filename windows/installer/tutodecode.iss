@@ -7,7 +7,7 @@
 #endif
 #define MyAppPublisher "Association TUTODECODE"
 #define MyAppURL "https://www.tutodecode.org"
-#define MyAppExeName "tutodecode_flutter.exe"
+#define MyAppExeName "T2DECODE.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.

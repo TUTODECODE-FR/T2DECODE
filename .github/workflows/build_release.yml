@@ -195,7 +195,7 @@ jobs:
             Select-Object -First 1 -ExpandProperty FullName
           if (-not $signtool) { throw "signtool.exe introuvable" }
 
-          $exePath = "build\windows\x64\runner\Release\tutodecode_flutter.exe"
+          $exePath = "build\windows\x64\runner\Release\T2DECODE.exe"
           & $signtool sign /f $pfxPath /p "${{ env.WINDOWS_PFX_PASSWORD }}" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v $exePath
           & $signtool verify /pa /v $exePath
 
