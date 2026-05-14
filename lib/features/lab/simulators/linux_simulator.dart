@@ -108,12 +108,13 @@ final _linuxScenarios = [
         color: TdcColors.system,
         description: 'Le noyau se décompresse et monte le système de fichiers temporaire.',
         detail:
-            'Le noyau se décompresse lui-même en RAM (self-extracting bzImage). '
-            'Il initialise la MMU, détecte les CPUs (SMP), configure les interruptions (IDT/GDT) '
-            'et monte l\'initramfs (cpio.gz) comme rootfs temporaire en tmpfs.\n'
-            'L\'initramfs contient les modules nécessaires pour accéder au vrai disque '
-            '(pilotes SATA/NVMe, dm-crypt pour LUKS, LVM). Une fois le vrai rootfs monté, '
-            'init pivot_root vers lui et démonte l\'initramfs.',
+            '[   0.000000] Linux version 6.8.0-40-generic (gcc version 13.2.0)\n'
+            '[   0.000000] Command line: BOOT_IMAGE=/vmlinuz-6.8.0-40 root=UUID=... ro quiet splash\n'
+            '[   0.000000] KERNEL: Initializing MMU and page tables...\n'
+            '[   0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 6.8.0-40\n\n'
+            'Le noyau se décompresse en RAM (self-extracting bzImage). '
+            'Il initialise la MMU, détecte les CPUs (SMP) et monte l\'initramfs '
+            '(système de fichiers temporaire) pour charger les pilotes de stockage indispensables.',
       ),
       _Step(
         title: 'systemd PID 1',
@@ -122,12 +123,12 @@ final _linuxScenarios = [
         color: TdcColors.system,
         description: 'Le premier processus utilisateur, ancêtre de tous les autres.',
         detail:
-            'systemd est lancé en tant que PID 1 — s\'il meurt, le kernel panique. '
-            'Il lit /etc/systemd/system.conf et parcourt les units (.service, .socket, .mount, .target) '
-            'pour construire un graphe de dépendances.\n'
-            'systemd active en parallèle tous les services dont les dépendances sont satisfaites, '
-            'ce qui accélère considérablement le boot par rapport à l\'ancien SysVinit séquentiel. '
-            'journald est également démarré pour capturer les logs dès le début.',
+            '[   0.841022] Run /init as init process\n'
+            '[   0.842100] systemd[1]: systemd 255.4-1ubuntu8 running in system mode\n'
+            '[   0.842150] systemd[1]: Detected architecture x86-64.\n'
+            '[   0.850000] systemd[1]: Queued start job for default target Graphical Interface.\n\n'
+            'systemd est lancé en tant que PID 1. Il construit le graphe de dépendances '
+            'et active les unités (.service, .socket) en parallèle pour accélérer le boot.',
         visual: () => const SimLayerStack(
           layers: [
             SimLayer('sysinit.target', 'montage fs, udev, cryptsetup', TdcColors.danger),
@@ -1012,19 +1013,20 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: SimulatorAIAssistant(
-          topic: 'Linux — ${_scenario.name}',
+          topic: 'Architecture & Linux',
           accentColor: _scenario.color,
           systemPrompt:
-              'Tu es un expert Linux/Unix (niveau administrateur système). Réponds en français, de façon concise. '
-              'Contexte actuel : ${_scenario.name}. '
-              'Domaines couverts : boot BIOS/UEFI/GRUB, systemd, système de fichiers (ext4/FHS/inodes), '
-              'processus et signaux, réseau Linux (ip/netstat/ss), permissions chmod/chown, Bash scripting.',
+              'Tu es Ghost, l\'expert système de T2DECODE. Ta mission est d\'expliquer la technique avec passion et pédagogie. '
+              'Sois sympa, utilise un ton encourageant, mais reste extrêmement précis techniquement. Ne sois jamais sec. '
+              'Tu connais parfaitement l\'architecture en 7 couches (Hardware > Kernel > Drivers > OS > Libs > Middleware > App). '
+              'Contexte : ${_scenario.name}. '
+              'Maîtrise : Boot sequence (POST/GRUB/Kernel), systemd PID 1, VFS (Ext4/Inodes), signaux POSIX, Stack réseau Linux, permissions.',
           suggestedQuestions: const [
+            'Explique-moi les 7 couches de l\'informatique ?',
+            'Comment retenir ces couches avec un mémo ?',
+            'C\'est quoi le rôle exact du Kernel ?',
+            'Différence entre Hardware et Firmware ?',
             'Comment fonctionne le boot Linux ?',
-            'C\'est quoi un inode ?',
-            'Différence SIGTERM vs SIGKILL ?',
-            'Comment lire les permissions rwx ?',
-            'Expliquer le rôle de systemd',
           ],
         ),
       ),
