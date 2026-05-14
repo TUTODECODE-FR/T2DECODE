@@ -47,6 +47,8 @@ abstract class TdcColors {
   static const cloudDim = Color(0x1ACBC1B2);
   static const crypto = Color(0xFFE0C79C);
   static const cryptoDim = Color(0x1AE0C79C);
+  static const algorithms = Color(0xFFCFC5B6);
+  static const algorithmsDim = Color(0x1ACFC5B6);
 
   // NIVEAUX
   static const levelBeginner = Color(0xFFD7CDBF);
@@ -107,6 +109,8 @@ abstract class TdcLightColors {
   static const cloudDim = TdcColors.cloudDim;
   static const crypto = TdcColors.crypto;
   static const cryptoDim = TdcColors.cryptoDim;
+  static const algorithms = TdcColors.algorithms;
+  static const algorithmsDim = TdcColors.algorithmsDim;
 
   static const levelBeginner = TdcColors.levelBeginner;
   static const levelIntermediate = TdcColors.levelIntermediate;
