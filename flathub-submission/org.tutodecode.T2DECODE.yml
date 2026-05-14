@@ -1,0 +1,37 @@
+app-id: org.tutodecode.T2DECODE
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+command: T2DECODE
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --device=dri
+  - --share=network       # Nécessaire pour télécharger les modèles IA locaux (Ollama)
+  - --filesystem=host     # Permet aux outils réseaux de scanner la machine hôte
+
+modules:
+  - name: t2decode
+    buildsystem: simple
+    build-commands:
+      # Extraction et installation du binaire et des assets Flutter
+      - mkdir -p /app/bin /app/share/applications /app/share/metainfo /app/share/icons/hicolor/scalable/apps
+      - cp -r * /app/bin/
+      - chmod +x /app/bin/T2DECODE
+      
+      # Installation des fichiers d'intégration système
+      - cp org.tutodecode.T2DECODE.desktop /app/share/applications/
+      - cp org.tutodecode.T2DECODE.metainfo.xml /app/share/metainfo/
+      - cp logo.svg /app/share/icons/hicolor/scalable/apps/org.tutodecode.T2DECODE.svg
+    sources:
+      - type: archive
+        url: https://github.com/TUTODECODE-FR/T2DECODE/releases/download/v1.0.1/TUTODECODE-Linux.tar.gz
+        sha256: a162fe09fbe0f42f66c4dfe016211ce1746abab276fb0cf3b0da4180ef3b0d41
+        size: 21586483
+      - type: file
+        path: org.tutodecode.T2DECODE.desktop
+      - type: file
+        path: org.tutodecode.T2DECODE.metainfo.xml
+      - type: file
+        path: logo.svg

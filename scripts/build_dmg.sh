@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Configuration
-APP_NAME="TUTODECODE"
-APP_BUNDLE_NAME="TUTODECODE.app"
+APP_NAME="T2DECODE"
+APP_BUNDLE_NAME="T2DECODE.app"
 BUILD_DIR="build/macos/Build/Products/Release"
-DMG_NAME="TUTODECODE-macOS.dmg"
+DMG_NAME="T2DECODE-macOS.dmg"
 DMG_STAGING_DIR="build/dmg_staging"
 
 echo "🚀 Préparation de la génération du DMG pour $APP_NAME..."

@@ -33,16 +33,9 @@ class LabGlassContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(
           width: 1,
-          color: borderColor ?? TdcColors.border.withValues(alpha: 0.2),
+          color: borderColor ?? TdcColors.border.withValues(alpha: 0.5),
         ),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: 0.05),
-            Colors.white.withValues(alpha: 0.02),
-          ],
-        ),
+        color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
       ),
       child: child,
     );
@@ -65,7 +58,7 @@ class LabNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tint = color ?? TdcColors.textMuted;
+    final tint = color ?? TdcColors.accent;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -92,7 +85,7 @@ class LabNotice extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(message,
                     style: const TextStyle(
-                        color: TdcColors.textMuted,
+                        color: TdcColors.textSecondary,
                         fontSize: 12,
                         height: 1.3)),
               ],
@@ -120,8 +113,13 @@ class LabMetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LabGlassContainer(
+    return Container(
       padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: TdcColors.surfaceAlt,
+        border: Border.all(color: TdcColors.border),
+        borderRadius: BorderRadius.zero,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -157,7 +155,7 @@ class LabMetricCard extends StatelessWidget {
             width: 40,
             decoration: BoxDecoration(
               color: color.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(1),
+              borderRadius: BorderRadius.zero,
             ),
           ),
         ],
@@ -180,16 +178,9 @@ class LabTerminal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF0A0A0F),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue.withOpacity(0.3)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.blue.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 2,
-          ),
-        ],
+        color: TdcColors.bg,
+        borderRadius: BorderRadius.zero,
+        border: Border.all(color: TdcColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -197,18 +188,17 @@ class LabTerminal extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.1),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(12)),
+              color: TdcColors.surfaceAlt,
+              border: const Border(bottom: BorderSide(color: TdcColors.border)),
             ),
             child: Row(
               children: [
-                const Icon(Icons.terminal, color: Colors.blue, size: 14),
+                const Icon(Icons.terminal, color: TdcColors.accent, size: 14),
                 const SizedBox(width: 8),
                 Text(
                   title,
                   style: const TextStyle(
-                    color: Colors.blue,
+                    color: TdcColors.accent,
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),
@@ -216,11 +206,11 @@ class LabTerminal extends StatelessWidget {
                 const Spacer(),
                 Row(
                   children: [
-                    _buildDot(Colors.red),
+                    _buildDot(TdcColors.dangerDim),
                     const SizedBox(width: 4),
-                    _buildDot(Colors.orange),
+                    _buildDot(TdcColors.warningDim),
                     const SizedBox(width: 4),
-                    _buildDot(Colors.green),
+                    _buildDot(TdcColors.successDim),
                   ],
                 ),
               ],
@@ -239,7 +229,7 @@ class LabTerminal extends StatelessWidget {
                       Text(
                         '${index + 1} ',
                         style: TextStyle(
-                          color: Colors.blue.withOpacity(0.3),
+                          color: TdcColors.textMuted.withOpacity(0.5),
                           fontSize: 12,
                           fontFamily: 'monospace',
                         ),
@@ -247,7 +237,7 @@ class LabTerminal extends StatelessWidget {
                       const Text(
                         '> ',
                         style: TextStyle(
-                          color: Colors.blue,
+                          color: TdcColors.accent,
                           fontSize: 12,
                           fontFamily: 'monospace',
                         ),
@@ -256,7 +246,7 @@ class LabTerminal extends StatelessWidget {
                         child: Text(
                           logs[index],
                           style: const TextStyle(
-                            color: Color(0xFFE0E0E0),
+                            color: TdcColors.textSecondary,
                             fontSize: 12,
                             fontFamily: 'monospace',
                           ),
@@ -278,7 +268,8 @@ class LabTerminal extends StatelessWidget {
       width: 8,
       height: 8,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.5),
+        color: color,
+        border: Border.all(color: TdcColors.border),
         shape: BoxShape.circle,
       ),
     );

@@ -61,13 +61,13 @@ final _algoScenarios = [
     name: 'Tri & Recherche',
     subtitle: 'Big-O · Sorting · Binary Search · Hash',
     icon: Icons.sort,
-    color: Colors.blue,
+    color: TdcColors.algorithms,
     steps: [
       _Step(
         title: 'Complexité Big-O notation',
         protocol: 'Analyse asymptotique',
         icon: Icons.show_chart,
-        color: const Color(0xFF2196F3),
+        color: TdcColors.algorithms,
         description: 'Mesurer l\'efficacité d\'un algorithme indépendamment du matériel.',
         detail:
             'La notation Big-O décrit la croissance du temps d\'exécution (ou de l\'espace mémoire) '
@@ -78,12 +78,12 @@ final _algoScenarios = [
             '(best-case) — en pratique, c\'est le worst-case qui guide les décisions d\'ingénierie.',
         visual: () => const SimComplexityBar(
           entries: [
-            SimComplexityEntry('O(1)', 'constant', 0.05, Color(0xFF10B981)),
-            SimComplexityEntry('O(log n)', 'binary search', 0.15, Color(0xFF06B6D4)),
-            SimComplexityEntry('O(n)', 'linear', 0.35, Color(0xFF3B82F6)),
-            SimComplexityEntry('O(n log n)', 'merge sort', 0.55, Color(0xFFF97316)),
-            SimComplexityEntry('O(n²)', 'bubble sort', 0.85, Color(0xFFEF4444)),
-            SimComplexityEntry('O(2ⁿ)', 'exponential', 1.0, Colors.deepOrange),
+            SimComplexityEntry('O(1)', 'constant', 0.05, TdcColors.success),
+            SimComplexityEntry('O(log n)', 'binary search', 0.15, TdcColors.successDim),
+            SimComplexityEntry('O(n)', 'linear', 0.35, TdcColors.info),
+            SimComplexityEntry('O(n log n)', 'merge sort', 0.55, TdcColors.warningDim),
+            SimComplexityEntry('O(n²)', 'bubble sort', 0.85, TdcColors.warning),
+            SimComplexityEntry('O(2ⁿ)', 'exponential', 1.0, TdcColors.danger),
           ],
         ),
       ),
@@ -91,7 +91,7 @@ final _algoScenarios = [
         title: 'Bubble Sort O(n²)',
         protocol: 'Tri par comparaison',
         icon: Icons.bubble_chart,
-        color: const Color(0xFF1976D2),
+        color: TdcColors.algorithms,
         description: 'Algorithme de tri naïf : comparer et permuter les voisins successivement.',
         detail:
             'Bubble Sort parcourt le tableau n fois et échange les éléments adjacents '
@@ -100,8 +100,8 @@ final _algoScenarios = [
             'Il est stable (préserve l\'ordre relatif des éléments égaux) et in-place (O(1) mémoire '
             'auxiliaire), mais ses performances médiocres le rendent inutilisable en production '
             'au-delà de quelques centaines d\'éléments.',
-        visual: () => SimCodeBlock(
-          color: const Color(0xFF1976D2),
+        visual: () => const SimCodeBlock(
+          color: TdcColors.algorithms,
           title: 'Bubble Sort',
           code: 'function bubbleSort(arr):\n'
               '  n = arr.length\n'
@@ -119,7 +119,7 @@ final _algoScenarios = [
         title: 'Merge Sort O(n log n)',
         protocol: 'Diviser pour régner',
         icon: Icons.call_split,
-        color: const Color(0xFF1565C0),
+        color: TdcColors.algorithms,
         description: 'Diviser le tableau en deux moitiés, trier récursivement, puis fusionner.',
         detail:
             'Merge Sort divise le tableau en deux sous-tableaux de taille n/2, se rappelle '
@@ -128,7 +128,7 @@ final _algoScenarios = [
             'Il est stable et particulièrement adapté au tri externe (données sur disque) car '
             'il accède aux données séquentiellement, mais requiert O(n) d\'espace auxiliaire.',
         visual: () => const SimTreeDiagram(
-          color: Color(0xFF1565C0),
+          color: TdcColors.algorithms,
           root: SimTreeNode(
             '[8,3,5,1]',
             sublabel: 'diviser',
@@ -1120,8 +1120,8 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF0D1117),
-          borderRadius: BorderRadius.circular(12),
+          color: TdcColors.bg,
+          borderRadius: BorderRadius.zero,
           border: Border.all(color: color.withOpacity(0.35)),
         ),
         child: Column(
@@ -1131,7 +1131,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.12),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(11)),
+                borderRadius: BorderRadius.zero,
               ),
               child: Row(
                 children: [
