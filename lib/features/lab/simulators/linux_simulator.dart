@@ -61,13 +61,13 @@ final _linuxScenarios = [
     name: 'Boot Linux',
     subtitle: 'De l\'alimentation au shell',
     icon: Icons.power_settings_new,
-    color: const Color(0xFF22C55E),
+    color: TdcColors.system,
     steps: [
       const _Step(
         title: 'BIOS/UEFI POST',
         protocol: 'Firmware',
         icon: Icons.memory,
-        color: Color(0xFF94A3B8),
+        color: TdcColors.system,
         description: 'Le firmware initialise le matériel et cherche un bootloader.',
         detail:
             'À la mise sous tension, le CPU saute à l\'adresse reset vector du firmware '
@@ -81,7 +81,7 @@ final _linuxScenarios = [
         title: 'GRUB bootloader',
         protocol: 'GRUB2',
         icon: Icons.list_alt,
-        color: const Color(0xFFF59E0B),
+        color: TdcColors.system,
         description: 'GRUB présente le menu et charge le noyau + initramfs.',
         detail:
             'GRUB2 lit sa configuration dans /boot/grub/grub.cfg. Il charge en mémoire '
@@ -90,9 +90,9 @@ final _linuxScenarios = [
             'GRUB passe au noyau une ligne de commande (kernel cmdline) contenant '
             'root=UUID=..., quiet, splash et d\'autres paramètres. '
             'On peut l\'éditer au boot avec "e" pour du debug ou du rescue.',
-        visual: () => SimFlowDiagram(
-          color: const Color(0xFFF59E0B),
-          nodes: const [
+        visual: () => const SimFlowDiagram(
+          color: TdcColors.system,
+          nodes: [
             SimFlowNode('UEFI', Icons.memory),
             SimFlowNode('ESP FAT32', Icons.storage),
             SimFlowNode('grub.cfg', Icons.description),
@@ -105,7 +105,7 @@ final _linuxScenarios = [
         title: 'Décompression du noyau + initramfs',
         protocol: 'Kernel',
         icon: Icons.layers,
-        color: Color(0xFF8B5CF6),
+        color: TdcColors.system,
         description: 'Le noyau se décompresse et monte le système de fichiers temporaire.',
         detail:
             'Le noyau se décompresse lui-même en RAM (self-extracting bzImage). '
@@ -119,7 +119,7 @@ final _linuxScenarios = [
         title: 'systemd PID 1',
         protocol: 'systemd',
         icon: Icons.settings,
-        color: const Color(0xFF06B6D4),
+        color: TdcColors.system,
         description: 'Le premier processus utilisateur, ancêtre de tous les autres.',
         detail:
             'systemd est lancé en tant que PID 1 — s\'il meurt, le kernel panique. '
@@ -130,11 +130,11 @@ final _linuxScenarios = [
             'journald est également démarré pour capturer les logs dès le début.',
         visual: () => const SimLayerStack(
           layers: [
-            SimLayer('sysinit.target', 'montage fs, udev, cryptsetup', Color(0xFFEF4444)),
-            SimLayer('basic.target', 'timers, sockets, paths', Color(0xFFF97316)),
-            SimLayer('network.target', 'NetworkManager, networkd', Color(0xFF06B6D4)),
-            SimLayer('multi-user.target', 'runlevel 3 — sshd, cron…', Color(0xFF3B82F6)),
-            SimLayer('graphical.target', 'runlevel 5 — GDM/SDDM', Color(0xFF22C55E)),
+            SimLayer('sysinit.target', 'montage fs, udev, cryptsetup', TdcColors.danger),
+            SimLayer('basic.target', 'timers, sockets, paths', TdcColors.warning),
+            SimLayer('network.target', 'NetworkManager, networkd', TdcColors.info),
+            SimLayer('multi-user.target', 'runlevel 3 — sshd, cron…', TdcColors.system),
+            SimLayer('graphical.target', 'runlevel 5 — GDM/SDDM', TdcColors.success),
           ],
         ),
       ),
@@ -1094,8 +1094,8 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF0D1117),
-          borderRadius: BorderRadius.circular(12),
+          color: TdcColors.bg,
+          borderRadius: BorderRadius.zero,
           border: Border.all(color: color.withOpacity(0.35)),
         ),
         child: Column(
@@ -1105,7 +1105,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.12),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(11)),
+                borderRadius: BorderRadius.zero,
               ),
               child: Row(
                 children: [
