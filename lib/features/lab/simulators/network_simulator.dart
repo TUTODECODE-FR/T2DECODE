@@ -4,6 +4,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import '../widgets/lab_widgets.dart';
 import '../widgets/simulator_ai_assistant.dart';
@@ -46,7 +47,7 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
     _scanController = AnimationController(vsync: this, duration: const Duration(seconds: 2));
     _packetController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
     
@@ -152,7 +153,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                 ),
               ],
             ),
-          )          // Custom TabBar inside Lab
+          ),
+          // Custom TabBar inside Lab
           Container(
             height: 45,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1079,7 +1081,6 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       case 'icmp': return TdcColors.crypto;
       default: return TdcColors.textMuted;
     }
-  }
   }
 }
 
