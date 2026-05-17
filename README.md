@@ -42,7 +42,7 @@ T2DECODE est une **suite pédagogique et technique souveraine** conçue pour app
 T2DECODE adopte un modèle de sécurité rigoureux, axé sur la souveraineté numérique et le respect absolu de l'utilisateur final.
 
 ```mermaid
-graph LR
+graph TD
     subgraph "Machine Locale (Air-Gapped Ready)"
         A[Interface T2DECODE<br/>Flutter Multi-OS]
         B(Stockage Local<br/>SharedPreferences)
@@ -51,9 +51,9 @@ graph LR
         E[Ghost Link P2P<br/>UDP Broadcast LAN]
     end
 
-    A -->|Aucune API Externe| B
+    A <-->|Lecture & Écriture| B
     A <-->|HTTP Streaming Local| C
-    C -->|Génération 100% Offline| D
+    C <-->|Requête & Réponse RAG| D
     A <-->|Chiffrement AES-GCM| E
     
     style A fill:#02569B,stroke:#FFF,stroke-width:2px,color:#FFF
@@ -100,16 +100,16 @@ graph LR
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 📥 Téléchargements & Plateformes
+## 📥 Téléchargements & Plateformes (v1.0.2)
 
 ➡️ [**Télécharger les binaires précompilés (Releases GitHub)**](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
 
 | Plateforme | Format de Distribution | Statut CI | Accessibilité |
 | :--- | :--- | :---: | :---: |
-| ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white) | **APK** / AAB (64-bit) | Actif | Disponible (v1.0.1) |
-| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white) | **ZIP** / Installateur EXE | Actif | Disponible (v1.0.1) |
-| ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) | **[App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)** / PKG / ZIP Universel | Actif | Disponible (v1.0.1) |
-| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | **AppImage** / DEB / [Flathub](https://flathub.org) | Actif | Disponible (v1.0.1) |
+| ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white) | **APK** / AAB (64-bit) | Actif | Disponible (v1.0.2) |
+| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white) | **ZIP** / Installateur EXE | Actif | Disponible (v1.0.2) |
+| ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) | **[App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)** / PKG / ZIP Universel | Actif | Disponible (v1.0.2) |
+| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | **AppImage** / DEB (64-bit) | Actif | Disponible (v1.0.2) |
 
 > 🔒 **Garantie d'intégrité** : Chaque version publiée s'accompagne d'un fichier de vérification `SHA256SUMS.txt` et de signatures cryptographiques pour authentifier la provenance des binaires.
 
