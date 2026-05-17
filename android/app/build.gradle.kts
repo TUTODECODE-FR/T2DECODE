@@ -15,7 +15,7 @@ if (keyPropertiesFile.exists()) {
 val isFdroidBuild = (System.getenv("FDROID_BUILD") ?: "false").equals("true", ignoreCase = true)
 
 android {
-    namespace = "com.tutodecode.app"
+    namespace = "org.t2decode.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -29,7 +29,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.tutodecode.app"
+        applicationId = "org.t2decode.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

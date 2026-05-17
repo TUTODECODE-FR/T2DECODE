@@ -534,9 +534,18 @@ class _AppShellState extends State<AppShell> {
               const SizedBox(height: TdcSpacing.lg),
               const Divider(color: TdcColors.border, height: 1),
               const SizedBox(height: TdcSpacing.sm),
-              ..._navItems.map((item) =>
-                  _buildNavItem(context, item, insideDrawer, activeRoute)),
-              const Expanded(child: SizedBox()),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(vertical: TdcSpacing.sm),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: _navItems
+                        .map((item) => _buildNavItem(
+                            context, item, insideDrawer, activeRoute))
+                        .toList(),
+                  ),
+                ),
+              ),
               const Divider(color: TdcColors.border, height: 1),
               Padding(
                 padding: const EdgeInsets.all(TdcSpacing.md),

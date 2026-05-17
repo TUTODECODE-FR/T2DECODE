@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration
-APP_NAME="TUTODECODE"
+APP_NAME="T2DECODE"
 MIN_FLUTTER_VERSION="3.0.0"
 
 echo "--------------------------------------------------"
@@ -13,7 +13,8 @@ if ! command -v flutter &> /dev/null; then
     echo "❌ Error: Flutter is not installed. Please visit https://docs.flutter.dev/get-started/install"
     exit 1
 else
-    echo "✅ Flutter found: $(flutter --version | head -n 1)"
+    FLUTTER_VER=$(flutter --version | head -n 1)
+    echo "✅ Flutter found: $FLUTTER_VER"
 fi
 
 # Check if Dart is installed
