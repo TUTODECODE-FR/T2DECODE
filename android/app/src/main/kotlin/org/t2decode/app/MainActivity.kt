@@ -1,4 +1,4 @@
-package com.tutodecode.app
+package org.t2decode.app
 
 import io.flutter.embedding.android.FlutterActivity
 
