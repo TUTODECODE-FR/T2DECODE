@@ -301,7 +301,9 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 1.5,
             ),
           ),
-          SizedBox(height: TdcAdaptive.space(context, 24)),
+          SizedBox(height: TdcAdaptive.space(context, 32)),
+          _buildSovereignArchitectureBanner(context),
+          SizedBox(height: TdcAdaptive.space(context, 32)),
           ElevatedButton(
             onPressed: () => AppNavigator.pushNamed('/tools'),
             child: const Text('Explorer'),
@@ -325,7 +327,127 @@ class _HomeScreenState extends State<HomeScreen> {
         Text('Apprendre. Construire. Comprendre.',
             style: TextStyle(
                 color: TdcColors.textMuted, fontSize: TdcText.caption(context))),
+        SizedBox(height: TdcAdaptive.space(context, 16)),
+        _buildSovereignArchitectureBanner(context, compact: true),
       ],
+    );
+  }
+
+  Widget _buildSovereignArchitectureBanner(BuildContext context, {bool compact = false}) {
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 860),
+      padding: EdgeInsets.all(TdcAdaptive.padding(context, compact ? 16 : 24)),
+      decoration: BoxDecoration(
+        color: TdcColors.surfaceAlt,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: TdcColors.accent.withValues(alpha: 0.05),
+            blurRadius: 30,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.shield_outlined, color: TdcColors.accent, size: compact ? 20 : 24)
+                .animate(onPlay: (c) => c.repeat(reverse: true))
+                .shimmer(duration: 2.seconds, color: Colors.white),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'ARCHITECTURE LOCALE SOUVERAINE · PRIVACY BY DESIGN',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontSize: compact ? 12 : 14,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: TdcAdaptive.space(context, 16)),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: TdcAdaptive.space(context, 16),
+            runSpacing: TdcAdaptive.space(context, 12),
+            children: [
+              _buildFeaturePill(
+                context,
+                icon: Icons.air_outlined,
+                title: '100% Air-Gapped',
+                desc: 'Fonctionnement autonome sans connexion Internet',
+              ),
+              _buildFeaturePill(
+                context,
+                icon: Icons.memory_outlined,
+                title: 'IA & RAG Locaux',
+                desc: 'Modèles LLM exécutés en local via Ollama',
+              ),
+              _buildFeaturePill(
+                context,
+                icon: Icons.wifi_tethering_outlined,
+                title: 'Réseau LAN P2P',
+                desc: 'Messagerie chiffrée décentralisée Ghost Link',
+              ),
+              _buildFeaturePill(
+                context,
+                icon: Icons.block_outlined,
+                title: 'Zéro Télémétrie',
+                desc: 'Aucun pistage, aucune collecte de données',
+              ),
+            ],
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.96, 0.96), curve: Curves.easeOutCubic);
+  }
+
+  Widget _buildFeaturePill(BuildContext context, {required IconData icon, required String title, required String desc}) {
+    return Container(
+      width: 200,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: TdcColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: TdcColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 16, color: TdcColors.accent),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            desc,
+            style: const TextStyle(
+              color: TdcColors.textMuted,
+              fontSize: 10,
+              height: 1.3,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -479,17 +479,47 @@ class _AppShellState extends State<AppShell> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(
                     TdcSpacing.md, TdcSpacing.lg, TdcSpacing.md, TdcSpacing.md),
-                child: Row(children: [
-                  Image.asset('assets/logo.png', width: 32, height: 32),
-                  const SizedBox(width: TdcSpacing.sm),
-                  const Text('T2DECODE',
-                      style: TextStyle(
-                        color: TdcColors.textPrimary,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 12,
-                        letterSpacing: 1.4,
-                      )),
-                ]),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      Image.asset('assets/logo.png', width: 32, height: 32),
+                      const SizedBox(width: TdcSpacing.sm),
+                      const Text('T2DECODE',
+                          style: TextStyle(
+                            color: TdcColors.textPrimary,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 14,
+                            letterSpacing: 1.4,
+                          )),
+                    ]),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: TdcColors.accent.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.verified_user_outlined, size: 12, color: TdcColors.accent),
+                          const SizedBox(width: 6),
+                          const Text(
+                            'SOUVERAIN & AIR-GAPPED',
+                            style: TextStyle(
+                              color: TdcColors.accent,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: TdcSpacing.md),
