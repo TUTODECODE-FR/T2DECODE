@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Configuration
-APP_NAME="TUTODECODE"
-BUNDLE_ID="com.tutodecode.app"
-APP_BUNDLE_NAME="TUTODECODE.app"
+APP_NAME="T2DECODE"
+BUNDLE_ID="org.t2decode.app"
+APP_BUNDLE_NAME="T2DECODE.app"
 APP_VERSION="${APP_VERSION:-1.0.0}"
 BUILD_DIR="build/macos/Build/Products/Release"
 RESOURCES_DIR="macos/installer_resources"
-COMPONENT_PKG="$BUILD_DIR/TUTODECODE_Component.pkg"
-FINAL_PKG="$BUILD_DIR/TUTODECODE_Installer.pkg"
+COMPONENT_PKG="$BUILD_DIR/T2DECODE_Component.pkg"
+FINAL_PKG="$BUILD_DIR/T2DECODE_Installer.pkg"
 
 echo "🚀 Génération de l'installeur Premium macOS (.pkg) pour $APP_NAME..."
 

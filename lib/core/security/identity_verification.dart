@@ -23,6 +23,7 @@ class IdentityVerification {
     'assets/manifest.json',
     'assets/asset_checksums.json',
     'assets/cheat_sheets.json',
+    'assets/logo.png',
   ];
 
   /// Vérifie l'intégrité des assets bundlés avec l'application.

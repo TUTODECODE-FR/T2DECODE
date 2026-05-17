@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration
-APP_NAME="TUTODECODE"
+APP_NAME="T2DECODE"
 BUILD_DIR="build/linux/x64/release/bundle"
 OUTPUT_DIR="build/linux-appimage"
 RESOURCES_DIR="linux/installer_resources"

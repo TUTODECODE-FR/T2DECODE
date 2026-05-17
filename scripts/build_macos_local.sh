@@ -5,7 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 # Force build/ onto a local, non-FileProvider path to avoid disallowed xattrs and build.db I/O issues.
-TMP_BUILD_ROOT="/tmp/tutodecode-build"
+TMP_BUILD_ROOT="/tmp/t2decode-build"
 mkdir -p "$TMP_BUILD_ROOT"
 if [ -e "$ROOT_DIR/build" ] && [ ! -L "$ROOT_DIR/build" ]; then
   ts="$(date +%Y%m%d-%H%M%S)"
