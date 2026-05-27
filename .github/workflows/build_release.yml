@@ -502,7 +502,7 @@ jobs:
             --detach-sign release_assets/SHA256SUMS.txt
 
       - name: Attest release assets provenance
-        uses: actions/attest-build-provenance@c0744439c878d655f4640d256860d5b4a08154e0 # v2.2.3
+        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
         with:
           subject-path: 'release_assets/*'
 
