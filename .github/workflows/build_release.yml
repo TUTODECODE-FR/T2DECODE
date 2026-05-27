@@ -229,6 +229,7 @@ jobs:
           # DMG
           chmod +x scripts/build_dmg.sh
           ./scripts/build_dmg.sh
+          cp -f build/macos/Build/Products/Release/T2DECODE-macOS.dmg T2DECODE-macOS.dmg
 
           # PKG (unsigned by default)
           chmod +x scripts/build_pkg.sh
