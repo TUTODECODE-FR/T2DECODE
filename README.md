@@ -43,40 +43,61 @@ T2DECODE adopte un modèle de sécurité rigoureux, axé sur la souveraineté nu
 
 ```mermaid
 flowchart TB
-    subgraph Client ["💻 Machine Locale (100% Hors-ligne / Air-Gapped)"]
+    subgraph Boot ["Phase d'Initialisation (Boot)"]
+        Verify["Verificateur d'Integrite (AssetIntegrityService & SHA-256)"]
+    end
+
+    subgraph AppShell ["Conteneur Principal (App Shell & Navigation)"]
         direction TB
-        App["🎨 Interface Utilisateur T2DECODE (Flutter)"]
+        UI["Interface Utilisateur (Flutter GUI)"]
         
-        subgraph Storage ["💾 Persistance de Données"]
-            DB["Preferences & Données Applicatives"]
-        end
-        
-        subgraph AI ["🧠 Moteur d'IA Souverain"]
-            Ollama["🤖 Service Local Ollama (localhost:11434)"]
-            Models["📦 LLMs Locaux (Llama / Mistral / Phi)"]
-        end
-        
-        subgraph Network ["🌐 Réseau P2P Décentralisé"]
-            P2P["🔗 Ghost Link (Diffusion UDP LAN)"]
-            Peers["👥 Pairs du Sous-Réseau (Mesh Encrypt)"]
+        subgraph Features ["Modules Applicatifs"]
+            direction LR
+            Courses["Cours Interactifs (Progression & XP/Badges)"]
+            Labs["Laboratoires (9 Simulateurs Réseau/Systèmes/Crypto)"]
+            Tools["Boite a Outils (15+ Utilitaires Offline)"]
         end
     end
 
-    App <-->|Stockage local sécurisé| DB
-    App <-->|Streaming HTTP local| Ollama
-    Ollama <-->|Requêtes RAG directes| Models
-    App <-->|Chiffrement AES-GCM / ECDH| P2P
-    P2P <-->|Découverte UDP & Chat chiffré| Peers
+    subgraph LocalStorage ["Persistance Locale"]
+        DB["Stockage et Preferences (StorageService)"]
+    end
+
+    subgraph localServices ["Services d'Arriere-plan Locaux"]
+        subgraph AISubsystem ["Moteur d'IA (Ghost AI)"]
+            Ollama["Connecteur Ollama (localhost:11434)"]
+            LLM["Modeles LLM Locaux (Llama / Mistral / Phi)"]
+        end
+        
+        subgraph NetworkSubsystem ["Reseau Decentralise (Ghost Link)"]
+            P2P["Service P2P (Diffusion UDP LAN)"]
+            Peers["Mesh de Pairs Chiffre (AES-GCM / ECDH)"]
+        end
+    end
+
+    Verify -->|Validation de Securite OK| UI
+    UI <-->|Interaction Utilisateur| Features
+    
+    UI <-->|Stockage Local Securise| DB
+    Courses <-->|Sauvegarde Progression & Badges| DB
+    
+    UI <-->|Streaming HTTP Local| Ollama
+    Ollama <-->|RAG sur le Contenu des Cours| LLM
+    
+    UI <-->|Echanges Directs| P2P
+    P2P <-->|Decouverte & Chat P2P| Peers
 
     classDef default fill:#121212,stroke:#F5EBDA,stroke-width:1px,color:#F5EBDA;
     classDef primary fill:#000000,stroke:#F5EBDA,stroke-width:2px,color:#F5EBDA;
     classDef accent fill:#F5EBDA,stroke:#000000,stroke-width:1px,color:#000000;
     classDef container fill:#000000,stroke:#333333,stroke-width:1px,color:#FFFFFF;
+    classDef security fill:#1b1510,stroke:#d4a373,stroke-width:1px,color:#d4a373;
     
-    class App primary;
-    class DB,Ollama,P2P default;
-    class Models,Peers accent;
-    class Client container;
+    class UI primary;
+    class Courses,Labs,Tools,DB,Ollama,P2P default;
+    class LLM,Peers accent;
+    class Verify security;
+    class Boot,AppShell,LocalStorage,localServices container;
 ```
 
 ### Les 4 Piliers de l'Architecture Locale
