@@ -1,0 +1,46 @@
+name: OpenSSF Scorecard
+on:
+  # Planifie un scan automatique tous les dimanches à minuit
+  schedule:
+    - cron: '0 0 * * 0'
+  push:
+    branches: [ "main" ]
+
+# Déclare les permissions minimales nécessaires pour exécuter le scan
+permissions: read-all
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    runs-on: ubuntu-latest
+    permissions:
+      # Nécessaire pour téléverser les résultats dans l'onglet Security de GitHub
+      security-events: write
+      # Nécessaire pour publier les résultats et obtenir le badge public
+      id-token: write
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: "Run analysis"
+        uses: ossf/scorecard-action@v2.4.0
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          # Permet de publier les résultats sur l'API publique OpenSSF pour générer le badge
+          publish_results: true
+
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: SARIF file
+          path: results.sarif
+          retention-days: 5
+
+      - name: "Upload to code-scanning"
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
