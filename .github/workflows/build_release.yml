@@ -502,6 +502,18 @@ jobs:
             --output release_assets/SHA256SUMS.txt.sig \
             --detach-sign release_assets/SHA256SUMS.txt
 
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da # v3.7.0
+
+      - name: Sign release checksums with Cosign (keyless)
+        shell: bash
+        run: |
+          cosign sign-blob \
+            --yes \
+            --output-signature release_assets/SHA256SUMS.txt.sig \
+            --output-certificate release_assets/SHA256SUMS.txt.pem \
+            release_assets/SHA256SUMS.txt
+
       - name: Attest release assets provenance
         uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
         with:
