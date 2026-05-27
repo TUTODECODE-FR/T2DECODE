@@ -23,6 +23,25 @@ Seule la dernière version stable est considérée comme supportée pour les cor
 | Dernière version stable | ✅ |
 | Anciennes versions | ❌ |
 
+**Portée du support :** Chaque version stable reçoit des correctifs de sécurité jusqu'à la publication de la version stable suivante. Les versions majeures (ex: v1.x) sont supportées pendant au moins 6 mois après la sortie de la version majeure suivante.
+
+## Fin de Support (End of Life)
+
+Une version atteint sa fin de support dans les cas suivants :
+
+- Une nouvelle version stable est publiée : l'ancienne version cesse de recevoir des correctifs de sécurité immédiatement.
+- La version a plus de 12 mois d'ancienneté sans mise à jour majeure.
+
+Les utilisateurs sont **fortement encouragés** à mettre à jour vers la dernière version stable dès sa disponibilité. Les annonces de fin de support sont publiées dans les [notes de version](https://github.com/TUTODECODE-FR/T2DECODE/releases) et dans le fichier `CHANGELOG.md`.
+
+## Nomenclature Logicielle (SBOM)
+
+La liste complète des dépendances logicielles (Software Bill of Materials) est disponible sous forme machine-readable dans :
+
+- [`pubspec.yaml`](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/pubspec.yaml) — dépendances déclarées avec contraintes de version
+- [`pubspec.lock`](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/pubspec.lock) — versions exactes résolues et hashes d'intégrité
+- [Graphe de dépendances GitHub](https://github.com/TUTODECODE-FR/T2DECODE/network/dependencies) — vue interactive de toutes les dépendances transitives
+
 ## Contrôles de Sécurité (Actuels)
 
 - Les sommes de contrôle SHA-256 (`SHA256SUMS.txt`) sont publiées pour les assets de la release.
