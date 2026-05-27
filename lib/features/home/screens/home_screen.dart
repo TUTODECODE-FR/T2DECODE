@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // home_screen.dart — Page d'accueil responsive TutoDeCode
 // ── Desktop  : sidebar + grille 3 cols + panneau droit
@@ -281,7 +283,9 @@ class _HomeScreenState extends State<HomeScreen> {
           logo,
           SizedBox(height: TdcAdaptive.space(context, 24)),
           Text(
-            'APPRENDRE.\nCONSTRUIRE.\nCOMPRENDRE.',
+            'APPRENDRE.
+CONSTRUIRE.
+COMPRENDRE.',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: TdcColors.textPrimary,

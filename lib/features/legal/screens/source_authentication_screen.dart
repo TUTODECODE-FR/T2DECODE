@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // Source Authentication Screen - Interface de vérification du code source
 // ============================================================
@@ -900,11 +902,21 @@ Hash: ${signature.signatureHash}
 
 CONTRÔLES D'AUTHENTIFICATION
 ---------------------------
-${result.checks.entries.map((e) => '- ${e.key}: ${e.value ? 'OK' : 'FAIL'}').join('\n')}
+${result.checks.entries.map((e) => '- ${e.key}: ${e.value ? 'OK' : 'FAIL'}').join('
+')}
 
-${result.modifiedFiles.isNotEmpty ? 'FICHIERS MODIFIÉS:\n${result.modifiedFiles.map((f) => '- $f').join('\n')}\n' : ''}
-${result.suspiciousFiles.isNotEmpty ? 'FICHIERS SUSPECTS:\n${result.suspiciousFiles.map((f) => '- $f').join('\n')}\n' : ''}
-${result.plagiarizedFiles.isNotEmpty ? 'FICHIERS PLAGIÉS:\n${result.plagiarizedFiles.map((f) => '- $f').join('\n')}\n' : ''}
+${result.modifiedFiles.isNotEmpty ? 'FICHIERS MODIFIÉS:
+${result.modifiedFiles.map((f) => '- $f').join('
+')}
+' : ''}
+${result.suspiciousFiles.isNotEmpty ? 'FICHIERS SUSPECTS:
+${result.suspiciousFiles.map((f) => '- $f').join('
+')}
+' : ''}
+${result.plagiarizedFiles.isNotEmpty ? 'FICHIERS PLAGIÉS:
+${result.plagiarizedFiles.map((f) => '- $f').join('
+')}
+' : ''}
 
 WATERMARK
 ---------

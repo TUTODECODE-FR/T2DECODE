@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // Cryptography Simulator - Simulation cryptographie ultra-professionnelle
 // ============================================================
@@ -70,8 +72,12 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
   void _initializeKeys() {
     // Générer des clés de démonstration
     _keyController.text = 'MySecretKey123!';
-    _privateKeyController.text = '-----BEGIN PRIVATE KEY-----\nMIIEpAIBAAKCAQEA...\n-----END PRIVATE KEY-----';
-    _publicKeyController.text = '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhki...\n-----END PUBLIC KEY-----';
+    _privateKeyController.text = '-----BEGIN PRIVATE KEY-----
+MIIEpAIBAAKCAQEA...
+-----END PRIVATE KEY-----';
+    _publicKeyController.text = '-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhki...
+-----END PUBLIC KEY-----';
   }
 
   @override

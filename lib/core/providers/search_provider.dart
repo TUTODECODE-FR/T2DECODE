@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -73,7 +75,9 @@ class SearchProvider extends ChangeNotifier {
         id: 'course:${course.id}',
         kind: SearchDocKind.course,
         title: course.title,
-        body: '${course.description}\n${course.category}\n${course.keywords.join(' ')}',
+        body: '${course.description}
+${course.category}
+${course.keywords.join(' ')}',
         nav: {'route': '/', 'courseId': course.id},
       ));
 
@@ -100,7 +104,8 @@ class SearchProvider extends ChangeNotifier {
     final docLen = <String, int>{};
 
     for (final d in docs) {
-      final tokens = _tokenize('${d.title}\n${d.body}');
+      final tokens = _tokenize('${d.title}
+${d.body}');
       docLen[d.id] = tokens.length;
       final tf = <String, int>{};
       for (final t in tokens) {
@@ -181,7 +186,8 @@ class SearchProvider extends ChangeNotifier {
       id: id,
       kind: SearchDocKind.cheat,
       title: '${entry.command} — ${entry.description}',
-      body: bodyParts.join('\n'),
+      body: bodyParts.join('
+'),
       nav: {
         'route': '/cheat-sheets',
         'command': entry.command,
@@ -225,7 +231,7 @@ class SearchProvider extends ChangeNotifier {
 
   Set<String> _trigrams(String s) {
     final out = <String>{};
-    final cleaned = s.replaceAll(RegExp(r'\\s+'), ' ').trim();
+    final cleaned = s.replaceAll(RegExp(r'\s+'), ' ').trim();
     for (var i = 0; i + 3 <= cleaned.length; i++) {
       out.add(cleaned.substring(i, i + 3));
     }

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // Script Generator Screen — Générateur de scripts et automation
 // ============================================================
@@ -174,27 +176,33 @@ mkdir -p "$REPORT_DIR"
 echo "=== AUDIT DE SÉCURITÉ - $(date) ===" > "$REPORT_DIR/security_report.txt"
 
 # 1. Utilisateurs avec shell
-echo -e "\n1. UTILISATEURS AVEC SHELL:" >> "$REPORT_DIR/security_report.txt"
+echo -e "
+1. UTILISATEURS AVEC SHELL:" >> "$REPORT_DIR/security_report.txt"
 cat /etc/passwd | grep -E "(bash|sh|zsh)" >> "$REPORT_DIR/security_report.txt"
 
 # 2. Permissions SUID
-echo -e "\n2. FICHIERS SUID:" >> "$REPORT_DIR/security_report.txt"
+echo -e "
+2. FICHIERS SUID:" >> "$REPORT_DIR/security_report.txt"
 find / -type f -perm -4000 -ls 2>/dev/null >> "$REPORT_DIR/security_report.txt"
 
 # 3. Connexions réseau actives
-echo -e "\n3. CONNEXIONS RÉSEAU:" >> "$REPORT_DIR/security_report.txt"
+echo -e "
+3. CONNEXIONS RÉSEAU:" >> "$REPORT_DIR/security_report.txt"
 netstat -tuln >> "$REPORT_DIR/security_report.txt"
 
 # 4. Services en écoute
-echo -e "\n4. SERVICES EN ÉCOUTE:" >> "$REPORT_DIR/security_report.txt"
+echo -e "
+4. SERVICES EN ÉCOUTE:" >> "$REPORT_DIR/security_report.txt"
 ss -tulpn >> "$REPORT_DIR/security_report.txt"
 
 # 5. Logs récents suspects
-echo -e "\n5. LOGS SUSPECTS (24h):" >> "$REPORT_DIR/security_report.txt"
+echo -e "
+5. LOGS SUSPECTS (24h):" >> "$REPORT_DIR/security_report.txt"
 grep -i "failed\|error\|attack\|intrusion" /var/log/auth.log --since="1 day ago" >> "$REPORT_DIR/security_report.txt" 2>/dev/null
 
 # 6. Vérifier les mises à jour
-echo -e "\n6. MISES À JOUR:" >> "$REPORT_DIR/security_report.txt"
+echo -e "
+6. MISES À JOUR:" >> "$REPORT_DIR/security_report.txt"
 apt list --upgradable 2>/dev/null | grep -v "WARNING" >> "$REPORT_DIR/security_report.txt"
 
 echo "Audit terminé. Rapport: $REPORT_DIR/security_report.txt"''',
@@ -273,7 +281,8 @@ class NetworkScanner:
             hosts[host].append(port)
         
         for host, ports in sorted(hosts.items()):
-            print(f"\n{host}: {sorted(ports)}")
+            print(f"
+{host}: {sorted(ports)}")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -421,7 +430,8 @@ class WebHealthChecker:
             print(f"{status_icon} {result['name']}")
             print(f"   URL: {result['url']}")
             print(f"   Status: {result['status']} ({result['status_text']})")
-            print(f"   Response Time: {result['response_time']}ms\n")
+            print(f"   Response Time: {result['response_time']}ms
+")
         
         # Sauvegarder les résultats
         with open(f"health_check_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json", "w") as f:
@@ -446,7 +456,7 @@ if __name__ == "__main__":
         id: '1',
         name: 'Backup Personnalisé',
         language: ScriptLanguage.bash,
-        content: '#!/bin/bash\\necho "Script de backup personnalisé"',
+        content: '#!/bin/bash\necho "Script de backup personnalisé"',
         createdAt: DateTime.now().subtract(const Duration(hours: 2)),
         category: ScriptCategory.system,
       ),
@@ -1214,7 +1224,8 @@ if __name__ == "__main__":
 
     final model = status.models.first;
     final langName = _selectedLanguage.name;
-    final prompt = 'Génère uniquement le code $langName complet et fonctionnel pour : $description\n'
+    final prompt = 'Génère uniquement le code $langName complet et fonctionnel pour : $description
+'
         'Règles : code propre avec commentaires en français, pas d\'explication en dehors du code, '
         'inclure les imports nécessaires, gestion d\'erreurs basique.';
 
@@ -1293,7 +1304,10 @@ Write-Host "Début du script: \$(Get-Date)"
 Write-Host "Script terminé: \$(Get-Date)"
 exit 0''';
       default:
-        return '# Script généré par TUTODECODE\n# $description\n\n# Implémentez votre logique ici';
+        return '# Script généré par TUTODECODE
+# $description
+
+# Implémentez votre logique ici';
     }
   }
 

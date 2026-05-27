@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // Identity Verification Screen - Interface de vérification d'authenticité
 // ============================================================
@@ -965,7 +967,8 @@ Validité: ${certificate.isValid ? 'Valide' : 'Invalide'}
 
 CONTRÔLES DE SÉCURITÉ
 ----------------------
-${result.checks.entries.map((e) => '- ${e.key}: ${e.value ? 'OK' : 'FAIL'}').join('\n')}
+${result.checks.entries.map((e) => '- ${e.key}: ${e.value ? 'OK' : 'FAIL'}').join('
+')}
 
 DÉTAILS
 -------

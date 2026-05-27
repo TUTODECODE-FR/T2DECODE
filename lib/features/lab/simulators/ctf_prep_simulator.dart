@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
@@ -23,7 +25,8 @@ services:
     # Un conteneur "notes" purement local pour garder les infos du scénario.
     image: alpine:3.20
     container_name: t2decode_notes
-    command: ["sh", "-lc", "printf '%s\n' 'T2DECODE CTF PREP' 'Scénario local — ne pas exposer sur Internet.'; sleep 365d"]
+    command: ["sh", "-lc", "printf '%s
+' 'T2DECODE CTF PREP' 'Scénario local — ne pas exposer sur Internet.'; sleep 365d"]
     restart: unless-stopped
 ''';
 
@@ -343,4 +346,3 @@ class _ScenarioCard extends StatelessWidget {
     );
   }
 }
-

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
@@ -18,13 +20,17 @@ class _SurvivalScreenState extends State<SurvivalScreen> {
       'scenarios': [
         {
           'title': 'Boucle de démarrage (Boot Loop)',
-          'content': '1. Éteindre/Allumer 3 fois brusquement pour forcer la Récupération.\n2. Dépannage > Options avancées > Paramètres > Redémarrer.\n3. Appuyer sur 4 ou F4 pour le Mode Sans Échec.',
+          'content': '1. Éteindre/Allumer 3 fois brusquement pour forcer la Récupération.
+2. Dépannage > Options avancées > Paramètres > Redémarrer.
+3. Appuyer sur 4 ou F4 pour le Mode Sans Échec.',
           'severity': 'critical',
           'prevention': 'Vérifier les mises à jour de pilotes récentes ou les nouveaux matériels.',
         },
         {
           'title': 'OS Corrompu / Écran Bleu (BSOD)',
-          'content': '1. Ouvrir CMD en admin.\n2. Lancer "sfc /scannow" pour les fichiers système.\n3. Lancer "DISM /Online /Cleanup-Image /RestoreHealth" si SFC échoue.',
+          'content': '1. Ouvrir CMD en admin.
+2. Lancer "sfc /scannow" pour les fichiers système.
+3. Lancer "DISM /Online /Cleanup-Image /RestoreHealth" si SFC échoue.',
           'severity': 'critical',
           'prevention': 'Maintenir 20% d\'espace disque libre et éviter les logiciels de "nettoyage" tiers.',
         },
@@ -37,13 +43,17 @@ class _SurvivalScreenState extends State<SurvivalScreen> {
       'scenarios': [
         {
           'title': 'Infection Ransomware active',
-          'content': 'URGENT : Débranchez le câble réseau et coupez le Wi-Fi IMMÉDIATEMENT.\nNe redémarrez pas (certains ransomwares s\'activent au reboot).\nIsolez le poste et utilisez un autre PC pour identifier l\'extension des fichiers.',
+          'content': 'URGENT : Débranchez le câble réseau et coupez le Wi-Fi IMMÉDIATEMENT.
+Ne redémarrez pas (certains ransomwares s\'activent au reboot).
+Isolez le poste et utilisez un autre PC pour identifier l\'extension des fichiers.',
           'severity': 'critical',
           'prevention': 'Sauvegardes hors-ligne régulières (Règle du 3-2-1).',
         },
         {
           'title': 'Malware / Publicités intempestives',
-          'content': '1. Utiliser Malawarebytes en mode sans échec.\n2. Vérifier les extensions de navigateur suspectes.\n3. Réinitialiser le fichier "hosts" de Windows.',
+          'content': '1. Utiliser Malawarebytes en mode sans échec.
+2. Vérifier les extensions de navigateur suspectes.
+3. Réinitialiser le fichier "hosts" de Windows.',
           'severity': 'risk',
           'prevention': 'Activer la protection contre les ransomwares de Windows Defender.',
         },
@@ -56,13 +66,17 @@ class _SurvivalScreenState extends State<SurvivalScreen> {
       'scenarios': [
         {
           'title': 'Bruit anormal / Claquement disque',
-          'content': 'SIGNE DE PANNE MÉCANIQUE IMMINENTE.\nCopiez les données vitalES immédiatement sans redémarrer.\nCessez toute activité intensive sur le disque.',
+          'content': 'SIGNE DE PANNE MÉCANIQUE IMMINENTE.
+Copiez les données vitalES immédiatement sans redémarrer.
+Cessez toute activité intensive sur le disque.',
           'severity': 'critical',
           'prevention': 'Surveiller les rapports S.M.A.R.T avec CrystalDiskInfo.',
         },
         {
           'title': 'Surchauffe / Coupure brutale',
-          'content': '1. Nettoyer les ventilateurs et bouches d\'air.\n2. Vérifier si un processus sature le CPU via le Gestionnaire des tâches.\n3. Remplacer la pâte thermique si le PC a + de 3 ans.',
+          'content': '1. Nettoyer les ventilateurs et bouches d\'air.
+2. Vérifier si un processus sature le CPU via le Gestionnaire des tâches.
+3. Remplacer la pâte thermique si le PC a + de 3 ans.',
           'severity': 'risk',
           'prevention': 'Éviter d\'utiliser un PC portable sur des surfaces molles (lit, couette).',
         },

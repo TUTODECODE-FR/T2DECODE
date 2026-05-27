@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // Ethical Hacking Simulator — Simulateur de hacking éthique avancé
 // ============================================================
@@ -915,7 +917,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
   String _generatePayload(String protocol) {
     switch (protocol.toLowerCase()) {
       case 'http':
-        return 'GET /index.html HTTP/1.1\\nHost: example.com';
+        return 'GET /index.html HTTP/1.1\nHost: example.com';
       case 'dns':
         return 'Query: A example.com';
       case 'tcp':

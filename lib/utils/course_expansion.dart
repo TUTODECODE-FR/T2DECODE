@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import '../features/courses/data/course_repository.dart';
 
 /// CourseExpansion : génère un contenu pédagogique ultra-riche et structuré
@@ -88,7 +90,8 @@ class CourseExpansion {
 
   static String _explainCodeLines(String code) {
     final lines = code
-        .split('\n')
+        .split('
+')
         .map((l) => l.trim())
         .where((l) => l.isNotEmpty && !l.startsWith('#') && !l.startsWith('//') && !l.startsWith('--'))
         .take(8)
@@ -122,7 +125,8 @@ class CourseExpansion {
         explained.add('> 🔹 **`$line`** — instruction technique à comprendre dans son contexte');
       }
     }
-    return explained.join('\n');
+    return explained.join('
+');
   }
 
   // ─── Génération de quiz adaptatifs ──────────────────────────────────────
@@ -217,7 +221,8 @@ Comment amélioreriez-vous ce que vous venez d'apprendre pour le rendre plus rob
 
     return '''### ⚠️ Erreurs classiques à éviter absolument
 
-${pittfalls.join('\n')}''';
+${pittfalls.join('
+')}''';
   }
 
   // ─── Génération de cheat sheet ───────────────────────────────────────────
@@ -225,11 +230,13 @@ ${pittfalls.join('\n')}''';
     if (code.isEmpty) return '';
 
     final commands = code
-        .split('\n')
+        .split('
+')
         .where((l) => l.trim().isNotEmpty && !l.trim().startsWith('#') && !l.trim().startsWith('//'))
         .take(6)
         .map((l) => '- `${l.trim()}`')
-        .join('\n');
+        .join('
+');
 
     return '''### 📋 Mémo rapide — À garder sous la main
 
@@ -479,6 +486,7 @@ Ce chapitre est théorique mais demande une mise en pratique immédiate.
       '---',
       '',
       resources,
-    ].join('\n');
+    ].join('
+');
   }
 }

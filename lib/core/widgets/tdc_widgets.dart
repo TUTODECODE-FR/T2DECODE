@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // tdc_widgets.dart — Composants UI réutilisables TutoDeCode
 // Hover, animations, motion
