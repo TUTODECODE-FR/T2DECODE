@@ -42,25 +42,41 @@ T2DECODE est une **suite pédagogique et technique souveraine** conçue pour app
 T2DECODE adopte un modèle de sécurité rigoureux, axé sur la souveraineté numérique et le respect absolu de l'utilisateur final.
 
 ```mermaid
-graph TD
-    subgraph "Machine Locale (Air-Gapped Ready)"
-        A[Interface T2DECODE<br/>Flutter Multi-OS]
-        B(Stockage Local<br/>SharedPreferences)
-        C{Service Ollama<br/>Localhost:11434}
-        D[Modèles LLM & RAG<br/>Llama / Mistral / Phi]
-        E[Ghost Link P2P<br/>UDP Broadcast LAN]
+flowchart TB
+    subgraph Client ["💻 Machine Locale (100% Hors-ligne / Air-Gapped)"]
+        direction TB
+        App["🎨 Interface Utilisateur T2DECODE (Flutter)"]
+        
+        subgraph Storage ["💾 Persistance de Données"]
+            DB["Preferences & Données Applicatives"]
+        end
+        
+        subgraph AI ["🧠 Moteur d'IA Souverain"]
+            Ollama["🤖 Service Local Ollama (localhost:11434)"]
+            Models["📦 LLMs Locaux (Llama / Mistral / Phi)"]
+        end
+        
+        subgraph Network ["🌐 Réseau P2P Décentralisé"]
+            P2P["🔗 Ghost Link (Diffusion UDP LAN)"]
+            Peers["👥 Pairs du Sous-Réseau (Mesh Encrypt)"]
+        end
     end
 
-    A <-->|Lecture & Écriture| B
-    A <-->|HTTP Streaming Local| C
-    C <-->|Requête & Réponse RAG| D
-    A <-->|Chiffrement AES-GCM| E
+    App <-->|Stockage local sécurisé| DB
+    App <-->|Streaming HTTP local| Ollama
+    Ollama <-->|Requêtes RAG directes| Models
+    App <-->|Chiffrement AES-GCM / ECDH| P2P
+    P2P <-->|Découverte UDP & Chat chiffré| Peers
+
+    classDef default fill:#121212,stroke:#F5EBDA,stroke-width:1px,color:#F5EBDA;
+    classDef primary fill:#000000,stroke:#F5EBDA,stroke-width:2px,color:#F5EBDA;
+    classDef accent fill:#F5EBDA,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef container fill:#000000,stroke:#333333,stroke-width:1px,color:#FFFFFF;
     
-    style A fill:#02569B,stroke:#FFF,stroke-width:2px,color:#FFF
-    style B fill:#1A1D2E,stroke:#3DDC84,stroke-width:2px,color:#FFF
-    style C fill:#000000,stroke:#F5EBDA,stroke-width:2px,color:#FFF
-    style D fill:#1A1D2E,stroke:#F5EBDA,stroke-width:2px,color:#FFF
-    style E fill:#0078D6,stroke:#FFF,stroke-width:2px,color:#FFF
+    class App primary;
+    class DB,Ollama,P2P default;
+    class Models,Peers accent;
+    class Client container;
 ```
 
 ### Les 4 Piliers de l'Architecture Locale
