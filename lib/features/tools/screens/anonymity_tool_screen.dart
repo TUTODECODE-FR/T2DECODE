@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // Network Identity & Privacy Tool — Real system actions
 // ============================================================
@@ -168,7 +170,8 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
             message: result.message,
             detail: [result.output, result.error]
                 .where((s) => s != null && s.isNotEmpty)
-                .join('\n'),
+                .join('
+'),
             time: DateTime.now(),
           ));
     });

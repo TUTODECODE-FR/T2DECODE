@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'package:flutter/material.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
@@ -72,7 +74,9 @@ class _MentionsLegalesScreenState extends State<MentionsLegalesScreen> {
             content: [
               const Text('Application 100% "Air-Gapped" / Local-First.', style: TextStyle(color: TdcColors.textSecondary, height: 1.5, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              const Text('L\'association TUTO DECODE ne collecte, ne transmet et ne stocke aucune donnée personnelle sur des serveurs distants. L\'application fonctionne de manière autonome en local sur la machine de l\'utilisateur, garantissant un respect absolu du RGPD "Privacy by Design".\n\nLe code source est public (AGPL-3.0) et auditable par tous sur GitHub.', style: TextStyle(color: TdcColors.textSecondary, height: 1.5)),
+              const Text('L\'association TUTO DECODE ne collecte, ne transmet et ne stocke aucune donnée personnelle sur des serveurs distants. L\'application fonctionne de manière autonome en local sur la machine de l\'utilisateur, garantissant un respect absolu du RGPD "Privacy by Design".
+
+Le code source est public (AGPL-3.0) et auditable par tous sur GitHub.', style: TextStyle(color: TdcColors.textSecondary, height: 1.5)),
             ],
           ),
         ],

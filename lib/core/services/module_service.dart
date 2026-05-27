@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -99,7 +101,7 @@ class ModuleService {
   /// Saves a module's content and its SHA hash.
   Future<void> saveModule(String fileName, String content, String sha) async {
     // Sécurité : Extraire uniquement le nom de fichier pour éviter le Path Traversal
-    final safeFileName = fileName.split('/').last.split('\\').last;
+    final safeFileName = fileName.split('/').last.split('\').last;
     if (safeFileName.isEmpty || safeFileName == '..' || safeFileName == '.') return;
 
     final dir = await getModulesDirectory();
@@ -228,12 +230,12 @@ class ModuleService {
 
   Future<String> readLocalModule(String safeFileName) async {
     final dir = await getModulesDirectory();
-    final file = File('${dir.path}/${safeFileName.split('/').last.split('\\').last}');
+    final file = File('${dir.path}/${safeFileName.split('/').last.split('\').last}');
     return file.readAsString();
   }
 
   Future<void> deleteModule(String fileName) async {
-    final safeFileName = fileName.split('/').last.split('\\').last;
+    final safeFileName = fileName.split('/').last.split('\').last;
     final dir = await getModulesDirectory();
     final file = File('${dir.path}/$safeFileName');
     if (await file.exists()) {

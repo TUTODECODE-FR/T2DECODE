@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // GhostLink — Découverte LAN + messagerie chiffrée pair-à-pair
 // Découverte : broadcast UDP port 54321
@@ -643,8 +645,10 @@ class GhostLinkService extends ChangeNotifier {
       (bytes) async {
         buffer.write(utf8.decode(bytes));
         final raw = buffer.toString();
-        if (raw.contains('\n')) {
-          final lines = raw.split('\n');
+        if (raw.contains('
+')) {
+          final lines = raw.split('
+');
           for (var i = 0; i < lines.length - 1; i++) {
             await _handleIncomingPacket(lines[i], remoteIp, socket);
           }
@@ -669,7 +673,8 @@ class GhostLinkService extends ChangeNotifier {
       'name': _localName,
       'v': 2, // Protocol version 2 (Hardened)
     };
-    socket.write('${jsonEncode(packet)}\n');
+    socket.write('${jsonEncode(packet)}
+');
   }
 
   Future<void> _handleIncomingPacket(
@@ -795,9 +800,11 @@ class GhostLinkService extends ChangeNotifier {
       final raw = jsonEncode(packet);
       final encrypted = await _encrypt(raw);
       socket
-          .write('${jsonEncode({'type': 'secure_msg', 'data': encrypted})}\n');
+          .write('${jsonEncode({'type': 'secure_msg', 'data': encrypted})}
+');
     } else {
-      socket.write('${jsonEncode(packet)}\n');
+      socket.write('${jsonEncode(packet)}
+');
     }
   }
 

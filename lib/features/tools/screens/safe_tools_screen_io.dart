@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -269,7 +271,8 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: TdcColors.surface,
         title: const Text('Infos Système', style: TextStyle(color: TdcColors.textPrimary)),
-        content: Text(out.entries.map((e) => '${e.key}: ${e.value}').join('\n'), style: const TextStyle(color: TdcColors.textSecondary)),
+        content: Text(out.entries.map((e) => '${e.key}: ${e.value}').join('
+'), style: const TextStyle(color: TdcColors.textSecondary)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('Fermer')),
         ],
@@ -341,4 +344,3 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
     return '${b.toStringAsFixed(1)} ${units[u]}';
   }
 }
-
