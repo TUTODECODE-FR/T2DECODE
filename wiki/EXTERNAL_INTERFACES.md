@@ -1,5 +1,7 @@
 # External Interfaces Reference Manual
 
+[Lire en Français (FR)](EXTERNAL_INTERFACES_FR.md)
+
 This document describes the external interfaces, data formats, protocols, and inputs used by T2DECODE, allowing users and developers to extend the application, import custom courses, or interact with its peer-to-peer (P2P) network.
 
 ---
