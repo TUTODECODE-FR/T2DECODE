@@ -13,6 +13,7 @@
   [![Flutter](https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=1A1D2E&color=02569B)](https://flutter.dev)
   [![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-000000?style=for-the-badge&logo=ollama&logoColor=white&labelColor=1A1D2E&color=F5EBDA)](https://ollama.com/)
   [![Privacy By Design](https://img.shields.io/badge/Privacy-By%20Design-3DDC84?style=for-the-badge&labelColor=1A1D2E&color=3DDC84)](RGPD.md)
+  [![OpenSSF Best Practices](https://bestpractices.dev/projects/12999/badge)](https://bestpractices.dev/projects/12999)
   
   <br>
   <p>
