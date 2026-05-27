@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +26,10 @@ class _SshToolScreenState extends State<SshToolScreen> {
         ConfigParameter('IdentityFile', 'Chemin vers la clé privée (ex: ~/.ssh/id_rsa)'),
         ConfigParameter('Port', 'Port SSH si différent de 22'),
       ],
-      'Host prod\n  HostName 1.2.3.4\n  User admin\n  IdentityFile ~/.ssh/prod_key',
+      'Host prod
+  HostName 1.2.3.4
+  User admin
+  IdentityFile ~/.ssh/prod_key',
     ),
     SshTopic(
       'Best Practices Sécurité',
@@ -35,7 +40,10 @@ class _SshToolScreenState extends State<SshToolScreen> {
         ConfigParameter('PubkeyAuthentication yes', 'Autoriser l\'authentification par clé'),
         ConfigParameter('Port 2222', 'Changer le port par défaut (obscurité)'),
       ],
-      '# /etc/ssh/sshd_config\nPermitRootLogin no\nPasswordAuthentication no\nMaxAuthTries 3',
+      '# /etc/ssh/sshd_config
+PermitRootLogin no
+PasswordAuthentication no
+MaxAuthTries 3',
     ),
   ];
 

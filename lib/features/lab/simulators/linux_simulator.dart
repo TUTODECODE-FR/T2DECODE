@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // Linux Simulator
 // Explications théoriques interactives et animées :
@@ -72,7 +74,8 @@ final _linuxScenarios = [
         detail:
             'À la mise sous tension, le CPU saute à l\'adresse reset vector du firmware '
             '(0xFFFFFFF0 en x86). Le POST (Power-On Self Test) vérifie la RAM, le CPU, '
-            'les bus PCI/PCIe et les périphériques de stockage.\n'
+            'les bus PCI/PCIe et les périphériques de stockage.
+'
             'L\'UEFI lit la partition EFI System Partition (ESP, FAT32) et y charge '
             'directement le bootloader signé (Secure Boot vérifie la signature '
             'cryptographique avant exécution).',
@@ -86,7 +89,8 @@ final _linuxScenarios = [
         detail:
             'GRUB2 lit sa configuration dans /boot/grub/grub.cfg. Il charge en mémoire '
             'deux fichiers : vmlinuz (le noyau compressé, typiquement bzImage) et '
-            'initrd.img (le système de fichiers temporaire initial).\n'
+            'initrd.img (le système de fichiers temporaire initial).
+'
             'GRUB passe au noyau une ligne de commande (kernel cmdline) contenant '
             'root=UUID=..., quiet, splash et d\'autres paramètres. '
             'On peut l\'éditer au boot avec "e" pour du debug ou du rescue.',
@@ -108,10 +112,15 @@ final _linuxScenarios = [
         color: TdcColors.system,
         description: 'Le noyau se décompresse et monte le système de fichiers temporaire.',
         detail:
-            '[   0.000000] Linux version 6.8.0-40-generic (gcc version 13.2.0)\n'
-            '[   0.000000] Command line: BOOT_IMAGE=/vmlinuz-6.8.0-40 root=UUID=... ro quiet splash\n'
-            '[   0.000000] KERNEL: Initializing MMU and page tables...\n'
-            '[   0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 6.8.0-40\n\n'
+            '[   0.000000] Linux version 6.8.0-40-generic (gcc version 13.2.0)
+'
+            '[   0.000000] Command line: BOOT_IMAGE=/vmlinuz-6.8.0-40 root=UUID=... ro quiet splash
+'
+            '[   0.000000] KERNEL: Initializing MMU and page tables...
+'
+            '[   0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 6.8.0-40
+
+'
             'Le noyau se décompresse en RAM (self-extracting bzImage). '
             'Il initialise la MMU, détecte les CPUs (SMP) et monte l\'initramfs '
             '(système de fichiers temporaire) pour charger les pilotes de stockage indispensables.',
@@ -123,10 +132,15 @@ final _linuxScenarios = [
         color: TdcColors.system,
         description: 'Le premier processus utilisateur, ancêtre de tous les autres.',
         detail:
-            '[   0.841022] Run /init as init process\n'
-            '[   0.842100] systemd[1]: systemd 255.4-1ubuntu8 running in system mode\n'
-            '[   0.842150] systemd[1]: Detected architecture x86-64.\n'
-            '[   0.850000] systemd[1]: Queued start job for default target Graphical Interface.\n\n'
+            '[   0.841022] Run /init as init process
+'
+            '[   0.842100] systemd[1]: systemd 255.4-1ubuntu8 running in system mode
+'
+            '[   0.842150] systemd[1]: Detected architecture x86-64.
+'
+            '[   0.850000] systemd[1]: Queued start job for default target Graphical Interface.
+
+'
             'systemd est lancé en tant que PID 1. Il construit le graphe de dépendances '
             'et active les unités (.service, .socket) en parallèle pour accélérer le boot.',
         visual: () => const SimLayerStack(
@@ -148,7 +162,8 @@ final _linuxScenarios = [
         detail:
             'Les targets systemd remplacent les runlevels SysV : '
             'multi-user.target (runlevel 3), graphical.target (runlevel 5). '
-            'Chaque service déclare After=, Requires=, Wants= pour exprimer ses dépendances.\n'
+            'Chaque service déclare After=, Requires=, Wants= pour exprimer ses dépendances.
+'
             'Des services critiques sont activés : udev (détection matériel), '
             'NetworkManager ou systemd-networkd, dbus, sshd, etc. '
             'La commande systemctl list-units --failed permet de voir les services en erreur.',
@@ -163,7 +178,8 @@ final _linuxScenarios = [
             'Sur un TTY, systemd lance getty (agetty) qui affiche le prompt login:. '
             'L\'authentification passe par PAM (Pluggable Authentication Modules) : '
             'pam_unix vérifie le mot de passe contre /etc/shadow (hash SHA-512 ou yescrypt), '
-            'pam_limits applique les limites (ulimit), pam_env charge l\'environnement.\n'
+            'pam_limits applique les limites (ulimit), pam_env charge l\'environnement.
+'
             'En mode graphique, un display manager (GDM, SDDM, LightDM) gère la session Wayland/X11. '
             'Après authentification, le shell de l\'utilisateur (.bashrc, .profile) est sourcé.',
       ),
@@ -187,7 +203,8 @@ final _linuxScenarios = [
             'La philosophie Unix "everything is a file" est implémentée via le VFS du noyau. '
             'Les périphériques (/dev/sda), les processus (/proc/1234), le matériel (/sys/class/net), '
             'les sockets réseau et les pipes sont tous accessibles via les mêmes appels système : '
-            'open(), read(), write(), close(), ioctl().\n'
+            'open(), read(), write(), close(), ioctl().
+'
             'Le VFS définit des interfaces (inode_operations, file_operations) que chaque '
             'système de fichiers concret (ext4, xfs, btrfs, tmpfs) implémente.',
       ),
@@ -198,15 +215,24 @@ final _linuxScenarios = [
         color: const Color(0xFFF59E0B),
         description: 'Le Filesystem Hierarchy Standard définit la structure des répertoires.',
         detail:
-            'Les répertoires principaux et leur rôle :\n'
-            '/bin, /sbin → binaires essentiels (souvent liens vers /usr/bin aujourd\'hui)\n'
-            '/etc → configuration système\n'
-            '/var → données variables (logs, spool, cache)\n'
-            '/tmp → temporaire (vidé au reboot sur tmpfs)\n'
-            '/home → répertoires utilisateurs\n'
-            '/proc, /sys → pseudo-filesystems noyau\n'
-            '/dev → fichiers de périphériques (udev)\n'
-            '/boot → noyau et bootloader\n'
+            'Les répertoires principaux et leur rôle :
+'
+            '/bin, /sbin → binaires essentiels (souvent liens vers /usr/bin aujourd\'hui)
+'
+            '/etc → configuration système
+'
+            '/var → données variables (logs, spool, cache)
+'
+            '/tmp → temporaire (vidé au reboot sur tmpfs)
+'
+            '/home → répertoires utilisateurs
+'
+            '/proc, /sys → pseudo-filesystems noyau
+'
+            '/dev → fichiers de périphériques (udev)
+'
+            '/boot → noyau et bootloader
+'
             '/lib, /usr → bibliothèques et programmes',
         visual: () => const SimTreeDiagram(
           color: Color(0xFFF59E0B),
@@ -236,7 +262,8 @@ final _linuxScenarios = [
             'Un inode stocke les métadonnées d\'un fichier : UID/GID propriétaires, '
             'permissions (mode), timestamps (atime/mtime/ctime), taille, et les pointeurs '
             'vers les blocs de données (direct, indirect, doubly/triply indirect en ext4, '
-            'ou extents pour les fichiers contigus).\n'
+            'ou extents pour les fichiers contigus).
+'
             'Le nom du fichier n\'est PAS dans l\'inode — il est dans l\'entrée du répertoire '
             'parent (dentry) qui mappe nom → numéro d\'inode. C\'est pourquoi les hard links '
             'pointent sur le même inode : stat(1) montre le même inode number.',
@@ -249,9 +276,11 @@ final _linuxScenarios = [
         description: 'Attacher un système de fichiers à l\'arborescence.',
         detail:
             'mount(2) attache un block device (ex: /dev/sda2) ou un type spécial (tmpfs, '
-            'proc) sur un répertoire existant appelé point de montage.\n'
+            'proc) sur un répertoire existant appelé point de montage.
+'
             '/etc/fstab liste les montages permanents avec UUID, type, options (ro/rw, '
-            'noexec, nosuid, relatime) et priorité fsck.\n'
+            'noexec, nosuid, relatime) et priorité fsck.
+'
             'systemd génère des units .mount depuis fstab. Les bind mounts permettent '
             'd\'exposer un sous-répertoire à un autre chemin — très utilisé dans les '
             'conteneurs (namespaces de mount).',
@@ -264,20 +293,28 @@ final _linuxScenarios = [
         description: 'Contrôle d\'accès propriétaire/groupe/autres.',
         detail:
             'Chaque fichier a 3 triplets rwx : propriétaire (u), groupe (g), autres (o). '
-            'Chaque permission est un bit : r=4, w=2, x=1. chmod 755 = rwxr-xr-x.\n'
+            'Chaque permission est un bit : r=4, w=2, x=1. chmod 755 = rwxr-xr-x.
+'
             'Pour les répertoires : r=lister, w=créer/supprimer, x=traverser (cd). '
             'Sans x sur un répertoire parent, impossible d\'accéder à son contenu même '
-            'si les permissions du fichier le permettent.\n'
+            'si les permissions du fichier le permettent.
+'
             'Les ACL POSIX (setfacl/getfacl) permettent des règles plus fines par utilisateur.',
         visual: () => SimCodeBlock(
           color: const Color(0xFF10B981),
           title: 'permissions',
-          code: '-rwxr-xr-- 1 root users 4096 jan 1 /usr/bin/exemple\n'
-              'rwx = owner(root): read+write+exec\n'
-              'r-x = group(users): read+exec\n'
-              'r-- = others: read only\n'
-              '\n'
-              'chmod 755 fichier  # rwxr-xr-x\n'
+          code: '-rwxr-xr-- 1 root users 4096 jan 1 /usr/bin/exemple
+'
+              'rwx = owner(root): read+write+exec
+'
+              'r-x = group(users): read+exec
+'
+              'r-- = others: read only
+'
+              '
+'
+              'chmod 755 fichier  # rwxr-xr-x
+'
               'chmod u+x fichier  # ajoute exec au owner',
         ),
       ),
@@ -291,7 +328,8 @@ final _linuxScenarios = [
             '/proc expose l\'état des processus (/proc/PID/maps, /proc/PID/fd), '
             'des statistiques système (/proc/meminfo, /proc/cpuinfo, /proc/net/dev) '
             'et des paramètres noyau (/proc/sys/ = sysctl). Les écritures modifient '
-            'le comportement noyau en live (ex: echo 1 > /proc/sys/net/ipv4/ip_forward).\n'
+            'le comportement noyau en live (ex: echo 1 > /proc/sys/net/ipv4/ip_forward).
+'
             '/sys (sysfs) expose la topologie matérielle (PCI, USB, blocs, réseau) '
             'sous forme d\'attributs lisibles/modifiables. Udev l\'utilise pour créer '
             '/dev automatiquement lors de la détection des périphériques.',
@@ -315,7 +353,8 @@ final _linuxScenarios = [
         detail:
             'fork(2) duplique le processus courant via le mécanisme Copy-on-Write (COW) : '
             'les pages mémoire sont partagées en lecture seule jusqu\'à la première écriture, '
-            'évitant une copie immédiate coûteuse. Le père reçoit le PID fils, le fils reçoit 0.\n'
+            'évitant une copie immédiate coûteuse. Le père reçoit le PID fils, le fils reçoit 0.
+'
             'exec(3) remplace l\'image mémoire du processus par un nouveau programme '
             '(lit l\'ELF, mappe les segments, initialise la pile). '
             'Le shell combine les deux : fork() → le fils fait exec(commande) → '
@@ -328,11 +367,14 @@ final _linuxScenarios = [
         color: const Color(0xFFF59E0B),
         description: 'Les états de vie d\'un processus dans le noyau.',
         detail:
-            'R (Running/Runnable) : en cours d\'exécution ou prêt dans la run queue.\n'
+            'R (Running/Runnable) : en cours d\'exécution ou prêt dans la run queue.
+'
             'S (Sleeping, interruptible) : attend un événement, réveillable par signal — '
-            'c\'est l\'état le plus courant (ex: attente I/O réseau).\n'
+            'c\'est l\'état le plus courant (ex: attente I/O réseau).
+'
             'D (Sleeping, uninterruptible) : attente I/O disque, NE PEUT PAS être tué — '
-            'un processus bloqué en D souvent indique un problème NFS ou I/O.\n'
+            'un processus bloqué en D souvent indique un problème NFS ou I/O.
+'
             'Z (Zombie) : terminé mais le père n\'a pas encore appelé wait() — '
             'l\'entrée dans la table des processus subsiste pour transmettre le code retour.',
         visual: () => SimFlowDiagram(
@@ -356,9 +398,11 @@ final _linuxScenarios = [
         detail:
             'Le CFS (Linux 2.6.23+) utilise un red-black tree trié par vruntime '
             '(temps CPU virtuel normalisé par la priorité). Il choisit toujours la tâche '
-            'au vruntime le plus faible, garantissant l\'équité.\n'
+            'au vruntime le plus faible, garantissant l\'équité.
+'
             'nice values (-20 à +19) ajustent les poids. cgroups v2 permettent des '
-            'quotas CPU par groupe (cpu.max = 50000 100000 = 50% d\'un core).\n'
+            'quotas CPU par groupe (cpu.max = 50000 100000 = 50% d\'un core).
+'
             'SCHED_FIFO et SCHED_RR sont des politiques temps-réel (soft RT) '
             'pour les processus critiques à faible latence.',
       ),
@@ -371,7 +415,8 @@ final _linuxScenarios = [
         detail:
             'Les signaux sont des notifications asynchrones envoyées à un processus. '
             'SIGTERM (15) : demande de terminaison propre, le processus peut l\'attraper '
-            'et faire un cleanup (fermer fichiers, libérer ressources).\n'
+            'et faire un cleanup (fermer fichiers, libérer ressources).
+'
             'SIGKILL (9) : terminaison forcée par le noyau, IMPOSSIBLE à intercepter ni ignorer. '
             'SIGHUP (1) : historiquement "raccrochage terminal", utilisé pour recharger la config. '
             'SIGSEGV (11) : accès mémoire invalide → core dump. '
@@ -386,9 +431,12 @@ final _linuxScenarios = [
         detail:
             'Pipe anonyme (|) : buffer noyau unidirectionnel entre deux fd. '
             'ls | grep .dart crée un pipe : stdout de ls → stdin de grep. '
-            'Capacité ~64KB sur Linux ; write() bloque si plein, read() bloque si vide.\n'
-            'FIFO (named pipe) : pipe avec un nom dans le filesystem.\n'
-            'Unix Domain Socket : full-duplex, plus rapide que TCP loopback (pas de stack IP).\n'
+            'Capacité ~64KB sur Linux ; write() bloque si plein, read() bloque si vide.
+'
+            'FIFO (named pipe) : pipe avec un nom dans le filesystem.
+'
+            'Unix Domain Socket : full-duplex, plus rapide que TCP loopback (pas de stack IP).
+'
             'Shared Memory (shm_open / mmap) : le plus rapide, les processus partagent '
             'des pages physiques — synchronisation via sémaphores POSIX ou futex.',
       ),
@@ -399,12 +447,18 @@ final _linuxScenarios = [
         color: Color(0xFF3B82F6),
         description: 'Les briques fondamentales des conteneurs Linux.',
         detail:
-            'Les namespaces isolent les ressources système par processus :\n'
-            'pid → arbre de processus isolé (PID 1 dans le conteneur)\n'
-            'net → interface réseau, table de routage, sockets dédiées\n'
-            'mnt → arborescence de montage indépendante\n'
-            'uts → hostname isolé\n'
-            'user → mapping UID/GID (rootless containers)\n'
+            'Les namespaces isolent les ressources système par processus :
+'
+            'pid → arbre de processus isolé (PID 1 dans le conteneur)
+'
+            'net → interface réseau, table de routage, sockets dédiées
+'
+            'mnt → arborescence de montage indépendante
+'
+            'uts → hostname isolé
+'
+            'user → mapping UID/GID (rootless containers)
+'
             'cgroups v2 limitent la consommation : memory.max, cpu.max, io.max. '
             'Docker, podman et LXC combinent namespaces + cgroups + seccomp + '
             'capabilities pour isoler les conteneurs sans hyperviseur.',
@@ -427,7 +481,8 @@ final _linuxScenarios = [
         description: 'Lister et configurer les interfaces réseau.',
         detail:
             'ip link show liste toutes les interfaces : eth0, wlan0, lo (loopback 127.0.0.1/8), '
-            'veth (virtual ethernet pour conteneurs), bridge, bond (agrégation).\n'
+            'veth (virtual ethernet pour conteneurs), bridge, bond (agrégation).
+'
             'ip addr add 192.168.1.10/24 dev eth0 assigne une adresse. '
             'ip link set eth0 up/down active/désactive. '
             'Les interfaces virtuelles veth fonctionnent par paires : ce qui entre dans l\'une '
@@ -441,9 +496,11 @@ final _linuxScenarios = [
         description: 'Décider par où envoyer chaque paquet IP.',
         detail:
             'ip route show affiche la table de routage principale. '
-            'Le noyau sélectionne la route la plus spécifique (longest prefix match).\n'
+            'Le noyau sélectionne la route la plus spécifique (longest prefix match).
+'
             'La route par défaut (default via 192.168.1.1) est le gateway de dernier recours. '
-            'ip route add 10.0.0.0/8 via 172.16.0.1 dev eth1 metric 100 ajoute une route statique.\n'
+            'ip route add 10.0.0.0/8 via 172.16.0.1 dev eth1 metric 100 ajoute une route statique.
+'
             'Linux supporte plusieurs tables de routage (ip rule) pour du policy routing : '
             'différentes tables selon l\'IP source, le mark netfilter ou l\'interface entrante.',
       ),
@@ -455,9 +512,11 @@ final _linuxScenarios = [
         description: 'Filtrage, NAT et manipulation des paquets dans le noyau.',
         detail:
             'Netfilter est le framework noyau de traitement des paquets avec des hooks '
-            '(PREROUTING, INPUT, FORWARD, OUTPUT, POSTROUTING).\n'
+            '(PREROUTING, INPUT, FORWARD, OUTPUT, POSTROUTING).
+'
             'iptables (legacy) et nftables (moderne, recommandé) définissent des règles '
-            'dans des tables (filter, nat, mangle, raw) et des chaînes.\n'
+            'dans des tables (filter, nat, mangle, raw) et des chaînes.
+'
             'Exemple NAT : iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE '
             '(partage de connexion Internet). nftables unifie IPv4/IPv6/ARP/bridge '
             'avec une syntaxe plus lisible et de meilleures performances.',
@@ -480,9 +539,11 @@ final _linuxScenarios = [
         detail:
             'socket(AF_INET, SOCK_STREAM, 0) crée un socket TCP. '
             'bind() associe une adresse/port, listen() accepte les connexions, '
-            'accept() retourne un fd par client, connect() côté client.\n'
+            'accept() retourne un fd par client, connect() côté client.
+'
             'Ports 0-1023 : well-known (80 HTTP, 443 HTTPS, 22 SSH) — nécessitent CAP_NET_BIND_SERVICE. '
-            'Ports 1024-49151 : registered. 49152-65535 : éphémères (assignés par l\'OS aux clients).\n'
+            'Ports 1024-49151 : registered. 49152-65535 : éphémères (assignés par l\'OS aux clients).
+'
             'SO_REUSEPORT permet plusieurs processus d\'écouter sur le même port '
             '(load balancing kernel-level, utilisé par Nginx).',
       ),
@@ -494,11 +555,16 @@ final _linuxScenarios = [
         description: 'Inspecter l\'état des connexions et des sockets.',
         detail:
             'ss (socket statistics) remplace netstat, plus rapide car interroge directement '
-            'le noyau via netlink. Commandes utiles :\n'
-            'ss -tlnp → sockets TCP en écoute avec PID\n'
-            'ss -s → résumé statistique\n'
-            'ss -tnp state established → connexions établies\n'
-            'tcpdump -i eth0 port 80 -w capture.pcap capture les paquets bruts.\n'
+            'le noyau via netlink. Commandes utiles :
+'
+            'ss -tlnp → sockets TCP en écoute avec PID
+'
+            'ss -s → résumé statistique
+'
+            'ss -tnp state established → connexions établies
+'
+            'tcpdump -i eth0 port 80 -w capture.pcap capture les paquets bruts.
+'
             'Wireshark analyse les .pcap. '
             'strace -e network ./programme trace les appels système réseau d\'un processus.',
       ),
@@ -510,9 +576,11 @@ final _linuxScenarios = [
         description: 'Gestion de la configuration réseau au niveau système.',
         detail:
             'NetworkManager est le standard sur les distributions desktop (Fedora, Ubuntu, Debian). '
-            'nmcli con show liste les connexions, nmcli device wifi connect SSID configure le WiFi.\n'
+            'nmcli con show liste les connexions, nmcli device wifi connect SSID configure le WiFi.
+'
             'systemd-networkd est préféré sur les serveurs et dans les conteneurs : '
-            'fichiers .network dans /etc/systemd/network/ définissent les interfaces statiques.\n'
+            'fichiers .network dans /etc/systemd/network/ définissent les interfaces statiques.
+'
             'systemd-resolved gère la résolution DNS avec cache et support DoT/DoH. '
             'resolvectl status montre les DNS actifs par interface. '
             '/etc/resolv.conf pointe généralement vers le stub resolver 127.0.0.53.',
@@ -536,7 +604,8 @@ final _linuxScenarios = [
         detail:
             'Chaque processus possède real UID (RUID), effective UID (EUID) et saved UID (SUID). '
             'Le noyau vérifie EUID pour les contrôles d\'accès. root = UID 0, '
-            'il bypasse la plupart des vérifications de permissions (sauf capabilities et MAC).\n'
+            'il bypasse la plupart des vérifications de permissions (sauf capabilities et MAC).
+'
             'Les capabilities Linux (cap_net_admin, cap_sys_admin, cap_dac_override…) '
             'découpent les privilèges root en unités fines : un daemon peut avoir '
             'cap_net_bind_service sans être root complet. '
@@ -551,9 +620,11 @@ final _linuxScenarios = [
         detail:
             'su - root ouvre un shell root après authentification par le mot de passe root. '
             'sudo exécute une commande avec les privilèges d\'un autre utilisateur (root par défaut) '
-            'après authentification par le mot de passe de l\'utilisateur courant.\n'
+            'après authentification par le mot de passe de l\'utilisateur courant.
+'
             '/etc/sudoers (édité avec visudo pour vérification syntaxique) définit les règles : '
-            'user ALL=(ALL:ALL) ALL, ou des droits fins : alice Web=(root) NOPASSWD: /bin/systemctl restart nginx.\n'
+            'user ALL=(ALL:ALL) ALL, ou des droits fins : alice Web=(root) NOPASSWD: /bin/systemctl restart nginx.
+'
             'sudo journalise chaque commande. sudo -l liste les droits de l\'utilisateur courant.',
       ),
       _Step(
@@ -563,9 +634,11 @@ final _linuxScenarios = [
         color: const Color(0xFF8B5CF6),
         description: 'Gestion des permissions de fichiers (Discretionary Access Control).',
         detail:
-            'chmod modifie les bits de permission : chmod u+x, chmod 644, chmod -R 755 dir/.\n'
+            'chmod modifie les bits de permission : chmod u+x, chmod 644, chmod -R 755 dir/.
+'
             'chown user:group file transfère la propriété. '
-            'Seul root peut changer le propriétaire (évite l\'escalade de privilèges).\n'
+            'Seul root peut changer le propriétaire (évite l\'escalade de privilèges).
+'
             'umask définit les permissions retirées à la création : '
             'umask 022 → fichiers créés en 644 (666-022), répertoires en 755 (777-022). '
             'Un umask plus restrictif (027) est recommandé en production : '
@@ -590,9 +663,11 @@ final _linuxScenarios = [
         detail:
             'SUID (Set-User-ID) sur un exécutable : le processus tourne avec EUID = propriétaire '
             'du fichier, pas de l\'appelant. Ex: /usr/bin/passwd est SUID root → '
-            'peut écrire dans /etc/shadow. find / -perm -4000 liste les SUID binaires.\n'
+            'peut écrire dans /etc/shadow. find / -perm -4000 liste les SUID binaires.
+'
             'SGID sur répertoire : les nouveaux fichiers héritent du groupe du répertoire '
-            '(utile pour les répertoires collaboratifs).\n'
+            '(utile pour les répertoires collaboratifs).
+'
             'Sticky bit (/tmp) : seul le propriétaire d\'un fichier peut le supprimer '
             'même si le répertoire est writable par tous. ls -la affiche "t" en position x des autres.',
       ),
@@ -604,10 +679,12 @@ final _linuxScenarios = [
         description: 'Contrôle d\'accès obligatoire au-dessus des permissions UNIX.',
         detail:
             'Les Linux Security Modules (LSM) ajoutent une couche MAC (Mandatory Access Control) '
-            'que même root ne peut pas contourner. Chaque accès passe par des hooks LSM.\n'
+            'que même root ne peut pas contourner. Chaque accès passe par des hooks LSM.
+'
             'SELinux (Red Hat/Fedora) utilise des labels (contextes) sur fichiers et processus. '
             'Une règle type_enforcement autorise domain → type:class:permission. '
-            'getenforce (Enforcing/Permissive/Disabled), audit2allow génère des règles depuis les refus.\n'
+            'getenforce (Enforcing/Permissive/Disabled), audit2allow génère des règles depuis les refus.
+'
             'AppArmor (Ubuntu/Debian) utilise des profils par chemin de programme '
             '(plus simple à écrire). aa-status liste les profils actifs. '
             'Les deux bloquent les exploits même après compromission d\'un service.',
@@ -620,10 +697,12 @@ final _linuxScenarios = [
         description: 'Traçabilité et centralisation des événements de sécurité.',
         detail:
             'auditd collecte les événements noyau (appels système, accès fichiers, connexions réseau) '
-            'via le sous-système audit. ausearch -k passwd_changes, aureport -au pour l\'analyse.\n'
+            'via le sous-système audit. ausearch -k passwd_changes, aureport -au pour l\'analyse.
+'
             'journald (systemd-journald) collecte les logs de tous les services, '
             'du noyau (kmsg) et de systemd. journalctl -u sshd -f suit les logs SSH. '
-            'journalctl --since "1 hour ago" --priority=err filtre les erreurs récentes.\n'
+            'journalctl --since "1 hour ago" --priority=err filtre les erreurs récentes.
+'
             'Pour la conformité, rsyslog ou syslog-ng peuvent centraliser les logs vers '
             'un serveur distant (SIEM). logrotate gère la rotation et la compression.',
       ),
@@ -645,9 +724,11 @@ final _linuxScenarios = [
         description: 'La première ligne qui désigne l\'interpréteur du script.',
         detail:
             '#!/usr/bin/env bash est préféré à #!/bin/bash car env recherche bash dans le PATH, '
-            'garantissant la portabilité (bash peut être dans /usr/local/bin sur macOS).\n'
+            'garantissant la portabilité (bash peut être dans /usr/local/bin sur macOS).
+'
             'Le noyau lit les deux premiers octets (#!) et exécute le programme indiqué '
-            'avec le script comme argument. chmod +x script.sh puis ./script.sh suffit.\n'
+            'avec le script comme argument. chmod +x script.sh puis ./script.sh suffit.
+'
             'set -euo pipefail en début de script est une bonne pratique : '
             '-e arrête sur erreur, -u traite les variables indéfinies comme erreur, '
             '-o pipefail propage les erreurs dans les pipes.',
@@ -660,29 +741,44 @@ final _linuxScenarios = [
         description: 'Manipuler les données avec les expansions Bash.',
         detail:
             'VAR="valeur" (pas d\'espaces autour de =). '
-            '\${VAR} expansion simple, toujours entre guillemets pour éviter word splitting.\n'
+            '\${VAR} expansion simple, toujours entre guillemets pour éviter word splitting.
+'
             '\${VAR:-défaut} → valeur ou défaut si vide. '
             '\${#VAR} → longueur. \${VAR#prefix} → supprime prefix. '
-            '\${VAR/old/new} → remplacement. \${VAR^^} → majuscules.\n'
+            '\${VAR/old/new} → remplacement. \${VAR^^} → majuscules.
+'
             'Arrays : arr=(a b c), \${arr[1]}=b, \${arr[@]}=tous, \${#arr[@]}=taille. '
             'Substitution de commande : result=\$(commande) (préfère \$() à `backticks`). '
             'Arithmétique : ((count++)), \$(( 2 ** 10 ))=1024.',
         visual: () => SimCodeBlock(
           color: const Color(0xFFF59E0B),
           title: 'Bash',
-          code: '#!/usr/bin/env bash\n'
-              'set -euo pipefail\n'
-              '\n'
-              'NAME="World"\n'
-              'echo "Hello, \${NAME}!"\n'
-              '\n'
-              '# Valeur par défaut\n'
-              'PORT=\${PORT:-8080}\n'
-              '\n'
-              '# Longueur de chaine\n'
-              'echo \${#NAME}  # 5\n'
-              '\n'
-              '# Substitution de commande\n'
+          code: '#!/usr/bin/env bash
+'
+              'set -euo pipefail
+'
+              '
+'
+              'NAME="World"
+'
+              'echo "Hello, \${NAME}!"
+'
+              '
+'
+              '# Valeur par défaut
+'
+              'PORT=\${PORT:-8080}
+'
+              '
+'
+              '# Longueur de chaine
+'
+              'echo \${#NAME}  # 5
+'
+              '
+'
+              '# Substitution de commande
+'
               'DATE=\$(date +%Y-%m-%d)',
         ),
       ),
@@ -693,32 +789,52 @@ final _linuxScenarios = [
         color: const Color(0xFF8B5CF6),
         description: 'Contrôler le flux d\'exécution du script.',
         detail:
-            'if [[ condition ]]; then ... elif ...; else ...; fi\n'
-            '[[ ]] est préféré à [ ] : supporte &&, ||, =~, pas de word splitting.\n'
+            'if [[ condition ]]; then ... elif ...; else ...; fi
+'
+            '[[ ]] est préféré à [ ] : supporte &&, ||, =~, pas de word splitting.
+'
             'Tests utiles : -f file (fichier), -d dir, -z str (vide), -n str (non vide), '
-            '-eq/-ne/-lt/-gt pour les entiers.\n'
-            'for f in *.log; do gzip "\$f"; done\n'
-            'for ((i=0; i<10; i++)); do echo \$i; done\n'
+            '-eq/-ne/-lt/-gt pour les entiers.
+'
+            'for f in *.log; do gzip "\$f"; done
+'
+            'for ((i=0; i<10; i++)); do echo \$i; done
+'
             'while IFS= read -r line; do ...; done < fichier.txt '
             '(lire un fichier ligne par ligne sans perdre les espaces).',
         visual: () => SimCodeBlock(
           color: const Color(0xFF8B5CF6),
           title: 'Bash',
-          code: '# if/elif/else\n'
-              'if [[ -f "\$FILE" ]]; then\n'
-              '  echo "exists"\n'
-              'elif [[ -d "\$FILE" ]]; then\n'
-              '  echo "is a dir"\n'
-              'fi\n'
-              '\n'
-              '# for loop\n'
-              'for i in \$(seq 1 5); do\n'
-              '  echo "item \$i"\n'
-              'done\n'
-              '\n'
-              '# while read\n'
-              'while IFS= read -r line; do\n'
-              '  echo "\$line"\n'
+          code: '# if/elif/else
+'
+              'if [[ -f "\$FILE" ]]; then
+'
+              '  echo "exists"
+'
+              'elif [[ -d "\$FILE" ]]; then
+'
+              '  echo "is a dir"
+'
+              'fi
+'
+              '
+'
+              '# for loop
+'
+              'for i in \$(seq 1 5); do
+'
+              '  echo "item \$i"
+'
+              'done
+'
+              '
+'
+              '# while read
+'
+              'while IFS= read -r line; do
+'
+              '  echo "\$line"
+'
               'done < input.txt',
         ),
       ),
@@ -729,10 +845,13 @@ final _linuxScenarios = [
         color: Color(0xFF06B6D4),
         description: 'Structurer le code en fonctions réutilisables.',
         detail:
-            'function ma_fonction() { ... } ou ma_fonction() { ... } (les deux syntaxes valides).\n'
-            'Arguments : \$1, \$2, ..., \$@ (tous), \$# (nombre), \$0 (nom du script).\n'
+            'function ma_fonction() { ... } ou ma_fonction() { ... } (les deux syntaxes valides).
+'
+            'Arguments : \$1, \$2, ..., \$@ (tous), \$# (nombre), \$0 (nom du script).
+'
             'return N pour le code de retour (0=succès). '
-            'local var=valeur pour les variables locales (évite la pollution de scope).\n'
+            'local var=valeur pour les variables locales (évite la pollution de scope).
+'
             'Sous-shell (cmd1 ; cmd2) : fork sans exec, hérite l\'environnement mais '
             'les modifications (cd, variables) ne remontent pas au parent. '
             'export VAR rend une variable visible dans les sous-processus (env hérité).',
@@ -744,12 +863,16 @@ final _linuxScenarios = [
         color: Color(0xFF10B981),
         description: 'Rediriger les flux stdin, stdout, stderr.',
         detail:
-            'cmd > fichier : redirige stdout (crée/écrase). >> : append.\n'
-            'cmd 2> erreurs.log : redirige stderr. cmd &> tout.log : stdout + stderr.\n'
-            'cmd 2>&1 : redirige stderr vers stdout (ordre important !).\n'
+            'cmd > fichier : redirige stdout (crée/écrase). >> : append.
+'
+            'cmd 2> erreurs.log : redirige stderr. cmd &> tout.log : stdout + stderr.
+'
+            'cmd 2>&1 : redirige stderr vers stdout (ordre important !).
+'
             'cmd < input.txt : stdin depuis fichier. '
             'Heredoc : cmd << EOF ... EOF (multi-ligne). '
-            'Herestring : cmd <<< "string".\n'
+            'Herestring : cmd <<< "string".
+'
             'process substitution : diff <(ls dir1) <(ls dir2) — '
             'exécute dans un sous-shell et expose le résultat comme un fd (FIFO virtuel). '
             'tee permet de bifurquer le flux : cmd | tee fichier | autre_cmd.',
@@ -761,11 +884,14 @@ final _linuxScenarios = [
         color: Color(0xFFA855F7),
         description: 'Gérer les signaux et le nettoyage en sortie.',
         detail:
-            'trap "commande" SIGNAL permet de réagir aux signaux dans un script.\n'
+            'trap "commande" SIGNAL permet de réagir aux signaux dans un script.
+'
             'trap "rm -f /tmp/mon_script_\$\$; exit" INT TERM EXIT '
             'nettoie les fichiers temporaires à l\'interruption (Ctrl+C = SIGINT) '
-            'ou en fin normale. \$\$ est le PID du script courant.\n'
-            'trap "" INT ignore SIGINT (utile pendant une section critique non interruptible).\n'
+            'ou en fin normale. \$\$ est le PID du script courant.
+'
+            'trap "" INT ignore SIGINT (utile pendant une section critique non interruptible).
+'
             'trap - INT restaure le comportement par défaut. '
             'kill -SIGUSR1 \$PID envoie un signal personnalisé pour déclencher '
             'une action dans un daemon (ex: rechargement de config sans restart).',
@@ -936,19 +1062,30 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
     } else if (c == 'uname -r') {
       output = '6.8.0-40-generic';
     } else if (c == 'ps aux' || c == 'ps') {
-      output = 'USER    PID  %CPU  %MEM  COMMAND\nroot      1   0.0   0.3  systemd\nroot    125   0.1   0.4  sshd\nuser    712   0.0   0.2  bash';
+      output = 'USER    PID  %CPU  %MEM  COMMAND
+root      1   0.0   0.3  systemd
+root    125   0.1   0.4  sshd
+user    712   0.0   0.2  bash';
     } else if (c == 'df -h') {
-      output = 'Filesystem  Size  Used  Avail Use%\n/dev/sda1    50G   18G    30G  38%\ntmpfs       1.9G     0   1.9G   0%';
+      output = 'Filesystem  Size  Used  Avail Use%
+/dev/sda1    50G   18G    30G  38%
+tmpfs       1.9G     0   1.9G   0%';
     } else if (c == 'free -h') {
-      output = '       total  used  free  available\nMem:    7.8G  3.2G  2.1G       4.2G\nSwap:   2.0G  0.1G  1.9G';
+      output = '       total  used  free  available
+Mem:    7.8G  3.2G  2.1G       4.2G
+Swap:   2.0G  0.1G  1.9G';
     } else if (c == 'uptime') {
       output = '14:32:01 up 3 days, 5:12, 1 user, load average: 0.15, 0.20, 0.18';
     } else if (c.startsWith('cat /etc/')) {
       final file = c.substring(4);
       if (file == '/etc/hosts') {
-        output = '127.0.0.1  localhost\n127.0.1.1  hostname\n::1        localhost ip6-localhost';
+        output = '127.0.0.1  localhost
+127.0.1.1  hostname
+::1        localhost ip6-localhost';
       } else if (file == '/etc/passwd') {
-        output = 'root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nuser:x:1000:1000::/home/user:/bin/bash';
+        output = 'root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+user:x:1000:1000::/home/user:/bin/bash';
       } else {
         output = 'cat: $file: No such file or directory';
       }
@@ -962,7 +1099,8 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
     }
     if (!mounted) return;
     setState(() {
-      for (final line in output.split('\n')) {
+      for (final line in output.split('
+')) {
         _bashLines.add(line);
       }
     });
@@ -1192,7 +1330,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
             if (_bootPhase >= 6)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text('Ubuntu 24.04 LTS \\n \\l', style: const TextStyle(color: Color(0xFF22C55E), fontSize: 11, fontFamily: 'monospace'))
+                child: Text('Ubuntu 24.04 LTS \n \l', style: const TextStyle(color: Color(0xFF22C55E), fontSize: 11, fontFamily: 'monospace'))
                     .animate().fadeIn(),
               ),
           ],
@@ -1328,11 +1466,18 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
   // 3 – Network commands ────────────────────────────────────
   Widget _buildNetworkPanel() {
     final cmds = <_LP2>[
-      _LP2('ip a', 'eth0: 192.168.1.10/24 brd 192.168.1.255\nlo: 127.0.0.1/8'),
-      _LP2('ip r', 'default via 192.168.1.1 dev eth0\n192.168.1.0/24 dev eth0 proto kernel'),
-      _LP2('ss -tulpn', 'tcp LISTEN 0.0.0.0:22 (sshd)\ntcp LISTEN 0.0.0.0:80 (nginx)\ntcp LISTEN 0.0.0.0:5432 (postgres)'),
-      _LP2('netstat -rn', 'Destination  Gateway      Genmask       Iface\n0.0.0.0      192.168.1.1  0.0.0.0       eth0'),
-      _LP2('iptables -L', 'Chain INPUT (policy DROP)\nACCEPT  tcp --  anywhere  tcp dpt:ssh\nACCEPT  tcp --  anywhere  tcp dpt:http'),
+      _LP2('ip a', 'eth0: 192.168.1.10/24 brd 192.168.1.255
+lo: 127.0.0.1/8'),
+      _LP2('ip r', 'default via 192.168.1.1 dev eth0
+192.168.1.0/24 dev eth0 proto kernel'),
+      _LP2('ss -tulpn', 'tcp LISTEN 0.0.0.0:22 (sshd)
+tcp LISTEN 0.0.0.0:80 (nginx)
+tcp LISTEN 0.0.0.0:5432 (postgres)'),
+      _LP2('netstat -rn', 'Destination  Gateway      Genmask       Iface
+0.0.0.0      192.168.1.1  0.0.0.0       eth0'),
+      _LP2('iptables -L', 'Chain INPUT (policy DROP)
+ACCEPT  tcp --  anywhere  tcp dpt:ssh
+ACCEPT  tcp --  anywhere  tcp dpt:http'),
     ];
     return _shellBox(
       color: const Color(0xFF8B5CF6),
@@ -1351,7 +1496,8 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
                   ],
                 ),
                 const SizedBox(height: 2),
-                ...cmd.b.split('\n').map((l) => Text(l, style: const TextStyle(color: Colors.white60, fontSize: 10, fontFamily: 'monospace'))),
+                ...cmd.b.split('
+').map((l) => Text(l, style: const TextStyle(color: Colors.white60, fontSize: 10, fontFamily: 'monospace'))),
                 const SizedBox(height: 8),
               ],
             );

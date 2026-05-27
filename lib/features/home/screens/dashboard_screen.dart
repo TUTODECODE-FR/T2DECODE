@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -212,7 +214,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
           decoration: BoxDecoration(color: Colors.black, borderRadius: TdcRadius.sm),
           child: const SingleChildScrollView(
             child: Text(
-              '[INFO] Ollama service started\n[DEBUG] Connecting to p2p mesh...\n[INFO] 127.0.0.1:11434 reachable\n[WARN] High CPU load detected: 85%\n[INFO] Course "Linux Basics" loaded\n[INFO] Dashboard initialized',
+              '[INFO] Ollama service started
+[DEBUG] Connecting to p2p mesh...
+[INFO] 127.0.0.1:11434 reachable
+[WARN] High CPU load detected: 85%
+[INFO] Course "Linux Basics" loaded
+[INFO] Dashboard initialized',
               style: TextStyle(color: TdcColors.success, fontFamily: 'monospace', fontSize: 12),
             ),
           ),

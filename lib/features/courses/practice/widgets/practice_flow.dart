@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
@@ -170,4 +172,3 @@ class _ConnectorChip extends StatelessWidget {
         .shimmer(duration: 1400.ms, color: color.withOpacity(0.25));
   }
 }
-

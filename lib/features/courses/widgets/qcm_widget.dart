@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'package:flutter/material.dart';
 import '../data/course_repository.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -103,7 +105,12 @@ class OllamaService {
     final msgs = <Map<String, String>>[];
     String fullSystem = system;
     if (context != null && context.isNotEmpty) {
-      fullSystem += "\n\nCONTEXTE ACTUEL DU COURS :\n$context\n\nL'utilisateur étudie ce contenu. Utilise ces informations pour répondre de manière précise et personnalisée.";
+      fullSystem += "
+
+CONTEXTE ACTUEL DU COURS :
+$context
+
+L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de manière précise et personnalisée.";
     }
 
     if (fullSystem.isNotEmpty) msgs.add({'role': 'system', 'content': fullSystem});
@@ -150,7 +157,8 @@ class OllamaService {
         lineBuf.clear();
 
         // Séparer les lignes JSON
-        final lines = full.split('\n');
+        final lines = full.split('
+');
         // Protection contre les flux malveillants sans saut de ligne (DoS)
         if (full.length > 50000) {
           throw Exception('Buffer overflow: Réponse du serveur trop longue sans saut de ligne.');

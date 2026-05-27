@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -208,7 +210,9 @@ class _ChapterScreenState extends State<ChapterScreen> {
               context: context,
               builder: (ctx) => AlertDialog(
                 title: const Text('Lien externe'),
-                content: Text('Voulez-vous ouvrir ce lien externe ?\n\n$href'),
+                content: Text('Voulez-vous ouvrir ce lien externe ?
+
+$href'),
                 actions: [
                   TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
                   TextButton(

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // Feature: courses — Data layer
 // Loads and owns the Course/Chapter data model.
 import 'dart:convert';

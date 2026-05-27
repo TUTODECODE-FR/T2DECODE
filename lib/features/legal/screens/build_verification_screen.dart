@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // Build Verification Screen - Interface de vérification de build
 // ============================================================
@@ -738,9 +740,13 @@ Hash: ${certificate.certificateHash}
 
 CONTRÔLES DE SÉCURITÉ
 ----------------------
-${result.checks.entries.map((e) => '- ${e.key}: ${e.value ? 'OK' : 'FAIL'}').join('\n')}
+${result.checks.entries.map((e) => '- ${e.key}: ${e.value ? 'OK' : 'FAIL'}').join('
+')}
 
-${result.reasons != null ? 'ALERTES:\n${result.reasons!.map((r) => '- $r').join('\n')}\n' : ''}
+${result.reasons != null ? 'ALERTES:
+${result.reasons!.map((r) => '- $r').join('
+')}
+' : ''}
 
 RECOMMANDATION
 --------------

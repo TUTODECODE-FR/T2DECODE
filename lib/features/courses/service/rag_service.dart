@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import '../data/course_repository.dart';
 
 class RagService {
@@ -36,13 +38,19 @@ class RagService {
 
       if (matches || q.contains(course.title.toLowerCase())) {
         // Add course description and some chapter titles
-        String context = "### PARCOURS : ${course.title}\n${course.description}\n";
-        context += "Chapitres inclus : ${course.chapters.map((c) => c.title).join(', ')}.\n";
+        String context = "### PARCOURS : ${course.title}
+${course.description}
+";
+        context += "Chapitres inclus : ${course.chapters.map((c) => c.title).join(', ')}.
+";
         
         // Search in chapters
         for (var ch in course.chapters) {
           if (q.contains(ch.title.toLowerCase())) {
-            context += "\nEXTRAIT CH. '${ch.title}' :\n${ch.content.length > 500 ? ch.content.substring(0, 500) + "..." : ch.content}\n";
+            context += "
+EXTRAIT CH. '${ch.title}' :
+${ch.content.length > 500 ? ch.content.substring(0, 500) + "..." : ch.content}
+";
           }
         }
         results.add(context);
@@ -50,6 +58,8 @@ class RagService {
     }
 
     if (results.isEmpty) return null;
-    return results.join("\n---\n");
+    return results.join("
+---
+");
   }
 }

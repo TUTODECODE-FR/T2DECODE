@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // responsive.dart — Utilitaires de responsive design TutoDeCode
 // Breakpoints : mobile < 600 | tablet 600–1024 | desktop > 1024
