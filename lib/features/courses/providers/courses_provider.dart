@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // Feature: courses — State management (Provider)
 // Single source of truth for all course state.
 import 'package:flutter/material.dart';

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 /// Outil diagnostic : commandes utiles pour Linux, macOS, Windows
 /// Catégories : Réseau, Disque, Système, Processus, Matériel
 

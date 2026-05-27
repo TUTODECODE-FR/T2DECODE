@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
@@ -252,7 +254,8 @@ class GithubService {
       ).timeout(_timeout);
       
       if (response.statusCode == 200) {
-        final lines = response.body.split('\n');
+        final lines = response.body.split('
+');
         for (final line in lines) {
           if (line.trim().startsWith('version:')) {
             return line.split(':')[1].trim();

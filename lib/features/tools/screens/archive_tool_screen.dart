@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -177,7 +179,12 @@ class _ArchiveToolScreenState extends State<ArchiveToolScreen> {
         children: [
           Text('💡 Rappel des Flags TAR :', style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 14)),
           SizedBox(height: 8),
-          Text('• c : Create (Créer)\n• x : Extract (Extraire)\n• v : Verbose (Détail)\n• f : File (Fichier)\n• z : Gzip (Compression rapide)\n• j : Bzip2 (Meilleure compression)', 
+          Text('• c : Create (Créer)
+• x : Extract (Extraire)
+• v : Verbose (Détail)
+• f : File (Fichier)
+• z : Gzip (Compression rapide)
+• j : Bzip2 (Meilleure compression)', 
             style: TextStyle(color: TdcColors.textSecondary, fontSize: 12, height: 1.5)),
         ],
       ),

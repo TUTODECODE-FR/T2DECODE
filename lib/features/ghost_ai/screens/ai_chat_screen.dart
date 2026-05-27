@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -180,7 +182,9 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
         _msgs.add(_Msg(role: 'user', text: text));
         _msgs.add(const _Msg(
           role: 'assistant',
-          text: 'Bonjour ! Je suis Ghost AI. 🤖\n\n'
+          text: 'Bonjour ! Je suis Ghost AI. 🤖
+
+'
               'Il semble que l\'IA locale (Ollama) ne soit pas encore configurée ou active. '
               'Pour une réponse complète et intelligente, allez dans **Paramètres > IA** pour l\'activer, '
               'ou lancez `ollama serve` sur votre Mac.',
@@ -206,7 +210,9 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       setState(() {
         _msgs[_msgs.length - 1] = const _Msg(
           role: 'assistant',
-          text: '🧪 **Mode Démo actif** — Ceci est une réponse simulée.\n\n'
+          text: '🧪 **Mode Démo actif** — Ceci est une réponse simulée.
+
+'
               'En production, Ghost AI utilise Ollama (moteur IA 100% local) '
               'pour répondre à vos questions techniques en temps réel. '
               'Aucune donnée ne quitte votre appareil.',
@@ -225,7 +231,10 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     try {
       final contextText = await RagService().findRelevantContext(text);
       final finalSystemPrompt = contextText != null 
-          ? "$_kSystem\n\nCONTEXTE RELEVANT DES COURS :\n$contextText"
+          ? "$_kSystem
+
+CONTEXTE RELEVANT DES COURS :
+$contextText"
           : _kSystem;
 
       _sub = OllamaService.stream(_model!, history, system: finalSystemPrompt).listen(
@@ -256,8 +265,11 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
           setState(() {
             _msgs[_msgs.length - 1] = const _Msg(
               role: 'error',
-              text: '⚠️ **Impossible de se connecter à l\'IA.**\n\n'
-                  'Vérifiez qu\'Ollama est bien installé et en cours d\'exécution sur votre Mac.\n'
+              text: '⚠️ **Impossible de se connecter à l\'IA.**
+
+'
+                  'Vérifiez qu\'Ollama est bien installé et en cours d\'exécution sur votre Mac.
+'
                   '_Commande : `ollama serve`_',
             );
             _status = const OllamaStatus(running: false, error: 'Ollama indisponible');
@@ -272,7 +284,9 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       setState(() {
         _msgs[_msgs.length - 1] = const _Msg(
           role: 'error',
-          text: '⚠️ **Impossible de se connecter à l\'IA.**\n\n'
+          text: '⚠️ **Impossible de se connecter à l\'IA.**
+
+'
               'Vérifiez qu\'Ollama est bien installé et en cours d\'exécution sur votre Mac.',
         );
         _streaming = false;

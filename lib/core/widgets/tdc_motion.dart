@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // tdc_motion.dart — Fond animé, bordures dégradé, halos, motion
 // ============================================================

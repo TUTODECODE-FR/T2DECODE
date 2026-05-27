@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // GhostLinkScreen — Liste des pairs P2P découverts
 // ============================================================
@@ -277,7 +279,8 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           const Text(
-              'Démarrez Ghost Link pour découvrir\nles appareils sur votre réseau local.',
+              'Démarrez Ghost Link pour découvrir
+les appareils sur votre réseau local.',
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: TdcColors.textSecondary, fontSize: 14, height: 1.5)),

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:convert';
 import 'dart:io';
 
@@ -28,7 +30,8 @@ class ToolLogService {
         'action': action,
         if (meta != null) 'meta': meta,
       };
-      await f.writeAsString('${jsonEncode(entry)}\n', mode: FileMode.append, flush: true);
+      await f.writeAsString('${jsonEncode(entry)}
+', mode: FileMode.append, flush: true);
     } catch (e) {
       if (kDebugMode) debugPrint('Tool log failed: $e');
     }
@@ -39,4 +42,3 @@ class ToolLogService {
     if (await f.exists()) await f.delete();
   }
 }
-
