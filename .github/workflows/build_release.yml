@@ -77,6 +77,11 @@ jobs:
               build/ios/ipa/*.ipa
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@17d0e2bd7d51742c71671bd19fa12bdc9d40a3d6 # v2.10.2
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           # On workflow_dispatch, build the exact tag the user asked for (avoid uploading main builds to an older tag release).
@@ -437,6 +442,11 @@ jobs:
       LINUX_GPG_PASSPHRASE: ${{ secrets.LINUX_GPG_PASSPHRASE }}
       LINUX_GPG_KEY_ID: ${{ secrets.LINUX_GPG_KEY_ID }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@17d0e2bd7d51742c71671bd19fa12bdc9d40a3d6 # v2.10.2
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           ref: ${{ github.event.inputs.target_tag != '' && github.event.inputs.target_tag || github.ref }}
