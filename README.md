@@ -6,14 +6,19 @@
   **« Le savoir ne devrait pas toujours dépendre d'une connexion. »**<br>
   — *Maxime MARTIN CIVET*
 
-  [![CI](https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1A1D2E&color=3DDC84)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
-  [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=F5EBDA&labelColor=1A1D2E&logoColor=F5EBDA)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
-  [![Mac App Store](https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6)](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)
-  [![License](https://img.shields.io/badge/License-GPLv3-FCC624?style=for-the-badge&labelColor=1A1D2E&color=FCC624)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
-  [![Flutter](https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=1A1D2E&color=02569B)](https://flutter.dev)
-  [![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-000000?style=for-the-badge&logo=ollama&logoColor=white&labelColor=1A1D2E&color=F5EBDA)](https://ollama.com/)
-  [![Privacy By Design](https://img.shields.io/badge/Privacy-By%20Design-3DDC84?style=for-the-badge&labelColor=1A1D2E&color=3DDC84)](RGPD.md)
-  [![OpenSSF Best Practices](https://bestpractices.dev/projects/12999/badge)](https://bestpractices.dev/projects/12999)
+[![CI](https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1A1D2E&color=3DDC84)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
+  [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=F5EBDA&labelColor=1A1D2E&logoColor=F5EBDA)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
+  [![Mac App Store](https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6)](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)
+  [![License](https://img.shields.io/badge/License-GPLv3-FCC624?style=for-the-badge&labelColor=1A1D2E&color=FCC624)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
+  [![Flutter](https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=1A1D2E&color=02569B)](https://flutter.dev)
+  [![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-000000?style=for-the-badge&logo=ollama&logoColor=white&labelColor=1A1D2E&color=F5EBDA)](https://ollama.com/)
+  [![Privacy By Design](https://img.shields.io/badge/Privacy-By%20Design-3DDC84?style=for-the-badge&labelColor=1A1D2E&color=3DDC84)](RGPD.md)
+  
+  <br>
+
+  [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12999/badge)](https://www.bestpractices.dev/projects/12999)
+  [![OpenSSF Baseline](https://www.bestpractices.dev/projects/12999/baseline)](https://www.bestpractices.dev/projects/12999)
+  [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge)](https://scorecard.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE)
   
   <br>
   <p>
