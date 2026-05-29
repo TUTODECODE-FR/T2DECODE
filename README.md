@@ -267,6 +267,12 @@ Si T2DECODE vous fait gagner du temps ou enrichit votre parcours professionnel, 
 
 <img src="assets/separator.svg" width="100%" height="4">
 
+## 🔐 Security
+
+All commits in this repository are GPG-signed for authenticity.
+
+<img src="assets/separator.svg" width="100%" height="4">
+
 ## 📄 Licence & Droits
 
 Ce projet est distribué sous licence **[GNU General Public License v3.0 (GPLv3)](LICENSE)**.  
