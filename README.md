@@ -1,5 +1,6 @@
 <div align="center">
-  <img src="assets/TDC.png" width="160" height="160" alt="T2DECODE Logo">
+  <img src="https://raw.githubusercontent.com/TUTODECODE-FR/T2DECODE/main/assets/TDC.png" width="160" height="160" alt="T2C Logo">
+
 
   # T2DECODE
   
