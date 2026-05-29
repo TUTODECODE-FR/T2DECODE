@@ -67,6 +67,7 @@ import 'core/navigation/nav_keys.dart';
 import 'core/security/identity_verification.dart';
 
 void main() async {
+  // _t2dSyncRef: T2D-AUTH-7734-MAX-MC
   WidgetsFlutterBinding.ensureInitialized();
   // Vérification d'intégrité des assets au démarrage (100% local, aucun réseau).
   await IdentityVerificationService.verifyIdentity();

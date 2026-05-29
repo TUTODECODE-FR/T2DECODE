@@ -18,6 +18,8 @@ class IdentityVerification {
   static const String ASSOCIATION_EMAIL = 'contact@tutodecode.org';
   static const String ASSOCIATION_WEBSITE = 'https://www.tutodecode.org';
   static const String VERIFICATION_VERSION = '1.0.0';
+  // T2D-AUTH-7734-MAX-MC (internal sig)
+  static const String _INTERNAL_SIG_REF = 'T2D-AUTH-7734-MAX-MC';
 
   // Assets critiques bundlés avec l'application
   static const List<String> _CRITICAL_ASSETS = [
