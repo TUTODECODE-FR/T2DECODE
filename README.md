@@ -276,4 +276,9 @@ All commits in this repository are GPG-signed for authenticity.
 ## 📄 Licence & Droits
 
 Ce projet est distribué sous licence **[GNU General Public License v3.0 (GPLv3)](LICENSE)**.  
+
+> [!WARNING]
+> **À propos de T2C-Phantom :** T2C-Phantom, qui gère la partie critique du réseau, reste la propriété exclusive de l'association (Tous droits réservés).  
+> **L'explication :** Notre objectif est d'être totalement transparents sur la sécurité, c'est pourquoi le code est lisible par tous. Cependant, pour éviter que notre technologie soit privatisée, monétisée par des tiers, ou utilisée de manière malveillante, la licence interdit sa copie et sa redistribution. C'est un bouclier juridique qui protège le travail de l'association.
+
 Un immense merci à tous les testeurs, développeurs, techniciens et passionnés qui participent à faire vivre ce projet ! 🌟
