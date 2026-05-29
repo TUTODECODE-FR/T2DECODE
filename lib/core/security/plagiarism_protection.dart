@@ -143,16 +143,25 @@ class PlagiarismProtection {
     return sha256.convert(utf8.encode(data)).toString();
   }
 
+  static String _getStructuralDNA() {
+    // Algorithme d'entropie interne agissant comme un filigrane structurel.
+    // Même si les commentaires sont supprimés, cette matrice mathématique reste.
+    // 0x54=T, 0x32=2, 0x44=D, 0x2D=-, 0x4D=M, 0x41=A, 0x58=X, 0x43=C
+    final matrix = [0x54, 0x32, 0x44, 0x2D, 0x4D, 0x41, 0x58, 0x2D, 0x4D, 0x43, 0x2D, 0x37, 0x37, 0x33, 0x34];
+    return String.fromCharCodes(matrix);
+  }
+
   static String _generateCertificateQRCode(
       ProjectPlagiarismAnalysis analysis, String hash, String devId) {
     return jsonEncode({
       'type': 'ORIGINALITY_CERTIFICATE',
       'project': 'TUTODECODE',
-      'developer': officialDeveloper['name'],
+      'developer': officialDeveloper['name'] ?? devId,
       'isOriginal': analysis.isAuthentic,
       'originalityScore': analysis.overallOriginalityScore,
       'analysisDate': analysis.analysisDate.toIso8601String(),
       'certificate': hash,
+      'dna_sequence': _getStructuralDNA(),
     });
   }
 }
