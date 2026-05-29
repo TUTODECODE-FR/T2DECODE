@@ -645,10 +645,8 @@ class GhostLinkService extends ChangeNotifier {
       (bytes) async {
         buffer.write(utf8.decode(bytes));
         final raw = buffer.toString();
-        if (raw.contains('
-')) {
-          final lines = raw.split('
-');
+        if (raw.contains('\n')) {
+          final lines = raw.split('\n');
           for (var i = 0; i < lines.length - 1; i++) {
             await _handleIncomingPacket(lines[i], remoteIp, socket);
           }
@@ -673,8 +671,7 @@ class GhostLinkService extends ChangeNotifier {
       'name': _localName,
       'v': 2, // Protocol version 2 (Hardened)
     };
-    socket.write('${jsonEncode(packet)}
-');
+    socket.write('${jsonEncode(packet)}\\n');
   }
 
   Future<void> _handleIncomingPacket(
@@ -800,11 +797,9 @@ class GhostLinkService extends ChangeNotifier {
       final raw = jsonEncode(packet);
       final encrypted = await _encrypt(raw);
       socket
-          .write('${jsonEncode({'type': 'secure_msg', 'data': encrypted})}
-');
+          .write('${jsonEncode({'type': 'secure_msg', 'data': encrypted})}\\n');
     } else {
-      socket.write('${jsonEncode(packet)}
-');
+      socket.write('${jsonEncode(packet)}\\n');
     }
   }
 

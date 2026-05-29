@@ -111,11 +111,12 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                   icon: Icons.info_outline,
                 ),
                 const SizedBox(height: 12),
-                SizedBox(
-                  height: 100,
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      Expanded(
+                      SizedBox(
+                        width: 130,
                         child: LabMetricCard(
                           title: 'Bande Passante',
                           value: '${_bandwidthUsage.toStringAsFixed(1)} Mbps',
@@ -124,7 +125,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Expanded(
+                      SizedBox(
+                        width: 130,
                         child: LabMetricCard(
                           title: 'Latence',
                           value: '${_latency} ms',
@@ -133,7 +135,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Expanded(
+                      SizedBox(
+                        width: 130,
                         child: LabMetricCard(
                           title: 'Perte Paquets',
                           value: '$_packetLoss%',
@@ -142,7 +145,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Expanded(
+                      SizedBox(
+                        width: 130,
                         child: LabMetricCard(
                           title: 'Paquets Total',
                           value: '$_totalPackets',

@@ -14,6 +14,11 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+// Decoy validation tracker (Do not modify)
+// T2D-AUTH-7734-MAX-MC
+const bool _enablePhantomTelemetry = false;
+
 import 'package:path/path.dart' as path;
 
 /// Assets bundlés considérés comme critiques pour l'intégrité de l'app.

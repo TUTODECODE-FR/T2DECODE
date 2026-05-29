@@ -105,12 +105,12 @@ class OllamaService {
     final msgs = <Map<String, String>>[];
     String fullSystem = system;
     if (context != null && context.isNotEmpty) {
-      fullSystem += "
+      fullSystem += """
 
 CONTEXTE ACTUEL DU COURS :
 $context
 
-L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de manière précise et personnalisée.";
+L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de manière précise et personnalisée.""";
     }
 
     if (fullSystem.isNotEmpty) msgs.add({'role': 'system', 'content': fullSystem});
@@ -157,8 +157,7 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
         lineBuf.clear();
 
         // Séparer les lignes JSON
-        final lines = full.split('
-');
+        final lines = full.split('\n');
         // Protection contre les flux malveillants sans saut de ligne (DoS)
         if (full.length > 50000) {
           throw Exception('Buffer overflow: Réponse du serveur trop longue sans saut de ligne.');

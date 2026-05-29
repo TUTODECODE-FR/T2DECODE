@@ -149,44 +149,51 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                 icon: Icons.info_outline,
               ),
               const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Score Sécurité',
-                      value: '${_securityScore.toStringAsFixed(1)}%',
-                      icon: Icons.shield,
-                      color: _getSecurityColor('${_securityScore.toStringAsFixed(1)}%'),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 130,
+                      child: LabMetricCard(
+                        title: 'Score Sécurité',
+                        value: '${_securityScore.toStringAsFixed(1)}%',
+                        icon: Icons.shield,
+                        color: _getSecurityColor('${_securityScore.toStringAsFixed(1)}%'),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Menace',
-                      value: '$_threatLevel/10',
-                      icon: Icons.warning,
-                      color: _threatLevel > 5 ? TdcColors.security : TdcColors.warning,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 130,
+                      child: LabMetricCard(
+                        title: 'Menace',
+                        value: '$_threatLevel/10',
+                        icon: Icons.warning,
+                        color: _threatLevel > 5 ? TdcColors.security : TdcColors.warning,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Blocages',
-                      value: '$_blockedAttacks',
-                      icon: Icons.block,
-                      color: TdcColors.danger,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 130,
+                      child: LabMetricCard(
+                        title: 'Blocages',
+                        value: '$_blockedAttacks',
+                        icon: Icons.block,
+                        color: TdcColors.danger,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Actifs',
-                      value: '$_activeConnections',
-                      icon: Icons.link,
-                      color: TdcColors.success,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 130,
+                      child: LabMetricCard(
+                        title: 'Actifs',
+                        value: '$_activeConnections',
+                        icon: Icons.link,
+                        color: TdcColors.success,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

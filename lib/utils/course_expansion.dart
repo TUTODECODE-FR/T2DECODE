@@ -90,8 +90,7 @@ class CourseExpansion {
 
   static String _explainCodeLines(String code) {
     final lines = code
-        .split('
-')
+        .split('\n')
         .map((l) => l.trim())
         .where((l) => l.isNotEmpty && !l.startsWith('#') && !l.startsWith('//') && !l.startsWith('--'))
         .take(8)
@@ -125,8 +124,7 @@ class CourseExpansion {
         explained.add('> 🔹 **`$line`** — instruction technique à comprendre dans son contexte');
       }
     }
-    return explained.join('
-');
+    return explained.join('\n');
   }
 
   // ─── Génération de quiz adaptatifs ──────────────────────────────────────
@@ -221,8 +219,7 @@ Comment amélioreriez-vous ce que vous venez d'apprendre pour le rendre plus rob
 
     return '''### ⚠️ Erreurs classiques à éviter absolument
 
-${pittfalls.join('
-')}''';
+${pittfalls.join('\n')}''';
   }
 
   // ─── Génération de cheat sheet ───────────────────────────────────────────
@@ -230,13 +227,11 @@ ${pittfalls.join('
     if (code.isEmpty) return '';
 
     final commands = code
-        .split('
-')
+        .split('\n')
         .where((l) => l.trim().isNotEmpty && !l.trim().startsWith('#') && !l.trim().startsWith('//'))
         .take(6)
         .map((l) => '- `${l.trim()}`')
-        .join('
-');
+        .join('\n');
 
     return '''### 📋 Mémo rapide — À garder sous la main
 
@@ -486,7 +481,6 @@ Ce chapitre est théorique mais demande une mise en pratique immédiate.
       '---',
       '',
       resources,
-    ].join('
-');
+    ].join('\n');
   }
 }

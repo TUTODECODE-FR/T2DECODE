@@ -254,8 +254,7 @@ class GithubService {
       ).timeout(_timeout);
       
       if (response.statusCode == 200) {
-        final lines = response.body.split('
-');
+        final lines = response.body.split('\n');
         for (final line in lines) {
           if (line.trim().startsWith('version:')) {
             return line.split(':')[1].trim();

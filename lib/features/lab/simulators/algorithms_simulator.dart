@@ -105,24 +105,15 @@ final _algoScenarios = [
         visual: () => const SimCodeBlock(
           color: TdcColors.algorithms,
           title: 'Bubble Sort',
-          code: 'function bubbleSort(arr):
-'
-              '  n = arr.length
-'
-              '  for i in 0..n-1:
-'
-              '    for j in 0..n-i-2:
-'
-              '      if arr[j] > arr[j+1]:
-'
-              '        swap(arr[j], arr[j+1])
-'
-              '  return arr
-'
-              '
-'
-              '# O(n²) comparaisons, O(1) espace
-'
+          code: 'function bubbleSort(arr):\n'
+              '  n = arr.length\n'
+              '  for i in 0..n-1:\n'
+              '    for j in 0..n-i-2:\n'
+              '      if arr[j] > arr[j+1]:\n'
+              '        swap(arr[j], arr[j+1])\n'
+              '  return arr\n'
+              '\n'
+              '# O(n²) comparaisons, O(1) espace\n'
               '# Stable: oui, In-place: oui',
         ),
       ),
@@ -377,28 +368,17 @@ final _algoScenarios = [
         visual: () => SimCodeBlock(
           color: const Color(0xFFFF6D00),
           title: 'Fibonacci — memo vs naive',
-          code: '# Naive O(2^n)
-'
-              'def fib_naive(n):
-'
-              '  if n <= 1: return n
-'
-              '  return fib_naive(n-1) + fib_naive(n-2)
-'
-              '
-'
-              '# Memo O(n)
-'
-              'cache = {}
-'
-              'def fib_memo(n):
-'
-              '  if n in cache: return cache[n]
-'
-              '  if n <= 1: return n
-'
-              '  cache[n] = fib_memo(n-1) + fib_memo(n-2)
-'
+          code: '# Naive O(2^n)\n'
+              'def fib_naive(n):\n'
+              '  if n <= 1: return n\n'
+              '  return fib_naive(n-1) + fib_naive(n-2)\n'
+              '\n'
+              '# Memo O(n)\n'
+              'cache = {}\n'
+              'def fib_memo(n):\n'
+              '  if n in cache: return cache[n]\n'
+              '  if n <= 1: return n\n'
+              '  cache[n] = fib_memo(n-1) + fib_memo(n-2)\n'
               '  return cache[n]',
         ),
       ),

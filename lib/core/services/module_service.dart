@@ -101,7 +101,7 @@ class ModuleService {
   /// Saves a module's content and its SHA hash.
   Future<void> saveModule(String fileName, String content, String sha) async {
     // Sécurité : Extraire uniquement le nom de fichier pour éviter le Path Traversal
-    final safeFileName = fileName.split('/').last.split('\').last;
+    final safeFileName = fileName.split('/').last.split(r'\').last;
     if (safeFileName.isEmpty || safeFileName == '..' || safeFileName == '.') return;
 
     final dir = await getModulesDirectory();
@@ -230,12 +230,12 @@ class ModuleService {
 
   Future<String> readLocalModule(String safeFileName) async {
     final dir = await getModulesDirectory();
-    final file = File('${dir.path}/${safeFileName.split('/').last.split('\').last}');
+    final file = File('${dir.path}/${safeFileName.split('/').last.split(r'\').last}');
     return file.readAsString();
   }
 
   Future<void> deleteModule(String fileName) async {
-    final safeFileName = fileName.split('/').last.split('\').last;
+    final safeFileName = fileName.split('/').last.split(r'\').last;
     final dir = await getModulesDirectory();
     final file = File('${dir.path}/$safeFileName');
     if (await file.exists()) {

@@ -740,13 +740,9 @@ Hash: ${certificate.certificateHash}
 
 CONTRÔLES DE SÉCURITÉ
 ----------------------
-${result.checks.entries.map((e) => '- ${e.key}: ${e.value ? 'OK' : 'FAIL'}').join('
-')}
+${result.checks.entries.map((e) => '- ${e.key}: ${e.value ? 'OK' : 'FAIL'}').join('\n')}
 
-${result.reasons != null ? 'ALERTES:
-${result.reasons!.map((r) => '- $r').join('
-')}
-' : ''}
+${result.reasons != null ? 'ALERTES:\n${result.reasons!.map((r) => '- $r').join('\n')}\n' : ''}
 
 RECOMMANDATION
 --------------

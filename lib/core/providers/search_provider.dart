@@ -75,9 +75,9 @@ class SearchProvider extends ChangeNotifier {
         id: 'course:${course.id}',
         kind: SearchDocKind.course,
         title: course.title,
-        body: '${course.description}
+        body: '''${course.description}
 ${course.category}
-${course.keywords.join(' ')}',
+${course.keywords.join(' ')}''',
         nav: {'route': '/', 'courseId': course.id},
       ));
 
@@ -104,8 +104,8 @@ ${course.keywords.join(' ')}',
     final docLen = <String, int>{};
 
     for (final d in docs) {
-      final tokens = _tokenize('${d.title}
-${d.body}');
+      final tokens = _tokenize('''${d.title}
+${d.body}''');
       docLen[d.id] = tokens.length;
       final tf = <String, int>{};
       for (final t in tokens) {
@@ -186,8 +186,7 @@ ${d.body}');
       id: id,
       kind: SearchDocKind.cheat,
       title: '${entry.command} — ${entry.description}',
-      body: bodyParts.join('
-'),
+      body: bodyParts.join('\n'),
       nav: {
         'route': '/cheat-sheets',
         'command': entry.command,

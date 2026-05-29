@@ -276,8 +276,7 @@ class AnonymityService {
       } else if (Platform.isWindows) {
         final result = await Process.run('getmac', ['/fo', 'csv', '/nh']);
         final out = result.stdout as String;
-        final line = out.trim().split('
-').first;
+        final line = out.trim().split('\n').first;
         final parts = line.split(',');
         if (parts.length >= 2) {
           final mac = parts[0].replaceAll('"', '').replaceAll('-', ':').trim();
@@ -380,8 +379,7 @@ sed -i "s/127.0.1.1.*/127.0.1.1\t$name/" /etc/hosts
     return AnonResult(
         success: true,
         message: 'Hostname changé en "$name"',
-        output: lines.join('
-'));
+        output: lines.join('\n'));
   }
 
   static Future<AnonResult> _changeHostnameMacOS(
@@ -401,8 +399,7 @@ sed -i "s/127.0.1.1.*/127.0.1.1\t$name/" /etc/hosts
     return AnonResult(
       success: allOk,
       message: allOk ? 'Hostname changé en "$name"' : 'Changement partiel',
-      output: lines.join('
-'),
+      output: lines.join('\n'),
     );
   }
 
@@ -466,10 +463,8 @@ sed -i "s/127.0.1.1.*/127.0.1.1\t$name/" /etc/hosts
     return AnonResult(
       success: ok,
       message: ok ? 'MAC changée en $mac sur $iface' : 'Échec changement MAC',
-      output: [r1.stdout, r2.stdout, r3.stdout].join('
-'),
-      error: ok ? null : [r1.stderr, r2.stderr, r3.stderr].join('
-'),
+      output: [r1.stdout, r2.stdout, r3.stdout].join('\n'),
+      error: ok ? null : [r1.stderr, r2.stderr, r3.stderr].join('\n'),
     );
   }
 
@@ -486,8 +481,7 @@ sed -i "s/127.0.1.1.*/127.0.1.1\t$name/" /etc/hosts
       message: ok
           ? 'MAC changée en $mac sur $iface'
           : 'Échec. Sur Apple Silicon la MAC Wi-Fi peut être verrouillée.',
-      output: [r1.stdout, r2.stdout, r3.stdout].join('
-'),
+      output: [r1.stdout, r2.stdout, r3.stdout].join('\n'),
       error: ok ? null : r2.stderr as String,
     );
   }
@@ -571,8 +565,7 @@ if (\$adapter) {
     final uidResult =
         await Process.run('dscl', ['.', '-list', '/Users', 'UniqueID']);
     final usedUids = (uidResult.stdout as String)
-        .split('
-')
+        .split('\n')
         .map((l) => int.tryParse(l.trim().split(RegExp(r'\s+')).last) ?? 0)
         .toSet();
     int uid = 501;
@@ -611,8 +604,7 @@ if (\$adapter) {
       message: allOk
           ? 'Utilisateur "$name" créé (UID $uid). Définissez un mot de passe avec: sudo passwd $name'
           : 'Création partielle',
-      output: lines.join('
-'),
+      output: lines.join('\n'),
     );
   }
 
@@ -680,8 +672,7 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
     return AnonResult(
         success: true,
         message: 'IPv6 désactivé sur ${ifaces.length} interface(s)',
-        output: lines.join('
-'));
+        output: lines.join('\n'));
   }
 
   static Future<AnonResult> _disableIPv6Windows() async {
@@ -833,8 +824,7 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
   static Future<ProcessResult> _sudoScript(
       String script, String? password) async {
     final tmp = await File('/tmp/_tdc_anon_script.sh')
-        .writeAsString('#!/bin/sh
-$script');
+        .writeAsString('#!/bin/sh\n$script');
     await Process.run('chmod', ['+x', tmp.path]);
     final result = await _sudo(['sh', tmp.path], password);
     await tmp.delete().catchError((_) => tmp);
@@ -844,8 +834,7 @@ $script');
   static Future<List<String>> _getMacOSInterfaces() async {
     final r = await Process.run('networksetup', ['-listallnetworkservices']);
     return (r.stdout as String)
-        .split('
-')
+        .split('\n')
         .where((l) =>
             l.isNotEmpty && !l.startsWith('*') && !l.startsWith('An asterisk'))
         .map((l) => l.trim())

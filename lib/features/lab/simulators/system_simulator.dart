@@ -208,53 +208,61 @@ class _SystemSimulatorState extends State<SystemSimulator>
                 icon: Icons.info_outline,
               ),
               const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'CPU',
-                      value: '${_cpuUsage.toStringAsFixed(1)}%',
-                      icon: Icons.memory,
-                      color: _getMetricColor('${_cpuUsage.toStringAsFixed(1)}%'),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 120,
+                      child: LabMetricCard(
+                        title: 'CPU',
+                        value: '${_cpuUsage.toStringAsFixed(1)}%',
+                        icon: Icons.memory,
+                        color: _getMetricColor('${_cpuUsage.toStringAsFixed(1)}%'),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'RAM',
-                      value: '${_memoryUsage.toStringAsFixed(1)}%',
-                      icon: Icons.sd_storage,
-                      color: _getMetricColor('${_memoryUsage.toStringAsFixed(1)}%'),
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 120,
+                      child: LabMetricCard(
+                        title: 'RAM',
+                        value: '${_memoryUsage.toStringAsFixed(1)}%',
+                        icon: Icons.sd_storage,
+                        color: _getMetricColor('${_memoryUsage.toStringAsFixed(1)}%'),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Disque',
-                      value: '${_diskUsage.toStringAsFixed(1)}%',
-                      icon: Icons.storage,
-                      color: _getMetricColor('${_diskUsage.toStringAsFixed(1)}%'),
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 120,
+                      child: LabMetricCard(
+                        title: 'Disque',
+                        value: '${_diskUsage.toStringAsFixed(1)}%',
+                        icon: Icons.storage,
+                        color: _getMetricColor('${_diskUsage.toStringAsFixed(1)}%'),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Réseau',
-                      value: '${_networkUsage.toStringAsFixed(1)}M',
-                      icon: Icons.network_check,
-                      color: TdcColors.network,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 120,
+                      child: LabMetricCard(
+                        title: 'Réseau',
+                        value: '${_networkUsage.toStringAsFixed(1)}M',
+                        icon: Icons.network_check,
+                        color: TdcColors.network,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Temp',
-                      value: '${_temperature.toStringAsFixed(1)}°C',
-                      icon: Icons.thermostat,
-                      color: _temperature > 70 ? TdcColors.danger : TdcColors.warning,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 120,
+                      child: LabMetricCard(
+                        title: 'Temp',
+                        value: '${_temperature.toStringAsFixed(1)}°C',
+                        icon: Icons.thermostat,
+                        color: _temperature > 70 ? TdcColors.danger : TdcColors.warning,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

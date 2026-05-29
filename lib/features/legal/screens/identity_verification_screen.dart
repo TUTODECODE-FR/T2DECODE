@@ -967,8 +967,7 @@ Validité: ${certificate.isValid ? 'Valide' : 'Invalide'}
 
 CONTRÔLES DE SÉCURITÉ
 ----------------------
-${result.checks.entries.map((e) => '- ${e.key}: ${e.value ? 'OK' : 'FAIL'}').join('
-')}
+${result.checks.entries.map((e) => '- ${e.key}: ${e.value ? 'OK' : 'FAIL'}').join('\n')}
 
 DÉTAILS
 -------

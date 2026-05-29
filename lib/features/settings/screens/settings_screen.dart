@@ -381,41 +381,65 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildAboutSection() {
     return _buildSection(
-      title: 'Identité de l\'Association',
-      icon: Icons.business,
+      title: 'Association & Mentions Légales',
+      icon: Icons.info_outline,
       children: [
-        const Text('TUTO DECODE - Association Loi 1901', style: TextStyle(fontWeight: FontWeight.bold)),
-        const Text('Structure à but non lucratif dédiée à l\'éducation numérique.'),
-        TextButton(onPressed: () {}, child: const Text('Visiter tutodecode.org')),
-        const SizedBox(height: 12),
+        const Text(
+          'Association TUTODECODE (Loi 1901)',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: TdcColors.textPrimary),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'Structure à but non lucratif dédiée à l\'éducation numérique et à la liberté technologique.',
+          style: TextStyle(color: TdcColors.textSecondary, fontSize: 13, height: 1.4),
+        ),
+        const SizedBox(height: 16),
         Row(
           children: [
-            ElevatedButton(onPressed: () {}, child: const Text('Security Policy')),
-            const SizedBox(width: 12),
-            OutlinedButton(onPressed: () => Navigator.pushNamed(context, '/mentions-legales'), child: const Text('Mentions Légales (JO)')),
+            OutlinedButton(
+              onPressed: () => Navigator.pushNamed(context, '/mentions-legales'),
+              child: const Row(
+                children: [
+                  Icon(Icons.badge_outlined, size: 14, color: TdcColors.accent),
+                  SizedBox(width: 8),
+                  Text('Fiche d\'Identité & Mentions Légales'),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        const Row(
+          children: [
+            Text('LOGICIEL : ', style: TextStyle(color: TdcColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
+            Text('T2DECODE', style: TextStyle(color: TdcColors.textPrimary, fontSize: 11, fontWeight: FontWeight.bold)),
+            SizedBox(width: 16),
+            Text('LICENCE : ', style: TextStyle(color: TdcColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
+            Text('GPL-3.0-only', style: TextStyle(color: TdcColors.textPrimary, fontSize: 11, fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: 12),
-        const Text('Licence : AGPL-3.0', style: TextStyle(color: TdcColors.textSecondary)),
-        const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(12),
-          decoration: const BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: TdcRadius.sm),
-          child: const Row(
+          decoration: const BoxDecoration(
+            color: TdcColors.surfaceAlt,
+            border: Border.fromBorderSide(BorderSide(color: TdcColors.border)),
+          ),
+          child: Row(
             children: [
               Icon(
-                bool.fromEnvironment('OFFICIAL_BUILD') ? Icons.verified : Icons.warning_amber_rounded, 
-                color: bool.fromEnvironment('OFFICIAL_BUILD') ? TdcColors.success : TdcColors.warning, 
-                size: 16
+                const bool.fromEnvironment('OFFICIAL_BUILD') ? Icons.verified : Icons.warning_amber_rounded,
+                color: const bool.fromEnvironment('OFFICIAL_BUILD') ? TdcColors.success : TdcColors.warning,
+                size: 16,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  bool.fromEnvironment('OFFICIAL_BUILD') 
-                      ? 'Signature : v1.0.3-official-asso-release' 
-                      : 'Version Non-Officielle (Code Source Modifié/GitHub)', 
-                  style: TextStyle(fontFamily: 'monospace', fontSize: 11)
-                )
+                  const bool.fromEnvironment('OFFICIAL_BUILD')
+                      ? 'Signature : v1.0.3-official-release-verified'
+                      : 'Build de développement (Signature locale non certifiée)',
+                  style: const TextStyle(fontFamily: 'monospace', fontSize: 11, color: TdcColors.textSecondary),
+                ),
               ),
             ],
           ),

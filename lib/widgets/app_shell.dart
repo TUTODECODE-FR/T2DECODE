@@ -475,164 +475,173 @@ class _AppShellState extends State<AppShell> {
                 ? null
                 : Border(right: BorderSide(color: TdcColors.border)),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                    TdcSpacing.md, TdcSpacing.lg, TdcSpacing.md, TdcSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(children: [
-                      Image.asset('assets/logo.png', width: 32, height: 32),
-                      const SizedBox(width: TdcSpacing.sm),
-                      const Text('T2DECODE',
-                          style: TextStyle(
-                            color: TdcColors.textPrimary,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 14,
-                            letterSpacing: 1.4,
-                          )),
-                    ]),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: TdcColors.accent.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.verified_user_outlined, size: 12, color: TdcColors.accent),
-                          const SizedBox(width: 6),
-                          const Text(
-                            'SOUVERAIN & AIR-GAPPED',
-                            style: TextStyle(
-                              color: TdcColors.accent,
-                              fontSize: 9,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 0.8,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: TdcSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('PROGRESSION',
-                            style: TextStyle(
-                                color: TdcColors.textMuted,
-                                fontSize: 10,
-                                letterSpacing: 1.4,
-                                fontWeight: FontWeight.w700)),
-                        Text('${(prov.overallProgress * 100).toInt()}%',
-                            style: const TextStyle(
-                                color: TdcColors.accent,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(0),
-                      child: LinearProgressIndicator(
-                        value: prov.overallProgress,
-                        minHeight: 4,
-                        backgroundColor: TdcColors.surfaceAlt,
-                        valueColor:
-                            const AlwaysStoppedAnimation(TdcColors.accent),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                        '${prov.completedCount} sur ${prov.totalChaptersCount} chapitres',
-                        style: const TextStyle(
-                            color: TdcColors.textMuted, fontSize: 10)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: TdcSpacing.lg),
-              const Divider(color: TdcColors.border, height: 1),
-              const SizedBox(height: TdcSpacing.sm),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(vertical: TdcSpacing.sm),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: _navItems
-                        .map((item) => _buildNavItem(
-                            context, item, insideDrawer, activeRoute))
-                        .toList(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
                   ),
-                ),
-              ),
-              const Divider(color: TdcColors.border, height: 1),
-              Padding(
-                padding: const EdgeInsets.all(TdcSpacing.md),
-                child: InkWell(
-                  onTap: () {
-                    if (insideDrawer) Navigator.pop(context);
-                    AppNavigator.pushNamed('/ai-config');
-                  },
-                  borderRadius: TdcRadius.sm,
-                  child: Container(
-                    padding: const EdgeInsets.all(TdcSpacing.sm + 2),
-                    decoration: BoxDecoration(
-                      color: TdcColors.surfaceAlt,
-                      borderRadius: TdcRadius.sm,
-                      border: Border.all(color: TdcColors.border),
-                    ),
-                    child: Row(children: [
-                      Consumer<AiTutorProvider>(
-                        builder: (context, ai, _) => Icon(
-                          Icons.memory,
-                          size: 16,
-                          color: ai.isConnected ? TdcColors.info : TdcColors.textMuted,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Consumer<AiTutorProvider>(
-                          builder: (context, ai, _) => Column(
+                  child: IntrinsicHeight(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                              TdcSpacing.md, TdcSpacing.lg, TdcSpacing.md, TdcSpacing.md),
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                !ai.hasCheckedOllama
-                                    ? 'Vérification…'
-                                    : (ai.isConnected ? 'IA locale prête' : 'IA locale optionnelle'),
-                                style: const TextStyle(
-                                    color: TdcColors.textPrimary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              Text(
-                                ai.isConnected
-                                    ? '${ai.availableModels.length} modèle(s)'
-                                    : 'Cliquer pour configurer Ollama',
-                                style: const TextStyle(
-                                    color: TdcColors.textMuted, fontSize: 10),
+                              Row(children: [
+                                Image.asset('assets/logo.png', width: 32, height: 32),
+                                const SizedBox(width: TdcSpacing.sm),
+                                const Text('T2DECODE',
+                                    style: TextStyle(
+                                      color: TdcColors.textPrimary,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 14,
+                                      letterSpacing: 1.4,
+                                    )),
+                              ]),
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: TdcColors.accent.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.verified_user_outlined, size: 12, color: TdcColors.accent),
+                                    const SizedBox(width: 6),
+                                    const Text(
+                                      'SOUVERAIN & AIR-GAPPED',
+                                      style: TextStyle(
+                                        color: TdcColors.accent,
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 0.8,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                    ]),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: TdcSpacing.md),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('PROGRESSION',
+                                      style: TextStyle(
+                                          color: TdcColors.textMuted,
+                                          fontSize: 10,
+                                          letterSpacing: 1.4,
+                                          fontWeight: FontWeight.w700)),
+                                  Text('${(prov.overallProgress * 100).toInt()}%',
+                                      style: const TextStyle(
+                                          color: TdcColors.accent,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(0),
+                                child: LinearProgressIndicator(
+                                  value: prov.overallProgress,
+                                  minHeight: 4,
+                                  backgroundColor: TdcColors.surfaceAlt,
+                                  valueColor:
+                                      const AlwaysStoppedAnimation(TdcColors.accent),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                  '${prov.completedCount} sur ${prov.totalChaptersCount} chapitres',
+                                  style: const TextStyle(
+                                      color: TdcColors.textMuted, fontSize: 10)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: TdcSpacing.lg),
+                        const Divider(color: TdcColors.border, height: 1),
+                        const SizedBox(height: TdcSpacing.sm),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: _navItems
+                              .map((item) => _buildNavItem(
+                                  context, item, insideDrawer, activeRoute))
+                              .toList(),
+                        ),
+                        const Spacer(),
+                        const Divider(color: TdcColors.border, height: 1),
+                        Padding(
+                          padding: const EdgeInsets.all(TdcSpacing.md),
+                          child: InkWell(
+                            onTap: () {
+                              if (insideDrawer) Navigator.pop(context);
+                              AppNavigator.pushNamed('/ai-config');
+                            },
+                            borderRadius: TdcRadius.sm,
+                            child: Container(
+                              padding: const EdgeInsets.all(TdcSpacing.sm + 2),
+                              decoration: BoxDecoration(
+                                color: TdcColors.surfaceAlt,
+                                borderRadius: TdcRadius.sm,
+                                border: Border.all(color: TdcColors.border),
+                              ),
+                              child: Row(children: [
+                                Consumer<AiTutorProvider>(
+                                  builder: (context, ai, _) => Icon(
+                                    Icons.memory,
+                                    size: 16,
+                                    color: ai.isConnected ? TdcColors.info : TdcColors.textMuted,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Consumer<AiTutorProvider>(
+                                    builder: (context, ai, _) => Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          !ai.hasCheckedOllama
+                                              ? 'Vérification…'
+                                              : (ai.isConnected ? 'IA locale prête' : 'IA locale optionnelle'),
+                                          style: const TextStyle(
+                                              color: TdcColors.textPrimary,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        Text(
+                                          ai.isConnected
+                                              ? '${ai.availableModels.length} modèle(s)'
+                                              : 'Cliquer pour configurer Ollama',
+                                          style: const TextStyle(
+                                              color: TdcColors.textMuted, fontSize: 10),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              );
+            },
           ),
         );
       },
