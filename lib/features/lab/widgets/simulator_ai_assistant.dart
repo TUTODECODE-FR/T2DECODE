@@ -193,8 +193,7 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
           Icon(Icons.smart_toy_outlined, color: widget.accentColor.withOpacity(0.4), size: 56),
           const SizedBox(height: 12),
           Text(
-            'Pose ta question sur
-${widget.topic}',
+            'Pose ta question sur\n${widget.topic}',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 14),
           ),

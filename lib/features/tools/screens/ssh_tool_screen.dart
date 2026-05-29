@@ -26,10 +26,10 @@ class _SshToolScreenState extends State<SshToolScreen> {
         ConfigParameter('IdentityFile', 'Chemin vers la clé privée (ex: ~/.ssh/id_rsa)'),
         ConfigParameter('Port', 'Port SSH si différent de 22'),
       ],
-      'Host prod
+      '''Host prod
   HostName 1.2.3.4
   User admin
-  IdentityFile ~/.ssh/prod_key',
+  IdentityFile ~/.ssh/prod_key''',
     ),
     SshTopic(
       'Best Practices Sécurité',
@@ -40,10 +40,10 @@ class _SshToolScreenState extends State<SshToolScreen> {
         ConfigParameter('PubkeyAuthentication yes', 'Autoriser l\'authentification par clé'),
         ConfigParameter('Port 2222', 'Changer le port par défaut (obscurité)'),
       ],
-      '# /etc/ssh/sshd_config
+      '''# /etc/ssh/sshd_config
 PermitRootLogin no
 PasswordAuthentication no
-MaxAuthTries 3',
+MaxAuthTries 3''',
     ),
   ];
 

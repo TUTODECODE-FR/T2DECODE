@@ -72,12 +72,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
   void _initializeKeys() {
     // Générer des clés de démonstration
     _keyController.text = 'MySecretKey123!';
-    _privateKeyController.text = '-----BEGIN PRIVATE KEY-----
-MIIEpAIBAAKCAQEA...
------END PRIVATE KEY-----';
-    _publicKeyController.text = '-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhki...
------END PUBLIC KEY-----';
+    _privateKeyController.text = '-----BEGIN PRIVATE KEY-----\\nMIIEpAIBAAKCAQEA...\\n-----END PRIVATE KEY-----';
+    _publicKeyController.text = '-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhki...\\n-----END PUBLIC KEY-----';
   }
 
   @override
@@ -144,44 +140,51 @@ MIIBIjANBgkqhki...
                 icon: Icons.info_outline,
               ),
               const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Algorithme',
-                      value: _selectedCipher,
-                      icon: Icons.settings_suggest,
-                      color: TdcColors.crypto,
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 130,
+                      child: LabMetricCard(
+                        title: 'Algorithme',
+                        value: _selectedCipher,
+                        icon: Icons.settings_suggest,
+                        color: TdcColors.crypto,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Sécurité',
-                      value: 'DÉMO',
-                      icon: Icons.verified_user,
-                      color: TdcColors.textMuted,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 130,
+                      child: LabMetricCard(
+                        title: 'Sécurité',
+                        value: 'DÉMO',
+                        icon: Icons.verified_user,
+                        color: TdcColors.textMuted,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Entropie',
-                      value: 'N/A',
-                      icon: Icons.analytics,
-                      color: TdcColors.textMuted,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 130,
+                      child: LabMetricCard(
+                        title: 'Entropie',
+                        value: 'N/A',
+                        icon: Icons.analytics,
+                        color: TdcColors.textMuted,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Status',
-                      value: 'SIMULÉ',
-                      icon: Icons.lock_outline,
-                      color: TdcColors.textMuted,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 130,
+                      child: LabMetricCard(
+                        title: 'Status',
+                        value: 'SIMULÉ',
+                        icon: Icons.lock_outline,
+                        color: TdcColors.textMuted,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

@@ -170,8 +170,7 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
             message: result.message,
             detail: [result.output, result.error]
                 .where((s) => s != null && s.isNotEmpty)
-                .join('
-'),
+                .join('\n'),
             time: DateTime.now(),
           ));
     });

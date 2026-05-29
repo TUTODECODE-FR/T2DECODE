@@ -902,21 +902,11 @@ Hash: ${signature.signatureHash}
 
 CONTRÔLES D'AUTHENTIFICATION
 ---------------------------
-${result.checks.entries.map((e) => '- ${e.key}: ${e.value ? 'OK' : 'FAIL'}').join('
-')}
+${result.checks.entries.map((e) => '- ${e.key}: ${e.value ? 'OK' : 'FAIL'}').join('\n')}
 
-${result.modifiedFiles.isNotEmpty ? 'FICHIERS MODIFIÉS:
-${result.modifiedFiles.map((f) => '- $f').join('
-')}
-' : ''}
-${result.suspiciousFiles.isNotEmpty ? 'FICHIERS SUSPECTS:
-${result.suspiciousFiles.map((f) => '- $f').join('
-')}
-' : ''}
-${result.plagiarizedFiles.isNotEmpty ? 'FICHIERS PLAGIÉS:
-${result.plagiarizedFiles.map((f) => '- $f').join('
-')}
-' : ''}
+${result.modifiedFiles.isNotEmpty ? 'FICHIERS MODIFIÉS:\n${result.modifiedFiles.map((f) => '- $f').join('\n')}\n' : ''}
+${result.suspiciousFiles.isNotEmpty ? 'FICHIERS SUSPECTS:\n${result.suspiciousFiles.map((f) => '- $f').join('\n')}\n' : ''}
+${result.plagiarizedFiles.isNotEmpty ? 'FICHIERS PLAGIÉS:\n${result.plagiarizedFiles.map((f) => '- $f').join('\n')}\n' : ''}
 
 WATERMARK
 ---------

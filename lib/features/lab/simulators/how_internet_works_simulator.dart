@@ -186,16 +186,11 @@ final _scenarios = [
         color: const Color(0xFFF59E0B),
         description: 'Qui est google.com ? → 142.250.179.46',
         detail:
-            'Résolution récursive en 4 étapes :
-'
-            '1. Résolveur local → Serveur DNS récursif de ton FAI (ou 8.8.8.8)
-'
-            '2. Récursif → Serveur Racine (.) → "va voir .com"
-'
-            '3. Récursif → Serveur TLD .com → "va voir ns1.google.com"
-'
-            '4. Récursif → Serveur Autoritaire Google → "142.250.179.46"
-'
+            'Résolution récursive en 4 étapes :\n'
+            '1. Résolveur local → Serveur DNS récursif de ton FAI (ou 8.8.8.8)\n'
+            '2. Récursif → Serveur Racine (.) → "va voir .com"\n'
+            '3. Récursif → Serveur TLD .com → "va voir ns1.google.com"\n'
+            '4. Récursif → Serveur Autoritaire Google → "142.250.179.46"\n'
             'Le résultat est mis en cache selon le TTL du record A (ex: 300s). '
             'DNS utilise UDP port 53 (TCP si réponse > 512 octets ou DNSSEC).',
         visual: () => const SimTreeDiagram(
@@ -220,12 +215,9 @@ final _scenarios = [
         color: const Color(0xFF8B5CF6),
         description: 'Établissement de la connexion fiable.',
         detail:
-            '1. SYN → ton PC envoie SYN (seq=x) au serveur
-'
-            '2. SYN-ACK ← le serveur répond SYN (seq=y) + ACK (x+1)
-'
-            '3. ACK → ton PC confirme ACK (y+1)
-'
+            '1. SYN → ton PC envoie SYN (seq=x) au serveur\n'
+            '2. SYN-ACK ← le serveur répond SYN (seq=y) + ACK (x+1)\n'
+            '3. ACK → ton PC confirme ACK (y+1)\n'
             'La connexion est établie. TCP garantit l\'ordre et la livraison des données '
             'grâce aux numéros de séquence et aux accusés de réception. '
             'Le port destination est 443 (HTTPS). Le port source est éphémère (ex: 54321).',
@@ -249,16 +241,11 @@ final _scenarios = [
         color: const Color(0xFF10B981),
         description: 'Chiffrement de la connexion.',
         detail:
-            '1. ClientHello → ton navigateur envoie les suites de chiffrement supportées + SNI (Server Name Indication)
-'
-            '2. ServerHello ← le serveur choisit la suite (ex: TLS_AES_256_GCM_SHA384) + certificat X.509
-'
-            '3. Ton navigateur vérifie le certificat contre les CA de confiance
-'
-            '4. Échange de clés ECDHE → dérivation des clés de session
-'
-            '5. Finished ↔ les deux parties confirment le handshake
-'
+            '1. ClientHello → ton navigateur envoie les suites de chiffrement supportées + SNI (Server Name Indication)\n'
+            '2. ServerHello ← le serveur choisit la suite (ex: TLS_AES_256_GCM_SHA384) + certificat X.509\n'
+            '3. Ton navigateur vérifie le certificat contre les CA de confiance\n'
+            '4. Échange de clés ECDHE → dérivation des clés de session\n'
+            '5. Finished ↔ les deux parties confirment le handshake\n'
             'Avec TLS 1.3, tout ça tient en 1 aller-retour (1-RTT), ou 0-RTT si session reprise.',
         visual: () => const SimKeyValue(
           color: Color(0xFF10B981),
@@ -277,11 +264,9 @@ final _scenarios = [
         color: Color(0xFF6366F1),
         description: 'GET / HTTP/2 → google.com',
         detail:
-            'Le navigateur envoie une requête HTTP/2 (binaire, multiplexée) :
-'
+            'Le navigateur envoie une requête HTTP/2 (binaire, multiplexée) :\n'
             'HEADERS frame : :method=GET, :path=/, :authority=google.com, '
-            'user-agent=Chrome/..., accept-encoding=gzip,br
-'
+            'user-agent=Chrome/..., accept-encoding=gzip,br\n'
             'HTTP/2 permet plusieurs requêtes en parallèle sur la même connexion TCP '
             '(streams), contrairement à HTTP/1.1 qui était séquentiel.',
       ),
@@ -292,16 +277,12 @@ final _scenarios = [
         color: Color(0xFF06B6D4),
         description: 'Le serveur envoie le HTML, le navigateur construit la page.',
         detail:
-            'Le serveur renvoie :
-'
-            '- Status 200 OK + en-têtes (content-type, cache-control, HSTS…)
-'
-            '- Corps HTML (souvent compressé en gzip ou Brotli)
-'
+            'Le serveur renvoie :\n'
+            '- Status 200 OK + en-têtes (content-type, cache-control, HSTS…)\n'
+            '- Corps HTML (souvent compressé en gzip ou Brotli)\n'
             'Le navigateur parse le HTML → construit le DOM → charge les CSS/JS/images '
             '(nouvelles requêtes DNS+TCP+TLS pour chaque domaine tiers) → '
-            'calcule le layout → peint les pixels à l\'écran.
-'
+            'calcule le layout → peint les pixels à l\'écran.\n'
             'C\'est le Critical Rendering Path.',
       ),
     ],
@@ -331,8 +312,7 @@ final _scenarios = [
         description: 'Négociation des algorithmes et échange Diffie-Hellman.',
         detail:
             'Les deux parties négocient : algorithme de KEX (curve25519-sha256), '
-            'chiffrement (chacha20-poly1305 ou aes256-gcm), MAC, compression.
-'
+            'chiffrement (chacha20-poly1305 ou aes256-gcm), MAC, compression.\n'
             'L\'échange ECDH génère un secret partagé sans jamais le transmettre '
             '(propriété Forward Secrecy). Les clés de session sont dérivées de ce secret.',
         visual: () => SimFlowDiagram(
@@ -355,10 +335,8 @@ final _scenarios = [
         description: 'Est-ce bien le bon serveur ? (TOFU / known_hosts)',
         detail:
             'Le serveur prouve son identité avec sa clé privée (ed25519, RSA…). '
-            'Le client vérifie dans ~/.ssh/known_hosts.
-'
-            'Premier contact → Trust On First Use (TOFU) : le fingerprint est stocké.
-'
+            'Le client vérifie dans ~/.ssh/known_hosts.\n'
+            'Premier contact → Trust On First Use (TOFU) : le fingerprint est stocké.\n'
             'Si la clé change → AVERTISSEMENT (possible Man-in-the-Middle !).',
       ),
       const _Step(
@@ -368,16 +346,11 @@ final _scenarios = [
         color: Color(0xFF10B981),
         description: 'Par clé publique (recommandé) ou mot de passe.',
         detail:
-            'Méthode clé publique :
-'
-            '1. Le client annonce sa clé publique
-'
-            '2. Le serveur vérifie qu\'elle est dans ~/.ssh/authorized_keys
-'
-            '3. Le serveur envoie un challenge chiffré avec la clé publique
-'
-            '4. Le client le déchiffre avec sa clé privée → prouve qu\'il la possède
-'
+            'Méthode clé publique :\n'
+            '1. Le client annonce sa clé publique\n'
+            '2. Le serveur vérifie qu\'elle est dans ~/.ssh/authorized_keys\n'
+            '3. Le serveur envoie un challenge chiffré avec la clé publique\n'
+            '4. Le client le déchiffre avec sa clé privée → prouve qu\'il la possède\n'
             'Aucun mot de passe ne transite. Résistant au phishing.',
       ),
       const _Step(
@@ -387,16 +360,11 @@ final _scenarios = [
         color: Color(0xFF6366F1),
         description: 'Shell interactif chiffré bout en bout.',
         detail:
-            'SSH ouvre un ou plusieurs canaux multiplexés dans la même connexion :
-'
-            '- shell interactif
-'
-            '- transfert de fichiers (SFTP / SCP)
-'
-            '- port forwarding (tunnels TCP)
-'
-            '- agent forwarding
-'
+            'SSH ouvre un ou plusieurs canaux multiplexés dans la même connexion :\n'
+            '- shell interactif\n'
+            '- transfert de fichiers (SFTP / SCP)\n'
+            '- port forwarding (tunnels TCP)\n'
+            '- agent forwarding\n'
             'Chaque frappe de touche est chiffrée immédiatement (mode interactif).',
       ),
     ],
@@ -414,11 +382,9 @@ final _scenarios = [
         color: Color(0xFF6366F1),
         description: 'Ce que voient les applications.',
         detail:
-            'La couche application définit le format des données échangées.
-'
+            'La couche application définit le format des données échangées.\n'
             'Exemples : HTTP (web), DNS (noms de domaine), SMTP (email), '
-            'FTP (fichiers), MQTT (IoT), gRPC (microservices).
-'
+            'FTP (fichiers), MQTT (IoT), gRPC (microservices).\n'
             'Elle ne se préoccupe pas de comment les données arrivent à destination.',
       ),
       const _Step(
@@ -429,11 +395,9 @@ final _scenarios = [
         description: 'Communication entre processus (ports).',
         detail:
             'TCP : connexion fiable, ordonnée, avec retransmission. '
-            'Idéal pour HTTP, SSH, FTP.
-'
+            'Idéal pour HTTP, SSH, FTP.\n'
             'UDP : sans connexion, sans garantie, rapide. '
-            'Idéal pour DNS, vidéo streaming, jeux en ligne, QUIC.
-'
+            'Idéal pour DNS, vidéo streaming, jeux en ligne, QUIC.\n'
             'Les ports (0–65535) permettent de multiplexer plusieurs services sur un seul hôte. '
             'Ports bien connus : 80 (HTTP), 443 (HTTPS), 22 (SSH), 53 (DNS).',
       ),
@@ -445,15 +409,11 @@ final _scenarios = [
         description: 'Adressage et routage entre réseaux.',
         detail:
             'IPv4 : adresses 32 bits (ex: 192.168.1.1). Environ 4,3 milliards d\'adresses '
-            '(épuisées → NAT + IPv6).
-'
-            'IPv6 : adresses 128 bits (ex: 2001:db8::1). Espace quasi infini.
-'
+            '(épuisées → NAT + IPv6).\n'
+            'IPv6 : adresses 128 bits (ex: 2001:db8::1). Espace quasi infini.\n'
             'IP est "best effort" : pas de garantie de livraison ni d\'ordre. '
-            'C\'est TCP au-dessus qui compense.
-'
-            'ICMP : messages de contrôle (ping, TTL exceeded, port unreachable).
-'
+            'C\'est TCP au-dessus qui compense.\n'
+            'ICMP : messages de contrôle (ping, TTL exceeded, port unreachable).\n'
             'ARP : résolution IP → MAC sur le LAN.',
         visual: () => const SimLayerStack(
           layers: [
@@ -472,13 +432,10 @@ final _scenarios = [
         color: Color(0xFFF59E0B),
         description: 'Communication sur le réseau local.',
         detail:
-            'Ethernet (câble) et WiFi (802.11) opèrent à ce niveau.
-'
-            'Adresses MAC : 48 bits, uniques par interface (ex: AA:BB:CC:DD:EE:FF).
-'
+            'Ethernet (câble) et WiFi (802.11) opèrent à ce niveau.\n'
+            'Adresses MAC : 48 bits, uniques par interface (ex: AA:BB:CC:DD:EE:FF).\n'
             'Les trames Ethernet encapsulent les paquets IP et sont transmises '
-            'uniquement sur le segment local. Un switch L2 fait le routage par MAC.
-'
+            'uniquement sur le segment local. Un switch L2 fait le routage par MAC.\n'
             'MTU standard : 1500 octets (au-delà → fragmentation IP).',
       ),
       const _Step(
@@ -489,12 +446,9 @@ final _scenarios = [
         description: 'Les bits sur le fil (ou l\'air).',
         detail:
             'Conversion des bits en signaux électriques (Ethernet), optiques (fibre), '
-            'ou radio (WiFi, 4G, 5G).
-'
-            'Débits : Fast Ethernet 100 Mbps, Gigabit 1 Gbps, 10G, 100G (datacenter).
-'
-            'Fibre monomode : jusqu\'à des centaines de km sans répéteur.
-'
+            'ou radio (WiFi, 4G, 5G).\n'
+            'Débits : Fast Ethernet 100 Mbps, Gigabit 1 Gbps, 10G, 100G (datacenter).\n'
+            'Fibre monomode : jusqu\'à des centaines de km sans répéteur.\n'
             'WiFi 6 (802.11ax) : jusqu\'à 9,6 Gbps théoriques en OFDMA.',
       ),
       const _Step(
@@ -504,17 +458,11 @@ final _scenarios = [
         color: Color(0xFFF59E0B),
         description: 'Chaque couche ajoute son en-tête.',
         detail:
-            'À l\'émission, les données descendent la pile :
-'
-            'App → [données HTTP]
-'
-            'Transport → [TCP header | données HTTP]
-'
-            'Internet → [IP header | TCP header | données HTTP]
-'
-            'Liaison → [Eth header | IP header | TCP header | données HTTP | Eth trailer]
-
-'
+            'À l\'émission, les données descendent la pile :\n'
+            'App → [données HTTP]\n'
+            'Transport → [TCP header | données HTTP]\n'
+            'Internet → [IP header | TCP header | données HTTP]\n'
+            'Liaison → [Eth header | IP header | TCP header | données HTTP | Eth trailer]\n'
             'À la réception, chaque couche lit et retire son en-tête (désencapsulation), '
             'puis passe le reste à la couche supérieure.',
       ),
@@ -533,14 +481,10 @@ final _scenarios = [
         color: Color(0xFF94A3B8),
         description: 'Le plus rapide : la réponse est peut-être déjà connue.',
         detail:
-            'L\'OS vérifie dans l\'ordre :
-'
-            '1. /etc/hosts (ou C:\Windows\System32\drivers\etc\hosts) — priorité absolue
-'
-            '2. Cache DNS de l\'OS (ipconfig /displaydns sur Windows, systemd-resolve --statistics sur Linux)
-'
-            '3. Cache du navigateur
-'
+            'L\'OS vérifie dans l\'ordre :\n'
+            '1. /etc/hosts (ou C:\Windows\System32\drivers\etc\hosts) — priorité absolue\n'
+            '2. Cache DNS de l\'OS (ipconfig /displaydns sur Windows, systemd-resolve --statistics sur Linux)\n'
+            '3. Cache du navigateur\n'
             'Si trouvé et TTL non expiré → réponse immédiate, aucune requête réseau.',
       ),
       _Step(
@@ -551,14 +495,10 @@ final _scenarios = [
         description: 'Ton DNS configuré (FAI, 8.8.8.8, 1.1.1.1…)',
         detail:
             'Le résolveur récursif fait le travail à ta place. Il interroge la hiérarchie DNS '
-            'et te renvoie la réponse finale.
-'
-            '8.8.8.8 = Google Public DNS
-'
-            '1.1.1.1 = Cloudflare (privacy-first)
-'
-            '9.9.9.9 = Quad9 (sécurité + filtrage malware)
-'
+            'et te renvoie la réponse finale.\n'
+            '8.8.8.8 = Google Public DNS\n'
+            '1.1.1.1 = Cloudflare (privacy-first)\n'
+            '9.9.9.9 = Quad9 (sécurité + filtrage malware)\n'
             'Ils mettent les réponses en cache → très rapides pour les domaines populaires.',
         visual: () => const SimTreeDiagram(
           color: Color(0xFF6366F1),
@@ -581,10 +521,8 @@ final _scenarios = [
         description: '13 clusters de serveurs racine dans le monde.',
         detail:
             'Il y a 13 adresses IP de serveurs racine (a.root-servers.net à m.root-servers.net), '
-            'mais des centaines de machines physiques via Anycast.
-'
-            'Ils ne connaissent pas les domaines, mais savent qui gère chaque TLD.
-'
+            'mais des centaines de machines physiques via Anycast.\n'
+            'Ils ne connaissent pas les domaines, mais savent qui gère chaque TLD.\n'
             'Exemple : "google.com" → "je ne sais pas, mais .com est géré par VeriSign".',
       ),
       const _Step(
@@ -594,14 +532,10 @@ final _scenarios = [
         color: Color(0xFF8B5CF6),
         description: '.com, .fr, .io, .org… chacun a ses serveurs.',
         detail:
-            '.com et .net → VeriSign
-'
-            '.fr → AFNIC
-'
-            '.io → Internet Computer Bureau
-'
-            'Les serveurs TLD connaissent les serveurs autoritaires de chaque domaine enregistré.
-'
+            '.com et .net → VeriSign\n'
+            '.fr → AFNIC\n'
+            '.io → Internet Computer Bureau\n'
+            'Les serveurs TLD connaissent les serveurs autoritaires de chaque domaine enregistré.\n'
             'Exemple : "google.com" → "les serveurs autoritaires sont ns1.google.com, ns2.google.com".',
       ),
       const _Step(
@@ -611,20 +545,13 @@ final _scenarios = [
         color: Color(0xFF10B981),
         description: 'La réponse définitive vient de là.',
         detail:
-            'Le serveur autoritaire est géré par le propriétaire du domaine (ou son hébergeur DNS).
-'
-            'Il contient les vrais records DNS :
-'
-            'A → IPv4 (142.250.179.46)
-'
-            'AAAA → IPv6
-'
-            'MX → serveurs mail
-'
-            'CNAME → alias
-'
-            'TXT → SPF, DKIM, vérifications diverses
-'
+            'Le serveur autoritaire est géré par le propriétaire du domaine (ou son hébergeur DNS).\n'
+            'Il contient les vrais records DNS :\n'
+            'A → IPv4 (142.250.179.46)\n'
+            'AAAA → IPv6\n'
+            'MX → serveurs mail\n'
+            'CNAME → alias\n'
+            'TXT → SPF, DKIM, vérifications diverses\n'
             'NS → délégation de sous-domaine',
       ),
       const _Step(
@@ -635,16 +562,10 @@ final _scenarios = [
         description: 'Protéger les réponses DNS contre la falsification.',
         detail:
             'DNSSEC : signatures cryptographiques sur les records DNS → impossible de falsifier '
-            'une réponse sans la clé privée du domaine.
-
-'
+            'une réponse sans la clé privée du domaine.\n'
             'DoH (DNS over HTTPS) : encapsule les requêtes DNS dans HTTPS → '
-            'chiffré, indiscernable du trafic web normal, résistant à la censure.
-
-'
-            'DoT (DNS over TLS) : chiffrement TLS sur port 853.
-
-'
+            'chiffré, indiscernable du trafic web normal, résistant à la censure.\n'
+            'DoT (DNS over TLS) : chiffrement TLS sur port 853.\n'
             'DNS classique (UDP 53) est en clair → ton FAI voit tous tes domaines visités.',
       ),
     ],
@@ -662,18 +583,12 @@ final _scenarios = [
         color: Color(0xFFF59E0B),
         description: 'Il n\'y a que 4,3 milliards d\'adresses IPv4 pour 15 milliards d\'appareils.',
         detail:
-            'IPv4 (32 bits) → 2³² = ~4,3 milliards d\'adresses. Épuisées depuis 2011.
-'
-            'Solution : adresses privées (RFC 1918) + NAT.
-'
-            'Plages privées :
-'
-            '  10.0.0.0/8 (16M hôtes)
-'
-            '  172.16.0.0/12 (1M hôtes)
-'
-            '  192.168.0.0/16 (65K hôtes)
-'
+            'IPv4 (32 bits) → 2³² = ~4,3 milliards d\'adresses. Épuisées depuis 2011.\n'
+            'Solution : adresses privées (RFC 1918) + NAT.\n'
+            'Plages privées :\n'
+            '  10.0.0.0/8 (16M hôtes)\n'
+            '  172.16.0.0/12 (1M hôtes)\n'
+            '  192.168.0.0/16 (65K hôtes)\n'
             'Ces adresses ne sont pas routables sur Internet → invisibles depuis l\'extérieur.',
       ),
       _Step(
@@ -683,16 +598,11 @@ final _scenarios = [
         color: const Color(0xFF06B6D4),
         description: 'Ton routeur traduit tes adresses privées en une seule IP publique.',
         detail:
-            'Quand tu accèdes à google.com depuis 192.168.1.50:54321 :
-'
-            '1. Le routeur remplace 192.168.1.50:54321 → IP_publique:58900
-'
-            '2. Il note la correspondance dans sa table NAT
-'
-            '3. La réponse arrive sur IP_publique:58900
-'
-            '4. Le routeur la retransmet à 192.168.1.50:54321
-'
+            'Quand tu accèdes à google.com depuis 192.168.1.50:54321 :\n'
+            '1. Le routeur remplace 192.168.1.50:54321 → IP_publique:58900\n'
+            '2. Il note la correspondance dans sa table NAT\n'
+            '3. La réponse arrive sur IP_publique:58900\n'
+            '4. Le routeur la retransmet à 192.168.1.50:54321\n'
             'C\'est du PAT (Port Address Translation) : plusieurs hôtes partagent une IP publique '
             'grâce aux ports différents.',
         visual: () => const SimKeyValue(
@@ -711,20 +621,13 @@ final _scenarios = [
         color: Color(0xFFEF4444),
         description: 'Filtrage des paquets entrants et sortants.',
         detail:
-            'Un firewall stateful suit l\'état des connexions :
-'
-            '- NEW : premier paquet d\'une connexion
-'
-            '- ESTABLISHED : connexion établie (les deux sens)
-'
-            '- RELATED : connexion liée (ex: FTP data)
-'
-            '- INVALID : paquet incohérent → DROP
-
-'
+            'Un firewall stateful suit l\'état des connexions :\n'
+            '- NEW : premier paquet d\'une connexion\n'
+            '- ESTABLISHED : connexion établie (les deux sens)\n'
+            '- RELATED : connexion liée (ex: FTP data)\n'
+            '- INVALID : paquet incohérent → DROP\n'
             'Règle typique : accepter tout le trafic ESTABLISHED/RELATED sortant, '
-            'mais bloquer les connexions entrantes non sollicitées.
-'
+            'mais bloquer les connexions entrantes non sollicitées.\n'
             'iptables (Linux), pf (BSD/macOS), Windows Defender Firewall.',
       ),
       const _Step(
@@ -734,13 +637,9 @@ final _scenarios = [
         color: Color(0xFF8B5CF6),
         description: 'Exposer un service interne à Internet.',
         detail:
-            'Pour rendre accessible un serveur web interne (192.168.1.100:80) depuis Internet :
-'
-            'Le routeur fait du DNAT (Destination NAT) :
-'
-            'IP_publique:80 → 192.168.1.100:80
-
-'
+            'Pour rendre accessible un serveur web interne (192.168.1.100:80) depuis Internet :\n'
+            'Le routeur fait du DNAT (Destination NAT) :\n'
+            'IP_publique:80 → 192.168.1.100:80\n'
             'Risque : expose directement le service. '
             'Toujours sécuriser avec un reverse proxy (nginx) + TLS + authentification.',
       ),
@@ -751,16 +650,11 @@ final _scenarios = [
         color: Color(0xFF10B981),
         description: 'Zone démilitarisée pour les serveurs publics.',
         detail:
-            'Une DMZ est un segment réseau entre Internet et le LAN interne.
-'
-            'Les serveurs accessibles depuis Internet (web, mail, DNS) sont en DMZ.
-'
-            'Deux firewalls :
-'
-            '  FW1 : Internet → DMZ (filtre le trafic entrant)
-'
-            '  FW2 : DMZ → LAN (protège le réseau interne)
-'
+            'Une DMZ est un segment réseau entre Internet et le LAN interne.\\n'
+            'Les serveurs accessibles depuis Internet (web, mail, DNS) sont en DMZ.\\n'
+            'Deux firewalls :\\n'
+            '  FW1 : Internet → DMZ (filtre le trafic entrant)\\n'
+            '  FW2 : DMZ → LAN (protège le réseau interne)\\n'
             'Même si un serveur en DMZ est compromis, l\'attaquant ne peut pas '
             'directement atteindre le LAN interne.',
       ),
@@ -1182,8 +1076,7 @@ class _HowInternetWorksSimulatorState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _tcpNode('CLIENT
-192.168.1.10', Icons.computer, const Color(0xFF06B6D4), _tcpPhase >= 0),
+                _tcpNode('CLIENT\\n192.168.1.10', Icons.computer, const Color(0xFF06B6D4), _tcpPhase >= 0),
                 Expanded(
                   child: Column(
                     children: List.generate(phases.length, (i) {
@@ -1222,8 +1115,7 @@ class _HowInternetWorksSimulatorState
                     }),
                   ),
                 ),
-                _tcpNode('SERVER
-8.8.8.8:443', Icons.dns, const Color(0xFF6366F1), _tcpPhase >= 1),
+                _tcpNode('SERVER\\n8.8.8.8:443', Icons.dns, const Color(0xFF6366F1), _tcpPhase >= 1),
               ],
             ),
             if (_tcpPhase == 3)

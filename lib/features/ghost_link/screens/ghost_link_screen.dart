@@ -279,8 +279,8 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           const Text(
-              'Démarrez Ghost Link pour découvrir
-les appareils sur votre réseau local.',
+              'Démarrez Ghost Link pour découvrir\\n'
+              'les appareils sur votre réseau local.',
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: TdcColors.textSecondary, fontSize: 14, height: 1.5)),

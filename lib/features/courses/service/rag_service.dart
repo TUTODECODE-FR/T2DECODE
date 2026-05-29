@@ -58,8 +58,6 @@ ${ch.content.length > 500 ? ch.content.substring(0, 500) + "..." : ch.content}
     }
 
     if (results.isEmpty) return null;
-    return results.join("
----
-");
+    return results.join("\\n---\\n");
   }
 }

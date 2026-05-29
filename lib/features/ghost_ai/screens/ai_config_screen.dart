@@ -189,8 +189,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
         ? 'Ping sur ${_hostController.text}…'
         : (isRunning
             ? '${_status!.models.length} modèle(s) installé(s) · Port 11434'
-            : 'Installez ou démarrez Ollama pour activer l\'IA locale
-${_status?.error ?? ""}');
+            : 'Installez ou démarrez Ollama pour activer l\\'IA locale\\n${_status?.error ?? ""}');
 
     return Container(
       padding: EdgeInsets.all(TdcAdaptive.padding(context, TdcSpacing.lg)),
@@ -246,8 +245,7 @@ ${_status?.error ?? ""}');
       icon: Icons.inventory_2,
       title: 'Modèles installés',
       child: models.isEmpty
-          ? _buildEmptyState('Aucun modèle installé.
-Utilisez `ollama pull <modèle>` pour en ajouter un.')
+          ? _buildEmptyState('Aucun modèle installé.\\nUtilisez `ollama pull <modèle>` pour en ajouter un.')
           : Column(
               children: models.map((m) => _buildModelRow(
                 context: context,

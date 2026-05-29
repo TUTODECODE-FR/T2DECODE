@@ -187,44 +187,51 @@ class _CloudSimulatorState extends State<CloudSimulator>
                 icon: Icons.info_outline,
               ),
               const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Instances',
-                      value: '$_activeInstances',
-                      icon: Icons.dns,
-                      color: TdcColors.cloud,
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 130,
+                      child: LabMetricCard(
+                        title: 'Instances',
+                        value: '$_activeInstances',
+                        icon: Icons.dns,
+                        color: TdcColors.cloud,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Coût/H',
-                      value: '\$${_totalCost.toStringAsFixed(3)}',
-                      icon: Icons.attach_money,
-                      color: TdcColors.system,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 130,
+                      child: LabMetricCard(
+                        title: 'Coût/H',
+                        value: '\$${_totalCost.toStringAsFixed(3)}',
+                        icon: Icons.attach_money,
+                        color: TdcColors.system,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Requêtes',
-                      value: '$_totalRequests',
-                      icon: Icons.sync,
-                      color: TdcColors.network,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 130,
+                      child: LabMetricCard(
+                        title: 'Requêtes',
+                        value: '$_totalRequests',
+                        icon: Icons.sync,
+                        color: TdcColors.network,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: LabMetricCard(
-                      title: 'Latence',
-                      value: '${_avgResponseTime.toStringAsFixed(0)}ms',
-                      icon: Icons.timer,
-                      color: _avgResponseTime < 100 ? TdcColors.success : TdcColors.warning,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 130,
+                      child: LabMetricCard(
+                        title: 'Latence',
+                        value: '${_avgResponseTime.toStringAsFixed(0)}ms',
+                        icon: Icons.timer,
+                        color: _avgResponseTime < 100 ? TdcColors.success : TdcColors.warning,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

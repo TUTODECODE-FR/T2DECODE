@@ -220,8 +220,7 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: TdcColors.surface,
         title: const Text('Infos Système', style: TextStyle(color: TdcColors.textPrimary)),
-        content: Text(out.entries.map((e) => '${e.key}: ${e.value}').join('
-'), style: const TextStyle(color: TdcColors.textSecondary)),
+        content: Text(out.entries.map((e) => '${e.key}: ${e.value}').join('\n'), style: const TextStyle(color: TdcColors.textSecondary)),
         actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Fermer'))],
       ),
     );

@@ -1224,8 +1224,7 @@ if __name__ == "__main__":
 
     final model = status.models.first;
     final langName = _selectedLanguage.name;
-    final prompt = 'Génère uniquement le code $langName complet et fonctionnel pour : $description
-'
+    final prompt = 'Génère uniquement le code $langName complet et fonctionnel pour : $description\n'
         'Règles : code propre avec commentaires en français, pas d\'explication en dehors du code, '
         'inclure les imports nécessaires, gestion d\'erreurs basique.';
 
@@ -1304,10 +1303,10 @@ Write-Host "Début du script: \$(Get-Date)"
 Write-Host "Script terminé: \$(Get-Date)"
 exit 0''';
       default:
-        return '# Script généré par TUTODECODE
+        return '''# Script généré par TUTODECODE
 # $description
 
-# Implémentez votre logique ici';
+# Implémentez votre logique ici''';
     }
   }
 
