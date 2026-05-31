@@ -97,7 +97,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
   Widget _buildConnectedBar(AiTutorProvider provider) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: TdcColors.surface,
         border: Border(bottom: BorderSide(color: TdcColors.border)),
       ),
@@ -135,7 +135,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
         children: [
           // Onglets — visibles dans tous les cas
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: TdcColors.surface,
               border: Border(bottom: BorderSide(color: TdcColors.border)),
             ),
@@ -584,18 +584,18 @@ class _AiTutorScreenState extends State<AiTutorScreen>
         ),
         Expanded(
           child: provider.sessions.isEmpty
-              ? Center(
+              ? const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.history, color: TdcColors.textMuted, size: 48),
-                      const SizedBox(height: 16),
-                      const Text(
+                      SizedBox(height: 16),
+                      Text(
                         'Aucune session précédente',
                         style: TextStyle(color: TdcColors.textMuted, fontSize: 16),
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
+                      SizedBox(height: 8),
+                      Text(
                         'Démarrez votre première session de tutorat',
                         style: TextStyle(color: TdcColors.textMuted, fontSize: 12),
                       ),
@@ -645,7 +645,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                   ),
                   const Spacer(),
                   PopupMenuButton<String>(
-                    icon: Icon(Icons.more_vert, color: TdcColors.textMuted, size: 16),
+                    icon: const Icon(Icons.more_vert, color: TdcColors.textMuted, size: 16),
                     onSelected: (value) {
                       if (value == 'delete') {
                         provider.deleteSession(session.id);
@@ -686,7 +686,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
               const SizedBox(height: 8),
               Row(
                 children: [
-                  Icon(Icons.message, color: TdcColors.textMuted, size: 14),
+                  const Icon(Icons.message, color: TdcColors.textMuted, size: 14),
                   const SizedBox(width: 4),
                   Text(
                     '${session.messages.length} messages',
@@ -696,7 +696,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Icon(Icons.schedule, color: TdcColors.textMuted, size: 14),
+                  const Icon(Icons.schedule, color: TdcColors.textMuted, size: 14),
                   const SizedBox(width: 4),
                   Text(
                     _formatDate(session.updatedAt ?? session.createdAt),
@@ -881,7 +881,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
-        border: Border(bottom: BorderSide(color: TdcColors.border)),
+        border: const Border(bottom: BorderSide(color: TdcColors.border)),
       ),
       child: Row(
         children: [
@@ -956,10 +956,10 @@ class _AiTutorScreenState extends State<AiTutorScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isUser) ...[
-            CircleAvatar(
+            const CircleAvatar(
               radius: 16,
               backgroundColor: TdcColors.accent,
-              child: const Icon(Icons.smart_toy, color: Colors.white, size: 16),
+              child: Icon(Icons.smart_toy, color: Colors.white, size: 16),
             ),
             const SizedBox(width: 12),
           ],
@@ -972,8 +972,8 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                   decoration: BoxDecoration(
                     color: isUser ? TdcColors.accent : TdcColors.surfaceAlt,
                     borderRadius: BorderRadius.circular(16).copyWith(
-                      bottomLeft: isUser ? Radius.circular(16) : Radius.circular(4),
-                      bottomRight: isUser ? Radius.circular(4) : Radius.circular(16),
+                      bottomLeft: isUser ? const Radius.circular(16) : const Radius.circular(4),
+                      bottomRight: isUser ? const Radius.circular(4) : const Radius.circular(16),
                     ),
                   ),
                   child: Text(
@@ -1013,10 +1013,10 @@ class _AiTutorScreenState extends State<AiTutorScreen>
           ),
           if (isUser) ...[
             const SizedBox(width: 12),
-            CircleAvatar(
+            const CircleAvatar(
               radius: 16,
               backgroundColor: Colors.blue,
-              child: const Icon(Icons.person, color: Colors.white, size: 16),
+              child: Icon(Icons.person, color: Colors.white, size: 16),
             ),
           ],
         ],
@@ -1052,7 +1052,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
           ),
         Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: TdcColors.surface,
             border: Border(top: BorderSide(color: TdcColors.border)),
           ),

@@ -87,7 +87,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
 
   void _copyCommand(String cmd) {
     Clipboard.setData(ClipboardData(text: cmd));
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Commande copiée !', style: TextStyle(color: TdcColors.textPrimary)),
       backgroundColor: TdcColors.surface,
       behavior: SnackBarBehavior.floating,
@@ -101,10 +101,10 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
     return Scaffold(
       backgroundColor: TdcColors.bg,
       appBar: AppBar(
-        title: Text('Configuration IA Locale'),
+        title: const Text('Configuration IA Locale'),
         backgroundColor: TdcColors.bg,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: TdcColors.textSecondary),
+          icon: const Icon(Icons.arrow_back, color: TdcColors.textSecondary),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -113,7 +113,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
                 ? SizedBox(
                     width: TdcAdaptive.space(context, 18), 
                     height: TdcAdaptive.space(context, 18), 
-                    child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.accent))
+                    child: const CircularProgressIndicator(strokeWidth: 2, color: TdcColors.accent))
                 : Icon(Icons.refresh, color: TdcColors.textSecondary, size: TdcAdaptive.icon(context, 20)),
             tooltip: 'Vérifier à nouveau',
             onPressed: _checking ? null : _checkOllama,
@@ -232,7 +232,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
               label: Text('Rafraîchir', style: TextStyle(fontSize: TdcText.button(context))),
               style: OutlinedButton.styleFrom(
                 foregroundColor: TdcColors.textSecondary,
-                side: BorderSide(color: TdcColors.border),
+                side: const BorderSide(color: TdcColors.border),
                 padding: EdgeInsets.symmetric(
                   horizontal: TdcAdaptive.padding(context, 14), 
                   vertical: TdcAdaptive.padding(context, 10)),
@@ -348,13 +348,13 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
           children: [
             Text(model['label']!, style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: TdcText.body(context))),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(color: TdcColors.surface, borderRadius: BorderRadius.circular(4)),
               child: Text(model['size']!, style: TextStyle(color: TdcColors.textMuted, fontSize: TdcText.label(context), fontWeight: FontWeight.bold)),
             ),
             if (isInstalled)
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                 decoration: BoxDecoration(color: TdcColors.success.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
                 child: Text('installé', style: TextStyle(color: TdcColors.success, fontSize: TdcText.label(context), fontWeight: FontWeight.bold)),
               ),
@@ -466,7 +466,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
           ),
           
           SizedBox(height: TdcAdaptive.space(context, TdcSpacing.lg)),
-          Divider(color: TdcColors.border, height: 1),
+          const Divider(color: TdcColors.border, height: 1),
           SizedBox(height: TdcAdaptive.space(context, TdcSpacing.lg)),
 
           // Contenu selon l'OS
@@ -493,7 +493,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
       side: BorderSide(color: isSelected ? TdcColors.accent : TdcColors.border),
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     );
   }
 
@@ -550,13 +550,13 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: TdcColors.warning.withValues(alpha: 0.1),
             borderRadius: TdcRadius.md,
             border: Border.all(color: TdcColors.warning.withValues(alpha: 0.3)),
           ),
-          child: Row(
+          child: const Row(
             children: [
               Icon(Icons.info_outline, color: TdcColors.warning),
               SizedBox(width: 16),
@@ -569,7 +569,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
             ],
           ),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         _buildInstallStep(context, '1', 'Configurer le serveur (PC/Mac)',
             'Par défaut, Ollama n\'écoute que sur localhost. Pour autoriser le mobile, définissez la variable d\'environnement :',
             command: 'OLLAMA_HOST=0.0.0.0'),
@@ -584,7 +584,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
   Widget _buildLinkButton(String url) {
     return OutlinedButton.icon(
       onPressed: () => _copyCommand('https://$url'),
-      icon: Icon(Icons.open_in_new, size: 14),
+      icon: const Icon(Icons.open_in_new, size: 14),
       label: Text(url),
       style: OutlinedButton.styleFrom(
         foregroundColor: TdcColors.accent,
@@ -814,7 +814,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
           Container(
             margin: const EdgeInsets.only(left: 30, top: 4, bottom: 16),
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: const Color(0xFF1A1D2E), borderRadius: TdcRadius.sm),
+            decoration: const BoxDecoration(color: Color(0xFF1A1D2E), borderRadius: TdcRadius.sm),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -907,7 +907,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
             Text(title, style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: TdcText.bodyLarge(context))),
           ]),
           SizedBox(height: TdcAdaptive.space(context, TdcSpacing.md)),
-          Divider(color: TdcColors.border, height: 1),
+          const Divider(color: TdcColors.border, height: 1),
           SizedBox(height: TdcAdaptive.space(context, TdcSpacing.md)),
           child,
         ],
@@ -938,12 +938,12 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
                     controller: _hostController,
                     style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 14),
                     textInputAction: TextInputAction.done,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'http://localhost:11434',
                       filled: true,
                       fillColor: TdcColors.surfaceAlt,
-                      border: OutlineInputBorder(borderRadius: TdcRadius.sm, borderSide: const BorderSide(color: TdcColors.border)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      border: OutlineInputBorder(borderRadius: TdcRadius.sm, borderSide: BorderSide(color: TdcColors.border)),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
                     onSubmitted: (_) => _saveHost(),
                     onTap: () => FocusScope.of(context).requestFocus(),

@@ -190,7 +190,7 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
         columnWidths: const {0: FlexColumnWidth(1), 1: FlexColumnWidth(2)},
         children: [
           TableRow(
-            decoration: BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: const BorderRadius.vertical(top: Radius.circular(12))),
+            decoration: const BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
             children: (e.tableHeaders ?? ['Argument', 'Description']).map((h) => Padding(
               padding: const EdgeInsets.all(12),
               child: Text(h, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: TdcColors.accent)),

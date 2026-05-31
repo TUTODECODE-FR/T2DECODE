@@ -101,7 +101,7 @@ class _MentionsLegalesScreenState extends State<MentionsLegalesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // 1. Identity grid
-                    _SectionLabel(label: 'Fiche d\'Identité', index: 0),
+                    const _SectionLabel(label: 'Fiche d\'Identité', index: 0),
                     const SizedBox(height: 16),
                     _IdentityGrid(
                       items: _identity,
@@ -112,19 +112,19 @@ class _MentionsLegalesScreenState extends State<MentionsLegalesScreen> {
                     const SizedBox(height: 48),
 
                     // 2. Privacy by design
-                    _SectionLabel(label: 'Confidentialité & Données', index: 1),
+                    const _SectionLabel(label: 'Confidentialité & Données', index: 1),
                     const SizedBox(height: 16),
                     _PrivacyRow(pills: _privacy, isDesktop: isDesktop || isTablet),
                     const SizedBox(height: 48),
 
                     // 3. Legal declaration
-                    _SectionLabel(label: 'Déclaration Officielle', index: 2),
+                    const _SectionLabel(label: 'Déclaration Officielle', index: 2),
                     const SizedBox(height: 16),
                     _LegalDeclarationCard(onCopy: _copy),
                     const SizedBox(height: 48),
 
                     // 4. RGPD detail
-                    _SectionLabel(label: 'Politique RGPD', index: 3),
+                    const _SectionLabel(label: 'Politique RGPD', index: 3),
                     const SizedBox(height: 16),
                     _RgpdCard(),
                     const SizedBox(height: 64),
@@ -250,10 +250,10 @@ class _HeroHeader extends StatelessWidget {
                     .fadeIn(duration: 500.ms, delay: 160.ms),
                 const SizedBox(height: 28),
                 // Stats row
-                Wrap(
+                const Wrap(
                   spacing: 12,
                   runSpacing: 10,
-                  children: const [
+                  children: [
                     _HeroChip(Icons.shield_outlined,  'Air-Gapped',      TdcColors.accent),
                     _HeroChip(Icons.memory_outlined,   'IA Locale',       TdcColors.info),
                     _HeroChip(Icons.wifi_off_outlined, 'Zéro Télémétrie', TdcColors.success),
@@ -706,10 +706,10 @@ class _LegalDeclarationCard extends StatelessWidget {
                   color: TdcColors.accent,
                 ),
                 const SizedBox(width: 14),
-                Expanded(
+                const Expanded(
                   child: SelectableText(
                     _joUrl,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: TdcColors.accent,
                       fontFamily: 'monospace',
                       fontSize: 11,
@@ -831,7 +831,7 @@ class _RgpdCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: TdcColors.bg,
                     border: Border(
                       left: BorderSide(

@@ -467,9 +467,9 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
               hintStyle: const TextStyle(color: TdcColors.textMuted),
               filled: true,
               fillColor: TdcColors.surfaceAlt,
-              border: OutlineInputBorder(
+              border: const OutlineInputBorder(
                   borderRadius: TdcRadius.sm,
-                  borderSide: const BorderSide(color: TdcColors.border)),
+                  borderSide: BorderSide(color: TdcColors.border)),
               suffixIcon: IconButton(
                 icon: Icon(_showSudo ? Icons.visibility_off : Icons.visibility,
                     size: 18, color: TdcColors.textMuted),
@@ -668,16 +668,16 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
         children: [
           // IPv6
           Row(children: [
-            Expanded(
+            const Expanded(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                  const Text('Désactiver IPv6',
+                  Text('Désactiver IPv6',
                       style: TextStyle(
                           color: TdcColors.textPrimary,
                           fontSize: 13,
                           fontWeight: FontWeight.w600)),
-                  const Text('Réduit l\'empreinte réseau. Réversible.',
+                  Text('Réduit l\'empreinte réseau. Réversible.',
                       style:
                           TextStyle(color: TdcColors.textMuted, fontSize: 11)),
                 ])),
@@ -699,16 +699,16 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
           const Divider(height: 20, color: TdcColors.border),
           // mDNS
           Row(children: [
-            Expanded(
+            const Expanded(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                  const Text('Désactiver mDNS/Bonjour',
+                  Text('Désactiver mDNS/Bonjour',
                       style: TextStyle(
                           color: TdcColors.textPrimary,
                           fontSize: 13,
                           fontWeight: FontWeight.w600)),
-                  const Text('⚠ Désactive AirDrop/AirPlay sur macOS.',
+                  Text('⚠ Désactive AirDrop/AirPlay sur macOS.',
                       style: TextStyle(color: Color(0xFFF59E0B), fontSize: 11)),
                 ])),
             ElevatedButton(

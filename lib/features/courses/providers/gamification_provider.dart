@@ -80,7 +80,7 @@ class GamificationProvider with ChangeNotifier {
   Future<void> _loadAchievements() async {
     _allAchievements = [
       // Achievements Linux
-      Achievement(
+      const Achievement(
         id: 'linux_novice',
         title: 'Explorateur Linux',
         description: 'Complétez votre premier chapitre Linux',
@@ -101,7 +101,7 @@ class GamificationProvider with ChangeNotifier {
         requirements: ['linux-basics:intro', 'linux-basics:navigation', 'linux-basics:files'],
         totalSteps: 3,
       ),
-      Achievement(
+      const Achievement(
         id: 'script_kiddie',
         title: 'Script Kiddie',
         description: 'Écrivez votre premier script Bash fonctionnel',
@@ -113,7 +113,7 @@ class GamificationProvider with ChangeNotifier {
       ),
 
       // Achievements Réseau
-      Achievement(
+      const Achievement(
         id: 'network_explorer',
         title: 'Explorateur Réseau',
         description: 'Maîtrisez les bases du réseau',
@@ -136,7 +136,7 @@ class GamificationProvider with ChangeNotifier {
       ),
 
       // Achievements Cybersécurité
-      Achievement(
+      const Achievement(
         id: 'security_guard',
         title: 'Gardien de la Sécurité',
         description: 'Complétez le module de sécurité de base',
@@ -159,7 +159,7 @@ class GamificationProvider with ChangeNotifier {
       ),
 
       // Achievements Développement
-      Achievement(
+      const Achievement(
         id: 'code_warrior',
         title: 'Guerrier du Code',
         description: 'Écrivez 1000 lignes de code dans les labos',
@@ -171,7 +171,7 @@ class GamificationProvider with ChangeNotifier {
       ),
 
       // Achievements Spéciaux
-      Achievement(
+      const Achievement(
         id: 'speed_learner',
         title: 'Apprentissage Rapide',
         description: 'Complétez 5 chapitres en une journée',
@@ -181,7 +181,7 @@ class GamificationProvider with ChangeNotifier {
         category: 'special',
         isSecret: true,
       ),
-      Achievement(
+      const Achievement(
         id: 'perfectionist',
         title: 'Perfectionniste',
         description: 'Obtenez 100% dans tous les quiz',
@@ -196,7 +196,7 @@ class GamificationProvider with ChangeNotifier {
 
   Future<void> _loadSkillTrees() async {
     _skillTrees = [
-      SkillTree(
+      const SkillTree(
         id: 'linux_tree',
         title: 'Maîtrise Linux',
         description: 'De novice à administrateur système',
@@ -241,7 +241,7 @@ class GamificationProvider with ChangeNotifier {
           ),
         ],
       ),
-      SkillTree(
+      const SkillTree(
         id: 'network_tree',
         title: 'Expert Réseau',
         description: 'TCP/IP, DNS et au-delà',
@@ -318,7 +318,7 @@ class GamificationProvider with ChangeNotifier {
 
   Future<void> _loadLearningPaths() async {
     _learningPaths = [
-      LearningPath(
+      const LearningPath(
         id: 'devops_path',
         title: 'Parcours DevOps',
         description: 'De Linux à Docker et Kubernetes',
@@ -327,7 +327,7 @@ class GamificationProvider with ChangeNotifier {
         difficulty: 'intermediate',
         certificate: 'DevOps Foundation',
       ),
-      LearningPath(
+      const LearningPath(
         id: 'cybersecurity_path',
         title: 'Parcours Cybersécurité',
         description: 'De la défense au pentesting',
@@ -336,7 +336,7 @@ class GamificationProvider with ChangeNotifier {
         difficulty: 'advanced',
         certificate: 'Cybersecurity Professional',
       ),
-      LearningPath(
+      const LearningPath(
         id: 'system_admin_path',
         title: 'Administrateur Système',
         description: 'Maîtrise complète des systèmes Linux/Windows',

@@ -226,9 +226,9 @@ final _algoScenarios = [
             'BFS garantit le plus court chemin en nombre d\'arêtes (non pondéré) et permet de '
             'détecter les composantes connexes. Il est aussi à la base du test de bipartisme '
             '(2-coloration) et du calcul des niveaux dans un arbre BFS.',
-        visual: () => SimFlowDiagram(
-          color: const Color(0xFF43A047),
-          nodes: const [
+        visual: () => const SimFlowDiagram(
+          color: Color(0xFF43A047),
+          nodes: [
             SimFlowNode('A', Icons.circle),
             SimFlowNode('B', Icons.circle),
             SimFlowNode('C', Icons.circle),
@@ -365,8 +365,8 @@ final _algoScenarios = [
             'Encore plus rapide : exponentiation matricielle de la matrice [[1,1],[1,0]] → O(log n). '
             'Fibonacci illustre tous les niveaux de DP et montre comment l\'analyse de complexité '
             'peut transformer un problème exponentiel en problème polynomial.',
-        visual: () => SimCodeBlock(
-          color: const Color(0xFFFF6D00),
+        visual: () => const SimCodeBlock(
+          color: Color(0xFFFF6D00),
           title: 'Fibonacci — memo vs naive',
           code: '# Naive O(2^n)\n'
               'def fib_naive(n):\n'
@@ -523,9 +523,9 @@ final _algoScenarios = [
             'ECDH (Diffie-Hellman sur courbes elliptiques) remplace gᵃ par a·P sur la courbe, '
             'offrant la même sécurité avec des clés 10× plus courtes. '
             'TLS 1.3 utilise exclusivement ECDHE (Ephemeral) pour la propriété de Perfect Forward Secrecy.',
-        visual: () => SimFlowDiagram(
-          color: const Color(0xFFBA68C8),
-          nodes: const [
+        visual: () => const SimFlowDiagram(
+          color: Color(0xFFBA68C8),
+          nodes: [
             SimFlowNode('Alice', Icons.person),
             SimFlowNode('g^a mod p', Icons.key),
             SimFlowNode('Bob', Icons.person),
@@ -539,13 +539,13 @@ final _algoScenarios = [
   ),
 
   // ── 5. Systèmes Distribués ───────────────────────────────────
-  _Scenario(
+  const _Scenario(
     name: 'Systèmes Distribués',
     subtitle: 'CAP · Paxos · Hashing · Bloom · MapReduce',
     icon: Icons.hub,
     color: Colors.cyan,
     steps: [
-      const _Step(
+      _Step(
         title: 'Théorème CAP',
         protocol: 'Consistency/Availability/Partition',
         icon: Icons.device_hub,
@@ -561,7 +561,7 @@ final _algoScenarios = [
             'Le modèle PACELC raffine CAP en considérant aussi la latence (Latency vs Consistency '
             'en l\'absence de partition).',
       ),
-      const _Step(
+      _Step(
         title: 'Consensus Paxos/Raft',
         protocol: 'Algorithmes de consensus',
         icon: Icons.how_to_vote,
@@ -577,7 +577,7 @@ final _algoScenarios = [
             'puis répercute toutes les entrées de log vers les followers. '
             'Utilisé dans etcd (Kubernetes), CockroachDB, Consul.',
       ),
-      const _Step(
+      _Step(
         title: 'Consistent hashing',
         protocol: 'Distribution de charge',
         icon: Icons.donut_large,
@@ -592,7 +592,7 @@ final _algoScenarios = [
             'nœud physique plusieurs positions sur l\'anneau. '
             'Utilisé dans Amazon DynamoDB, Apache Cassandra, Memcached (ketama), Chord DHT.',
       ),
-      const _Step(
+      _Step(
         title: 'Bloom filters',
         protocol: 'Probabilistic membership',
         icon: Icons.filter_alt,
@@ -609,7 +609,7 @@ final _algoScenarios = [
             'Utilisé dans Google Bigtable, Cassandra (réduire les lookups de SSTable), '
             'Chrome (liste noire d\'URL malveillantes).',
       ),
-      const _Step(
+      _Step(
         title: 'MapReduce',
         protocol: 'Traitement distribué',
         icon: Icons.transform,
@@ -626,7 +626,7 @@ final _algoScenarios = [
             'Apache Spark remplace largement Hadoop MapReduce en gardant les données en mémoire '
             '(RDD/DataFrame) pour des pipelines 100× plus rapides.',
       ),
-      const _Step(
+      _Step(
         title: 'Gossip protocol',
         protocol: 'Épidémique · Propagation',
         icon: Icons.cell_tower,
@@ -670,9 +670,9 @@ final _algoScenarios = [
             'il reconnaît les mêmes langages qu\'un DFA (construction de sous-ensembles), '
             'mais peut être exponentiellement plus compact. '
             'Les langages reconnus par les DFA/NFA sont exactement les langages réguliers.',
-        visual: () => SimFlowDiagram(
-          color: const Color(0xFFF44336),
-          nodes: const [
+        visual: () => const SimFlowDiagram(
+          color: Color(0xFFF44336),
+          nodes: [
             SimFlowNode('q0', Icons.circle),
             SimFlowNode('(a)', Icons.label),
             SimFlowNode('q1', Icons.circle),
@@ -1339,10 +1339,10 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
               }),
             ),
             if (_dpStep == 9)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
+              const Padding(
+                padding: EdgeInsets.only(top: 8),
                 child: Text('Toutes les valeurs en cache — O(n) temps, O(n) espace',
-                    style: const TextStyle(color: Color(0xFF10B981), fontSize: 10, fontFamily: 'monospace')),
+                    style: TextStyle(color: Color(0xFF10B981), fontSize: 10, fontFamily: 'monospace')),
               ),
           ],
         ),
@@ -1424,9 +1424,9 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
               _aBtn('Reset', Colors.grey, _resetRaft),
               if (_raftLeader >= 0) ...[
                 const SizedBox(width: 8),
-                Icon(Icons.how_to_vote, color: const Color(0xFF10B981), size: 14),
+                const Icon(Icons.how_to_vote, color: Color(0xFF10B981), size: 14),
                 const SizedBox(width: 4),
-                Text('Node 0 est LEADER', style: const TextStyle(color: Color(0xFF10B981), fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                const Text('Node 0 est LEADER', style: TextStyle(color: Color(0xFF10B981), fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
               ],
             ]),
             const SizedBox(height: 10),
@@ -1474,11 +1474,11 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
   // 5 – Compiler pipeline ───────────────────────────────────
   Widget _buildCompilerPanel() {
     final stages = <_AP4>[
-      _AP4('Lexer', 'int x = 5 + 3;', 'TOKENS: INT ID EQ NUM PLUS NUM SEMI', const Color(0xFF6366F1)),
-      _AP4('Parser', 'Tokens → AST', 'Assign(x, BinOp(+, 5, 3))', const Color(0xFF8B5CF6)),
-      _AP4('Semantic', 'Analyse types', 'x: int, expr: int ✓', const Color(0xFF06B6D4)),
-      _AP4('Optimizer', 'Constant folding', 'Assign(x, 8)  ← 5+3 = 8', const Color(0xFF10B981)),
-      _AP4('Codegen', 'IR → Assembly', 'mov eax, 8 / mov [x], eax', const Color(0xFFF59E0B)),
+      const _AP4('Lexer', 'int x = 5 + 3;', 'TOKENS: INT ID EQ NUM PLUS NUM SEMI', Color(0xFF6366F1)),
+      const _AP4('Parser', 'Tokens → AST', 'Assign(x, BinOp(+, 5, 3))', Color(0xFF8B5CF6)),
+      const _AP4('Semantic', 'Analyse types', 'x: int, expr: int ✓', Color(0xFF06B6D4)),
+      const _AP4('Optimizer', 'Constant folding', 'Assign(x, 8)  ← 5+3 = 8', Color(0xFF10B981)),
+      const _AP4('Codegen', 'IR → Assembly', 'mov eax, 8 / mov [x], eax', Color(0xFFF59E0B)),
     ];
     return _algoShell(
       color: const Color(0xFF6366F1),

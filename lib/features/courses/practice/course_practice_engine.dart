@@ -34,44 +34,44 @@ class CoursePracticeEngine {
     switch (course.category) {
       case 'network':
         return [
-          CoursePracticeLink(
+          const CoursePracticeLink(
             title: 'Diagnostiquer un réseau (virtuel)',
             subtitle: 'Résolution DNS → connexion → latence',
             icon: Icons.lan,
             tint: TdcColors.network,
-            labArgs: const {'sim': 'network'},
+            labArgs: {'sim': 'network'},
             toolRoute: '/tools/dns',
-            flow: const [
+            flow: [
               PracticeNode(icon: Icons.laptop_mac, label: 'Client', color: TdcColors.network),
               PracticeNode(icon: Icons.dns, label: 'DNS', color: TdcColors.info),
               PracticeNode(icon: Icons.public, label: 'Serveur', color: TdcColors.network),
             ],
-            embeddedSandbox: const MiniDnsSandbox(),
+            embeddedSandbox: MiniDnsSandbox(),
           ),
         ];
 
       case 'security':
         return [
-          CoursePracticeLink(
+          const CoursePracticeLink(
             title: 'Injection SQL (virtuel)',
             subtitle: 'Comprendre le “pourquoi” avant de tester',
             icon: Icons.shield_outlined,
             tint: TdcColors.security,
-            labArgs: const {'sim': 'security'},
-            flow: const [
+            labArgs: {'sim': 'security'},
+            flow: [
               PracticeNode(icon: Icons.person, label: 'Attaquant', color: TdcColors.security),
               PracticeNode(icon: Icons.web, label: 'Web app', color: TdcColors.warning),
               PracticeNode(icon: Icons.storage, label: 'Base', color: TdcColors.security),
             ],
-            embeddedSandbox: const MiniSqlInjectionSandbox(),
+            embeddedSandbox: MiniSqlInjectionSandbox(),
           ),
-          CoursePracticeLink(
+          const CoursePracticeLink(
             title: 'Préparer un lab CTF (offline)',
             subtitle: 'Vulnérable, mais isolé et contrôlé',
             icon: Icons.flag_outlined,
             tint: TdcColors.warning,
-            labArgs: const {'sim': 'ctf_prep'},
-            flow: const [
+            labArgs: {'sim': 'ctf_prep'},
+            flow: [
               PracticeNode(icon: Icons.computer, label: 'VM Attaque', color: TdcColors.warning),
               PracticeNode(icon: Icons.router, label: 'Réseau isolé', color: TdcColors.info),
               PracticeNode(icon: Icons.shield, label: 'VM Logs', color: TdcColors.security),
@@ -81,14 +81,14 @@ class CoursePracticeEngine {
 
       case 'linux':
         return [
-          CoursePracticeLink(
+          const CoursePracticeLink(
             title: 'Linux : permissions & chemins (virtuel)',
             subtitle: 'Comprendre chmod/chown et l’impact',
             icon: Icons.terminal,
             tint: TdcColors.system,
-            labArgs: const {'sim': 'linux'},
+            labArgs: {'sim': 'linux'},
             toolRoute: '/tools/chmod',
-            flow: const [
+            flow: [
               PracticeNode(icon: Icons.person, label: 'Utilisateur', color: TdcColors.system),
               PracticeNode(icon: Icons.folder, label: 'Fichiers', color: TdcColors.info),
               PracticeNode(icon: Icons.lock_outline, label: 'Permissions', color: TdcColors.system),
@@ -98,13 +98,13 @@ class CoursePracticeEngine {
 
       case 'sql':
         return [
-          CoursePracticeLink(
+          const CoursePracticeLink(
             title: 'SQL : requête & impact (virtuel)',
             subtitle: 'Du SELECT aux erreurs communes',
             icon: Icons.storage_outlined,
             tint: TdcColors.warning,
-            labArgs: const {'sim': 'security'},
-            flow: const [
+            labArgs: {'sim': 'security'},
+            flow: [
               PracticeNode(icon: Icons.code, label: 'Entrée', color: TdcColors.warning),
               PracticeNode(icon: Icons.storage, label: 'SQL', color: TdcColors.security),
               PracticeNode(icon: Icons.receipt_long, label: 'Résultat', color: TdcColors.info),
@@ -114,13 +114,13 @@ class CoursePracticeEngine {
 
       case 'devops':
         return [
-          CoursePracticeLink(
+          const CoursePracticeLink(
             title: 'DevOps : pipeline (virtuel)',
             subtitle: 'Build → package → déploiement local',
             icon: Icons.cloud_outlined,
             tint: TdcColors.cloud,
-            labArgs: const {'sim': 'cloud'},
-            flow: const [
+            labArgs: {'sim': 'cloud'},
+            flow: [
               PracticeNode(icon: Icons.build, label: 'Build', color: TdcColors.cloud),
               PracticeNode(icon: Icons.inventory_2, label: 'Artefact', color: TdcColors.info),
               PracticeNode(icon: Icons.rocket_launch, label: 'Déploiement', color: TdcColors.cloud),
@@ -131,14 +131,14 @@ class CoursePracticeEngine {
       case 'web':
       case 'javascript':
         return [
-          CoursePracticeLink(
+          const CoursePracticeLink(
             title: 'Web : requête HTTP (virtuel)',
             subtitle: 'Statuts, latence, erreurs',
             icon: Icons.public,
             tint: TdcColors.info,
             toolRoute: '/tools/http-status',
-            labArgs: const {'sim': 'theory'},
-            flow: const [
+            labArgs: {'sim': 'theory'},
+            flow: [
               PracticeNode(icon: Icons.phone_iphone, label: 'Client', color: TdcColors.info),
               PracticeNode(icon: Icons.http, label: 'HTTP', color: TdcColors.warning),
               PracticeNode(icon: Icons.dns, label: 'DNS', color: TdcColors.info),
@@ -150,13 +150,13 @@ class CoursePracticeEngine {
       case 'programming':
       default:
         return [
-          CoursePracticeLink(
+          const CoursePracticeLink(
             title: 'Réviser avec une simulation',
             subtitle: 'Rejouer le concept au lieu de juste lire',
             icon: Icons.science_outlined,
             tint: TdcColors.accent,
-            labArgs: const {'sim': 'algorithms'},
-            flow: const [
+            labArgs: {'sim': 'algorithms'},
+            flow: [
               PracticeNode(icon: Icons.account_tree, label: 'Algorithme', color: TdcColors.accent),
               PracticeNode(icon: Icons.memory, label: 'États', color: TdcColors.info),
               PracticeNode(icon: Icons.check_circle_outline, label: 'Résultat', color: TdcColors.success),

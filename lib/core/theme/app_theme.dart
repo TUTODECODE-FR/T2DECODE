@@ -188,9 +188,9 @@ ThemeData buildAppTheme() {
       onPrimary: Color(0xFF000000),
       onSurface: TdcColors.textPrimary,
     ),
-    cardTheme: CardThemeData(
+    cardTheme: const CardThemeData(
       color: TdcColors.bg,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: TdcRadius.sm,
         side: BorderSide(color: TdcColors.border),
       ),
@@ -260,24 +260,24 @@ ThemeData buildAppTheme() {
       ),
     ),
     iconTheme: const IconThemeData(color: TdcColors.textMuted, size: 20),
-    inputDecorationTheme: InputDecorationTheme(
+    inputDecorationTheme: const InputDecorationTheme(
       filled: true,
       fillColor: TdcColors.surfaceAlt,
-      contentPadding: const EdgeInsets.symmetric(
+      contentPadding: EdgeInsets.symmetric(
           horizontal: TdcSpacing.md, vertical: TdcSpacing.sm + 2),
       border: OutlineInputBorder(
         borderRadius: TdcRadius.md,
-        borderSide: const BorderSide(color: TdcColors.border),
+        borderSide: BorderSide(color: TdcColors.border),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: TdcRadius.md,
-        borderSide: const BorderSide(color: TdcColors.border),
+        borderSide: BorderSide(color: TdcColors.border),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: TdcRadius.md,
-        borderSide: const BorderSide(color: TdcColors.accent, width: 2),
+        borderSide: BorderSide(color: TdcColors.accent, width: 2),
       ),
-      hintStyle: const TextStyle(color: TdcColors.textMuted),
+      hintStyle: TextStyle(color: TdcColors.textMuted),
     ),
     scrollbarTheme: ScrollbarThemeData(
       thumbColor: WidgetStateProperty.all(TdcColors.borderFocus),
@@ -290,12 +290,12 @@ ThemeData buildAppTheme() {
       textColor: TdcColors.textPrimary,
       iconColor: TdcColors.textSecondary,
     ),
-    chipTheme: ChipThemeData(
+    chipTheme: const ChipThemeData(
       backgroundColor: TdcColors.bg,
-      labelStyle: const TextStyle(color: TdcColors.textSecondary, fontSize: 12),
-      side: const BorderSide(color: TdcColors.border),
-      shape: const RoundedRectangleBorder(borderRadius: TdcRadius.sm),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      labelStyle: TextStyle(color: TdcColors.textSecondary, fontSize: 12),
+      side: BorderSide(color: TdcColors.border),
+      shape: RoundedRectangleBorder(borderRadius: TdcRadius.sm),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {

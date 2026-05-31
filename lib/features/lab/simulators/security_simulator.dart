@@ -98,7 +98,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
             children: [
               Row(
                 children: [
-                  Icon(Icons.security, color: TdcColors.security, size: 24),
+                  const Icon(Icons.security, color: TdcColors.security, size: 24),
                   const SizedBox(width: 12),
                   const Text(
                     'SÉCURITÉ RÉSEAU & INFRA',
@@ -346,7 +346,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
-                        Icon(Icons.bug_report, color: TdcColors.security),
+                        const Icon(Icons.bug_report, color: TdcColors.security),
                         const SizedBox(width: 8),
                         const Text(
                           'Vulnérabilités Détectées',
@@ -454,7 +454,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
           const SizedBox(height: 8),
           Row(
             children: [
-              Icon(Icons.link, color: TdcColors.textTertiary, size: 16),
+              const Icon(Icons.link, color: TdcColors.textTertiary, size: 16),
               const SizedBox(width: 4),
               Text(
                 vulnerability.url,
@@ -729,7 +729,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
-                        Icon(Icons.list_alt, color: TdcColors.security),
+                        const Icon(Icons.list_alt, color: TdcColors.security),
                         const SizedBox(width: 8),
                         const Text(
                           'Logs de Sécurité',
@@ -837,7 +837,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
             const SizedBox(height: 4),
             Row(
               children: [
-                Icon(Icons.lan, color: TdcColors.textTertiary, size: 12),
+                const Icon(Icons.lan, color: TdcColors.textTertiary, size: 12),
                 const SizedBox(width: 4),
                 Text(
                   'IP: ${log.ip}',

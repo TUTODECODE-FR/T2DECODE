@@ -91,7 +91,7 @@ class _SecurityDiagnosticScreenState extends State<SecurityDiagnosticScreen> {
         Icon(icon, color: color, size: 20),
         const SizedBox(width: 12),
         Expanded(child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold))),
-        Text(value, style: TextStyle(color: TdcColors.textMuted, fontSize: 13)),
+        Text(value, style: const TextStyle(color: TdcColors.textMuted, fontSize: 13)),
       ],
     );
   }

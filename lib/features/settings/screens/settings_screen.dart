@@ -425,20 +425,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
             color: TdcColors.surfaceAlt,
             border: Border.fromBorderSide(BorderSide(color: TdcColors.border)),
           ),
-          child: Row(
+          child: const Row(
             children: [
               Icon(
-                const bool.fromEnvironment('OFFICIAL_BUILD') ? Icons.verified : Icons.warning_amber_rounded,
-                color: const bool.fromEnvironment('OFFICIAL_BUILD') ? TdcColors.success : TdcColors.warning,
+                bool.fromEnvironment('OFFICIAL_BUILD') ? Icons.verified : Icons.warning_amber_rounded,
+                color: bool.fromEnvironment('OFFICIAL_BUILD') ? TdcColors.success : TdcColors.warning,
                 size: 16,
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  const bool.fromEnvironment('OFFICIAL_BUILD')
+                  bool.fromEnvironment('OFFICIAL_BUILD')
                       ? 'Signature : v1.0.3-official-release-verified'
                       : 'Build de développement (Signature locale non certifiée)',
-                  style: const TextStyle(fontFamily: 'monospace', fontSize: 11, color: TdcColors.textSecondary),
+                  style: TextStyle(fontFamily: 'monospace', fontSize: 11, color: TdcColors.textSecondary),
                 ),
               ),
             ],
@@ -463,7 +463,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       borderRadius: TdcRadius.md,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: TdcRadius.md),
+        decoration: const BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: TdcRadius.md),
         child: Row(
           children: [
             Icon(icon, color: danger ? TdcColors.danger : TdcColors.accent),

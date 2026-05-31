@@ -97,7 +97,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           child: Padding(padding: const EdgeInsets.only(bottom: 8), child: Row(children: [
                             Container(width: 6, height: 6, decoration: BoxDecoration(shape: BoxShape.circle, color: gl.isRunning ? TdcColors.success : TdcColors.textMuted)),
                             const SizedBox(width: 12),
-                            Expanded(child: Text('Ghost Link', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 13))),
+                            const Expanded(child: Text('Ghost Link', style: TextStyle(color: TdcColors.textSecondary, fontSize: 13))),
                             Text(gl.isRunning ? '${gl.peers.length} pair(s)' : 'Inactif',
                               style: TextStyle(color: gl.isRunning ? TdcColors.success : TdcColors.textMuted, fontSize: 10, fontWeight: FontWeight.bold)),
                             const SizedBox(width: 4),
@@ -211,7 +211,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           width: 500,
           height: 300,
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: Colors.black, borderRadius: TdcRadius.sm),
+          decoration: const BoxDecoration(color: Colors.black, borderRadius: TdcRadius.sm),
           child: const SingleChildScrollView(
             child: Text(
               '[INFO] Ollama service started\\n[DEBUG] Connecting to p2p mesh...\\n[INFO] 127.0.0.1:11434 reachable\\n[WARN] High CPU load detected: 85%\\n[INFO] Course "Linux Basics" loaded\\n[INFO] Dashboard initialized',

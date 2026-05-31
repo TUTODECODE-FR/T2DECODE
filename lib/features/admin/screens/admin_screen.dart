@@ -27,21 +27,21 @@ class _AdminScreenState extends State<AdminScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return TdcPageWrapper(
+    return const TdcPageWrapper(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Network Controller Plan',
+          Text('Network Controller Plan',
               style: TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 1.2)),
-          const SizedBox(height: 8),
-          const Text('Panneau d\'administration',
+          SizedBox(height: 8),
+          Text('Panneau d\'administration',
               style: TextStyle(
                   color: TdcColors.textPrimary,
                   fontSize: 24,
                   fontWeight: FontWeight.bold)),
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           TdcCard(
-            child: const ListTile(
+            child: ListTile(
               leading: Icon(Icons.emergency_share, color: TdcColors.danger),
               title: Text('Broadcast control (simulation)',
                   style: TextStyle(color: TdcColors.textPrimary)),

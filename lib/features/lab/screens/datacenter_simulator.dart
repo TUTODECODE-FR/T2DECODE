@@ -173,7 +173,7 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
       children: [
         Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(color: TdcColors.surface, border: Border(bottom: BorderSide(color: TdcColors.border))),
+          decoration: const BoxDecoration(color: TdcColors.surface, border: Border(bottom: BorderSide(color: TdcColors.border))),
           child: Row(
             children: [
               Icon(Icons.dns, color: Colors.blue.shade700, size: 28),
@@ -239,7 +239,7 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
         final inc = _activeIncidents[i];
         return Card(
           color: Colors.red.withValues(alpha: 0.05),
-          shape: RoundedRectangleBorder(borderRadius: TdcRadius.md, side: const BorderSide(color: Colors.red, width: 0.5)),
+          shape: const RoundedRectangleBorder(borderRadius: TdcRadius.md, side: BorderSide(color: Colors.red, width: 0.5)),
           child: ListTile(
             leading: const Icon(Icons.warning_amber_rounded, color: Colors.red),
             title: Text(inc.description, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
@@ -254,7 +254,7 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
   Widget _buildMetricsBar() {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surfaceAlt.withValues(alpha: 0.2), border: Border(bottom: BorderSide(color: TdcColors.border))),
+      decoration: BoxDecoration(color: TdcColors.surfaceAlt.withValues(alpha: 0.2), border: const Border(bottom: BorderSide(color: TdcColors.border))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [

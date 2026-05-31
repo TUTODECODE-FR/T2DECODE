@@ -455,7 +455,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
               border: Border.all(color: TdcColors.border),
             ),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: const [
+              const Row(children: [
                 Icon(Icons.info_outline, size: 16, color: TdcColors.info),
                 SizedBox(width: 8),
                 Text('IA locale (optionnelle)', style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
@@ -480,7 +480,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
                   label: const Text('Détecter'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: TdcColors.textPrimary,
-                    side: BorderSide(color: TdcColors.border),
+                    side: const BorderSide(color: TdcColors.border),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -490,7 +490,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
                   label: const Text('Configurer'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: TdcColors.textPrimary,
-                    side: BorderSide(color: TdcColors.border),
+                    side: const BorderSide(color: TdcColors.border),
                   ),
                 ),
               ]),
@@ -556,7 +556,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   Widget _buildInput(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: TdcColors.surface,
         border: Border(top: BorderSide(color: TdcColors.border)),
       ),

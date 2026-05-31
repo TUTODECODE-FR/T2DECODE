@@ -56,7 +56,7 @@ class _ScriptGeneratorScreenState extends State<ScriptGeneratorScreen>
   void _initializeTemplates() {
     _templates.addAll([
       // System Administration
-      ScriptTemplate(
+      const ScriptTemplate(
         id: 'backup_system',
         name: 'Backup Complet du Système',
         description: 'Crée un backup complet du système avec compression',
@@ -112,7 +112,7 @@ echo "Backup terminé: $(date)"''',
         ],
       ),
 
-      ScriptTemplate(
+      const ScriptTemplate(
         id: 'monitor_system',
         name: 'Monitoring Système',
         description: 'Surveille l\'utilisation CPU, RAM et disque',
@@ -160,7 +160,7 @@ done''',
         ],
       ),
 
-      ScriptTemplate(
+      const ScriptTemplate(
         id: 'security_audit',
         name: 'Audit de Sécurité',
         description: 'Effectue un audit de sécurité complet',
@@ -210,7 +210,7 @@ echo "Audit terminé. Rapport: $REPORT_DIR/security_report.txt"''',
       ),
 
       // Network Scripts
-      ScriptTemplate(
+      const ScriptTemplate(
         id: 'network_scanner',
         name: 'Scanner Réseau',
         description: 'Scan un réseau pour détecter les hôtes actifs',
@@ -302,7 +302,7 @@ if __name__ == "__main__":
       ),
 
       // Database Scripts
-      ScriptTemplate(
+      const ScriptTemplate(
         id: 'database_backup',
         name: 'Backup MySQL',
         description: 'Backup automatique de bases de données MySQL',
@@ -354,7 +354,7 @@ echo "Espace utilisé: $(du -sh "$BACKUP_DIR" | cut -f1)"''',
       ),
 
       // Web Scripts
-      ScriptTemplate(
+      const ScriptTemplate(
         id: 'web_health_check',
         name: 'Health Check Web',
         description: 'Vérifie la santé de services web',
@@ -469,7 +469,7 @@ if __name__ == "__main__":
       children: [
         Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: TdcColors.surface,
             border: Border(bottom: BorderSide(color: TdcColors.border)),
           ),
@@ -858,7 +858,7 @@ if __name__ == "__main__":
                     ),
                   ),
                   const Spacer(),
-                  Icon(Icons.arrow_forward_ios, color: TdcColors.textMuted, size: 16),
+                  const Icon(Icons.arrow_forward_ios, color: TdcColors.textMuted, size: 16),
                 ],
               ),
               const SizedBox(height: 12),
@@ -882,7 +882,7 @@ if __name__ == "__main__":
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.tune, color: TdcColors.textMuted, size: 16),
+                    const Icon(Icons.tune, color: TdcColors.textMuted, size: 16),
                     const SizedBox(width: 4),
                     Text(
                       '${template.parameters.length} paramètres configurables',
@@ -930,18 +930,18 @@ if __name__ == "__main__":
         ),
         Expanded(
           child: _tasks.isEmpty
-              ? Center(
+              ? const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.schedule, color: TdcColors.textMuted, size: 48),
-                      const SizedBox(height: 16),
-                      const Text(
+                      SizedBox(height: 16),
+                      Text(
                         'Aucune tâche automatisée',
                         style: TextStyle(color: TdcColors.textMuted, fontSize: 16),
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
+                      SizedBox(height: 8),
+                      Text(
                         'Créez votre première tâche automatisée',
                         style: TextStyle(color: TdcColors.textMuted, fontSize: 12),
                       ),
@@ -1004,7 +1004,7 @@ if __name__ == "__main__":
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.schedule, color: TdcColors.textMuted, size: 16),
+                const Icon(Icons.schedule, color: TdcColors.textMuted, size: 16),
                 const SizedBox(width: 4),
                 Text(
                   'Exécution: ${task.schedule}',
@@ -1014,7 +1014,7 @@ if __name__ == "__main__":
                   ),
                 ),
                 const SizedBox(width: 16),
-                Icon(Icons.history, color: TdcColors.textMuted, size: 16),
+                const Icon(Icons.history, color: TdcColors.textMuted, size: 16),
                 const SizedBox(width: 4),
                 Text(
                   'Dernière: ${_formatDate(task.lastRun)}',
@@ -1059,18 +1059,18 @@ if __name__ == "__main__":
         ),
         Expanded(
           child: _generatedScripts.isEmpty
-              ? Center(
+              ? const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.code_off, color: TdcColors.textMuted, size: 48),
-                      const SizedBox(height: 16),
-                      const Text(
+                      SizedBox(height: 16),
+                      Text(
                         'Aucun script généré',
                         style: TextStyle(color: TdcColors.textMuted, fontSize: 16),
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
+                      SizedBox(height: 8),
+                      Text(
                         'Générez votre premier script',
                         style: TextStyle(color: TdcColors.textMuted, fontSize: 12),
                       ),

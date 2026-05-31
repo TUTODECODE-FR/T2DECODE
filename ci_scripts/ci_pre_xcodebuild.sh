@@ -25,7 +25,7 @@ retry() {
   shift || true
   local n=1
   until "$@"; do
-    if [ "$n" -ge "$max" ]; then
+    if [[ "$n" -ge "$max" ]]; then
       return 1
     fi
     n=$((n + 1))
@@ -36,7 +36,7 @@ retry() {
 if ! command -v flutter >/dev/null 2>&1; then
   echo "[ci_pre_xcodebuild] flutter not found; installing Flutter SDK (stable)..." >&2
   FLUTTER_DIR="$ROOT/flutter"
-  if [ ! -d "$FLUTTER_DIR/.git" ]; then
+  if [[ ! -d "$FLUTTER_DIR/.git" ]]; then
     retry 3 git clone --depth 1 -b stable https://github.com/flutter/flutter.git "$FLUTTER_DIR"
   fi
   export PATH="$FLUTTER_DIR/bin:$PATH"
@@ -114,7 +114,7 @@ ensure_pod() {
   gem install --no-document --user-install cocoapods
   if command -v ruby >/dev/null 2>&1; then
     GEM_USER_DIR="$(ruby -e 'require \"rubygems\"; print Gem.user_dir' 2>/dev/null || true)"
-    if [ -n "${GEM_USER_DIR:-}" ]; then
+    if [[ -n "${GEM_USER_DIR:-}" ]]; then
       export PATH="$GEM_USER_DIR/bin:$PATH"
     fi
   fi

@@ -100,7 +100,7 @@ class TdcPremium {
             fontWeight: FontWeight.w900,
             letterSpacing: 1.5,
             foreground: Paint()
-              ..shader = LinearGradient(
+              ..shader = const LinearGradient(
                 colors: [TdcColors.textPrimary, TdcColors.accent],
               ).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
           ),

@@ -270,7 +270,7 @@ class _QcmWidgetState extends State<QcmWidget> {
               onPressed: _selected != null ? (_validated ? _next : _validate) : null,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 18),
-                shape: RoundedRectangleBorder(borderRadius: TdcRadius.md),
+                shape: const RoundedRectangleBorder(borderRadius: TdcRadius.md),
                 elevation: 4,
                 shadowColor: TdcColors.accent.withValues(alpha: 0.4),
               ),

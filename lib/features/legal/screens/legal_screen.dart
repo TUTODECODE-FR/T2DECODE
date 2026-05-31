@@ -14,7 +14,7 @@ class LegalScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: TdcColors.surface,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: TdcColors.accent),
+          icon: const Icon(Icons.arrow_back, color: TdcColors.accent),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('Mentions légales', 
@@ -58,7 +58,7 @@ class LegalScreen extends StatelessWidget {
             const SizedBox(height: 32),
             const Divider(color: TdcColors.border),
             const SizedBox(height: 16),
-            Text('© 2026 Association TUTODECODE. Tous droits réservés.', 
+            const Text('© 2026 Association TUTODECODE. Tous droits réservés.', 
               style: TextStyle(
                 color: TdcColors.textMuted, 
                 fontSize: 10)),

@@ -163,11 +163,11 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.business, color: TdcColors.accent, size: 24),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Informations du Développeur',
                   style: TextStyle(
                     color: TdcColors.textPrimary,
@@ -235,7 +235,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
           children: [
             Row(
               children: [
-                Icon(Icons.security, color: TdcColors.accent, size: 24),
+                const Icon(Icons.security, color: TdcColors.accent, size: 24),
                 const SizedBox(width: 12),
                 const Text(
                   'Contrôles d\'Authentification',
@@ -442,11 +442,11 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.warning, color: Colors.red, size: 24),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Problèmes de Sécurité Détectés',
                   style: TextStyle(
                     color: Colors.red,
@@ -480,14 +480,14 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
                 color: Colors.red.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Row(
+              child: const Row(
                 children: [
                   Icon(Icons.info, color: Colors.red, size: 16),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Ce code source présente des problèmes de sécurité. Téléchargez la version officielle depuis le dépôt GitHub officiel.',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.red,
                         fontSize: 12,
                       ),
@@ -546,11 +546,11 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.verified, color: TdcColors.accent, size: 24),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Signature du Code Source',
                   style: TextStyle(
                     color: TdcColors.textPrimary,
@@ -658,7 +658,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
           children: [
             Row(
               children: [
-                Icon(Icons.water_drop, color: TdcColors.accent, size: 24),
+                const Icon(Icons.water_drop, color: TdcColors.accent, size: 24),
                 const SizedBox(width: 12),
                 const Text(
                   'Watermark du Code Source',
@@ -688,11 +688,11 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     children: [
                       Icon(Icons.info, color: Colors.blue, size: 20),
-                      const SizedBox(width: 8),
-                      const Text(
+                      SizedBox(width: 8),
+                      Text(
                         'Watermark unique intégré dans le code source',
                         style: TextStyle(
                           color: Colors.blue,

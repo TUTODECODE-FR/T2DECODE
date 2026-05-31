@@ -285,7 +285,7 @@ class AnonymityService {
     } catch (e) {
       if (kDebugMode) debugPrint('[AnonymityService] getCurrentMac error: $e');
     }
-    return MacInfo(interface: 'eth0', mac: 'inconnu');
+    return const MacInfo(interface: 'eth0', mac: 'inconnu');
   }
 
   // ── Sauvegarde / restauration ──────────────────────────────
@@ -723,7 +723,7 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
               'Set-Service -Name "Bonjour Service" -StartupType Disabled; Stop-Service -Name "Bonjour Service" -Force -ErrorAction SilentlyContinue'
             ],
             runInShell: true);
-        return AnonResult(
+        return const AnonResult(
             success: true, message: 'Service Bonjour désactivé (si installé)');
       }
       return const AnonResult(

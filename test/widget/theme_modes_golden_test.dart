@@ -42,12 +42,12 @@ class ThemePreview extends StatelessWidget {
               decoration: InputDecoration(labelText: 'Champ texte'),
             ),
             const SizedBox(height: TdcSpacing.lg),
-            Card(
+            const Card(
               child: Padding(
-                padding: const EdgeInsets.all(TdcSpacing.md),
+                padding: EdgeInsets.all(TdcSpacing.md),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text('Carte'),
                     SizedBox(height: TdcSpacing.sm),
                     Text('Contenu de test pour les surfaces.'),

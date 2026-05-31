@@ -465,7 +465,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_ios, color: TdcColors.textMuted, size: 16),
+          const Icon(Icons.arrow_forward_ios, color: TdcColors.textMuted, size: 16),
         ],
       ),
     );
@@ -593,8 +593,8 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
       length: 3,
       child: Column(
         children: [
-          TabBar(
-            tabs: const [
+          const TabBar(
+            tabs: [
               Tab(text: 'Débloqués'),
               Tab(text: 'En cours'),
               Tab(text: 'Disponibles'),
@@ -619,7 +619,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
 
   Widget _buildAchievementList(List<Achievement> achievements) {
     if (achievements.isEmpty) {
-      return Center(
+      return const Center(
         child: Text(
           'Aucun achievement dans cette catégorie',
           style: TextStyle(color: TdcColors.textMuted),
@@ -796,7 +796,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
           const SizedBox(height: 12),
           Row(
             children: [
-              Icon(Icons.timer, color: TdcColors.textMuted, size: 16),
+              const Icon(Icons.timer, color: TdcColors.textMuted, size: 16),
               const SizedBox(width: 4),
               Text(
                 '$hoursLeft h restantes',
@@ -806,7 +806,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
                 ),
               ),
               const Spacer(),
-              Icon(Icons.star, color: TdcColors.accent, size: 16),
+              const Icon(Icons.star, color: TdcColors.accent, size: 16),
               const SizedBox(width: 4),
               Text(
                 '+${challenge.pointsReward}',
@@ -823,7 +823,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
             padding: const EdgeInsets.only(top: 4),
             child: Row(
               children: [
-                Icon(Icons.radio_button_unchecked, color: TdcColors.textMuted, size: 12),
+                const Icon(Icons.radio_button_unchecked, color: TdcColors.textMuted, size: 12),
                 const SizedBox(width: 8),
                 Text(
                   chapter,

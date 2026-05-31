@@ -92,7 +92,7 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.transparent,
       ),
       child: Column(

@@ -110,15 +110,15 @@ class TutoDeCodeApp extends StatelessWidget {
               settings: settings,
               pageBuilder: (context, animation, secondaryAnimation) {
                 switch (settings.name) {
-                  case '/':                     return HomeScreen();
-                  case '/chapter':              return ChapterScreen();
+                  case '/':                     return const HomeScreen();
+                  case '/chapter':              return const ChapterScreen();
                   case '/ai':                   return const AIChatScreen();
                   case '/ai-tutor':             return const AiTutorScreen();
                   case '/ai-config':            return const AIConfigScreen();
                   case '/netkit':               return const NetKitScreen();
-                  case '/roadmap':              return RoadmapScreen();
+                  case '/roadmap':              return const RoadmapScreen();
                   case '/lab':                  return const ProfessionalLabScreen();
-                  case '/cheat-sheets':         return CheatSheetScreen();
+                  case '/cheat-sheets':         return const CheatSheetScreen();
                   case '/cheat-sheets/details':
                     final entry = settings.arguments as CheatSheetEntry;
                     return CheatSheetDetailScreen(entry: entry);
@@ -148,8 +148,8 @@ class TutoDeCodeApp extends StatelessWidget {
                   case '/tools/anonymity':      return const AnonymityToolScreen();
                   case '/dashboard':            return const DashboardScreen();
 
-                  case '/admin':                return AdminScreen();
-                  case '/legal':                return LegalScreen();
+                  case '/admin':                return const AdminScreen();
+                  case '/legal':                return const LegalScreen();
                   case '/legal/build-verification': return const BuildVerificationScreen();
                   case '/mentions-legales':     return const MentionsLegalesScreen();
                   case '/settings':             return const SettingsScreen();
@@ -157,7 +157,7 @@ class TutoDeCodeApp extends StatelessWidget {
                   case '/ghost-link/chat':
                     final peer = settings.arguments as GhostPeer;
                     return GhostChatScreen(peer: peer);
-                  default:                      return HomeScreen();
+                  default:                      return const HomeScreen();
                 }
               },
               transitionsBuilder: (context, animation, secondaryAnimation, child) {
