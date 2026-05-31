@@ -210,9 +210,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
               context: context,
               builder: (ctx) => AlertDialog(
                 title: const Text('Lien externe'),
-                content: Text('Voulez-vous ouvrir ce lien externe ?
-
-$href'),
+                content: Text('Voulez-vous ouvrir ce lien externe ?\n\n$href'),
                 actions: [
                   TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
                   TextButton(

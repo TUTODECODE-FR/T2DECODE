@@ -258,9 +258,9 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
           setState(() {
             _msgs[_msgs.length - 1] = const _Msg(
               role: 'error',
-              text: '⚠️ **Impossible de se connecter à l\\'IA.**\\n\\n'
-                  'Vérifiez qu\\'Ollama est bien installé et en cours d\\'exécution sur votre Mac.\\n'
-                  '_Commande : `ollama serve`_',
+              text: "⚠️ **Impossible de se connecter à l'IA.**\n\n"
+                  "Vérifiez qu'Ollama est bien installé et en cours d'exécution sur votre Mac.\n"
+                  "_Commande : `ollama serve`_",
             );
             _status = const OllamaStatus(running: false, error: 'Ollama indisponible');
             _model = null;
@@ -274,8 +274,8 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       setState(() {
         _msgs[_msgs.length - 1] = const _Msg(
           role: 'error',
-          text: '⚠️ **Impossible de se connecter à l\\'IA.**\\n\\n'
-              'Vérifiez qu\'Ollama est bien installé et en cours d\'exécution sur votre Mac.',
+          text: "⚠️ **Impossible de se connecter à l'IA.**\n\n"
+              "Vérifiez qu'Ollama est bien installé et en cours d'exécution sur votre Mac.",
         );
         _streaming = false;
       });

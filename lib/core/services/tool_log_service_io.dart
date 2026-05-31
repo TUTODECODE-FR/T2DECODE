@@ -30,8 +30,7 @@ class ToolLogService {
         'action': action,
         if (meta != null) 'meta': meta,
       };
-      await f.writeAsString('${jsonEncode(entry)}
-', mode: FileMode.append, flush: true);
+      await f.writeAsString('${jsonEncode(entry)}\n', mode: FileMode.append, flush: true);
     } catch (e) {
       if (kDebugMode) debugPrint('Tool log failed: $e');
     }

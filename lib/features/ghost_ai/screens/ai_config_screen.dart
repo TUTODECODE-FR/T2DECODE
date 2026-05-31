@@ -174,22 +174,28 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
   // ── Carte statut ───────────────────────────────────────────
   Widget _buildStatusCard(BuildContext context) {
     final isRunning = _status?.running ?? false;
-    final color = _checking
-        ? TdcColors.warning
-        : (isRunning ? TdcColors.success : TdcColors.danger);
-    final icon = _checking
-        ? Icons.hourglass_top
-        : (isRunning ? Icons.check_circle : Icons.cancel);
-    final statusText = _checking
-        ? 'Vérification en cours…'
-        : (isRunning
-            ? 'Ollama est en ligne  ${_status?.version != null ? "— v${_status!.version}" : ""}'
-            : (_status?.error ?? 'Ollama n\'est pas détecté'));
-    final subText = _checking
-        ? 'Ping sur ${_hostController.text}…'
-        : (isRunning
-            ? '${_status!.models.length} modèle(s) installé(s) · Port 11434'
-            : 'Installez ou démarrez Ollama pour activer l\\'IA locale\\n${_status?.error ?? ""}');
+    
+    Color color;
+    IconData icon;
+    String statusText;
+    String subText;
+
+    if (_checking) {
+      color = TdcColors.warning;
+      icon = Icons.hourglass_top;
+      statusText = 'Vérification en cours…';
+      subText = 'Ping sur ${_hostController.text}…';
+    } else if (isRunning) {
+      color = TdcColors.success;
+      icon = Icons.check_circle;
+      statusText = 'Ollama est en ligne  ${_status?.version != null ? "— v${_status!.version}" : ""}';
+      subText = '${_status!.models.length} modèle(s) installé(s) · Port 11434';
+    } else {
+      color = TdcColors.danger;
+      icon = Icons.cancel;
+      statusText = _status?.error ?? 'Ollama n\'est pas détecté';
+      subText = "Installez ou démarrez Ollama pour activer l'IA locale\n${_status?.error ?? ""}";
+    }
 
     return Container(
       padding: EdgeInsets.all(TdcAdaptive.padding(context, TdcSpacing.lg)),

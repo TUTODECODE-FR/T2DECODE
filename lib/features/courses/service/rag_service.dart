@@ -38,19 +38,20 @@ class RagService {
 
       if (matches || q.contains(course.title.toLowerCase())) {
         // Add course description and some chapter titles
-        String context = "### PARCOURS : ${course.title}
+        String context = '''### PARCOURS : ${course.title}
 ${course.description}
-";
-        context += "Chapitres inclus : ${course.chapters.map((c) => c.title).join(', ')}.
-";
+''';
+        context += '''Chapitres inclus : ${course.chapters.map((c) => c.title).join(', ')}.
+''';
         
         // Search in chapters
         for (var ch in course.chapters) {
           if (q.contains(ch.title.toLowerCase())) {
-            context += "
+            context += '''
+
 EXTRAIT CH. '${ch.title}' :
 ${ch.content.length > 500 ? ch.content.substring(0, 500) + "..." : ch.content}
-";
+''';
           }
         }
         results.add(context);
