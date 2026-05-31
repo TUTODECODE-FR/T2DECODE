@@ -189,7 +189,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
         ? 'Ping sur ${_hostController.text}…'
         : (isRunning
             ? '${_status!.models.length} modèle(s) installé(s) · Port 11434'
-            : 'Installez ou démarrez Ollama pour activer l\\'IA locale\\n${_status?.error ?? ""}');
+            : "Installez ou démarrez Ollama pour activer l'IA locale\n${_status?.error ?? ""}");
 
     return Container(
       padding: EdgeInsets.all(TdcAdaptive.padding(context, TdcSpacing.lg)),
