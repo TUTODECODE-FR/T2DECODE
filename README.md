@@ -8,7 +8,6 @@
   — *Maxime MARTIN CIVET*
 
   <br>
-  <!-- ⚠️ N'OUBLIEZ PAS DE PLACER VOTRE GIF DANS docs/images/t2decode_demo.gif -->
   <img src="docs/images/t2decode_demo.gif" width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" alt="Démo rapide - Ghost AI & Simulateurs">
   <br>
 
