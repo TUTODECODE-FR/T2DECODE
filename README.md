@@ -161,7 +161,7 @@ flowchart TB
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🖼️ Aperçu de l'Interface Premium (Noir & Beige)
+## 🖼️ Aperçu de l'Interface
 
 L'interface de T2DECODE est conçue selon un design moderne (*Noir & Beige*, *Glassmorphism*, animations fluides) pour offrir une expérience de navigation d'excellence sur toutes les tailles d'écran.
 
