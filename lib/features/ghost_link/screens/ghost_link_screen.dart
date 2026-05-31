@@ -152,9 +152,9 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
       padding: EdgeInsets.all(isMobile ? 16 : 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-            colors: [_color.withOpacity(0.15), _color.withOpacity(0.05)]),
+            colors: [_color.withValues(alpha: 0.15), _color.withValues(alpha: 0.05)]),
         borderRadius: TdcRadius.lg,
-        border: Border.all(color: _color.withOpacity(0.3)),
+        border: Border.all(color: _color.withValues(alpha: 0.3)),
       ),
       child: isMobile
           ? Column(
@@ -186,7 +186,7 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration:
-          BoxDecoration(color: _color.withOpacity(0.2), shape: BoxShape.circle),
+          BoxDecoration(color: _color.withValues(alpha: 0.2), shape: BoxShape.circle),
       child: Icon(
           gl.isRunning ? Icons.wifi_tethering : Icons.wifi_tethering_off,
           color: _color,
@@ -219,7 +219,7 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
             child: Switch(
               value: gl.stealthMode,
               onChanged: (v) => gl.setStealthMode(v),
-              activeColor: _color,
+              activeThumbColor: _color,
             ),
           ),
           Text(gl.stealthMode ? 'Mode Stealth ACTIF' : 'Mode Découverte PUBLIC',
@@ -270,7 +270,7 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
         children: [
           const SizedBox(height: 40),
           Icon(Icons.wifi_off,
-              size: 64, color: TdcColors.textMuted.withOpacity(0.5)),
+              size: 64, color: TdcColors.textMuted.withValues(alpha: 0.5)),
           const SizedBox(height: 20),
           const Text('Ghost Link est arrêté',
               style: TextStyle(
@@ -313,7 +313,7 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
                 builder: (_, v, child) =>
                     Opacity(opacity: 0.4 + 0.6 * v, child: child),
                 child:
-                    Icon(Icons.radar, size: 64, color: _color.withOpacity(0.7)),
+                    Icon(Icons.radar, size: 64, color: _color.withValues(alpha: 0.7)),
               ),
               const SizedBox(height: 20),
               const Text('Recherche de pairs...',
@@ -370,7 +370,7 @@ class _PeerCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 22,
-            backgroundColor: accentColor.withOpacity(0.15),
+            backgroundColor: accentColor.withValues(alpha: 0.15),
             child: Text(
               peer.name.isNotEmpty ? peer.name[0].toUpperCase() : '?',
               style: TextStyle(
@@ -397,7 +397,7 @@ class _PeerCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                            color: accentColor.withOpacity(0.1),
+                            color: accentColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4)),
                         child: Text('MANUEL',
                             style: TextStyle(
@@ -409,7 +409,7 @@ class _PeerCard extends StatelessWidget {
                     if (peer.protocolVersion >= 2) ...[
                       const SizedBox(width: 6),
                       Icon(Icons.lock,
-                          color: TdcColors.success.withOpacity(0.7), size: 12),
+                          color: TdcColors.success.withValues(alpha: 0.7), size: 12),
                     ],
                   ],
                 ),
@@ -423,7 +423,7 @@ class _PeerCard extends StatelessWidget {
                     if (peer.isPinned) ...[
                       const SizedBox(width: 6),
                       Icon(Icons.push_pin,
-                          color: accentColor.withOpacity(0.5), size: 10),
+                          color: accentColor.withValues(alpha: 0.5), size: 10),
                     ],
                   ],
                 ),
@@ -479,11 +479,11 @@ class _StatusBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color:
-            (running ? TdcColors.success : TdcColors.danger).withOpacity(0.1),
+            (running ? TdcColors.success : TdcColors.danger).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
             color: (running ? TdcColors.success : TdcColors.danger)
-                .withOpacity(0.3)),
+                .withValues(alpha: 0.3)),
       ),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         Container(

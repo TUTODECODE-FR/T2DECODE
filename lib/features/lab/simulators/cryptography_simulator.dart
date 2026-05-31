@@ -103,9 +103,9 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: TdcColors.crypto.withOpacity(0.1),
+                      color: TdcColors.crypto.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: TdcColors.crypto.withOpacity(0.3)),
+                      border: Border.all(color: TdcColors.crypto.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -192,7 +192,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
         
         // Tabs
         Container(
-          color: TdcColors.surfaceAlt.withOpacity(0.3),
+          color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
           child: TabBar(
             controller: _tabController,
             indicatorColor: TdcColors.crypto,
@@ -954,13 +954,13 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: _verificationResult 
-                                ? TdcColors.system.withOpacity(0.1)
-                                : TdcColors.security.withOpacity(0.1),
+                                ? TdcColors.system.withValues(alpha: 0.1)
+                                : TdcColors.security.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               color: _verificationResult 
-                                  ? TdcColors.system.withOpacity(0.3)
-                                  : TdcColors.security.withOpacity(0.3),
+                                  ? TdcColors.system.withValues(alpha: 0.3)
+                                  : TdcColors.security.withValues(alpha: 0.3),
                             ),
                           ),
                           child: Row(

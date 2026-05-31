@@ -106,7 +106,7 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
     margin: const EdgeInsets.only(bottom: 16),
     padding: const EdgeInsets.all(12),
     width: double.infinity,
-    decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), borderRadius: TdcRadius.sm, border: Border.all(color: Colors.red)),
+    decoration: BoxDecoration(color: Colors.red.withValues(alpha: 0.1), borderRadius: TdcRadius.sm, border: Border.all(color: Colors.red)),
     child: Text(_error, style: const TextStyle(color: Colors.red, fontSize: 12)),
   );
 

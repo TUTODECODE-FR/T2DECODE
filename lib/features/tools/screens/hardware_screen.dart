@@ -169,9 +169,9 @@ class _HardwareScreenState extends State<HardwareScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: securityColor.withOpacity(0.1),
+                color: securityColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: securityColor.withOpacity(0.3)),
+                border: Border.all(color: securityColor.withValues(alpha: 0.3)),
               ),
               child: Text(
                 securityText,

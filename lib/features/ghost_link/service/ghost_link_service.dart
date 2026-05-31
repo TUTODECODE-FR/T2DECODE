@@ -10,7 +10,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:crypto/crypto.dart' as pkg_crypto;
 import 'package:flutter/foundation.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -213,8 +212,9 @@ class GhostLinkService extends ChangeNotifier {
         _cleanupMessages();
       });
 
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('[GhostLink] Started. IP=$_localIp Name=$_localName');
+      }
       return true;
     } catch (e) {
       await stop();
@@ -709,8 +709,9 @@ class GhostLinkService extends ChangeNotifier {
           }
           break;
         case 'ack':
-          if (kDebugMode)
+          if (kDebugMode) {
             debugPrint('[GhostLink] ACK received for msg ${data['id']}');
+          }
           break;
         case 'req_info':
           _sendSystemInfo(socket);

@@ -82,7 +82,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
           end: Alignment.bottomRight,
           colors: [
             TdcColors.surface,
-            TdcColors.surfaceAlt.withOpacity(0.3),
+            TdcColors.surfaceAlt.withValues(alpha: 0.3),
           ],
         ),
         borderRadius: const BorderRadius.only(
@@ -247,7 +247,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: TdcColors.surfaceAlt.withOpacity(0.5),
+        color: TdcColors.surfaceAlt.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -428,7 +428,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: TdcColors.surfaceAlt.withOpacity(0.3),
+        color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: TdcColors.border),
       ),
@@ -437,7 +437,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: tree.color.withOpacity(0.2),
+              color: tree.color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(tree.icon, color: tree.color),
@@ -500,7 +500,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: TdcColors.surfaceAlt.withOpacity(0.3),
+        color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: TdcColors.border),
       ),
@@ -642,12 +642,12 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: achievement.isUnlocked 
-            ? achievement.color.withOpacity(0.1)
-            : TdcColors.surfaceAlt.withOpacity(0.3),
+            ? achievement.color.withValues(alpha: 0.1)
+            : TdcColors.surfaceAlt.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: achievement.isUnlocked 
-              ? achievement.color.withOpacity(0.3)
+              ? achievement.color.withValues(alpha: 0.3)
               : TdcColors.border,
         ),
       ),
@@ -657,7 +657,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: achievement.isUnlocked 
-                  ? achievement.color.withOpacity(0.2)
+                  ? achievement.color.withValues(alpha: 0.2)
                   : TdcColors.surfaceAlt,
               borderRadius: BorderRadius.circular(12),
             ),

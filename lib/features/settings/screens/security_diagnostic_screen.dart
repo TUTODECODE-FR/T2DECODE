@@ -104,7 +104,7 @@ class _SecurityDiagnosticScreenState extends State<SecurityDiagnosticScreen> {
       decoration: BoxDecoration(
         color: TdcColors.surfaceAlt,
         borderRadius: TdcRadius.sm,
-        border: Border.all(color: isError ? TdcColors.danger.withOpacity(0.3) : TdcColors.border),
+        border: Border.all(color: isError ? TdcColors.danger.withValues(alpha: 0.3) : TdcColors.border),
       ),
       child: Text(
         log,

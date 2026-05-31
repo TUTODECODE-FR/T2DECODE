@@ -154,7 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Expanded(
               child: DropdownButtonFormField<String>(
-                value: settings.ollamaModel,
+                initialValue: settings.ollamaModel,
                 decoration: const InputDecoration(labelText: 'Sélecteur de modèle'),
                 items: (_status?.models ?? [settings.ollamaModel]).map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
                 onChanged: (val) => val != null ? settings.setOllamaModel(val) : null,
@@ -164,7 +164,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: (_status?.running ?? false) ? TdcColors.success.withOpacity(0.1) : TdcColors.danger.withOpacity(0.1),
+                color: (_status?.running ?? false) ? TdcColors.success.withValues(alpha: 0.1) : TdcColors.danger.withValues(alpha: 0.1),
                 borderRadius: TdcRadius.sm,
               ),
               child: Row(
@@ -179,7 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
-          value: settings.tutorPersonality,
+          initialValue: settings.tutorPersonality,
           decoration: const InputDecoration(labelText: 'Personnalité du tuteur'),
           items: const [
             DropdownMenuItem(value: 'Direct', child: Text('Direct (Donne la réponse)')),

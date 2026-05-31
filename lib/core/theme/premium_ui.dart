@@ -22,17 +22,17 @@ class TdcPremium {
       width: width,
       gradient: LinearGradient(
         colors: [
-          TdcColors.surface.withOpacity(0.7),
-          TdcColors.surfaceAlt.withOpacity(0.4),
+          TdcColors.surface.withValues(alpha: 0.7),
+          TdcColors.surfaceAlt.withValues(alpha: 0.4),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
       borderGradient: LinearGradient(
         colors: [
-          TdcColors.accent.withOpacity(0.5),
-          TdcColors.border.withOpacity(0.1),
-          TdcColors.info.withOpacity(0.3),
+          TdcColors.accent.withValues(alpha: 0.5),
+          TdcColors.border.withValues(alpha: 0.1),
+          TdcColors.info.withValues(alpha: 0.3),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -61,7 +61,7 @@ class TdcPremium {
             height: 300,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: TdcColors.accent.withOpacity(0.05),
+              color: TdcColors.accent.withValues(alpha: 0.05),
             ),
           ).animate(onPlay: (controller) => controller.repeat(reverse: true))
             .move(begin: const Offset(-20, -20), end: const Offset(20, 20), duration: 5.seconds, curve: Curves.easeInOut),
@@ -75,7 +75,7 @@ class TdcPremium {
             height: 400,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: TdcColors.info.withOpacity(0.03),
+              color: TdcColors.info.withValues(alpha: 0.03),
             ),
           ).animate(onPlay: (controller) => controller.repeat(reverse: true))
             .move(begin: const Offset(30, 30), end: const Offset(-30, -30), duration: 7.seconds, curve: Curves.easeInOut),
@@ -91,7 +91,7 @@ class TdcPremium {
       children: [
         Icon(icon, size: 20, color: TdcColors.accent)
             .animate(onPlay: (controller) => controller.repeat(reverse: true))
-            .shimmer(duration: 2.seconds, color: Colors.white.withOpacity(0.3)),
+            .shimmer(duration: 2.seconds, color: Colors.white.withValues(alpha: 0.3)),
         const SizedBox(width: 12),
         Text(
           text.toUpperCase(),

@@ -163,7 +163,7 @@ class _RaidToolScreenState extends State<RaidToolScreen> {
     }
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.blue.withOpacity(0.05), borderRadius: TdcRadius.md, border: Border.all(color: Colors.blue.withOpacity(0.2))),
+      decoration: BoxDecoration(color: Colors.blue.withValues(alpha: 0.05), borderRadius: TdcRadius.md, border: Border.all(color: Colors.blue.withValues(alpha: 0.2))),
       child: Row(
         children: [
           const Icon(Icons.info_outline, color: Colors.blue, size: 20),

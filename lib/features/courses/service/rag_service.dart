@@ -50,7 +50,7 @@ ${course.description}
             context += '''
 
 EXTRAIT CH. '${ch.title}' :
-${ch.content.length > 500 ? ch.content.substring(0, 500) + "..." : ch.content}
+${ch.content.length > 500 ? "${ch.content.substring(0, 500)}..." : ch.content}
 ''';
           }
         }

@@ -233,9 +233,9 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFEF4444).withOpacity(0.09),
+        color: const Color(0xFFEF4444).withValues(alpha: 0.09),
         borderRadius: TdcRadius.md,
-        border: Border.all(color: const Color(0xFFEF4444).withOpacity(0.4)),
+        border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,9 +273,9 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF3B82F6).withOpacity(0.08),
+        color: const Color(0xFF3B82F6).withValues(alpha: 0.08),
         borderRadius: TdcRadius.md,
-        border: Border.all(color: const Color(0xFF3B82F6).withOpacity(0.35)),
+        border: Border.all(color: const Color(0xFF3B82F6).withValues(alpha: 0.35)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -749,7 +749,7 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
                             horizontal: 14, vertical: 7),
                         decoration: BoxDecoration(
                           color: _ttl == v
-                              ? TdcColors.accent.withOpacity(0.15)
+                              ? TdcColors.accent.withValues(alpha: 0.15)
                               : Colors.transparent,
                           borderRadius: TdcRadius.sm,
                           border: Border.all(
@@ -794,9 +794,9 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF10B981).withOpacity(0.07),
+        color: const Color(0xFF10B981).withValues(alpha: 0.07),
         borderRadius: TdcRadius.md,
-        border: Border.all(color: const Color(0xFF10B981).withOpacity(0.35)),
+        border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.35)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -832,9 +832,10 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
                         final results = await AnonymityService.restoreAll(
                             _backup!,
                             sudoPassword: _sudoPassword);
-                        if (results.isEmpty)
+                        if (results.isEmpty) {
                           return const AnonResult(
                               success: true, message: 'Rien à restaurer');
+                        }
                         final allOk = results.every((r) => r.success);
                         final msgs = results.map((r) => r.message).join(' | ');
                         return AnonResult(success: allOk, message: msgs);
@@ -895,14 +896,14 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: log.success
-            ? const Color(0xFF10B981).withOpacity(0.07)
-            : const Color(0xFFEF4444).withOpacity(0.07),
+            ? const Color(0xFF10B981).withValues(alpha: 0.07)
+            : const Color(0xFFEF4444).withValues(alpha: 0.07),
         borderRadius: TdcRadius.sm,
         border: Border.all(
             color: (log.success
                     ? const Color(0xFF10B981)
                     : const Color(0xFFEF4444))
-                .withOpacity(0.3)),
+                .withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

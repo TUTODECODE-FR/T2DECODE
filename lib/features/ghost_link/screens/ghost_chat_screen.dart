@@ -111,7 +111,7 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
               child: Row(children: [
                 CircleAvatar(
                   radius: 18,
-                  backgroundColor: _color.withOpacity(0.15),
+                  backgroundColor: _color.withValues(alpha: 0.15),
                   child: Text(widget.peer.name[0].toUpperCase(), style: TextStyle(color: _color, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(width: 12),
@@ -121,9 +121,9 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
                 ])),
                 Row(children: [
                   if (widget.peer.protocolVersion >= 2) ...[
-                    Icon(Icons.lock, color: TdcColors.success.withOpacity(0.7), size: 12),
+                    Icon(Icons.lock, color: TdcColors.success.withValues(alpha: 0.7), size: 12),
                     const SizedBox(width: 4),
-                    Text('Sécurisé (AES)', style: TextStyle(color: TdcColors.success.withOpacity(0.7), fontSize: 11, fontWeight: FontWeight.bold)),
+                    Text('Sécurisé (AES)', style: TextStyle(color: TdcColors.success.withValues(alpha: 0.7), fontSize: 11, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 12),
                   ],
                   const SizedBox(width: 6),
@@ -143,7 +143,7 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
               child: messages.isEmpty
                   ? Center(
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        Icon(Icons.forum_outlined, size: 48, color: TdcColors.textMuted.withOpacity(0.5)),
+                        Icon(Icons.forum_outlined, size: 48, color: TdcColors.textMuted.withValues(alpha: 0.5)),
                         const SizedBox(height: 12),
                         const Text('Aucun message encore.', style: TextStyle(color: TdcColors.textMuted, fontSize: 14)),
                         const SizedBox(height: 4),
@@ -239,7 +239,7 @@ class _MessageBubble extends StatelessWidget {
           if (!isOwn) ...[
             CircleAvatar(
               radius: 14,
-              backgroundColor: accentColor.withOpacity(0.15),
+              backgroundColor: accentColor.withValues(alpha: 0.15),
               child: Text(message.fromName.isNotEmpty ? message.fromName[0].toUpperCase() : '?',
                   style: TextStyle(color: accentColor, fontSize: 12, fontWeight: FontWeight.bold)),
             ),
@@ -258,7 +258,7 @@ class _MessageBubble extends StatelessWidget {
                   bottomRight: Radius.circular(isOwn ? 4 : 16),
                 ),
                 border: isOwn ? null : Border.all(color: TdcColors.border),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))],
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4, offset: const Offset(0, 2))],
               ),
               child: Column(
                 crossAxisAlignment: isOwn ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -272,16 +272,16 @@ class _MessageBubble extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     _formatTime(message.timestamp),
-                    style: TextStyle(color: isOwn ? Colors.white.withOpacity(0.6) : TdcColors.textMuted, fontSize: 10),
+                    style: TextStyle(color: isOwn ? Colors.white.withValues(alpha: 0.6) : TdcColors.textMuted, fontSize: 10),
                   ),
                   if (message.expiry != null) ...[
                     const SizedBox(height: 2),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.timer_outlined, size: 10, color: isOwn ? Colors.white.withOpacity(0.8) : TdcColors.accent),
+                        Icon(Icons.timer_outlined, size: 10, color: isOwn ? Colors.white.withValues(alpha: 0.8) : TdcColors.accent),
                         const SizedBox(width: 4),
-                        Text('Auto-destruction', style: TextStyle(color: isOwn ? Colors.white.withOpacity(0.8) : TdcColors.accent, fontSize: 9, fontWeight: FontWeight.bold)),
+                        Text('Auto-destruction', style: TextStyle(color: isOwn ? Colors.white.withValues(alpha: 0.8) : TdcColors.accent, fontSize: 9, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],

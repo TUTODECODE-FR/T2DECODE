@@ -1072,7 +1072,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
           child: FloatingActionButton.extended(
             heroTag: 'linux_ai_fab',
             onPressed: _openAIPanel,
-            backgroundColor: _scenario.color.withOpacity(0.9),
+            backgroundColor: _scenario.color.withValues(alpha: 0.9),
             icon: const Icon(Icons.auto_awesome, size: 18),
             label: const Text('IA', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
@@ -1100,7 +1100,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
         decoration: BoxDecoration(
           color: TdcColors.bg,
           borderRadius: BorderRadius.zero,
-          border: Border.all(color: color.withOpacity(0.35)),
+          border: Border.all(color: color.withValues(alpha: 0.35)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1108,7 +1108,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.12),
+                color: color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.zero,
               ),
               child: Row(
@@ -1132,9 +1132,9 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: onTap != null ? color.withOpacity(0.14) : Colors.white.withOpacity(0.03),
+          color: onTap != null ? color.withValues(alpha: 0.14) : Colors.white.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: onTap != null ? color.withOpacity(0.45) : Colors.white12),
+          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.45) : Colors.white12),
         ),
         child: Text(label, style: TextStyle(color: onTap != null ? color : Colors.white24, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
       ),
@@ -1173,7 +1173,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
                 margin: const EdgeInsets.only(bottom: 4),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: done || active ? c.withOpacity(0.10) : Colors.transparent,
+                  color: done || active ? c.withValues(alpha: 0.10) : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
                   border: Border(left: BorderSide(color: done || active ? c : Colors.white12, width: 3)),
                 ),
@@ -1194,7 +1194,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
             if (_bootPhase >= 6)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text('Ubuntu 24.04 LTS \n \l', style: const TextStyle(color: Color(0xFF22C55E), fontSize: 11, fontFamily: 'monospace'))
+                child: Text('Ubuntu 24.04 LTS \n l', style: const TextStyle(color: Color(0xFF22C55E), fontSize: 11, fontFamily: 'monospace'))
                     .animate().fadeIn(),
               ),
           ],
@@ -1216,10 +1216,10 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
           children: [
             Row(
               children: [
-                Text('user@linux:', style: TextStyle(color: Colors.white.withOpacity(0.35), fontSize: 11, fontFamily: 'monospace')),
+                Text('user@linux:', style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11, fontFamily: 'monospace')),
                 const SizedBox(width: 4),
                 Text(_fsPath, style: const TextStyle(color: Color(0xFF06B6D4), fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
-                Text('\$ ls', style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 11, fontFamily: 'monospace')),
+                Text('\$ ls', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11, fontFamily: 'monospace')),
                 const Spacer(),
                 if (_fsPath != '/') _cmdBtn('cd ..', Colors.grey, _fsUp),
               ],
@@ -1236,9 +1236,9 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: isDir ? const Color(0xFF06B6D4).withOpacity(0.10) : Colors.white.withOpacity(0.04),
+                      color: isDir ? const Color(0xFF06B6D4).withValues(alpha: 0.10) : Colors.white.withValues(alpha: 0.04),
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: isDir ? const Color(0xFF06B6D4).withOpacity(0.35) : Colors.white12),
+                      border: Border.all(color: isDir ? const Color(0xFF06B6D4).withValues(alpha: 0.35) : Colors.white12),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -1253,7 +1253,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
               }).toList(),
             ),
             if (entries.isEmpty)
-              Text('(vide)', style: TextStyle(color: Colors.white.withOpacity(0.25), fontSize: 11, fontFamily: 'monospace')),
+              Text('(vide)', style: TextStyle(color: Colors.white.withValues(alpha: 0.25), fontSize: 11, fontFamily: 'monospace')),
           ],
         ),
       ),
@@ -1284,13 +1284,13 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(4)),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(4)),
               child: Row(
                 children: [
-                  SizedBox(width: 40, child: Text('PID', style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 80, child: Text('COMMAND', style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 40, child: Text('%CPU', style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 50, child: Text('%MEM', style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 40, child: Text('PID', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 80, child: Text('COMMAND', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 40, child: Text('%CPU', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 50, child: Text('%MEM', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
                   const SizedBox(width: 30, child: Text('STAT', style: TextStyle(color: Colors.white38, fontSize: 10, fontFamily: 'monospace'))),
                 ],
               ),
@@ -1390,8 +1390,8 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
                 children: [
                   Text(f.a, style: const TextStyle(color: Color(0xFF10B981), fontSize: 10, fontFamily: 'monospace')),
                   const SizedBox(width: 8),
-                  SizedBox(width: 36, child: Text(f.b, style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 36, child: Text(f.c, style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 36, child: Text(f.b, style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 36, child: Text(f.c, style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
                   SizedBox(width: 32, child: Text(f.d, style: const TextStyle(color: Color(0xFFF59E0B), fontSize: 10, fontFamily: 'monospace'))),
                   Expanded(child: Text(f.e, style: TextStyle(color: color, fontSize: 10, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis)),
                 ],
@@ -1416,7 +1416,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
             ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 110),
               child: _bashLines.isEmpty
-                  ? Text('user@linux:~\$ _', style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 11, fontFamily: 'monospace'))
+                  ? Text('user@linux:~\$ _', style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 11, fontFamily: 'monospace'))
                   : ListView.builder(
                       shrinkWrap: true,
                       reverse: true,
@@ -1478,7 +1478,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: selected ? s.color.withOpacity(0.18) : TdcColors.surface,
+                color: selected ? s.color.withValues(alpha: 0.18) : TdcColors.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: selected ? s.color : TdcColors.border,
@@ -1532,16 +1532,16 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: s.color.withOpacity(0.08),
+          color: s.color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: s.color.withOpacity(0.25)),
+          border: Border.all(color: s.color.withValues(alpha: 0.25)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: s.color.withOpacity(0.15),
+                color: s.color.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: Icon(s.icon, color: s.color, size: 22),
@@ -1596,14 +1596,14 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
         child: Container(
           decoration: BoxDecoration(
             color: state == _StepState.active
-                ? step.color.withOpacity(0.12)
+                ? step.color.withValues(alpha: 0.12)
                 : TdcColors.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: state == _StepState.active
                   ? step.color
                   : state == _StepState.done
-                      ? step.color.withOpacity(0.35)
+                      ? step.color.withValues(alpha: 0.35)
                       : TdcColors.border,
               width: state == _StepState.active ? 1.5 : 1,
             ),
@@ -1642,7 +1642,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: step.color.withOpacity(0.15),
+                                  color: step.color.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
@@ -1706,7 +1706,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
               height: 14,
               child: CircularProgressIndicator(
                 strokeWidth: 1.5,
-                color: step.color.withOpacity(0.4),
+                color: step.color.withValues(alpha: 0.4),
               ),
             ),
           ],
@@ -1719,9 +1719,9 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: state == _StepState.done
-            ? step.color.withOpacity(0.2)
+            ? step.color.withValues(alpha: 0.2)
             : state == _StepState.active
-                ? step.color.withOpacity(0.25)
+                ? step.color.withValues(alpha: 0.25)
                 : TdcColors.surfaceAlt,
         border: Border.all(
           color: state == _StepState.future ? TdcColors.border : step.color,
@@ -1750,9 +1750,9 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
       margin: const EdgeInsets.fromLTRB(14, 0, 14, 14),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.25),
+        color: Colors.black.withValues(alpha: 0.25),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: step.color.withOpacity(0.15)),
+        border: Border.all(color: step.color.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1912,7 +1912,7 @@ class _LinuxRetainButtonState extends State<_LinuxRetainButton> {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: _saved ? const Color(0xFFF59E0B).withOpacity(0.18) : Colors.white.withOpacity(0.05),
+          color: _saved ? const Color(0xFFF59E0B).withValues(alpha: 0.18) : Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(6),
           border: Border.all(color: _saved ? const Color(0xFFF59E0B) : Colors.white24),
         ),

@@ -160,7 +160,7 @@ class LabMetricCard extends StatelessWidget {
             height: 2,
             width: 40,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.5),
+              color: color.withValues(alpha: 0.5),
               borderRadius: BorderRadius.zero,
             ),
           ),
@@ -235,7 +235,7 @@ class LabTerminal extends StatelessWidget {
                       Text(
                         '${index + 1} ',
                         style: TextStyle(
-                          color: TdcColors.textMuted.withOpacity(0.5),
+                          color: TdcColors.textMuted.withValues(alpha: 0.5),
                           fontSize: 12,
                           fontFamily: 'monospace',
                         ),

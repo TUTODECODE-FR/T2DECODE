@@ -119,7 +119,7 @@ class _HashToolScreenState extends State<HashToolScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: active ? TdcColors.accent.withOpacity(0.1) : Colors.transparent,
+                  color: active ? TdcColors.accent.withValues(alpha: 0.1) : Colors.transparent,
                   borderRadius: TdcRadius.sm,
                   border: Border.all(color: active ? TdcColors.accent : TdcColors.border),
                 ),
@@ -139,9 +139,9 @@ class _HashToolScreenState extends State<HashToolScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFFEF4444).withOpacity(0.1),
+              color: const Color(0xFFEF4444).withValues(alpha: 0.1),
               borderRadius: TdcRadius.sm,
-              border: Border.all(color: const Color(0xFFEF4444).withOpacity(0.4)),
+              border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.4)),
             ),
             child: Row(
               children: [

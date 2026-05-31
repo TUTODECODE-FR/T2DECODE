@@ -77,7 +77,7 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
       children: [
         Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: _getColor(e).withOpacity(0.1), borderRadius: TdcRadius.md),
+          decoration: BoxDecoration(color: _getColor(e).withValues(alpha: 0.1), borderRadius: TdcRadius.md),
           child: Icon(_getIcon(e), color: _getColor(e), size: 24),
         ),
         const SizedBox(width: 20),
@@ -107,15 +107,15 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF0F172A),
         borderRadius: TdcRadius.md,
-        border: Border.all(color: TdcColors.border.withOpacity(0.5)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20)],
+        border: Border.all(color: TdcColors.border.withValues(alpha: 0.5)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 20)],
       ),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             ),
             child: Row(
@@ -152,7 +152,7 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
     );
   }
 
-  Widget _dot(Color c) => Container(width: 10, height: 10, decoration: BoxDecoration(color: c.withOpacity(0.5), shape: BoxShape.circle));
+  Widget _dot(Color c) => Container(width: 10, height: 10, decoration: BoxDecoration(color: c.withValues(alpha: 0.5), shape: BoxShape.circle));
 
   Widget _buildList(List<String> items) {
     return Column(
@@ -262,7 +262,7 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: color.withOpacity(0.3))),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: color.withValues(alpha: 0.3))),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

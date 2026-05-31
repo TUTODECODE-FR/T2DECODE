@@ -180,7 +180,7 @@ class _ChmodToolScreenState extends State<ChmodToolScreen> {
           child: Container(
             width: 40, height: 40,
             decoration: BoxDecoration(
-              color: active ? Colors.blue.withOpacity(0.1) : TdcColors.surfaceAlt,
+              color: active ? Colors.blue.withValues(alpha: 0.1) : TdcColors.surfaceAlt,
               borderRadius: TdcRadius.sm,
               border: Border.all(color: active ? Colors.blue : TdcColors.border),
             ),
@@ -219,7 +219,7 @@ class _ChmodToolScreenState extends State<ChmodToolScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: TdcRadius.md,
         border: Border.all(color: color, width: 0.5),
       ),

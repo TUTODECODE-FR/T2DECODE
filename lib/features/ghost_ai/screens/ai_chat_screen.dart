@@ -2,7 +2,6 @@
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 import 'package:tutodecode/features/courses/service/rag_service.dart';
@@ -14,14 +13,14 @@ import 'package:flutter_animate/flutter_animate.dart';
 // ─── Prompt système ──────────────────────────────────────────────────────────
 const _kSystem = '''Tu es Ghost, assistant technique de T2DECODE. Regles strictes :
 - Reponds en francais, TOUJOURS court et direct (3-5 lignes max pour une question simple)
-- PAS d\'introduction, PAS de recapitulatif, PAS de "Bien sur !"
+- PAS d'introduction, PAS de recapitulatif, PAS de "Bien sur !"
 - Va droit au but : reponds uniquement a ce qui est demande
 - Code uniquement si la question porte sur du code, sinon texte simple
 - Si la reponse necessite un exemple, 1 seul exemple concis suffit
 - Jamais de listes a puces si une phrase suffit
 - Si la demande est ambigue, pose 1-2 questions de clarification AVANT de conclure
-- Si tu n\'es pas certain, dis-le clairement et propose une verification/une methode
-- Fais un effort de comprehension: reformule en 1 phrase ce que l\'utilisateur veut faire''';
+- Si tu n'es pas certain, dis-le clairement et propose une verification/une methode
+- Fais un effort de comprehension: reformule en 1 phrase ce que l'utilisateur veut faire''';
 
 class AIChatScreen extends StatefulWidget {
   const AIChatScreen({super.key});
@@ -344,8 +343,8 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: TdcColors.surface.withOpacity(0.5),
-        border: Border(bottom: BorderSide(color: TdcColors.border.withOpacity(0.3))),
+        color: TdcColors.surface.withValues(alpha: 0.5),
+        border: Border(bottom: BorderSide(color: TdcColors.border.withValues(alpha: 0.3))),
       ),
       child: Row(children: [
         Container(
@@ -422,12 +421,12 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: TdcColors.accent.withOpacity(0.1),
+      color: TdcColors.accent.withValues(alpha: 0.1),
       child: Row(children: [
         const Icon(Icons.auto_stories, size: 14, color: TdcColors.accent),
         const SizedBox(width: 8),
         const Text('FOCUS : ', style: TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold)),
-        Expanded(child: Text(title, style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 10), overflow: TextOverflow.ellipsis)),
+        Expanded(child: Text(title, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 10), overflow: TextOverflow.ellipsis)),
       ]),
     );
   }
@@ -443,7 +442,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
           _status?.running == true
               ? 'Prêt à vous aider (IA 100% locale).'
               : 'Ollama est optionnel. Sans lui, l’application reste 100% utilisable.',
-          style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 14),
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 14),
         ),
         if (_status?.running != true) ...[
           const SizedBox(height: 20),
@@ -464,13 +463,13 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
               const SizedBox(height: 8),
               Text(
                 'Activez Ollama pour débloquer le chat IA. Sinon, ignorez cette section: rien n’est bloquant.',
-                style: TextStyle(color: Colors.white.withOpacity(0.55), fontSize: 12, height: 1.4),
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 12, height: 1.4),
               ),
               if ((_status?.error ?? '').isNotEmpty) ...[
                 const SizedBox(height: 10),
                 Text(
                   'Détail: ${_status?.error}',
-                  style: TextStyle(color: Colors.white.withOpacity(0.35), fontSize: 11, height: 1.3),
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11, height: 1.3),
                 ),
               ],
               const SizedBox(height: 12),
@@ -522,17 +521,17 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
         padding: const EdgeInsets.all(16),
         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
         decoration: BoxDecoration(
-          color: isUser ? TdcColors.accent.withOpacity(0.1) : TdcColors.surface,
+          color: isUser ? TdcColors.accent.withValues(alpha: 0.1) : TdcColors.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: isUser ? TdcColors.accent.withOpacity(0.3) : TdcColors.border),
+          border: Border.all(color: isUser ? TdcColors.accent.withValues(alpha: 0.3) : TdcColors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (msg.thinking.isNotEmpty) ...[
-              Text('Réflexion...', style: TextStyle(color: TdcColors.accent.withOpacity(0.5), fontSize: 10, fontStyle: FontStyle.italic)),
+              Text('Réflexion...', style: TextStyle(color: TdcColors.accent.withValues(alpha: 0.5), fontSize: 10, fontStyle: FontStyle.italic)),
               const SizedBox(height: 4),
-              Text(msg.thinking, style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12)),
+              Text(msg.thinking, style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 12)),
               const Divider(height: 16),
             ],
             Text(msg.text, style: TextStyle(color: isError ? TdcColors.info : Colors.white, fontSize: 14, height: 1.5)),
@@ -577,7 +576,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
               cursorColor: TdcColors.accent,
               decoration: InputDecoration(
                 hintText: _demoMode ? 'Posez une question (mode démo)...' : 'Posez une question...',
-                hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: const EdgeInsets.symmetric(vertical: 8),

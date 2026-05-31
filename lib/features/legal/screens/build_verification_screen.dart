@@ -129,18 +129,18 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
                 end: Alignment.bottomRight,
                 colors: [
                   _verificationResult?.isOfficial == true 
-                      ? Colors.green.withOpacity(0.1)
-                      : Colors.orange.withOpacity(0.1),
+                      ? Colors.green.withValues(alpha: 0.1)
+                      : Colors.orange.withValues(alpha: 0.1),
                   _verificationResult?.isOfficial == true 
-                      ? Colors.green.withOpacity(0.05)
-                      : Colors.orange.withOpacity(0.05),
+                      ? Colors.green.withValues(alpha: 0.05)
+                      : Colors.orange.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _verificationResult?.isOfficial == true 
-                    ? Colors.green.withOpacity(0.3)
-                    : Colors.orange.withOpacity(0.3),
+                    ? Colors.green.withValues(alpha: 0.3)
+                    : Colors.orange.withValues(alpha: 0.3),
               ),
             ),
             child: Column(
@@ -421,9 +421,9 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
 
   Widget _buildReasonsSection(List<String> reasons) {
     return Card(
-      color: Colors.orange.withOpacity(0.1),
+      color: Colors.orange.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.orange.withOpacity(0.3)),
+        side: BorderSide(color: Colors.orange.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
@@ -588,13 +588,13 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: _verificationResult?.isOfficial == true 
-                ? Colors.green.withOpacity(0.1)
-                : Colors.orange.withOpacity(0.1),
+                ? Colors.green.withValues(alpha: 0.1)
+                : Colors.orange.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: _verificationResult?.isOfficial == true 
-                  ? Colors.green.withOpacity(0.3)
-                  : Colors.orange.withOpacity(0.3),
+                  ? Colors.green.withValues(alpha: 0.3)
+                  : Colors.orange.withValues(alpha: 0.3),
             ),
           ),
           child: Row(

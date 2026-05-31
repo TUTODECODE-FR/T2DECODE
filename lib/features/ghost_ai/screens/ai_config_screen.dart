@@ -202,14 +202,14 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
       decoration: BoxDecoration(
         color: TdcColors.surface,
         borderRadius: TdcRadius.lg,
-        border: Border.all(color: color.withOpacity(0.4)),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Row(
         children: [
           Container(
             padding: EdgeInsets.all(TdcAdaptive.padding(context, 14)),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: TdcAdaptive.icon(context, 28)),
@@ -292,7 +292,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
         color: TdcColors.surfaceAlt,
         borderRadius: TdcRadius.md,
         border: Border.all(
-          color: isInstalled ? TdcColors.success.withOpacity(0.3) : TdcColors.border,
+          color: isInstalled ? TdcColors.success.withValues(alpha: 0.3) : TdcColors.border,
         ),
       ),
       child: isMobile 
@@ -326,7 +326,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
       padding: EdgeInsets.all(TdcAdaptive.padding(context, 10)),
       decoration: BoxDecoration(
         color: isInstalled
-            ? TdcColors.success.withOpacity(0.1)
+            ? TdcColors.success.withValues(alpha: 0.1)
             : TdcColors.accentDim,
         borderRadius: TdcRadius.sm,
       ),
@@ -355,7 +355,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
             if (isInstalled)
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                decoration: BoxDecoration(color: TdcColors.success.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
+                decoration: BoxDecoration(color: TdcColors.success.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
                 child: Text('installé', style: TextStyle(color: TdcColors.success, fontSize: TdcText.label(context), fontWeight: FontWeight.bold)),
               ),
           ],
@@ -416,7 +416,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
       decoration: BoxDecoration(
         color: TdcColors.surfaceAlt,
         borderRadius: TdcRadius.sm,
-        border: Border.all(color: TdcColors.success.withOpacity(0.2)),
+        border: Border.all(color: TdcColors.success.withValues(alpha: 0.2)),
       ),
       child: Row(children: [
         Icon(Icons.circle, size: TdcAdaptive.icon(context, 8), color: TdcColors.success),
@@ -552,9 +552,9 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
         Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: TdcColors.warning.withOpacity(0.1),
+            color: TdcColors.warning.withValues(alpha: 0.1),
             borderRadius: TdcRadius.md,
-            border: Border.all(color: TdcColors.warning.withOpacity(0.3)),
+            border: Border.all(color: TdcColors.warning.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
@@ -588,7 +588,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
       label: Text(url),
       style: OutlinedButton.styleFrom(
         foregroundColor: TdcColors.accent,
-        side: BorderSide(color: TdcColors.accent.withOpacity(0.4)),
+        side: BorderSide(color: TdcColors.accent.withValues(alpha: 0.4)),
       ),
     );
   }
@@ -602,7 +602,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
             Container(
               width: TdcAdaptive.space(context, 28), 
               height: TdcAdaptive.space(context, 28),
-              decoration: BoxDecoration(color: TdcColors.accentDim, shape: BoxShape.circle, border: Border.all(color: TdcColors.accent.withOpacity(0.3))),
+              decoration: BoxDecoration(color: TdcColors.accentDim, shape: BoxShape.circle, border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3))),
               child: Center(child: Text(num, style: TextStyle(color: TdcColors.accent, fontSize: TdcText.bodySmall(context), fontWeight: FontWeight.bold))),
             ),
             if (!isLast) Expanded(child: Container(width: 1, color: TdcColors.border, margin: EdgeInsets.symmetric(vertical: TdcAdaptive.space(context, 4)))),
@@ -711,7 +711,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
               borderRadius: TdcRadius.md,
               border: Border.all(
                 color: _demoMode
-                    ? const Color(0xFFFFB300).withOpacity(0.5)
+                    ? const Color(0xFFFFB300).withValues(alpha: 0.5)
                     : TdcColors.border,
               ),
             ),
@@ -772,7 +772,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
               decoration: BoxDecoration(
                 color: TdcColors.surface,
                 borderRadius: TdcRadius.sm,
-                border: Border.all(color: const Color(0xFFFFB300).withOpacity(0.3)),
+                border: Border.all(color: const Color(0xFFFFB300).withValues(alpha: 0.3)),
               ),
               child: Row(children: [
                 const Icon(Icons.info_outline, size: 14, color: Color(0xFFFFB300)),
@@ -862,7 +862,7 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: TdcColors.accent.withOpacity(0.7)),
+        Icon(icon, size: 18, color: TdcColors.accent.withValues(alpha: 0.7)),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
