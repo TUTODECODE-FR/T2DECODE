@@ -185,11 +185,14 @@ class _AIConfigScreenState extends State<AIConfigScreen> {
         : (isRunning
             ? 'Ollama est en ligne  ${_status?.version != null ? "— v${_status!.version}" : ""}'
             : (_status?.error ?? 'Ollama n\'est pas détecté'));
-    final subText = _checking
-        ? 'Ping sur ${_hostController.text}…'
-        : (isRunning
-            ? '${_status!.models.length} modèle(s) installé(s) · Port 11434'
-            : "Installez ou démarrez Ollama pour activer l'IA locale\n${_status?.error ?? ""}");
+    String subText;
+    if (_checking) {
+      subText = 'Ping sur ${_hostController.text}…';
+    } else if (isRunning) {
+      subText = '${_status!.models.length} modèle(s) installé(s) · Port 11434';
+    } else {
+      subText = "Installez ou démarrez Ollama pour activer l'IA locale\n${_status?.error ?? ""}";
+    }
 
     return Container(
       padding: EdgeInsets.all(TdcAdaptive.padding(context, TdcSpacing.lg)),
