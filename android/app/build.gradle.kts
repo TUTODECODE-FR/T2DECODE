@@ -59,8 +59,8 @@ android {
                 signingConfig = signingConfigs.getByName("debug")
             }
             // For troubleshooting, let's disable minification temporarily
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
 }

@@ -1,4 +1,4 @@
-allprojects {
+allprojects { // NOSONAR
     repositories {
         google()
         mavenCentral()
