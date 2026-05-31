@@ -22,6 +22,7 @@
   [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12999/badge)](https://www.bestpractices.dev/projects/12999)
   [![OpenSSF Baseline](https://www.bestpractices.dev/projects/12999/baseline)](https://www.bestpractices.dev/projects/12999)
   [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge)](https://scorecard.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE)
+  [![Snyk Security](https://snyk.io/test/github/TUTODECODE-FR/T2DECODE/badge.svg)](https://snyk.io/test/github/TUTODECODE-FR/T2DECODE)
   
   <br>
   <p>
