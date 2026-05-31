@@ -1,7 +1,6 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/TUTODECODE-FR/T2DECODE/main/assets/TDC.png" width="160" height="160" alt="T2C Logo">
 
-
   # T2DECODE
   
   **« Le savoir ne devrait pas toujours dépendre d'une connexion. »**<br>
@@ -9,21 +8,23 @@
 
   <br>
 
-[![CI](https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1A1D2E&color=3DDC84)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
-  [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=F5EBDA&labelColor=1A1D2E&logoColor=F5EBDA)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
-  [![Mac App Store](https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6)](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)
-  [![License](https://img.shields.io/badge/License-GPLv3-FCC624?style=for-the-badge&labelColor=1A1D2E&color=FCC624)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
-  [![Flutter](https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=1A1D2E&color=02569B)](https://flutter.dev)
-  [![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-000000?style=for-the-badge&logo=ollama&logoColor=white&labelColor=1A1D2E&color=F5EBDA)](https://ollama.com/)
-  [![Privacy By Design](https://img.shields.io/badge/Privacy-By%20Design-3DDC84?style=for-the-badge&labelColor=1A1D2E&color=3DDC84)](RGPD.md)
-  
+  <!-- CI & Distribution Badges -->
+  [![CI](https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1A1D2E&color=3DDC84)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
+  [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=F5EBDA&labelColor=1A1D2E&logoColor=F5EBDA)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
+  [![Mac App Store](https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6)](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)
+  [![Flutter](https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=1A1D2E&color=02569B)](https://flutter.dev)
+  [![License](https://img.shields.io/badge/License-GPLv3-FCC624?style=for-the-badge&labelColor=1A1D2E&color=FCC624)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
+  
   <br>
 
-  [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12999/badge)](https://www.bestpractices.dev/projects/12999)
+  <!-- Security & Trust Badges -->
+  [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12999/badge)](https://www.bestpractices.dev/projects/12999)
   [![OpenSSF Baseline](https://www.bestpractices.dev/projects/12999/baseline)](https://www.bestpractices.dev/projects/12999)
   [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge)](https://scorecard.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE)
   [![Snyk Security](https://snyk.io/test/github/TUTODECODE-FR/T2DECODE/badge.svg)](https://snyk.io/test/github/TUTODECODE-FR/T2DECODE)
-  
+  [![SonarQube Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=TUTODECODE-FR_T2DECODE&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=TUTODECODE-FR_T2DECODE)
+  [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=TUTODECODE-FR_T2DECODE&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=TUTODECODE-FR_T2DECODE)
+
   <br>
   <p>
     <b>Plateforme locale d’apprentissage technique (Réseau · Systèmes · Sécurité Défensive) avec boîte à outils et IA intégrée.</b><br>
@@ -36,114 +37,41 @@
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🎯 Raison d'Être de T2DECODE
+## 🎯 La Vision T2DECODE
 
-T2DECODE est une **suite pédagogique et technique souveraine** conçue pour apprendre, expérimenter et diagnostiquer des infrastructures **sans aucune dépendance au cloud ni connexion Internet** :
+T2DECODE est une **suite pédagogique et technique de classe entreprise** conçue pour apprendre, expérimenter et diagnostiquer des infrastructures **sans aucune dépendance au cloud ni connexion Internet**.
 
-- 📚 **Apprentissage Structuré** : Cours interactifs en Markdown/JSON avec QCM de validation des acquis et système de progression gamifié (XP & Badges).
-- 🛠️ **Boîte à Outils Professionnelle** : Plus de 15 utilitaires de calcul, diagnostic et conversion fonctionnant entièrement en local.
-- 🔬 **Laboratoires Virtuels (Simulateurs)** : Simulateurs interactifs de réseaux (NetKit), cryptographie, systèmes, cloud et algorithmique.
-- 🛡️ **Souveraineté & Résilience** : Conçu spécifiquement pour opérer en environnements stricts (*air-gapped*, zones blanches, datacenters sécurisés).
+Que vous soyez dans un *datacenter* sécurisé, dans un train sans réseau, ou dans un environnement *air-gapped* strict, T2DECODE vous offre vos outils, vos cours et votre IA.
 
-<img src="assets/separator.svg" width="100%" height="4">
-
-## 🛡️ Engagements & Architecture (Privacy by Design)
-
-T2DECODE adopte un modèle de sécurité rigoureux, axé sur la souveraineté numérique et le respect absolu de l'utilisateur final.
-
-```mermaid
-flowchart TB
-    subgraph Boot ["Phase d'Initialisation (Boot)"]
-        Verify["Verificateur d'Integrite (AssetIntegrityService & SHA-256)"]
-    end
-
-    subgraph AppShell ["Conteneur Principal (App Shell & Navigation)"]
-        direction TB
-        UI["Interface Utilisateur (Flutter GUI)"]
-        
-        subgraph Features ["Modules Applicatifs"]
-            direction LR
-            Courses["Cours Interactifs (Progression & XP/Badges)"]
-            Labs["Laboratoires (9 Simulateurs Réseau/Systèmes/Crypto)"]
-            Tools["Boite a Outils (15+ Utilitaires Offline)"]
-        end
-    end
-
-    subgraph LocalStorage ["Persistance Locale"]
-        DB["Stockage et Preferences (StorageService)"]
-    end
-
-    subgraph localServices ["Services d'Arriere-plan Locaux"]
-        subgraph AISubsystem ["Moteur d'IA (Ghost AI)"]
-            Ollama["Connecteur Ollama (localhost:11434)"]
-            LLM["Modeles LLM Locaux (Llama / Mistral / Phi)"]
-        end
-        
-        subgraph NetworkSubsystem ["Reseau Decentralise (Ghost Link)"]
-            P2P["Service P2P (Diffusion UDP LAN)"]
-            Peers["Mesh de Pairs Chiffre (AES-GCM / ECDH)"]
-        end
-    end
-
-    Verify -->|Validation de Securite OK| UI
-    UI <-->|Interaction Utilisateur| Features
-    
-    UI <-->|Stockage Local Securise| DB
-    Courses <-->|Sauvegarde Progression & Badges| DB
-    
-    UI <-->|Streaming HTTP Local| Ollama
-    Ollama <-->|RAG sur le Contenu des Cours| LLM
-    
-    UI <-->|Echanges Directs| P2P
-    P2P <-->|Decouverte & Chat P2P| Peers
-
-    classDef default fill:#121212,stroke:#F5EBDA,stroke-width:1px,color:#F5EBDA;
-    classDef primary fill:#000000,stroke:#F5EBDA,stroke-width:2px,color:#F5EBDA;
-    classDef accent fill:#F5EBDA,stroke:#000000,stroke-width:1px,color:#000000;
-    classDef container fill:#000000,stroke:#333333,stroke-width:1px,color:#FFFFFF;
-    classDef security fill:#1b1510,stroke:#d4a373,stroke-width:1px,color:#d4a373;
-    
-    class UI primary;
-    class Courses,Labs,Tools,DB,Ollama,P2P default;
-    class LLM,Peers accent;
-    class Verify security;
-    class Boot,AppShell,LocalStorage,localServices container;
-```
-
-### Les 4 Piliers de l'Architecture Locale
-
-1. ⚡ **100% Air-Gapped Ready** : Aucune connexion Internet requise après l'installation. L'application et tous ses modules sont autonomes.
-2. 🧠 **IA & RAG Locaux (Ollama)** : Connecteur intégré de streaming HTTP vers votre instance locale Ollama. Accédez à un tuteur LLM privatif capable d'interroger directement vos cours (RAG).
-3. 🌐 **Réseau LAN P2P (Ghost Link)** : Module de communication par diffusion UDP sur réseau local. Messagerie instantanée décentralisée et chiffrée de bout en bout entre pairs d'un même sous-réseau.
-4. 🚫 **Zéro Télémétrie & Zéro Tracking** : Aucun appel réseau externe, aucun pistage (*analytics*), aucune collecte de données. L'intégrité de vos données est totale ([Politique RGPD](RGPD.md)).
-
-### Modèle de Confiance
-| Ce que nous faisons ✅ | Ce que nous ne faisons PAS ❌ |
-| :--- | :--- |
-| **Exécution 100% Locale** avec vérification d'intégrité SHA-256 des assets | **Pas d’API externe ni de cloud obligatoire** |
-| **Isolation complète** et respect strict du [RGPD](RGPD.md) | **Pas d’analytics ni de cookies de pistage** |
-| **Transparence totale** via des binaires open source et auditables | **Pas d’envoi de données de télémétrie vers des tiers** |
+- 📚 **Apprentissage Structuré** : Cours interactifs en Markdown avec QCM de validation et système de progression gamifié (XP & Badges).
+- 🛠️ **Boîte à Outils Professionnelle** : Plus de 15 utilitaires de calcul, diagnostic et conversion (Syslog, CIDR, Chmod, Base64).
+- 🔬 **Laboratoires Virtuels (Simulateurs)** : Entraînez-vous sur des simulateurs de réseaux (NetKit), cryptographie, systèmes et algorithmique.
+- 🛡️ **Souveraineté & Résilience** : Conçu spécifiquement pour opérer en environnements stricts (Air-gapped, Zéro Confiance).
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 👥 À Qui S'Adresse T2DECODE ?
+## 🛡️ Posture de Sécurité & Audits Continus
 
-- 🎓 **Étudiants & Autodidactes IT** : Acquisition de compétences solides en réseaux, administration Linux et sécurité défensive.
-- 🧑‍💻 **Administrateurs Système & Réseau** : Utilitaires de diagnostic rapides (calculateurs IP, permissions chmod, générateurs CRON, tables de ports) utilisables sans accès réseau.
-- 🕵️ **Auditeurs & Experts en Sécurité** : Interventions fiables et sécurisées dans des environnements isolés ou à diffusion restreinte (*datacenters*, salles blanches).
-- 👨‍🏫 **Enseignants & Formateurs** : Plateforme pédagogique locale, reproductible et personnalisable grâce à l'importation de modules Markdown externes.
+La sécurité n'est pas une option, c'est le cœur de T2DECODE. Nous appliquons les standards de développement les plus stricts du marché pour garantir une fiabilité absolue.
+
+| Métrique de Confiance | Implémentation | Preuve |
+| :--- | :--- | :--- |
+| **Analyse Statique (SAST)** | Vérification en continu par **SonarQube** et **CodeQL** à chaque modification. | [![SonarQube Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=TUTODECODE-FR_T2DECODE&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=TUTODECODE-FR_T2DECODE) |
+| **Sécurité des Dépendances** | Audit automatisé de la chaîne logistique logicielle par **Snyk**. | [![Snyk Security](https://snyk.io/test/github/TUTODECODE-FR/T2DECODE/badge.svg)](https://snyk.io/test/github/TUTODECODE-FR/T2DECODE) |
+| **Pratiques de Développement** | Respect des critères de l'Open Source Security Foundation (OpenSSF). | [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge)](https://scorecard.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE) |
+| **Anti-Tampering** | Vérification d'intégrité SHA-256 des assets au démarrage de l'application. | `IdentityVerificationService` |
+| **Zéro Télémétrie** | Aucun appel API sortant (air-gapped par conception). RGPD strict. | [Politique Privacy](RGPD.md) |
 
 <img src="assets/separator.svg" width="100%" height="4">
 
 ## ⚡ Fonctionnalités Phares
 
-| Fonctionnalité | Description | Documentation |
+| Module | Description | Guide |
 | :--- | :--- | :--- |
-| 🧠 **Ghost AI (IA Locale)** | Tuteur conversationnel en streaming connecté à Ollama. Compatible Phi-3, Llama 3.2, Mistral, Qwen, CodeLlama. | [docs/ollama.md](docs/ollama.md) |
-| 🔗 **Ghost Link (LAN P2P)** | Découverte automatique de pairs via UDP et chat chiffré en réseau local de bout en bout sans serveur central. | [docs/architecture.md](docs/architecture.md) |
-| 🔬 **Laboratoires Intégrés** | 9 simulateurs interactifs : Réseau (NetKit), Système, Cloud, Cryptographie, Linux, Algorithmes et Préparation CTF. | [docs/labs.md](docs/labs.md) |
-| 🛠️ **Multi-Outils Offline** | 15+ outils de productivité : Hash (SHA/MD5), CIDR IPv4/v6, Chmod, CRON, JSON Formatter, Base64, ASCII, Syslog, etc. | [docs/tools.md](docs/tools.md) |
-| 🔒 **Sécurité au Démarrage** | Vérification automatique des sommes de contrôle SHA-256 (`assets/asset_checksums.json`) et protection anti-tampering. | [docs/security-model.md](docs/security-model.md) |
+| 🧠 **Ghost AI (IA Locale)** | Tuteur conversationnel en streaming connecté à Ollama (127.0.0.1). Interrogez vos cours localement. | [docs/ollama.md](docs/ollama.md) |
+| 🔗 **Ghost Link (LAN P2P)** | Découverte automatique de pairs via UDP et chat chiffré en réseau local (sans serveur central). | [docs/architecture.md](docs/architecture.md) |
+| 🔬 **Laboratoires Intégrés** | 9 simulateurs interactifs : Réseau (NetKit), Système, Cloud, Cryptographie, Linux, et CTF. | [docs/labs.md](docs/labs.md) |
+| 🛠️ **Multi-Outils Offline** | Calculateur CIDR, Permissions Chmod, Générateur CRON, JSON Formatter, Encodeurs Hash/Base64. | [docs/tools.md](docs/tools.md) |
 
 <img src="assets/separator.svg" width="100%" height="4">
 
@@ -153,18 +81,18 @@ flowchart TB
 
 | Plateforme | Format de Distribution | Statut CI | Accessibilité |
 | :--- | :--- | :---: | :---: |
-| ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white) | **APK** / AAB (64-bit) | Actif | Disponible (v1.0.2) |
-| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white) | **ZIP** / Installateur EXE | Actif | Disponible (v1.0.2) |
-| ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) | **[App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)** / PKG / ZIP Universel | Actif | Disponible (v1.0.2) |
-| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | **AppImage** / DEB (64-bit) | Actif | Disponible (v1.0.2) |
+| ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white) | **APK** / AAB (64-bit) | ✅ Actif | Disponible |
+| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white) | **ZIP** / Installateur EXE | ✅ Actif | Disponible |
+| ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) | **[App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)** / PKG / ZIP | ✅ Actif | Disponible |
+| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | **AppImage** / DEB (64-bit) | ✅ Actif | Disponible |
 
-> 🔒 **Garantie d'intégrité** : Chaque version publiée s'accompagne d'un fichier de vérification `SHA256SUMS.txt` et de signatures cryptographiques pour authentifier la provenance des binaires.
+> 🔒 **Garantie d'intégrité** : Chaque version publiée s'accompagne d'un fichier de vérification `SHA256SUMS.txt` et de signatures GPG pour authentifier la provenance des binaires.
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🖼️ Aperçu de l'Interface
+## 🖼️ Interface Premium (Noir & Beige)
 
-L'interface de T2DECODE est conçue selon un design moderne (*Noir & Beige*, *Glassmorphism*, animations fluides) pour offrir une expérience de navigation d'excellence sur toutes les tailles d'écran.
+L'interface de T2DECODE est conçue selon un design moderne (*Glassmorphism*, animations fluides) pour offrir une expérience utilisateur d'excellence sur toutes les tailles d'écran.
 
 <div align="center">
   <img src="docs/images/t2decode_demo.gif" width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" alt="Démo vidéo - T2DECODE en action">
@@ -191,110 +119,99 @@ L'interface de T2DECODE est conçue selon un design moderne (*Noir & Beige*, *Gl
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 👨‍💻 Environnement de Développement & Compilation
+## ⚙️ Architecture Interne
 
-### 1. Dépendances Système Nécessaires
+T2DECODE suit le principe de l'isolation des processus et des données privatives.
 
-L'application reposant sur Flutter et des librairies natives (notamment pour le réseau et les fenêtres de bureau), assurez-vous d'installer les prérequis selon votre système d'exploitation :
+```mermaid
+flowchart TB
+    subgraph Boot ["Phase d'Initialisation (Sécurisée)"]
+        Verify["IdentityVerificationService (Anti-Tampering SHA-256)"]
+    end
 
-- **Linux (Debian / Ubuntu)** :
-  ```bash
-  sudo apt-get update && sudo apt-get install -y clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
-  ```
+    subgraph AppShell ["Conteneur Principal"]
+        direction TB
+        UI["Interface Flutter Multiplateforme"]
+        
+        subgraph Features ["Modules Applicatifs (Offline)"]
+            direction LR
+            Courses["Cours & Progression"]
+            Labs["9 Simulateurs (Labs)"]
+            Tools["15+ Utilitaires"]
+        end
+    end
+
+    subgraph Backend ["Services Locaux Sous-jacents"]
+        Ollama["Ghost AI (Ollama Local API)"]
+        P2P["Ghost Link (UDP / AES-GCM Mesh)"]
+        Storage["Stockage Sécurisé (SharedPreferences)"]
+    end
+
+    Verify -->|Validation OK| UI
+    UI <--> Features
+    UI <--> Backend
+
+    classDef default fill:#121212,stroke:#F5EBDA,stroke-width:1px,color:#F5EBDA;
+    classDef primary fill:#000000,stroke:#F5EBDA,stroke-width:2px,color:#F5EBDA;
+    classDef security fill:#1b1510,stroke:#d4a373,stroke-width:1px,color:#d4a373;
+    
+    class UI primary;
+    class Verify security;
+    class Boot,AppShell,Backend,Features default;
+```
+
+<img src="assets/separator.svg" width="100%" height="4">
+
+## 👨‍💻 Compilation & Développement
+
+### 1. Prérequis Système
+- **Linux** : `sudo apt-get install clang cmake git ninja-build pkg-config libgtk-3-dev`
 - **macOS** : `xcode-select --install`
-- **Windows** : Git et Visual Studio 2022 avec la charge de travail *Développement Desktop en C++*.
+- **Windows** : Git et Visual Studio 2022 (C++ Desktop).
 
-> 📖 *Pour des instructions détaillées par distribution, consultez [OS_DEPENDENCIES.md](OS_DEPENDENCIES.md).*
-
-### 2. Démarrage Rapide
-
+### 2. Lancement Rapide
 ```bash
-# Clonage du dépôt officiel
 git clone https://github.com/TUTODECODE-FR/T2DECODE.git
 cd T2DECODE
 
-# Vérification de l'environnement de build
+# Validation de l'environnement (Flutter, Dart, Ollama)
 make setup
 
-# Installation des dépendances Flutter
+# Téléchargement des packages
 make get
 
-# Exécution de la suite de tests unitaires
+# Exécution des tests unitaires
 make test
 
-# Lancement de l'application en mode débogage
+# Lancement en mode debug
 flutter run
 ```
 
-### 🛠️ Automatisation des Tâches (Makefile)
-
-Le projet intègre un `Makefile` complet pour faciliter la compilation sur l'ensemble des cibles :
-
-```bash
-make setup          # Diagnostic des dépendances (Flutter, Dart, Ollama)
-make clean          # Nettoyage complet des répertoires de build
-make test           # Lancement des tests automatisés
-make build-android  # Construction de l'archive APK release
-make build-macos    # Construction du binaire .app macOS
-make build-dmg      # Création de l'image disque d'installation .dmg (macOS)
-make build-linux    # Construction de l'exécutable natif Linux
-```
-
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🏛️ L'Association TUTODECODE (Mentions Légales)
+## 🏛️ Mentions Légales & Association
 
-Le projet T2DECODE est développé et soutenu par l'**Association TUTODECODE**, structure relevant de l'Économie Sociale et Solidaire (ESS).  
-Notre mission est de démocratiser la maîtrise des infrastructures informatiques et de la cybersécurité défensive en fournissant des outils souverains, auditable et respectueux de la vie privée.
+Le projet T2DECODE est soutenu par l'**Association TUTODECODE** (Loi 1901, ESS).
+Notre mission : démocratiser les infrastructures et la cybersécurité avec des outils souverains, sans tracking.
 
-Dans une démarche absolue de transparence et de rigueur, l'association publie ses identifiants légaux officiels :
-
-- **Éditeur** : Association Loi 1901 TUTO DECODE
+- **Éditeur** : Association TUTO DECODE (SIREN : 102 763 133)
 - **Directeur de Publication** : Maxime MARTIN CIVET
-- **SIREN** : 102 763 133
-- **Site Web Officiel** : [https://tutodecode.org](https://tutodecode.org)
-- **Preuve Légale** : [Annonce de création parue au Journal Officiel de la République Française (JOAFE)](https://www.journal-officiel.gouv.fr/pages/associations-detail-annonce/?q.id=id:202600110336)
-- **Engagement de Confidentialité** : [Consulter notre Politique RGPD](RGPD.md)
-
-> 💡 *L'intégralité de ces mentions légales et attestations est accessible directement depuis l'application via la section **Paramètres > Mentions Légales (JO)***.
+- **Preuve Légale** : [Annonce de création au JOAFE](https://www.journal-officiel.gouv.fr/pages/associations-detail-annonce/?q.id=id:202600110336)
+- **Confidentialité** : [Politique RGPD Zéro-Data](RGPD.md)
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🤝 Contribuer & Normes Communautaires
+## 🤝 Contribuer
 
-T2DECODE est un bien commun open source construit par et pour sa communauté. Toutes les contributions sont chaleureusement accueillies !
+T2DECODE est un bien commun open source. Rejoignez-nous !
+- ⭐ **Étoilez** ce dépôt pour nous soutenir.
+- 🐛 **Signalez des bugs** via les *Issues*.
+- 📝 **Ajoutez des cours** en Markdown.
+- 👨‍💻 **Codez de nouveaux outils** en suivant le [Guide de Contribution (CONTRIBUTING.md)](CONTRIBUTING.md).
 
-### 📜 Standards et Santé du Projet (Community Health)
-Dans une démarche de transparence professionnelle absolue, ce projet respecte les standards open source :
-- 🛡️ **[Sécurité & Vulnérabilités (SECURITY.md)](SECURITY.md)** : Notre politique stricte de gestion des failles.
-- ⚖️ **[Licence Libre (LICENSE)](LICENSE)** : Vos droits et obligations (GPLv3).
-- 🤝 **[Code de Conduite (CODE_OF_CONDUCT.md)](CODE_OF_CONDUCT.md)** : Pour un environnement sain et inclusif.
-- 📖 **[Guide de Contribution (CONTRIBUTING.md)](CONTRIBUTING.md)** : Comment ajouter des cours ou du code.
-- 🏛️ **[Gouvernance (GOVERNANCE.md)](GOVERNANCE.md)** : Modèle de décision de l'association.
-- 🆘 **[Support (SUPPORT.md)](SUPPORT.md)** : Où trouver de l'aide en cas de besoin.
-- 🗺️ **[Roadmap & Profils (ROADMAP.md)](ROADMAP.md)** : Nos prochaines étapes et nos offres de missions ciblées.
+> 💖 **Soutenir le projet** : [Faire un don sécurisé via HelloAsso](https://www.helloasso.com/associations/tutodecode) pour nous aider à payer nos serveurs vitrines.
 
-### Comment nous aider ?
-Consultez notre [CONTRIBUTING.md](CONTRIBUTING.md) pour découvrir comment :
-- ⭐ **Soutenir le dépôt** en lui attribuant une étoile sur GitHub.
-- 🐛 **Signaler des anomalies** ou suggérer des fonctionnalités via les *Issues*.
-- 📝 **Créer ou enrichir des cours** (rédaction au format Markdown / QCM en JSON).
-- 💻 **Développer de nouveaux outils** utilitaires en Dart/Flutter.
-
-### 💖 Soutien Financier (Dons)
-Si T2DECODE vous fait gagner du temps ou enrichit votre parcours professionnel, vous pouvez soutenir l'association TUTODECODE. Les dons servent exclusivement à pérenniser l'hébergement de nos services, le maintien des noms de domaine et la continuité de nos actions éducatives gratuites et sans publicité.
-- ➡️ **[Faire un don sécurisé à l'association via HelloAsso](https://www.helloasso.com/associations/tutodecode)**
-
-<img src="assets/separator.svg" width="100%" height="4">
-
-## 🔐 Security
-
-All commits in this repository are GPG-signed for authenticity.
-
-<img src="assets/separator.svg" width="100%" height="4">
-
-## 📄 Licence & Droits
-
-Ce projet est distribué sous licence **[GNU General Public License v3.0 (GPLv3)](LICENSE)**.  
-
-Un immense merci à tous les testeurs, développeurs, techniciens et passionnés qui participent à faire vivre ce projet ! 🌟
+<br>
+<div align="center">
+  <i>Distribué sous licence <b>GNU General Public License v3.0 (GPLv3)</b>.</i>
+</div>
