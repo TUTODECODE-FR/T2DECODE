@@ -7,6 +7,11 @@
   **« Le savoir ne devrait pas toujours dépendre d'une connexion. »**<br>
   — *Maxime MARTIN CIVET*
 
+  <br>
+  <!-- ⚠️ N'OUBLIEZ PAS DE PLACER VOTRE GIF DANS docs/images/t2decode_demo.gif -->
+  <img src="docs/images/t2decode_demo.gif" width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" alt="Démo rapide - Ghost AI & Simulateurs">
+  <br>
+
 [![CI](https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1A1D2E&color=3DDC84)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
   [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=F5EBDA&labelColor=1A1D2E&logoColor=F5EBDA)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
   [![Mac App Store](https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6)](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)
@@ -264,6 +269,7 @@ Dans une démarche de transparence professionnelle absolue, ce projet respecte l
 - 📖 **[Guide de Contribution (CONTRIBUTING.md)](CONTRIBUTING.md)** : Comment ajouter des cours ou du code.
 - 🏛️ **[Gouvernance (GOVERNANCE.md)](GOVERNANCE.md)** : Modèle de décision de l'association.
 - 🆘 **[Support (SUPPORT.md)](SUPPORT.md)** : Où trouver de l'aide en cas de besoin.
+- 🗺️ **[Roadmap & Profils (ROADMAP.md)](ROADMAP.md)** : Nos prochaines étapes et nos offres de missions ciblées.
 
 ### Comment nous aider ?
 Consultez notre [CONTRIBUTING.md](CONTRIBUTING.md) pour découvrir comment :
