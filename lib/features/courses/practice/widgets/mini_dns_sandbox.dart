@@ -50,8 +50,8 @@ class _MiniDnsSandboxState extends State<MiniDnsSandbox> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: TdcColors.info.withOpacity(0.12),
-                  border: Border.all(color: TdcColors.info.withOpacity(0.25)),
+                  color: TdcColors.info.withValues(alpha: 0.12),
+                  border: Border.all(color: TdcColors.info.withValues(alpha: 0.25)),
                 ),
                 child: const Text(
                   'DNS',

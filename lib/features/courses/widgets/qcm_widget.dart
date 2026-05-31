@@ -8,7 +8,7 @@ class QcmWidget extends StatefulWidget {
   final List<QuizQuestion> questions;
   final void Function(bool success)? onComplete;
 
-  const QcmWidget({required this.questions, this.onComplete, Key? key}) : super(key: key);
+  const QcmWidget({required this.questions, this.onComplete, super.key});
 
   @override
   State<QcmWidget> createState() => _QcmWidgetState();
@@ -55,7 +55,7 @@ class _QcmWidgetState extends State<QcmWidget> {
         decoration: BoxDecoration(
           color: TdcColors.surface,
           borderRadius: TdcRadius.lg,
-          border: Border.all(color: success ? TdcColors.success.withOpacity(0.5) : TdcColors.danger.withOpacity(0.5)),
+          border: Border.all(color: success ? TdcColors.success.withValues(alpha: 0.5) : TdcColors.danger.withValues(alpha: 0.5)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -127,7 +127,7 @@ class _QcmWidgetState extends State<QcmWidget> {
         border: Border.all(color: TdcColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -142,7 +142,7 @@ class _QcmWidgetState extends State<QcmWidget> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: TdcColors.accent.withOpacity(0.15),
+                  color: TdcColors.accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -166,25 +166,25 @@ class _QcmWidgetState extends State<QcmWidget> {
             final isSelected = _selected == i;
             final isCorrect = i == q.correctIndex;
             
-            Color bgColor = isSelected ? TdcColors.accent.withOpacity(0.08) : TdcColors.surfaceAlt;
+            Color bgColor = isSelected ? TdcColors.accent.withValues(alpha: 0.08) : TdcColors.surfaceAlt;
             Color borderColor = isSelected ? TdcColors.accent : TdcColors.border;
             Color iconColor = isSelected ? TdcColors.accent : TdcColors.textMuted;
             Widget? icon = isSelected ? const Center(child: Icon(Icons.check, size: 14, color: Colors.white)) : null;
 
             if (_validated) {
               if (isCorrect) {
-                bgColor = TdcColors.success.withOpacity(0.1);
+                bgColor = TdcColors.success.withValues(alpha: 0.1);
                 borderColor = TdcColors.success;
                 iconColor = TdcColors.success;
                 icon = const Center(child: Icon(Icons.check, size: 14, color: Colors.white));
               } else if (isSelected && !isCorrect) {
-                bgColor = TdcColors.danger.withOpacity(0.1);
+                bgColor = TdcColors.danger.withValues(alpha: 0.1);
                 borderColor = TdcColors.danger;
                 iconColor = TdcColors.danger;
                 icon = const Center(child: Icon(Icons.close, size: 14, color: Colors.white));
               } else {
-                bgColor = TdcColors.surfaceAlt.withOpacity(0.5);
-                borderColor = TdcColors.border.withOpacity(0.5);
+                bgColor = TdcColors.surfaceAlt.withValues(alpha: 0.5);
+                borderColor = TdcColors.border.withValues(alpha: 0.5);
               }
             }
 
@@ -226,7 +226,7 @@ class _QcmWidgetState extends State<QcmWidget> {
                           q.choices[i],
                           style: TextStyle(
                             color: _validated 
-                                ? (isCorrect || (isSelected && !isCorrect) ? TdcColors.textPrimary : TdcColors.textSecondary.withOpacity(0.5))
+                                ? (isCorrect || (isSelected && !isCorrect) ? TdcColors.textPrimary : TdcColors.textSecondary.withValues(alpha: 0.5))
                                 : (isSelected ? TdcColors.textPrimary : TdcColors.textSecondary),
                             fontSize: 15,
                             fontWeight: isSelected || (_validated && isCorrect) ? FontWeight.bold : FontWeight.normal,
@@ -244,9 +244,9 @@ class _QcmWidgetState extends State<QcmWidget> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TdcColors.accent.withOpacity(0.1),
+                color: TdcColors.accent.withValues(alpha: 0.1),
                 borderRadius: TdcRadius.md,
-                border: Border.all(color: TdcColors.accent.withOpacity(0.3)),
+                border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,7 +272,7 @@ class _QcmWidgetState extends State<QcmWidget> {
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(borderRadius: TdcRadius.md),
                 elevation: 4,
-                shadowColor: TdcColors.accent.withOpacity(0.4),
+                shadowColor: TdcColors.accent.withValues(alpha: 0.4),
               ),
               child: Text(
                 _validated 

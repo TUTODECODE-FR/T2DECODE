@@ -44,8 +44,8 @@ class _SurvivalScreenState extends State<SurvivalScreen> {
         {
           'title': 'Infection Ransomware active',
           'content': '''URGENT : Débranchez le câble réseau et coupez le Wi-Fi IMMÉDIATEMENT.
-Ne redémarrez pas (certains ransomwares s\'activent au reboot).
-Isolez le poste et utilisez un autre PC pour identifier l\'extension des fichiers.''',
+Ne redémarrez pas (certains ransomwares s'activent au reboot).
+Isolez le poste et utilisez un autre PC pour identifier l'extension des fichiers.''',
           'severity': 'critical',
           'prevention': 'Sauvegardes hors-ligne régulières (Règle du 3-2-1).',
         },
@@ -74,7 +74,7 @@ Cessez toute activité intensive sur le disque.''',
         },
         {
           'title': 'Surchauffe / Coupure brutale',
-          'content': '''1. Nettoyer les ventilateurs et bouches d\'air.
+          'content': '''1. Nettoyer les ventilateurs et bouches d'air.
 2. Vérifier si un processus sature le CPU via le Gestionnaire des tâches.
 3. Remplacer la pâte thermique si le PC a + de 3 ans.''',
           'severity': 'risk',
@@ -103,7 +103,7 @@ Cessez toute activité intensive sur le disque.''',
           const Text('PROTOCOLES D\'URGENCE', style: TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
           const Text('SOS Secours Technique', style: TextStyle(color: TdcColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold)),
           const SizedBox(height: 24),
-          ..._guides.map((g) => _buildCategorySection(g)).toList(),
+          ..._guides.map((g) => _buildCategorySection(g)),
         ],
       ),
     );
@@ -121,7 +121,7 @@ Cessez toute activité intensive sur le disque.''',
               const SizedBox(width: 12),
               Text(g['category'], style: TextStyle(color: g['color'], fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(width: 12),
-              Expanded(child: Divider(color: g['color'].withOpacity(0.2))),
+              Expanded(child: Divider(color: g['color'].withValues(alpha: 0.2))),
             ],
           ),
         ),
@@ -137,8 +137,8 @@ Cessez toute activité intensive sur le disque.''',
       decoration: BoxDecoration(
         color: TdcColors.surface,
         borderRadius: TdcRadius.md,
-        border: Border.all(color: isCrit ? TdcColors.danger.withOpacity(0.3) : TdcColors.border),
-        boxShadow: isCrit ? [BoxShadow(color: TdcColors.danger.withOpacity(0.05), blurRadius: 10)] : null,
+        border: Border.all(color: isCrit ? TdcColors.danger.withValues(alpha: 0.3) : TdcColors.border),
+        boxShadow: isCrit ? [BoxShadow(color: TdcColors.danger.withValues(alpha: 0.05), blurRadius: 10)] : null,
       ),
       child: ClipRRect(
         borderRadius: TdcRadius.md,
@@ -147,7 +147,7 @@ Cessez toute activité intensive sur le disque.''',
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              color: isCrit ? TdcColors.danger.withOpacity(0.1) : TdcColors.surfaceAlt,
+              color: isCrit ? TdcColors.danger.withValues(alpha: 0.1) : TdcColors.surfaceAlt,
               child: Row(
                 children: [
                   Icon(isCrit ? Icons.warning_amber_rounded : Icons.info_outline, color: isCrit ? TdcColors.danger : catColor, size: 18),
@@ -168,7 +168,7 @@ Cessez toute activité intensive sur le disque.''',
                   const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(color: TdcColors.bg.withOpacity(0.5), borderRadius: TdcRadius.sm),
+                    decoration: BoxDecoration(color: TdcColors.bg.withValues(alpha: 0.5), borderRadius: TdcRadius.sm),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -192,7 +192,7 @@ Cessez toute activité intensive sur le disque.''',
     final label = level == 'critical' ? 'CRITIQUE' : 'RISQUE';
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: color.withOpacity(0.3))),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: color.withValues(alpha: 0.3))),
       child: Text(label, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.bold)),
     );
   }

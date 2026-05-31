@@ -60,9 +60,9 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
         Container(
           width: 220,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.03),
+            color: Colors.white.withValues(alpha: 0.03),
             border: Border(
-              right: BorderSide(color: Colors.white.withOpacity(0.08)),
+              right: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
             ),
           ),
           child: Column(
@@ -94,7 +94,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     Text(
                       '${labCatalog.length} simulations',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.4),
+                        color: Colors.white.withValues(alpha: 0.4),
                         fontSize: 11,
                       ),
                     ),
@@ -117,7 +117,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   border: Border(
-                    top: BorderSide(color: Colors.white.withOpacity(0.08)),
+                    top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
                   ),
                 ),
                 child: Column(
@@ -151,10 +151,10 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
         margin: const EdgeInsets.symmetric(vertical: 2),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? lab.color.withOpacity(0.15) : Colors.transparent,
+          color: isSelected ? lab.color.withValues(alpha: 0.15) : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected ? lab.color.withOpacity(0.4) : Colors.transparent,
+            color: isSelected ? lab.color.withValues(alpha: 0.4) : Colors.transparent,
           ),
         ),
         child: Row(
@@ -163,7 +163,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: lab.color.withOpacity(isSelected ? 0.2 : 0.08),
+                color: lab.color.withValues(alpha: isSelected ? 0.2 : 0.08),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(lab.icon, color: lab.color, size: 16),
@@ -185,7 +185,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                   Text(
                     lab.subtitle,
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.35),
+                      color: Colors.white.withValues(alpha: 0.35),
                       fontSize: 10,
                     ),
                     maxLines: 1,
@@ -226,13 +226,13 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? lab.color.withOpacity(0.2)
-                        : Colors.white.withOpacity(0.05),
+                        ? lab.color.withValues(alpha: 0.2)
+                        : Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isSelected
-                          ? lab.color.withOpacity(0.6)
-                          : Colors.white.withOpacity(0.1),
+                          ? lab.color.withValues(alpha: 0.6)
+                          : Colors.white.withValues(alpha: 0.1),
                     ),
                   ),
                   child: Row(
@@ -292,7 +292,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                 decoration: BoxDecoration(
                   border: Border(
-                    bottom: BorderSide(color: Colors.white.withOpacity(0.07)),
+                    bottom: BorderSide(color: Colors.white.withValues(alpha: 0.07)),
                   ),
                 ),
                 child: Row(
@@ -301,9 +301,9 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: lab.color.withOpacity(0.15),
+                        color: lab.color.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: lab.color.withOpacity(0.3)),
+                        border: Border.all(color: lab.color.withValues(alpha: 0.3)),
                       ),
                       child: Icon(lab.icon, color: lab.color, size: 18),
                     ),
@@ -323,7 +323,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                         Text(
                           lab.subtitle,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                             fontSize: 12,
                           ),
                         ),
@@ -333,7 +333,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     Text(
                       '${_selectedIndex + 1} / ${labCatalog.length}',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.25),
+                        color: Colors.white.withValues(alpha: 0.25),
                         fontSize: 11,
                         fontFamily: 'monospace',
                       ),
@@ -374,7 +374,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
         Text(
           '$label: ',
           style: TextStyle(
-            color: color.withOpacity(0.6),
+            color: color.withValues(alpha: 0.6),
             fontSize: 9,
             fontWeight: FontWeight.bold,
           ),

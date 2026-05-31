@@ -65,8 +65,8 @@ class _MiniSqlInjectionSandboxState extends State<MiniSqlInjectionSandbox> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: badgeColor.withOpacity(0.12),
-                  border: Border.all(color: badgeColor.withOpacity(0.25)),
+                  color: badgeColor.withValues(alpha: 0.12),
+                  border: Border.all(color: badgeColor.withValues(alpha: 0.25)),
                 ),
                 child: Text(
                   badgeText,
@@ -96,7 +96,7 @@ class _MiniSqlInjectionSandboxState extends State<MiniSqlInjectionSandbox> {
             subtitle: const Text('Réduit le risque lié à la concaténation de chaînes.',
                 style: TextStyle(color: TdcColors.textMuted, fontSize: 12)),
             contentPadding: EdgeInsets.zero,
-            activeColor: TdcColors.accent,
+            activeThumbColor: TdcColors.accent,
           ),
           const SizedBox(height: 8),
           const Text('Requête générée (simulation):',

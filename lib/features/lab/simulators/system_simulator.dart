@@ -172,9 +172,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: TdcColors.system.withOpacity(0.1),
+                      color: TdcColors.system.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: TdcColors.system.withOpacity(0.3)),
+                      border: Border.all(color: TdcColors.system.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -270,7 +270,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
         
         // Tabs
         Container(
-          color: TdcColors.surfaceAlt.withOpacity(0.3),
+          color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
           child: TabBar(
             controller: _tabController,
             indicatorColor: TdcColors.system,
@@ -419,7 +419,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TdcColors.surfaceAlt.withOpacity(0.5),
+        color: TdcColors.surfaceAlt.withValues(alpha: 0.5),
         borderRadius: BorderRadius.zero,
         border: Border.all(color: TdcColors.border),
       ),
@@ -472,13 +472,13 @@ class _SystemSimulatorState extends State<SystemSimulator>
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: process.status == 'Running' 
-                      ? TdcColors.system.withOpacity(0.1)
-                      : TdcColors.security.withOpacity(0.1),
+                      ? TdcColors.system.withValues(alpha: 0.1)
+                      : TdcColors.security.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.zero,
                   border: Border.all(
                     color: process.status == 'Running' 
-                        ? TdcColors.system.withOpacity(0.3)
-                        : TdcColors.security.withOpacity(0.3),
+                        ? TdcColors.system.withValues(alpha: 0.3)
+                        : TdcColors.security.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
@@ -635,13 +635,13 @@ class _SystemSimulatorState extends State<SystemSimulator>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: service.status == 'Active' 
-            ? TdcColors.system.withOpacity(0.1)
-            : TdcColors.security.withOpacity(0.1),
+            ? TdcColors.system.withValues(alpha: 0.1)
+            : TdcColors.security.withValues(alpha: 0.1),
         borderRadius: BorderRadius.zero,
         border: Border.all(
           color: service.status == 'Active' 
-              ? TdcColors.system.withOpacity(0.3)
-              : TdcColors.security.withOpacity(0.3),
+              ? TdcColors.system.withValues(alpha: 0.3)
+              : TdcColors.security.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -682,13 +682,13 @@ class _SystemSimulatorState extends State<SystemSimulator>
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: service.status == 'Active' 
-                          ? TdcColors.system.withOpacity(0.1)
-                          : TdcColors.security.withOpacity(0.1),
+                          ? TdcColors.system.withValues(alpha: 0.1)
+                          : TdcColors.security.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.zero,
                       border: Border.all(
                         color: service.status == 'Active' 
-                            ? TdcColors.system.withOpacity(0.3)
-                            : TdcColors.security.withOpacity(0.3),
+                            ? TdcColors.system.withValues(alpha: 0.3)
+                            : TdcColors.security.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Text(
@@ -909,10 +909,10 @@ class _SystemSimulatorState extends State<SystemSimulator>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: TdcColors.surface,
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -963,7 +963,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TdcColors.surfaceAlt.withOpacity(0.5),
+        color: TdcColors.surfaceAlt.withValues(alpha: 0.5),
         borderRadius: BorderRadius.zero,
         border: Border.all(color: TdcColors.border),
       ),

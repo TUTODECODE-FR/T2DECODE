@@ -5,6 +5,8 @@ import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/responsive/responsive.dart';
 
 class LegalScreen extends StatelessWidget {
+  const LegalScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

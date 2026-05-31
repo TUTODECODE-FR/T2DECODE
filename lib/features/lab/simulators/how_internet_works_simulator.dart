@@ -482,7 +482,7 @@ final _scenarios = [
         description: 'Le plus rapide : la réponse est peut-être déjà connue.',
         detail:
             'L\'OS vérifie dans l\'ordre :\n'
-            '1. /etc/hosts (ou C:\Windows\System32\drivers\etc\hosts) — priorité absolue\n'
+            '1. /etc/hosts (ou C:WindowsSystem32driversetchosts) — priorité absolue\n'
             '2. Cache DNS de l\'OS (ipconfig /displaydns sur Windows, systemd-resolve --statistics sur Linux)\n'
             '3. Cache du navigateur\n'
             'Si trouvé et TTL non expiré → réponse immédiate, aucune requête réseau.',
@@ -712,7 +712,7 @@ class _HowInternetWorksSimulatorState
     _FwRule('DROP', 'INVALID', 'all', Colors.red),
   ];
   bool _fwBlocked = false;
-  String _fwTestPort = '80';
+  final String _fwTestPort = '80';
   final TextEditingController _fwPortCtrl = TextEditingController(text: '80');
 
   _Scenario get _scenario => _scenarios[_scenarioIndex];
@@ -939,7 +939,7 @@ class _HowInternetWorksSimulatorState
           child: FloatingActionButton.extended(
             heroTag: 'internet_ai_fab',
             onPressed: _openAIPanel,
-            backgroundColor: _scenario.color.withOpacity(0.9),
+            backgroundColor: _scenario.color.withValues(alpha: 0.9),
             icon: const Icon(Icons.auto_awesome, size: 18),
             label: const Text('IA', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
@@ -969,7 +969,7 @@ class _HowInternetWorksSimulatorState
         decoration: BoxDecoration(
           color: const Color(0xFF0D1117),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.35)),
+          border: Border.all(color: color.withValues(alpha: 0.35)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -977,7 +977,7 @@ class _HowInternetWorksSimulatorState
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.12),
+                color: color.withValues(alpha: 0.12),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(11)),
               ),
               child: Row(
@@ -1009,7 +1009,7 @@ class _HowInternetWorksSimulatorState
           children: [
             Row(
               children: [
-                Text('target: ', style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12, fontFamily: 'monospace')),
+                Text('target: ', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12, fontFamily: 'monospace')),
                 const Text('8.8.8.8 (Google DNS)', style: TextStyle(color: Color(0xFF06B6D4), fontSize: 12, fontFamily: 'monospace')),
                 const Spacer(),
                 _simButton('Ping', const Color(0xFF06B6D4), _pinging ? null : _startPing),
@@ -1086,10 +1086,10 @@ class _HowInternetWorksSimulatorState
                         margin: const EdgeInsets.symmetric(vertical: 3),
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: active ? phases[i].color.withOpacity(0.15) : Colors.transparent,
+                          color: active ? phases[i].color.withValues(alpha: 0.15) : Colors.transparent,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: active ? phases[i].color.withOpacity(0.6) : Colors.white12,
+                            color: active ? phases[i].color.withValues(alpha: 0.6) : Colors.white12,
                           ),
                         ),
                         child: Row(
@@ -1123,7 +1123,7 @@ class _HowInternetWorksSimulatorState
                 margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withOpacity(0.15),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Row(
@@ -1146,7 +1146,7 @@ class _HowInternetWorksSimulatorState
       duration: const Duration(milliseconds: 400),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: active ? color.withOpacity(0.15) : Colors.transparent,
+        color: active ? color.withValues(alpha: 0.15) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: active ? color : Colors.white12),
       ),
@@ -1178,7 +1178,7 @@ class _HowInternetWorksSimulatorState
           children: [
             Row(
               children: [
-                Text('user@192.168.1.10 → ', style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 11, fontFamily: 'monospace')),
+                Text('user@192.168.1.10 → ', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11, fontFamily: 'monospace')),
                 const Text('root@server.example.com', style: TextStyle(color: Color(0xFF10B981), fontSize: 11, fontFamily: 'monospace')),
                 const Spacer(),
                 _simButton('Connect', const Color(0xFF10B981), _sshRunning ? null : _startSsh),
@@ -1196,9 +1196,9 @@ class _HowInternetWorksSimulatorState
                 margin: const EdgeInsets.only(bottom: 4),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: active || current ? color.withOpacity(0.12) : Colors.transparent,
+                  color: active || current ? color.withValues(alpha: 0.12) : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: active || current ? color.withOpacity(0.5) : Colors.white12),
+                  border: Border.all(color: active || current ? color.withValues(alpha: 0.5) : Colors.white12),
                 ),
                 child: Row(
                   children: [
@@ -1241,7 +1241,7 @@ class _HowInternetWorksSimulatorState
               margin: EdgeInsets.only(bottom: 4, left: i * 8.0),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
               decoration: BoxDecoration(
-                color: l.d.withOpacity(0.10),
+                color: l.d.withValues(alpha: 0.10),
                 borderRadius: BorderRadius.circular(6),
                 border: Border(left: BorderSide(color: l.d, width: 3)),
               ),
@@ -1254,7 +1254,7 @@ class _HowInternetWorksSimulatorState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(l.b, style: const TextStyle(color: Colors.white70, fontSize: 10, fontFamily: 'monospace')),
-                        Text(l.c, style: TextStyle(color: Colors.white.withOpacity(0.35), fontSize: 9, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis),
+                        Text(l.c, style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 9, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),
@@ -1285,15 +1285,15 @@ class _HowInternetWorksSimulatorState
                     style: const TextStyle(color: Color(0xFFF59E0B), fontSize: 12, fontFamily: 'monospace'),
                     decoration: InputDecoration(
                       hintText: 'Domaine à résoudre…',
-                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12),
+                      hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 12),
                       prefixText: '> nslookup ',
-                      prefixStyle: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12, fontFamily: 'monospace'),
+                      prefixStyle: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12, fontFamily: 'monospace'),
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                       filled: true,
-                      fillColor: Colors.white.withOpacity(0.04),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withOpacity(0.15))),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withOpacity(0.15))),
+                      fillColor: Colors.white.withValues(alpha: 0.04),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15))),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15))),
                     ),
                   ),
                 ),
@@ -1309,9 +1309,9 @@ class _HowInternetWorksSimulatorState
                 margin: const EdgeInsets.only(bottom: 4),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: s.color.withOpacity(0.10),
+                  color: s.color.withValues(alpha: 0.10),
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: s.color.withOpacity(0.4)),
+                  border: Border.all(color: s.color.withValues(alpha: 0.4)),
                 ),
                 child: Row(
                   children: [
@@ -1352,7 +1352,7 @@ class _HowInternetWorksSimulatorState
                 margin: const EdgeInsets.only(bottom: 4),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.07),
+                  color: color.withValues(alpha: 0.07),
                   borderRadius: BorderRadius.circular(6),
                   border: Border(left: BorderSide(color: color, width: 3)),
                 ),
@@ -1374,15 +1374,15 @@ class _HowInternetWorksSimulatorState
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       hintText: 'Port à tester…',
-                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12),
+                      hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 12),
                       prefixText: 'tcp dport=',
-                      prefixStyle: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12, fontFamily: 'monospace'),
+                      prefixStyle: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12, fontFamily: 'monospace'),
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                       filled: true,
-                      fillColor: Colors.white.withOpacity(0.04),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withOpacity(0.15))),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withOpacity(0.15))),
+                      fillColor: Colors.white.withValues(alpha: 0.04),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15))),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15))),
                     ),
                   ),
                 ),
@@ -1390,7 +1390,7 @@ class _HowInternetWorksSimulatorState
                 _simButton('Tester', const Color(0xFFEF4444), _testFirewall),
               ],
             ),
-            if (_fwPortCtrl.text.isNotEmpty && _fwBlocked != null)
+            if (_fwPortCtrl.text.isNotEmpty)
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 child: Container(
@@ -1398,7 +1398,7 @@ class _HowInternetWorksSimulatorState
                   margin: const EdgeInsets.only(top: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: (_fwBlocked ? const Color(0xFFEF4444) : const Color(0xFF10B981)).withOpacity(0.15),
+                    color: (_fwBlocked ? const Color(0xFFEF4444) : const Color(0xFF10B981)).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -1432,9 +1432,9 @@ class _HowInternetWorksSimulatorState
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: onTap != null ? color.withOpacity(0.15) : Colors.white.withOpacity(0.03),
+          color: onTap != null ? color.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: onTap != null ? color.withOpacity(0.5) : Colors.white12),
+          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.5) : Colors.white12),
         ),
         child: Text(label, style: TextStyle(color: onTap != null ? color : Colors.white24, fontSize: 11, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
       ),
@@ -1460,7 +1460,7 @@ class _HowInternetWorksSimulatorState
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: selected ? s.color.withOpacity(0.18) : TdcColors.surface,
+                color: selected ? s.color.withValues(alpha: 0.18) : TdcColors.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: selected ? s.color : TdcColors.border,
@@ -1497,15 +1497,15 @@ class _HowInternetWorksSimulatorState
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: s.color.withOpacity(0.08),
+          color: s.color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: s.color.withOpacity(0.25)),
+          border: Border.all(color: s.color.withValues(alpha: 0.25)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: s.color.withOpacity(0.15), shape: BoxShape.circle),
+              decoration: BoxDecoration(color: s.color.withValues(alpha: 0.15), shape: BoxShape.circle),
               child: Icon(s.icon, color: s.color, size: 22),
             ),
             const SizedBox(width: 12),
@@ -1539,10 +1539,10 @@ class _HowInternetWorksSimulatorState
         opacity: state == _StepState.future ? 0.3 : 1.0,
         child: Container(
           decoration: BoxDecoration(
-            color: state == _StepState.active ? step.color.withOpacity(0.12) : TdcColors.surface,
+            color: state == _StepState.active ? step.color.withValues(alpha: 0.12) : TdcColors.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: state == _StepState.active ? step.color : state == _StepState.done ? step.color.withOpacity(0.35) : TdcColors.border,
+              color: state == _StepState.active ? step.color : state == _StepState.done ? step.color.withValues(alpha: 0.35) : TdcColors.border,
               width: state == _StepState.active ? 1.5 : 1,
             ),
           ),
@@ -1563,7 +1563,7 @@ class _HowInternetWorksSimulatorState
                               Expanded(child: Text(step.title, style: TextStyle(color: state != _StepState.future ? TdcColors.textPrimary : TdcColors.textMuted, fontWeight: FontWeight.bold, fontSize: 14), overflow: TextOverflow.ellipsis, maxLines: 2)),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                                decoration: BoxDecoration(color: step.color.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
+                                decoration: BoxDecoration(color: step.color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
                                 child: Text(step.protocol, style: TextStyle(color: step.color, fontSize: 9, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
                               ),
                             ],
@@ -1593,7 +1593,7 @@ class _HowInternetWorksSimulatorState
       width: 32, height: 32,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: state == _StepState.done ? step.color.withOpacity(0.2) : state == _StepState.active ? step.color.withOpacity(0.25) : TdcColors.surfaceAlt,
+        color: state == _StepState.done ? step.color.withValues(alpha: 0.2) : state == _StepState.active ? step.color.withValues(alpha: 0.25) : TdcColors.surfaceAlt,
         border: Border.all(color: state == _StepState.future ? TdcColors.border : step.color),
       ),
       child: state == _StepState.done
@@ -1608,9 +1608,9 @@ class _HowInternetWorksSimulatorState
       margin: const EdgeInsets.fromLTRB(14, 0, 14, 14),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.25),
+        color: Colors.black.withValues(alpha: 0.25),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: step.color.withOpacity(0.15)),
+        border: Border.all(color: step.color.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1764,7 +1764,7 @@ class _RetainButtonState extends State<_RetainButton> {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: _saved ? const Color(0xFFF59E0B).withOpacity(0.18) : Colors.white.withOpacity(0.05),
+          color: _saved ? const Color(0xFFF59E0B).withValues(alpha: 0.18) : Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(6),
           border: Border.all(color: _saved ? const Color(0xFFF59E0B) : Colors.white24),
         ),

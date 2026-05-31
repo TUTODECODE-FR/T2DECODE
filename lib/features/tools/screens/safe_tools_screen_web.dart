@@ -68,9 +68,9 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: TdcColors.danger.withOpacity(0.1),
+                          color: TdcColors.danger.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(999),
-                          border: Border.all(color: TdcColors.danger.withOpacity(0.4)),
+                          border: Border.all(color: TdcColors.danger.withValues(alpha: 0.4)),
                         ),
                         child: const Row(
                           children: [
@@ -159,7 +159,7 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
         ],
       ),
       subtitle: Text(subtitle, style: const TextStyle(color: TdcColors.textMuted)),
-      activeColor: TdcColors.accent,
+      activeThumbColor: TdcColors.accent,
     );
   }
 

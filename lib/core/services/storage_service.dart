@@ -173,8 +173,9 @@ class StorageService {
         raw != null ? List<String>.from(jsonDecode(raw) as List) : <String>[];
     final timestamp = DateTime.now().toUtc().toIso8601String();
     logs.insert(0, '[$timestamp] $message');
-    if (logs.length > 200)
+    if (logs.length > 200) {
       logs.removeRange(200, logs.length); // Limite 200 entrées
+    }
     await _secure.write(key: _securityLogsKey, value: jsonEncode(logs));
   }
 
@@ -305,10 +306,12 @@ class StorageService {
   }
 
   Future<void> saveAiSettings(Map<String, String> settings) async {
-    if (settings['ollamaUrl'] != null)
+    if (settings['ollamaUrl'] != null) {
       await saveOllamaHost(settings['ollamaUrl']!);
-    if (settings['selectedModel'] != null)
+    }
+    if (settings['selectedModel'] != null) {
       await setOllamaModel(settings['selectedModel']!);
+    }
   }
 
   Future<List<dynamic>> loadTutorSessions() async {

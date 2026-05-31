@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
@@ -710,7 +709,7 @@ services:
               Text(
                 'Utilise une image locale (pré‑téléchargée). '
                 'Le port est bindé sur 127.0.0.1 pour éviter toute exposition.',
-                style: TextStyle(color: TdcColors.textMuted.withOpacity(0.95), fontSize: 12, height: 1.3),
+                style: TextStyle(color: TdcColors.textMuted.withValues(alpha: 0.95), fontSize: 12, height: 1.3),
               ),
               const SizedBox(height: 10),
               Container(

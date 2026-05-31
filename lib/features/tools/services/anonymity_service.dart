@@ -8,7 +8,6 @@
 // ============================================================
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -295,22 +294,22 @@ class AnonymityService {
     final prefs = await SharedPreferences.getInstance();
     // Encode manuellement pour éviter jsonEncode (pas d'import dart:convert ici)
     final map = backup.toMap();
-    await prefs.setString(_backupKey + '_hostname', map['hostname'] ?? '');
-    await prefs.setString(_backupKey + '_mac', map['mac'] ?? '');
-    await prefs.setString(_backupKey + '_interface', map['interface'] ?? '');
-    await prefs.setString(_backupKey + '_username', map['username'] ?? '');
-    await prefs.setString(_backupKey + '_savedAt', map['savedAt'] as String);
+    await prefs.setString('${_backupKey}_hostname', map['hostname'] ?? '');
+    await prefs.setString('${_backupKey}_mac', map['mac'] ?? '');
+    await prefs.setString('${_backupKey}_interface', map['interface'] ?? '');
+    await prefs.setString('${_backupKey}_username', map['username'] ?? '');
+    await prefs.setString('${_backupKey}_savedAt', map['savedAt'] as String);
   }
 
   static Future<AnonBackup?> loadBackup() async {
     final prefs = await SharedPreferences.getInstance();
-    final savedAt = prefs.getString(_backupKey + '_savedAt');
+    final savedAt = prefs.getString('${_backupKey}_savedAt');
     if (savedAt == null) return null;
     return AnonBackup(
-      hostname: prefs.getString(_backupKey + '_hostname'),
-      macAddress: prefs.getString(_backupKey + '_mac'),
-      interface: prefs.getString(_backupKey + '_interface'),
-      username: prefs.getString(_backupKey + '_username'),
+      hostname: prefs.getString('${_backupKey}_hostname'),
+      macAddress: prefs.getString('${_backupKey}_mac'),
+      interface: prefs.getString('${_backupKey}_interface'),
+      username: prefs.getString('${_backupKey}_username'),
       savedAt: DateTime.parse(savedAt),
     );
   }
@@ -569,7 +568,9 @@ if (\$adapter) {
         .map((l) => int.tryParse(l.trim().split(RegExp(r'\s+')).last) ?? 0)
         .toSet();
     int uid = 501;
-    while (usedUids.contains(uid)) uid++;
+    while (usedUids.contains(uid)) {
+      uid++;
+    }
 
     final cmds = [
       ['dscl', '.', '-create', '/Users/$name'],
@@ -733,9 +734,10 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
   }
 
   static Future<AnonResult> changeTTL(int ttl, {String? sudoPassword}) async {
-    if (ttl < 1 || ttl > 255)
+    if (ttl < 1 || ttl > 255) {
       return const AnonResult(
           success: false, message: 'TTL doit être entre 1 et 255');
+    }
     try {
       if (Platform.isLinux) {
         final r = await _sudo(
@@ -754,7 +756,7 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
             'powershell',
             [
               '-Command',
-              'Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" -Name "DefaultTTL" -Value $ttl -Type DWord'
+              'Set-ItemProperty -Path "HKLM:SYSTEMCurrentControlSetServicesTcpipParameters" -Name "DefaultTTL" -Value $ttl -Type DWord'
             ],
             runInShell: true);
         return AnonResult(

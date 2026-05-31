@@ -507,10 +507,10 @@ class _AiTutorScreenState extends State<AiTutorScreen>
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isSelected ? mode.color.withOpacity(0.1) : TdcColors.surface,
+                  color: isSelected ? mode.color.withValues(alpha: 0.1) : TdcColors.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected ? mode.color.withOpacity(0.3) : TdcColors.border,
+                    color: isSelected ? mode.color.withValues(alpha: 0.3) : TdcColors.border,
                   ),
                 ),
                 child: Row(
@@ -631,7 +631,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: session.mode.color.withOpacity(0.2),
+                      color: session.mode.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -880,7 +880,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TdcColors.surfaceAlt.withOpacity(0.3),
+        color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
         border: Border(bottom: BorderSide(color: TdcColors.border)),
       ),
       child: Row(
@@ -888,7 +888,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: provider.currentMode.color.withOpacity(0.2),
+              color: provider.currentMode.color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -1072,7 +1072,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                     decoration: InputDecoration(
                       hintText: 'Posez votre question...',
                       filled: true,
-                      fillColor: TdcColors.surfaceAlt.withOpacity(0.3),
+                      fillColor: TdcColors.surfaceAlt.withValues(alpha: 0.3),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
                         borderSide: BorderSide.none,

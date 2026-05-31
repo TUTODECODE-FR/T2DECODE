@@ -32,7 +32,7 @@ class _ScriptGeneratorScreenState extends State<ScriptGeneratorScreen>
 
   // Automation State
   final List<AutomationTask> _tasks = [];
-  bool _isRunningAutomation = false;
+  final bool _isRunningAutomation = false;
   Timer? _automationTimer;
 
   @override
@@ -489,9 +489,9 @@ if __name__ == "__main__":
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.purple.withOpacity(0.1),
+                  color: Colors.purple.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.purple.withOpacity(0.3)),
+                  border: Border.all(color: Colors.purple.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   '${_generatedScripts.length} scripts générés',
@@ -506,7 +506,7 @@ if __name__ == "__main__":
           ),
         ),
         Container(
-          color: TdcColors.surfaceAlt.withOpacity(0.3),
+          color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
           child: TabBar(
             controller: _tabController,
             indicatorColor: Colors.purple.shade700,
@@ -657,7 +657,7 @@ if __name__ == "__main__":
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: TdcColors.surfaceAlt.withOpacity(0.3),
+                      color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(12),
                         topRight: Radius.circular(12),
@@ -668,7 +668,7 @@ if __name__ == "__main__":
                         Icon(Icons.code, color: Colors.purple.shade700, size: 20),
                         const SizedBox(width: 8),
                         Text(
-                          '${_selectedLanguage.name.toUpperCase()}',
+                          _selectedLanguage.name.toUpperCase(),
                           style: TextStyle(
                             color: Colors.purple.shade700,
                             fontSize: 12,
@@ -829,7 +829,7 @@ if __name__ == "__main__":
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: template.language.color.withOpacity(0.2),
+                      color: template.language.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -845,7 +845,7 @@ if __name__ == "__main__":
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: template.category.color.withOpacity(0.2),
+                      color: template.category.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -989,7 +989,7 @@ if __name__ == "__main__":
                 Switch(
                   value: task.isEnabled,
                   onChanged: (value) => _toggleTask(task.id, value),
-                  activeColor: Colors.purple.shade700,
+                  activeThumbColor: Colors.purple.shade700,
                 ),
               ],
             ),
@@ -1106,7 +1106,7 @@ if __name__ == "__main__":
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: script.language.color.withOpacity(0.2),
+                      color: script.language.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -1122,7 +1122,7 @@ if __name__ == "__main__":
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: script.category.color.withOpacity(0.2),
+                      color: script.category.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(

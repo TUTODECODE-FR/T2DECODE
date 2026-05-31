@@ -61,7 +61,7 @@ class AiTutorProvider with ChangeNotifier {
       return e.message;
     }
   }
-  Map<String, dynamic> _userProgress = {};
+  final Map<String, dynamic> _userProgress = {};
   
   // Ollama connection
   String _ollamaUrl = 'http://localhost:11434';
@@ -316,7 +316,7 @@ Limite ta réponse à 200 mots maximum.''';
 Sujet : <TOPIC>$topic</TOPIC>
 Propose des exercices pratiques et des scénarios réels.
 Donne des instructions étape par étape.
-Sois patient et guide l\'utilisateur à travers les erreurs.
+Sois patient et guide l'utilisateur à travers les erreurs.
 Limite ta réponse à 150 mots maximum.''';
       case TutorMode.troubleshooting:
         return '''Tu es un expert en dépannage pour T2DECODE.
@@ -358,7 +358,7 @@ Limite ta réponse à 120 mots maximum.''';
           id: (DateTime.now().millisecondsSinceEpoch + 1).toString(),
           content: '''Bonjour ! Je suis votre tuteur Ghost AI. 🤖
 
-Il semble que je sois hors-ligne pour le moment car Ollama n\'est pas détecté. Pour démarrer notre session d\'apprentissage, assurez-vous qu\'Ollama est lancé sur votre Mac (avec `ollama serve`) ou configuré dans les réglages du tuteur.''',
+Il semble que je sois hors-ligne pour le moment car Ollama n'est pas détecté. Pour démarrer notre session d'apprentissage, assurez-vous qu'Ollama est lancé sur votre Mac (avec `ollama serve`) ou configuré dans les réglages du tuteur.''',
           isFromUser: false,
           timestamp: DateTime.now(),
         );

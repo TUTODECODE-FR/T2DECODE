@@ -140,8 +140,8 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
-            color: widget.accentColor.withOpacity(0.08),
-            border: Border(bottom: BorderSide(color: widget.accentColor.withOpacity(0.2))),
+            color: widget.accentColor.withValues(alpha: 0.08),
+            border: Border(bottom: BorderSide(color: widget.accentColor.withValues(alpha: 0.2))),
           ),
           child: Row(
             children: [
@@ -159,7 +159,7 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: Colors.blueGrey.withOpacity(0.2),
+                  color: Colors.blueGrey.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Text(
@@ -190,12 +190,12 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.smart_toy_outlined, color: widget.accentColor.withOpacity(0.4), size: 56),
+          Icon(Icons.smart_toy_outlined, color: widget.accentColor.withValues(alpha: 0.4), size: 56),
           const SizedBox(height: 12),
           Text(
             'Pose ta question sur\n${widget.topic}',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 14),
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 14),
           ),
         ],
       ),
@@ -217,13 +217,13 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               color: msg.isUser
-                  ? widget.accentColor.withOpacity(0.2)
+                  ? widget.accentColor.withValues(alpha: 0.2)
                   : TdcColors.surface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: msg.isUser
-                    ? widget.accentColor.withOpacity(0.4)
-                    : Colors.white.withOpacity(0.06),
+                    ? widget.accentColor.withValues(alpha: 0.4)
+                    : Colors.white.withValues(alpha: 0.06),
               ),
             ),
             child: msg.isStreaming && msg.text.isEmpty
@@ -237,7 +237,7 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
                 : SelectableText(
                     msg.text,
                     style: TextStyle(
-                      color: msg.isUser ? Colors.white : Colors.white.withOpacity(0.9),
+                      color: msg.isUser ? Colors.white : Colors.white.withValues(alpha: 0.9),
                       fontSize: 13,
                       height: 1.5,
                     ),
@@ -260,9 +260,9 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: widget.accentColor.withOpacity(0.08),
+                color: widget.accentColor.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: widget.accentColor.withOpacity(0.3)),
+                border: Border.all(color: widget.accentColor.withValues(alpha: 0.3)),
               ),
               child: Text(
                 q,
@@ -280,7 +280,7 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: TdcColors.surface,
-        border: Border(top: BorderSide(color: Colors.white.withOpacity(0.06))),
+        border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
       ),
       child: Row(
         children: [
@@ -291,9 +291,9 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
               style: const TextStyle(color: Colors.white, fontSize: 13),
               decoration: InputDecoration(
                 hintText: 'Pose ta question…',
-                hintStyle: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 13),
+                hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 13),
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
+                fillColor: Colors.white.withValues(alpha: 0.05),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -313,7 +313,7 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
               decoration: BoxDecoration(
                 color: _loading
                     ? Colors.white10
-                    : widget.accentColor.withOpacity(0.8),
+                    : widget.accentColor.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(

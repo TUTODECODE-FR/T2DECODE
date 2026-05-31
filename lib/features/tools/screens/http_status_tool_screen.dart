@@ -82,7 +82,7 @@ class _HttpStatusToolScreenState extends State<HttpStatusToolScreen> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(8), border: Border.all(color: color)),
+                        decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8), border: Border.all(color: color)),
                         child: Text(s['code']!, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 18)),
                       ),
                       const SizedBox(width: 16),

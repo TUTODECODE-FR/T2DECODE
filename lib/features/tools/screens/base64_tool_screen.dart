@@ -115,7 +115,7 @@ class _Base64ToolScreenState extends State<Base64ToolScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: active ? TdcColors.accent.withOpacity(0.1) : Colors.transparent,
+            color: active ? TdcColors.accent.withValues(alpha: 0.1) : Colors.transparent,
             borderRadius: TdcRadius.sm,
             border: Border.all(color: active ? TdcColors.accent : TdcColors.border),
           ),

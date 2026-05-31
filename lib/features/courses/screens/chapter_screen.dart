@@ -139,8 +139,8 @@ class _ChapterScreenState extends State<ChapterScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: l.tint.withOpacity(0.10),
-                              border: Border.all(color: l.tint.withOpacity(0.25)),
+                              color: l.tint.withValues(alpha: 0.10),
+                              border: Border.all(color: l.tint.withValues(alpha: 0.25)),
                             ),
                             child: Text(
                               'Ouvrir le lab',

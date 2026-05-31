@@ -72,11 +72,11 @@ class _NodeTile extends StatelessWidget {
             height: 34,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: node.color.withOpacity(0.10),
-              border: Border.all(color: node.color.withOpacity(0.25)),
+              color: node.color.withValues(alpha: 0.10),
+              border: Border.all(color: node.color.withValues(alpha: 0.25)),
               boxShadow: [
                 BoxShadow(
-                  color: node.color.withOpacity(0.10),
+                  color: node.color.withValues(alpha: 0.10),
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
@@ -117,14 +117,14 @@ class _ConnectorBar extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              color.withOpacity(0.0),
-              color.withOpacity(0.6),
-              color.withOpacity(0.0),
+              color.withValues(alpha: 0.0),
+              color.withValues(alpha: 0.6),
+              color.withValues(alpha: 0.0),
             ],
           ),
         ),
       ),
-    ).animate().shimmer(duration: 1400.ms, color: color.withOpacity(0.25));
+    ).animate().shimmer(duration: 1400.ms, color: color.withValues(alpha: 0.25));
   }
 }
 
@@ -166,9 +166,9 @@ class _ConnectorChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Icon(Icons.swap_horiz, size: 16, color: color.withOpacity(0.8))
+    return Icon(Icons.swap_horiz, size: 16, color: color.withValues(alpha: 0.8))
         .animate()
         .fadeIn(duration: 200.ms)
-        .shimmer(duration: 1400.ms, color: color.withOpacity(0.25));
+        .shimmer(duration: 1400.ms, color: color.withValues(alpha: 0.25));
   }
 }

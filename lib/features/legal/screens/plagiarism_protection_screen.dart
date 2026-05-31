@@ -4,7 +4,6 @@
 // Plagiarism Protection Screen - Interface de protection contre le plagiat
 // ============================================================
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
@@ -65,18 +64,18 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
               gradient: LinearGradient(
                 colors: [
                   _analysis?.isAuthentic == true 
-                      ? Colors.green.withOpacity(0.1)
-                      : Colors.red.withOpacity(0.1),
+                      ? Colors.green.withValues(alpha: 0.1)
+                      : Colors.red.withValues(alpha: 0.1),
                   _analysis?.isAuthentic == true 
-                      ? Colors.green.withOpacity(0.05)
-                      : Colors.red.withOpacity(0.05),
+                      ? Colors.green.withValues(alpha: 0.05)
+                      : Colors.red.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _analysis?.isAuthentic == true 
-                    ? Colors.green.withOpacity(0.3)
-                    : Colors.red.withOpacity(0.3),
+                    ? Colors.green.withValues(alpha: 0.3)
+                    : Colors.red.withValues(alpha: 0.3),
               ),
             ),
             child: Column(
@@ -162,10 +161,10 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: _getScoreColor(analysis.overallOriginalityScore).withOpacity(0.1),
+                color: _getScoreColor(analysis.overallOriginalityScore).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: _getScoreColor(analysis.overallOriginalityScore).withOpacity(0.3),
+                  color: _getScoreColor(analysis.overallOriginalityScore).withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -262,13 +261,13 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: analysis.isOriginal 
-            ? Colors.green.withOpacity(0.1)
-            : Colors.red.withOpacity(0.1),
+            ? Colors.green.withValues(alpha: 0.1)
+            : Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: analysis.isOriginal 
-              ? Colors.green.withOpacity(0.3)
-              : Colors.red.withOpacity(0.3),
+              ? Colors.green.withValues(alpha: 0.3)
+              : Colors.red.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -320,9 +319,9 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
 
   Widget _buildIssuesSection(ProjectPlagiarismAnalysis analysis) {
     return Card(
-      color: Colors.red.withOpacity(0.1),
+      color: Colors.red.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.red.withOpacity(0.3)),
+        side: BorderSide(color: Colors.red.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
@@ -472,13 +471,13 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: _analysis?.isAuthentic == true 
-                ? Colors.green.withOpacity(0.1)
-                : Colors.red.withOpacity(0.1),
+                ? Colors.green.withValues(alpha: 0.1)
+                : Colors.red.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: _analysis?.isAuthentic == true 
-                  ? Colors.green.withOpacity(0.3)
-                  : Colors.red.withOpacity(0.3),
+                  ? Colors.green.withValues(alpha: 0.3)
+                  : Colors.red.withValues(alpha: 0.3),
             ),
           ),
           child: Row(

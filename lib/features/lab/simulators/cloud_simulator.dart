@@ -151,9 +151,9 @@ class _CloudSimulatorState extends State<CloudSimulator>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: TdcColors.cloud.withOpacity(0.1),
+                      color: TdcColors.cloud.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: TdcColors.cloud.withOpacity(0.3)),
+                      border: Border.all(color: TdcColors.cloud.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -239,7 +239,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
         
         // Tabs
         Container(
-          color: TdcColors.surfaceAlt.withOpacity(0.3),
+          color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
           child: TabBar(
             controller: _tabController,
             indicatorColor: TdcColors.cloud,
@@ -399,9 +399,9 @@ class _CloudSimulatorState extends State<CloudSimulator>
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _getInstanceStatusColor(instance.status).withOpacity(0.1),
+        color: _getInstanceStatusColor(instance.status).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: _getInstanceStatusColor(instance.status).withOpacity(0.3)),
+        border: Border.all(color: _getInstanceStatusColor(instance.status).withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -656,13 +656,13 @@ class _CloudSimulatorState extends State<CloudSimulator>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: service.status == 'Active' || service.status == 'Available'
-            ? TdcColors.system.withOpacity(0.1)
-            : TdcColors.security.withOpacity(0.1),
+            ? TdcColors.system.withValues(alpha: 0.1)
+            : TdcColors.security.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: service.status == 'Active' || service.status == 'Available'
-              ? TdcColors.system.withOpacity(0.3)
-              : TdcColors.security.withOpacity(0.3),
+              ? TdcColors.system.withValues(alpha: 0.3)
+              : TdcColors.security.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -855,9 +855,9 @@ class _CloudSimulatorState extends State<CloudSimulator>
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _getDeploymentStatusColor(deployment.status).withOpacity(0.1),
+        color: _getDeploymentStatusColor(deployment.status).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: _getDeploymentStatusColor(deployment.status).withOpacity(0.3)),
+        border: Border.all(color: _getDeploymentStatusColor(deployment.status).withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [

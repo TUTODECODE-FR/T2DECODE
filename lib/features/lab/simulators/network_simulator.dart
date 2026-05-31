@@ -3,9 +3,7 @@
 // ============================================================
 // Network Simulator - Simulation réseau ultra-professionnelle
 // ============================================================
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import '../widgets/lab_widgets.dart';
@@ -33,13 +31,13 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
   
   // Données de simulation
   List<NetworkDevice> _discoveredDevices = [];
-  List<PingResult> _pingResults = [];
-  List<TraceHop> _traceHops = [];
-  List<CapturedPacket> _capturedPackets = [];
+  final List<PingResult> _pingResults = [];
+  final List<TraceHop> _traceHops = [];
+  final List<CapturedPacket> _capturedPackets = [];
   
   // Métriques réseau
   double _bandwidthUsage = 0.0;
-  int _packetLoss = 0;
+  final int _packetLoss = 0;
   int _latency = 0;
   int _totalPackets = 0;
   
@@ -129,7 +127,7 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                         width: 130,
                         child: LabMetricCard(
                           title: 'Latence',
-                          value: '${_latency} ms',
+                          value: '$_latency ms',
                           icon: Icons.timer,
                           color: Colors.orange,
                         ),
@@ -447,7 +445,7 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  border: Border.all(color: TdcColors.network.withOpacity(0.3)),
+                  border: Border.all(color: TdcColors.network.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   '${device.responseTime}ms',
@@ -476,8 +474,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: TdcColors.network.withOpacity(0.1),
-                    border: Border.all(color: TdcColors.network.withOpacity(0.2)),
+                    color: TdcColors.network.withValues(alpha: 0.1),
+                    border: Border.all(color: TdcColors.network.withValues(alpha: 0.2)),
                   ),
                   child: Text(
                     '$port',
@@ -590,7 +588,7 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: TdcColors.surfaceAlt,
-        border: Border.all(color: statusColor.withOpacity(0.3)),
+        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -883,7 +881,7 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: TdcColors.surfaceAlt.withOpacity(0.5),
+        color: TdcColors.surfaceAlt.withValues(alpha: 0.5),
         border: Border(left: BorderSide(color: protoColor, width: 2)),
       ),
       child: Column(

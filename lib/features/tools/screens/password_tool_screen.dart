@@ -116,7 +116,7 @@ class _PasswordToolScreenState extends State<PasswordToolScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getStrengthColor(entropy).withOpacity(0.1),
+                  color: _getStrengthColor(entropy).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: _getStrengthColor(entropy), width: 0.5),
                 ),

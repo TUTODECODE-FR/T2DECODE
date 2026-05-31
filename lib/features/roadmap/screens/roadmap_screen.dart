@@ -100,7 +100,7 @@ class _RoadmapScreenState extends State<RoadmapScreen> with SingleTickerProvider
       Column(children: [
         Container(
           width: 32, height: 32,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: done ? TdcColors.success : color.withOpacity(0.1), border: Border.all(color: done ? TdcColors.success : color)),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: done ? TdcColors.success : color.withValues(alpha: 0.1), border: Border.all(color: done ? TdcColors.success : color)),
           child: Center(child: done ? const Icon(Icons.check, size: 16, color: Colors.white) : Text('${i+1}', style: TextStyle(color: color, fontWeight: FontWeight.bold))),
         ),
         if (i < total - 1) Container(width: 2, height: 40, color: TdcColors.border),

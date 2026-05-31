@@ -100,13 +100,13 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: _verificationResult!.isAuthentic 
-                        ? Colors.green.withOpacity(0.1)
-                        : Colors.red.withOpacity(0.1),
+                        ? Colors.green.withValues(alpha: 0.1)
+                        : Colors.red.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: _verificationResult!.isAuthentic 
-                          ? Colors.green.withOpacity(0.3)
-                          : Colors.red.withOpacity(0.3),
+                          ? Colors.green.withValues(alpha: 0.3)
+                          : Colors.red.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -132,7 +132,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
           ),
         ),
         Container(
-          color: TdcColors.surfaceAlt.withOpacity(0.3),
+          color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
           child: TabBar(
             controller: _tabController,
             indicatorColor: Colors.blue.shade700,
@@ -206,13 +206,13 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: result.isAuthentic 
-                  ? Colors.green.withOpacity(0.1)
-                  : Colors.red.withOpacity(0.1),
+                  ? Colors.green.withValues(alpha: 0.1)
+                  : Colors.red.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: result.isAuthentic 
-                    ? Colors.green.withOpacity(0.3)
-                    : Colors.red.withOpacity(0.3),
+                    ? Colors.green.withValues(alpha: 0.3)
+                    : Colors.red.withValues(alpha: 0.3),
               ),
             ),
             child: Column(
@@ -284,7 +284,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: TdcColors.surfaceAlt.withOpacity(0.3),
+                  color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: TdcColors.border),
                 ),
@@ -532,12 +532,12 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.blue.shade700.withOpacity(0.1),
-                  Colors.blue.shade500.withOpacity(0.05),
+                  Colors.blue.shade700.withValues(alpha: 0.1),
+                  Colors.blue.shade500.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.blue.shade300.withOpacity(0.3)),
+              border: Border.all(color: Colors.blue.shade300.withValues(alpha: 0.3)),
             ),
             child: Column(
               children: [
@@ -725,12 +725,12 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.purple.shade700.withOpacity(0.1),
-                  Colors.purple.shade500.withOpacity(0.05),
+                  Colors.purple.shade700.withValues(alpha: 0.1),
+                  Colors.purple.shade500.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.purple.shade300.withOpacity(0.3)),
+              border: Border.all(color: Colors.purple.shade300.withValues(alpha: 0.3)),
             ),
             child: Column(
               children: [
@@ -750,7 +750,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.purple.withOpacity(0.3),
+                        color: Colors.purple.withValues(alpha: 0.3),
                         blurRadius: 20,
                         spreadRadius: 5,
                       ),

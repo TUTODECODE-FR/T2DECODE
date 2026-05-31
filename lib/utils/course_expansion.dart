@@ -266,7 +266,7 @@ $commands
     return '''## $posLabel dans **$courseTitle**
 
 **Pourquoi ce chapitre existe :**
-Ce bloc "$title" est fondamental pour **$ctx**. Dans les équipes tech professionnelles, maîtriser ce sujet vous distingue d\'un utilisateur occasionnel d\'un vrai praticien.
+Ce bloc "$title" est fondamental pour **$ctx**. Dans les équipes tech professionnelles, maîtriser ce sujet vous distingue d'un utilisateur occasionnel d'un vrai praticien.
 
 **Ce que vous gagnerez concrètement :**
 - ✅ Compréhension profonde du mécanisme sous-jacent
@@ -296,7 +296,7 @@ Ce bloc "$title" est fondamental pour **$ctx**. Dans les équipes tech professio
 $resources
 
 **Pratiquez maintenant :**
-> Ouvrez un terminal, un éditeur ou un playground et **refaites** les exemples de ce chapitre de mémoire. La répétition espacée est la meilleure méthode d\'apprentissage.''';
+> Ouvrez un terminal, un éditeur ou un playground et **refaites** les exemples de ce chapitre de mémoire. La répétition espacée est la meilleure méthode d'apprentissage.''';
   }
 
   // ─── Point d'entrée principal ────────────────────────────────────────────
@@ -331,10 +331,10 @@ Vous ouvrez votre terminal (ou votre IDE). L'équipe observe. Voici exactement c
 
 - Comprendre **pourquoi** on fait ça (pas juste copier-coller)
 - Savoir **quand** appliquer cette technique dans un projet réel
-- Être capable d\'**expliquer** votre démarche à un collègue
+- Être capable d'**expliquer** votre démarche à un collègue
 - **Déboguer** quand quelque chose ne fonctionne pas comme prévu
 
-> 💼 **Profil ciblé :** Ce chapitre s\'adresse à quelqu\'un qui veut passer de "je regarde des tutoriels" à "je produis des solutions autonomes".''';
+> 💼 **Profil ciblé :** Ce chapitre s'adresse à quelqu'un qui veut passer de "je regarde des tutoriels" à "je produis des solutions autonomes".''';
 
     // ── Section 3 : Contenu technique du cours ──────────────────────────
     final courseContent = '''### 📖 Le cours — Contenu technique complet
@@ -345,11 +345,11 @@ $rawContent''';
     final codeSection = code.isNotEmpty
         ? '''### 🔍 Analyse ligne par ligne — $codeTitle
 
-Décryptage de l\'exemple de code fourni :
+Décryptage de l'exemple de code fourni :
 
 ${_explainCodeLines(code)}
 
-> 🛠️ **Exercice immédiat :** Modifiez **une seule ligne** de ce code et observez l\'impact. C\'est la meilleure façon de comprendre le rôle de chaque instruction.'''
+> 🛠️ **Exercice immédiat :** Modifiez **une seule ligne** de ce code et observez l'impact. C'est la meilleure façon de comprendre le rôle de chaque instruction.'''
         : '''### 🔍 Mise en pratique guidée
 
 Ce chapitre est théorique mais demande une mise en pratique immédiate.
@@ -364,18 +364,18 @@ Ce chapitre est théorique mais demande une mise en pratique immédiate.
     final actionPlan = '''### 🗺️ Plan d'action pas à pas
 
 **Phase 1 — Comprendre (5 minutes)**
-1. Identifier l\'objectif principal de "$title"
-2. Lister les prérequis nécessaires (qu\'est-ce que vous devez savoir avant ?)
+1. Identifier l'objectif principal de "$title"
+2. Lister les prérequis nécessaires (qu'est-ce que vous devez savoir avant ?)
 3. Noter les 3 concepts clés à retenir
 
 **Phase 2 — Expérimenter (15-20 minutes)**
-1. Reproduire l\'exemple du cours dans votre environnement
+1. Reproduire l'exemple du cours dans votre environnement
 2. Tester avec des valeurs différentes pour comprendre les limites
 3. Provoquer intentionnellement une erreur pour apprendre à la corriger
 
 **Phase 3 — Solidifier (5-10 minutes)**
-1. Refaire l\'exercice de mémoire (sans regarder)
-2. Expliquer le concept à voix haute, comme si vous formatiez quelqu\'un
+1. Refaire l'exercice de mémoire (sans regarder)
+2. Expliquer le concept à voix haute, comme si vous formatiez quelqu'un
 3. Documenter dans vos notes personnelles''';
 
     // ── Section 6 : Cas concret professionnel ───────────────────────────
@@ -393,7 +393,7 @@ Ce chapitre est théorique mais demande une mise en pratique immédiate.
 5. ✅ **Validation** — Confirmer la résolution avec des métriques claires
 6. 📝 **Post-mortem** — Documenter pour éviter la récidive
 
-> 🎯 **Leçon clé :** En production, la méthode compte autant que le résultat. Une correction bien documentée vaut 10 fois plus qu\'un hack rapide.''';
+> 🎯 **Leçon clé :** En production, la méthode compte autant que le résultat. Une correction bien documentée vaut 10 fois plus qu'un hack rapide.''';
 
     // ── Section 7 : Avant / Après ────────────────────────────────────────
     final beforeAfter = '''### ⚡ Transformation : Avant vs Après ce chapitre
@@ -403,8 +403,8 @@ Ce chapitre est théorique mais demande une mise en pratique immédiate.
 | Vous cherchez sur Google à chaque fois | Vous exécutez de mémoire avec confiance |
 | Vous copiez-collez sans comprendre | Vous adaptez le code à votre contexte |
 | Un bug bloque plusieurs heures | Vous diagnostiquez en moins de 15 minutes |
-| Vous évitez les sujets liés à $k2 | Vous prenez l\'initiative sur ces sujets |
-| Vous ne savez pas expliquer votre démarche | Vous pouvez former quelqu\'un d\'autre |''';
+| Vous évitez les sujets liés à $k2 | Vous prenez l'initiative sur ces sujets |
+| Vous ne savez pas expliquer votre démarche | Vous pouvez former quelqu'un d'autre |''';
 
     // ── Section 8 : Pitfalls ─────────────────────────────────────────────
     final pitfalls = _generatePitfalls(title, course.category);
@@ -418,13 +418,13 @@ Ce chapitre est théorique mais demande une mise en pratique immédiate.
     // ── Section 11 : Mission élite ───────────────────────────────────────
     final eliteMission = '''### 🏆 Mission Élite — Pour ceux qui veulent tout maîtriser
 
-**Niveau 1 — Bronze :** Reproduisez l\'exemple du cours en moins de 5 minutes sans aide.
+**Niveau 1 — Bronze :** Reproduisez l'exemple du cours en moins de 5 minutes sans aide.
 
-**Niveau 2 — Argent :** Adaptez l\'exemple à un cas personnalisé (votre propre projet, vos propres données).
+**Niveau 2 — Argent :** Adaptez l'exemple à un cas personnalisé (votre propre projet, vos propres données).
 
 **Niveau 3 — Or :** Trouvez une limitation ou un edge case dans les exemples fournis et proposez une amélioration.
 
-**Niveau 4 — Platine :** Expliquez le chapitre entier à quelqu\'un qui ne connaît pas $k1, avec vos propres exemples.''';
+**Niveau 4 — Platine :** Expliquez le chapitre entier à quelqu'un qui ne connaît pas $k1, avec vos propres exemples.''';
 
     // ── Section 12 : Ressources ──────────────────────────────────────────
     final resources = _generateResources(course.category, course.keywords);

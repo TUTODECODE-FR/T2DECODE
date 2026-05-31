@@ -69,7 +69,7 @@ final bool kSkipGoldens =
 void main() {
   const surfaceSize = Size(1280, 800);
 
-  Future<void> _pumpPreview(
+  Future<void> pumpPreview(
     WidgetTester tester, {
     required ThemeData theme,
     required String title,
@@ -88,7 +88,7 @@ void main() {
   }
 
   testWidgets('Light theme golden', (WidgetTester tester) async {
-    await _pumpPreview(
+    await pumpPreview(
       tester,
       theme: buildAppLightTheme(),
       title: 'Mode clair',
@@ -101,7 +101,7 @@ void main() {
   }, skip: kSkipGoldens);
 
   testWidgets('Dark theme golden', (WidgetTester tester) async {
-    await _pumpPreview(
+    await pumpPreview(
       tester,
       theme: buildAppTheme(),
       title: 'Mode sombre',

@@ -33,9 +33,9 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
   List<LogEntry> _logEntries = [];
   
   // Métriques de sécurité
-  int _threatLevel = 0;
-  int _blockedAttacks = 0;
-  int _activeConnections = 0;
+  final int _threatLevel = 0;
+  final int _blockedAttacks = 0;
+  final int _activeConnections = 0;
   double _securityScore = 100.0;
 
   @override
@@ -113,9 +113,9 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: TdcColors.security.withOpacity(0.1),
+                      color: TdcColors.security.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: TdcColors.security.withOpacity(0.3)),
+                      border: Border.all(color: TdcColors.security.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -201,7 +201,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
         
         // Tabs
         Container(
-          color: TdcColors.surfaceAlt.withOpacity(0.3),
+          color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
           child: TabBar(
             controller: _tabController,
             indicatorColor: TdcColors.security,
@@ -360,9 +360,9 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: _getVulnerabilityCountColor().withOpacity(0.1),
+                            color: _getVulnerabilityCountColor().withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: _getVulnerabilityCountColor().withOpacity(0.3)),
+                            border: Border.all(color: _getVulnerabilityCountColor().withValues(alpha: 0.3)),
                           ),
                           child: Text(
                             '${_vulnerabilities.length} vulnérabilités',
@@ -399,9 +399,9 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _getSeverityColor(vulnerability.severity).withOpacity(0.1),
+        color: _getSeverityColor(vulnerability.severity).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: _getSeverityColor(vulnerability.severity).withOpacity(0.3)),
+        border: Border.all(color: _getSeverityColor(vulnerability.severity).withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -597,13 +597,13 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: success 
-            ? TdcColors.system.withOpacity(0.1)
-            : TdcColors.border.withOpacity(0.1),
+            ? TdcColors.system.withValues(alpha: 0.1)
+            : TdcColors.border.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: success 
-              ? TdcColors.system.withOpacity(0.3)
-              : TdcColors.border.withOpacity(0.3),
+              ? TdcColors.system.withValues(alpha: 0.3)
+              : TdcColors.border.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -743,9 +743,9 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: TdcColors.security.withOpacity(0.1),
+                            color: TdcColors.security.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: TdcColors.security.withOpacity(0.3)),
+                            border: Border.all(color: TdcColors.security.withValues(alpha: 0.3)),
                           ),
                           child: const Text(
                             'DÉMO',
@@ -782,9 +782,9 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: _getLogLevelColor(log.level).withOpacity(0.1),
+        color: _getLogLevelColor(log.level).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: _getLogLevelColor(log.level).withOpacity(0.3)),
+        border: Border.all(color: _getLogLevelColor(log.level).withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

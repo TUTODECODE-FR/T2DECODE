@@ -458,7 +458,7 @@ class _CheatSheetTabState extends State<_CheatSheetTab> {
           children: [
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: TdcColors.accent.withOpacity(0.1), borderRadius: TdcRadius.sm),
+              decoration: BoxDecoration(color: TdcColors.accent.withValues(alpha: 0.1), borderRadius: TdcRadius.sm),
               child: Icon(_getIcon(e.category), color: TdcColors.accent, size: 18),
             ),
             const SizedBox(width: 16),
@@ -485,7 +485,7 @@ class _CheatSheetTabState extends State<_CheatSheetTab> {
     return Container(
       margin: const EdgeInsets.only(left: 12),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: color.withOpacity(0.2))),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: color.withValues(alpha: 0.2))),
       child: Icon(Icons.warning_amber_rounded, size: 12, color: color),
     );
   }

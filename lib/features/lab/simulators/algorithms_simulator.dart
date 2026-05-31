@@ -1096,7 +1096,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
           child: FloatingActionButton.extended(
             heroTag: 'algo_ai_fab',
             onPressed: _openAIPanel,
-            backgroundColor: _scenario.color.withOpacity(0.9),
+            backgroundColor: _scenario.color.withValues(alpha: 0.9),
             icon: const Icon(Icons.auto_awesome, size: 18),
             label: const Text('IA', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
@@ -1124,7 +1124,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
         decoration: BoxDecoration(
           color: TdcColors.bg,
           borderRadius: BorderRadius.zero,
-          border: Border.all(color: color.withOpacity(0.35)),
+          border: Border.all(color: color.withValues(alpha: 0.35)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1132,7 +1132,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.12),
+                color: color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.zero,
               ),
               child: Row(
@@ -1156,9 +1156,9 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: onTap != null ? color.withOpacity(0.14) : Colors.white.withOpacity(0.03),
+          color: onTap != null ? color.withValues(alpha: 0.14) : Colors.white.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: onTap != null ? color.withOpacity(0.45) : Colors.white12),
+          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.45) : Colors.white12),
         ),
         child: Text(label, style: TextStyle(color: onTap != null ? color : Colors.white24, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
       ),
@@ -1205,7 +1205,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                             duration: const Duration(milliseconds: 200),
                             height: h,
                             decoration: BoxDecoration(
-                              color: color.withOpacity(0.6),
+                              color: color.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(3),
                               border: Border.all(color: color),
                             ),
@@ -1250,7 +1250,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: const Color(0xFF8B5CF6).withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
+                decoration: BoxDecoration(color: const Color(0xFF8B5CF6).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
                 child: Text(_graphMode, style: const TextStyle(color: Color(0xFF8B5CF6), fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
               ),
             ]),
@@ -1266,7 +1266,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                   width: 40, height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: color.withOpacity(0.15),
+                    color: color.withValues(alpha: 0.15),
                     border: Border.all(color: color, width: isVisited ? 2 : 1),
                   ),
                   child: Center(child: Text(node, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 14, fontFamily: 'monospace'))),
@@ -1311,7 +1311,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
             ]),
             const SizedBox(height: 10),
             Text('fib(n) = fib(n-1) + fib(n-2),  fib(0)=0, fib(1)=1',
-                style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 10, fontFamily: 'monospace')),
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace')),
             const SizedBox(height: 8),
             Row(
               children: List.generate(10, (i) {
@@ -1324,13 +1324,13 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                     margin: const EdgeInsets.symmetric(horizontal: 2),
                     padding: const EdgeInsets.symmetric(vertical: 6),
                     decoration: BoxDecoration(
-                      color: isActive ? const Color(0xFF10B981).withOpacity(0.2) : val != null ? const Color(0xFF10B981).withOpacity(0.08) : Colors.white.withOpacity(0.03),
+                      color: isActive ? const Color(0xFF10B981).withValues(alpha: 0.2) : val != null ? const Color(0xFF10B981).withValues(alpha: 0.08) : Colors.white.withValues(alpha: 0.03),
                       borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: isActive ? const Color(0xFF10B981) : color.withOpacity(0.3)),
+                      border: Border.all(color: isActive ? const Color(0xFF10B981) : color.withValues(alpha: 0.3)),
                     ),
                     child: Column(
                       children: [
-                        Text('n=$i', style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 8, fontFamily: 'monospace')),
+                        Text('n=$i', style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 8, fontFamily: 'monospace')),
                         Text(val != null ? '$val' : '?', style: TextStyle(color: color, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
                       ],
                     ),
@@ -1376,13 +1376,13 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                     style: const TextStyle(color: Colors.white, fontSize: 12, fontFamily: 'monospace'),
                     decoration: InputDecoration(
                       hintText: 'Texte à encoder…',
-                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.25), fontSize: 12),
+                      hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.25), fontSize: 12),
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                       filled: true,
-                      fillColor: Colors.white.withOpacity(0.04),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withOpacity(0.15))),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withOpacity(0.15))),
+                      fillColor: Colors.white.withValues(alpha: 0.04),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15))),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15))),
                     ),
                     onSubmitted: (_) => _runCrypto(),
                   ),
@@ -1396,9 +1396,9 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                 margin: const EdgeInsets.only(top: 8),
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEF4444).withOpacity(0.08),
+                  color: const Color(0xFFEF4444).withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFEF4444).withOpacity(0.3)),
+                  border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.3)),
                 ),
                 child: SelectableText(_cryptoResult, style: const TextStyle(color: Color(0xFFEF4444), fontSize: 11, fontFamily: 'monospace')),
               ).animate().fadeIn(),
@@ -1444,7 +1444,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                       width: 44, height: 44,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: color.withOpacity(0.15),
+                        color: color.withValues(alpha: 0.15),
                         border: Border.all(color: color, width: isLeader ? 2.5 : 1.5),
                       ),
                       child: Center(
@@ -1492,7 +1492,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
               margin: const EdgeInsets.only(bottom: 4),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
               decoration: BoxDecoration(
-                color: s.d.withOpacity(0.08),
+                color: s.d.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(6),
                 border: Border(left: BorderSide(color: s.d, width: 3)),
               ),
@@ -1536,7 +1536,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: selected ? s.color.withOpacity(0.18) : TdcColors.surface,
+                color: selected ? s.color.withValues(alpha: 0.18) : TdcColors.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: selected ? s.color : TdcColors.border,
@@ -1586,16 +1586,16 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: s.color.withOpacity(0.08),
+          color: s.color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: s.color.withOpacity(0.25)),
+          border: Border.all(color: s.color.withValues(alpha: 0.25)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: s.color.withOpacity(0.15),
+                color: s.color.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: Icon(s.icon, color: s.color, size: 22),
@@ -1647,14 +1647,14 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
         child: Container(
           decoration: BoxDecoration(
             color: state == _StepState.active
-                ? step.color.withOpacity(0.12)
+                ? step.color.withValues(alpha: 0.12)
                 : TdcColors.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: state == _StepState.active
                   ? step.color
                   : state == _StepState.done
-                      ? step.color.withOpacity(0.35)
+                      ? step.color.withValues(alpha: 0.35)
                       : TdcColors.border,
               width: state == _StepState.active ? 1.5 : 1,
             ),
@@ -1690,7 +1690,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: step.color.withOpacity(0.15),
+                                  color: step.color.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
@@ -1750,9 +1750,9 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: state == _StepState.done
-            ? step.color.withOpacity(0.2)
+            ? step.color.withValues(alpha: 0.2)
             : state == _StepState.active
-                ? step.color.withOpacity(0.25)
+                ? step.color.withValues(alpha: 0.25)
                 : TdcColors.surfaceAlt,
         border: Border.all(
           color: state == _StepState.future ? TdcColors.border : step.color,
@@ -1781,9 +1781,9 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
       margin: const EdgeInsets.fromLTRB(14, 0, 14, 14),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.25),
+        color: Colors.black.withValues(alpha: 0.25),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: step.color.withOpacity(0.15)),
+        border: Border.all(color: step.color.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1913,7 +1913,7 @@ class _AlgoRetainButtonState extends State<_AlgoRetainButton> {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: _saved ? const Color(0xFFF59E0B).withOpacity(0.18) : Colors.white.withOpacity(0.05),
+          color: _saved ? const Color(0xFFF59E0B).withValues(alpha: 0.18) : Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(6),
           border: Border.all(color: _saved ? const Color(0xFFF59E0B) : Colors.white24),
         ),

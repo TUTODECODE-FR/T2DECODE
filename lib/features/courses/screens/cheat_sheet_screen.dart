@@ -136,7 +136,7 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TdcColors.surface.withOpacity(0.3),
+        color: TdcColors.surface.withValues(alpha: 0.3),
         border: const Border(bottom: BorderSide(color: TdcColors.border)),
       ),
       child: Column(
@@ -186,7 +186,7 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: _getColor(e).withOpacity(0.1),
+                color: _getColor(e).withValues(alpha: 0.1),
                 borderRadius: TdcRadius.md,
               ),
               child: Icon(_getIcon(e), color: _getColor(e), size: 20),
@@ -332,7 +332,7 @@ class _HighlightText extends StatelessWidget {
       }
       spans.add(TextSpan(
         text: text.substring(indexOfHighlight, indexOfHighlight + highlight.length),
-        style: TextStyle(backgroundColor: TdcColors.accent.withOpacity(0.3), color: Colors.white),
+        style: TextStyle(backgroundColor: TdcColors.accent.withValues(alpha: 0.3), color: Colors.white),
       ));
       start = indexOfHighlight + highlight.length;
     }

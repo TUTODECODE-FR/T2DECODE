@@ -69,18 +69,18 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
                 end: Alignment.bottomRight,
                 colors: [
                   _authResult?.isAuthentic == true 
-                      ? Colors.green.withOpacity(0.1)
-                      : Colors.red.withOpacity(0.1),
+                      ? Colors.green.withValues(alpha: 0.1)
+                      : Colors.red.withValues(alpha: 0.1),
                   _authResult?.isAuthentic == true 
-                      ? Colors.green.withOpacity(0.05)
-                      : Colors.red.withOpacity(0.05),
+                      ? Colors.green.withValues(alpha: 0.05)
+                      : Colors.red.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _authResult?.isAuthentic == true 
-                    ? Colors.green.withOpacity(0.3)
-                    : Colors.red.withOpacity(0.3),
+                    ? Colors.green.withValues(alpha: 0.3)
+                    : Colors.red.withValues(alpha: 0.3),
               ),
             ),
             child: Column(
@@ -432,9 +432,9 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
 
   Widget _buildIssuesSection(SourceAuthResult result) {
     return Card(
-      color: Colors.red.withOpacity(0.1),
+      color: Colors.red.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.red.withOpacity(0.3)),
+        side: BorderSide(color: Colors.red.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
@@ -477,7 +477,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.1),
+                color: Colors.red.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -681,9 +681,9 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
+                color: Colors.blue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -747,13 +747,13 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: _authResult?.isAuthentic == true 
-                ? Colors.green.withOpacity(0.1)
-                : Colors.red.withOpacity(0.1),
+                ? Colors.green.withValues(alpha: 0.1)
+                : Colors.red.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: _authResult?.isAuthentic == true 
-                  ? Colors.green.withOpacity(0.3)
-                  : Colors.red.withOpacity(0.3),
+                  ? Colors.green.withValues(alpha: 0.3)
+                  : Colors.red.withValues(alpha: 0.3),
             ),
           ),
           child: Row(

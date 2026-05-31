@@ -88,9 +88,7 @@ class Course {
           : null;
 
       final quizData = c['quiz'] as List<dynamic>?;
-      final quiz = quizData != null
-          ? quizData.map((q) => QuizQuestion.fromMap(q as Map<String, dynamic>)).toList()
-          : null;
+      final quiz = quizData?.map((q) => QuizQuestion.fromMap(q as Map<String, dynamic>)).toList();
 
       final tempChapter = CourseChapter(
         id: c['id'],

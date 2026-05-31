@@ -6,7 +6,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 
 class EthicalHackingSimulator extends StatefulWidget {
@@ -83,9 +82,9 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red.withOpacity(0.3)),
+                  border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
                 ),
                 child: const Text(
                   'MODE FORMATION',
@@ -100,7 +99,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
           ),
         ),
         Container(
-          color: TdcColors.surfaceAlt.withOpacity(0.3),
+          color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
           child: TabBar(
             controller: _tabController,
             indicatorColor: Colors.red.shade700,
@@ -214,10 +213,10 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: result.isOpen ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+        color: result.isOpen ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: result.isOpen ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3),
+          color: result.isOpen ? Colors.green.withValues(alpha: 0.3) : Colors.red.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -375,10 +374,10 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: result.isVulnerable ? Colors.orange.withOpacity(0.1) : Colors.green.withOpacity(0.1),
+        color: result.isVulnerable ? Colors.orange.withValues(alpha: 0.1) : Colors.green.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: result.isVulnerable ? Colors.orange.withOpacity(0.3) : Colors.green.withOpacity(0.3),
+          color: result.isVulnerable ? Colors.orange.withValues(alpha: 0.3) : Colors.green.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -535,10 +534,10 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: result.isCracked ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+        color: result.isCracked ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: result.isCracked ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3),
+          color: result.isCracked ? Colors.green.withValues(alpha: 0.3) : Colors.red.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -670,10 +669,10 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: _getPacketColor(packet.protocol).withOpacity(0.1),
+        color: _getPacketColor(packet.protocol).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: _getPacketColor(packet.protocol).withOpacity(0.3),
+          color: _getPacketColor(packet.protocol).withValues(alpha: 0.3),
         ),
       ),
       child: Column(

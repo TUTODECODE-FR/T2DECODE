@@ -133,7 +133,7 @@ class PlagiarismProtection {
       double plagiarismScore, List<String> issues) {
     if (plagiarismScore >= 0.7 || issues.length >= 5) return PlagiarismRiskLevel.critical;
     if (plagiarismScore >= 0.4 || issues.length >= 3) return PlagiarismRiskLevel.high;
-    if (plagiarismScore >= 0.2 || issues.length >= 1) return PlagiarismRiskLevel.medium;
+    if (plagiarismScore >= 0.2 || issues.isNotEmpty) return PlagiarismRiskLevel.medium;
     return PlagiarismRiskLevel.low;
   }
 
