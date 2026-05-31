@@ -763,13 +763,13 @@ final _linuxScenarios = [
         color: Color(0xFFA855F7),
         description: 'Gérer les signaux et le nettoyage en sortie.',
         detail:
-            'trap "commande" SIGNAL permet de réagir aux signaux dans un script.\\n'
-            'trap "rm -f /tmp/mon_script_\\$\\$; exit" INT TERM EXIT '
-            'nettoie les fichiers temporaires à l\\'interruption (Ctrl+C = SIGINT) '
-            'ou en fin normale. \\$\\$ est le PID du script courant.\\n'
-            'trap "" INT ignore SIGINT (utile pendant une section critique non interruptible).\\n'
+            'trap "commande" SIGNAL permet de réagir aux signaux dans un script.\n'
+            r'trap "rm -f /tmp/mon_script_$$; exit" INT TERM EXIT '
+            "nettoie les fichiers temporaires à l'interruption (Ctrl+C = SIGINT) "
+            r'ou en fin normale. $$ est le PID du script courant.' '\n'
+            'trap "" INT ignore SIGINT (utile pendant une section critique non interruptible).\n'
             'trap - INT restaure le comportement par défaut. '
-            'kill -SIGUSR1 \$PID envoie un signal personnalisé pour déclencher '
+            r'kill -SIGUSR1 $PID envoie un signal personnalisé pour déclencher '
             'une action dans un daemon (ex: rechargement de config sans restart).',
       ),
     ],
