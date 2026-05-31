@@ -1,28 +1,39 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/TUTODECODE-FR/T2DECODE/main/assets/TDC.png" width="160" height="160" alt="T2C Logo">
+  <a href="https://github.com/TUTODECODE-FR/T2DECODE">
+    <img src="https://raw.githubusercontent.com/TUTODECODE-FR/T2DECODE/main/assets/TDC.png" width="160" height="160" alt="T2C Logo">
+  </a>
 
-
-  # T2DECODE
+  <h1>T2DECODE</h1>
   
-  **« Le savoir ne devrait pas toujours dépendre d'une connexion. »**<br>
-  — *Maxime MARTIN CIVET*
+  <p>
+    <b>« Le savoir ne devrait pas toujours dépendre d'une connexion. »</b><br>
+    — <i>Maxime MARTIN CIVET</i>
+  </p>
 
   <br>
 
-[![CI](https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1A1D2E&color=3DDC84)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
-  [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=F5EBDA&labelColor=1A1D2E&logoColor=F5EBDA)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
-  [![Mac App Store](https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6)](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)
-  [![License](https://img.shields.io/badge/License-GPLv3-FCC624?style=for-the-badge&labelColor=1A1D2E&color=FCC624)](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE)
-  [![Flutter](https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=1A1D2E&color=02569B)](https://flutter.dev)
-  [![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-000000?style=for-the-badge&logo=ollama&logoColor=white&labelColor=1A1D2E&color=F5EBDA)](https://ollama.com/)
-  [![Privacy By Design](https://img.shields.io/badge/Privacy-By%20Design-3DDC84?style=for-the-badge&labelColor=1A1D2E&color=3DDC84)](RGPD.md)
-  
-  <br>
+  <!-- CI & Distribution Badges -->
+  <p>
+    <a href="https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1A1D2E&color=3DDC84" alt="CI"></a>
+    <a href="https://github.com/TUTODECODE-FR/T2DECODE/releases/latest"><img src="https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=F5EBDA&labelColor=1A1D2E&logoColor=F5EBDA" alt="Release"></a>
+    <a href="https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12"><img src="https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6" alt="Mac App Store"></a>
+    <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=1A1D2E&color=02569B" alt="Flutter"></a>
+    <a href="https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-FCC624?style=for-the-badge&labelColor=1A1D2E&color=FCC624" alt="License"></a>
+  </p>
 
-  [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12999/badge)](https://www.bestpractices.dev/projects/12999)
-  [![OpenSSF Baseline](https://www.bestpractices.dev/projects/12999/baseline)](https://www.bestpractices.dev/projects/12999)
-  [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge)](https://scorecard.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE)
-  [![Snyk Security](https://snyk.io/test/github/TUTODECODE-FR/T2DECODE/badge.svg)](https://snyk.io/test/github/TUTODECODE-FR/T2DECODE)
+  <!-- OpenSSF Badges -->
+  <p>
+    <a href="https://www.bestpractices.dev/projects/12999"><img src="https://www.bestpractices.dev/projects/12999/badge" alt="OpenSSF Best Practices"></a>
+    <a href="https://www.bestpractices.dev/projects/12999"><img src="https://www.bestpractices.dev/projects/12999/baseline" alt="OpenSSF Baseline"></a>
+    <a href="https://scorecard.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE"><img src="https://api.scorecard.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge" alt="OpenSSF Scorecard"></a>
+  </p>
+
+  <!-- Security Scans Badges -->
+  <p>
+    <a href="https://snyk.io/test/github/TUTODECODE-FR/T2DECODE"><img src="https://snyk.io/test/github/TUTODECODE-FR/T2DECODE/badge.svg" alt="Snyk Security"></a>
+    <a href="https://sonarcloud.io/summary/new_code?id=TUTODECODE-FR_T2DECODE"><img src="https://sonarcloud.io/api/project_badges/measure?project=TUTODECODE-FR_T2DECODE&metric=alert_status" alt="SonarQube Quality Gate"></a>
+    <a href="https://sonarcloud.io/summary/new_code?id=TUTODECODE-FR_T2DECODE"><img src="https://sonarcloud.io/api/project_badges/measure?project=TUTODECODE-FR_T2DECODE&metric=security_rating" alt="Security Rating"></a>
+  </p>
   
   <br>
   <p>
@@ -31,8 +42,28 @@
   </p>
   <br>
 
-  [Releases](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) · [Build & Compilation](docs/build.md) · [Architecture Souveraine](docs/architecture.md) · [Confidentialité & RGPD](RGPD.md) · [Contribuer](CONTRIBUTING.md)
+  <p>
+    <a href="https://github.com/TUTODECODE-FR/T2DECODE/releases/latest">Releases</a> · 
+    <a href="docs/build.md">Build & Compilation</a> · 
+    <a href="docs/architecture.md">Architecture Souveraine</a> · 
+    <a href="RGPD.md">Confidentialité & RGPD</a> · 
+    <a href="CONTRIBUTING.md">Contribuer</a>
+  </p>
 </div>
+
+<img src="assets/separator.svg" width="100%" height="4">
+
+## 🛡️ Posture de Sécurité & Audits Continus
+
+La sécurité n'est pas une option, c'est le cœur de T2DECODE. Nous appliquons les standards de développement les plus stricts du marché pour garantir une fiabilité absolue.
+
+| Métrique de Confiance | Implémentation | Preuve |
+| :--- | :--- | :--- |
+| **Analyse Statique (SAST)** | Vérification en continu par **SonarQube** et **CodeQL** à chaque modification. | [![SonarQube Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=TUTODECODE-FR_T2DECODE&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=TUTODECODE-FR_T2DECODE) |
+| **Sécurité des Dépendances** | Audit automatisé de la chaîne logistique logicielle par **Snyk**. | [![Snyk Security](https://snyk.io/test/github/TUTODECODE-FR/T2DECODE/badge.svg)](https://snyk.io/test/github/TUTODECODE-FR/T2DECODE) |
+| **Pratiques de Développement** | Respect des critères de l'Open Source Security Foundation (OpenSSF). | [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge)](https://scorecard.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE) |
+| **Anti-Tampering** | Vérification d'intégrité SHA-256 des assets au démarrage de l'application. | `IdentityVerificationService` |
+| **Zéro Télémétrie** | Aucun appel API sortant (air-gapped par conception). RGPD strict. | [Politique Privacy](RGPD.md) |
 
 <img src="assets/separator.svg" width="100%" height="4">
 
