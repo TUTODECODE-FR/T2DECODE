@@ -35,13 +35,7 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build Android APK
-        run: flutter build apk --release
-
       - name: Run MobSF Analysis
-        uses: MobSF/mobsf-action@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: MobSF/mobsfscan@ec2927a8cfab6626a67f26b223be3aba52a34b70 # main
         with:
           args: '.ext_mobsf'
-          file_name: 'build/app/outputs/flutter-apk/app-release.apk'
