@@ -2,7 +2,7 @@
 
 ## Notre Engagement
 
-En tant que membres, contributeurs et contributrices, et personnes à la tête de ce projet, nous nous engageons à faire de la participation à ce projet une expérience exempte de harcèlement pour tout le monde, quels que soient l'âge, la taille, le handicap, l'appartenance ethnique, les caractéristiques sexuelles, l'identité et l'expression de genre, le niveau d'expérience, la formation, le statut socio-économique, la nationalité, l'apparence personnelle, la race, la religion, ou l'identité et l'orientation sexuelle.
+En tant que membres, contributeurs et contributrices, et personnes à la tête de ce projet, nous nous engageons à faire de la participation à ce projet une expérience exempte de harcèlement pour tout le monde, quels que soient l'âge, la taille, le handicap, l'appartenance ethnique, les caractéristiques sexuelles, l'identité et l'expression de genre, le niveau d'expérience, la formation, le statut socio-économique, la nationalité, l'apparence personnelle, la religion, ou l'identité et l'orientation sexuelle.
 
 Nous nous engageons à agir et interagir de manières qui contribuent à une communauté ouverte, accueillante, diversifiée, inclusive et saine.
 
