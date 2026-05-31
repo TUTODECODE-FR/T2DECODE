@@ -20,7 +20,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   OllamaStatus? _aiStatus;
   double _cpuLoad = 0.12;
   double _ramUsage = 0.45;
-  final Random _rng = Random();
+  final Random _rng = Random.secure();
   Timer? _timer;
 
   @override

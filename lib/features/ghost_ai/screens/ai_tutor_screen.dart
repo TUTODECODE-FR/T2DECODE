@@ -359,7 +359,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                   style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
                   decoration: InputDecoration(
                     hintText: '192.168.1.42',
-                    prefixText: 'http://',
+                    prefixText: 'http://', // NOSONAR - Local Ollama instance
                     prefixStyle: const TextStyle(color: TdcColors.textMuted, fontSize: 13),
                     suffixText: ':11434',
                     suffixStyle: const TextStyle(color: TdcColors.textMuted, fontSize: 13),
@@ -381,7 +381,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                   onPressed: () {
                     final ip = _bridgeIpController.text.trim();
                     if (ip.isNotEmpty) {
-                      provider.updateOllamaUrl('http://$ip:11434');
+                      provider.updateOllamaUrl('http://$ip:11434'); // NOSONAR - Local Ollama instance
                     }
                   },
                   icon: const Icon(Icons.link, size: 16),

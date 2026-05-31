@@ -120,8 +120,8 @@ class _CloudSimulatorState extends State<CloudSimulator>
       final hours = DateTime.now().difference(instance.launchTime).inHours;
       return sum + (hours * instance.hourlyCost);
     });
-    _totalRequests = Random().nextInt(10000) + 5000;
-    _avgResponseTime = Random().nextDouble() * 200 + 50;
+    _totalRequests = Random.secure().nextInt(10000) + 5000;
+    _avgResponseTime = Random.secure().nextDouble() * 200 + 50;
   }
 
   @override
@@ -957,7 +957,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
       type: 't3.medium',
       status: 'Running',
       region: 'eu-west-3',
-      publicIp: '52.47.${Random().nextInt(255)}.${Random().nextInt(255)}',
+      publicIp: '52.47.${Random.secure().nextInt(255)}.${Random.secure().nextInt(255)}',
       privateIp: '10.0.1.${100 + _instances.length}',
       cpu: 2,
       memory: 4.0,

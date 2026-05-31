@@ -134,11 +134,11 @@ class _SystemSimulatorState extends State<SystemSimulator>
     Future.delayed(const Duration(seconds: 1), () {
       if (mounted) {
         setState(() {
-          _cpuUsage = (Random().nextDouble() * 30 + 10).clamp(0.0, 100.0);
-          _memoryUsage = (Random().nextDouble() * 20 + 60).clamp(0.0, 100.0);
-          _diskUsage = (Random().nextDouble() * 5 + 45).clamp(0.0, 100.0);
-          _networkUsage = (Random().nextDouble() * 100).clamp(0.0, 100.0);
-          _temperature = (Random().nextDouble() * 20 + 40).clamp(30.0, 85.0);
+          _cpuUsage = (Random.secure().nextDouble() * 30 + 10).clamp(0.0, 100.0);
+          _memoryUsage = (Random.secure().nextDouble() * 20 + 60).clamp(0.0, 100.0);
+          _diskUsage = (Random.secure().nextDouble() * 5 + 45).clamp(0.0, 100.0);
+          _networkUsage = (Random.secure().nextDouble() * 100).clamp(0.0, 100.0);
+          _temperature = (Random.secure().nextDouble() * 20 + 40).clamp(30.0, 85.0);
         });
         _startRealTimeMonitoring();
       }
