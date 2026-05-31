@@ -34,12 +34,12 @@ else
 fi
 
 # Check for assets
-if [ ! -f "assets/logo.png" ]; then
+if [[ ! -f "assets/logo.png" ]]; then
     echo "⚠️ Warning: 'assets/logo.png' is missing. Icons generation will fail."
 fi
 
 # Create necessary directories
-if [ -L "build" ]; then
+if [[ -L "build" ]]; then
     TARGET=$(readlink "build")
     echo "ℹ️ 'build' is a symlink pointing to $TARGET. Recreating target directory..."
     mkdir -p "$TARGET"

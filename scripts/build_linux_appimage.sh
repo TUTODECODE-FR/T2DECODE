@@ -8,7 +8,7 @@ RESOURCES_DIR="linux/installer_resources"
 
 echo "🐧 Préparation de l'AppImage Premium pour $APP_NAME..."
 
-if [ ! -d "$BUILD_DIR" ]; then
+if [[ ! -d "$BUILD_DIR" ]]; then
     echo "❌ Erreur: L'application n'est pas buildée dans $BUILD_DIR."
     echo "Lancez d'abord: flutter build linux --release"
     exit 1

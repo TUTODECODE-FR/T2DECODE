@@ -7,13 +7,13 @@ cd "$ROOT_DIR"
 # Force build/ onto a local, non-FileProvider path to avoid disallowed xattrs and build.db I/O issues.
 TMP_BUILD_ROOT="/tmp/t2decode-build"
 mkdir -p "$TMP_BUILD_ROOT"
-if [ -e "$ROOT_DIR/build" ] && [ ! -L "$ROOT_DIR/build" ]; then
+if [[ -e "$ROOT_DIR/build" && ! -L "$ROOT_DIR/build" ]]; then
   ts="$(date +%Y%m%d-%H%M%S)"
   mv "$ROOT_DIR/build" "$ROOT_DIR/build.backup-${ts}"
 fi
 ln -sfn "$TMP_BUILD_ROOT" "$ROOT_DIR/build"
 
-if [ "${SKIP_PUB_GET:-0}" != "1" ]; then
+if [[ "${SKIP_PUB_GET:-0}" != "1" ]]; then
   flutter pub get >/dev/null
 fi
 flutter build macos --config-only --no-pub >/dev/null || true
@@ -26,7 +26,7 @@ mkdir -p "$NATIVE_DST_DIR" 2>/dev/null || true
 # build/native_assets/macos/objective_c.framework/objective_c
 ARM_SRC=""
 X64_SRC=""
-if [ -d "$HOOK_BUILD_DIR" ]; then
+if [[ -d "$HOOK_BUILD_DIR" ]]; then
   for f in "$HOOK_BUILD_DIR"/*/objective_c.dylib; do
     [ -f "$f" ] || continue
     info="$(lipo -info "$f" 2>/dev/null || true)"
@@ -41,11 +41,11 @@ rm -rf "$NATIVE_DST_DIR" 2>/dev/null || true
 mkdir -p "$NATIVE_DST_DIR/Versions/A/Resources" 2>/dev/null || true
 
 BIN_OUT="$NATIVE_DST_DIR/Versions/A/objective_c"
-if [ -n "${ARM_SRC:-}" ] && [ -n "${X64_SRC:-}" ]; then
+if [[ -n "${ARM_SRC:-}" && -n "${X64_SRC:-}" ]]; then
   lipo -create "$ARM_SRC" "$X64_SRC" -output "$BIN_OUT" 2>/dev/null || true
-elif [ -n "${ARM_SRC:-}" ]; then
+elif [[ -n "${ARM_SRC:-}" ]]; then
   cp -f "$ARM_SRC" "$BIN_OUT" 2>/dev/null || true
-elif [ -n "${X64_SRC:-}" ]; then
+elif [[ -n "${X64_SRC:-}" ]]; then
   cp -f "$X64_SRC" "$BIN_OUT" 2>/dev/null || true
 fi
 chmod +x "$BIN_OUT" 2>/dev/null || true
@@ -76,7 +76,7 @@ cat > "$NATIVE_DST_DIR/Versions/A/Resources/Info.plist" <<'PLIST'
 PLIST
 
 DART_DEFINES=""
-if [ "${TUTODECODE_OFFICIAL_BUILD:-}" = "true" ]; then
+if [[ "${TUTODECODE_OFFICIAL_BUILD:-}" = "true" ]]; then
   DART_DEFINES="--dart-define=OFFICIAL_BUILD=true"
 fi
 
@@ -86,10 +86,10 @@ rc=$?
 set -e
 
 APP_PATH="$ROOT_DIR/build/macos/Build/Products/Release/T2DECODE.app"
-if [ ! -d "$APP_PATH" ]; then
+if [[ ! -d "$APP_PATH" ]]; then
   # Fallback: pick the first .app found in Release.
   APP_PATH_FOUND="$(find "$ROOT_DIR/build/macos/Build/Products/Release" -maxdepth 1 -name '*.app' -print -quit 2>/dev/null || true)"
-  if [ -n "${APP_PATH_FOUND:-}" ]; then
+  if [[ -n "${APP_PATH_FOUND:-}" ]]; then
     APP_PATH="$APP_PATH_FOUND"
   fi
 fi
@@ -104,7 +104,7 @@ if grep -q "com.apple.security.app-sandbox" "$TMP_BUILD_ROOT/entitlements.xml" 2
   /usr/bin/codesign --force --sign - --entitlements "$TMP_BUILD_ROOT/entitlements.xml" --timestamp=none --generate-entitlement-der "$APP_PATH" >/dev/null 2>&1 || true
 fi
 
-if [ "$rc" -eq 0 ]; then
+if [[ "$rc" -eq 0 ]]; then
   # Copy to project root for easy access
   DIST_DIR="$ROOT_DIR/dist/macos"
   mkdir -p "$DIST_DIR"

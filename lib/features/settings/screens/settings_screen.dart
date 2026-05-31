@@ -202,6 +202,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           icon: Icons.delete_sweep,
           onTap: () async {
             await settings.clearChatHistory();
+            if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Historique effacé.')));
           },
         ),
@@ -216,6 +217,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             if (confirm) {
               await settings.resetProgress();
               await courses.reload();
+              if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Progression réinitialisée.')));
             }
           },

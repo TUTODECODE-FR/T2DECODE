@@ -74,7 +74,7 @@ class Achievement {
       'title': title,
       'description': description,
       'icon': icon.codePoint,
-      'color': color.value,
+      'color': color.toARGB32(),
       'points': points,
       'category': category,
       'requirements': requirements,
@@ -133,7 +133,7 @@ class SkillTree {
       'title': title,
       'description': description,
       'icon': icon.codePoint,
-      'color': color.value,
+      'color': color.toARGB32(),
       'nodes': nodes.map((n) => n.toJson()).toList(),
       'prerequisites': prerequisites,
     };

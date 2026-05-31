@@ -1,3 +1,4 @@
+// ignore_for_file: library_private_types_in_public_api, strict_top_level_inference
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'package:flutter/material.dart';
