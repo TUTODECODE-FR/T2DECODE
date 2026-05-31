@@ -102,7 +102,7 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
                     OutlinedButton.icon(
                       onPressed: () async {
                         await _logs.clear();
-                        if (!mounted) return;
+                        if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Logs outils effacés.')));
                       },
                       icon: const Icon(Icons.delete_outline, size: 18),

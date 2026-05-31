@@ -13,7 +13,7 @@ FINAL_PKG="$BUILD_DIR/T2DECODE_Installer.pkg"
 echo "🚀 Génération de l'installeur Premium macOS (.pkg) pour $APP_NAME..."
 
 # 1. Vérifier si l'app est buildée
-if [ ! -d "$BUILD_DIR/$APP_BUNDLE_NAME" ]; then
+if [[ ! -d "$BUILD_DIR/$APP_BUNDLE_NAME" ]]; then
     echo "❌ Erreur: L'application n'est pas buildée dans $BUILD_DIR."
     echo "Lancez d'abord: flutter build macos --release"
     exit 1
