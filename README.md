@@ -251,11 +251,21 @@ Dans une démarche absolue de transparence et de rigueur, l'association publie s
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🤝 Contribuer au Projet
+## 🤝 Contribuer & Normes Communautaires
 
 T2DECODE est un bien commun open source construit par et pour sa communauté. Toutes les contributions sont chaleureusement accueillies !
 
-Consultez notre guide de contribution [CONTRIBUTING.md](CONTRIBUTING.md) pour découvrir comment :
+### 📜 Standards et Santé du Projet (Community Health)
+Dans une démarche de transparence professionnelle absolue, ce projet respecte les standards open source :
+- 🛡️ **[Sécurité & Vulnérabilités (SECURITY.md)](SECURITY.md)** : Notre politique stricte de gestion des failles.
+- ⚖️ **[Licence Libre (LICENSE)](LICENSE)** : Vos droits et obligations (GPLv3).
+- 🤝 **[Code de Conduite (CODE_OF_CONDUCT.md)](CODE_OF_CONDUCT.md)** : Pour un environnement sain et inclusif.
+- 📖 **[Guide de Contribution (CONTRIBUTING.md)](CONTRIBUTING.md)** : Comment ajouter des cours ou du code.
+- 🏛️ **[Gouvernance (GOVERNANCE.md)](GOVERNANCE.md)** : Modèle de décision de l'association.
+- 🆘 **[Support (SUPPORT.md)](SUPPORT.md)** : Où trouver de l'aide en cas de besoin.
+
+### Comment nous aider ?
+Consultez notre [CONTRIBUTING.md](CONTRIBUTING.md) pour découvrir comment :
 - ⭐ **Soutenir le dépôt** en lui attribuant une étoile sur GitHub.
 - 🐛 **Signaler des anomalies** ou suggérer des fonctionnalités via les *Issues*.
 - 📝 **Créer ou enrichir des cours** (rédaction au format Markdown / QCM en JSON).
