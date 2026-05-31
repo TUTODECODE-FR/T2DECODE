@@ -12,7 +12,7 @@ EMOJI_PATTERN = re.compile(
     "\U0001F680-\U0001F6FF"  # transport & map
     "\U0001F1E0-\U0001F1FF"  # flags
     "\U00002702-\U000027B0"
-    "\U000024C2-\U0001F251"
+    "\U000024C2"             # circled M
     "\U0001F900-\U0001F9FF"  # supplemental symbols
     "\U0001FA00-\U0001FA6F"
     "\U0001FA70-\U0001FAFF"

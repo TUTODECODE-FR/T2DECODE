@@ -277,4 +277,5 @@ All commits in this repository are GPG-signed for authenticity.
 ## 📄 Licence & Droits
 
 Ce projet est distribué sous licence **[GNU General Public License v3.0 (GPLv3)](LICENSE)**.  
+
 Un immense merci à tous les testeurs, développeurs, techniciens et passionnés qui participent à faire vivre ce projet ! 🌟
