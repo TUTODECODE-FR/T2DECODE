@@ -104,7 +104,7 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
             // Peer info bar
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: TdcColors.surface,
                 border: Border(bottom: BorderSide(color: TdcColors.border)),
               ),
@@ -112,7 +112,7 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
                 CircleAvatar(
                   radius: 18,
                   backgroundColor: _color.withValues(alpha: 0.15),
-                  child: Text(widget.peer.name[0].toUpperCase(), style: TextStyle(color: _color, fontWeight: FontWeight.bold)),
+                  child: Text(widget.peer.name[0].toUpperCase(), style: const TextStyle(color: _color, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -161,7 +161,7 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
             // Input bar
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: TdcColors.surface,
                 border: Border(top: BorderSide(color: TdcColors.border)),
               ),
@@ -186,8 +186,8 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
                         hintStyle: const TextStyle(color: TdcColors.textMuted),
                         filled: true,
                         fillColor: TdcColors.bg,
-                        border: OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none),
-                        enabledBorder: OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide(color: TdcColors.border)),
+                        border: const OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none),
+                        enabledBorder: const OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide(color: TdcColors.border)),
                       ),
                     ),
                   ),

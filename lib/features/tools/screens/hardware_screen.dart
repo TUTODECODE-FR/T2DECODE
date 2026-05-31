@@ -150,7 +150,7 @@ class _HardwareScreenState extends State<HardwareScreen> {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: TdcColors.border)),
       ),
       child: Row(

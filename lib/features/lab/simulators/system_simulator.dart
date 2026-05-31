@@ -157,7 +157,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
             children: [
               Row(
                 children: [
-                  Icon(Icons.computer, color: TdcColors.system, size: 24),
+                  const Icon(Icons.computer, color: TdcColors.system, size: 24),
                   const SizedBox(width: 12),
                   const Text(
                     'MONITORING SYSTÈME AVANCÉ',
@@ -340,9 +340,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: TextField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Filtrer les processus',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.search),
@@ -375,7 +375,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
-                        Icon(Icons.list, color: TdcColors.system),
+                        const Icon(Icons.list, color: TdcColors.system),
                         const SizedBox(width: 8),
                         const Text(
                           'Processus Actifs',
@@ -555,9 +555,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: TextField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Rechercher un service',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.search),
@@ -590,7 +590,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
-                        Icon(Icons.settings, color: TdcColors.system),
+                        const Icon(Icons.settings, color: TdcColors.system),
                         const SizedBox(width: 8),
                         const Text(
                           'Services Système',
@@ -716,7 +716,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
           const SizedBox(height: 8),
           Row(
             children: [
-              Icon(Icons.access_time, color: TdcColors.textTertiary, size: 16),
+              const Icon(Icons.access_time, color: TdcColors.textTertiary, size: 16),
               const SizedBox(width: 4),
               Text(
                 'Démarré: ${_formatDateTime(service.loadedAt)}',
@@ -780,11 +780,11 @@ class _SystemSimulatorState extends State<SystemSimulator>
                 children: [
                   Container(
                     padding: const EdgeInsets.all(16),
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(Icons.storage, color: TdcColors.system),
-                        const SizedBox(width: 8),
-                        const Text(
+                        SizedBox(width: 8),
+                        Text(
                           'Partitions de Disque',
                           style: TextStyle(
                             color: TdcColors.textPrimary,
@@ -971,7 +971,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
         children: [
           Row(
             children: [
-              Icon(Icons.storage, color: TdcColors.system, size: 20),
+              const Icon(Icons.storage, color: TdcColors.system, size: 20),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

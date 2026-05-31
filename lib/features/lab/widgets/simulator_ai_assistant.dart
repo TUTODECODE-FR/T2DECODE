@@ -77,7 +77,7 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
 
     setState(() {
       _messages.add(_AiMessage(text: text, isUser: true));
-      _messages.add(_AiMessage(text: '', isUser: false, isStreaming: true));
+      _messages.add(const _AiMessage(text: '', isUser: false, isStreaming: true));
       _loading = true;
     });
     _scrollToBottom();

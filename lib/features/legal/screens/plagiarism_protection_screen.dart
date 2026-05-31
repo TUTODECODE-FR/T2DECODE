@@ -329,11 +329,11 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.warning, color: Colors.red, size: 24),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Problèmes Détectés',
                   style: TextStyle(
                     color: Colors.red,
@@ -350,7 +350,7 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.error_outline, color: Colors.red, size: 16),
+                  const Icon(Icons.error_outline, color: Colors.red, size: 16),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(

@@ -135,7 +135,7 @@ class LabMetricCard extends StatelessWidget {
                   title.toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: TdcColors.textMuted,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
@@ -193,9 +193,9 @@ class LabTerminal extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: TdcColors.surfaceAlt,
-              border: const Border(bottom: BorderSide(color: TdcColors.border)),
+              border: Border(bottom: BorderSide(color: TdcColors.border)),
             ),
             child: Row(
               children: [

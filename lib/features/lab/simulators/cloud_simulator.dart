@@ -136,7 +136,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
             children: [
               Row(
                 children: [
-                  Icon(Icons.cloud, color: TdcColors.cloud, size: 24),
+                  const Icon(Icons.cloud, color: TdcColors.cloud, size: 24),
                   const SizedBox(width: 12),
                   const Text(
                     'INFRASTRUCTURE CLOUD HYBRIDE',
@@ -355,7 +355,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
-                        Icon(Icons.dns, color: TdcColors.cloud),
+                        const Icon(Icons.dns, color: TdcColors.cloud),
                         const SizedBox(width: 8),
                         const Text(
                           'Instances Cloud',
@@ -484,7 +484,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
           Row(
             children: [
               if (instance.publicIp.isNotEmpty) ...[
-                Icon(Icons.public, color: TdcColors.textTertiary, size: 16),
+                const Icon(Icons.public, color: TdcColors.textTertiary, size: 16),
                 const SizedBox(width: 4),
                 Text(
                   'Pub: ${instance.publicIp}',
@@ -495,7 +495,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                 ),
                 const SizedBox(width: 16),
               ],
-              Icon(Icons.lan, color: TdcColors.textTertiary, size: 16),
+              const Icon(Icons.lan, color: TdcColors.textTertiary, size: 16),
               const SizedBox(width: 4),
               Text(
                 'Priv: ${instance.privateIp}',
@@ -611,7 +611,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
-                        Icon(Icons.cloud_queue, color: TdcColors.cloud),
+                        const Icon(Icons.cloud_queue, color: TdcColors.cloud),
                         const SizedBox(width: 8),
                         const Text(
                           'Services Cloud',
@@ -719,7 +719,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
           const SizedBox(height: 8),
           Row(
             children: [
-              Icon(Icons.location_on, color: TdcColors.textTertiary, size: 16),
+              const Icon(Icons.location_on, color: TdcColors.textTertiary, size: 16),
               const SizedBox(width: 4),
               Text(
                 service.region,
@@ -729,7 +729,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                 ),
               ),
               const Spacer(),
-              Icon(Icons.attach_money, color: TdcColors.system, size: 16),
+              const Icon(Icons.attach_money, color: TdcColors.system, size: 16),
               const SizedBox(width: 4),
               Text(
                 '\$${service.monthlyCost.toStringAsFixed(2)}/mois',
@@ -745,7 +745,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.link, color: TdcColors.textTertiary, size: 16),
+                const Icon(Icons.link, color: TdcColors.textTertiary, size: 16),
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
@@ -817,11 +817,11 @@ class _CloudSimulatorState extends State<CloudSimulator>
                 children: [
                   Container(
                     padding: const EdgeInsets.all(16),
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(Icons.history, color: TdcColors.cloud),
-                        const SizedBox(width: 8),
-                        const Text(
+                        SizedBox(width: 8),
+                        Text(
                           'Historique des Déploiements',
                           style: TextStyle(
                             color: TdcColors.textPrimary,
@@ -919,7 +919,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
           const SizedBox(height: 8),
           Row(
             children: [
-              Icon(Icons.timer, color: TdcColors.textTertiary, size: 16),
+              const Icon(Icons.timer, color: TdcColors.textTertiary, size: 16),
               const SizedBox(width: 4),
               Text(
                 'Durée: ${deployment.duration.inMinutes} min',
@@ -929,7 +929,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                 ),
               ),
               const Spacer(),
-              Icon(Icons.access_time, color: TdcColors.textTertiary, size: 16),
+              const Icon(Icons.access_time, color: TdcColors.textTertiary, size: 16),
               const SizedBox(width: 4),
               Text(
                 'Début: ${_formatDateTime(deployment.startTime)}',

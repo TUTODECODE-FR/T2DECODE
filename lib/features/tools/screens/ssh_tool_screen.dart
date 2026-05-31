@@ -121,7 +121,7 @@ MaxAuthTries 3''',
                 Container(
                   padding: const EdgeInsets.all(12),
                   width: double.infinity,
-                  decoration: BoxDecoration(color: const Color(0xFF0D1117), borderRadius: TdcRadius.sm),
+                  decoration: const BoxDecoration(color: Color(0xFF0D1117), borderRadius: TdcRadius.sm),
                   child: Row(
                     children: [
                       Expanded(child: Text(t.example, style: const TextStyle(color: TdcColors.success, fontFamily: 'monospace', fontSize: 12))),
@@ -156,7 +156,7 @@ MaxAuthTries 3''',
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(color: const Color(0xFF0D1117), borderRadius: TdcRadius.sm),
+            decoration: const BoxDecoration(color: Color(0xFF0D1117), borderRadius: TdcRadius.sm),
             child: const Row(children: [
               Expanded(child: Text('ssh-keygen -t ed25519 -C "votre_email@tdc.io"', style: TextStyle(color: TdcColors.success, fontFamily: 'monospace', fontSize: 12))),
             ]),

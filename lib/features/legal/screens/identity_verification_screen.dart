@@ -74,7 +74,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
       children: [
         Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: TdcColors.surface,
             border: Border(bottom: BorderSide(color: TdcColors.border)),
           ),
@@ -165,7 +165,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.error, color: Colors.red, size: 48),
+                          const Icon(Icons.error, color: Colors.red, size: 48),
                           const SizedBox(height: 16),
                           const Text(
                             'Erreur de vérification',
@@ -552,9 +552,9 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   'Ce certificat atteste de l\'authenticité de l\'application',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: TdcColors.textSecondary,
                     fontSize: 14,
                   ),
@@ -772,17 +772,17 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   'Association TUTODECODE',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: TdcColors.textSecondary,
                     fontSize: 16,
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
+                const Text(
                   'Authentifié et scellé numériquement',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: TdcColors.textMuted,
                     fontSize: 12,
                   ),
@@ -824,14 +824,14 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
           const SizedBox(height: 32),
           
           // Vérification du sceau
-          Card(
+          const Card(
             color: TdcColors.surface,
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Vérification du Sceau',
                     style: TextStyle(
                       color: TdcColors.textPrimary,
@@ -839,12 +839,12 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   Row(
                     children: [
                       Icon(Icons.check_circle, color: Colors.green, size: 20),
-                      const SizedBox(width: 12),
-                      const Text(
+                      SizedBox(width: 12),
+                      Text(
                         'Sceau valide et authentique',
                         style: TextStyle(
                           color: Colors.green,
@@ -854,12 +854,12 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   Row(
                     children: [
                       Icon(Icons.verified, color: Colors.blue, size: 20),
-                      const SizedBox(width: 12),
-                      const Text(
+                      SizedBox(width: 12),
+                      Text(
                         'Signature cryptographique vérifiée',
                         style: TextStyle(
                           color: Colors.blue,

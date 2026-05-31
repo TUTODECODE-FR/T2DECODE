@@ -265,7 +265,7 @@ class TdcEmptyState extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: TdcColors.surfaceAlt,
               shape: BoxShape.circle,
             ),

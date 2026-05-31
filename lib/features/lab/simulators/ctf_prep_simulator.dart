@@ -105,7 +105,7 @@ services:
 
   Future<void> _copy(BuildContext context, String text) async {
     await Clipboard.setData(ClipboardData(text: text));
-    if (!mounted) return;
+    if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Copié dans le presse‑papiers.')),
     );
@@ -121,10 +121,10 @@ services:
         }
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           backgroundColor: TdcColors.success,
           content: Row(
-            children: const [
+            children: [
               Icon(Icons.stars, color: Colors.white),
               SizedBox(width: 8),
               Text('Bravo ! Flag correct. +100 XP', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -638,8 +638,8 @@ services:
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: const [
+              const Row(
+                children: [
                   Icon(Icons.router_outlined, color: TdcColors.network, size: 18),
                   SizedBox(width: 8),
                   Text(
@@ -663,8 +663,8 @@ services:
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: const [
+              const Row(
+                children: [
                   Icon(Icons.info_outline, color: TdcColors.textMuted, size: 18),
                   SizedBox(width: 8),
                   Text(
@@ -695,8 +695,8 @@ services:
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: const [
+              const Row(
+                children: [
                   Icon(Icons.layers_outlined, color: TdcColors.cloud, size: 18),
                   SizedBox(width: 8),
                   Text(

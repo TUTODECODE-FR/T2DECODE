@@ -271,8 +271,8 @@ final _linuxScenarios = [
             'Sans x sur un répertoire parent, impossible d\'accéder à son contenu même '
             'si les permissions du fichier le permettent.\n'
             'Les ACL POSIX (setfacl/getfacl) permettent des règles plus fines par utilisateur.',
-        visual: () => SimCodeBlock(
-          color: const Color(0xFF10B981),
+        visual: () => const SimCodeBlock(
+          color: Color(0xFF10B981),
           title: 'permissions',
           code: '-rwxr-xr-- 1 root users 4096 jan 1 /usr/bin/exemple\n'
               'rwx = owner(root): read+write+exec\n'
@@ -337,9 +337,9 @@ final _linuxScenarios = [
             'un processus bloqué en D souvent indique un problème NFS ou I/O.\n'
             'Z (Zombie) : terminé mais le père n\'a pas encore appelé wait() — '
             'l\'entrée dans la table des processus subsiste pour transmettre le code retour.',
-        visual: () => SimFlowDiagram(
-          color: const Color(0xFFF59E0B),
-          nodes: const [
+        visual: () => const SimFlowDiagram(
+          color: Color(0xFFF59E0B),
+          nodes: [
             SimFlowNode('Running(R)', Icons.play_arrow),
             SimFlowNode('Sleeping(S)', Icons.bedtime),
             SimFlowNode('Stopped(T)', Icons.pause),
@@ -669,8 +669,8 @@ final _linuxScenarios = [
             'Arrays : arr=(a b c), \${arr[1]}=b, \${arr[@]}=tous, \${#arr[@]}=taille. '
             'Substitution de commande : result=\$(commande) (préfère \$() à `backticks`). '
             'Arithmétique : ((count++)), \$(( 2 ** 10 ))=1024.',
-        visual: () => SimCodeBlock(
-          color: const Color(0xFFF59E0B),
+        visual: () => const SimCodeBlock(
+          color: Color(0xFFF59E0B),
           title: 'Bash',
           code: '#!/usr/bin/env bash\n'
               'set -euo pipefail\n'
@@ -703,8 +703,8 @@ final _linuxScenarios = [
             'for ((i=0; i<10; i++)); do echo \$i; done\\n'
             'while IFS= read -r line; do ...; done < fichier.txt '
             '(lire un fichier ligne par ligne sans perdre les espaces).',
-        visual: () => SimCodeBlock(
-          color: const Color(0xFF8B5CF6),
+        visual: () => const SimCodeBlock(
+          color: Color(0xFF8B5CF6),
           title: 'Bash',
           code: '# if/elif/else\\n'
               'if [[ -f "\$FILE" ]]; then\\n'
@@ -813,12 +813,12 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
 
   // ── Process manager ───────────────────────────────────────
   final List<_LinuxProcess> _processes = [
-    _LinuxProcess(1, 'systemd', 'root', 0.0, 8.2, 'S'),
-    _LinuxProcess(2, 'kthreadd', 'root', 0.0, 0.0, 'S'),
-    _LinuxProcess(125, 'sshd', 'root', 0.1, 4.5, 'S'),
-    _LinuxProcess(312, 'nginx', 'www-data', 0.3, 12.1, 'S'),
-    _LinuxProcess(450, 'postgres', 'postgres', 1.2, 64.0, 'S'),
-    _LinuxProcess(712, 'bash', 'user', 0.0, 2.1, 'S'),
+    const _LinuxProcess(1, 'systemd', 'root', 0.0, 8.2, 'S'),
+    const _LinuxProcess(2, 'kthreadd', 'root', 0.0, 0.0, 'S'),
+    const _LinuxProcess(125, 'sshd', 'root', 0.1, 4.5, 'S'),
+    const _LinuxProcess(312, 'nginx', 'www-data', 0.3, 12.1, 'S'),
+    const _LinuxProcess(450, 'postgres', 'postgres', 1.2, 64.0, 'S'),
+    const _LinuxProcess(712, 'bash', 'user', 0.0, 2.1, 'S'),
   ];
   bool _psRunning = false;
   Timer? _psTimer;
@@ -1144,12 +1144,12 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
   // 0 – Boot sequence ────────────────────────────────────────
   Widget _buildBootPanel() {
     final phases = <_LP3>[
-      _LP3('BIOS/UEFI', 'POST & Secure Boot check', const Color(0xFF94A3B8)),
-      _LP3('GRUB2', 'Loading kernel vmlinuz-6.8.0', const Color(0xFF6366F1)),
-      _LP3('Kernel', 'Décompression & init mémoire', const Color(0xFF8B5CF6)),
-      _LP3('initramfs', 'Montage rootfs temporaire', const Color(0xFFF59E0B)),
-      _LP3('systemd', 'PID 1 — démarrage services', const Color(0xFF06B6D4)),
-      _LP3('Login', 'getty → login prompt ready', const Color(0xFF22C55E)),
+      const _LP3('BIOS/UEFI', 'POST & Secure Boot check', Color(0xFF94A3B8)),
+      const _LP3('GRUB2', 'Loading kernel vmlinuz-6.8.0', Color(0xFF6366F1)),
+      const _LP3('Kernel', 'Décompression & init mémoire', Color(0xFF8B5CF6)),
+      const _LP3('initramfs', 'Montage rootfs temporaire', Color(0xFFF59E0B)),
+      const _LP3('systemd', 'PID 1 — démarrage services', Color(0xFF06B6D4)),
+      const _LP3('Login', 'getty → login prompt ready', Color(0xFF22C55E)),
     ];
     return _shellBox(
       color: const Color(0xFF22C55E),
@@ -1194,7 +1194,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
             if (_bootPhase >= 6)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text('Ubuntu 24.04 LTS \n l', style: const TextStyle(color: Color(0xFF22C55E), fontSize: 11, fontFamily: 'monospace'))
+                child: const Text('Ubuntu 24.04 LTS \n l', style: TextStyle(color: Color(0xFF22C55E), fontSize: 11, fontFamily: 'monospace'))
                     .animate().fadeIn(),
               ),
           ],
@@ -1274,10 +1274,10 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
               children: [
                 _cmdBtn(_psRunning ? 'Stop' : 'top', const Color(0xFFF59E0B), _togglePsMonitor),
                 const SizedBox(width: 8),
-                if (_psRunning) Row(children: [
-                  SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 2, color: const Color(0xFFF59E0B))),
-                  const SizedBox(width: 6),
-                  const Text('Monitoring…', style: TextStyle(color: Colors.white38, fontSize: 10)),
+                if (_psRunning) const Row(children: [
+                  SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFF59E0B))),
+                  SizedBox(width: 6),
+                  Text('Monitoring…', style: TextStyle(color: Colors.white38, fontSize: 10)),
                 ]),
               ],
             ),
@@ -1330,11 +1330,11 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
   // 3 – Network commands ────────────────────────────────────
   Widget _buildNetworkPanel() {
     final cmds = <_LP2>[
-      _LP2('ip a', '''eth0: 192.168.1.10/24 brd 192.168.1.255\nlo: 127.0.0.1/8'''),
-      _LP2('ip r', '''default via 192.168.1.1 dev eth0\n192.168.1.0/24 dev eth0 proto kernel'''),
-      _LP2('ss -tulpn', '''tcp LISTEN 0.0.0.0:22 (sshd)\ntcp LISTEN 0.0.0.0:80 (nginx)\ntcp LISTEN 0.0.0.0:5432 (postgres)'''),
-      _LP2('netstat -rn', '''Destination  Gateway      Genmask       Iface\n0.0.0.0      192.168.1.1  0.0.0.0       eth0'''),
-      _LP2('iptables -L', '''Chain INPUT (policy DROP)\nACCEPT  tcp --  anywhere  tcp dpt:ssh\nACCEPT  tcp --  anywhere  tcp dpt:http'''),
+      const _LP2('ip a', '''eth0: 192.168.1.10/24 brd 192.168.1.255\nlo: 127.0.0.1/8'''),
+      const _LP2('ip r', '''default via 192.168.1.1 dev eth0\n192.168.1.0/24 dev eth0 proto kernel'''),
+      const _LP2('ss -tulpn', '''tcp LISTEN 0.0.0.0:22 (sshd)\ntcp LISTEN 0.0.0.0:80 (nginx)\ntcp LISTEN 0.0.0.0:5432 (postgres)'''),
+      const _LP2('netstat -rn', '''Destination  Gateway      Genmask       Iface\n0.0.0.0      192.168.1.1  0.0.0.0       eth0'''),
+      const _LP2('iptables -L', '''Chain INPUT (policy DROP)\nACCEPT  tcp --  anywhere  tcp dpt:ssh\nACCEPT  tcp --  anywhere  tcp dpt:http'''),
     ];
     return _shellBox(
       color: const Color(0xFF8B5CF6),
@@ -1366,12 +1366,12 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
   // 4 – Permissions ─────────────────────────────────────────
   Widget _buildPermPanel() {
     final files = <_LP5>[
-      _LP5('-rw-r--r--', 'root', 'root', '644', '/etc/passwd'),
-      _LP5('-rw-------', 'root', 'root', '600', '/etc/shadow'),
-      _LP5('-rwxr-xr-x', 'root', 'root', '755', '/bin/bash'),
-      _LP5('-rws--x--x', 'root', 'root', '4711', '/usr/bin/sudo (SUID)'),
-      _LP5('drwxrwxrwt', 'root', 'root', '1777', '/tmp (sticky)'),
-      _LP5('-rw-r-----', 'www', 'www', '640', '/var/log/nginx.log'),
+      const _LP5('-rw-r--r--', 'root', 'root', '644', '/etc/passwd'),
+      const _LP5('-rw-------', 'root', 'root', '600', '/etc/shadow'),
+      const _LP5('-rwxr-xr-x', 'root', 'root', '755', '/bin/bash'),
+      const _LP5('-rws--x--x', 'root', 'root', '4711', '/usr/bin/sudo (SUID)'),
+      const _LP5('drwxrwxrwt', 'root', 'root', '1777', '/tmp (sticky)'),
+      const _LP5('-rw-r-----', 'www', 'www', '640', '/var/log/nginx.log'),
     ];
     return _shellBox(
       color: const Color(0xFFEF4444),
@@ -1435,7 +1435,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
             const SizedBox(height: 8),
             Row(
               children: [
-                Text('user@linux:~\$ ', style: const TextStyle(color: Color(0xFF22C55E), fontSize: 11, fontFamily: 'monospace')),
+                const Text('user@linux:~\$ ', style: TextStyle(color: Color(0xFF22C55E), fontSize: 11, fontFamily: 'monospace')),
                 Expanded(
                   child: TextField(
                     controller: _bashCtrl,

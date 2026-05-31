@@ -63,8 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted) return;
       if (mismatched.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text(
+          const SnackBar(
+            content: Text(
                 'Alerte intégrité: certains assets semblent modifiés.'),
             backgroundColor: TdcColors.danger,
           ),
@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     duration: 1400.ms,
                     color: TdcColors.accent.withValues(alpha: 0.35)),
                 const SizedBox(height: 20),
-                Text(
+                const Text(
                   'Chargement…',
                   style: TextStyle(
                       color: TdcColors.textMuted,
@@ -1102,7 +1102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ]),
-            SizedBox(height: 6),
+            const SizedBox(height: 6),
             Text(course.description,
                 style: TextStyle(
                     color: TdcColors.textSecondary,
@@ -1195,7 +1195,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 width: 7,
                 height: 7,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     shape: BoxShape.circle, color: TdcColors.info),
               ),
           ]),
@@ -1289,14 +1289,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   Container(
                     width: 7,
                     height: 7,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         shape: BoxShape.circle, color: TdcColors.accent),
                   ),
               ]),
               SizedBox(height: TdcAdaptive.space(context, TdcSpacing.sm)),
               if (active) ...[
                 Row(children: [
-                  Icon(Icons.people, size: 12, color: TdcColors.textMuted),
+                  const Icon(Icons.people, size: 12, color: TdcColors.textMuted),
                   const SizedBox(width: 6),
                   Text(
                     peers == 0

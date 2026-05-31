@@ -88,7 +88,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
             children: [
               Row(
                 children: [
-                  Icon(Icons.lock, color: TdcColors.crypto, size: 24),
+                  const Icon(Icons.lock, color: TdcColors.crypto, size: 24),
                   const SizedBox(width: 12),
                   const Text(
                     'CRYPTOGRAPHIE & CRYPTO-ANALYSE',
@@ -154,7 +154,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                       ),
                     ),
                     const SizedBox(width: 12),
-                    SizedBox(
+                    const SizedBox(
                       width: 130,
                       child: LabMetricCard(
                         title: 'Sécurité',
@@ -164,7 +164,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                       ),
                     ),
                     const SizedBox(width: 12),
-                    SizedBox(
+                    const SizedBox(
                       width: 130,
                       child: LabMetricCard(
                         title: 'Entropie',
@@ -174,7 +174,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                       ),
                     ),
                     const SizedBox(width: 12),
-                    SizedBox(
+                    const SizedBox(
                       width: 130,
                       child: LabMetricCard(
                         title: 'Status',
@@ -320,7 +320,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.text_fields, color: TdcColors.crypto),
+                      const Icon(Icons.text_fields, color: TdcColors.crypto),
                       const SizedBox(width: 8),
                       const Text(
                         'Texte Clair',
@@ -363,7 +363,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.vpn_key, color: TdcColors.crypto),
+                      const Icon(Icons.vpn_key, color: TdcColors.crypto),
                       const SizedBox(width: 8),
                       const Text(
                         'Clé de Chiffrement',
@@ -449,7 +449,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.enhanced_encryption, color: TdcColors.crypto),
+                      const Icon(Icons.enhanced_encryption, color: TdcColors.crypto),
                       const SizedBox(width: 8),
                       const Text(
                         'Texte Chiffré',
@@ -504,7 +504,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Icon(Icons.fingerprint, color: TdcColors.crypto),
+                  const Icon(Icons.fingerprint, color: TdcColors.crypto),
                   const SizedBox(width: 8),
                   const Text(
                     'Algorithme de Hashage',
@@ -543,11 +543,11 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     children: [
                       Icon(Icons.input, color: TdcColors.crypto),
-                      const SizedBox(width: 8),
-                      const Text(
+                      SizedBox(width: 8),
+                      Text(
                         'Données à Hasher',
                         style: TextStyle(
                           color: TdcColors.textPrimary,
@@ -598,7 +598,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.check_circle, color: TdcColors.crypto),
+                      const Icon(Icons.check_circle, color: TdcColors.crypto),
                       const SizedBox(width: 8),
                       const Text(
                         'Résultat du Hash',
@@ -682,7 +682,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Icon(Icons.gavel, color: TdcColors.crypto),
+                  const Icon(Icons.gavel, color: TdcColors.crypto),
                   const SizedBox(width: 8),
                   const Text(
                     'Algorithme de Signature',
@@ -723,11 +723,11 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Icon(Icons.vpn_key, color: TdcColors.crypto),
-                            const SizedBox(width: 8),
-                            const Text(
+                            SizedBox(width: 8),
+                            Text(
                               'Clé Privée',
                               style: TextStyle(
                                 color: TdcColors.textPrimary,
@@ -761,11 +761,11 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Icon(Icons.public, color: TdcColors.crypto),
-                            const SizedBox(width: 8),
-                            const Text(
+                            SizedBox(width: 8),
+                            Text(
                               'Clé Publique',
                               style: TextStyle(
                                 color: TdcColors.textPrimary,
@@ -803,11 +803,11 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     children: [
                       Icon(Icons.edit, color: TdcColors.crypto),
-                      const SizedBox(width: 8),
-                      const Text(
+                      SizedBox(width: 8),
+                      Text(
                         'Message à Signer',
                         style: TextStyle(
                           color: TdcColors.textPrimary,
@@ -884,7 +884,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.fingerprint, color: TdcColors.crypto),
+                            const Icon(Icons.fingerprint, color: TdcColors.crypto),
                             const SizedBox(width: 8),
                             const Text(
                               'Signature',
@@ -934,11 +934,11 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Icon(Icons.verified_user, color: TdcColors.crypto),
-                            const SizedBox(width: 8),
-                            const Text(
+                            SizedBox(width: 8),
+                            Text(
                               'Vérification',
                               style: TextStyle(
                                 color: TdcColors.textPrimary,

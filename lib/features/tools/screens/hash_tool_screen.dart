@@ -184,7 +184,7 @@ class _HashToolScreenState extends State<HashToolScreen> {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: TdcRadius.sm),
+                  decoration: const BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: TdcRadius.sm),
                   child: Text(h['algo']!, style: const TextStyle(color: TdcColors.textMuted, fontSize: 10, fontFamily: 'monospace')),
                 ),
                 const SizedBox(width: 8),

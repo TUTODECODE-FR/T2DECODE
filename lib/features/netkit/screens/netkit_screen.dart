@@ -251,7 +251,7 @@ class _PortCheckerTabState extends State<_PortCheckerTab> {
       controller: ctrl,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       style: const TextStyle(color: TdcColors.textPrimary),
-      decoration: InputDecoration(prefixIcon: Icon(icon, color: TdcColors.accent, size: 20), hintText: hint, filled: true, fillColor: TdcColors.bg, border: OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none)),
+      decoration: InputDecoration(prefixIcon: Icon(icon, color: TdcColors.accent, size: 20), hintText: hint, filled: true, fillColor: TdcColors.bg, border: const OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none)),
     );
   }
 }
@@ -300,7 +300,7 @@ class _DnsTabState extends State<_DnsTab> {
 
   Widget _inputRow() {
     return Row(children: [
-      Expanded(child: TextField(controller: _ctrl, style: const TextStyle(color: TdcColors.textPrimary), decoration: InputDecoration(hintText: 'Domaine', filled: true, fillColor: TdcColors.surface, border: OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none)))),
+      Expanded(child: TextField(controller: _ctrl, style: const TextStyle(color: TdcColors.textPrimary), decoration: const InputDecoration(hintText: 'Domaine', filled: true, fillColor: TdcColors.surface, border: OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none)))),
       const SizedBox(width: 8),
       IconButton.filled(onPressed: _loading ? null : _lookup, icon: const Icon(Icons.search), style: IconButton.styleFrom(backgroundColor: TdcColors.accent)),
     ]);
@@ -415,13 +415,13 @@ class _CheatSheetTabState extends State<_CheatSheetTab> {
           TextField(
             onChanged: (v) => setState(() => _filter = v),
             style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Rechercher une commande réseau...',
-              prefixIcon: const Icon(Icons.search, size: 18, color: TdcColors.textMuted),
+              prefixIcon: Icon(Icons.search, size: 18, color: TdcColors.textMuted),
               filled: true,
               fillColor: TdcColors.bg,
               border: OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none),
-              contentPadding: const EdgeInsets.symmetric(vertical: 0),
+              contentPadding: EdgeInsets.symmetric(vertical: 0),
             ),
           ),
           const SizedBox(height: 12),

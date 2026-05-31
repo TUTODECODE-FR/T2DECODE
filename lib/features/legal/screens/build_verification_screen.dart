@@ -229,11 +229,11 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.info, color: TdcColors.accent, size: 24),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Informations du Build',
                   style: TextStyle(
                     color: TdcColors.textPrimary,
@@ -302,7 +302,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
           children: [
             Row(
               children: [
-                Icon(Icons.security, color: TdcColors.accent, size: 24),
+                const Icon(Icons.security, color: TdcColors.accent, size: 24),
                 const SizedBox(width: 12),
                 const Text(
                   'Contrôles de Sécurité',
@@ -431,11 +431,11 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.warning, color: Colors.orange, size: 24),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Alertes de Sécurité',
                   style: TextStyle(
                     color: Colors.orange,
@@ -451,7 +451,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.error_outline, color: Colors.orange, size: 16),
+                  const Icon(Icons.error_outline, color: Colors.orange, size: 16),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -481,11 +481,11 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.verified, color: TdcColors.accent, size: 24),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Certificat de Build',
                   style: TextStyle(
                     color: TdcColors.textPrimary,

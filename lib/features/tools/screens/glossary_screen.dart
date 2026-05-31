@@ -20,12 +20,12 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
   String _cat = "TOUT";
 
   final List<GlossaryEntry> _terms = [
-    GlossaryEntry(category: 'RÉSEAU', term: 'IP', definition: 'Identifiant unique sur un réseau TCP/IP.'),
-    GlossaryEntry(category: 'RÉSEAU', term: 'DNS', definition: 'Traduit les noms de domaine en adresses IP.'),
-    GlossaryEntry(category: 'SÉCURITÉ', term: 'Firewall', definition: 'Filtre le trafic selon des règles.'),
-    GlossaryEntry(category: 'SÉCURITÉ', term: 'VPN', definition: 'Tunnel sécurisé et chiffré.'),
-    GlossaryEntry(category: 'SYSTÈME', term: 'Kernel', definition: 'Partie centrale de l\'OS.'),
-    GlossaryEntry(category: 'SYSTÈME', term: 'RAM', definition: 'Mémoire vive volatile.'),
+    const GlossaryEntry(category: 'RÉSEAU', term: 'IP', definition: 'Identifiant unique sur un réseau TCP/IP.'),
+    const GlossaryEntry(category: 'RÉSEAU', term: 'DNS', definition: 'Traduit les noms de domaine en adresses IP.'),
+    const GlossaryEntry(category: 'SÉCURITÉ', term: 'Firewall', definition: 'Filtre le trafic selon des règles.'),
+    const GlossaryEntry(category: 'SÉCURITÉ', term: 'VPN', definition: 'Tunnel sécurisé et chiffré.'),
+    const GlossaryEntry(category: 'SYSTÈME', term: 'Kernel', definition: 'Partie centrale de l\'OS.'),
+    const GlossaryEntry(category: 'SYSTÈME', term: 'RAM', definition: 'Mémoire vive volatile.'),
   ];
 
   @override

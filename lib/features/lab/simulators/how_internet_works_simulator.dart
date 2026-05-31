@@ -84,9 +84,9 @@ final _scenarios = [
             'l\'adresse MAC de la passerelle (routeur). Elle diffuse un ARP Request : '
             '"Qui a l\'IP 192.168.1.1 ?" — le routeur répond avec son adresse MAC. '
             'Ce résultat est mis en cache dans la table ARP.',
-        visual: () => SimFlowDiagram(
-          color: const Color(0xFFF59E0B),
-          nodes: const [
+        visual: () => const SimFlowDiagram(
+          color: Color(0xFFF59E0B),
+          nodes: [
             SimFlowNode('PC', Icons.computer),
             SimFlowNode('ARP Bcast', Icons.broadcast_on_personal),
             SimFlowNode('Switch', Icons.device_hub),
@@ -126,9 +126,9 @@ final _scenarios = [
             'Chaque routeur consulte sa table de routage, décrémente le TTL, recalcule le checksum '
             'et redirige le paquet vers le prochain saut (next hop). Si le TTL atteint 0, le routeur '
             'envoie un ICMP "Time Exceeded" à ton IP — c\'est ce que exploite traceroute.',
-        visual: () => SimFlowDiagram(
-          color: const Color(0xFF06B6D4),
-          nodes: const [
+        visual: () => const SimFlowDiagram(
+          color: Color(0xFF06B6D4),
+          nodes: [
             SimFlowNode('PC', Icons.computer),
             SimFlowNode('R1', Icons.router),
             SimFlowNode('R2', Icons.router),
@@ -221,9 +221,9 @@ final _scenarios = [
             'La connexion est établie. TCP garantit l\'ordre et la livraison des données '
             'grâce aux numéros de séquence et aux accusés de réception. '
             'Le port destination est 443 (HTTPS). Le port source est éphémère (ex: 54321).',
-        visual: () => SimFlowDiagram(
-          color: const Color(0xFF8B5CF6),
-          nodes: const [
+        visual: () => const SimFlowDiagram(
+          color: Color(0xFF8B5CF6),
+          nodes: [
             SimFlowNode('Client', Icons.computer),
             SimFlowNode('SYN', Icons.arrow_forward),
             SimFlowNode('Server', Icons.dns),
@@ -315,9 +315,9 @@ final _scenarios = [
             'chiffrement (chacha20-poly1305 ou aes256-gcm), MAC, compression.\n'
             'L\'échange ECDH génère un secret partagé sans jamais le transmettre '
             '(propriété Forward Secrecy). Les clés de session sont dérivées de ce secret.',
-        visual: () => SimFlowDiagram(
-          color: const Color(0xFFF59E0B),
-          nodes: const [
+        visual: () => const SimFlowDiagram(
+          color: Color(0xFFF59E0B),
+          nodes: [
             SimFlowNode('Client', Icons.computer),
             SimFlowNode('ECDH pubkey', Icons.key),
             SimFlowNode('Server', Icons.dns),
@@ -705,11 +705,11 @@ class _HowInternetWorksSimulatorState
 
   // Firewall rules
   final List<_FwRule> _fwRules = [
-    _FwRule('ACCEPT', 'ESTABLISHED,RELATED', 'all', Colors.green),
-    _FwRule('ACCEPT', 'NEW', 'tcp dport 22', Colors.blue),
-    _FwRule('ACCEPT', 'NEW', 'tcp dport 443', Colors.blue),
-    _FwRule('DROP', 'all', 'tcp dport 23 (Telnet)', Colors.red),
-    _FwRule('DROP', 'INVALID', 'all', Colors.red),
+    const _FwRule('ACCEPT', 'ESTABLISHED,RELATED', 'all', Colors.green),
+    const _FwRule('ACCEPT', 'NEW', 'tcp dport 22', Colors.blue),
+    const _FwRule('ACCEPT', 'NEW', 'tcp dport 443', Colors.blue),
+    const _FwRule('DROP', 'all', 'tcp dport 23 (Telnet)', Colors.red),
+    const _FwRule('DROP', 'INVALID', 'all', Colors.red),
   ];
   bool _fwBlocked = false;
   final String _fwTestPort = '80';
@@ -755,7 +755,7 @@ class _HowInternetWorksSimulatorState
       _pingSeq = 0;
     });
     final rng = Random.secure();
-    setState(() => _pingLines.add(_PingLine('PING 8.8.8.8 56(84) bytes of data.', Colors.white70, false)));
+    setState(() => _pingLines.add(const _PingLine('PING 8.8.8.8 56(84) bytes of data.', Colors.white70, false)));
     await Future.delayed(const Duration(milliseconds: 300));
     for (int i = 0; i < 4; i++) {
       if (!mounted) return;
@@ -803,7 +803,7 @@ class _HowInternetWorksSimulatorState
     final rng = Random.secure();
 
     final steps = [
-      _DnsStep('Cache local', 'Vérification /etc/hosts et cache OS…', Colors.grey, false),
+      const _DnsStep('Cache local', 'Vérification /etc/hosts et cache OS…', Colors.grey, false),
       _DnsStep('Résolveur 8.8.8.8', 'Query A $query → résolveur récursif', const Color(0xFF6366F1), false),
       _DnsStep('Root Server', 'Demande délégation .${query.split('.').last}', const Color(0xFFF59E0B), false),
       _DnsStep('TLD .${query.split('.').last}', 'NS records → serveur autoritaire', const Color(0xFF8B5CF6), false),
@@ -1038,7 +1038,7 @@ class _HowInternetWorksSimulatorState
                 padding: const EdgeInsets.only(top: 8),
                 child: Row(
                   children: [
-                    SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2, color: const Color(0xFF06B6D4))),
+                    const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF06B6D4))),
                     const SizedBox(width: 8),
                     Text('Envoi paquet ICMP #${_pingSeq + 1}…', style: const TextStyle(color: Colors.white54, fontSize: 11)),
                   ],
@@ -1053,10 +1053,10 @@ class _HowInternetWorksSimulatorState
   // 1 – TCP Handshake ───────────────────────────────────────
   Widget _buildTcpPanel() {
     final phases = [
-      _TcpPhaseInfo('SYN', 'Client → Server', 'seq=1000', const Color(0xFF6366F1)),
-      _TcpPhaseInfo('SYN-ACK', 'Server → Client', 'seq=5000 ack=1001', const Color(0xFF8B5CF6)),
-      _TcpPhaseInfo('ACK', 'Client → Server', 'ack=5001', const Color(0xFF10B981)),
-      _TcpPhaseInfo('ESTABLISHED', 'Connexion ouverte', 'Données peuvent transiter', const Color(0xFF10B981)),
+      const _TcpPhaseInfo('SYN', 'Client → Server', 'seq=1000', Color(0xFF6366F1)),
+      const _TcpPhaseInfo('SYN-ACK', 'Server → Client', 'seq=5000 ack=1001', Color(0xFF8B5CF6)),
+      const _TcpPhaseInfo('ACK', 'Client → Server', 'ack=5001', Color(0xFF10B981)),
+      const _TcpPhaseInfo('ESTABLISHED', 'Connexion ouverte', 'Données peuvent transiter', Color(0xFF10B981)),
     ];
     return _panelShell(
       color: const Color(0xFF6366F1),
@@ -1162,11 +1162,11 @@ class _HowInternetWorksSimulatorState
   // 2 – SSH ─────────────────────────────────────────────────
   Widget _buildSshPanel() {
     final phases = <_HiP3>[
-      _HiP3('TCP:22 SYN', 'Ouverture connexion', const Color(0xFF8B5CF6)),
-      _HiP3('KEX Init', 'Négociation curve25519', const Color(0xFFF59E0B)),
-      _HiP3('Host Key', 'Vérif ed25519 fingerprint', const Color(0xFF06B6D4)),
-      _HiP3('Auth', 'Clé publique acceptée', const Color(0xFF10B981)),
-      _HiP3('Shell', 'Canal chiffré ouvert ✓', const Color(0xFF22C55E)),
+      const _HiP3('TCP:22 SYN', 'Ouverture connexion', Color(0xFF8B5CF6)),
+      const _HiP3('KEX Init', 'Négociation curve25519', Color(0xFFF59E0B)),
+      const _HiP3('Host Key', 'Vérif ed25519 fingerprint', Color(0xFF06B6D4)),
+      const _HiP3('Auth', 'Clé publique acceptée', Color(0xFF10B981)),
+      const _HiP3('Shell', 'Canal chiffré ouvert ✓', Color(0xFF22C55E)),
     ];
     return _panelShell(
       color: const Color(0xFF10B981),
@@ -1223,11 +1223,11 @@ class _HowInternetWorksSimulatorState
   // 3 – TCP/IP Layers ───────────────────────────────────────
   Widget _buildLayersPanel() {
     final layers = [
-      _HiP4('L7 App', 'HTTP/2 GET /', 'data: Hello World', const Color(0xFF6366F1)),
-      _HiP4('L4 Transport', 'TCP header', 'sport=54321 dport=443 seq=1000', const Color(0xFF8B5CF6)),
-      _HiP4('L3 Network', 'IP header', 'src=192.168.1.10 dst=142.250.179.46 ttl=64', const Color(0xFFF97316)),
-      _HiP4('L2 Link', 'Ethernet frame', 'src=AA:BB:CC:DD dst=FF:EE:CC:BB type=0x0800', const Color(0xFFF59E0B)),
-      _HiP4('L1 Physical', 'Signal', '01001000 01100101 01101100 … (bits)', const Color(0xFFEF4444)),
+      const _HiP4('L7 App', 'HTTP/2 GET /', 'data: Hello World', Color(0xFF6366F1)),
+      const _HiP4('L4 Transport', 'TCP header', 'sport=54321 dport=443 seq=1000', Color(0xFF8B5CF6)),
+      const _HiP4('L3 Network', 'IP header', 'src=192.168.1.10 dst=142.250.179.46 ttl=64', Color(0xFFF97316)),
+      const _HiP4('L2 Link', 'Ethernet frame', 'src=AA:BB:CC:DD dst=FF:EE:CC:BB type=0x0800', Color(0xFFF59E0B)),
+      const _HiP4('L1 Physical', 'Signal', '01001000 01100101 01101100 … (bits)', Color(0xFFEF4444)),
     ];
     return _panelShell(
       color: const Color(0xFFF59E0B),

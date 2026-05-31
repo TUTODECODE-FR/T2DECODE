@@ -460,7 +460,7 @@ class _PeerCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              Icon(Icons.chevron_right, color: TdcColors.textMuted, size: 18),
+              const Icon(Icons.chevron_right, color: TdcColors.textMuted, size: 18),
             ],
           ),
         ],

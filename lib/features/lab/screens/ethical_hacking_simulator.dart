@@ -62,7 +62,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
       children: [
         Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: TdcColors.surface,
             border: Border(bottom: BorderSide(color: TdcColors.border)),
           ),

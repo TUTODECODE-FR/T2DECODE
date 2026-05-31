@@ -53,7 +53,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
     final chapter = prov.currentChapter;
 
     if (course == null || chapter == null) {
-      return Center(child: Text('Aucun chapitre', style: TextStyle(color: TdcColors.textMuted)));
+      return const Center(child: Text('Aucun chapitre', style: TextStyle(color: TdcColors.textMuted)));
     }
 
     return Column(
@@ -95,9 +95,9 @@ class _ChapterScreenState extends State<ChapterScreen> {
       children: [
         const TdcSectionTitle('PRATIQUE (VIRTUEL)'),
         const SizedBox(height: 12),
-        Text(
+        const Text(
           "Teste le concept dans un environnement contrôlé (simulation locale) ou ouvre directement un lab.",
-          style: const TextStyle(color: TdcColors.textMuted, fontSize: 12, height: 1.35),
+          style: TextStyle(color: TdcColors.textMuted, fontSize: 12, height: 1.35),
         ),
         const SizedBox(height: 14),
         ...links.map((l) => Padding(
@@ -247,7 +247,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
     final hasNext = idx < course.chapters.length - 1;
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, border: Border(top: BorderSide(color: TdcColors.border))),
+      decoration: const BoxDecoration(color: TdcColors.surface, border: Border(top: BorderSide(color: TdcColors.border))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

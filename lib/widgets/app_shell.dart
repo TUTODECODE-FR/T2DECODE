@@ -61,7 +61,7 @@ class _AppShellState extends State<AppShell> {
   // ── Petites icônes de statut IA ───────────────────────────
   Widget _aiDot(AiTutorProvider ai) {
     if (!ai.hasCheckedOllama) {
-      return SizedBox(
+      return const SizedBox(
         width: 8,
         height: 8,
         child: CircularProgressIndicator(
@@ -181,10 +181,10 @@ class _AppShellState extends State<AppShell> {
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: TdcColors.bg,
         border:
-            const Border(bottom: BorderSide(color: TdcColors.border, width: 1)),
+            Border(bottom: BorderSide(color: TdcColors.border, width: 1)),
       ),
       child: Row(
         children: [
@@ -388,11 +388,11 @@ class _AppShellState extends State<AppShell> {
   }
 
   Widget _networkOffAction() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8),
       child: Tooltip(
         message: 'Mode Zéro Réseau activé',
-        child: const Icon(Icons.wifi_off, color: TdcColors.danger),
+        child: Icon(Icons.wifi_off, color: TdcColors.danger),
       ),
     );
   }
@@ -473,7 +473,7 @@ class _AppShellState extends State<AppShell> {
             color: TdcColors.bg,
             border: insideDrawer
                 ? null
-                : Border(right: BorderSide(color: TdcColors.border)),
+                : const Border(right: BorderSide(color: TdcColors.border)),
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -511,12 +511,12 @@ class _AppShellState extends State<AppShell> {
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
                                 ),
-                                child: Row(
+                                child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.verified_user_outlined, size: 12, color: TdcColors.accent),
-                                    const SizedBox(width: 6),
-                                    const Text(
+                                    Icon(Icons.verified_user_outlined, size: 12, color: TdcColors.accent),
+                                    SizedBox(width: 6),
+                                    Text(
                                       'SOUVERAIN & AIR-GAPPED',
                                       style: TextStyle(
                                         color: TdcColors.accent,
@@ -914,7 +914,7 @@ class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             color: TdcColors.surfaceAlt, borderRadius: TdcRadius.sm),
         child: Icon(icon, size: 16, color: TdcColors.textSecondary),
       ),
@@ -938,7 +938,7 @@ class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             color: TdcColors.surfaceAlt, borderRadius: TdcRadius.sm),
         child: Icon(icon, size: 16, color: TdcColors.textSecondary),
       ),

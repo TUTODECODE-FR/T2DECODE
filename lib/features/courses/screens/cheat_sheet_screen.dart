@@ -143,9 +143,9 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
         children: [
           TextField(
             onChanged: (v) => setState(() => _filter = v),
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Rechercher une commande...',
-              prefixIcon: const Icon(Icons.search, size: 18),
+              prefixIcon: Icon(Icons.search, size: 18),
               filled: true,
               fillColor: TdcColors.bg,
               border: OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none),
