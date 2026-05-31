@@ -7,7 +7,7 @@ cd "$ROOT_DIR"
 # Force build/ onto a local, non-FileProvider path to avoid disallowed xattrs and build.db I/O issues.
 TMP_BUILD_ROOT="/tmp/t2decode-build"
 mkdir -p "$TMP_BUILD_ROOT"
-if [[ -e "$ROOT_DIR/build" ] && [ ! -L "$ROOT_DIR/build" ]]; then
+if [[ -e "$ROOT_DIR/build" && ! -L "$ROOT_DIR/build" ]]; then
   ts="$(date +%Y%m%d-%H%M%S)"
   mv "$ROOT_DIR/build" "$ROOT_DIR/build.backup-${ts}"
 fi
@@ -41,7 +41,7 @@ rm -rf "$NATIVE_DST_DIR" 2>/dev/null || true
 mkdir -p "$NATIVE_DST_DIR/Versions/A/Resources" 2>/dev/null || true
 
 BIN_OUT="$NATIVE_DST_DIR/Versions/A/objective_c"
-if [[ -n "${ARM_SRC:-}" ] && [ -n "${X64_SRC:-}" ]]; then
+if [[ -n "${ARM_SRC:-}" && -n "${X64_SRC:-}" ]]; then
   lipo -create "$ARM_SRC" "$X64_SRC" -output "$BIN_OUT" 2>/dev/null || true
 elif [[ -n "${ARM_SRC:-}" ]]; then
   cp -f "$ARM_SRC" "$BIN_OUT" 2>/dev/null || true
