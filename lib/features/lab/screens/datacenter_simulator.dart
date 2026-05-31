@@ -52,7 +52,7 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
         id: 'RACK-${String.fromCharCode(65 + i)}',
         position: i,
         servers: [],
-        temperature: 20.0 + Random().nextDouble() * 5,
+        temperature: 20.0 + Random.secure().nextDouble() * 5,
         powerUsage: 0.0,
       ));
     }
@@ -65,11 +65,11 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
         rackId: 'RACK-${String.fromCharCode(65 + rackIndex)}',
         position: i ~/ 8,
         status: ServerStatus.running,
-        cpuUsage: 10 + Random().nextDouble() * 40,
-        memoryUsage: 20 + Random().nextDouble() * 30,
-        temperature: 30.0 + Random().nextDouble() * 10,
-        powerConsumption: 100.0 + Random().nextDouble() * 200,
-        uptime: Duration(hours: Random().nextInt(1000)),
+        cpuUsage: 10 + Random.secure().nextDouble() * 40,
+        memoryUsage: 20 + Random.secure().nextDouble() * 30,
+        temperature: 30.0 + Random.secure().nextDouble() * 10,
+        powerConsumption: 100.0 + Random.secure().nextDouble() * 200,
+        uptime: Duration(hours: Random.secure().nextInt(1000)),
       );
       _servers.add(server);
       _racks[rackIndex].servers.add(server);
@@ -81,7 +81,7 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
         id: 'PDU-${i + 1}',
         status: PowerUnitStatus.active,
         capacity: 5000.0,
-        currentLoad: 2000.0 + Random().nextDouble() * 1000,
+        currentLoad: 2000.0 + Random.secure().nextDouble() * 1000,
         voltage: 230.0,
         frequency: 50.0,
       ));
@@ -94,7 +94,7 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
         status: CoolingUnitStatus.active,
         targetTemperature: 21.0,
         currentTemperature: 20.0,
-        fanSpeed: 50 + Random().nextInt(20),
+        fanSpeed: 50 + Random.secure().nextInt(20),
         coolingCapacity: 500.0,
         currentLoad: 250.0,
       ));
@@ -116,7 +116,7 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
   }
 
   void _triggerRandomIncident() {
-    final rand = Random();
+    final rand = Random.secure();
     if (rand.nextDouble() > 0.15) return; // 15% chance per tick
 
     final type = IncidentType.values[rand.nextInt(IncidentType.values.length)];
@@ -355,7 +355,7 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
   }
 
   void _updateMetrics() {
-    final random = Random();
+    final random = Random.secure();
     for (int i = 0; i < _servers.length; i++) {
       final s = _servers[i];
       if (s.status == ServerStatus.running) {

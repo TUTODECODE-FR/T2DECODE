@@ -754,7 +754,7 @@ class _HowInternetWorksSimulatorState
       _pingLines.clear();
       _pingSeq = 0;
     });
-    final rng = Random();
+    final rng = Random.secure();
     setState(() => _pingLines.add(_PingLine('PING 8.8.8.8 56(84) bytes of data.', Colors.white70, false)));
     await Future.delayed(const Duration(milliseconds: 300));
     for (int i = 0; i < 4; i++) {
@@ -800,7 +800,7 @@ class _HowInternetWorksSimulatorState
     if (_dnsRunning) return;
     final query = _dnsCtrl.text.trim().isEmpty ? 'google.com' : _dnsCtrl.text.trim();
     setState(() { _dnsRunning = true; _dnsSteps.clear(); _dnsQuery = query; });
-    final rng = Random();
+    final rng = Random.secure();
 
     final steps = [
       _DnsStep('Cache local', 'Vérification /etc/hosts et cache OS…', Colors.grey, false),

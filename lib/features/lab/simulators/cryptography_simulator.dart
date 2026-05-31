@@ -1151,7 +1151,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
 
   String _simulateRSASign(String hash) {
     // Simuler une signature RSA
-    final random = Random();
+    final random = Random.secure();
     final signature = List<int>.generate(64, (i) => random.nextInt(256));
     return base64.encode(signature);
   }

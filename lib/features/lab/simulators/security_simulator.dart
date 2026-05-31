@@ -903,10 +903,10 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
       
       final log = LogEntry(
         timestamp: DateTime.now(),
-        level: ['INFO', 'WARNING', 'CRITICAL'][Random().nextInt(3)],
+        level: ['INFO', 'WARNING', 'CRITICAL'][Random.secure().nextInt(3)],
         source: 'IDS',
         message: 'Activité réseau suspecte détectée',
-        ip: '192.168.1.${Random().nextInt(254) + 1}',
+        ip: '192.168.1.${Random.secure().nextInt(254) + 1}',
       );
       
       setState(() {

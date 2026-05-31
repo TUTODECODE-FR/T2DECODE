@@ -27,7 +27,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
   double _scanProgress = 0.0;
   
   // SQL Injection State
-  final _sqlUrlController = TextEditingController(text: 'http://testsite.com/login.php');
+  final _sqlUrlController = TextEditingController(text: 'https://testsite.com/login.php');
   final _sqlPayloadController = TextEditingController(text: "' OR '1'='1");
   final List<SqlInjectionResult> _sqlResults = [];
   bool _isInjecting = false;
@@ -753,7 +753,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
     });
 
     final target = _targetController.text;
-    final random = Random();
+    final random = Random.secure();
 
     // Simuler scan progressif
     for (int i = 0; i < 10; i++) {
@@ -789,7 +789,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
 
     final url = _sqlUrlController.text;
     final payload = _sqlPayloadController.text;
-    final random = Random();
+    final random = Random.secure();
 
     await Future.delayed(const Duration(milliseconds: 1500));
 
@@ -859,7 +859,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
         return;
       }
       
-      final random = Random();
+      final random = Random.secure();
       final protocols = ['TCP', 'UDP', 'HTTP', 'DNS'];
       final protocol = protocols[random.nextInt(protocols.length)];
       
