@@ -8,8 +8,6 @@
   — *Maxime MARTIN CIVET*
 
   <br>
-  <img src="docs/images/t2decode_demo.gif" width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" alt="Démo rapide - Ghost AI & Simulateurs">
-  <br>
 
 [![CI](https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1A1D2E&color=3DDC84)](https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml)
   [![Release](https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=F5EBDA&labelColor=1A1D2E&logoColor=F5EBDA)](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
@@ -166,6 +164,11 @@ flowchart TB
 ## 🖼️ Aperçu de l'Interface Premium (Noir & Beige)
 
 L'interface de T2DECODE est conçue selon un design moderne (*Noir & Beige*, *Glassmorphism*, animations fluides) pour offrir une expérience de navigation d'excellence sur toutes les tailles d'écran.
+
+<div align="center">
+  <img src="docs/images/t2decode_demo.gif" width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" alt="Démo vidéo - T2DECODE en action">
+  <br><br>
+</div>
 
 <table width="100%" style="border: none; border-collapse: collapse;">
   <tr>
