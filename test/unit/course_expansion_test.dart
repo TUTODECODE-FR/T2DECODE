@@ -28,7 +28,6 @@ void main() {
       expect(expanded, isNotEmpty);
       expect(expanded.contains('Intro'), isTrue);
     });
-
     test('generateExpandedContent coverage - empty fields', () {
       final course = Course(
         id: 'test_course_2',
