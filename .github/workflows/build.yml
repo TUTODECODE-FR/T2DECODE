@@ -24,6 +24,8 @@ jobs:
       # The analysis requires to retrieve dependencies and build successfully
       - name: Build
         run: make get && make build-macos
+      - name: Generate Coverage Report
+        run: flutter test --coverage
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@7006c4492b2e0ee0f816d36501671557c97f5995 # v8.1.0
         env:
