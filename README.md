@@ -56,11 +56,11 @@
 
 ## 🛡️ Posture de Sécurité & Audits Continus
 
-La sécurité n'est pas une option, c'est le cœur de T2DECODE. Nous appliquons les standards de développement les plus stricts du marché pour garantir une fiabilité absolue.
+La sécurité est au cœur de l'architecture de T2DECODE. Nous appliquons des standards de développement rigoureux pour viser un très haut niveau de fiabilité.
 
 | Métrique de Confiance | Implémentation | Preuve |
 | :--- | :--- | :--- |
-| **Score de Qualité (SAST)** | Triple A (Sécurité, Fiabilité, Maintenabilité) via **SonarQube** et **CodeQL**. | [![SonarQube Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=TUTODECODE-FR_T2DECODE&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=TUTODECODE-FR_T2DECODE) |
+| **Score de Qualité (SAST)** | Analyse de code statique continue via **SonarQube** et **CodeQL**. | [![SonarQube Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=TUTODECODE-FR_T2DECODE&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=TUTODECODE-FR_T2DECODE) |
 | **Audit des Dépendances** | Vérification anti-CVE automatisée par **Google OSV-Scanner**. | *Pipeline CI/CD (GitHub Actions)* |
 | **Pentest Automatisé** | Analyse dynamique des binaires Android par **MobSF** à chaque publication. | *Pipeline CI/CD* |
 | **Pratiques de Développement** | Respect des critères de l'Open Source Security Foundation (OpenSSF). | [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge)](https://scorecard.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE) |
@@ -280,7 +280,7 @@ make build-linux    # Construction de l'exécutable natif Linux
 Le projet T2DECODE est développé et soutenu par l'**Association TUTODECODE**, structure relevant de l'Économie Sociale et Solidaire (ESS).  
 Notre mission est de démocratiser la maîtrise des infrastructures informatiques et de la cybersécurité défensive en fournissant des outils souverains, auditable et respectueux de la vie privée.
 
-Dans une démarche absolue de transparence et de rigueur, l'association publie ses identifiants légaux officiels :
+Dans une démarche de transparence, l'association publie ses identifiants légaux officiels :
 
 - **Éditeur** : Association Loi 1901 TUTO DECODE
 - **Directeur de Publication** : Maxime MARTIN CIVET
