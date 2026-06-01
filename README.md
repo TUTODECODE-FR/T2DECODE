@@ -56,7 +56,22 @@
 
 ## 🛡️ Posture de Sécurité & Audits Continus
 
-La sécurité est au cœur de l'architecture de T2DECODE. Nous appliquons des standards de développement rigoureux pour viser un très haut niveau de fiabilité.
+La sécurité est au cœur de l'architecture de T2DECODE. Nous appliquons des standards de développement rigoureux pour viser un très haut niveau de fiabilité, avec une configuration transparente et auditable.
+
+### 1. Sécurité CI/CD (Pipelines Automatisés)
+L'intégralité de nos chaînes de validation de sécurité est open source et configurée dans le dossier [`.github/workflows/`](.github/workflows/).
+- **Analyse Statique (SAST)** : **SonarQube** et **CodeQL** s'exécutent à chaque Pull Request pour garantir un score AAA (Sécurité, Fiabilité, Maintenabilité). Configuration visible via `sonar-project.properties`.
+- **Scan de Vulnérabilités** : **Google OSV-Scanner** audite continuellement les dépendances du projet contre les CVE mondiales connues (`osv-scanner.yml`).
+- **Pentest Automatisé** : **MobSF (Mobile Security Framework)** effectue une analyse dynamique de l'APK Android généré pour bloquer toute faille d'exécution (`mobsf.yml`).
+- **OpenSSF Scorecard** : Audit continu des bonnes pratiques de sécurité Open Source.
+
+### 2. Sécurité au Runtime (In-App)
+Notre architecture "Zero Trust" locale est implémentée en Dart natif directement dans [`lib/core/security/`](lib/core/security/).
+- **Anti-Tampering Actif** : Au démarrage, le système recalcule les empreintes SHA-256 de tous les assets via `assets/asset_checksums.json`. Toute modification malveillante du binaire après compilation est immédiatement détectée.
+- **Authenticité & Certificats** : Vérification stricte des signatures et métadonnées de l'Association TUTODECODE stockées de manière chiffrée (via `flutter_secure_storage`).
+- **Conception Air-Gapped** : Aucune télémétrie, aucun SDK de pistage, aucun appel API cloud. Le fonctionnement est 100% hors-ligne.
+
+### 3. Tableau de Bord en Temps Réel
 
 | Métrique de Confiance | Implémentation | Preuve |
 | :--- | :--- | :--- |
