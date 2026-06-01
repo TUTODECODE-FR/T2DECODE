@@ -28,5 +28,28 @@ void main() {
       expect(expanded, isNotEmpty);
       expect(expanded.contains('Intro'), isTrue);
     });
+    test('generateExpandedContent coverage - empty fields', () {
+      final course = Course(
+        id: 'test_course_2',
+        title: 'Test Course 2',
+        description: 'Desc',
+        category: 'network',
+        level: 'Débutant',
+        duration: '1h',
+        keywords: [], // Empty keywords
+        chapters: [
+          CourseChapter(
+            id: 'c2',
+            title: 'Intro 2',
+            content: 'Just text',
+            duration: ' ', // Empty duration
+            codeBlocks: [], // Empty code blocks
+          )
+        ]
+      );
+
+      final expanded = CourseExpansion.expandChapterContent(course, course.chapters[0], 0);
+      expect(expanded, isNotEmpty);
+    });
   });
 }
