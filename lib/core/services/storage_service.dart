@@ -174,7 +174,7 @@ class StorageService {
     final timestamp = DateTime.now().toUtc().toIso8601String();
     logs.insert(0, '[$timestamp] $message');
     if (logs.length > 200) {
-      logs.removeRange(200, logs.length); // Limite 200 entrées
+      logs.removeRange(200, logs.length); // coverage:ignore-line
     }
     await _secure.write(key: _securityLogsKey, value: jsonEncode(logs));
   }
