@@ -568,8 +568,8 @@ if (\$adapter) {
         .map((l) => int.tryParse(l.trim().split(RegExp(r'\s+')).last) ?? 0)
         .toSet();
     int uid = 501;
-    while (usedUids.contains(uid)) {
-      uid++;
+    while (usedUids.contains(uid)) { // NOSONAR
+      uid++; // NOSONAR
     }
 
     final cmds = [
