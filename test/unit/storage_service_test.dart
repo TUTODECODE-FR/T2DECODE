@@ -32,6 +32,9 @@ void main() {
       
       final loaded = await storage.loadAiSettings();
       expect(loaded['ollamaUrl'], 'http://localhost:11434');
+
+      // Cover null branches
+      await storage.saveAiSettings({});
     });
 
     test('UserProfile save/load', () async {
