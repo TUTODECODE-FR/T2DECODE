@@ -15,6 +15,8 @@
   <!-- CI & Distribution Badges -->
   <p>
     <a href="https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1A1D2E&color=3DDC84" alt="CI"></a>
+    <a href="https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/mobsf.yml"><img src="https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/mobsf.yml?label=MobSF%20Pentest&style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1b1510" alt="MobSF Pentest"></a>
+    <a href="https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/osv-scanner.yml"><img src="https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/osv-scanner.yml?label=Google%20OSV&style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1b1510" alt="OSV Scanner"></a>
     <a href="https://github.com/TUTODECODE-FR/T2DECODE/releases/latest"><img src="https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=F5EBDA&labelColor=1A1D2E&logoColor=F5EBDA" alt="Release"></a>
     <a href="https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12"><img src="https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6" alt="Mac App Store"></a>
     <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=1A1D2E&color=02569B" alt="Flutter"></a>
@@ -30,7 +32,6 @@
 
   <!-- Security Scans Badges -->
   <p>
-    <a href="https://snyk.io/test/github/TUTODECODE-FR/T2DECODE"><img src="https://snyk.io/test/github/TUTODECODE-FR/T2DECODE/badge.svg" alt="Snyk Security"></a>
     <a href="https://sonarcloud.io/summary/new_code?id=TUTODECODE-FR_T2DECODE"><img src="https://sonarcloud.io/api/project_badges/measure?project=TUTODECODE-FR_T2DECODE&metric=alert_status" alt="SonarQube Quality Gate"></a>
     <a href="https://sonarcloud.io/summary/new_code?id=TUTODECODE-FR_T2DECODE"><img src="https://sonarcloud.io/api/project_badges/measure?project=TUTODECODE-FR_T2DECODE&metric=security_rating" alt="Security Rating"></a>
   </p>
@@ -59,8 +60,9 @@ La sécurité n'est pas une option, c'est le cœur de T2DECODE. Nous appliquons 
 
 | Métrique de Confiance | Implémentation | Preuve |
 | :--- | :--- | :--- |
-| **Analyse Statique (SAST)** | Vérification en continu par **SonarQube** et **CodeQL** à chaque modification. | [![SonarQube Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=TUTODECODE-FR_T2DECODE&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=TUTODECODE-FR_T2DECODE) |
-| **Sécurité des Dépendances** | Audit automatisé de la chaîne logistique logicielle par **Snyk**. | [![Snyk Security](https://snyk.io/test/github/TUTODECODE-FR/T2DECODE/badge.svg)](https://snyk.io/test/github/TUTODECODE-FR/T2DECODE) |
+| **Score de Qualité (SAST)** | Triple A (Sécurité, Fiabilité, Maintenabilité) via **SonarQube** et **CodeQL**. | [![SonarQube Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=TUTODECODE-FR_T2DECODE&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=TUTODECODE-FR_T2DECODE) |
+| **Audit des Dépendances** | Vérification anti-CVE automatisée par **Google OSV-Scanner**. | *Pipeline CI/CD (GitHub Actions)* |
+| **Pentest Automatisé** | Analyse dynamique des binaires Android par **MobSF** à chaque publication. | *Pipeline CI/CD* |
 | **Pratiques de Développement** | Respect des critères de l'Open Source Security Foundation (OpenSSF). | [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge)](https://scorecard.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE) |
 | **Anti-Tampering** | Vérification d'intégrité SHA-256 des assets au démarrage de l'application. | `IdentityVerificationService` |
 | **Zéro Télémétrie** | Aucun appel API sortant (air-gapped par conception). RGPD strict. | [Politique Privacy](RGPD.md) |

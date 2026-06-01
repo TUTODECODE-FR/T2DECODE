@@ -28,7 +28,7 @@ ARM_SRC=""
 X64_SRC=""
 if [[ -d "$HOOK_BUILD_DIR" ]]; then
   for f in "$HOOK_BUILD_DIR"/*/objective_c.dylib; do
-    [ -f "$f" ] || continue
+    [[ -f "$f" ]] || continue
     info="$(lipo -info "$f" 2>/dev/null || true)"
     case "$info" in
       *"architecture: arm64"*|*"are: arm64"*) ARM_SRC="${ARM_SRC:-$f}" ;;
