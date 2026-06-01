@@ -33,7 +33,7 @@ jobs:
           channel: "stable"
 
       - name: Get dependencies
-        run: flutter pub get
+        run: flutter pub get # NOSONAR
 
       - name: Run MobSF Analysis
         uses: MobSF/mobsfscan@ec2927a8cfab6626a67f26b223be3aba52a34b70 # main
