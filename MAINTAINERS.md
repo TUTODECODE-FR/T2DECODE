@@ -1,5 +1,7 @@
 # Maintainers
 
-The following people are officially maintaining the T2DECODE repository:
+Le projet T2DECODE est officiellement édité et maintenu par l'**Association TUTODECODE** (SIREN: 102 763 133). 
+C'est l'Association, en tant que personne morale, qui assume la responsabilité légale et éditoriale du projet.
 
-- **Maxime MARTIN CIVET** (@itswinancher) - Lead Developer & Architect
+Les validations techniques du code (Code Review) sur GitHub sont opérées par :
+- @itswinancher (Agissant techniquement pour le compte de l'Association)
