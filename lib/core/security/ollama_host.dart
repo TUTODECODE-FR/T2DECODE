@@ -10,7 +10,7 @@
 library ollama_host;
 
 class OllamaHost {
-  static const String defaultBaseUrl = 'http://localhost:11434';
+  static const String defaultBaseUrl = 'http://localhost:11434'; // NOSONAR
 
   static String normalize(String raw) {
     final trimmed = raw.trim();

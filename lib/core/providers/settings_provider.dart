@@ -12,7 +12,7 @@ class SettingsProvider with ChangeNotifier {
   bool _securityUpdates = true;
   bool _contentUpdates = true;
   bool _demoMode = false;
-  String _ollamaUrl = 'http://localhost:11434';
+  String _ollamaUrl = 'http://localhost:11434'; // NOSONAR
   String _ollamaModel = 'qwen2.5:1.5b';
   String _tutorPersonality = 'Socratique';
   double _terminalFontSize = 14.0;

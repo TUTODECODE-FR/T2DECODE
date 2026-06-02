@@ -1048,7 +1048,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
           hash = sha512.convert(utf8.encode(_hashInputController.text)).toString();
           break;
         case 'MD5':
-          hash = md5.convert(utf8.encode(_hashInputController.text)).toString();
+          hash = md5.convert(utf8.encode(_hashInputController.text)).toString(); // NOSONAR - Educational
           break;
         default:
           hash = sha256.convert(utf8.encode(_hashInputController.text)).toString();
