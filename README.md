@@ -162,7 +162,7 @@ flowchart TB
 
 1. ⚡ **100% Air-Gapped Ready** : Aucune connexion Internet requise après l'installation. L'application et tous ses modules sont autonomes.
 2. 🧠 **IA & RAG Locaux (Ollama)** : Connecteur intégré de streaming HTTP vers votre instance locale Ollama. Accédez à un tuteur LLM privatif capable d'interroger directement vos cours (RAG).
-3. 🌐 **Réseau LAN P2P (Ghost Link)** : Module de communication par diffusion UDP sur réseau local. Messagerie instantanée décentralisée et chiffrée de bout en bout entre pairs d'un même sous-réseau.
+3. 🌐 **Réseau LAN P2P (Ghost Link)** : *[En cours de développement]* Actuellement, l'interface visuelle est prête. À terme, ce module intégrera le réseau sous-jacent **T2C-Phantom** (développé en Go via libp2p) pour offrir une véritable messagerie instantanée décentralisée et chiffrée de bout en bout entre pairs d'un même sous-réseau, sans serveur central.
 4. 🚫 **Zéro Télémétrie & Zéro Tracking** : Aucun appel réseau externe, aucun pistage (*analytics*), aucune collecte de données. L'intégrité de vos données est totale ([Politique RGPD](RGPD.md)).
 
 ### Modèle de Confiance
@@ -188,7 +188,7 @@ flowchart TB
 | Fonctionnalité | Description | Documentation |
 | :--- | :--- | :--- |
 | 🧠 **Ghost AI (IA Locale)** | Tuteur conversationnel en streaming connecté à Ollama. Compatible Phi-3, Llama 3.2, Mistral, Qwen, CodeLlama. | [docs/ollama.md](docs/ollama.md) |
-| 🔗 **Ghost Link (LAN P2P)** | Découverte automatique de pairs via UDP et chat chiffré en réseau local de bout en bout sans serveur central. | [docs/architecture.md](docs/architecture.md) |
+| 🔗 **Ghost Link (LAN P2P)** | **[WIP - En cours de développement]** Interface implémentée. À terme : Découverte automatique de pairs et chat chiffré via libp2p (T2C-Phantom) sans serveur central. | [docs/architecture.md](docs/architecture.md) |
 | 🔬 **Laboratoires Intégrés** | 9 simulateurs interactifs : Réseau (NetKit), Système, Cloud, Cryptographie, Linux, Algorithmes et Préparation CTF. | [docs/labs.md](docs/labs.md) |
 | 🛠️ **Multi-Outils Offline** | 15+ outils de productivité : Hash (SHA/MD5), CIDR IPv4/v6, Chmod, CRON, JSON Formatter, Base64, ASCII, Syslog, etc. | [docs/tools.md](docs/tools.md) |
 | 🔒 **Sécurité au Démarrage** | Vérification automatique des sommes de contrôle SHA-256 (`assets/asset_checksums.json`) et protection anti-tampering. | [docs/security-model.md](docs/security-model.md) |
