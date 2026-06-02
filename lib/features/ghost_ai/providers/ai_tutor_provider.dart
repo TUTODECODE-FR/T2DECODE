@@ -64,7 +64,7 @@ class AiTutorProvider with ChangeNotifier {
   final Map<String, dynamic> _userProgress = {};
   
   // Ollama connection
-  String _ollamaUrl = 'http://localhost:11434';
+  String _ollamaUrl = 'http://localhost:11434'; // NOSONAR
   Timer? _connectionCheckTimer;
 
   // Getters
@@ -109,7 +109,7 @@ class AiTutorProvider with ChangeNotifier {
   Future<void> _loadSettings() async {
     try {
       final settings = await _storage.loadAiSettings();
-      _ollamaUrl = settings['ollamaUrl'] ?? 'http://localhost:11434';
+      _ollamaUrl = settings['ollamaUrl'] ?? 'http://localhost:11434'; // NOSONAR
       _selectedModel = settings['selectedModel'] ?? 'llama2';
       notifyListeners();
     } catch (e) {

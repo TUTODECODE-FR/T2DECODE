@@ -40,8 +40,8 @@ class _HashToolScreenState extends State<HashToolScreen> {
     Digest digest;
     
     switch (_algo) {
-      case 'MD5': digest = md5.convert(bytes); break;
-      case 'SHA-1': digest = sha1.convert(bytes); break;
+      case 'MD5': digest = md5.convert(bytes); break; // NOSONAR - Educational
+      case 'SHA-1': digest = sha1.convert(bytes); break; // NOSONAR - Educational
       case 'SHA-256': digest = sha256.convert(bytes); break;
       default: digest = sha256.convert(bytes);
     }
