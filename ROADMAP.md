@@ -10,7 +10,10 @@ T2DECODE est en constante évolution pour devenir la plateforme de référence p
 - [x] Vérification de l'intégrité Air-Gapped (AssetChecksums).
 - [ ] Optimisation des performances sur les architectures ARM natives (Linux/macOS).
 
-### Phase 2 : Expansion des Simulateurs
+### Phase 2 : T2C-Phantom & Réseau Décentralisé (Prochaine étape)
+L'objectif majeur de cette phase est le développement du réseau sous-jacent pour la fonctionnalité Ghost Link.
+- [ ] **T2C-Phantom** : Un réseau proxy décentralisé développé en **Go** utilisant **libp2p**.
+- [ ] **Ghost Link (véritable P2P)** : Découverte de pairs dynamique et messagerie chiffrée de bout en bout sans serveur centralisé, s'appuyant sur T2C-Phantom.
 - [ ] **Simulateur de Forensique** : Outils de base pour analyser des dumps réseau (.pcap) hors ligne.
 - [ ] **Simulateur Cloud** : Apprendre la configuration IAM, les buckets AWS/GCP en environnement simulé local.
 - [ ] **Nouvelle API pour modules** : Permettre à la communauté de créer des mini-outils (plugins) chargeables dynamiquement.
