@@ -26,7 +26,6 @@ class _QcmWidgetState extends State<QcmWidget> {
   bool _finished = false;
   bool _isLoadingOllama = true;
   List<QuizQuestion> _activeQuestions = [];
-  bool _isDynamic = false;
 
   @override
   void initState() {
@@ -49,7 +48,6 @@ class _QcmWidgetState extends State<QcmWidget> {
         setState(() { 
           _activeQuestions = newQ; 
           _isLoadingOllama = false;
-          _isDynamic = true; 
         });
         return;
       }
