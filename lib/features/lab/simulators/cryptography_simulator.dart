@@ -621,7 +621,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0D1117),
+                      color: TdcColors.surfaceAlt,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: TdcColors.border),
                     ),
@@ -907,7 +907,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                           width: double.infinity,
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF0D1117),
+                            color: TdcColors.surfaceAlt,
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: TdcColors.border),
                           ),

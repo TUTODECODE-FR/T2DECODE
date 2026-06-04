@@ -1,14 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../data/course_repository.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
+import 'package:tutodecode/core/providers/settings_provider.dart';
+import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 
 class QcmWidget extends StatefulWidget {
   final List<QuizQuestion> questions;
+  final String? chapterContent;
   final void Function(bool success)? onComplete;
 
-  const QcmWidget({required this.questions, this.onComplete, super.key});
+  const QcmWidget({required this.questions, this.chapterContent, this.onComplete, super.key});
 
   @override
   State<QcmWidget> createState() => _QcmWidgetState();
@@ -20,18 +24,48 @@ class _QcmWidgetState extends State<QcmWidget> {
   int? _selected;
   bool _validated = false;
   bool _finished = false;
+  bool _isLoadingOllama = true;
+  List<QuizQuestion> _activeQuestions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _activeQuestions = widget.questions;
+    _initOllama();
+  }
+
+  Future<void> _initOllama() async {
+    if (widget.chapterContent == null) {
+      if (mounted) setState(() => _isLoadingOllama = false);
+      return;
+    }
+    final status = await OllamaService.checkStatus(includeModels: false);
+    if (status.running) {
+      if (!mounted) return;
+      final model = context.read<SettingsProvider>().ollamaModel;
+      final newQ = await OllamaService.generateQcm(model, widget.chapterContent!);
+      if (newQ != null && newQ.isNotEmpty && mounted) {
+        setState(() { 
+          _activeQuestions = newQ; 
+          _isLoadingOllama = false;
+        });
+        return;
+      }
+    }
+    if (mounted) setState(() => _isLoadingOllama = false);
+  }
 
   void _validate() {
     setState(() {
       _validated = true;
-      if (_selected == widget.questions[_current].correctIndex) {
+      if (_selected == _activeQuestions[_current].correctIndex) {
         _score++;
       }
     });
   }
 
   void _next() {
-    if (_current < widget.questions.length - 1) {
+    if (_current < _activeQuestions.length - 1) {
       setState(() {
         _current++;
         _selected = null;
@@ -41,14 +75,33 @@ class _QcmWidgetState extends State<QcmWidget> {
       setState(() {
         _finished = true;
       });
-      widget.onComplete?.call(_score == widget.questions.length);
+      widget.onComplete?.call(_score == _activeQuestions.length);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoadingOllama) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(40),
+        decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.lg,
+          border: Border.all(color: TdcColors.border),
+        ),
+        child: Column(
+          children: [
+            const CircularProgressIndicator(color: TdcColors.accent),
+            const SizedBox(height: 16),
+            Text('Ollama génère un QCM unique...', style: TextStyle(color: TdcColors.accent.withValues(alpha: 0.8), fontSize: 13, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      );
+    }
+
     if (_finished) {
-      final success = _score == widget.questions.length;
+      final success = _score == _activeQuestions.length;
       return Container(
         width: double.infinity,
         padding: const EdgeInsets.all(24),
@@ -67,7 +120,7 @@ class _QcmWidgetState extends State<QcmWidget> {
             ),
             const SizedBox(height: 20),
             Text(
-              'Résultat : $_score / ${widget.questions.length}',
+              'Résultat : $_score / ${_activeQuestions.length}',
               style: const TextStyle(color: TdcColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
@@ -117,7 +170,7 @@ class _QcmWidgetState extends State<QcmWidget> {
       );
     }
 
-    final q = widget.questions[_current];
+    final q = _activeQuestions[_current];
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -146,7 +199,7 @@ class _QcmWidgetState extends State<QcmWidget> {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  'QUESTION ${_current + 1} SUR ${widget.questions.length}',
+                  'QUESTION ${_current + 1} SUR ${_activeQuestions.length}',
                   style: const TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1),
                 ),
               ),
@@ -276,7 +329,7 @@ class _QcmWidgetState extends State<QcmWidget> {
               ),
               child: Text(
                 _validated 
-                    ? (_current < widget.questions.length - 1 ? 'QUESTION SUIVANTE' : 'VOIR MON RÉSULTAT')
+                    ? (_current < _activeQuestions.length - 1 ? 'QUESTION SUIVANTE' : 'VOIR MON RÉSULTAT')
                     : 'VALIDER MA RÉPONSE',
                 style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
               ),

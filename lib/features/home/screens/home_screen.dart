@@ -283,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
           logo,
           SizedBox(height: TdcAdaptive.space(context, 24)),
           Text(
-            'APPRENDRE.\\nCONSTRUIRE.\\nCOMPRENDRE.',
+            'APPRENDRE.\nCONSTRUIRE.\nCOMPRENDRE.',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: TdcColors.textPrimary,

@@ -438,7 +438,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
                   child: Text(
                     '${process.pid}',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: TdcColors.textPrimary,
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
@@ -877,7 +877,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
             '1. HARDWARE (MATÉRIEL)',
             'CPU, RAM, Disque, GPU',
             'La base physique de l\'informatique.',
-            Colors.grey,
+            TdcColors.textMuted,
             Icons.memory,
           ),
           const SizedBox(height: 40),

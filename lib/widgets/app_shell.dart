@@ -106,11 +106,14 @@ class _AppShellState extends State<AppShell> {
       children: [
         GestureDetector(
           onTap: () => AppNavigator.pushReplacementNamed('/'),
-          child: const Text('Accueil',
-              style: TextStyle(
-                  color: TdcColors.textMuted,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500)),
+          child: const MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: Text('Accueil',
+                style: TextStyle(
+                    color: TdcColors.textMuted,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500)),
+          ),
         ),
         if (items.isNotEmpty)
           ...items.map((item) => Row(
@@ -122,16 +125,26 @@ class _AppShellState extends State<AppShell> {
                         size: 14,
                         color: TdcColors.textMuted.withValues(alpha: 0.5)),
                   ),
-                  Text(item.value,
-                      style: TextStyle(
-                        color: item.key == activeRoute
-                            ? TdcColors.accent
-                            : TdcColors.textSecondary,
-                        fontSize: 13,
-                        fontWeight: item.key == activeRoute
-                            ? FontWeight.bold
-                            : FontWeight.w500,
-                      )),
+                  MouseRegion(
+                    cursor: item.key == activeRoute ? SystemMouseCursors.basic : SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (item.key != activeRoute) {
+                          AppNavigator.pushNamed(item.key);
+                        }
+                      },
+                      child: Text(item.value,
+                          style: TextStyle(
+                            color: item.key == activeRoute
+                                ? TdcColors.accent
+                                : TdcColors.textSecondary,
+                            fontSize: 13,
+                            fontWeight: item.key == activeRoute
+                                ? FontWeight.bold
+                                : FontWeight.w500,
+                          )),
+                    ),
+                  ),
                 ],
               )),
       ],

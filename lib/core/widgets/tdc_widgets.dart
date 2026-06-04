@@ -346,3 +346,94 @@ class TdcKeyboardShortcut extends StatelessWidget {
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────
+// TdcToolHeader — En-tête standardisé pour les outils
+// ─────────────────────────────────────────────────────────────
+class TdcToolHeader extends StatelessWidget {
+  final String title;
+  final String description;
+  final String howToUse;
+
+  const TdcToolHeader({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.howToUse,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: TdcColors.surface,
+        borderRadius: TdcRadius.lg,
+        border: Border.all(color: TdcColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.info_outline, color: TdcColors.accent, size: 24),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            description,
+            style: const TextStyle(
+              color: TdcColors.textSecondary,
+              fontSize: 14,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: TdcColors.bg,
+              borderRadius: TdcRadius.md,
+              border: Border.all(color: TdcColors.border.withValues(alpha: 0.5)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'COMMENT ÇA FONCTIONNE ?',
+                  style: TextStyle(
+                    color: TdcColors.textMuted,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  howToUse,
+                  style: const TextStyle(
+                    color: TdcColors.textSecondary,
+                    fontSize: 13,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

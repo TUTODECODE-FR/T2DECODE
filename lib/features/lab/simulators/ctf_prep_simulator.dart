@@ -125,9 +125,9 @@ services:
           backgroundColor: TdcColors.success,
           content: Row(
             children: [
-              Icon(Icons.stars, color: Colors.white),
+              Icon(Icons.stars, color: TdcColors.textPrimary),
               SizedBox(width: 8),
-              Text('Bravo ! Flag correct. +100 XP', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              Text('Bravo ! Flag correct. +100 XP', style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -138,9 +138,9 @@ services:
           backgroundColor: TdcColors.danger,
           content: Row(
             children: [
-              Icon(Icons.error_outline, color: Colors.white),
+              Icon(Icons.error_outline, color: TdcColors.textPrimary),
               SizedBox(width: 8),
-              Text('Flag incorrect. Essayez encore !', style: TextStyle(color: Colors.white)),
+              Text('Flag incorrect. Essayez encore !', style: TextStyle(color: TdcColors.textPrimary)),
             ],
           ),
         ),

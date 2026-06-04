@@ -1,3 +1,4 @@
+import 'package:tutodecode/core/theme/app_theme.dart';
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
@@ -8,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/features/lab/lab_catalog.dart';
+import 'package:tutodecode/features/lab/widgets/lab_theory_panel.dart';
+import 'package:tutodecode/features/lab/data/lab_theory_data.dart';
 
 // ── Widget principal ─────────────────────────────────────────
 
@@ -46,7 +49,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
     final isNarrow = w < 700;
 
     return Container(
-      color: const Color(0xFF0F0F1A),
+      color: TdcColors.surfaceElevated,
       child: isNarrow ? _buildMobileLayout() : _buildSidebarLayout(),
     );
   }
@@ -60,9 +63,9 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
         Container(
           width: 220,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.03),
+            color: TdcColors.textPrimary.withValues(alpha: 0.03),
             border: Border(
-              right: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+              right: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.08)),
             ),
           ),
           child: Column(
@@ -77,12 +80,12 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     Row(
                       children: [
                         Icon(Icons.science,
-                            color: Colors.blue.shade400, size: 20),
+                            color: TdcColors.infoDim, size: 20),
                         const SizedBox(width: 8),
                         const Text(
                           'SIMULATION CORE',
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: TdcColors.info,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.5,
@@ -94,14 +97,14 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     Text(
                       '${labCatalog.length} simulations',
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: TdcColors.textPrimary.withValues(alpha: 0.4),
                         fontSize: 11,
                       ),
                     ),
                   ],
                 ),
               ),
-              const Divider(color: Colors.white12, height: 1),
+              const Divider(color: TdcColors.border, height: 1),
               const SizedBox(height: 8),
               // Liste des labs
               Expanded(
@@ -117,14 +120,14 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   border: Border(
-                    top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+                    top: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.08)),
                   ),
                 ),
                 child: Column(
                   children: [
-                    _buildFooterStat('SERVEURS', '12 ACTIVE', Colors.green),
+                    _buildFooterStat('SERVEURS', '12 ACTIVE', TdcColors.success),
                     const SizedBox(height: 6),
-                    _buildFooterStat('UPTIME', '99.9%', Colors.blue),
+                    _buildFooterStat('UPTIME', '99.9%', TdcColors.info),
                   ],
                 ),
               ),
@@ -176,7 +179,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                   Text(
                     lab.label,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white70,
+                      color: isSelected ? TdcColors.textPrimary : TdcColors.textPrimary,
                       fontSize: 13,
                       fontWeight:
                           isSelected ? FontWeight.w700 : FontWeight.w500,
@@ -185,7 +188,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                   Text(
                     lab.subtitle,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.35),
+                      color: TdcColors.textPrimary.withValues(alpha: 0.35),
                       fontSize: 10,
                     ),
                     maxLines: 1,
@@ -227,25 +230,25 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? lab.color.withValues(alpha: 0.2)
-                        : Colors.white.withValues(alpha: 0.05),
+                        : TdcColors.textPrimary.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isSelected
                           ? lab.color.withValues(alpha: 0.6)
-                          : Colors.white.withValues(alpha: 0.1),
+                          : TdcColors.textPrimary.withValues(alpha: 0.1),
                     ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(lab.icon,
-                          color: isSelected ? lab.color : Colors.white54,
+                          color: isSelected ? lab.color : TdcColors.textSecondary,
                           size: 14),
                       const SizedBox(width: 6),
                       Text(
                         lab.label,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.white54,
+                          color: isSelected ? TdcColors.textPrimary : TdcColors.textSecondary,
                           fontSize: 12,
                           fontWeight:
                               isSelected ? FontWeight.w700 : FontWeight.w400,
@@ -258,7 +261,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
             },
           ),
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: TdcColors.textPrimary.withValues(alpha: 0.1), height: 1),
         Expanded(child: _buildSimulatorPane()),
       ],
     );
@@ -292,7 +295,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                 decoration: BoxDecoration(
                   border: Border(
-                    bottom: BorderSide(color: Colors.white.withValues(alpha: 0.07)),
+                    bottom: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.07)),
                   ),
                 ),
                 child: Row(
@@ -323,7 +326,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                         Text(
                           lab.subtitle,
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.5),
+                            color: TdcColors.textPrimary.withValues(alpha: 0.5),
                             fontSize: 12,
                           ),
                         ),
@@ -333,7 +336,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     Text(
                       '${_selectedIndex + 1} / ${labCatalog.length}',
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.25),
+                        color: TdcColors.textPrimary.withValues(alpha: 0.25),
                         fontSize: 11,
                         fontFamily: 'monospace',
                       ),
@@ -343,14 +346,43 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
               ),
             // Simulateur lui-même
             Expanded(
-              child: lab.hasOwnHeader
-                  // Les simulateurs avec header propre occupent toute la zone sans padding
-                  ? lab.build()
-                  // Les simulateurs théoriques ont un padding confortable
-                  : Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: lab.build(),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: lab.hasOwnHeader
+                        // Les simulateurs avec header propre occupent toute la zone sans padding
+                        ? lab.build()
+                        // Les simulateurs théoriques ont un padding confortable
+                        : Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: lab.build(),
+                          ),
+                  ),
+                  Positioned(
+                    bottom: 24,
+                    right: 24,
+                    child: FloatingActionButton.extended(
+                      heroTag: 'theory_fab_${lab.id}',
+                      elevation: 4,
+                      onPressed: () {
+                         LabTheoryPanel.show(
+                           context, 
+                           title: "Théorie : ${lab.label}", 
+                           markdownContent: labTheoryData[lab.id] ?? "La théorie pour ce module est en cours de rédaction...", 
+                           accentColor: lab.color,
+                         );
+                      },
+                      backgroundColor: TdcColors.surfaceAlt,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: BorderSide(color: lab.color.withValues(alpha: 0.3)),
+                      ),
+                      icon: Icon(Icons.menu_book, color: lab.color, size: 18),
+                      label: Text("Théorie", style: TextStyle(color: lab.color, fontWeight: FontWeight.bold, fontSize: 13)),
                     ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

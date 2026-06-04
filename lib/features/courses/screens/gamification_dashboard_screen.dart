@@ -9,6 +9,7 @@ import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/features/courses/providers/gamification_provider.dart';
 import 'package:tutodecode/features/courses/models/gamification_models.dart';
+import 'package:tutodecode/features/courses/widgets/skill_radar_chart.dart';
 
 class GamificationDashboardScreen extends StatefulWidget {
   const GamificationDashboardScreen({super.key});
@@ -308,12 +309,45 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildRadarChart(provider),
+          const SizedBox(height: 24),
           _buildProgressByCategory(provider),
           const SizedBox(height: 24),
           _buildSkillTrees(provider),
           const SizedBox(height: 24),
           _buildLearningPaths(provider),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRadarChart(GamificationProvider provider) {
+    final progress = provider.getProgressByCategory();
+    return Card(
+      color: TdcColors.surface,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const Text(
+              'Radar de Compétences',
+              style: TextStyle(
+                color: TdcColors.textPrimary,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Center(
+              child: SkillRadarChart(
+                data: progress,
+                radius: 110,
+                color: TdcColors.accent,
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
   }

@@ -77,6 +77,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
                 const SizedBox(height: 16),
                 QcmWidget(
                   questions: chapter.quiz!,
+                  chapterContent: chapter.content,
                   onComplete: (ok) { if (ok) prov.toggleCompleted(course.id, chapter.id); },
                 ),
               ],

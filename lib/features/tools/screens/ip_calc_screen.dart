@@ -93,6 +93,11 @@ class _IPCalcScreenState extends State<IPCalcScreen> {
     return TdcPageWrapper(
       child: ListView(
         children: [
+          const TdcToolHeader(
+            title: 'Calculateur IP',
+            description: 'Calculez vos sous-réseaux, masques et plages d\'adresses rapidement.',
+            howToUse: 'Saisissez une adresse IP et un masque de sous-réseau (CIDR) et cliquez sur Calculer. L\'outil générera l\'adresse de réseau, de broadcast, ainsi que la plage d\'hôtes valides. Vous pouvez copier ces informations en un clic.',
+          ),
           _buildCard('CONFIGURATION RÉSEAU', [
             Row(children: [
               Expanded(flex: 3, child: TextField(controller: _ipController, decoration: const InputDecoration(labelText: 'IP', hintText: '192.168.1.1'))),

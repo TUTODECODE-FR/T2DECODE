@@ -159,12 +159,12 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: Colors.blueGrey.withValues(alpha: 0.2),
+                  color: TdcColors.surfaceAlt,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Text(
                   'Ollama local',
-                  style: TextStyle(color: Colors.blueGrey, fontSize: 10),
+                  style: TextStyle(color: TdcColors.textMuted, fontSize: 10),
                 ),
               ),
             ],
@@ -195,7 +195,7 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
           Text(
             'Pose ta question sur\n${widget.topic}',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 14),
+            style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 14),
           ),
         ],
       ),
@@ -223,7 +223,7 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
               border: Border.all(
                 color: msg.isUser
                     ? widget.accentColor.withValues(alpha: 0.4)
-                    : Colors.white.withValues(alpha: 0.06),
+                    : TdcColors.textPrimary.withValues(alpha: 0.06),
               ),
             ),
             child: msg.isStreaming && msg.text.isEmpty
@@ -231,13 +231,13 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
                     width: 40,
                     child: LinearProgressIndicator(
                       color: widget.accentColor,
-                      backgroundColor: Colors.white10,
+                      backgroundColor: TdcColors.textPrimary.withValues(alpha: 0.1),
                     ),
                   )
                 : SelectableText(
                     msg.text,
                     style: TextStyle(
-                      color: msg.isUser ? Colors.white : Colors.white.withValues(alpha: 0.9),
+                      color: msg.isUser ? TdcColors.textPrimary : TdcColors.textPrimary.withValues(alpha: 0.9),
                       fontSize: 13,
                       height: 1.5,
                     ),
@@ -280,7 +280,7 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: TdcColors.surface,
-        border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
+        border: Border(top: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.06))),
       ),
       child: Row(
         children: [
@@ -288,12 +288,12 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
             child: TextField(
               controller: _inputController,
               enabled: !_loading,
-              style: const TextStyle(color: Colors.white, fontSize: 13),
+              style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
               decoration: InputDecoration(
                 hintText: 'Pose ta question…',
-                hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 13),
+                hintStyle: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.3), fontSize: 13),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
+                fillColor: TdcColors.textPrimary.withValues(alpha: 0.05),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -312,13 +312,13 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
               height: 40,
               decoration: BoxDecoration(
                 color: _loading
-                    ? Colors.white10
+                    ? TdcColors.textPrimary.withValues(alpha: 0.1)
                     : widget.accentColor.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 _loading ? Icons.hourglass_top : Icons.send,
-                color: _loading ? Colors.white24 : Colors.white,
+                color: _loading ? TdcColors.textMuted : TdcColors.textPrimary,
                 size: 18,
               ),
             ),

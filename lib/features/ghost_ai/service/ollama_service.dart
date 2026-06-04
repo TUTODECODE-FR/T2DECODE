@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:tutodecode/core/services/storage_service.dart';
+import 'package:tutodecode/features/courses/data/course_repository.dart';
 
 const List<Map<String, String>> kRecommendedModels = [
   {'id': 'phi3',      'label': 'Phi-3 Mini',    'desc': 'Microsoft — ultra rapide, 2.3 GB',  'size': '2.3 GB'},
@@ -218,6 +219,47 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
       }
     } finally {
       client.close();
+    }
+  }
+
+  static Future<List<QuizQuestion>?> generateQcm(String model, String content) async {
+    try {
+      await _ensureAllowed();
+      final baseUrl = await _base;
+      final body = jsonEncode({
+        'model': model,
+        'messages': [
+          {
+            'role': 'system',
+            'content': 'Génère un QCM de 3 questions basé sur le texte fourni. Format JSON STRICT : [{"question": "...", "choices": ["...", "..."], "correctIndex": 0, "explanation": "..."}]. Ne renvoie RIEN d\'autre que du JSON valide.'
+          },
+          {'role': 'user', 'content': content},
+        ],
+        'stream': false,
+        'options': {'temperature': 0.1}, // Faible créativité pour respecter le format JSON
+      });
+
+      final req = http.Request('POST', Uri.parse('$baseUrl/api/chat'));
+      req.headers['Content-Type'] = 'application/json';
+      req.body = body;
+
+      final client = http.Client();
+      final res = await client.send(req).timeout(const Duration(seconds: 30));
+      final str = await res.stream.bytesToString();
+      final data = jsonDecode(str);
+      final msg = data['message']['content'].toString();
+      
+      String jsonStr = msg.trim();
+      if (jsonStr.contains('```json')) {
+        jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
+      } else if (jsonStr.contains('```')) {
+        jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
+      }
+      
+      final arr = jsonDecode(jsonStr) as List;
+      return arr.map((e) => QuizQuestion.fromMap(e as Map<String, dynamic>)).toList();
+    } catch (e) {
+      return null;
     }
   }
 }

@@ -36,6 +36,8 @@ import 'features/tools/screens/archive_tool_screen.dart';
 import 'features/tools/screens/ssh_tool_screen.dart';
 import 'features/tools/screens/dns_ref_tool_screen.dart';
 import 'features/tools/screens/anonymity_tool_screen.dart';
+import 'features/tools/screens/regex_tester_screen.dart';
+import 'features/tools/screens/cyber_converter_screen.dart';
 import 'features/ghost_ai/screens/ai_chat_screen.dart';
 import 'features/ghost_ai/screens/ai_config_screen.dart';
 import 'features/ghost_ai/screens/ai_tutor_screen.dart';
@@ -146,6 +148,8 @@ class TutoDeCodeApp extends StatelessWidget {
                   case '/tools/ssh':            return const SshToolScreen();
                   case '/tools/dns':            return const DnsRefToolScreen();
                   case '/tools/anonymity':      return const AnonymityToolScreen();
+                  case '/tools/regex':          return const RegexTesterScreen();
+                  case '/tools/cyber-converter':return const CyberConverterScreen();
                   case '/dashboard':            return const DashboardScreen();
 
                   case '/admin':                return const AdminScreen();

@@ -416,7 +416,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                 ),
                 child: Icon(
                   _getInstanceIcon(instance.status),
-                  color: Colors.white,
+                  color: TdcColors.textPrimary,
                   size: 16,
                 ),
               ),
@@ -452,7 +452,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                 child: Text(
                   instance.status,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: TdcColors.textPrimary,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -708,7 +708,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                 child: Text(
                   service.status,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: TdcColors.textPrimary,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -872,7 +872,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                 ),
                 child: Icon(
                   _getDeploymentIcon(deployment.status),
-                  color: Colors.white,
+                  color: TdcColors.textPrimary,
                   size: 16,
                 ),
               ),
@@ -908,7 +908,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                 child: Text(
                   deployment.status,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: TdcColors.textPrimary,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),

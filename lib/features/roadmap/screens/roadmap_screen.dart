@@ -17,9 +17,9 @@ class _Path {
 }
 
 const _kPaths = [
-  _Path(id: 'beginner', title: 'Débutant Cybersécurité', subtitle: 'Fondations, Réseau, Linux', icon: Icons.school, color: Color(0xFF10B981), courseIds: ['linux-basics', 'network-101', 'security-intro']),
-  _Path(id: 'pentester', title: 'Pentester (Red Team)', subtitle: 'Audit, Exploitation, Web', icon: Icons.bug_report, color: Color(0xFFEF4444), courseIds: ['web-hacking', 'network-pentest', 'privilege-escalation']),
-  _Path(id: 'forensic', title: 'Expert Forensic (Blue Team)', subtitle: 'Analyse, Réponse, SIEM', icon: Icons.search, color: Color(0xFF3B82F6), courseIds: ['incident-response', 'memory-forensics', 'malware-analysis']),
+  _Path(id: 'beginner', title: 'Débutant Cybersécurité', subtitle: 'Fondations, Réseau, Linux', icon: Icons.school, color: Color(0xFF10B981), courseIds: ['networking-fundamentals', 'linux-basics', 'cybersecurity-basics']),
+  _Path(id: 'pentester', title: 'Pentester (Red Team)', subtitle: 'Scripting, Réseau avancé', icon: Icons.bug_report, color: Color(0xFFEF4444), courseIds: ['bash-scripting', 'python-basics', 'sql-basics']),
+  _Path(id: 'forensic', title: 'Expert Forensic (Blue Team)', subtitle: 'Cryptographie, Dev, Data', icon: Icons.search, color: Color(0xFF3B82F6), courseIds: ['cryptography-applied', 'regex-mastery', 'python-advanced']),
 ];
 
 class RoadmapScreen extends StatefulWidget {

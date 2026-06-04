@@ -229,7 +229,11 @@ class _MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final gl = context.watch<GhostLinkService>();
     final isOwn = message.isOwn;
+    final isFile = message.fileName != null;
+    final isFileComplete = message.fileData != null;
+    final progress = gl.getFileProgress(message.id);
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -268,7 +272,39 @@ class _MessageBubble extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 4),
                       child: Text(message.fromName, style: TextStyle(color: accentColor, fontSize: 11, fontWeight: FontWeight.bold)),
                     ),
-                  Text(message.text, style: TextStyle(color: isOwn ? Colors.white : TdcColors.textPrimary, fontSize: 14, height: 1.4)),
+                  if (isFile) ...[
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.insert_drive_file, color: isOwn ? Colors.white : accentColor, size: 24),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(message.fileName!, style: TextStyle(color: isOwn ? Colors.white : TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 14), overflow: TextOverflow.ellipsis),
+                              if (!isFileComplete && progress > 0)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: LinearProgressIndicator(
+                                    value: progress,
+                                    backgroundColor: isOwn ? Colors.white.withValues(alpha: 0.3) : TdcColors.border,
+                                    valueColor: AlwaysStoppedAnimation<Color>(isOwn ? Colors.white : accentColor),
+                                  ),
+                                ),
+                              if (!isFileComplete)
+                                Text('${(progress * 100).toInt()}%', style: TextStyle(color: isOwn ? Colors.white.withValues(alpha: 0.7) : TdcColors.textMuted, fontSize: 10)),
+                              if (isFileComplete)
+                                Text('Fichier transféré', style: TextStyle(color: isOwn ? Colors.white.withValues(alpha: 0.7) : TdcColors.success, fontSize: 10, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                  if (!isFile || message.text.isNotEmpty)
+                    Text(message.text, style: TextStyle(color: isOwn ? Colors.white : TdcColors.textPrimary, fontSize: 14, height: 1.4)),
                   const SizedBox(height: 4),
                   Text(
                     _formatTime(message.timestamp),

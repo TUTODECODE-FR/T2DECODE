@@ -18,6 +18,7 @@ import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/features/lab/widgets/sim_step_card.dart';
 import 'package:tutodecode/features/lab/widgets/lab_widgets.dart';
 import 'package:tutodecode/features/lab/widgets/simulator_ai_assistant.dart';
+import 'package:tutodecode/features/lab/widgets/interactive_terminal.dart';
 
 // ─── Modèles ────────────────────────────────────────────────
 
@@ -145,7 +146,7 @@ final _linuxScenarios = [
         title: 'Targets & Services',
         protocol: 'Units',
         icon: Icons.account_tree,
-        color: Color(0xFF10B981),
+        color: TdcColors.success,
         description: 'Les targets orchestrent l\'activation des services.',
         detail:
             'Les targets systemd remplacent les runlevels SysV : '
@@ -159,7 +160,7 @@ final _linuxScenarios = [
         title: 'Login prompt',
         protocol: 'getty / PAM',
         icon: Icons.login,
-        color: Color(0xFF22C55E),
+        color: TdcColors.success,
         description: 'Le terminal ou l\'interface graphique invite l\'utilisateur à se connecter.',
         detail:
             'Sur un TTY, systemd lance getty (agetty) qui affiche le prompt login:. '
@@ -177,13 +178,13 @@ final _linuxScenarios = [
     name: 'Système de fichiers',
     subtitle: 'VFS, inodes, permissions',
     icon: Icons.folder_open,
-    color: const Color(0xFFF97316),
+    color: TdcColors.warning,
     steps: [
       const _Step(
         title: 'Tout est fichier (VFS)',
         protocol: 'VFS',
         icon: Icons.device_hub,
-        color: Color(0xFF94A3B8),
+        color: TdcColors.textTertiary,
         description: 'Le Virtual File System abstrait tous les types de ressources.',
         detail:
             'La philosophie Unix "everything is a file" est implémentée via le VFS du noyau. '
@@ -197,7 +198,7 @@ final _linuxScenarios = [
         title: 'Arborescence / (FHS)',
         protocol: 'FHS 3.0',
         icon: Icons.account_tree,
-        color: const Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: 'Le Filesystem Hierarchy Standard définit la structure des répertoires.',
         detail:
             'Les répertoires principaux et leur rôle :\n'
@@ -211,7 +212,7 @@ final _linuxScenarios = [
             '/boot → noyau et bootloader\n'
             '/lib, /usr → bibliothèques et programmes',
         visual: () => const SimTreeDiagram(
-          color: Color(0xFFF59E0B),
+          color: TdcColors.warning,
           root: SimTreeNode(
             '/',
             sublabel: 'root fs',
@@ -232,7 +233,7 @@ final _linuxScenarios = [
         title: 'Inodes & blocs',
         protocol: 'ext4 / xfs',
         icon: Icons.storage,
-        color: Color(0xFF8B5CF6),
+        color: TdcColors.coral,
         description: 'Un fichier = un inode + des blocs de données.',
         detail:
             'Un inode stocke les métadonnées d\'un fichier : UID/GID propriétaires, '
@@ -247,7 +248,7 @@ final _linuxScenarios = [
         title: 'Montage (mount)',
         protocol: 'mount / fstab',
         icon: Icons.layers,
-        color: Color(0xFF06B6D4),
+        color: TdcColors.info,
         description: 'Attacher un système de fichiers à l\'arborescence.',
         detail:
             'mount(2) attache un block device (ex: /dev/sda2) ou un type spécial (tmpfs, '
@@ -262,7 +263,7 @@ final _linuxScenarios = [
         title: 'Permissions UNIX (rwx)',
         protocol: 'chmod / ACL',
         icon: Icons.lock,
-        color: const Color(0xFF10B981),
+        color: TdcColors.success,
         description: 'Contrôle d\'accès propriétaire/groupe/autres.',
         detail:
             'Chaque fichier a 3 triplets rwx : propriétaire (u), groupe (g), autres (o). '
@@ -272,7 +273,7 @@ final _linuxScenarios = [
             'si les permissions du fichier le permettent.\n'
             'Les ACL POSIX (setfacl/getfacl) permettent des règles plus fines par utilisateur.',
         visual: () => const SimCodeBlock(
-          color: Color(0xFF10B981),
+          color: TdcColors.success,
           title: 'permissions',
           code: '-rwxr-xr-- 1 root users 4096 jan 1 /usr/bin/exemple\n'
               'rwx = owner(root): read+write+exec\n'
@@ -287,7 +288,7 @@ final _linuxScenarios = [
         title: '/proc & /sys pseudo-fs',
         protocol: 'procfs / sysfs',
         icon: Icons.memory,
-        color: Color(0xFFF97316),
+        color: TdcColors.warning,
         description: 'L\'interface entre le noyau et l\'espace utilisateur.',
         detail:
             '/proc expose l\'état des processus (/proc/PID/maps, /proc/PID/fd), '
@@ -306,13 +307,13 @@ final _linuxScenarios = [
     name: 'Processus & Signaux',
     subtitle: 'fork, scheduler, IPC',
     icon: Icons.memory,
-    color: const Color(0xFF3B82F6),
+    color: TdcColors.info,
     steps: [
       const _Step(
         title: 'fork() + exec()',
         protocol: 'syscall',
         icon: Icons.call_split,
-        color: Color(0xFF94A3B8),
+        color: TdcColors.textTertiary,
         description: 'Tout processus naît d\'un fork, tout programme naît d\'un exec.',
         detail:
             'fork(2) duplique le processus courant via le mécanisme Copy-on-Write (COW) : '
@@ -327,7 +328,7 @@ final _linuxScenarios = [
         title: 'États processus (R/S/D/Z)',
         protocol: 'task_struct',
         icon: Icons.bar_chart,
-        color: const Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: 'Les états de vie d\'un processus dans le noyau.',
         detail:
             'R (Running/Runnable) : en cours d\'exécution ou prêt dans la run queue.\n'
@@ -338,7 +339,7 @@ final _linuxScenarios = [
             'Z (Zombie) : terminé mais le père n\'a pas encore appelé wait() — '
             'l\'entrée dans la table des processus subsiste pour transmettre le code retour.',
         visual: () => const SimFlowDiagram(
-          color: Color(0xFFF59E0B),
+          color: TdcColors.warning,
           nodes: [
             SimFlowNode('Running(R)', Icons.play_arrow),
             SimFlowNode('Sleeping(S)', Icons.bedtime),
@@ -353,7 +354,7 @@ final _linuxScenarios = [
         title: 'Scheduler CFS',
         protocol: 'sched_fair',
         icon: Icons.balance,
-        color: Color(0xFF8B5CF6),
+        color: TdcColors.coral,
         description: 'Le Completely Fair Scheduler répartit équitablement le CPU.',
         detail:
             'Le CFS (Linux 2.6.23+) utilise un red-black tree trié par vruntime '
@@ -368,7 +369,7 @@ final _linuxScenarios = [
         title: 'Signaux (SIGTERM/SIGKILL)',
         protocol: 'kill(2)',
         icon: Icons.warning_amber,
-        color: Color(0xFFEF4444),
+        color: TdcColors.danger,
         description: 'Communication asynchrone entre processus et noyau.',
         detail:
             'Les signaux sont des notifications asynchrones envoyées à un processus. '
@@ -383,7 +384,7 @@ final _linuxScenarios = [
         title: 'Pipes & IPC',
         protocol: 'pipe / socket',
         icon: Icons.swap_horiz,
-        color: Color(0xFF06B6D4),
+        color: TdcColors.info,
         description: 'Communication inter-processus via pipes, sockets, mémoire partagée.',
         detail:
             'Pipe anonyme (|) : buffer noyau unidirectionnel entre deux fd. '
@@ -398,7 +399,7 @@ final _linuxScenarios = [
         title: 'Namespaces & cgroups',
         protocol: 'containers',
         icon: Icons.grid_view,
-        color: Color(0xFF3B82F6),
+        color: TdcColors.info,
         description: 'Les briques fondamentales des conteneurs Linux.',
         detail:
             'Les namespaces isolent les ressources système par processus :\n'
@@ -419,13 +420,13 @@ final _linuxScenarios = [
     name: 'Réseau sous Linux',
     subtitle: 'ip, iptables, sockets',
     icon: Icons.lan,
-    color: const Color(0xFF06B6D4),
+    color: TdcColors.info,
     steps: [
       const _Step(
         title: 'Interfaces réseau (ip link)',
         protocol: 'netdev',
         icon: Icons.settings_ethernet,
-        color: Color(0xFF94A3B8),
+        color: TdcColors.textTertiary,
         description: 'Lister et configurer les interfaces réseau.',
         detail:
             'ip link show liste toutes les interfaces : eth0, wlan0, lo (loopback 127.0.0.1/8), '
@@ -439,7 +440,7 @@ final _linuxScenarios = [
         title: 'Table de routage (ip route)',
         protocol: 'routing',
         icon: Icons.route,
-        color: Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: 'Décider par où envoyer chaque paquet IP.',
         detail:
             'ip route show affiche la table de routage principale. '
@@ -453,7 +454,7 @@ final _linuxScenarios = [
         title: 'iptables / nftables',
         protocol: 'netfilter',
         icon: Icons.shield,
-        color: const Color(0xFFEF4444),
+        color: TdcColors.danger,
         description: 'Filtrage, NAT et manipulation des paquets dans le noyau.',
         detail:
             'Netfilter est le framework noyau de traitement des paquets avec des hooks '
@@ -465,11 +466,11 @@ final _linuxScenarios = [
             'avec une syntaxe plus lisible et de meilleures performances.',
         visual: () => const SimLayerStack(
           layers: [
-            SimLayer('PREROUTING', 'DNAT, routing decision', Color(0xFFEF4444)),
-            SimLayer('INPUT', 'paquets pour cet hôte', Color(0xFFF97316)),
-            SimLayer('FORWARD', 'paquets routés via cet hôte', Color(0xFFF59E0B)),
-            SimLayer('OUTPUT', 'paquets générés localement', Color(0xFF3B82F6)),
-            SimLayer('POSTROUTING', 'SNAT, MASQUERADE', Color(0xFF8B5CF6)),
+            SimLayer('PREROUTING', 'DNAT, routing decision', TdcColors.danger),
+            SimLayer('INPUT', 'paquets pour cet hôte', TdcColors.warning),
+            SimLayer('FORWARD', 'paquets routés via cet hôte', TdcColors.warning),
+            SimLayer('OUTPUT', 'paquets générés localement', TdcColors.info),
+            SimLayer('POSTROUTING', 'SNAT, MASQUERADE', TdcColors.coral),
           ],
         ),
       ),
@@ -477,7 +478,7 @@ final _linuxScenarios = [
         title: 'Sockets & ports',
         protocol: 'socket(2)',
         icon: Icons.cable,
-        color: Color(0xFF8B5CF6),
+        color: TdcColors.coral,
         description: 'L\'API d\'abstraction réseau pour les applications.',
         detail:
             'socket(AF_INET, SOCK_STREAM, 0) crée un socket TCP. '
@@ -492,7 +493,7 @@ final _linuxScenarios = [
         title: 'ss / netstat',
         protocol: 'diagnostics',
         icon: Icons.monitor,
-        color: Color(0xFF10B981),
+        color: TdcColors.success,
         description: 'Inspecter l\'état des connexions et des sockets.',
         detail:
             'ss (socket statistics) remplace netstat, plus rapide car interroge directement '
@@ -508,7 +509,7 @@ final _linuxScenarios = [
         title: 'NetworkManager / systemd-networkd',
         protocol: 'netmgmt',
         icon: Icons.wifi,
-        color: Color(0xFF06B6D4),
+        color: TdcColors.info,
         description: 'Gestion de la configuration réseau au niveau système.',
         detail:
             'NetworkManager est le standard sur les distributions desktop (Fedora, Ubuntu, Debian). '
@@ -527,13 +528,13 @@ final _linuxScenarios = [
     name: 'Droits & Sécurité',
     subtitle: 'UID, sudo, MAC, audit',
     icon: Icons.security,
-    color: const Color(0xFFEF4444),
+    color: TdcColors.danger,
     steps: [
       const _Step(
         title: 'UID/GID root vs utilisateur',
         protocol: 'credentials',
         icon: Icons.person,
-        color: Color(0xFF94A3B8),
+        color: TdcColors.textTertiary,
         description: 'Le modèle d\'identité UNIX basé sur les identifiants numériques.',
         detail:
             'Chaque processus possède real UID (RUID), effective UID (EUID) et saved UID (SUID). '
@@ -548,7 +549,7 @@ final _linuxScenarios = [
         title: 'sudo & su',
         protocol: 'PAM / sudoers',
         icon: Icons.admin_panel_settings,
-        color: Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: 'Élévation de privilèges contrôlée.',
         detail:
             'su - root ouvre un shell root après authentification par le mot de passe root. '
@@ -562,7 +563,7 @@ final _linuxScenarios = [
         title: 'chmod / chown / umask',
         protocol: 'DAC',
         icon: Icons.lock_outline,
-        color: const Color(0xFF8B5CF6),
+        color: TdcColors.coral,
         description: 'Gestion des permissions de fichiers (Discretionary Access Control).',
         detail:
             'chmod modifie les bits de permission : chmod u+x, chmod 644, chmod -R 755 dir/.\n'
@@ -573,7 +574,7 @@ final _linuxScenarios = [
             'Un umask plus restrictif (027) est recommandé en production : '
             'les autres (o) n\'ont aucun droit par défaut.',
         visual: () => const SimKeyValue(
-          color: Color(0xFF8B5CF6),
+          color: TdcColors.coral,
           entries: [
             SimKVEntry('rwx', '7 = read(4)+write(2)+exec(1)'),
             SimKVEntry('r-x', '5 = read(4)+exec(1)'),
@@ -587,7 +588,7 @@ final _linuxScenarios = [
         title: 'SUID / SGID / Sticky bit',
         protocol: 'special bits',
         icon: Icons.star_border,
-        color: Color(0xFFEF4444),
+        color: TdcColors.danger,
         description: 'Les bits spéciaux qui modifient le comportement des permissions.',
         detail:
             'SUID (Set-User-ID) sur un exécutable : le processus tourne avec EUID = propriétaire '
@@ -602,7 +603,7 @@ final _linuxScenarios = [
         title: 'SELinux / AppArmor (MAC)',
         protocol: 'LSM',
         icon: Icons.verified_user,
-        color: Color(0xFF10B981),
+        color: TdcColors.success,
         description: 'Contrôle d\'accès obligatoire au-dessus des permissions UNIX.',
         detail:
             'Les Linux Security Modules (LSM) ajoutent une couche MAC (Mandatory Access Control) '
@@ -618,7 +619,7 @@ final _linuxScenarios = [
         title: 'Audit & journald',
         protocol: 'auditd / journald',
         icon: Icons.receipt_long,
-        color: Color(0xFFEF4444),
+        color: TdcColors.danger,
         description: 'Traçabilité et centralisation des événements de sécurité.',
         detail:
             'auditd collecte les événements noyau (appels système, accès fichiers, connexions réseau) '
@@ -637,13 +638,13 @@ final _linuxScenarios = [
     name: 'Scripting Bash',
     subtitle: 'Du shebang aux pièges avancés',
     icon: Icons.terminal,
-    color: const Color(0xFFA855F7),
+    color: TdcColors.electric,
     steps: [
       const _Step(
         title: 'Shebang & interpréteur',
         protocol: '#!',
         icon: Icons.code,
-        color: Color(0xFF94A3B8),
+        color: TdcColors.textTertiary,
         description: 'La première ligne qui désigne l\'interpréteur du script.',
         detail:
             '#!/usr/bin/env bash est préféré à #!/bin/bash car env recherche bash dans le PATH, '
@@ -658,7 +659,7 @@ final _linuxScenarios = [
         title: 'Variables & expansions',
         protocol: 'parameter expansion',
         icon: Icons.data_object,
-        color: const Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: 'Manipuler les données avec les expansions Bash.',
         detail:
             'VAR="valeur" (pas d\'espaces autour de =). '
@@ -670,7 +671,7 @@ final _linuxScenarios = [
             'Substitution de commande : result=\$(commande) (préfère \$() à `backticks`). '
             'Arithmétique : ((count++)), \$(( 2 ** 10 ))=1024.',
         visual: () => const SimCodeBlock(
-          color: Color(0xFFF59E0B),
+          color: TdcColors.warning,
           title: 'Bash',
           code: '#!/usr/bin/env bash\n'
               'set -euo pipefail\n'
@@ -692,7 +693,7 @@ final _linuxScenarios = [
         title: 'Structures if / for / while',
         protocol: 'control flow',
         icon: Icons.account_tree,
-        color: const Color(0xFF8B5CF6),
+        color: TdcColors.coral,
         description: 'Contrôler le flux d\'exécution du script.',
         detail:
             'if [[ condition ]]; then ... elif ...; else ...; fi\\n'
@@ -704,7 +705,7 @@ final _linuxScenarios = [
             'while IFS= read -r line; do ...; done < fichier.txt '
             '(lire un fichier ligne par ligne sans perdre les espaces).',
         visual: () => const SimCodeBlock(
-          color: Color(0xFF8B5CF6),
+          color: TdcColors.coral,
           title: 'Bash',
           code: '# if/elif/else\\n'
               'if [[ -f "\$FILE" ]]; then\\n'
@@ -728,7 +729,7 @@ final _linuxScenarios = [
         title: 'Fonctions & sous-shells',
         protocol: 'functions',
         icon: Icons.functions,
-        color: Color(0xFF06B6D4),
+        color: TdcColors.info,
         description: 'Structurer le code en fonctions réutilisables.',
         detail:
             'function ma_fonction() { ... } ou ma_fonction() { ... } (les deux syntaxes valides).\\n'
@@ -743,7 +744,7 @@ final _linuxScenarios = [
         title: 'Pipes & redirections',
         protocol: 'I/O redirection',
         icon: Icons.arrow_forward,
-        color: Color(0xFF10B981),
+        color: TdcColors.success,
         description: 'Rediriger les flux stdin, stdout, stderr.',
         detail:
             'cmd > fichier : redirige stdout (crée/écrase). >> : append.\\n'
@@ -760,7 +761,7 @@ final _linuxScenarios = [
         title: 'Signaux & trap',
         protocol: 'trap / signal',
         icon: Icons.flag,
-        color: Color(0xFFA855F7),
+        color: TdcColors.electric,
         description: 'Gérer les signaux et le nettoyage en sortie.',
         detail:
             'trap "commande" SIGNAL permet de réagir aux signaux dans un script.\n'
@@ -1132,11 +1133,11 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: onTap != null ? color.withValues(alpha: 0.14) : Colors.white.withValues(alpha: 0.03),
+          color: onTap != null ? color.withValues(alpha: 0.14) : TdcColors.textPrimary.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.45) : Colors.white12),
+          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.45) : TdcColors.border),
         ),
-        child: Text(label, style: TextStyle(color: onTap != null ? color : Colors.white24, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+        child: Text(label, style: TextStyle(color: onTap != null ? color : TdcColors.textMuted, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -1144,15 +1145,15 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
   // 0 – Boot sequence ────────────────────────────────────────
   Widget _buildBootPanel() {
     final phases = <_LP3>[
-      const _LP3('BIOS/UEFI', 'POST & Secure Boot check', Color(0xFF94A3B8)),
-      const _LP3('GRUB2', 'Loading kernel vmlinuz-6.8.0', Color(0xFF6366F1)),
-      const _LP3('Kernel', 'Décompression & init mémoire', Color(0xFF8B5CF6)),
-      const _LP3('initramfs', 'Montage rootfs temporaire', Color(0xFFF59E0B)),
-      const _LP3('systemd', 'PID 1 — démarrage services', Color(0xFF06B6D4)),
-      const _LP3('Login', 'getty → login prompt ready', Color(0xFF22C55E)),
+      const _LP3('BIOS/UEFI', 'POST & Secure Boot check', TdcColors.textTertiary),
+      const _LP3('GRUB2', 'Loading kernel vmlinuz-6.8.0', TdcColors.electric),
+      const _LP3('Kernel', 'Décompression & init mémoire', TdcColors.coral),
+      const _LP3('initramfs', 'Montage rootfs temporaire', TdcColors.warning),
+      const _LP3('systemd', 'PID 1 — démarrage services', TdcColors.info),
+      const _LP3('Login', 'getty → login prompt ready', TdcColors.success),
     ];
     return _shellBox(
-      color: const Color(0xFF22C55E),
+      color: TdcColors.success,
       title: 'LINUX BOOT SEQUENCE',
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -1160,9 +1161,9 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              _cmdBtn('Boot', const Color(0xFF22C55E), _booting ? null : _startBoot),
+              _cmdBtn('Boot', TdcColors.success, _booting ? null : _startBoot),
               const SizedBox(width: 8),
-              _cmdBtn('Reset', Colors.grey, _resetBoot),
+              _cmdBtn('Reset', TdcColors.textMuted, _resetBoot),
             ]),
             const SizedBox(height: 10),
             ...List.generate(phases.length, (i) {
@@ -1175,18 +1176,18 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
                 decoration: BoxDecoration(
                   color: done || active ? c.withValues(alpha: 0.10) : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
-                  border: Border(left: BorderSide(color: done || active ? c : Colors.white12, width: 3)),
+                  border: Border(left: BorderSide(color: done || active ? c : TdcColors.border, width: 3)),
                 ),
                 child: Row(
                   children: [
                     if (active && _booting)
                       SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: c))
                     else
-                      Icon(done ? Icons.check_circle : Icons.radio_button_unchecked, color: done ? c : Colors.white24, size: 14),
+                      Icon(done ? Icons.check_circle : Icons.radio_button_unchecked, color: done ? c : TdcColors.textMuted, size: 14),
                     const SizedBox(width: 8),
-                    Text('[${phases[i].a}]', style: TextStyle(color: done || active ? c : Colors.white24, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                    Text('[${phases[i].a}]', style: TextStyle(color: done || active ? c : TdcColors.textMuted, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
                     const SizedBox(width: 6),
-                    Expanded(child: Text(phases[i].b, style: TextStyle(color: done || active ? Colors.white60 : Colors.white24, fontSize: 10), overflow: TextOverflow.ellipsis)),
+                    Expanded(child: Text(phases[i].b, style: TextStyle(color: done || active ? TdcColors.textSecondary : TdcColors.textMuted, fontSize: 10), overflow: TextOverflow.ellipsis)),
                   ],
                 ),
               );
@@ -1194,7 +1195,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
             if (_bootPhase >= 6)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: const Text('Ubuntu 24.04 LTS \n l', style: TextStyle(color: Color(0xFF22C55E), fontSize: 11, fontFamily: 'monospace'))
+                child: const Text('Ubuntu 24.04 LTS \n l', style: TextStyle(color: TdcColors.success, fontSize: 11, fontFamily: 'monospace'))
                     .animate().fadeIn(),
               ),
           ],
@@ -1207,7 +1208,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
   Widget _buildFsPanel() {
     final entries = _fsTree[_fsPath] ?? [];
     return _shellBox(
-      color: const Color(0xFF06B6D4),
+      color: TdcColors.info,
       title: 'VFS NAVIGATOR — ls $_fsPath',
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -1216,12 +1217,12 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
           children: [
             Row(
               children: [
-                Text('user@linux:', style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11, fontFamily: 'monospace')),
+                Text('user@linux:', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.35), fontSize: 11, fontFamily: 'monospace')),
                 const SizedBox(width: 4),
-                Text(_fsPath, style: const TextStyle(color: Color(0xFF06B6D4), fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
-                Text('\$ ls', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11, fontFamily: 'monospace')),
+                Text(_fsPath, style: const TextStyle(color: TdcColors.info, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                Text('\$ ls', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 11, fontFamily: 'monospace')),
                 const Spacer(),
-                if (_fsPath != '/') _cmdBtn('cd ..', Colors.grey, _fsUp),
+                if (_fsPath != '/') _cmdBtn('cd ..', TdcColors.textMuted, _fsUp),
               ],
             ),
             const SizedBox(height: 8),
@@ -1230,15 +1231,15 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
               runSpacing: 6,
               children: entries.map((e) {
                 final isDir = e.endsWith('/');
-                final color = isDir ? const Color(0xFF06B6D4) : Colors.white70;
+                final color = isDir ? TdcColors.info : TdcColors.textPrimary;
                 return GestureDetector(
                   onTap: () => _fsNavigate(e),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: isDir ? const Color(0xFF06B6D4).withValues(alpha: 0.10) : Colors.white.withValues(alpha: 0.04),
+                      color: isDir ? TdcColors.info.withValues(alpha: 0.10) : TdcColors.textPrimary.withValues(alpha: 0.04),
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: isDir ? const Color(0xFF06B6D4).withValues(alpha: 0.35) : Colors.white12),
+                      border: Border.all(color: isDir ? TdcColors.info.withValues(alpha: 0.35) : TdcColors.border),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -1253,7 +1254,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
               }).toList(),
             ),
             if (entries.isEmpty)
-              Text('(vide)', style: TextStyle(color: Colors.white.withValues(alpha: 0.25), fontSize: 11, fontFamily: 'monospace')),
+              Text('(vide)', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.25), fontSize: 11, fontFamily: 'monospace')),
           ],
         ),
       ),
@@ -1263,7 +1264,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
   // 2 – Process manager ─────────────────────────────────────
   Widget _buildProcessPanel() {
     return _shellBox(
-      color: const Color(0xFFF59E0B),
+      color: TdcColors.warning,
       title: 'PROCESS MANAGER — top',
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -1272,26 +1273,26 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
           children: [
             Row(
               children: [
-                _cmdBtn(_psRunning ? 'Stop' : 'top', const Color(0xFFF59E0B), _togglePsMonitor),
+                _cmdBtn(_psRunning ? 'Stop' : 'top', TdcColors.warning, _togglePsMonitor),
                 const SizedBox(width: 8),
                 if (_psRunning) const Row(children: [
-                  SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFF59E0B))),
+                  SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.warning)),
                   SizedBox(width: 6),
-                  Text('Monitoring…', style: TextStyle(color: Colors.white38, fontSize: 10)),
+                  Text('Monitoring…', style: TextStyle(color: TdcColors.textTertiary, fontSize: 10)),
                 ]),
               ],
             ),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(4)),
+              decoration: BoxDecoration(color: TdcColors.textPrimary.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(4)),
               child: Row(
                 children: [
-                  SizedBox(width: 40, child: Text('PID', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 80, child: Text('COMMAND', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 40, child: Text('%CPU', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 50, child: Text('%MEM', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  const SizedBox(width: 30, child: Text('STAT', style: TextStyle(color: Colors.white38, fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 40, child: Text('PID', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 80, child: Text('COMMAND', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 40, child: Text('%CPU', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 50, child: Text('%MEM', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
+                  const SizedBox(width: 30, child: Text('STAT', style: TextStyle(color: TdcColors.textTertiary, fontSize: 10, fontFamily: 'monospace'))),
                 ],
               ),
             ),
@@ -1303,18 +1304,18 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
                 itemCount: _processes.length,
                 itemBuilder: (_, i) {
                   final p = _processes[i];
-                  final cpuColor = p.cpu > 2 ? const Color(0xFFEF4444) : p.cpu > 0.5 ? const Color(0xFFF59E0B) : Colors.white60;
+                  final cpuColor = p.cpu > 2 ? TdcColors.danger : p.cpu > 0.5 ? TdcColors.warning : TdcColors.textSecondary;
                   return Row(
                     children: [
-                      SizedBox(width: 40, child: Text('${p.pid}', style: const TextStyle(color: Colors.white38, fontSize: 10, fontFamily: 'monospace'))),
-                      SizedBox(width: 80, child: Text(p.name, style: const TextStyle(color: Colors.white70, fontSize: 10, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis)),
+                      SizedBox(width: 40, child: Text('${p.pid}', style: const TextStyle(color: TdcColors.textTertiary, fontSize: 10, fontFamily: 'monospace'))),
+                      SizedBox(width: 80, child: Text(p.name, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 10, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis)),
                       SizedBox(width: 40, child: Text(p.cpu.toStringAsFixed(1), style: TextStyle(color: cpuColor, fontSize: 10, fontFamily: 'monospace'))),
-                      SizedBox(width: 50, child: Text('${p.mem.toStringAsFixed(1)}M', style: const TextStyle(color: Colors.white54, fontSize: 10, fontFamily: 'monospace'))),
-                      SizedBox(width: 30, child: Text(p.stat, style: const TextStyle(color: Colors.white38, fontSize: 10, fontFamily: 'monospace'))),
+                      SizedBox(width: 50, child: Text('${p.mem.toStringAsFixed(1)}M', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontFamily: 'monospace'))),
+                      SizedBox(width: 30, child: Text(p.stat, style: const TextStyle(color: TdcColors.textTertiary, fontSize: 10, fontFamily: 'monospace'))),
                       if (p.pid != 1 && p.pid != 2)
                         GestureDetector(
                           onTap: () => _killProcess(p.pid),
-                          child: const Icon(Icons.close, color: Color(0xFFEF4444), size: 12),
+                          child: const Icon(Icons.close, color: TdcColors.danger, size: 12),
                         ),
                     ],
                   );
@@ -1337,7 +1338,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
       const _LP2('iptables -L', '''Chain INPUT (policy DROP)\nACCEPT  tcp --  anywhere  tcp dpt:ssh\nACCEPT  tcp --  anywhere  tcp dpt:http'''),
     ];
     return _shellBox(
-      color: const Color(0xFF8B5CF6),
+      color: TdcColors.coral,
       title: 'LINUX NETWORK TOOLS',
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -1349,11 +1350,11 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
               children: [
                 Row(
                   children: [
-                    Text('\$ ${cmd.a}', style: const TextStyle(color: Color(0xFF8B5CF6), fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                    Text('\$ ${cmd.a}', style: const TextStyle(color: TdcColors.coral, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 2),
-                ...cmd.b.split('\n').map((l) => Text(l, style: const TextStyle(color: Colors.white60, fontSize: 10, fontFamily: 'monospace'))),
+                ...cmd.b.split('\n').map((l) => Text(l, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontFamily: 'monospace'))),
                 const SizedBox(height: 8),
               ],
             );
@@ -1374,7 +1375,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
       const _LP5('-rw-r-----', 'www', 'www', '640', '/var/log/nginx.log'),
     ];
     return _shellBox(
-      color: const Color(0xFFEF4444),
+      color: TdcColors.danger,
       title: 'LINUX PERMISSIONS — ls -la',
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -1383,16 +1384,16 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
           children: files.map((f) {
             final isSuid = f.e.contains('SUID');
             final isSticky = f.e.contains('sticky');
-            final color = isSuid ? const Color(0xFFEF4444) : isSticky ? const Color(0xFFF59E0B) : Colors.white60;
+            final color = isSuid ? TdcColors.danger : isSticky ? TdcColors.warning : TdcColors.textSecondary;
             return Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Row(
                 children: [
-                  Text(f.a, style: const TextStyle(color: Color(0xFF10B981), fontSize: 10, fontFamily: 'monospace')),
+                  Text(f.a, style: const TextStyle(color: TdcColors.success, fontSize: 10, fontFamily: 'monospace')),
                   const SizedBox(width: 8),
-                  SizedBox(width: 36, child: Text(f.b, style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 36, child: Text(f.c, style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 32, child: Text(f.d, style: const TextStyle(color: Color(0xFFF59E0B), fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 36, child: Text(f.b, style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 36, child: Text(f.c, style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
+                  SizedBox(width: 32, child: Text(f.d, style: const TextStyle(color: TdcColors.warning, fontSize: 10, fontFamily: 'monospace'))),
                   Expanded(child: Text(f.e, style: TextStyle(color: color, fontSize: 10, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis)),
                 ],
               ),
@@ -1405,57 +1406,13 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
 
   // 5 – Bash terminal ───────────────────────────────────────
   Widget _buildBashPanel() {
-    return _shellBox(
-      color: const Color(0xFFF59E0B),
-      title: 'BASH TERMINAL (essaie: ls, pwd, whoami, ps aux, help)',
+    return const SizedBox(
+      height: 300,
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 110),
-              child: _bashLines.isEmpty
-                  ? Text('user@linux:~\$ _', style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 11, fontFamily: 'monospace'))
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      reverse: true,
-                      itemCount: _bashLines.length,
-                      itemBuilder: (_, i) {
-                        final line = _bashLines[_bashLines.length - 1 - i];
-                        final isCmd = line.startsWith('\$');
-                        return Text(line, style: TextStyle(
-                          color: isCmd ? const Color(0xFF22C55E) : Colors.white60,
-                          fontSize: 11,
-                          fontFamily: 'monospace',
-                        ));
-                      },
-                    ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Text('user@linux:~\$ ', style: TextStyle(color: Color(0xFF22C55E), fontSize: 11, fontFamily: 'monospace')),
-                Expanded(
-                  child: TextField(
-                    controller: _bashCtrl,
-                    style: const TextStyle(color: Color(0xFFF59E0B), fontSize: 11, fontFamily: 'monospace'),
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      contentPadding: EdgeInsets.symmetric(vertical: 4),
-                      border: InputBorder.none,
-                      hintText: 'commande…',
-                      hintStyle: TextStyle(color: Colors.white24, fontSize: 11),
-                    ),
-                    onSubmitted: _runBashCommand,
-                  ),
-                ),
-                _cmdBtn('Exec', const Color(0xFFF59E0B), () => _runBashCommand(_bashCtrl.text)),
-                const SizedBox(width: 6),
-                _cmdBtn('Clear', Colors.grey, () => setState(() => _bashLines.clear())),
-              ],
-            ),
-          ],
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: InteractiveTerminal(
+          hostname: 't2decode-lab',
+          username: 'student',
         ),
       ),
     );
@@ -1803,7 +1760,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
                       height: 14,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: TdcColors.textPrimary,
                       ),
                     )
                   : Icon(finished ? Icons.refresh : Icons.play_arrow),
@@ -1816,7 +1773,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: _scenario.color,
-                foregroundColor: Colors.white,
+                foregroundColor: TdcColors.textPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -1897,7 +1854,7 @@ class _LinuxRetainButtonState extends State<_LinuxRetainButton> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('« ${widget.title} » ajouté à la Cheat Sheet ★'),
-        backgroundColor: const Color(0xFFF59E0B),
+        backgroundColor: TdcColors.warning,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
@@ -1912,22 +1869,22 @@ class _LinuxRetainButtonState extends State<_LinuxRetainButton> {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: _saved ? const Color(0xFFF59E0B).withValues(alpha: 0.18) : Colors.white.withValues(alpha: 0.05),
+          color: _saved ? TdcColors.warning.withValues(alpha: 0.18) : TdcColors.textPrimary.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: _saved ? const Color(0xFFF59E0B) : Colors.white24),
+          border: Border.all(color: _saved ? TdcColors.warning : TdcColors.textMuted),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (_loading)
-              const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: Color(0xFFF59E0B)))
+              const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: TdcColors.warning))
             else
-              Icon(_saved ? Icons.bookmark : Icons.bookmark_border, color: _saved ? const Color(0xFFF59E0B) : Colors.white38, size: 13),
+              Icon(_saved ? Icons.bookmark : Icons.bookmark_border, color: _saved ? TdcColors.warning : TdcColors.textTertiary, size: 13),
             const SizedBox(width: 5),
             Text(
               _saved ? 'Retenu ✓' : 'Retenir',
               style: TextStyle(
-                color: _saved ? const Color(0xFFF59E0B) : Colors.white38,
+                color: _saved ? TdcColors.warning : TdcColors.textTertiary,
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),

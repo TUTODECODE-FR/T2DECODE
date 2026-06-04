@@ -218,7 +218,7 @@ class SimComplexityBar extends StatelessWidget {
                                   ? Text(
                                       e.name,
                                       style: const TextStyle(
-                                        color: Colors.white,
+                                        color: TdcColors.textPrimary,
                                         fontSize: 9,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -617,7 +617,7 @@ class SimCodeBlock extends StatelessWidget {
                       height: 10,
                       margin: const EdgeInsets.only(right: 5),
                       decoration: const BoxDecoration(
-                        color: Color(0xFFEF4444),
+                        color: TdcColors.danger,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -626,7 +626,7 @@ class SimCodeBlock extends StatelessWidget {
                       height: 10,
                       margin: const EdgeInsets.only(right: 5),
                       decoration: const BoxDecoration(
-                        color: Color(0xFFF59E0B),
+                        color: TdcColors.warning,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -635,7 +635,7 @@ class SimCodeBlock extends StatelessWidget {
                       height: 10,
                       margin: const EdgeInsets.only(right: 8),
                       decoration: const BoxDecoration(
-                        color: Color(0xFF10B981),
+                        color: TdcColors.success,
                         shape: BoxShape.circle,
                       ),
                     ),
