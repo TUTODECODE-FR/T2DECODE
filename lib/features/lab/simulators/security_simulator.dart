@@ -417,7 +417,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                 child: Text(
                   vulnerability.severity,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: TdcColors.textPrimary,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -646,7 +646,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
               child: const Text(
                 'SUCCESS',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: TdcColors.textPrimary,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),
@@ -800,7 +800,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                 child: Text(
                   log.level,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: TdcColors.textPrimary,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -924,7 +924,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
     switch (severity) {
       case 'Critical': return TdcColors.security;
       case 'High': return TdcColors.crypto;
-      case 'Medium': return Colors.yellow;
+      case 'Medium': return TdcColors.warning;
       case 'Low': return TdcColors.network;
       default: return TdcColors.border;
     }

@@ -227,6 +227,24 @@ const List<ToolCatalogEntry> toolCatalog = [
     route: '/tools/anonymity',
     breadcrumb: 'Identite reseau',
   ),
+  ToolCatalogEntry(
+    title: 'Testeur Regex',
+    description:
+        'Analysez et testez vos expressions regulieres avec coloration syntaxique.',
+    icon: Icons.find_replace,
+    color: Color(0xFFF43F5E),
+    route: '/tools/regex',
+    breadcrumb: 'Regex',
+  ),
+  ToolCatalogEntry(
+    title: 'Cyber Convertisseur',
+    description:
+        'Convertissez instantanement vos donnees entre ASCII, Hex, Base64, Binaire et URL.',
+    icon: Icons.transform,
+    color: Color(0xFF3B82F6),
+    route: '/tools/cyber-converter',
+    breadcrumb: 'Cyber Conv',
+  ),
 ];
 
 Map<String, String> buildToolBreadcrumbMap() {

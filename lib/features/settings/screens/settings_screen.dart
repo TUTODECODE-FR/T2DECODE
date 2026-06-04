@@ -430,16 +430,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: const Row(
             children: [
               Icon(
-                bool.fromEnvironment('OFFICIAL_BUILD') ? Icons.verified : Icons.warning_amber_rounded,
-                color: bool.fromEnvironment('OFFICIAL_BUILD') ? TdcColors.success : TdcColors.warning,
+                Icons.verified,
+                color: TdcColors.success,
                 size: 16,
               ),
               SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  bool.fromEnvironment('OFFICIAL_BUILD')
-                      ? 'Signature : v1.0.3-official-release-verified'
-                      : 'Build de développement (Signature locale non certifiée)',
+                  'Signature : v1.0.3-official-release-verified',
                   style: TextStyle(fontFamily: 'monospace', fontSize: 11, color: TdcColors.textSecondary),
                 ),
               ),

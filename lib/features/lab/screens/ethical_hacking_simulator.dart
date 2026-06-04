@@ -68,7 +68,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
           ),
           child: Row(
             children: [
-              Icon(Icons.security, color: Colors.red.shade700, size: 28),
+              Icon(Icons.security, color: TdcColors.danger, size: 28),
               const SizedBox(width: 12),
               const Text(
                 'Laboratoire de Hacking Éthique',
@@ -82,14 +82,14 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.red.withValues(alpha: 0.1),
+                  color: TdcColors.danger.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                  border: Border.all(color: TdcColors.danger.withValues(alpha: 0.3)),
                 ),
                 child: const Text(
                   'MODE FORMATION',
                   style: TextStyle(
-                    color: Colors.red,
+                    color: TdcColors.danger,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -102,8 +102,8 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
           color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
           child: TabBar(
             controller: _tabController,
-            indicatorColor: Colors.red.shade700,
-            labelColor: Colors.red.shade700,
+            indicatorColor: TdcColors.danger,
+            labelColor: TdcColors.danger,
             unselectedLabelColor: TdcColors.textMuted,
             tabs: const [
               Tab(text: 'Nmap Scanner'),
@@ -169,11 +169,11 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
                   ElevatedButton.icon(
                     onPressed: _isScanning ? null : _startNmapScan,
                     icon: _isScanning 
-                        ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.textPrimary))
                         : const Icon(Icons.radar),
                     label: Text(_isScanning ? 'Scan en cours...' : 'Scanner'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade700,
+                      backgroundColor: TdcColors.danger,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                     ),
                   ),
@@ -181,7 +181,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
               ),
               if (_isScanning) ...[
                 const SizedBox(height: 16),
-                LinearProgressIndicator(value: _scanProgress, backgroundColor: TdcColors.surfaceAlt, valueColor: AlwaysStoppedAnimation<Color>(Colors.red.shade700)),
+                LinearProgressIndicator(value: _scanProgress, backgroundColor: TdcColors.surfaceAlt, valueColor: AlwaysStoppedAnimation<Color>(TdcColors.danger)),
               ],
             ],
           ),
@@ -190,7 +190,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
           child: Container(
             margin: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF0D1117),
+              color: TdcColors.surfaceAlt,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: TdcColors.border),
             ),
@@ -213,10 +213,10 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: result.isOpen ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
+        color: result.isOpen ? TdcColors.success.withValues(alpha: 0.1) : TdcColors.danger.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: result.isOpen ? Colors.green.withValues(alpha: 0.3) : Colors.red.withValues(alpha: 0.3),
+          color: result.isOpen ? TdcColors.success.withValues(alpha: 0.3) : TdcColors.danger.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -226,14 +226,14 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
             children: [
               Icon(
                 result.isOpen ? Icons.lock_open : Icons.lock,
-                color: result.isOpen ? Colors.green : Colors.red,
+                color: result.isOpen ? TdcColors.success : TdcColors.danger,
                 size: 16,
               ),
               const SizedBox(width: 8),
               Text(
                 '${result.ip}:${result.port}',
                 style: TextStyle(
-                  color: result.isOpen ? Colors.green : Colors.red,
+                  color: result.isOpen ? TdcColors.success : TdcColors.danger,
                   fontFamily: 'monospace',
                   fontWeight: FontWeight.bold,
                 ),
@@ -242,7 +242,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
               Text(
                 result.state,
                 style: TextStyle(
-                  color: result.isOpen ? Colors.green.shade300 : Colors.red.shade300,
+                  color: result.isOpen ? TdcColors.successDim : TdcColors.dangerDim,
                   fontSize: 12,
                 ),
               ),
@@ -334,11 +334,11 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
                   ElevatedButton.icon(
                     onPressed: _isInjecting ? null : _testSqlInjection,
                     icon: _isInjecting 
-                        ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.textPrimary))
                         : const Icon(Icons.bug_report),
                     label: Text(_isInjecting ? 'Test...' : 'Tester'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange.shade700,
+                      backgroundColor: TdcColors.warning,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                     ),
                   ),
@@ -351,7 +351,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
           child: Container(
             margin: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF0D1117),
+              color: TdcColors.surfaceAlt,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: TdcColors.border),
             ),
@@ -374,10 +374,10 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: result.isVulnerable ? Colors.orange.withValues(alpha: 0.1) : Colors.green.withValues(alpha: 0.1),
+        color: result.isVulnerable ? TdcColors.warning.withValues(alpha: 0.1) : TdcColors.success.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: result.isVulnerable ? Colors.orange.withValues(alpha: 0.3) : Colors.green.withValues(alpha: 0.3),
+          color: result.isVulnerable ? TdcColors.warning.withValues(alpha: 0.3) : TdcColors.success.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -387,14 +387,14 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
             children: [
               Icon(
                 result.isVulnerable ? Icons.warning : Icons.security,
-                color: result.isVulnerable ? Colors.orange : Colors.green,
+                color: result.isVulnerable ? TdcColors.warning : TdcColors.success,
                 size: 16,
               ),
               const SizedBox(width: 8),
               Text(
                 result.isVulnerable ? 'VULNÉRABLE' : 'SÉCURISÉ',
                 style: TextStyle(
-                  color: result.isVulnerable ? Colors.orange : Colors.green,
+                  color: result.isVulnerable ? TdcColors.warning : TdcColors.success,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -475,11 +475,11 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
                   ElevatedButton.icon(
                     onPressed: _isCracking ? null : _startPasswordCracking,
                     icon: _isCracking 
-                        ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.textPrimary))
                         : const Icon(Icons.lock_open),
                     label: Text(_isCracking ? 'Cassage...' : 'Cracker'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple.shade700,
+                      backgroundColor: TdcColors.crypto,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                     ),
                   ),
@@ -498,7 +498,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
                       child: LinearProgressIndicator(
                         value: _currentPasswordIndex / _passwordList.length,
                         backgroundColor: TdcColors.surfaceAlt,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.purple.shade700),
+                        valueColor: AlwaysStoppedAnimation<Color>(TdcColors.crypto),
                       ),
                     ),
                   ],
@@ -511,7 +511,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
           child: Container(
             margin: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF0D1117),
+              color: TdcColors.surfaceAlt,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: TdcColors.border),
             ),
@@ -534,10 +534,10 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: result.isCracked ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
+        color: result.isCracked ? TdcColors.success.withValues(alpha: 0.1) : TdcColors.danger.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: result.isCracked ? Colors.green.withValues(alpha: 0.3) : Colors.red.withValues(alpha: 0.3),
+          color: result.isCracked ? TdcColors.success.withValues(alpha: 0.3) : TdcColors.danger.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -547,14 +547,14 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
             children: [
               Icon(
                 result.isCracked ? Icons.check_circle : Icons.error,
-                color: result.isCracked ? Colors.green : Colors.red,
+                color: result.isCracked ? TdcColors.success : TdcColors.danger,
                 size: 16,
               ),
               const SizedBox(width: 8),
               Text(
                 result.isCracked ? 'CRACKÉ' : 'ÉCHEC',
                 style: TextStyle(
-                  color: result.isCracked ? Colors.green : Colors.red,
+                  color: result.isCracked ? TdcColors.success : TdcColors.danger,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -574,7 +574,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
             Text(
               'Mot de passe: ${result.password}',
               style: const TextStyle(
-                color: Colors.green,
+                color: TdcColors.success,
                 fontFamily: 'monospace',
                 fontWeight: FontWeight.bold,
               ),
@@ -623,7 +623,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
                     icon: Icon(_isSniffing ? Icons.stop : Icons.play_arrow),
                     label: Text(_isSniffing ? 'Arrêter' : 'Commencer'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _isSniffing ? Colors.red : Colors.blue.shade700,
+                      backgroundColor: _isSniffing ? TdcColors.danger : TdcColors.info,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                     ),
                   ),
@@ -646,7 +646,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
           child: Container(
             margin: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF0D1117),
+              color: TdcColors.surfaceAlt,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: TdcColors.border),
             ),
@@ -734,12 +734,12 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
 
   Color _getPacketColor(String protocol) {
     switch (protocol.toLowerCase()) {
-      case 'tcp': return Colors.blue;
-      case 'udp': return Colors.green;
-      case 'http': return Colors.orange;
-      case 'https': return Colors.purple;
-      case 'dns': return Colors.red;
-      default: return Colors.grey;
+      case 'tcp': return TdcColors.info;
+      case 'udp': return TdcColors.success;
+      case 'http': return TdcColors.warning;
+      case 'https': return TdcColors.crypto;
+      case 'dns': return TdcColors.danger;
+      default: return TdcColors.textMuted;
     }
   }
 

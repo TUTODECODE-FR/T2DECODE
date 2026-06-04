@@ -21,7 +21,16 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
   final Set<String> _favoriteRoutes = <String>{};
   bool _favoritesLoaded = false;
 
+  final TextEditingController _searchCtrl = TextEditingController();
+  String _searchQuery = '';
+
   List<ToolCatalogEntry> get _tools => toolCatalog;
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -67,8 +76,19 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final q = _searchQuery.toLowerCase();
+    
+    final filteredTools = _tools.where((t) => 
+      t.title.toLowerCase().contains(q) || t.description.toLowerCase().contains(q)
+    ).toList();
+    
+    final filteredLabs = labCatalog.where((l) => 
+      l.label.toLowerCase().contains(q) || l.subtitle.toLowerCase().contains(q)
+    ).toList();
+
     final favoriteTools =
-        _tools.where((t) => _favoriteRoutes.contains(t.route)).toList();
+        filteredTools.where((t) => _favoriteRoutes.contains(t.route)).toList();
+        
     return TdcPageWrapper(
       child: ListView(
         children: [
@@ -85,6 +105,31 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
             style: TextStyle(color: TdcColors.textSecondary, fontSize: 16),
           ),
           const SizedBox(height: 16),
+          TextField(
+            controller: _searchCtrl,
+            onChanged: (v) => setState(() => _searchQuery = v),
+            style: const TextStyle(color: TdcColors.textPrimary),
+            decoration: InputDecoration(
+              hintText: 'Rechercher un outil ou un simulateur...',
+              hintStyle: const TextStyle(color: TdcColors.textMuted),
+              prefixIcon: const Icon(Icons.search, color: TdcColors.textMuted),
+              suffixIcon: _searchQuery.isNotEmpty 
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, color: TdcColors.textMuted),
+                      onPressed: () {
+                        _searchCtrl.clear();
+                        setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: TdcColors.surfaceAlt,
+              border: OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none),
+              enabledBorder: OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide(color: TdcColors.border)),
+              focusedBorder: const OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide(color: TdcColors.accent)),
+            ),
+          ),
+          const SizedBox(height: 24),
           const Text(
             'Astuce: Clique sur l\'étoile d\'une carte pour l\'épingler ici en favoris.',
             style: TextStyle(color: TdcColors.textMuted, fontSize: 13),
@@ -104,69 +149,78 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
               style: TextStyle(color: TdcColors.textSecondary, fontSize: 14),
             ),
             const SizedBox(height: 20),
-            GridView.count(
+            GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: _crossAxisCount(context),
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 20,
-              childAspectRatio: 1.2,
-              children: [
-                for (var i = 0; i < favoriteTools.length; i++)
-                  _buildToolCard(context, i, favoriteTools[i],
-                      isFavorite: true),
-              ],
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: _crossAxisCount(context),
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                mainAxisExtent: 100,
+              ),
+              itemCount: favoriteTools.length,
+              itemBuilder: (context, i) => _buildToolCard(context, i, favoriteTools[i], isFavorite: true),
             ),
             const SizedBox(height: 32),
           ],
-          const Text(
-            'Tous les outils',
-            style: TextStyle(
-                color: TdcColors.textPrimary,
-                fontSize: 20,
-                fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: _crossAxisCount(context),
-            mainAxisSpacing: 20,
-            crossAxisSpacing: 20,
-            childAspectRatio: 1.2,
-            children: [
-              for (var i = 0; i < _tools.length; i++)
-                _buildToolCard(context, i, _tools[i],
-                    isFavorite: _favoriteRoutes.contains(_tools[i].route)),
-            ],
-          ),
-          const SizedBox(height: 32),
-          const Text(
-            'Simulateurs Interactifs',
-            style: TextStyle(
-                color: TdcColors.textPrimary,
-                fontSize: 20,
-                fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 6),
+          if (filteredTools.isNotEmpty) ...[
+            const Text(
+              'Tous les outils',
+              style: TextStyle(
+                  color: TdcColors.textPrimary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: _crossAxisCount(context),
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                mainAxisExtent: 100,
+              ),
+              itemCount: filteredTools.length,
+              itemBuilder: (context, i) => _buildToolCard(context, i, filteredTools[i], isFavorite: _favoriteRoutes.contains(filteredTools[i].route)),
+            ),
+            const SizedBox(height: 32),
+          ],
+          if (filteredLabs.isNotEmpty) ...[
+            const Text(
+              'Simulateurs Interactifs',
+              style: TextStyle(
+                  color: TdcColors.textPrimary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 6),
           const Text(
             'Acces rapide aux simulations pour pratiquer et tester en temps reel.',
             style: TextStyle(color: TdcColors.textSecondary, fontSize: 14),
           ),
           const SizedBox(height: 20),
-          GridView.count(
+          GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: _crossAxisCount(context),
-            mainAxisSpacing: 20,
-            crossAxisSpacing: 20,
-            childAspectRatio: 1.2,
-            children: [
-              for (var i = 0; i < labCatalog.length; i++)
-                _buildSimCard(context, i, labCatalog[i]),
-            ],
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _crossAxisCount(context),
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              mainAxisExtent: 100,
+            ),
+            itemCount: filteredLabs.length,
+            itemBuilder: (context, i) => _buildSimCard(context, i, filteredLabs[i]),
           ),
           const SizedBox(height: 32),
+          ] else if (filteredTools.isEmpty && filteredLabs.isEmpty) ...[
+            TdcEmptyState(
+              icon: Icons.search_off,
+              title: 'Aucun résultat',
+              subtitle: 'Aucun outil ou simulateur ne correspond à "$_searchQuery".',
+            ),
+            const SizedBox(height: 32),
+          ],
         ],
       ),
     );
@@ -178,55 +232,53 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
       child: TdcCard(
         onTap: () =>
             Navigator.pushNamed(context, '/lab', arguments: {'sim': lab.id}),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.all(16),
+        child: Row(
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: lab.color.withValues(alpha: 0.12),
-                    borderRadius: TdcRadius.md,
-                  ),
-                  child: Icon(lab.icon, color: lab.color, size: 22),
-                ),
-                const Spacer(),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: lab.color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: lab.color.withValues(alpha: 0.12),
+                borderRadius: TdcRadius.md,
+              ),
+              child: Icon(lab.icon, color: lab.color, size: 24),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
                     children: [
-                      Icon(Icons.science, color: lab.color, size: 10),
-                      const SizedBox(width: 3),
-                      Text('SIMULATION',
-                          style: TextStyle(
-                              color: lab.color,
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold)),
+                      Text(
+                        'Simulation ${lab.label}',
+                        style: const TextStyle(color: TdcColors.textPrimary, fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: lab.color.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'SIM',
+                          style: TextStyle(color: lab.color, fontSize: 9, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    lab.subtitle,
+                    style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12, height: 1.3),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
-            const Spacer(),
-            const SizedBox(height: 12),
-            Text('Simulation ${lab.label}',
-                style: const TextStyle(
-                    color: TdcColors.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text(lab.subtitle,
-                style: const TextStyle(
-                    color: TdcColors.textSecondary, fontSize: 11),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis),
           ],
         ),
       ),
@@ -239,53 +291,44 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
       delay: Duration(milliseconds: 60 * index),
       child: TdcCard(
         onTap: () => Navigator.pushNamed(context, tool.route),
-        child: Stack(
+        padding: const EdgeInsets.all(16),
+        child: Row(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: tool.color.withValues(alpha: 0.1),
-                    borderRadius: TdcRadius.md,
-                  ),
-                  child: Icon(tool.icon, color: tool.color, size: 28),
-                ),
-                const Spacer(),
-                const SizedBox(height: 16),
-                Text(
-                  tool.title,
-                  style: const TextStyle(
-                      color: TdcColors.textPrimary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  tool.description,
-                  style: const TextStyle(
-                      color: TdcColors.textSecondary,
-                      fontSize: 13,
-                      height: 1.4),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: tool.color.withValues(alpha: 0.1),
+                borderRadius: TdcRadius.md,
+              ),
+              child: Icon(tool.icon, color: tool.color, size: 24),
             ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: IconButton(
-                tooltip:
-                    isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris',
-                onPressed: () => _toggleFavorite(tool.route),
-                icon: Icon(
-                  isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
-                  color: isFavorite
-                      ? const Color(0xFFF59E0B)
-                      : TdcColors.textMuted,
-                ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    tool.title,
+                    style: const TextStyle(color: TdcColors.textPrimary, fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    tool.description,
+                    style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12, height: 1.3),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              tooltip: isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris',
+              onPressed: () => _toggleFavorite(tool.route),
+              icon: Icon(
+                isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                color: isFavorite ? const Color(0xFFF59E0B) : TdcColors.textMuted,
+                size: 20,
               ),
             ),
           ],

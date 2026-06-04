@@ -11,6 +11,8 @@ import 'package:tutodecode/features/lab/simulators/network_simulator.dart';
 import 'package:tutodecode/features/lab/simulators/security_simulator.dart';
 import 'package:tutodecode/features/lab/simulators/system_simulator.dart';
 
+import 'package:tutodecode/core/theme/app_theme.dart';
+
 class LabCatalogEntry {
   final String id;
   final String label;
@@ -37,7 +39,7 @@ final List<LabCatalogEntry> labCatalog = <LabCatalogEntry>[
     label: 'Reseau',
     subtitle: 'Ping · Scan · Traceroute',
     icon: Icons.lan,
-    color: Colors.blue,
+    color: TdcColors.network,
     hasOwnHeader: true,
     build: () => const NetworkSimulator(),
   ),
@@ -46,7 +48,7 @@ final List<LabCatalogEntry> labCatalog = <LabCatalogEntry>[
     label: 'Securite',
     subtitle: 'Attaques · Defense · CTF',
     icon: Icons.shield,
-    color: Colors.red,
+    color: TdcColors.security,
     hasOwnHeader: true,
     build: () => const SecuritySimulator(),
   ),
@@ -55,7 +57,7 @@ final List<LabCatalogEntry> labCatalog = <LabCatalogEntry>[
     label: 'CTF Prep',
     subtitle: 'Offline · Vulnérable · Contrôlé',
     icon: Icons.flag,
-    color: Colors.yellow,
+    color: TdcColors.danger,
     build: () => const CtfPrepSimulator(),
   ),
   LabCatalogEntry(
@@ -63,7 +65,7 @@ final List<LabCatalogEntry> labCatalog = <LabCatalogEntry>[
     label: 'Systeme',
     subtitle: 'CPU · RAM · Processus',
     icon: Icons.memory,
-    color: Colors.orange,
+    color: TdcColors.system,
     hasOwnHeader: true,
     build: () => const SystemSimulator(),
   ),
@@ -72,7 +74,7 @@ final List<LabCatalogEntry> labCatalog = <LabCatalogEntry>[
     label: 'Cloud',
     subtitle: 'Conteneurs · K8s · CI/CD',
     icon: Icons.cloud,
-    color: Colors.cyan,
+    color: TdcColors.cloud,
     hasOwnHeader: true,
     build: () => const CloudSimulator(),
   ),
@@ -81,7 +83,7 @@ final List<LabCatalogEntry> labCatalog = <LabCatalogEntry>[
     label: 'Cryptographie',
     subtitle: 'AES · RSA · Hashes',
     icon: Icons.lock,
-    color: Colors.purple,
+    color: TdcColors.crypto,
     hasOwnHeader: true,
     build: () => const CryptographySimulator(),
   ),
@@ -90,7 +92,7 @@ final List<LabCatalogEntry> labCatalog = <LabCatalogEntry>[
     label: 'Theorie Internet',
     subtitle: 'Ping · DNS · TCP · SSH',
     icon: Icons.public,
-    color: Colors.teal,
+    color: TdcColors.textSecondary,
     build: () => const HowInternetWorksSimulator(),
   ),
   LabCatalogEntry(
@@ -98,7 +100,7 @@ final List<LabCatalogEntry> labCatalog = <LabCatalogEntry>[
     label: 'Linux',
     subtitle: 'Boot · FS · Processus · Bash',
     icon: Icons.terminal,
-    color: Colors.green,
+    color: TdcColors.system,
     build: () => const LinuxSimulator(),
   ),
   LabCatalogEntry(
@@ -106,7 +108,7 @@ final List<LabCatalogEntry> labCatalog = <LabCatalogEntry>[
     label: 'Algorithmes',
     subtitle: 'Tri · Graphes · Crypto · DP',
     icon: Icons.account_tree,
-    color: Colors.amber,
+    color: TdcColors.algorithms,
     build: () => const AlgorithmsSimulator(),
   ),
 ];

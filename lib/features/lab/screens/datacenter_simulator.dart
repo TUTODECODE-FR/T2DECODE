@@ -176,13 +176,13 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
           decoration: const BoxDecoration(color: TdcColors.surface, border: Border(bottom: BorderSide(color: TdcColors.border))),
           child: Row(
             children: [
-              Icon(Icons.dns, color: Colors.blue.shade700, size: 28),
+              Icon(Icons.dns, color: TdcColors.info, size: 28),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('Datacenter Explorer', style: TextStyle(color: TdcColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text('${_activeIncidents.length} incidents actifs', style: TextStyle(color: _activeIncidents.isEmpty ? Colors.green : Colors.red, fontSize: 11)),
+                  Text('${_activeIncidents.length} incidents actifs', style: TextStyle(color: _activeIncidents.isEmpty ? TdcColors.success : TdcColors.danger, fontSize: 11)),
                 ],
               ),
               const Spacer(),
@@ -201,14 +201,14 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
           child: TabBar(
             controller: _tabController,
             isScrollable: true,
-            indicatorColor: Colors.blue.shade700,
-            labelColor: Colors.blue.shade700,
+            indicatorColor: TdcColors.info,
+            labelColor: TdcColors.info,
             tabs: [
               const Tab(text: 'Salles/Racks'),
               const Tab(text: 'Serveurs'),
               const Tab(text: 'Énergie'),
               const Tab(text: 'Refroidissement'),
-              Tab(child: Row(children: [const Text('Incidents'), if(_activeIncidents.isNotEmpty) Container(margin: const EdgeInsets.only(left: 8), padding: const EdgeInsets.all(4), decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle), child: Text('${_activeIncidents.length}', style: const TextStyle(color: Colors.white, fontSize: 10)))]))
+              Tab(child: Row(children: [const Text('Incidents'), if(_activeIncidents.isNotEmpty) Container(margin: const EdgeInsets.only(left: 8), padding: const EdgeInsets.all(4), decoration: const BoxDecoration(color: TdcColors.danger, shape: BoxShape.circle), child: Text('${_activeIncidents.length}', style: const TextStyle(color: TdcColors.textPrimary, fontSize: 10)))]))
             ],
           ),
         ),
@@ -230,7 +230,7 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
 
   Widget _buildIncidentsTab() {
     if (_activeIncidents.isEmpty) {
-      return const Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.check_circle_outline, color: Colors.green, size: 64), SizedBox(height: 16), Text('Tous les systèmes sont nominaux', style: TextStyle(color: TdcColors.textMuted))]));
+      return const Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.check_circle_outline, color: TdcColors.success, size: 64), SizedBox(height: 16), Text('Tous les systèmes sont nominaux', style: TextStyle(color: TdcColors.textMuted))]));
     }
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -238,13 +238,13 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
       itemBuilder: (context, i) {
         final inc = _activeIncidents[i];
         return Card(
-          color: Colors.red.withValues(alpha: 0.05),
-          shape: const RoundedRectangleBorder(borderRadius: TdcRadius.md, side: BorderSide(color: Colors.red, width: 0.5)),
+          color: TdcColors.danger.withValues(alpha: 0.05),
+          shape: const RoundedRectangleBorder(borderRadius: TdcRadius.md, side: BorderSide(color: TdcColors.danger, width: 0.5)),
           child: ListTile(
-            leading: const Icon(Icons.warning_amber_rounded, color: Colors.red),
-            title: Text(inc.description, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+            leading: const Icon(Icons.warning_amber_rounded, color: TdcColors.danger),
+            title: Text(inc.description, style: const TextStyle(fontWeight: FontWeight.bold, color: TdcColors.danger)),
             subtitle: Text('ID: ${inc.id} | Target: ${inc.targetId}'),
-            trailing: ElevatedButton(onPressed: () => _resolveIncident(inc), style: ElevatedButton.styleFrom(backgroundColor: Colors.green), child: const Text('RÉPARER')),
+            trailing: ElevatedButton(onPressed: () => _resolveIncident(inc), style: ElevatedButton.styleFrom(backgroundColor: TdcColors.success), child: const Text('RÉPARER')),
           ),
         );
       },
@@ -262,7 +262,7 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
           _buildMetric('🌡️', '${_totalTemperature.toStringAsFixed(1)}°C', 'Temp'),
           IconButton(
             onPressed: _toggleMonitoring, 
-            icon: Icon(_isMonitoring ? Icons.pause_circle_filled : Icons.play_circle_fill, size: 40, color: _isMonitoring ? Colors.red : Colors.green)),
+            icon: Icon(_isMonitoring ? Icons.pause_circle_filled : Icons.play_circle_fill, size: 40, color: _isMonitoring ? TdcColors.danger : TdcColors.success)),
           _buildMetric('💧', '45%', 'Humidité'),
           _buildMetric('🖥️', '${_servers.length}', 'Hosts'),
         ],
@@ -278,9 +278,9 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
     final hasError = _activeIncidents.any((inc) => inc.targetId == rack.id || rack.servers.any((s) => s.status == ServerStatus.error));
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: hasError ? Colors.red : TdcColors.border)),
+      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: hasError ? TdcColors.danger : TdcColors.border)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [Text(rack.id, style: const TextStyle(fontWeight: FontWeight.bold)), const Spacer(), if(hasError) const Icon(Icons.error, color: Colors.red, size: 14)]),
+        Row(children: [Text(rack.id, style: const TextStyle(fontWeight: FontWeight.bold)), const Spacer(), if(hasError) const Icon(Icons.error, color: TdcColors.danger, size: 14)]),
         const Spacer(),
         LinearProgressIndicator(value: rack.temperature / 80, backgroundColor: TdcColors.surfaceAlt, color: _getTemperatureColor(rack.temperature)),
         const SizedBox(height: 8),
@@ -295,14 +295,14 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
     final isError = server.status == ServerStatus.error;
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: isError ? Colors.red : TdcColors.border)),
+      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: isError ? TdcColors.danger : TdcColors.border)),
       child: Row(children: [
         Container(width: 8, height: 32, decoration: BoxDecoration(color: _getServerStatusColor(server.status), borderRadius: BorderRadius.circular(4))),
         const SizedBox(width: 12),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(server.id, style: const TextStyle(fontWeight: FontWeight.bold)), Text(server.rackId, style: const TextStyle(fontSize: 11, color: TdcColors.textMuted))])),
         _buildMiniMetric('CPU', '${server.cpuUsage.toInt()}%'),
         _buildMiniMetric('Temp', '${server.temperature.toInt()}°C'),
-        if(isError) IconButton(icon: const Icon(Icons.build, size: 18, color: Colors.green), onPressed: () => _resolveIncident(_activeIncidents.firstWhere((inc) => inc.targetId == server.id))),
+        if(isError) IconButton(icon: const Icon(Icons.build, size: 18, color: TdcColors.success), onPressed: () => _resolveIncident(_activeIncidents.firstWhere((inc) => inc.targetId == server.id))),
       ]),
     );
   }
@@ -315,12 +315,12 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
     final isError = unit.status == PowerUnitStatus.error;
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: isError ? Colors.red : TdcColors.border)),
+      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: isError ? TdcColors.danger : TdcColors.border)),
       child: Column(children: [
-        Row(children: [const Icon(Icons.bolt, size: 16), const SizedBox(width: 8), Text(unit.id), const Spacer(), Icon(Icons.circle, color: isError ? Colors.red : Colors.green, size: 10)]),
+        Row(children: [const Icon(Icons.bolt, size: 16), const SizedBox(width: 8), Text(unit.id), const Spacer(), Icon(Icons.circle, color: isError ? TdcColors.danger : TdcColors.success, size: 10)]),
         const Spacer(),
         Text('${unit.currentLoad.toInt()}W / ${unit.capacity.toInt()}W', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-        if(isError) ElevatedButton(onPressed: () => _resolveIncident(_activeIncidents.firstWhere((inc) => inc.targetId == unit.id)), style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, minimumSize: const Size(double.infinity, 30)), child: const Text('Réparer PDU')),
+        if(isError) ElevatedButton(onPressed: () => _resolveIncident(_activeIncidents.firstWhere((inc) => inc.targetId == unit.id)), style: ElevatedButton.styleFrom(backgroundColor: TdcColors.warning, minimumSize: const Size(double.infinity, 30)), child: const Text('Réparer PDU')),
       ]),
     );
   }
@@ -331,12 +331,12 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
     final isError = unit.status == CoolingUnitStatus.error;
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: isError ? Colors.red : TdcColors.border)),
+      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: isError ? TdcColors.danger : TdcColors.border)),
       child: Column(children: [
-        Row(children: [const Icon(Icons.ac_unit, size: 16), const SizedBox(width: 8), Text(unit.id), const Spacer(), Icon(Icons.circle, color: isError ? Colors.red : Colors.green, size: 10)]),
+        Row(children: [const Icon(Icons.ac_unit, size: 16), const SizedBox(width: 8), Text(unit.id), const Spacer(), Icon(Icons.circle, color: isError ? TdcColors.danger : TdcColors.success, size: 10)]),
         const Spacer(),
         Text('Fan: ${unit.fanSpeed}%', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-        if(isError) ElevatedButton(onPressed: () => _resolveIncident(_activeIncidents.firstWhere((inc) => inc.targetId == unit.id)), style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, minimumSize: const Size(double.infinity, 30)), child: const Text('Réparer CRAC')),
+        if(isError) ElevatedButton(onPressed: () => _resolveIncident(_activeIncidents.firstWhere((inc) => inc.targetId == unit.id)), style: ElevatedButton.styleFrom(backgroundColor: TdcColors.warning, minimumSize: const Size(double.infinity, 30)), child: const Text('Réparer CRAC')),
       ]),
     );
   }
@@ -376,13 +376,13 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
     setState(() {});
   }
 
-  Color _getTemperatureColor(double temp) => temp > 60 ? Colors.red : (temp > 45 ? Colors.orange : Colors.green);
+  Color _getTemperatureColor(double temp) => temp > 60 ? TdcColors.danger : (temp > 45 ? TdcColors.warning : TdcColors.success);
   Color _getServerStatusColor(ServerStatus status) {
     switch(status) {
-      case ServerStatus.running: return Colors.green;
-      case ServerStatus.error: return Colors.red;
-      case ServerStatus.maintenance: return Colors.orange;
-      case ServerStatus.stopped: return Colors.grey;
+      case ServerStatus.running: return TdcColors.success;
+      case ServerStatus.error: return TdcColors.danger;
+      case ServerStatus.maintenance: return TdcColors.warning;
+      case ServerStatus.stopped: return TdcColors.textMuted;
     }
   }
 }

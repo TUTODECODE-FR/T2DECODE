@@ -61,13 +61,13 @@ final _scenarios = [
     name: 'Ping',
     subtitle: 'ICMP Echo Request/Reply',
     icon: Icons.radar,
-    color: const Color(0xFF06B6D4),
+    color: TdcColors.info,
     steps: [
       const _Step(
         title: 'Commande ping lancée',
         protocol: 'OS',
         icon: Icons.terminal,
-        color: Color(0xFF94A3B8),
+        color: TdcColors.textTertiary,
         description: 'Tu tapes `ping 8.8.8.8` dans le terminal.',
         detail:
             'Le système d\'exploitation reçoit ta commande et prépare un paquet ICMP '
@@ -78,7 +78,7 @@ final _scenarios = [
         title: 'Résolution ARP (si LAN)',
         protocol: 'ARP',
         icon: Icons.device_hub,
-        color: const Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: 'Qui est la passerelle par défaut sur le réseau local ?',
         detail:
             'Avant d\'envoyer quoi que ce soit hors du LAN, la carte réseau doit connaître '
@@ -86,7 +86,7 @@ final _scenarios = [
             '"Qui a l\'IP 192.168.1.1 ?" — le routeur répond avec son adresse MAC. '
             'Ce résultat est mis en cache dans la table ARP.',
         visual: () => const SimFlowDiagram(
-          color: Color(0xFFF59E0B),
+          color: TdcColors.warning,
           nodes: [
             SimFlowNode('PC', Icons.computer),
             SimFlowNode('ARP Bcast', Icons.broadcast_on_personal),
@@ -101,14 +101,14 @@ final _scenarios = [
         title: 'Construction du paquet IP',
         protocol: 'IP',
         icon: Icons.layers,
-        color: const Color(0xFF8B5CF6),
+        color: TdcColors.coral,
         description: 'Le paquet ICMP est encapsulé dans un datagramme IPv4.',
         detail:
             'L\'en-tête IP contient : IP source (ton PC), IP dest (8.8.8.8), TTL=64 '
             '(Time To Live — décrémenté à chaque routeur, dropped si = 0), protocole=1 (ICMP), '
             'et un checksum. Le tout est encapsulé dans une trame Ethernet avec les MAC source/dest.',
         visual: () => const SimPacketDiagram(
-          baseColor: Color(0xFF8B5CF6),
+          baseColor: TdcColors.coral,
           fields: [
             SimPacketField('ETH HDR', '14 bytes', 2),
             SimPacketField('IP HDR', '20 bytes', 3),
@@ -121,14 +121,14 @@ final _scenarios = [
         title: 'Traversée des routeurs',
         protocol: 'IP Routing',
         icon: Icons.route,
-        color: const Color(0xFF06B6D4),
+        color: TdcColors.info,
         description: 'Le paquet saute de routeur en routeur jusqu\'à destination.',
         detail:
             'Chaque routeur consulte sa table de routage, décrémente le TTL, recalcule le checksum '
             'et redirige le paquet vers le prochain saut (next hop). Si le TTL atteint 0, le routeur '
             'envoie un ICMP "Time Exceeded" à ton IP — c\'est ce que exploite traceroute.',
         visual: () => const SimFlowDiagram(
-          color: Color(0xFF06B6D4),
+          color: TdcColors.info,
           nodes: [
             SimFlowNode('PC', Icons.computer),
             SimFlowNode('R1', Icons.router),
@@ -142,7 +142,7 @@ final _scenarios = [
         title: 'Réception par la cible',
         protocol: 'ICMP',
         icon: Icons.check_circle,
-        color: Color(0xFF10B981),
+        color: TdcColors.success,
         description: '8.8.8.8 (Google DNS) reçoit l\'Echo Request.',
         detail:
             'Le serveur cible reçoit le paquet ICMP type 8. Il génère un ICMP type 0 '
@@ -153,7 +153,7 @@ final _scenarios = [
         title: 'Mesure du RTT',
         protocol: 'Résultat',
         icon: Icons.timer,
-        color: Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: 'Round Trip Time affiché : `64 bytes from 8.8.8.8: icmp_seq=1 ttl=118 time=12.4ms`',
         detail:
             'Ton OS mesure le temps entre l\'envoi et la réception. Le TTL dans la réponse '
@@ -167,13 +167,13 @@ final _scenarios = [
     name: 'Recherche Web',
     subtitle: 'DNS → TCP → TLS → HTTP',
     icon: Icons.search,
-    color: const Color(0xFF6366F1),
+    color: TdcColors.electric,
     steps: [
       const _Step(
         title: 'Tu tapes l\'URL',
         protocol: 'Browser',
         icon: Icons.keyboard,
-        color: Color(0xFF94A3B8),
+        color: TdcColors.textTertiary,
         description: 'Tu écris `https://google.com` et appuies sur Entrée.',
         detail:
             'Le navigateur décompose l\'URL : protocole=https, hôte=google.com, chemin=/. '
@@ -184,7 +184,7 @@ final _scenarios = [
         title: 'Résolution DNS',
         protocol: 'DNS (UDP 53)',
         icon: Icons.dns,
-        color: const Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: 'Qui est google.com ? → 142.250.179.46',
         detail:
             'Résolution récursive en 4 étapes :\n'
@@ -195,7 +195,7 @@ final _scenarios = [
             'Le résultat est mis en cache selon le TTL du record A (ex: 300s). '
             'DNS utilise UDP port 53 (TCP si réponse > 512 octets ou DNSSEC).',
         visual: () => const SimTreeDiagram(
-          color: Color(0xFFF59E0B),
+          color: TdcColors.warning,
           root: SimTreeNode(
             'Root DNS',
             sublabel: '13 clusters',
@@ -213,7 +213,7 @@ final _scenarios = [
         title: 'Connexion TCP (3-Way Handshake)',
         protocol: 'TCP (port 443)',
         icon: Icons.handshake,
-        color: const Color(0xFF8B5CF6),
+        color: TdcColors.coral,
         description: 'Établissement de la connexion fiable.',
         detail:
             '1. SYN → ton PC envoie SYN (seq=x) au serveur\n'
@@ -223,7 +223,7 @@ final _scenarios = [
             'grâce aux numéros de séquence et aux accusés de réception. '
             'Le port destination est 443 (HTTPS). Le port source est éphémère (ex: 54321).',
         visual: () => const SimFlowDiagram(
-          color: Color(0xFF8B5CF6),
+          color: TdcColors.coral,
           nodes: [
             SimFlowNode('Client', Icons.computer),
             SimFlowNode('SYN', Icons.arrow_forward),
@@ -239,7 +239,7 @@ final _scenarios = [
         title: 'Négociation TLS (HTTPS)',
         protocol: 'TLS 1.3',
         icon: Icons.lock,
-        color: const Color(0xFF10B981),
+        color: TdcColors.success,
         description: 'Chiffrement de la connexion.',
         detail:
             '1. ClientHello → ton navigateur envoie les suites de chiffrement supportées + SNI (Server Name Indication)\n'
@@ -249,7 +249,7 @@ final _scenarios = [
             '5. Finished ↔ les deux parties confirment le handshake\n'
             'Avec TLS 1.3, tout ça tient en 1 aller-retour (1-RTT), ou 0-RTT si session reprise.',
         visual: () => const SimKeyValue(
-          color: Color(0xFF10B981),
+          color: TdcColors.success,
           entries: [
             SimKVEntry('Client Hello', 'cipher suites + random'),
             SimKVEntry('Server Hello', 'chosen cipher + cert'),
@@ -262,7 +262,7 @@ final _scenarios = [
         title: 'Requête HTTP/2',
         protocol: 'HTTP/2',
         icon: Icons.send,
-        color: Color(0xFF6366F1),
+        color: TdcColors.electric,
         description: 'GET / HTTP/2 → google.com',
         detail:
             'Le navigateur envoie une requête HTTP/2 (binaire, multiplexée) :\n'
@@ -275,7 +275,7 @@ final _scenarios = [
         title: 'Réponse + Rendu',
         protocol: 'HTTP 200 OK',
         icon: Icons.web,
-        color: Color(0xFF06B6D4),
+        color: TdcColors.info,
         description: 'Le serveur envoie le HTML, le navigateur construit la page.',
         detail:
             'Le serveur renvoie :\n'
@@ -292,13 +292,13 @@ final _scenarios = [
     name: 'SSH',
     subtitle: 'Connexion sécurisée à distance',
     icon: Icons.terminal,
-    color: const Color(0xFF10B981),
+    color: TdcColors.success,
     steps: [
       const _Step(
         title: 'Connexion TCP port 22',
         protocol: 'TCP',
         icon: Icons.cable,
-        color: Color(0xFF8B5CF6),
+        color: TdcColors.coral,
         description: '3-Way Handshake vers le port 22 du serveur.',
         detail:
             'SSH utilise TCP pour garantir la fiabilité. Le client initie une connexion '
@@ -309,7 +309,7 @@ final _scenarios = [
         title: 'Échange de clés (KEX)',
         protocol: 'SSH-2 / ECDH',
         icon: Icons.swap_horiz,
-        color: const Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: 'Négociation des algorithmes et échange Diffie-Hellman.',
         detail:
             'Les deux parties négocient : algorithme de KEX (curve25519-sha256), '
@@ -317,7 +317,7 @@ final _scenarios = [
             'L\'échange ECDH génère un secret partagé sans jamais le transmettre '
             '(propriété Forward Secrecy). Les clés de session sont dérivées de ce secret.',
         visual: () => const SimFlowDiagram(
-          color: Color(0xFFF59E0B),
+          color: TdcColors.warning,
           nodes: [
             SimFlowNode('Client', Icons.computer),
             SimFlowNode('ECDH pubkey', Icons.key),
@@ -332,7 +332,7 @@ final _scenarios = [
         title: 'Vérification de l\'hôte',
         protocol: 'Host Key',
         icon: Icons.verified,
-        color: Color(0xFF06B6D4),
+        color: TdcColors.info,
         description: 'Est-ce bien le bon serveur ? (TOFU / known_hosts)',
         detail:
             'Le serveur prouve son identité avec sa clé privée (ed25519, RSA…). '
@@ -344,7 +344,7 @@ final _scenarios = [
         title: 'Authentification utilisateur',
         protocol: 'SSH Auth',
         icon: Icons.key,
-        color: Color(0xFF10B981),
+        color: TdcColors.success,
         description: 'Par clé publique (recommandé) ou mot de passe.',
         detail:
             'Méthode clé publique :\n'
@@ -358,7 +358,7 @@ final _scenarios = [
         title: 'Canal chiffré ouvert',
         protocol: 'SSH Channel',
         icon: Icons.lock_open,
-        color: Color(0xFF6366F1),
+        color: TdcColors.electric,
         description: 'Shell interactif chiffré bout en bout.',
         detail:
             'SSH ouvre un ou plusieurs canaux multiplexés dans la même connexion :\n'
@@ -374,13 +374,13 @@ final _scenarios = [
     name: 'TCP/IP',
     subtitle: 'Le modèle en couches expliqué',
     icon: Icons.layers,
-    color: const Color(0xFFF59E0B),
+    color: TdcColors.warning,
     steps: [
       const _Step(
         title: 'Couche Application (L7)',
         protocol: 'HTTP / DNS / SMTP…',
         icon: Icons.apps,
-        color: Color(0xFF6366F1),
+        color: TdcColors.electric,
         description: 'Ce que voient les applications.',
         detail:
             'La couche application définit le format des données échangées.\n'
@@ -392,7 +392,7 @@ final _scenarios = [
         title: 'Couche Transport (L4)',
         protocol: 'TCP / UDP',
         icon: Icons.compare_arrows,
-        color: Color(0xFF8B5CF6),
+        color: TdcColors.coral,
         description: 'Communication entre processus (ports).',
         detail:
             'TCP : connexion fiable, ordonnée, avec retransmission. '
@@ -406,7 +406,7 @@ final _scenarios = [
         title: 'Couche Internet (L3)',
         protocol: 'IP / ICMP / ARP',
         icon: Icons.public,
-        color: const Color(0xFF06B6D4),
+        color: TdcColors.info,
         description: 'Adressage et routage entre réseaux.',
         detail:
             'IPv4 : adresses 32 bits (ex: 192.168.1.1). Environ 4,3 milliards d\'adresses '
@@ -418,11 +418,11 @@ final _scenarios = [
             'ARP : résolution IP → MAC sur le LAN.',
         visual: () => const SimLayerStack(
           layers: [
-            SimLayer('L7 Application', 'HTTP, DNS, SMTP, FTP…', Color(0xFF6366F1)),
-            SimLayer('L4 Transport', 'TCP, UDP — ports + reliability', Color(0xFF10B981)),
-            SimLayer('L3 Network', 'IP, ICMP — routing + addressing', Color(0xFFF97316)),
-            SimLayer('L2 Link', 'Ethernet, WiFi — MAC + frames', Color(0xFF8B5CF6)),
-            SimLayer('L1 Physical', 'Bits → electrical/optical/radio', Color(0xFFEF4444)),
+            SimLayer('L7 Application', 'HTTP, DNS, SMTP, FTP…', TdcColors.electric),
+            SimLayer('L4 Transport', 'TCP, UDP — ports + reliability', TdcColors.success),
+            SimLayer('L3 Network', 'IP, ICMP — routing + addressing', TdcColors.warning),
+            SimLayer('L2 Link', 'Ethernet, WiFi — MAC + frames', TdcColors.coral),
+            SimLayer('L1 Physical', 'Bits → electrical/optical/radio', TdcColors.danger),
           ],
         ),
       ),
@@ -430,7 +430,7 @@ final _scenarios = [
         title: 'Couche Liaison (L2)',
         protocol: 'Ethernet / WiFi',
         icon: Icons.device_hub,
-        color: Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: 'Communication sur le réseau local.',
         detail:
             'Ethernet (câble) et WiFi (802.11) opèrent à ce niveau.\n'
@@ -443,7 +443,7 @@ final _scenarios = [
         title: 'Couche Physique (L1)',
         protocol: 'Bits / Signaux',
         icon: Icons.settings_ethernet,
-        color: Color(0xFF10B981),
+        color: TdcColors.success,
         description: 'Les bits sur le fil (ou l\'air).',
         detail:
             'Conversion des bits en signaux électriques (Ethernet), optiques (fibre), '
@@ -456,7 +456,7 @@ final _scenarios = [
         title: 'Encapsulation',
         protocol: 'Data wrapping',
         icon: Icons.wrap_text,
-        color: Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: 'Chaque couche ajoute son en-tête.',
         detail:
             'À l\'émission, les données descendent la pile :\n'
@@ -473,13 +473,13 @@ final _scenarios = [
     name: 'DNS',
     subtitle: 'Annuaire d\'Internet',
     icon: Icons.dns,
-    color: const Color(0xFFF59E0B),
+    color: TdcColors.warning,
     steps: [
       const _Step(
         title: 'Cache local d\'abord',
         protocol: 'OS Cache',
         icon: Icons.storage,
-        color: Color(0xFF94A3B8),
+        color: TdcColors.textTertiary,
         description: 'Le plus rapide : la réponse est peut-être déjà connue.',
         detail:
             'L\'OS vérifie dans l\'ordre :\n'
@@ -492,7 +492,7 @@ final _scenarios = [
         title: 'Résolveur récursif',
         protocol: 'DNS Récursif',
         icon: Icons.repeat,
-        color: const Color(0xFF6366F1),
+        color: TdcColors.electric,
         description: 'Ton DNS configuré (FAI, 8.8.8.8, 1.1.1.1…)',
         detail:
             'Le résolveur récursif fait le travail à ta place. Il interroge la hiérarchie DNS '
@@ -502,7 +502,7 @@ final _scenarios = [
             '9.9.9.9 = Quad9 (sécurité + filtrage malware)\n'
             'Ils mettent les réponses en cache → très rapides pour les domaines populaires.',
         visual: () => const SimTreeDiagram(
-          color: Color(0xFF6366F1),
+          color: TdcColors.electric,
           root: SimTreeNode(
             'Résolveur Récursif',
             sublabel: '8.8.8.8 / 1.1.1.1',
@@ -518,7 +518,7 @@ final _scenarios = [
         title: 'Serveurs Racine (.)',
         protocol: 'Root Servers',
         icon: Icons.account_tree,
-        color: Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: '13 clusters de serveurs racine dans le monde.',
         detail:
             'Il y a 13 adresses IP de serveurs racine (a.root-servers.net à m.root-servers.net), '
@@ -530,7 +530,7 @@ final _scenarios = [
         title: 'Serveurs TLD',
         protocol: 'TLD Servers',
         icon: Icons.language,
-        color: Color(0xFF8B5CF6),
+        color: TdcColors.coral,
         description: '.com, .fr, .io, .org… chacun a ses serveurs.',
         detail:
             '.com et .net → VeriSign\n'
@@ -543,7 +543,7 @@ final _scenarios = [
         title: 'Serveur Autoritaire',
         protocol: 'Authoritative NS',
         icon: Icons.verified,
-        color: Color(0xFF10B981),
+        color: TdcColors.success,
         description: 'La réponse définitive vient de là.',
         detail:
             'Le serveur autoritaire est géré par le propriétaire du domaine (ou son hébergeur DNS).\n'
@@ -559,7 +559,7 @@ final _scenarios = [
         title: 'DNSSEC & DoH',
         protocol: 'Sécurité DNS',
         icon: Icons.security,
-        color: Color(0xFF06B6D4),
+        color: TdcColors.info,
         description: 'Protéger les réponses DNS contre la falsification.',
         detail:
             'DNSSEC : signatures cryptographiques sur les records DNS → impossible de falsifier '
@@ -575,13 +575,13 @@ final _scenarios = [
     name: 'Firewall & NAT',
     subtitle: 'Filtrage et traduction d\'adresses',
     icon: Icons.shield,
-    color: const Color(0xFFEF4444),
+    color: TdcColors.danger,
     steps: [
       const _Step(
         title: 'Le problème IPv4',
         protocol: 'Pénurie d\'adresses',
         icon: Icons.warning,
-        color: Color(0xFFF59E0B),
+        color: TdcColors.warning,
         description: 'Il n\'y a que 4,3 milliards d\'adresses IPv4 pour 15 milliards d\'appareils.',
         detail:
             'IPv4 (32 bits) → 2³² = ~4,3 milliards d\'adresses. Épuisées depuis 2011.\n'
@@ -596,7 +596,7 @@ final _scenarios = [
         title: 'NAT (Network Address Translation)',
         protocol: 'NAT / PAT',
         icon: Icons.swap_horiz,
-        color: const Color(0xFF06B6D4),
+        color: TdcColors.info,
         description: 'Ton routeur traduit tes adresses privées en une seule IP publique.',
         detail:
             'Quand tu accèdes à google.com depuis 192.168.1.50:54321 :\n'
@@ -607,7 +607,7 @@ final _scenarios = [
             'C\'est du PAT (Port Address Translation) : plusieurs hôtes partagent une IP publique '
             'grâce aux ports différents.',
         visual: () => const SimKeyValue(
-          color: Color(0xFF06B6D4),
+          color: TdcColors.info,
           entries: [
             SimKVEntry('192.168.1.10:4523', '→ 93.184.216.34:80'),
             SimKVEntry('192.168.1.11:8821', '→ 93.184.216.34:443'),
@@ -619,7 +619,7 @@ final _scenarios = [
         title: 'Firewall stateful',
         protocol: 'iptables / nftables',
         icon: Icons.fireplace,
-        color: Color(0xFFEF4444),
+        color: TdcColors.danger,
         description: 'Filtrage des paquets entrants et sortants.',
         detail:
             'Un firewall stateful suit l\'état des connexions :\n'
@@ -635,7 +635,7 @@ final _scenarios = [
         title: 'Port Forwarding',
         protocol: 'DNAT',
         icon: Icons.open_in_new,
-        color: Color(0xFF8B5CF6),
+        color: TdcColors.coral,
         description: 'Exposer un service interne à Internet.',
         detail:
             'Pour rendre accessible un serveur web interne (192.168.1.100:80) depuis Internet :\n'
@@ -648,7 +648,7 @@ final _scenarios = [
         title: 'DMZ',
         protocol: 'Architecture réseau',
         icon: Icons.layers,
-        color: Color(0xFF10B981),
+        color: TdcColors.success,
         description: 'Zone démilitarisée pour les serveurs publics.',
         detail:
             'Une DMZ est un segment réseau entre Internet et le LAN interne.\\n'
@@ -706,11 +706,11 @@ class _HowInternetWorksSimulatorState
 
   // Firewall rules
   final List<_FwRule> _fwRules = [
-    const _FwRule('ACCEPT', 'ESTABLISHED,RELATED', 'all', Colors.green),
-    const _FwRule('ACCEPT', 'NEW', 'tcp dport 22', Colors.blue),
-    const _FwRule('ACCEPT', 'NEW', 'tcp dport 443', Colors.blue),
-    const _FwRule('DROP', 'all', 'tcp dport 23 (Telnet)', Colors.red),
-    const _FwRule('DROP', 'INVALID', 'all', Colors.red),
+    const _FwRule('ACCEPT', 'ESTABLISHED,RELATED', 'all', TdcColors.success),
+    const _FwRule('ACCEPT', 'NEW', 'tcp dport 22', TdcColors.info),
+    const _FwRule('ACCEPT', 'NEW', 'tcp dport 443', TdcColors.info),
+    const _FwRule('DROP', 'all', 'tcp dport 23 (Telnet)', TdcColors.danger),
+    const _FwRule('DROP', 'INVALID', 'all', TdcColors.danger),
   ];
   bool _fwBlocked = false;
   final String _fwTestPort = '80';
@@ -756,7 +756,7 @@ class _HowInternetWorksSimulatorState
       _pingSeq = 0;
     });
     final rng = Random.secure();
-    setState(() => _pingLines.add(const _PingLine('PING 8.8.8.8 56(84) bytes of data.', Colors.white70, false)));
+    setState(() => _pingLines.add(const _PingLine('PING 8.8.8.8 56(84) bytes of data.', TdcColors.textPrimary, false)));
     await Future.delayed(const Duration(milliseconds: 300));
     for (int i = 0; i < 4; i++) {
       if (!mounted) return;
@@ -767,7 +767,7 @@ class _HowInternetWorksSimulatorState
         _pingSeq++;
         _pingLines.add(_PingLine(
           '64 bytes from 8.8.8.8: icmp_seq=$_pingSeq ttl=$ttl time=$rtt ms',
-          const Color(0xFF10B981),
+          TdcColors.success,
           true,
         ));
       });
@@ -804,11 +804,11 @@ class _HowInternetWorksSimulatorState
     final rng = Random.secure();
 
     final steps = [
-      const _DnsStep('Cache local', 'Vérification /etc/hosts et cache OS…', Colors.grey, false),
-      _DnsStep('Résolveur 8.8.8.8', 'Query A $query → résolveur récursif', const Color(0xFF6366F1), false),
-      _DnsStep('Root Server', 'Demande délégation .${query.split('.').last}', const Color(0xFFF59E0B), false),
-      _DnsStep('TLD .${query.split('.').last}', 'NS records → serveur autoritaire', const Color(0xFF8B5CF6), false),
-      _DnsStep('Autoritaire NS', 'Réponse finale : A record', const Color(0xFF10B981), true,
+      const _DnsStep('Cache local', 'Vérification /etc/hosts et cache OS…', TdcColors.textMuted, false),
+      _DnsStep('Résolveur 8.8.8.8', 'Query A $query → résolveur récursif', TdcColors.electric, false),
+      _DnsStep('Root Server', 'Demande délégation .${query.split('.').last}', TdcColors.warning, false),
+      _DnsStep('TLD .${query.split('.').last}', 'NS records → serveur autoritaire', TdcColors.coral, false),
+      _DnsStep('Autoritaire NS', 'Réponse finale : A record', TdcColors.success, true,
           ip: '${rng.nextInt(220) + 34}.${rng.nextInt(250) + 1}.${rng.nextInt(250) + 1}.${rng.nextInt(200) + 1}'),
     ];
 
@@ -968,7 +968,7 @@ class _HowInternetWorksSimulatorState
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF0D1117),
+          color: TdcColors.surfaceAlt,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: color.withValues(alpha: 0.35)),
         ),
@@ -1001,7 +1001,7 @@ class _HowInternetWorksSimulatorState
   // 0 – Ping ────────────────────────────────────────────────
   Widget _buildPingPanel() {
     return _panelShell(
-      color: const Color(0xFF06B6D4),
+      color: TdcColors.info,
       title: 'PING SIMULATOR',
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -1010,12 +1010,12 @@ class _HowInternetWorksSimulatorState
           children: [
             Row(
               children: [
-                Text('target: ', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12, fontFamily: 'monospace')),
-                const Text('8.8.8.8 (Google DNS)', style: TextStyle(color: Color(0xFF06B6D4), fontSize: 12, fontFamily: 'monospace')),
+                Text('target: ', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 12, fontFamily: 'monospace')),
+                const Text('8.8.8.8 (Google DNS)', style: TextStyle(color: TdcColors.info, fontSize: 12, fontFamily: 'monospace')),
                 const Spacer(),
-                _simButton('Ping', const Color(0xFF06B6D4), _pinging ? null : _startPing),
+                _simButton('Ping', TdcColors.info, _pinging ? null : _startPing),
                 const SizedBox(width: 8),
-                _simButton('Reset', Colors.grey, _resetPing),
+                _simButton('Reset', TdcColors.textMuted, _resetPing),
               ],
             ),
             if (_pingLines.isNotEmpty) ...[
@@ -1039,9 +1039,9 @@ class _HowInternetWorksSimulatorState
                 padding: const EdgeInsets.only(top: 8),
                 child: Row(
                   children: [
-                    const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF06B6D4))),
+                    const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.info)),
                     const SizedBox(width: 8),
-                    Text('Envoi paquet ICMP #${_pingSeq + 1}…', style: const TextStyle(color: Colors.white54, fontSize: 11)),
+                    Text('Envoi paquet ICMP #${_pingSeq + 1}…', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 11)),
                   ],
                 ),
               ),
@@ -1054,13 +1054,13 @@ class _HowInternetWorksSimulatorState
   // 1 – TCP Handshake ───────────────────────────────────────
   Widget _buildTcpPanel() {
     final phases = [
-      const _TcpPhaseInfo('SYN', 'Client → Server', 'seq=1000', Color(0xFF6366F1)),
-      const _TcpPhaseInfo('SYN-ACK', 'Server → Client', 'seq=5000 ack=1001', Color(0xFF8B5CF6)),
-      const _TcpPhaseInfo('ACK', 'Client → Server', 'ack=5001', Color(0xFF10B981)),
-      const _TcpPhaseInfo('ESTABLISHED', 'Connexion ouverte', 'Données peuvent transiter', Color(0xFF10B981)),
+      const _TcpPhaseInfo('SYN', 'Client → Server', 'seq=1000', TdcColors.electric),
+      const _TcpPhaseInfo('SYN-ACK', 'Server → Client', 'seq=5000 ack=1001', TdcColors.coral),
+      const _TcpPhaseInfo('ACK', 'Client → Server', 'ack=5001', TdcColors.success),
+      const _TcpPhaseInfo('ESTABLISHED', 'Connexion ouverte', 'Données peuvent transiter', TdcColors.success),
     ];
     return _panelShell(
-      color: const Color(0xFF6366F1),
+      color: TdcColors.electric,
       title: 'TCP 3-WAY HANDSHAKE',
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -1068,16 +1068,16 @@ class _HowInternetWorksSimulatorState
           children: [
             Row(
               children: [
-                _simButton('Simuler', const Color(0xFF6366F1), _tcpRunning ? null : _startTcp),
+                _simButton('Simuler', TdcColors.electric, _tcpRunning ? null : _startTcp),
                 const SizedBox(width: 8),
-                _simButton('Reset', Colors.grey, _resetTcp),
+                _simButton('Reset', TdcColors.textMuted, _resetTcp),
               ],
             ),
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _tcpNode('CLIENT\\n192.168.1.10', Icons.computer, const Color(0xFF06B6D4), _tcpPhase >= 0),
+                _tcpNode('CLIENT\\n192.168.1.10', Icons.computer, TdcColors.info, _tcpPhase >= 0),
                 Expanded(
                   child: Column(
                     children: List.generate(phases.length, (i) {
@@ -1090,7 +1090,7 @@ class _HowInternetWorksSimulatorState
                           color: active ? phases[i].color.withValues(alpha: 0.15) : Colors.transparent,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: active ? phases[i].color.withValues(alpha: 0.6) : Colors.white12,
+                            color: active ? phases[i].color.withValues(alpha: 0.6) : TdcColors.border,
                           ),
                         ),
                         child: Row(
@@ -1102,7 +1102,7 @@ class _HowInternetWorksSimulatorState
                               child: Text(
                                 '${phases[i].name} — ${phases[i].flags}',
                                 style: TextStyle(
-                                  color: active ? phases[i].color : Colors.white24,
+                                  color: active ? phases[i].color : TdcColors.textMuted,
                                   fontSize: 10,
                                   fontFamily: 'monospace',
                                   fontWeight: FontWeight.bold,
@@ -1116,7 +1116,7 @@ class _HowInternetWorksSimulatorState
                     }),
                   ),
                 ),
-                _tcpNode('SERVER\\n8.8.8.8:443', Icons.dns, const Color(0xFF6366F1), _tcpPhase >= 1),
+                _tcpNode('SERVER\\n8.8.8.8:443', Icons.dns, TdcColors.electric, _tcpPhase >= 1),
               ],
             ),
             if (_tcpPhase == 3)
@@ -1124,15 +1124,15 @@ class _HowInternetWorksSimulatorState
                 margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                  color: TdcColors.success.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.check_circle, color: Color(0xFF10B981), size: 14),
+                    Icon(Icons.check_circle, color: TdcColors.success, size: 14),
                     SizedBox(width: 6),
-                    Text('Connexion TCP établie — prête pour TLS', style: TextStyle(color: Color(0xFF10B981), fontSize: 11, fontFamily: 'monospace')),
+                    Text('Connexion TCP établie — prête pour TLS', style: TextStyle(color: TdcColors.success, fontSize: 11, fontFamily: 'monospace')),
                   ],
                 ),
               ).animate().fadeIn(),
@@ -1149,12 +1149,12 @@ class _HowInternetWorksSimulatorState
       decoration: BoxDecoration(
         color: active ? color.withValues(alpha: 0.15) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: active ? color : Colors.white12),
+        border: Border.all(color: active ? color : TdcColors.border),
       ),
       child: Column(
         children: [
-          Icon(icon, color: active ? color : Colors.white24, size: 20),
-          Text(label, style: TextStyle(color: active ? Colors.white70 : Colors.white24, fontSize: 9, fontFamily: 'monospace'), textAlign: TextAlign.center),
+          Icon(icon, color: active ? color : TdcColors.textMuted, size: 20),
+          Text(label, style: TextStyle(color: active ? TdcColors.textPrimary : TdcColors.textMuted, fontSize: 9, fontFamily: 'monospace'), textAlign: TextAlign.center),
         ],
       ),
     );
@@ -1163,14 +1163,14 @@ class _HowInternetWorksSimulatorState
   // 2 – SSH ─────────────────────────────────────────────────
   Widget _buildSshPanel() {
     final phases = <_HiP3>[
-      const _HiP3('TCP:22 SYN', 'Ouverture connexion', Color(0xFF8B5CF6)),
-      const _HiP3('KEX Init', 'Négociation curve25519', Color(0xFFF59E0B)),
-      const _HiP3('Host Key', 'Vérif ed25519 fingerprint', Color(0xFF06B6D4)),
-      const _HiP3('Auth', 'Clé publique acceptée', Color(0xFF10B981)),
-      const _HiP3('Shell', 'Canal chiffré ouvert ✓', Color(0xFF22C55E)),
+      const _HiP3('TCP:22 SYN', 'Ouverture connexion', TdcColors.coral),
+      const _HiP3('KEX Init', 'Négociation curve25519', TdcColors.warning),
+      const _HiP3('Host Key', 'Vérif ed25519 fingerprint', TdcColors.info),
+      const _HiP3('Auth', 'Clé publique acceptée', TdcColors.success),
+      const _HiP3('Shell', 'Canal chiffré ouvert ✓', TdcColors.success),
     ];
     return _panelShell(
-      color: const Color(0xFF10B981),
+      color: TdcColors.success,
       title: 'SSH CONNECTION FLOW',
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -1179,12 +1179,12 @@ class _HowInternetWorksSimulatorState
           children: [
             Row(
               children: [
-                Text('user@192.168.1.10 → ', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11, fontFamily: 'monospace')),
-                const Text('root@server.example.com', style: TextStyle(color: Color(0xFF10B981), fontSize: 11, fontFamily: 'monospace')),
+                Text('user@192.168.1.10 → ', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 11, fontFamily: 'monospace')),
+                const Text('root@server.example.com', style: TextStyle(color: TdcColors.success, fontSize: 11, fontFamily: 'monospace')),
                 const Spacer(),
-                _simButton('Connect', const Color(0xFF10B981), _sshRunning ? null : _startSsh),
+                _simButton('Connect', TdcColors.success, _sshRunning ? null : _startSsh),
                 const SizedBox(width: 8),
-                _simButton('Reset', Colors.grey, _resetSsh),
+                _simButton('Reset', TdcColors.textMuted, _resetSsh),
               ],
             ),
             const SizedBox(height: 10),
@@ -1199,18 +1199,18 @@ class _HowInternetWorksSimulatorState
                 decoration: BoxDecoration(
                   color: active || current ? color.withValues(alpha: 0.12) : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: active || current ? color.withValues(alpha: 0.5) : Colors.white12),
+                  border: Border.all(color: active || current ? color.withValues(alpha: 0.5) : TdcColors.border),
                 ),
                 child: Row(
                   children: [
                     if (current)
                       SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: color))
                     else
-                      Icon(active ? Icons.check_circle : Icons.radio_button_unchecked, color: active ? color : Colors.white24, size: 14),
+                      Icon(active ? Icons.check_circle : Icons.radio_button_unchecked, color: active ? color : TdcColors.textMuted, size: 14),
                     const SizedBox(width: 8),
-                    Text('[${i + 1}] ${phases[i].a}', style: TextStyle(color: active || current ? color : Colors.white24, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                    Text('[${i + 1}] ${phases[i].a}', style: TextStyle(color: active || current ? color : TdcColors.textMuted, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
                     const SizedBox(width: 6),
-                    Expanded(child: Text('— ${phases[i].b}', style: TextStyle(color: active ? Colors.white54 : Colors.white24, fontSize: 10), overflow: TextOverflow.ellipsis)),
+                    Expanded(child: Text('— ${phases[i].b}', style: TextStyle(color: active ? TdcColors.textSecondary : TdcColors.textMuted, fontSize: 10), overflow: TextOverflow.ellipsis)),
                   ],
                 ),
               );
@@ -1224,14 +1224,14 @@ class _HowInternetWorksSimulatorState
   // 3 – TCP/IP Layers ───────────────────────────────────────
   Widget _buildLayersPanel() {
     final layers = [
-      const _HiP4('L7 App', 'HTTP/2 GET /', 'data: Hello World', Color(0xFF6366F1)),
-      const _HiP4('L4 Transport', 'TCP header', 'sport=54321 dport=443 seq=1000', Color(0xFF8B5CF6)),
-      const _HiP4('L3 Network', 'IP header', 'src=192.168.1.10 dst=142.250.179.46 ttl=64', Color(0xFFF97316)),
-      const _HiP4('L2 Link', 'Ethernet frame', 'src=AA:BB:CC:DD dst=FF:EE:CC:BB type=0x0800', Color(0xFFF59E0B)),
-      const _HiP4('L1 Physical', 'Signal', '01001000 01100101 01101100 … (bits)', Color(0xFFEF4444)),
+      const _HiP4('L7 App', 'HTTP/2 GET /', 'data: Hello World', TdcColors.electric),
+      const _HiP4('L4 Transport', 'TCP header', 'sport=54321 dport=443 seq=1000', TdcColors.coral),
+      const _HiP4('L3 Network', 'IP header', 'src=192.168.1.10 dst=142.250.179.46 ttl=64', TdcColors.warning),
+      const _HiP4('L2 Link', 'Ethernet frame', 'src=AA:BB:CC:DD dst=FF:EE:CC:BB type=0x0800', TdcColors.warning),
+      const _HiP4('L1 Physical', 'Signal', '01001000 01100101 01101100 … (bits)', TdcColors.danger),
     ];
     return _panelShell(
-      color: const Color(0xFFF59E0B),
+      color: TdcColors.warning,
       title: 'ENCAPSULATION VIEWER',
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -1254,8 +1254,8 @@ class _HowInternetWorksSimulatorState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l.b, style: const TextStyle(color: Colors.white70, fontSize: 10, fontFamily: 'monospace')),
-                        Text(l.c, style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 9, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis),
+                        Text(l.b, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 10, fontFamily: 'monospace')),
+                        Text(l.c, style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.35), fontSize: 9, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),
@@ -1271,7 +1271,7 @@ class _HowInternetWorksSimulatorState
   // 4 – DNS ─────────────────────────────────────────────────
   Widget _buildDnsPanel() {
     return _panelShell(
-      color: const Color(0xFFF59E0B),
+      color: TdcColors.warning,
       title: 'DNS RESOLVER',
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -1283,25 +1283,25 @@ class _HowInternetWorksSimulatorState
                 Expanded(
                   child: TextField(
                     controller: _dnsCtrl,
-                    style: const TextStyle(color: Color(0xFFF59E0B), fontSize: 12, fontFamily: 'monospace'),
+                    style: const TextStyle(color: TdcColors.warning, fontSize: 12, fontFamily: 'monospace'),
                     decoration: InputDecoration(
                       hintText: 'Domaine à résoudre…',
-                      hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 12),
+                      hintStyle: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.3), fontSize: 12),
                       prefixText: '> nslookup ',
-                      prefixStyle: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12, fontFamily: 'monospace'),
+                      prefixStyle: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 12, fontFamily: 'monospace'),
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                       filled: true,
-                      fillColor: Colors.white.withValues(alpha: 0.04),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15))),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15))),
+                      fillColor: TdcColors.textPrimary.withValues(alpha: 0.04),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.15))),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.15))),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                _simButton('Resolve', const Color(0xFFF59E0B), _dnsRunning ? null : _startDns),
+                _simButton('Resolve', TdcColors.warning, _dnsRunning ? null : _startDns),
                 const SizedBox(width: 8),
-                _simButton('Clear', Colors.grey, _resetDns),
+                _simButton('Clear', TdcColors.textMuted, _resetDns),
               ],
             ),
             if (_dnsSteps.isNotEmpty) ...[
@@ -1322,8 +1322,8 @@ class _HowInternetWorksSimulatorState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(s.label, style: TextStyle(color: s.color, fontSize: 11, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
-                        Text(s.detail, style: const TextStyle(color: Colors.white54, fontSize: 10, fontFamily: 'monospace')),
-                        if (s.ip != null) Text('→ ${s.ip}', style: const TextStyle(color: Color(0xFF10B981), fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                        Text(s.detail, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontFamily: 'monospace')),
+                        if (s.ip != null) Text('→ ${s.ip}', style: const TextStyle(color: TdcColors.success, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
                       ],
                     )),
                   ],
@@ -1339,7 +1339,7 @@ class _HowInternetWorksSimulatorState
   // 5 – Firewall ────────────────────────────────────────────
   Widget _buildFirewallPanel() {
     return _panelShell(
-      color: const Color(0xFFEF4444),
+      color: TdcColors.danger,
       title: 'FIREWALL RULES (iptables -L)',
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -1348,7 +1348,7 @@ class _HowInternetWorksSimulatorState
           children: [
             ..._fwRules.map((r) {
               final accept = r.action == 'ACCEPT';
-              final color = accept ? const Color(0xFF10B981) : const Color(0xFFEF4444);
+              final color = accept ? TdcColors.success : TdcColors.danger;
               return Container(
                 margin: const EdgeInsets.only(bottom: 4),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -1360,7 +1360,7 @@ class _HowInternetWorksSimulatorState
                 child: Row(
                   children: [
                     SizedBox(width: 56, child: Text(r.action, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold, fontFamily: 'monospace'))),
-                    Expanded(child: Text('${r.state} — ${r.target}', style: const TextStyle(color: Colors.white60, fontSize: 10, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis)),
+                    Expanded(child: Text('${r.state} — ${r.target}', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis)),
                   ],
                 ),
               );
@@ -1371,24 +1371,24 @@ class _HowInternetWorksSimulatorState
                 Expanded(
                   child: TextField(
                     controller: _fwPortCtrl,
-                    style: const TextStyle(color: Color(0xFFEF4444), fontSize: 12, fontFamily: 'monospace'),
+                    style: const TextStyle(color: TdcColors.danger, fontSize: 12, fontFamily: 'monospace'),
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       hintText: 'Port à tester…',
-                      hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 12),
+                      hintStyle: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.3), fontSize: 12),
                       prefixText: 'tcp dport=',
-                      prefixStyle: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12, fontFamily: 'monospace'),
+                      prefixStyle: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 12, fontFamily: 'monospace'),
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                       filled: true,
-                      fillColor: Colors.white.withValues(alpha: 0.04),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15))),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15))),
+                      fillColor: TdcColors.textPrimary.withValues(alpha: 0.04),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.15))),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.15))),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                _simButton('Tester', const Color(0xFFEF4444), _testFirewall),
+                _simButton('Tester', TdcColors.danger, _testFirewall),
               ],
             ),
             if (_fwPortCtrl.text.isNotEmpty)
@@ -1399,20 +1399,20 @@ class _HowInternetWorksSimulatorState
                   margin: const EdgeInsets.only(top: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: (_fwBlocked ? const Color(0xFFEF4444) : const Color(0xFF10B981)).withValues(alpha: 0.15),
+                    color: (_fwBlocked ? TdcColors.danger : TdcColors.success).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     children: [
                       Icon(_fwBlocked ? Icons.block : Icons.check_circle,
-                          color: _fwBlocked ? const Color(0xFFEF4444) : const Color(0xFF10B981), size: 16),
+                          color: _fwBlocked ? TdcColors.danger : TdcColors.success, size: 16),
                       const SizedBox(width: 8),
                       Text(
                         _fwBlocked
                             ? 'Port ${_fwPortCtrl.text} → DROP (bloqué par règle)'
                             : 'Port ${_fwPortCtrl.text} → ACCEPT (autorisé)',
                         style: TextStyle(
-                          color: _fwBlocked ? const Color(0xFFEF4444) : const Color(0xFF10B981),
+                          color: _fwBlocked ? TdcColors.danger : TdcColors.success,
                           fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -1433,11 +1433,11 @@ class _HowInternetWorksSimulatorState
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: onTap != null ? color.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.03),
+          color: onTap != null ? color.withValues(alpha: 0.15) : TdcColors.textPrimary.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.5) : Colors.white12),
+          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.5) : TdcColors.border),
         ),
-        child: Text(label, style: TextStyle(color: onTap != null ? color : Colors.white24, fontSize: 11, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
+        child: Text(label, style: TextStyle(color: onTap != null ? color : TdcColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
       ),
     );
   }
@@ -1641,12 +1641,12 @@ class _HowInternetWorksSimulatorState
             child: ElevatedButton.icon(
               onPressed: _running ? null : _startSimulation,
               icon: _running
-                  ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.textPrimary))
                   : const Icon(Icons.play_arrow),
               label: Text(_running ? 'Simulation en cours…' : 'Dérouler les étapes'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: _scenario.color,
-                foregroundColor: Colors.white,
+                foregroundColor: TdcColors.textPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
@@ -1750,7 +1750,7 @@ class _RetainButtonState extends State<_RetainButton> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('« ${widget.title} » ajouté à la Cheat Sheet ★'),
-        backgroundColor: const Color(0xFFF59E0B),
+        backgroundColor: TdcColors.warning,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
@@ -1765,22 +1765,22 @@ class _RetainButtonState extends State<_RetainButton> {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: _saved ? const Color(0xFFF59E0B).withValues(alpha: 0.18) : Colors.white.withValues(alpha: 0.05),
+          color: _saved ? TdcColors.warning.withValues(alpha: 0.18) : TdcColors.textPrimary.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: _saved ? const Color(0xFFF59E0B) : Colors.white24),
+          border: Border.all(color: _saved ? TdcColors.warning : TdcColors.textMuted),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (_loading)
-              const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: Color(0xFFF59E0B)))
+              const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: TdcColors.warning))
             else
-              Icon(_saved ? Icons.bookmark : Icons.bookmark_border, color: _saved ? const Color(0xFFF59E0B) : Colors.white38, size: 13),
+              Icon(_saved ? Icons.bookmark : Icons.bookmark_border, color: _saved ? TdcColors.warning : TdcColors.textTertiary, size: 13),
             const SizedBox(width: 5),
             Text(
               _saved ? 'Retenu ✓' : 'Retenir',
               style: TextStyle(
-                color: _saved ? const Color(0xFFF59E0B) : Colors.white38,
+                color: _saved ? TdcColors.warning : TdcColors.textTertiary,
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),

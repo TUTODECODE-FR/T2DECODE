@@ -176,53 +176,88 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
   }
 
   Widget _card(CheatSheetEntry e) {
+    final color = _getColor(e);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: TdcCard(
-        padding: const EdgeInsets.all(16),
-        onTap: () => Navigator.pushNamed(context, '/cheat-sheets/details', arguments: e),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: _getColor(e).withValues(alpha: 0.1),
-                borderRadius: TdcRadius.md,
-              ),
-              child: Icon(_getIcon(e), color: _getColor(e), size: 20),
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _HighlightText(
-                    text: e.description,
-                    highlight: _filter,
-                    style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      const Icon(Icons.chevron_right, size: 14, color: TdcColors.accent),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: _HighlightText(
-                          text: e.command,
-                          highlight: _filter,
-                          style: const TextStyle(color: TdcColors.textMuted, fontFamily: 'monospace', fontSize: 12),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            _CopyButton(text: e.command),
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.lg,
+          border: Border.all(color: TdcColors.border),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
           ],
+        ),
+        child: ClipRRect(
+          borderRadius: TdcRadius.lg,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => Navigator.pushNamed(context, '/cheat-sheets/details', arguments: e),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border(left: BorderSide(color: color, width: 4)),
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.1),
+                        borderRadius: TdcRadius.md,
+                      ),
+                      child: Icon(_getIcon(e), color: color, size: 24),
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _HighlightText(
+                            text: e.description,
+                            highlight: _filter,
+                            style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 15),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: TdcColors.bg,
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: TdcColors.border.withValues(alpha: 0.5)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.chevron_right, size: 14, color: TdcColors.accent),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: _HighlightText(
+                                    text: e.command,
+                                    highlight: _filter,
+                                    style: const TextStyle(color: TdcColors.textMuted, fontFamily: 'monospace', fontSize: 13),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    _CopyButton(text: e.command),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

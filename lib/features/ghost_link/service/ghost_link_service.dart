@@ -144,6 +144,15 @@ class GhostLinkService extends ChangeNotifier {
   final Map<String, List<GhostMessage>> _conversations = {};
   List<GhostMessage> getConversation(String peerIp) =>
       _conversations[peerIp] ?? [];
+      
+  // Progression des transferts de fichiers (clé = msgId)
+  final Map<String, double> _fileProgress = {};
+  double getFileProgress(String msgId) => _fileProgress[msgId] ?? 0.0;
+  
+  // Buffers de réception pour les fichiers (clé = msgId)
+  final Map<String, List<int>> _fileBuffers = {};
+  final Map<String, int> _fileExpectedSizes = {};
+  final Map<String, String> _fileNames = {};
 
   // Sockets
   RawDatagramSocket? _udpSocket;
@@ -748,23 +757,71 @@ class GhostLinkService extends ChangeNotifier {
   }
 
   void _handleFileMeta(Map<String, dynamic> data, String senderIp) {
+    final msgId = data['id'] as String;
+    final size = data['size'] as int;
+    final fileName = data['name'] as String;
+    
+    _fileExpectedSizes[msgId] = size;
+    _fileBuffers[msgId] = [];
+    _fileNames[msgId] = fileName;
+    _fileProgress[msgId] = 0.0;
+
     _conversations.putIfAbsent(senderIp, () => []).add(GhostMessage(
-          id: data['id'],
+          id: msgId,
           fromId: data['fromId'],
           fromName: data['fromName'],
           peerIp: senderIp,
-          text: 'Fichier entrant : ${data['name']} (${data['size']} octets)',
+          text: 'Fichier entrant : $fileName (${(size / 1024).toStringAsFixed(1)} KB)',
           timestamp: DateTime.now(),
           isOwn: false,
-          fileName: data['name'],
+          fileName: fileName,
         ));
     notifyListeners();
   }
 
   void _handleFileChunk(Map<String, dynamic> data, String senderIp) {
-    // In a real implementation, we'd append to a file or buffer.
-    // For now, we just log it to verify the protocol.
-    if (kDebugMode) debugPrint('[GhostLink] Chunk received from $senderIp');
+    final msgId = data['id'] as String;
+    final chunkB64 = data['data'] as String;
+    final isDone = data['done'] as bool? ?? false;
+    
+    if (!_fileBuffers.containsKey(msgId)) return;
+
+    final bytes = base64Decode(chunkB64);
+    _fileBuffers[msgId]!.addAll(bytes);
+    
+    final expected = _fileExpectedSizes[msgId] ?? 1;
+    _fileProgress[msgId] = _fileBuffers[msgId]!.length / expected;
+    notifyListeners();
+
+    if (isDone || _fileBuffers[msgId]!.length >= expected) {
+      if (kDebugMode) debugPrint('[GhostLink] File transfer complete: $msgId');
+      
+      // Trouver le message et lui attacher les bytes
+      final conv = _conversations[senderIp];
+      if (conv != null) {
+        final index = conv.indexWhere((m) => m.id == msgId);
+        if (index != -1) {
+          final oldMsg = conv[index];
+          conv[index] = GhostMessage(
+            id: oldMsg.id,
+            fromId: oldMsg.fromId,
+            fromName: oldMsg.fromName,
+            peerIp: oldMsg.peerIp,
+            text: 'Fichier reçu : ${oldMsg.fileName}',
+            timestamp: oldMsg.timestamp,
+            isOwn: oldMsg.isOwn,
+            fileName: oldMsg.fileName,
+            fileData: Uint8List.fromList(_fileBuffers[msgId]!),
+          );
+        }
+      }
+      
+      // Cleanup
+      _fileBuffers.remove(msgId);
+      _fileExpectedSizes.remove(msgId);
+      _fileNames.remove(msgId);
+      notifyListeners();
+    }
   }
 
   void _handleDecryptedMessage(String decrypted, String senderIp) {
@@ -860,10 +917,12 @@ class GhostLinkService extends ChangeNotifier {
   }
 
   Future<void> sendFile(GhostPeer peer) async {
-    final result = await FilePicker.platform.pickFiles();
+    final result = await FilePicker.platform.pickFiles(withData: true);
     if (result == null || result.files.isEmpty) return;
 
     final file = result.files.first;
+    if (file.bytes == null) return;
+    
     final socket = _activeSockets[peer.ip];
     if (socket == null) return;
 
@@ -872,36 +931,57 @@ class GhostLinkService extends ChangeNotifier {
         .map((b) => b.toRadixString(16).padLeft(2, '0'))
         .join();
 
-    // 1. Send metadata
-    await _sendPacket(socket, {
-      'type': 'file_meta',
-      'id': msgId,
-      'name': file.name,
-      'size': file.size,
-      'fromId': _localId,
-      'fromName': _localName,
-    });
+    final fileBytes = file.bytes!;
+    final fileSize = fileBytes.length;
 
-    // 2. Send in chunks (simulated for now with the first few bytes)
-    if (file.bytes != null) {
-      final chunk = file.bytes!.sublist(0, min(1024, file.size));
-      await _sendPacket(socket, {
-        'type': 'file_chunk',
-        'id': msgId,
-        'data': base64Encode(chunk),
-      });
-    }
-
+    // Ajouter le message en local
     _conversations.putIfAbsent(peer.ip, () => []).add(GhostMessage(
           id: msgId,
           fromId: _localId,
           fromName: _localName,
           peerIp: peer.ip,
-          text: 'Fichier envoyé : ${file.name}',
+          text: 'Envoi du fichier : ${file.name}',
           timestamp: DateTime.now(),
           isOwn: true,
           fileName: file.name,
+          fileData: fileBytes,
         ));
+        
+    _fileProgress[msgId] = 0.0;
     notifyListeners();
+
+    // 1. Send metadata
+    await _sendPacket(socket, {
+      'type': 'file_meta',
+      'id': msgId,
+      'name': file.name,
+      'size': fileSize,
+      'fromId': _localId,
+      'fromName': _localName,
+    });
+
+    // 2. Send in chunks (64 KB)
+    const chunkSize = 64 * 1024;
+    int offset = 0;
+    
+    while (offset < fileSize) {
+      final end = (offset + chunkSize < fileSize) ? offset + chunkSize : fileSize;
+      final chunk = fileBytes.sublist(offset, end);
+      final isDone = end >= fileSize;
+      
+      await _sendPacket(socket, {
+        'type': 'file_chunk',
+        'id': msgId,
+        'data': base64Encode(chunk),
+        'done': isDone,
+      });
+      
+      offset = end;
+      _fileProgress[msgId] = offset / fileSize;
+      notifyListeners();
+      
+      // Pause to avoid flooding the socket/UI
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
   }
 }
