@@ -82,7 +82,7 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
         with:
           # On workflow_dispatch, build the exact tag the user asked for (avoid uploading main builds to an older tag release).
           ref: ${{ env.TARGET_TAG }}
@@ -448,7 +448,7 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
         with:
           ref: ${{ github.event.inputs.target_tag != '' && github.event.inputs.target_tag || github.ref }}
 
