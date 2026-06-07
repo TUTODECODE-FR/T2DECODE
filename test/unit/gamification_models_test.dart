@@ -33,7 +33,7 @@ void main() {
     });
 
     test('SkillTree and SkillNode coverage', () {
-      final node = SkillNode(
+      final node = const SkillNode(
         id: 'n1',
         title: 'Node',
         description: 'Desc',
@@ -105,7 +105,7 @@ void main() {
     });
 
     test('LearningPath coverage', () {
-      final path = LearningPath(
+      final path = const LearningPath(
         id: 'p1',
         title: 'Path',
         description: 'Desc',

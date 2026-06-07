@@ -68,7 +68,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
           ),
           child: Row(
             children: [
-              Icon(Icons.security, color: TdcColors.danger, size: 28),
+              const Icon(Icons.security, color: TdcColors.danger, size: 28),
               const SizedBox(width: 12),
               const Text(
                 'Laboratoire de Hacking Éthique',
@@ -181,7 +181,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
               ),
               if (_isScanning) ...[
                 const SizedBox(height: 16),
-                LinearProgressIndicator(value: _scanProgress, backgroundColor: TdcColors.surfaceAlt, valueColor: AlwaysStoppedAnimation<Color>(TdcColors.danger)),
+                LinearProgressIndicator(value: _scanProgress, backgroundColor: TdcColors.surfaceAlt, valueColor: const AlwaysStoppedAnimation<Color>(TdcColors.danger)),
               ],
             ],
           ),
@@ -498,7 +498,7 @@ class _EthicalHackingSimulatorState extends State<EthicalHackingSimulator>
                       child: LinearProgressIndicator(
                         value: _currentPasswordIndex / _passwordList.length,
                         backgroundColor: TdcColors.surfaceAlt,
-                        valueColor: AlwaysStoppedAnimation<Color>(TdcColors.crypto),
+                        valueColor: const AlwaysStoppedAnimation<Color>(TdcColors.crypto),
                       ),
                     ),
                   ],

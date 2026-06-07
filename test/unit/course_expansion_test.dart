@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
 import 'package:tutodecode/utils/course_expansion.dart';
 import 'package:tutodecode/features/courses/data/course_repository.dart';
 
@@ -17,7 +16,7 @@ void main() {
         duration: '1h',
         keywords: ['test'],
         chapters: [
-          CourseChapter(
+          const CourseChapter(
             id: 'c1',
             title: 'Intro',
             content: 'import something\nprint("hello")\nclass Test {}',
@@ -40,7 +39,7 @@ void main() {
         duration: '1h',
         keywords: [], // Empty keywords
         chapters: [
-          CourseChapter(
+          const CourseChapter(
             id: 'c2',
             title: 'Intro 2',
             content: 'Just text',

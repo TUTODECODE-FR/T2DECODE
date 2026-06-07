@@ -176,7 +176,7 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
           decoration: const BoxDecoration(color: TdcColors.surface, border: Border(bottom: BorderSide(color: TdcColors.border))),
           child: Row(
             children: [
-              Icon(Icons.dns, color: TdcColors.info, size: 28),
+              const Icon(Icons.dns, color: TdcColors.info, size: 28),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -61,7 +61,7 @@ class _CyberConverterScreenState extends State<CyberConverterScreen> {
         bytes = utf8.encode(input);
       } else if (_currentFormat == 'HEX') {
         String cleanHex = input.replaceAll(' ', '').replaceAll('0x', '');
-        if (cleanHex.length % 2 != 0) cleanHex = '0' + cleanHex;
+        if (cleanHex.length % 2 != 0) cleanHex = '0$cleanHex';
         for (int i = 0; i < cleanHex.length; i += 2) {
           bytes.add(int.parse(cleanHex.substring(i, i + 2), radix: 16));
         }
