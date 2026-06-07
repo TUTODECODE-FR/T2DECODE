@@ -10,6 +10,11 @@
   </p>
 
   <br>
+  <img src="docs/images/t2decode_demo.gif" width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" alt="Démo vidéo - T2DECODE en action">
+  <br><br>
+
+  <p><b>15+</b> Outils &nbsp;•&nbsp; <b>9</b> Simulateurs &nbsp;•&nbsp; <b>4</b> Plateformes &nbsp;•&nbsp; <b>0</b> Télémétrie &nbsp;•&nbsp; <b>100%</b> Local</p>
+  <br>
 
   <!-- CI & Distribution Badges -->
   <p>
@@ -63,11 +68,6 @@
 
 ## 🖼️ T2DECODE en Action
 
-<div align="center">
-  <img src="docs/images/t2decode_demo.gif" width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" alt="Démo vidéo - T2DECODE en action">
-  <br><br>
-</div>
-
 <table width="100%" style="border: none; border-collapse: collapse;">
   <tr>
     <td colspan="2" align="center"><b>Vue Bureau — Accueil & Tableau de Bord</b><br><img src="docs/images/screenshots/app-home-full.png" width="100%" style="border-radius: 8px;" alt="Vue d'ensemble de l'application"></td>
@@ -114,6 +114,16 @@
 **👨‍🏫 Le Formateur**
 - Distribuer des supports de cours complets sur des clés USB (Air-gapped).
 - Construire et fournir des laboratoires pédagogiques virtuels autonomes.
+
+<img src="assets/separator.svg" width="100%" height="4">
+
+## 🚀 Démarrage Rapide (Utilisateur)
+
+Si vous ne souhaitez pas compiler l'application vous-même, voici les trois étapes pour démarrer en un éclair :
+
+1. **📥 Télécharger** : Récupérez la [dernière release](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) correspondant à votre système (Windows, macOS, Linux, Android).
+2. **⚡ Lancer** : L'application est autonome, installez-la ou exécutez le binaire directement selon votre plateforme.
+3. **🎓 Utiliser** : C'est fait ! Vous pouvez instantanément utiliser la boîte à outils, jouer avec les simulateurs, et discuter avec l'IA locale (Ollama).
 
 <img src="assets/separator.svg" width="100%" height="4">
 
