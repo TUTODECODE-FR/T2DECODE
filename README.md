@@ -5,16 +5,20 @@
 
   <h1>T2DECODE</h1>
   
-  <p>
-    <b>T2DECODE est une plateforme d'apprentissage technique offline-first permettant d'étudier les réseaux, les systèmes et la cybersécurité sans dépendance au cloud. Elle intègre des simulateurs, des outils professionnels et une IA locale compatible Ollama.</b>
-  </p>
+  <p><b>Apprenez les réseaux, Linux et la cybersécurité même sans Internet.</b></p>
+  
+  <p>Plateforme pédagogique locale avec :<br>
+  📚 Cours interactifs<br>
+  🔬 Simulateurs techniques<br>
+  🛠️ 15+ outils professionnels<br>
+  🧠 IA locale compatible Ollama<br>
+  🚫 Aucun cloud obligatoire</p>
+  
+  <p><b>100% Offline-First • Air-Gapped Ready • Open Source</b></p>
 
   <br>
   <img src="docs/images/t2decode_demo.gif" width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" alt="Démo vidéo - T2DECODE en action">
   <br><br>
-
-  <p><b>15+</b> Outils &nbsp;•&nbsp; <b>9</b> Simulateurs &nbsp;•&nbsp; <b>4</b> Plateformes &nbsp;•&nbsp; <b>0</b> Télémétrie &nbsp;•&nbsp; <b>100%</b> Local</p>
-  <br>
 
   <!-- CI & Distribution Badges -->
   <p>
@@ -45,59 +49,56 @@
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 📊 Aperçu du Projet
+## 📊 En chiffres
 
-<div align="center">
-  <img src="https://img.shields.io/badge/15%2B_Outils-Intégrés-3DDC84?style=for-the-badge&labelColor=1A1D2E" alt="Outils">
-  <img src="https://img.shields.io/badge/9_Simulateurs-Interactifs-0078D6?style=for-the-badge&labelColor=1A1D2E" alt="Simulateurs">
-  <img src="https://img.shields.io/badge/0_Télémétrie-Garantie-D93025?style=for-the-badge&labelColor=1A1D2E" alt="Zero Télémétrie">
-  <img src="https://img.shields.io/badge/0_Cloud-Obligatoire-FCC624?style=for-the-badge&labelColor=1A1D2E" alt="Zero Cloud">
-</div>
-<br>
+- 📚 **120+** fiches pédagogiques
+- 🔬 **9** simulateurs
+- 🛠️ **15+** outils intégrés
+- 💻 **Windows / Linux / macOS / Android**
+- 🌐 **0** dépendance cloud
+- 🔒 **100%** open source
 
-| Fonction | Statut |
-| :--- | :---: |
-| IA locale Ollama (RAG) | ✅ |
-| Simulateurs réseau & systèmes | ✅ |
-| Boîte à outils technique | ✅ |
-| Fonctionnement 100% hors ligne | ✅ |
-| Ghost Link (Réseau P2P) | 🚧 |
-| Synchronisation de cours en P2P | 🚧 |
+<img src="assets/separator.svg" width="100%" height="4">
+
+## ⚙️ Fonctionnalités
+
+| Module | Description |
+|----------|------------|
+| **Ghost AI** | Assistant IA local (LLM Ollama) avec RAG sur les cours |
+| **NetKit** | Simulateur réseau (Topologie, Routage, Ping) |
+| **CryptoLab** | Simulateur cryptographie (Chiffrement symétrique/asymétrique) |
+| **LinuxLab** | Simulateur terminal Linux |
+| **CIDR** | Calculateur de sous-réseaux IPv4/IPv6 |
+| **Hash** | Utilitaires de hachage (SHA256, MD5, etc.) |
+| **Chmod** | Calculateur de permissions système Linux |
+| **Cron** | Générateur et validateur de tâches planifiées |
 
 <img src="assets/separator.svg" width="100%" height="4">
 
 ## 🖼️ T2DECODE en Action
 
-<table width="100%" style="border: none; border-collapse: collapse;">
-  <tr>
-    <td colspan="2" align="center"><b>Vue Bureau — Accueil & Tableau de Bord</b><br><img src="docs/images/screenshots/app-home-full.png" width="100%" style="border-radius: 8px;" alt="Vue d'ensemble de l'application"></td>
-  </tr>
-  <tr>
-    <td width="50%" align="center"><b>Boîte à Outils Utilitaires</b><br><img src="docs/images/screenshots/section-tools.png" width="100%" style="border-radius: 8px;" alt="Outils Utilitaires"></td>
-    <td width="50%" align="center"><b>Ghost AI (Tuteur IA Local)</b><br><img src="docs/images/screenshots/section-chat-ia.png" width="100%" style="border-radius: 8px;" alt="Chat IA Local"></td>
-  </tr>
-</table>
+<p align="center">
+  <img width="48%" src="docs/images/screenshots/app-home-full.png" style="border-radius: 8px;" alt="Accueil">
+  <img width="48%" src="docs/images/screenshots/section-tools.png" style="border-radius: 8px;" alt="Outils">
+</p>
+<p align="center">
+  <img width="48%" src="docs/images/screenshots/section-chat-ia.png" style="border-radius: 8px;" alt="Ghost AI">
+  <img width="48%" src="docs/images/screenshots/section-cheat-sheets.png" style="border-radius: 8px;" alt="Fiches">
+</p>
 
 <img src="assets/separator.svg" width="100%" height="4">
 
 ## 🎯 Pourquoi T2DECODE ?
 
-| Problème | Réponse T2DECODE |
-| :--- | :--- |
-| **Pas d'Internet** | Fonctionne entièrement hors ligne. |
-| **Données sensibles** | Aucune télémétrie, aucun tracking. |
-| **Formation en zone isolée** | Mode Air-gapped ready (sans dépendances). |
-| **IA cloud interdite (ex: ChatGPT)** | Compatible avec des modèles locaux (Ollama). |
-| **Besoin d'outils rapides** | Boîte à outils intégrée (CIDR, chmod, Base64, etc.). |
+Contrairement aux plateformes de formation classiques :
 
-### Ce que T2DECODE n'est pas vs Ce qu'il est
-
-| ❌ Ce que T2DECODE n'est pas | ✅ Ce que T2DECODE est |
-| :--- | :--- |
-| Une plateforme SaaS | Une plateforme exécutée localement |
-| Un service cloud | Un outil pédagogique autonome |
-| Un outil offensif de hacking | Une boîte à outils technique et défensive |
-| Un collecteur de données | Une solution offline-first souveraine |
+| Plateforme Cloud | T2DECODE |
+|------------------|-----------|
+| Internet obligatoire | Fonctionne **hors ligne** |
+| Données hébergées chez un tiers | Données **locales** |
+| IA distante (SaaS) | IA **locale** Ollama |
+| Peu utilisable en environnement sécurisé | **Air-Gapped Ready** |
+| Dépendance à un abonnement | Logiciel **autonome** |
 
 <img src="assets/separator.svg" width="100%" height="4">
 
@@ -114,6 +115,19 @@
 **👨‍🏫 Le Formateur**
 - Distribuer des supports de cours complets sur des clés USB (Air-gapped).
 - Construire et fournir des laboratoires pédagogiques virtuels autonomes.
+
+<img src="assets/separator.svg" width="100%" height="4">
+
+## 🗺️ Roadmap Visuelle
+
+Nous construisons l'avenir de la formation souveraine :
+
+- [x] Simulateurs interactifs
+- [x] IA locale (Ollama)
+- [x] Boîte à outils offline
+- [ ] Moteur de synchronisation (T2C-Phantom)
+- [ ] Messagerie locale P2P (Ghost Link)
+- [ ] Marketplace de modules pédagogiques communautaires
 
 <img src="assets/separator.svg" width="100%" height="4">
 
