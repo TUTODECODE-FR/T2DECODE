@@ -106,7 +106,7 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
                   const Text('Case Sensitive', style: TextStyle(color: TdcColors.textSecondary, fontSize: 12)),
                   Switch(
                     value: _caseSensitive,
-                    activeColor: TdcColors.accent,
+                    activeThumbColor: TdcColors.accent,
                     onChanged: (v) { setState(() => _caseSensitive = v); _evaluateRegex(); },
                   ),
                 ],
@@ -117,7 +117,7 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
                   const Text('Multiline', style: TextStyle(color: TdcColors.textSecondary, fontSize: 12)),
                   Switch(
                     value: _multiLine,
-                    activeColor: TdcColors.accent,
+                    activeThumbColor: TdcColors.accent,
                     onChanged: (v) { setState(() => _multiLine = v); _evaluateRegex(); },
                   ),
                 ],
@@ -129,11 +129,11 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
             controller: _regexController,
             onChanged: (_) => _evaluateRegex(),
             style: const TextStyle(color: TdcColors.textPrimary, fontSize: 16, fontFamily: 'monospace', fontWeight: FontWeight.bold),
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               prefixText: '/',
               suffixText: '/',
-              prefixStyle: const TextStyle(color: TdcColors.textMuted, fontSize: 18),
-              suffixStyle: const TextStyle(color: TdcColors.textMuted, fontSize: 18),
+              prefixStyle: TextStyle(color: TdcColors.textMuted, fontSize: 18),
+              suffixStyle: TextStyle(color: TdcColors.textMuted, fontSize: 18),
               filled: true,
               fillColor: TdcColors.bg,
               border: OutlineInputBorder(borderRadius: TdcRadius.sm, borderSide: BorderSide.none),
@@ -170,7 +170,7 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
                   width: double.infinity,
                   height: double.infinity,
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: TdcColors.bg,
                     borderRadius: TdcRadius.sm,
                   ),

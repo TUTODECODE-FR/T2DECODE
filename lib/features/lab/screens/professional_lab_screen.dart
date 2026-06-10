@@ -77,12 +77,12 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.science,
                             color: TdcColors.infoDim, size: 20),
-                        const SizedBox(width: 8),
-                        const Text(
+                        SizedBox(width: 8),
+                        Text(
                           'SIMULATION CORE',
                           style: TextStyle(
                             color: TdcColors.info,

@@ -825,8 +825,6 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
   Timer? _psTimer;
 
   // ── Bash terminal ─────────────────────────────────────────
-  final List<String> _bashLines = [];
-  final TextEditingController _bashCtrl = TextEditingController();
 
   _Scenario get _scenario => _linuxScenarios[_scenarioIndex];
 
@@ -835,7 +833,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
     _timer?.cancel();
     _psTimer?.cancel();
     _scrollCtrl.dispose();
-    _bashCtrl.dispose();
+
     super.dispose();
   }
 
@@ -919,57 +917,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
 
   // ── Bash terminal ─────────────────────────────────────────
 
-  Future<void> _runBashCommand(String cmd) async {
-    final c = cmd.trim();
-    if (c.isEmpty) return;
-    setState(() {
-      _bashLines.add('\$ $c');
-      _bashCtrl.clear();
-    });
-    await Future.delayed(const Duration(milliseconds: 150));
-    String output = '';
-    if (c == 'ls' || c == 'ls /') {
-      output = 'bin  boot  dev  etc  home  lib  media  mnt  opt  proc  root  run  srv  sys  tmp  usr  var';
-    } else if (c.startsWith('echo ')) {
-      output = c.substring(5).replaceAll('"', '').replaceAll("'", '');
-    } else if (c == 'pwd') {
-      output = '/home/user';
-    } else if (c == 'whoami') {
-      output = 'user';
-    } else if (c == 'uname -r') {
-      output = '6.8.0-40-generic';
-    } else if (c == 'ps aux' || c == 'ps') {
-      output = '''USER    PID  %CPU  %MEM  COMMAND\nroot      1   0.0   0.3  systemd\nroot    125   0.1   0.4  sshd\nuser    712   0.0   0.2  bash''';
-    } else if (c == 'df -h') {
-      output = '''Filesystem  Size  Used  Avail Use%\n/dev/sda1    50G   18G    30G  38%\ntmpfs       1.9G     0   1.9G   0%''';
-    } else if (c == 'free -h') {
-      output = '''       total  used  free  available\nMem:    7.8G  3.2G  2.1G       4.2G\nSwap:   2.0G  0.1G  1.9G''';
-    } else if (c == 'uptime') {
-      output = '14:32:01 up 3 days, 5:12, 1 user, load average: 0.15, 0.20, 0.18';
-    } else if (c.startsWith('cat /etc/')) {
-      final file = c.substring(4);
-      if (file == '/etc/hosts') {
-        output = '''127.0.0.1  localhost\n127.0.1.1  hostname\n::1        localhost ip6-localhost''';
-      } else if (file == '/etc/passwd') {
-        output = '''root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nuser:x:1000:1000::/home/user:/bin/bash''';
-      } else {
-        output = 'cat: $file: No such file or directory';
-      }
-    } else if (c == 'help' || c == '?') {
-      output = 'Commandes disponibles : ls, pwd, whoami, echo, uname -r, ps aux, df -h, free -h, uptime, cat /etc/hosts, cat /etc/passwd';
-    } else if (c == 'clear') {
-      setState(() => _bashLines.clear());
-      return;
-    } else {
-      output = 'bash: $c: command not found (essaie "help")';
-    }
-    if (!mounted) return;
-    setState(() {
-      for (final line in output.split('\n')) {
-        _bashLines.add(line);
-      }
-    });
-  }
+
 
   Future<void> _startSimulation() async {
     if (_running) return;

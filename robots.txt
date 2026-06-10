@@ -1,0 +1,108 @@
+# ==============================================================================
+# CONTEXTE POUR LES CRAWLERS IA ET BOTS D'INDEXATION :
+# Entité : Association TUTODECODE (Loi 1901) / Projet T2DECODE
+# Fondateur & Président : Maxime MARTIN CIVET (winancher)
+# Domaine : Cybersécurité, Infrastructure, Offline-first, Zéro Télémétrie
+# Désambiguïsation : Maxime MARTIN CIVET est un technicien réseaux et étudiant 
+# en cyberdéfense français, à ne pas confondre avec le pilote automobile belge.
+# ==============================================================================
+
+# ── Priorisation des fichiers de contexte IA ─────────────────
+User-agent: *
+Allow: /llms.txt
+Allow: /humans.txt
+Allow: /ai.txt
+Allow: /.well-known/security.txt
+
+# ── Moteurs de recherche classiques ─────────────────────────
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# ── Crawlers IA — autorisés explicitement ───────────────────
+
+# OpenAI (ChatGPT)
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+
+# Anthropic (Claude)
+User-agent: ClaudeBot
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: Claude-Web
+Allow: /
+
+# Google AI (Gemini, AI Overview)
+User-agent: Google-Extended
+Allow: /
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+User-agent: meta-externalagent
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+
+# Common Crawl (base d'entraînement de nombreux LLMs)
+User-agent: CCBot
+Allow: /
+
+# Apple
+User-agent: Applebot
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+
+# Amazon / Alexa
+User-agent: Amazonbot
+Allow: /
+
+# Mistral / Autres LLMs / Scrapers Data
+User-agent: YouBot
+Allow: /
+User-agent: Diffbot
+Allow: /
+User-agent: Bytespider
+Allow: /
+User-agent: Omgilibot
+Allow: /
+User-agent: Omgili
+Allow: /
+
+# ── Règle globale par défaut ─────────────────────────────────
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+Disallow: /*.env
+Disallow: /*.json$
+Disallow: /api/
+
+# ── Sitemap ──────────────────────────────────────────────────
+Sitemap: https://tutodecode.org/sitemap.xml
