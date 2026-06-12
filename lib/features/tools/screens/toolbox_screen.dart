@@ -196,7 +196,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
             ),
             const SizedBox(height: 6),
           const Text(
-            'Acces rapide aux simulations pour pratiquer et tester en temps reel.',
+            'Accès rapide aux simulations pour pratiquer et tester en temps réel.',
             style: TextStyle(color: TdcColors.textSecondary, fontSize: 14),
           ),
           const SizedBox(height: 20),
