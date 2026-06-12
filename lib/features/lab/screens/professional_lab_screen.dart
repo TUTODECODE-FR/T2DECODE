@@ -1,9 +1,9 @@
-import 'package:tutodecode/core/theme/app_theme.dart';
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
 // Professional Lab Screen — Navigation latérale + simulateurs directs
 // ============================================================
+import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';

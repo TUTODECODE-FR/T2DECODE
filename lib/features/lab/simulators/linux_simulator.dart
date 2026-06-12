@@ -766,7 +766,7 @@ final _linuxScenarios = [
         detail:
             'trap "commande" SIGNAL permet de réagir aux signaux dans un script.\n'
             r'trap "rm -f /tmp/mon_script_$$; exit" INT TERM EXIT '
-            "nettoie les fichiers temporaires à l'interruption (Ctrl+C = SIGINT) "
+            r"nettoie les fichiers temporaires à l'interruption (Ctrl+C = SIGINT) "
             r'ou en fin normale. $$ est le PID du script courant.' '\n'
             'trap "" INT ignore SIGINT (utile pendant une section critique non interruptible).\n'
             'trap - INT restaure le comportement par défaut. '
@@ -1143,7 +1143,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
             if (_bootPhase >= 6)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: const Text('Ubuntu 24.04 LTS \n l', style: TextStyle(color: TdcColors.success, fontSize: 11, fontFamily: 'monospace'))
+                child: const Text('Ubuntu 24.04 LTS\nlogin:', style: TextStyle(color: TdcColors.success, fontSize: 11, fontFamily: 'monospace'))
                     .animate().fadeIn(),
               ),
           ],
