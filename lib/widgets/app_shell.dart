@@ -32,6 +32,8 @@ class AppShell extends StatefulWidget {
 }
 
 class _AppShellState extends State<AppShell> {
+  static final Map<String, String> _toolRouteNames = buildToolBreadcrumbMap();
+
   @override
   void initState() {
     super.initState();
@@ -79,11 +81,10 @@ class _AppShellState extends State<AppShell> {
   }
 
   Widget _buildBreadcrumbs(BuildContext context, String activeRoute) {
-    final toolRouteNames = buildToolBreadcrumbMap();
     final Map<String, String> routeNames = {
       '/': 'Accueil',
       '/tools': 'Outils',
-      ...toolRouteNames,
+      ..._toolRouteNames,
       '/cheat-sheets': 'Cheat Sheets',
       '/netkit': 'NetKit',
       '/ai': 'Chat IA',
@@ -973,7 +974,7 @@ class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
         if (route == '/chapter') {
           final courseId = r.doc.nav['courseId'];
           final chapterId = r.doc.nav['chapterId'];
-          if (courseId != null) {
+          if (courseId != null && courses.courses.isNotEmpty) {
             final course = courses.courses.firstWhere((c) => c.id == courseId,
                 orElse: () => courses.courses.first);
             final chId = chapterId ??

@@ -35,7 +35,7 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
     
     // Initial values
     _regexController.text = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}';
-    _textController.text = "Contactez-nous a support@tutodecode.org ou admin@t2decode.local pour plus d'infos.";
+    _textController.text = "Contactez-nous à support@tutodecode.org ou admin@t2decode.local pour plus d'infos.";
     _evaluateRegex();
   }
 
