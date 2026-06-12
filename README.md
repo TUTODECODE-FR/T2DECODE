@@ -72,6 +72,12 @@
 | **Hash** | Utilitaires de hachage (SHA256, MD5, etc.) |
 | **Chmod** | Calculateur de permissions système Linux |
 | **Cron** | Générateur et validateur de tâches planifiées |
+| **T2C-Phantom** | Réseau P2P décentralisé de mise à jour des cours |
+
+### 🔄 Mises à jour P2P autonomes avec T2C-Phantom
+
+**T2C-Phantom** est un réseau Peer-to-Peer (P2P) développé par TUTODECODE spécialement pour T2DECODE.
+Si l'utilisateur active la **mise à jour automatique** dans les paramètres et lance **T2C-Phantom**, l'application cherchera automatiquement sur une adresse P2P les derniers fichiers de cours, les téléchargera et se mettra à jour toute seule. Cela permet de distribuer et d'actualiser les contenus sans dépendre d'aucun serveur central cloud !
 
 <img src="assets/separator.svg" width="100%" height="4">
 
