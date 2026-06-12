@@ -3,6 +3,8 @@
 // ============================================================
 // Gamification Models — Système de progression avancé
 // ============================================================
+// ignore_for_file: non_const_argument_for_const_parameter
+
 import 'package:flutter/material.dart';
 
 class Achievement {
@@ -91,7 +93,6 @@ class Achievement {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      // ignore: non_const_argument_for_const_parameter
       icon: IconData(json['icon'], fontFamily: 'MaterialIcons'),
       color: Color(json['color']),
       points: json['points'],
@@ -145,7 +146,6 @@ class SkillTree {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      // ignore: non_const_argument_for_const_parameter
       icon: IconData(json['icon'], fontFamily: 'MaterialIcons'),
       color: Color(json['color']),
       nodes: (json['nodes'] as List).map((n) => SkillNode.fromJson(n)).toList(),
