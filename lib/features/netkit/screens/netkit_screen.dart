@@ -265,6 +265,14 @@ class _PortScannerTabState extends State<_PortScannerTab> {
     final ports = _parsePorts(_portsCtrl.text);
     if (host.isEmpty || ports.isEmpty) return;
 
+    const maxPorts = 256;
+    if (ports.length > maxPorts) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Veuillez limiter le scan à 256 ports maximum.')),
+      );
+      return;
+    }
+
     setState(() => _scanning = true);
     final term = _termKey.currentState;
     if (term == null) { setState(() => _scanning = false); return; }
