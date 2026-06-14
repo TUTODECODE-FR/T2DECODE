@@ -2,6 +2,9 @@
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:math';
 
+extension _IterableFirstOrNull<T> on Iterable<T> {
+  T? get firstOrNull => isEmpty ? null : first;
+}
 class VirtualFileSystem {
   final Map<String, _FSNode> _nodes = {};
 
