@@ -272,7 +272,7 @@ make build-linux    # Construction de l'exécutable natif Linux
 Le projet T2DECODE est développé et soutenu par l'**Association TUTODECODE**, structure relevant de l'Économie Sociale et Solidaire (ESS).  
 Notre mission est de démocratiser la maîtrise des infrastructures informatiques et de la cybersécurité en fournissant des outils souverains et respectueux de la vie privée.
 
-- **Éditeur** : Association Loi 1901 TUTO DECODE
+- **Éditeur** : Association Loi 1901 TUTODECODE
 - **Directeur de Publication** : Maxime MARTIN CIVET
 - **SIREN** : 102 763 133
 - **Site Web Officiel** : [https://tutodecode.org](https://tutodecode.org)
