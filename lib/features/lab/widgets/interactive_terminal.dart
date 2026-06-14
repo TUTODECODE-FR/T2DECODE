@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
+import 'package:tutodecode/features/lab/services/virtual_shell.dart';
 
 class InteractiveTerminal extends StatefulWidget {
   final String hostname;
   final String username;
   final String initialPath;
-  
+
   const InteractiveTerminal({
     super.key,
     this.hostname = 't2decode',
@@ -23,17 +25,27 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
   final TextEditingController _inputController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
-  
-  final List<String> _history = [];
-  String _currentPath = '';
+
+  final List<_TermLine> _lines = [];
+  late final VirtualShell _shell;
+  final List<String> _cmdHistory = [];
+  int _historyIndex = -1;
 
   @override
   void initState() {
     super.initState();
-    _currentPath = widget.initialPath;
-    _history.add('T2DECODE Simulation Terminal v1.0.0');
-    _history.add('Type "help" to see available commands.');
-    _history.add('');
+    _shell = VirtualShell();
+    _lines.add(_TermLine('T2DECODE Virtual Shell v2.0.0 — Linux Simulation Engine', _TermLineType.system));
+    _lines.add(_TermLine('Type "help" for available commands. Filesystem, pipes and redirection supported.', _TermLineType.system));
+    _lines.add(_TermLine('', _TermLineType.system));
+  }
+
+  @override
+  void dispose() {
+    _inputController.dispose();
+    _focusNode.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void _scrollToBottom() {
@@ -47,81 +59,54 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
   }
 
   void _handleCommand(String input) {
-    if (input.trim().isEmpty) {
-      setState(() {
-        _history.add('${widget.username}@${widget.hostname}:$_currentPath\$ ');
-      });
-      _scrollToBottom();
-      return;
-    }
+    final trimmed = input.trim();
 
-    final cmd = input.trim();
     setState(() {
-      _history.add('${widget.username}@${widget.hostname}:$_currentPath\$ $cmd');
-      
-      final parts = cmd.split(' ');
-      final base = parts[0].toLowerCase();
-      
-      switch (base) {
-        case 'clear':
-          _history.clear();
-          break;
-        case 'help':
-          _history.addAll([
-            'Available commands:',
-            '  ls       - List directory contents',
-            '  pwd      - Print working directory',
-            '  whoami   - Print current user id',
-            '  echo     - Print text',
-            '  ping     - Send ICMP ECHO_REQUEST',
-            '  clear    - Clear terminal',
-            '  sudo     - Execute a command as superuser',
-          ]);
-          break;
-        case 'pwd':
-          _history.add(_currentPath == '~' ? '/home/${widget.username}' : _currentPath);
-          break;
-        case 'whoami':
-          _history.add(widget.username);
-          break;
-        case 'ls':
-          _history.add('Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos');
-          break;
-        case 'echo':
-          _history.add(parts.skip(1).join(' '));
-          break;
-        case 'ping':
-          if (parts.length > 1) {
-            final target = parts[1];
-            _history.addAll([
-              'PING $target (192.168.1.42) 56(84) bytes of data.',
-              '64 bytes from $target (192.168.1.42): icmp_seq=1 ttl=64 time=0.034 ms',
-              '64 bytes from $target (192.168.1.42): icmp_seq=2 ttl=64 time=0.041 ms',
-              '64 bytes from $target (192.168.1.42): icmp_seq=3 ttl=64 time=0.039 ms',
-            ]);
+      _lines.add(_TermLine('${_shell.prompt}$trimmed', _TermLineType.prompt));
+
+      if (trimmed.isNotEmpty) {
+        _cmdHistory.add(trimmed);
+        _historyIndex = _cmdHistory.length;
+        final output = _shell.execute(trimmed);
+        for (final line in output) {
+          if (line == '__CLEAR__') {
+            _lines.clear();
           } else {
-            _history.add('ping: usage error: Destination address required');
+            _lines.add(_TermLine(line, _TermLineType.output));
           }
-          break;
-        case 'sudo':
-          _history.add('[sudo] password for ${widget.username}:');
-          _history.add('Sorry, try again.');
-          break;
-        default:
-          _history.add('bash: $base: command not found');
+        }
       }
     });
-    
+
     _inputController.clear();
     Future.delayed(const Duration(milliseconds: 50), _scrollToBottom);
     _focusNode.requestFocus();
+  }
+
+  void _handleKeyEvent(KeyEvent event) {
+    if (event is! KeyDownEvent) return;
+    if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+      if (_cmdHistory.isNotEmpty && _historyIndex > 0) {
+        _historyIndex--;
+        _inputController.text = _cmdHistory[_historyIndex];
+        _inputController.selection = TextSelection.fromPosition(TextPosition(offset: _inputController.text.length));
+      }
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+      if (_historyIndex < _cmdHistory.length - 1) {
+        _historyIndex++;
+        _inputController.text = _cmdHistory[_historyIndex];
+      } else {
+        _historyIndex = _cmdHistory.length;
+        _inputController.clear();
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E), // Vrai noir de terminal
+        color: const Color(0xFF1E1E1E),
         borderRadius: TdcRadius.md,
         border: Border.all(color: TdcColors.border),
         boxShadow: [
@@ -135,7 +120,6 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header (Barre de titre macOS/Linux style)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
@@ -145,22 +129,21 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
             ),
             child: Row(
               children: [
-                _buildWindowControl(Colors.redAccent),
+                _dot(Colors.redAccent),
                 const SizedBox(width: 8),
-                _buildWindowControl(Colors.orangeAccent),
+                _dot(Colors.orangeAccent),
                 const SizedBox(width: 8),
-                _buildWindowControl(Colors.greenAccent),
+                _dot(Colors.greenAccent),
                 const Spacer(),
-                const Text(
-                  'bash — 80x24',
-                  style: TextStyle(color: Colors.white54, fontSize: 12, fontFamily: 'monospace'),
+                Text(
+                  '${_shell.user}@${_shell.hostname}: ${_shell.cwd}',
+                  style: const TextStyle(color: Colors.white54, fontSize: 12, fontFamily: 'monospace'),
                 ),
                 const Spacer(),
               ],
             ),
           ),
-          
-          // Corps du terminal
+
           Expanded(
             child: GestureDetector(
               onTap: () => _focusNode.requestFocus(),
@@ -168,51 +151,56 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
                 padding: const EdgeInsets.all(12),
                 child: ListView.builder(
                   controller: _scrollController,
-                  itemCount: _history.length + 1,
+                  itemCount: _lines.length + 1,
                   itemBuilder: (context, index) {
-                    if (index < _history.length) {
+                    if (index < _lines.length) {
+                      final line = _lines[index];
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
+                        padding: const EdgeInsets.only(bottom: 2),
                         child: Text(
-                          _history[index],
-                          style: const TextStyle(
-                            color: Color(0xFFE0E0E0),
-                            fontSize: 14,
+                          line.text,
+                          style: TextStyle(
+                            color: line.color,
+                            fontSize: 13,
                             fontFamily: 'monospace',
+                            height: 1.4,
                           ),
                         ),
                       );
                     }
-                    // Input line
                     return Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '${widget.username}@${widget.hostname}:$_currentPath\$ ',
+                          _shell.prompt,
                           style: const TextStyle(
-                            color: Color(0xFF4ADE80), // Vert fluo classique
-                            fontSize: 14,
+                            color: Color(0xFF4ADE80),
+                            fontSize: 13,
                             fontFamily: 'monospace',
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Expanded(
-                          child: TextField(
-                            controller: _inputController,
-                            focusNode: _focusNode,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontFamily: 'monospace',
+                          child: KeyboardListener(
+                            focusNode: FocusNode(),
+                            onKeyEvent: _handleKeyEvent,
+                            child: TextField(
+                              controller: _inputController,
+                              focusNode: _focusNode,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontFamily: 'monospace',
+                              ),
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                              cursorColor: Colors.white,
+                              cursorWidth: 8,
+                              onSubmitted: _handleCommand,
                             ),
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                            cursorColor: Colors.white,
-                            cursorWidth: 8,
-                            onSubmitted: _handleCommand,
                           ),
                         ),
                       ],
@@ -227,14 +215,27 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
     );
   }
 
-  Widget _buildWindowControl(Color color) {
-    return Container(
-      width: 12,
-      height: 12,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
-    );
+  Widget _dot(Color color) => Container(
+    width: 12,
+    height: 12,
+    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+  );
+}
+
+enum _TermLineType { prompt, output, system, error }
+
+class _TermLine {
+  final String text;
+  final _TermLineType type;
+
+  _TermLine(this.text, this.type);
+
+  Color get color {
+    switch (type) {
+      case _TermLineType.prompt: return const Color(0xFF4ADE80);
+      case _TermLineType.output: return const Color(0xFFE0E0E0);
+      case _TermLineType.system: return const Color(0xFF60A5FA);
+      case _TermLineType.error: return const Color(0xFFF87171);
+    }
   }
 }
