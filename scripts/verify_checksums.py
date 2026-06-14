@@ -3,24 +3,29 @@ import hashlib
 import json
 from pathlib import Path
 
-j = json.load(open('assets/asset_checksums.json'))
+ROOT = Path(__file__).resolve().parents[1]
+CHECKSUM_FILE = ROOT / 'assets' / 'asset_checksums.json'
+
+with CHECKSUM_FILE.open('r', encoding='utf-8') as f:
+    checksums = json.load(f)
+
 errors = []
-for k, v in j.items():
-    p = Path(k)
+for rel_path, expected in checksums.items():
+    p = ROOT / rel_path
     if not p.exists():
-        errors.append((k, 'MISSING', None))
+        errors.append((rel_path, 'MISSING', None))
         continue
-    h = hashlib.sha256(p.read_bytes()).hexdigest()
-    if h != v:
-        errors.append((k, v, h))
+    actual = hashlib.sha256(p.read_bytes()).hexdigest()
+    if actual != expected:
+        errors.append((rel_path, expected, actual))
 
 if not errors:
     print('All checksums match')
     raise SystemExit(0)
-else:
-    for e in errors:
-        if e[1] == 'MISSING':
-            print(f'MISSING: {e[0]}')
-        else:
-            print(f'MISMATCH: {e[0]} expected={e[1]} actual={e[2]}')
-    raise SystemExit(2)
+
+for rel_path, expected, actual in errors:
+    if expected == 'MISSING':
+        print(f'MISSING: {rel_path}')
+    else:
+        print(f'MISMATCH: {rel_path} expected={expected} actual={actual}')
+raise SystemExit(2)
