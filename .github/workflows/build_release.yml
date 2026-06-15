@@ -700,6 +700,8 @@ jobs:
               cleaned_gh = parts[0]
               parts = re.split(r'##\s+Nouveaux\s+contributeurs', cleaned_gh, flags=re.IGNORECASE)
               cleaned_gh = parts[0]
+              # Éviter de dupliquer le header déjà ajouté plus haut
+              cleaned_gh = re.sub(r"^\s*##\s+What's Changed\s*\n+", "", cleaned_gh, flags=re.IGNORECASE)
               final_content += cleaned_gh.strip() + "\n\n"
           elif not has_changelog:
               final_content += "* Mises à jour et correctifs de la version.\n\n"
