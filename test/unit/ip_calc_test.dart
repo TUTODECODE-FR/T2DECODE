@@ -1,47 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import 'package:flutter_test/flutter_test.dart';
-
-String numToIp(int num) =>
-    '${(num >> 24) & 0xFF}.${(num >> 16) & 0xFF}.${(num >> 8) & 0xFF}.${num & 0xFF}';
-
-class SubnetResult {
-  final String network, broadcast, firstHost, lastHost, numHosts, netmask;
-  SubnetResult({required this.network, required this.broadcast, required this.firstHost,
-    required this.lastHost, required this.numHosts, required this.netmask});
-}
+import 'package:tutodecode/utils/ip_helper.dart';
 
 SubnetResult calculateSubnet(String ipStr, int mask) {
-  final ipParts = ipStr.split('.').map(int.parse).toList();
-  if (ipParts.length != 4) throw FormatException('Invalid IP');
-  if (mask < 0 || mask > 32) throw FormatException('Invalid mask');
-
-  int ipNum = (ipParts[0] << 24) | (ipParts[1] << 16) | (ipParts[2] << 8) | ipParts[3];
-  int maskNum = mask == 0 ? 0 : (0xFFFFFFFF << (32 - mask)) & 0xFFFFFFFF;
-  int networkNum = ipNum & maskNum;
-  int broadcastNum = networkNum | (~maskNum & 0xFFFFFFFF);
-
-  final network = numToIp(networkNum);
-  final broadcast = numToIp(broadcastNum);
-  final netmask = numToIp(maskNum);
-  String firstHost, lastHost, numHosts;
-
-  if (mask < 31) {
-    firstHost = numToIp(networkNum + 1);
-    lastHost = numToIp(broadcastNum - 1);
-    numHosts = (broadcastNum - networkNum - 1).toString();
-  } else if (mask == 31) {
-    firstHost = numToIp(networkNum);
-    lastHost = numToIp(broadcastNum);
-    numHosts = '2 (P2P)';
-  } else {
-    firstHost = numToIp(networkNum);
-    lastHost = numToIp(networkNum);
-    numHosts = '1';
-  }
-
-  return SubnetResult(network: network, broadcast: broadcast, firstHost: firstHost,
-    lastHost: lastHost, numHosts: numHosts, netmask: netmask);
+  return IpHelper.calculateSubnet(ipStr, mask);
 }
+
+String numToIp(int num) {
+  return IpHelper.numToIp(num);
+}
+
 
 void main() {
   group('IP Calculator - Standard subnets', () {

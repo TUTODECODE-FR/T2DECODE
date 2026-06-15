@@ -1,62 +1,48 @@
-================================================================================
-📘 T2DECODE — RÉSUMÉ COMPLET DE L'APPLICATION
-================================================================================
+# T2DECODE — Résumé de l'application
 
-T2DECODE est une suite pédagogique et technique "All-in-One" conçue pour les
-professionnels de l'IT, les étudiants et les passionnés de sécurité informatique. 
-L'application se distingue par son approche offline-first, Privacy-First et 
-propulsée par l'Intelligence Artificielle locale.
+T2DECODE est une suite pédagogique destinée aux étudiants, formateurs et
+professionnels IT. Conçue pour fonctionner entièrement hors‑ligne, elle combine
+cours interactifs, simulateurs techniques, outils métiers et un assistant IA
+local (Ollama), tout en plaçant la confidentialité et l'intégrité des données au
+centre de son architecture.
 
---------------------------------------------------------------------------------
-🎯 MISSION & PHILOSOPHIE
---------------------------------------------------------------------------------
+## Mission et philosophie
 
-- SOUVERAINETÉ NUMÉRIQUE : Aucune dépendance au Cloud. Tout fonctionne en local.
-- CONFIDENTIALITÉ ABSOLUE : Pas de tracking, pas de compte, pas de fuite de données.
-- ACCESSIBILITÉ : Indispensable en zone blanche, datacenter ou en déplacement.
-- OPEN SOURCE : Projet porté par l'Association TUTODECODE (Licence GPLv3).
+- Souveraineté numérique : aucune dépendance au cloud ; tout fonctionne en local.
+- Confidentialité : pas de tracking, pas de comptes obligatoires, pas d'exfiltration.
+- Accessibilité : utilisable en environnement déconnecté (zones blanches, datacenters).
+- Open source : projet porté par l'Association TUTODECODE (licence GPLv3).
 
---------------------------------------------------------------------------------
-🚀 FONCTIONNALITÉS MAÎTRESSES
---------------------------------------------------------------------------------
+## Fonctionnalités principales
 
-1. GHOST AI (Intelligence Artificielle Locale)
-   - Intégration native avec Ollama pour faire tourner des LLM sur votre machine.
-   - Assistant technique privé pour le code, le debug et l'administration système.
+### 1) Ghost AI — Intelligence artificielle locale
+- Intégration native avec Ollama pour exécuter des LLM en local.
+- Assistant technique privé pour aide au code, diagnostics et tutoriels.
 
-2. ACADÉMIE (Cours & Formations)
-   Modules couvrant l'essentiel de l'IT moderne :
-   - Systèmes : Linux (Bases, Bash), Docker, Kubernetes.
-   - Développement : Python, JavaScript, TypeScript, Node.js & API REST.
-   - Réseaux : Modèle OSI, TCP/IP, DNS, HTTP/HTTPS.
-   - Sécurité : bonnes pratiques, vulnérabilités web courantes (pédagogique).
-   - Web : HTML5 Sémantique, CSS Moderne (Flexbox, Grid, Animations).
-   - Outils : Git & GitHub.
+### 2) Académie — Cours et formations
+Modules couvrant : systèmes (Linux, Bash), conteneurs (Docker, Kubernetes),
+développement (Python, JavaScript, TypeScript), réseaux (OSI, TCP/IP, DNS),
+sécurité pédagogique, et outils (Git, GitHub).
 
-3. NETKIT (Outils de Diagnostic)
-   - Port Checker : Testez la connectivité réelle sur n'importe quel hôte.
-   - DNS Lookup : Résolution de noms via les serveurs du système.
-   - System Info : Données en temps réel (Hostname, CPU, IPs locales/publiques).
-   - Calculateur IP / Masques : Outil de subnetting rapide.
+### 3) NetKit — Outils de diagnostic
+- Vérification de ports, résolutions DNS, inventaire système (hostname, adresses IP),
+  calculateur d'adressage et de sous‑réseaux.
 
-4. LABORATOIRE DE SIMULATION
-   - Simulations interactives visuelles (Ping ICMP, Handshake TCP, DNS).
-   - Simulateurs de vulnérabilités web : entraînement pédagogique et contrôlé.
+### 4) Laboratoire de simulation
+- Simulations interactives (Ping, handshake TCP, DNS) et environnements d'entraînement
+  contrôlés pour l'apprentissage des vulnérabilités web (pédagogique).
 
-5. BIBLIOTHÈQUE TECHNIQUE
-   - Cheat Sheets : Mémos de commandes (Windows, Mac, Linux, Git, Docker).
-   - Scripts Ready-to-use : Bibliothèques de scripts Bash, Batch et PowerShell.
-   - Hardware Lab : Codes bips BIOS, schémas de ports et guides de survie.
+### 5) Bibliothèque technique
+- Cheat sheets, scripts réutilisables (Bash, PowerShell), et guides matériels.
 
---------------------------------------------------------------------------------
-🛠️ SPÉCIFICATIONS TECHNIQUES
---------------------------------------------------------------------------------
+## Spécifications techniques
 
-- Framework : Flutter (Multi-plateforme : macOS, Windows, Linux, Android).
-- Stockage : Local uniquement (SharedPreferences / Local Files).
-- Modules Externes : Possibilité de charger ses propres cours via un dossier local.
-- Sécurité : Désactivation du trafic cleartext, isolation réseau pour l'IA.
+- Framework : Flutter (multi‑plateforme : macOS, Windows, Linux, Android).
+- Stockage : local uniquement (SharedPreferences / fichiers locaux).
+- Modules externes : import possible via dossier local, avec contrôles d'intégrité.
+- Sécurité : trafic cleartext désactivé, contrôle SHA‑256 des assets au démarrage.
 
-================================================================================
+---
+
 © 2026 Association TUTODECODE — Le savoir ne devrait jamais dépendre d'une connexion.
-================================================================================
+

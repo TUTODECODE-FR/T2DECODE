@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/core/widgets/tdc_widgets.dart';
+import 'package:tutodecode/utils/ip_helper.dart';
 
 class IPCalcScreen extends StatefulWidget {
   const IPCalcScreen({super.key});
@@ -28,41 +29,16 @@ class _IPCalcScreenState extends State<IPCalcScreen> {
     try {
       final ipStr = _ipController.text.trim();
       final maskStr = _maskController.text.trim();
-      final ipParts = ipStr.split('.').map(int.parse).toList();
-      if (ipParts.length != 4) throw Exception();
       final mask = int.parse(maskStr);
-      if (mask < 0 || mask > 32) throw Exception();
-
-      int ipNum = (ipParts[0] << 24) | (ipParts[1] << 16) | (ipParts[2] << 8) | ipParts[3];
-      int maskNum = mask == 0 ? 0 : (0xFFFFFFFF << (32 - mask)) & 0xFFFFFFFF;
-      int networkNum = ipNum & maskNum;
-      int broadcastNum = networkNum | (~maskNum & 0xFFFFFFFF);
-      
-      final network = _numToIp(networkNum);
-      final broadcast = _numToIp(broadcastNum);
-      final netmask = _numToIp(maskNum);
-      String firstHost, lastHost, numHosts;
-      if (mask < 31) {
-        firstHost = _numToIp(networkNum + 1);
-        lastHost = _numToIp(broadcastNum - 1);
-        numHosts = (broadcastNum - networkNum - 1).toString();
-      } else if (mask == 31) {
-        firstHost = _numToIp(networkNum);
-        lastHost = _numToIp(broadcastNum);
-        numHosts = '2 (P2P)';
-      } else {
-        firstHost = _numToIp(networkNum);
-        lastHost = _numToIp(networkNum);
-        numHosts = '1';
-      }
-      final entry = '$ipStr/$mask → $network';
+      final r = IpHelper.calculateSubnet(ipStr, mask);
+      final entry = '$ipStr/$mask → ${r.network}';
       setState(() {
-        _network = network;
-        _broadcast = broadcast;
-        _netmask = netmask;
-        _firstHost = firstHost;
-        _lastHost = lastHost;
-        _numHosts = numHosts;
+        _network = r.network;
+        _broadcast = r.broadcast;
+        _netmask = r.netmask;
+        _firstHost = r.firstHost;
+        _lastHost = r.lastHost;
+        _numHosts = r.numHosts;
         if (_history.isEmpty || _history.first != entry) {
           _history.insert(0, entry);
           if (_history.length > 8) _history.removeLast();
@@ -73,7 +49,6 @@ class _IPCalcScreenState extends State<IPCalcScreen> {
     }
   }
 
-  String _numToIp(int num) => '${(num >> 24) & 0xFF}.${(num >> 16) & 0xFF}.${(num >> 8) & 0xFF}.${num & 0xFF}';
 
   @override
   void initState() {

@@ -151,7 +151,12 @@ class VirtualFileSystem {
     } else if (isFile(path)) {
       targets.add(path);
     }
-    final regex = RegExp(pattern, caseSensitive: true);
+    final RegExp regex;
+    try {
+      regex = RegExp(pattern, caseSensitive: true);
+    } on FormatException catch (e) {
+      throw FormatException('grep: invalid regular expression: ${e.message}');
+    }
     for (final t in targets) {
       final content = _nodes[t]!.content ?? '';
       final lines = content.split('\n');
@@ -163,6 +168,7 @@ class VirtualFileSystem {
     }
     return results;
   }
+
 }
 
 class _FSNode {
@@ -583,15 +589,20 @@ class VirtualShell {
     if (positional.isEmpty) return ['grep: missing pattern'];
     final pattern = positional[0];
     final target = positional.length > 1 ? _resolvePath(positional[1]) : _cwd;
-    final results = fs.grep(pattern, target, recursive: recursive);
-    if (!numbered && !recursive) {
-      return results.map((r) {
-        final colonIdx = r.indexOf(':');
-        return colonIdx > 0 ? r.substring(colonIdx + 1) : r;
-      }).toList();
+    try {
+      final results = fs.grep(pattern, target, recursive: recursive);
+      if (!numbered && !recursive) {
+        return results.map((r) {
+          final colonIdx = r.indexOf(':');
+          return colonIdx > 0 ? r.substring(colonIdx + 1) : r;
+        }).toList();
+      }
+      return results;
+    } on FormatException catch (e) {
+      return [e.message];
     }
-    return results;
   }
+
 
   List<String> _chmod(List<String> args) {
     if (args.length < 2) return ['chmod: missing operand'];

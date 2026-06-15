@@ -4,17 +4,20 @@
   </a>
 
   <h1>T2DECODE</h1>
-  
-  <p><b>Apprenez les réseaux, Linux et la cybersécurité même sans Internet.</b></p>
-  
-  <p>Plateforme pédagogique locale avec :<br>
-  📚 Cours interactifs<br>
-  🔬 Simulateurs techniques<br>
-  🛠️ 15+ outils professionnels<br>
-  🧠 IA locale compatible Ollama<br>
-  🚫 Aucun cloud obligatoire</p>
-  
-  <p><b>100% Offline-First • Air-Gapped Ready • Open Source</b></p>
+  <p><strong>T2DECODE — Plateforme pédagogique hors‑ligne pour réseaux, Linux et cybersécurité.</strong></p>
+
+  <p>T2DECODE est une suite logicielle autonome destinée aux étudiants, formateurs et professionnels IT. Elle regroupe cours interactifs, simulateurs techniques, outils spécialisés et un assistant IA local (Ollama), conçus pour fonctionner sans connexion et garantir la confidentialité et l'intégrité des données.</p>
+
+  <p><strong>Points forts :</strong></p>
+  <ul>
+    <li>Fonctionne 100% hors ligne — aucune dépendance cloud.</li>
+    <li>Simulateurs interactifs : réseau, Linux, cryptographie.</li>
+    <li>Outils métier intégrés : CIDR, hachage, chmod, cron.</li>
+    <li>Ghost AI : assistant LLM local via Ollama, sans envoi de données externes.</li>
+    <li>Intégrité et sécurité : contrôles SHA‑256 et anti‑altération au démarrage.</li>
+  </ul>
+
+  <p><strong>Multi‑plateforme • Air‑gapped ready • Open‑source (GPLv3)</strong></p>
 
   <br>
   <img src="docs/images/t2decode_demo.gif" width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" alt="Démo vidéo - T2DECODE en action">
@@ -40,6 +43,7 @@
 
   <p>
     <a href="https://github.com/TUTODECODE-FR/T2DECODE/releases/latest">Releases</a> · 
+    <a href="docs/resume.md">Résumé</a> ·
     <a href="docs/build.md">Build & Compilation</a> · 
     <a href="docs/architecture.md">Architecture</a> · 
     <a href="RGPD.md">Confidentialité</a> · 
@@ -55,8 +59,9 @@
 - 🔬 **9** simulateurs
 - 🛠️ **15+** outils intégrés
 - 💻 **Windows / Linux / macOS / Android**
-- 🌐 **0** dépendance cloud
+ - 🌐 **0** dépendances cloud
 - 🔒 **100%** open source
+
 
 <img src="assets/separator.svg" width="100%" height="4">
 
@@ -300,8 +305,8 @@ Si T2DECODE vous fait gagner du temps ou enrichit votre parcours, vous pouvez so
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🔐 Security
-All commits in this repository are GPG-signed for authenticity.
+## 🔐 Sécurité
+Tous les commits de ce dépôt sont signés GPG pour en garantir l'authenticité.
 
 <img src="assets/separator.svg" width="100%" height="4">
 
