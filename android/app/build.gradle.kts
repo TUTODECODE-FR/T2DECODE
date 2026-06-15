@@ -29,7 +29,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "org.t2decode.app"
+        applicationId = "org.tutodecode.android"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

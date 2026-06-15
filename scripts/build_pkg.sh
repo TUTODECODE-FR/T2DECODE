@@ -2,7 +2,7 @@
 
 # Configuration
 APP_NAME="T2DECODE"
-BUNDLE_ID="org.t2decode.app"
+BUNDLE_ID="org.tutodecode.macos"
 APP_BUNDLE_NAME="T2DECODE.app"
 APP_VERSION="${APP_VERSION:-1.0.0}"
 BUILD_DIR="build/macos/Build/Products/Release"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <installer-gui-script minSpecVersion="1">
-    <title>TUTODECODE</title>
+    <title>T2DECODE</title>
     <options customize="never" require-scripts="false"/>
     
     <welcome file="welcome.html"/>
@@ -14,9 +14,9 @@
         <line choice="default"/>
     </choices-outline>
     
-    <choice id="default" visible="true" title="TUTODECODE Application">
-        <pkg-ref id="com.tutodecode.app"/>
+    <choice id="default" visible="true" title="T2DECODE Application">
+        <pkg-ref id="org.tutodecode.macos"/>
     </choice>
     
-    <pkg-ref id="com.tutodecode.app" version="1.0.3" onConclusion="none">TUTODECODE_Component.pkg</pkg-ref>
+    <pkg-ref id="org.tutodecode.macos" onConclusion="none">T2DECODE_Component.pkg</pkg-ref>
 </installer-gui-script>

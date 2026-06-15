@@ -210,7 +210,7 @@ jobs:
 
           cp -R build/linux/x64/release/bundle/* "$STAGE/opt/t2decode/"
 
-          cat > "$STAGE/usr/share/applications/t2decode.desktop" <<'EOF'
+          cat > "$STAGE/usr/share/applications/org.tutodecode.T2DECODE.desktop" <<'EOF'
           [Desktop Entry]
           Name=T2DECODE
           Comment=T2DECODE learning platform
@@ -243,17 +243,17 @@ jobs:
           STAGE_APPIMAGE="$RUNNER_TEMP/AppDir"
           mkdir -p "$STAGE_APPIMAGE"
           cp -R build/linux/x64/release/bundle/* "$STAGE_APPIMAGE/"
-          cat > "$STAGE_APPIMAGE/t2decode.desktop" <<'EOF'
+          cat > "$STAGE_APPIMAGE/org.tutodecode.T2DECODE.desktop" <<'EOF'
           [Desktop Entry]
           Name=T2DECODE
           Comment=T2DECODE learning platform
           Exec=AppRun
-          Icon=t2decode
+          Icon=org.tutodecode.T2DECODE
           Terminal=false
           Type=Application
           Categories=Education;Development;
           EOF
-          cp "assets/logo.png" "$STAGE_APPIMAGE/t2decode.png"
+          cp "assets/logo.png" "$STAGE_APPIMAGE/org.tutodecode.T2DECODE.png"
           ln -s T2DECODE "$STAGE_APPIMAGE/AppRun"
           APPIMAGETOOL=./appimagetool-x86_64.AppImage
           if ! $APPIMAGETOOL --version >/dev/null 2>&1; then
@@ -345,27 +345,11 @@ jobs:
       - name: Get dependencies
         run: flutter pub get # NOSONAR
 
-      - name: Cache CocoaPods spec repo
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
-        with:
-          path: ~/.cocoapods/repos/trunk
-          key: cocoapods-trunk-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            cocoapods-trunk-
-
       - name: Setup CocoaPods spec repo
         shell: bash
         run: |
-          # S'assurer que le repo trunk est disponible localement avant flutter build
-          # (évite l'échec DNS sur cdn.cocoapods.org lors du pod install automatique)
-          if [ ! -d "$HOME/.cocoapods/repos/trunk" ]; then
-            echo "Clonage du spec repo CocoaPods..."
-            pod repo add-cdn trunk https://cdn.cocoapods.org/ --silent || \
-              pod repo add trunk https://github.com/CocoaPods/Specs.git --silent || \
-              (echo "❌ Échec de la configuration du repo CocoaPods" && exit 1)
-          else
-            echo "Spec repo CocoaPods déjà en cache."
-          fi
+          # Initialisation rapide du CDN CocoaPods
+          pod repo add-cdn trunk https://cdn.cocoapods.org/ --silent || true
 
       - name: Run tests
         run: flutter test --dart-define=SKIP_GOLDENS=true
@@ -476,9 +460,6 @@ jobs:
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/Runner.mobileprovision"
 
-          # Pré-installer les pods sans accès CDN (specs locaux Flutter)
-          cd ios && pod install --no-repo-update && cd ..
-
           flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
 
       - name: Upload platform artifact
@@ -509,6 +490,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.event.inputs.target_tag != '' && github.event.inputs.target_tag || github.ref }}
+          fetch-depth: 0
 
       - name: Download all artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -603,28 +585,145 @@ jobs:
       - name: Generate and clean release notes
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.inputs.target_tag || github.ref_name }}
         shell: bash
         run: |
-          TAG="${{ github.event.inputs.target_tag || github.ref_name }}"
           gh release notes "$TAG" --exclude-drafts > raw_notes.md || echo "* Mises à jour de la version" > raw_notes.md
           cat <<'EOF' > clean_notes.py
-          import re, os
-          if not os.path.exists('raw_notes.md'):
-              with open('cleaned_notes.md', 'w') as f:
-                  f.write('* Mises à jour de la version')
-              exit(0)
-          with open('raw_notes.md', 'r') as f:
-              content = f.read()
-          cleaned = re.sub(r' by @[a-zA-Z0-9_-]+', '', content)
-          parts = re.split(r'##\s+(?:New\s+)?Contributors', cleaned, flags=re.IGNORECASE)
-          cleaned = parts[0]
-          parts = re.split(r'##\s+Nouveaux\s+contributeurs', cleaned, flags=re.IGNORECASE)
-          cleaned = parts[0]
+          import re, os, subprocess
+
+          tag = os.environ.get('TAG', '')
+          
+          # Récupérer le tag précédent
+          try:
+              # On cherche le tag précédent direct
+              prev_tag = subprocess.check_output(['git', 'describe', '--tags', '--abbrev=0', tag + '^'], text=True).strip()
+          except Exception:
+              try:
+                  prev_tag = subprocess.check_output(['git', 'describe', '--tags', '--abbrev=0', 'HEAD^'], text=True).strip()
+              except Exception:
+                  prev_tag = None
+
+          commits_list = []
+          files_list = []
+
+          if prev_tag:
+              print(f"Tag précédent détecté : {prev_tag}")
+              # Récupérer les commits
+              try:
+                  log_out = subprocess.check_output(['git', 'log', f'{prev_tag}..{tag}', '--pretty=format:- %s (%h)', '--no-merges'], text=True)
+                  commits_list = [line.strip() for line in log_out.split('\n') if line.strip()]
+              except Exception as e:
+                  print(f"Erreur lors de la récupération des commits : {e}")
+              
+              # Récupérer les fichiers modifiés
+              try:
+                  diff_out = subprocess.check_output(['git', 'diff', '--name-only', f'{prev_tag}..{tag}'], text=True)
+                  files_list = [line.strip() for line in diff_out.split('\n') if line.strip()]
+              except Exception as e:
+                  print(f"Erreur lors de la récupération des fichiers modifiés : {e}")
+          else:
+              print("Aucun tag précédent trouvé.")
+
+          # Fallback sur gh release notes si raw_notes existe
+          gh_notes = ""
+          if os.path.exists('raw_notes.md'):
+              with open('raw_notes.md', 'r') as f:
+                  gh_notes = f.read().strip()
+
+          # Catégorisation des commits
+          features = []
+          fixes = []
+          docs = []
+          maintenance = []
+          others = []
+
+          # Filtrage pour ne pas inclure des commits triviaux ou de release automatique
+          ignore_patterns = [
+              r'^[-\s]*chore:\s*release',
+              r'^[-\s]*chore:\s*increment version',
+              r'^[-\s]*chore:\s*bump version',
+              r'^[-\s]*merge'
+          ]
+
+          for commit in commits_list:
+              msg = commit.lstrip('- ').strip()
+              # Supprimer les 'by @username' ou les mentions d'auteurs
+              msg = re.sub(r'\s*by\s*@[a-zA-Z0-9_-]+', '', msg)
+              
+              if any(re.search(pat, msg, re.IGNORECASE) for pat in ignore_patterns):
+                  continue
+                  
+              if msg.lower().startswith('feat') or 'feature' in msg.lower():
+                  features.append(f"- {msg}")
+              elif msg.lower().startswith('fix') or 'bug' in msg.lower():
+                  fixes.append(f"- {msg}")
+              elif msg.lower().startswith('docs'):
+                  docs.append(f"- {msg}")
+              elif any(msg.lower().startswith(x) for x in ['chore', 'ci', 'refactor', 'style', 'test', 'build']):
+                  maintenance.append(f"- {msg}")
+              else:
+                  others.append(f"- {msg}")
+
+          # Construction des notes de version finales
+          final_content = ""
+
+          # 1. Message d'avertissement de sous-version
+          if tag and re.match(r'^v?\d+\.\d+\.\d+\.\d+$', tag):
+              final_content += "> [!NOTE]\n> Cette version (" + tag + ") est une mise à jour de maintenance automatisée. Il n'est pas nécessaire de la réinstaller si vous disposez déjà d'une version stable récente (ex: v1.0.2).\n\n"
+
+          # 2. Section des changements
+          final_content += "## What's Changed\n\n"
+
+          has_changelog = False
+          if features:
+              final_content += "### 🚀 Nouvelles fonctionnalités\n" + "\n".join(features) + "\n\n"
+              has_changelog = True
+          if fixes:
+              final_content += "### 🐛 Corrections de bugs\n" + "\n".join(fixes) + "\n\n"
+              has_changelog = True
+          if docs:
+              final_content += "### 📝 Documentation\n" + "\n".join(docs) + "\n\n"
+              has_changelog = True
+          if maintenance:
+              final_content += "### ⚙️ Maintenance & CI/CD\n" + "\n".join(maintenance) + "\n\n"
+              has_changelog = True
+          if others:
+              final_content += "### 🔄 Autres changements\n" + "\n".join(others) + "\n\n"
+              has_changelog = True
+
+          # Si on n'a aucun commit détaillé mais qu'on a les notes de GitHub, on met les notes de GitHub
+          if not has_changelog and gh_notes and "* Mises à jour de la version" not in gh_notes:
+              # Nettoyer les mentions by @username dans les notes gh
+              cleaned_gh = re.sub(r'\s*by\s*@[a-zA-Z0-9_-]+', '', gh_notes)
+              parts = re.split(r'##\s+(?:New\s+)?Contributors', cleaned_gh, flags=re.IGNORECASE)
+              cleaned_gh = parts[0]
+              parts = re.split(r'##\s+Nouveaux\s+contributeurs', cleaned_gh, flags=re.IGNORECASE)
+              cleaned_gh = parts[0]
+              # Éviter de dupliquer le header déjà ajouté plus haut
+              cleaned_gh = re.sub(r"^\s*##\s+What's Changed\s*\n+", "", cleaned_gh, flags=re.IGNORECASE)
+              final_content += cleaned_gh.strip() + "\n\n"
+          elif not has_changelog:
+              final_content += "* Mises à jour et correctifs de la version.\n\n"
+
+          # 3. Liste des fichiers modifiés
+          if files_list:
+              final_content += "### 📂 Fichiers modifiés\n"
+              for f in files_list[:15]:
+                  final_content += f"- `{f}`\n"
+              if len(files_list) > 15:
+                  final_content += f"- *Et {len(files_list) - 15} autres fichiers...*\n"
+              final_content += "\n"
+
+          # 4. Lien vers le changelog complet
+          if prev_tag:
+              final_content += f"**Changelog complet** : [{prev_tag}...{tag}](https://github.com/TUTODECODE-FR/T2DECODE/compare/{prev_tag}...{tag})\n"
+
           with open('cleaned_notes.md', 'w') as f:
-              f.write(cleaned.strip())
+              f.write(final_content.strip())
           EOF
           # Remove 10 leading spaces of indentation
-          sed -i '' 's/^[[:space:]]\{10\}//' clean_notes.py || sed -i 's/^[[:space:]]\{10\}//' clean_notes.py
+          sed -i 's/^[[:space:]]\{10\}//' clean_notes.py
           python3 clean_notes.py
           cat cleaned_notes.md
 
