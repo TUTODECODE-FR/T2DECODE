@@ -262,8 +262,12 @@ class VirtualShell {
     switch (base) {
       case 'grep':
         if (args.length < 2) return stdinLines;
-        final pattern = RegExp(args[1]);
-        return stdinLines.where((l) => pattern.hasMatch(l)).toList();
+        try {
+          final pattern = RegExp(args[1]);
+          return stdinLines.where((l) => pattern.hasMatch(l)).toList();
+        } on FormatException catch (e) {
+          return ['grep: invalid regular expression: ${e.message}'];
+        }
       case 'head':
         final n = args.length > 2 && args[1] == '-n' ? int.tryParse(args[2]) ?? 10 : 10;
         return stdinLines.take(n).toList();
