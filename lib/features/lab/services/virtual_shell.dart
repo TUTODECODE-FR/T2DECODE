@@ -187,11 +187,12 @@ class VirtualShell {
   final VirtualFileSystem fs;
   String _cwd = '/home/admin';
   String _user = 'admin';
-  String _hostname = 't2decode';
+  final String _hostname = 't2decode';
   final Map<String, String> env = {};
   final List<String> _commandHistory = [];
   final List<_VirtualProcess> _processes;
   final Random _rng = Random();
+
 
   VirtualShell({VirtualFileSystem? fileSystem})
       : fs = fileSystem ?? VirtualFileSystem(),
@@ -261,57 +262,79 @@ class VirtualShell {
     return output;
   }
 
+  List<String> _pipeGrep(List<String> args, List<String> stdinLines) {
+
+    if (args.length < 2) return stdinLines;
+    try {
+      final pattern = RegExp(args[1]);
+      return stdinLines.where((l) => pattern.hasMatch(l)).toList();
+    } on FormatException catch (e) {
+      return ['grep: invalid regular expression: ${e.message}'];
+    }
+  }
+
+  List<String> _pipeHead(List<String> args, List<String> stdinLines) {
+    final n = args.length > 2 && args[1] == '-n' ? int.tryParse(args[2]) ?? 10 : 10;
+    return stdinLines.take(n).toList();
+  }
+
+  List<String> _pipeTail(List<String> args, List<String> stdinLines) {
+    final n = args.length > 2 && args[1] == '-n' ? int.tryParse(args[2]) ?? 10 : 10;
+    return stdinLines.length > n ? stdinLines.sublist(stdinLines.length - n) : stdinLines;
+  }
+
+  List<String> _pipeWc(List<String> args, List<String> stdinLines) {
+    if (args.contains('-l')) return ['${stdinLines.length}'];
+    final words = stdinLines.expand((l) => l.split(RegExp(r'\s+'))).where((w) => w.isNotEmpty).length;
+    final chars = stdinLines.fold<int>(0, (s, l) => s + l.length + 1);
+    return ['  ${stdinLines.length}  $words  $chars'];
+  }
+
+  List<String> _pipeSort(List<String> args, List<String> stdinLines) {
+    final sorted = List<String>.from(stdinLines);
+    if (args.contains('-r')) {
+      sorted.sort((a, b) => b.compareTo(a));
+    } else {
+      sorted.sort();
+    }
+    return sorted;
+  }
+
+  List<String> _pipeUniq(List<String> stdinLines) {
+    final result = <String>[];
+    for (final line in stdinLines) {
+      if (result.isEmpty || result.last != line) result.add(line);
+    }
+    return result;
+  }
+
+  List<String> _pipeCut(List<String> args, List<String> stdinLines) {
+    final dIdx = args.indexOf('-d');
+    final fIdx = args.indexOf('-f');
+    final delimiter = dIdx >= 0 && dIdx + 1 < args.length ? args[dIdx + 1] : '\t';
+    final field = fIdx >= 0 && fIdx + 1 < args.length ? int.tryParse(args[fIdx + 1]) ?? 1 : 1;
+    return stdinLines.map((l) {
+      final parts = l.split(delimiter);
+      return field <= parts.length ? parts[field - 1] : '';
+    }).toList();
+  }
+
   List<String> _executeSingleWithInput(String cmd, List<String> stdinLines) {
     final args = _parseArgs(cmd);
     if (args.isEmpty) return stdinLines;
     final base = args[0];
     switch (base) {
-      case 'grep':
-        if (args.length < 2) return stdinLines;
-        try {
-          final pattern = RegExp(args[1]);
-          return stdinLines.where((l) => pattern.hasMatch(l)).toList();
-        } on FormatException catch (e) {
-          return ['grep: invalid regular expression: ${e.message}'];
-        }
-      case 'head':
-        final n = args.length > 2 && args[1] == '-n' ? int.tryParse(args[2]) ?? 10 : 10;
-        return stdinLines.take(n).toList();
-      case 'tail':
-        final n = args.length > 2 && args[1] == '-n' ? int.tryParse(args[2]) ?? 10 : 10;
-        return stdinLines.length > n ? stdinLines.sublist(stdinLines.length - n) : stdinLines;
-      case 'wc':
-        if (args.contains('-l')) return ['${stdinLines.length}'];
-        final words = stdinLines.expand((l) => l.split(RegExp(r'\s+'))).where((w) => w.isNotEmpty).length;
-        final chars = stdinLines.fold<int>(0, (s, l) => s + l.length + 1);
-        return ['  ${stdinLines.length}  $words  $chars'];
-      case 'sort':
-        final sorted = List<String>.from(stdinLines);
-        if (args.contains('-r')) {
-          sorted.sort((a, b) => b.compareTo(a));
-        } else {
-          sorted.sort();
-        }
-        return sorted;
-      case 'uniq':
-        final result = <String>[];
-        for (final line in stdinLines) {
-          if (result.isEmpty || result.last != line) result.add(line);
-        }
-        return result;
-      case 'cut':
-        final dIdx = args.indexOf('-d');
-        final fIdx = args.indexOf('-f');
-        final delimiter = dIdx >= 0 && dIdx + 1 < args.length ? args[dIdx + 1] : '\t';
-        final field = fIdx >= 0 && fIdx + 1 < args.length ? int.tryParse(args[fIdx + 1]) ?? 1 : 1;
-        return stdinLines.map((l) {
-          final parts = l.split(delimiter);
-          return field <= parts.length ? parts[field - 1] : '';
-        }).toList();
-      default:
-        return stdinLines;
+      case 'grep': return _pipeGrep(args, stdinLines);
+      case 'head': return _pipeHead(args, stdinLines);
+      case 'tail': return _pipeTail(args, stdinLines);
+      case 'wc': return _pipeWc(args, stdinLines);
+      case 'sort': return _pipeSort(args, stdinLines);
+      case 'uniq': return _pipeUniq(stdinLines);
+      case 'cut': return _pipeCut(args, stdinLines);
+      default: return stdinLines;
     }
   }
+
 
   List<String> _parseArgs(String cmd) {
     final args = <String>[];
@@ -403,6 +426,30 @@ class VirtualShell {
     }
   }
 
+  List<String> _lsFile(String path, bool longFormat) {
+    if (longFormat) {
+      final size = (fs.readFile(path) ?? '').length;
+      return ['-rw-r--r-- 1 $_user $_user $size Jun 12 08:00 ${path.split('/').last}'];
+    }
+    return [path.split('/').last];
+  }
+
+  List<String> _lsLongFormat(String path, List<String> entries, bool showAll) {
+    final lines = <String>['total ${entries.length}'];
+    if (showAll) {
+      lines.add('drwxr-xr-x  2 $_user $_user 4096 Jun 12 08:00 .');
+      lines.add('drwxr-xr-x  3 $_user $_user 4096 Jun 12 08:00 ..');
+    }
+    for (final e in entries) {
+      final fullPath = path == '/' ? '/$e' : '$path/$e';
+      final isDir = fs.isDir(fullPath);
+      final size = isDir ? 4096 : (fs.readFile(fullPath) ?? '').length;
+      final perm = isDir ? 'drwxr-xr-x' : '-rw-r--r--';
+      lines.add('$perm  1 $_user $_user ${size.toString().padLeft(5)} Jun 12 08:00 $e${isDir ? '/' : ''}');
+    }
+    return lines;
+  }
+
   List<String> _ls(List<String> args) {
     final showAll = args.contains('-a') || args.contains('-la') || args.contains('-al');
     final longFormat = args.contains('-l') || args.contains('-la') || args.contains('-al');
@@ -411,32 +458,20 @@ class VirtualShell {
 
     if (!fs.exists(path)) return ['ls: cannot access \'$target\': No such file or directory'];
     if (fs.isFile(path)) {
-      if (longFormat) return ['-rw-r--r-- 1 $_user $_user ${(fs.readFile(path) ?? '').length} Jun 12 08:00 ${path.split('/').last}'];
-      return [path.split('/').last];
+      return _lsFile(path, longFormat);
     }
 
     var entries = fs.listDir(path);
     if (!showAll) entries = entries.where((e) => !e.startsWith('.')).toList();
 
     if (longFormat) {
-      final lines = <String>['total ${entries.length}'];
-      if (showAll) {
-        lines.add('drwxr-xr-x  2 $_user $_user 4096 Jun 12 08:00 .');
-        lines.add('drwxr-xr-x  3 $_user $_user 4096 Jun 12 08:00 ..');
-      }
-      for (final e in entries) {
-        final fullPath = path == '/' ? '/$e' : '$path/$e';
-        final isDir = fs.isDir(fullPath);
-        final size = isDir ? 4096 : (fs.readFile(fullPath) ?? '').length;
-        final perm = isDir ? 'drwxr-xr-x' : '-rw-r--r--';
-        lines.add('$perm  1 $_user $_user ${size.toString().padLeft(5)} Jun 12 08:00 $e${isDir ? '/' : ''}');
-      }
-      return lines;
+      return _lsLongFormat(path, entries, showAll);
     }
 
     if (showAll) entries = ['.', '..', ...entries];
     return entries.isEmpty ? [] : [entries.join('  ')];
   }
+
 
   List<String> _cd(List<String> args) {
     if (args.isEmpty) {

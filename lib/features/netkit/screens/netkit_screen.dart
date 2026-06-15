@@ -12,7 +12,12 @@ import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/features/lab/widgets/terminal_emulator.dart';
 
+const _googleCom = 'google.com';
+const _githubCom = 'github.com';
+const _oneOneOneOne = '1.1.1.1';
+
 class NetKitScreen extends StatefulWidget {
+
   const NetKitScreen({super.key});
   @override
   State<NetKitScreen> createState() => _NetKitScreenState();
@@ -98,17 +103,7 @@ class _SysInfoTabState extends State<_SysInfoTab> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _run());
   }
 
-  Future<void> _run() async {
-    if (_running) return;
-    _running = true;
-    final term = _termKey.currentState;
-    if (term == null) { _running = false; return; }
-    term.clear();
-
-    final lines = <TermLine>[];
-    lines.add(const TermLine('\$ neofetch --minimal', TermColor.green));
-    lines.add(const TermLine('', TermColor.white));
-
+  void _addNeofetchLines(List<TermLine> lines) {
     final hostname = Platform.localHostname;
     final os = Platform.operatingSystem;
     final osVersion = Platform.operatingSystemVersion;
@@ -120,13 +115,17 @@ class _SysInfoTabState extends State<_SysInfoTab> {
     lines.add(const TermLine('  ─────────────────────────────', TermColor.gray));
     lines.add(TermLine('  OS:      $os $osVersion', TermColor.white));
     lines.add(TermLine('  Host:    $hostname', TermColor.white));
-    lines.add(TermLine('  Kernel:  ${(os == 'macos' || os == 'ios') ? 'Darwin' : (os == 'windows' ? 'Windows' : 'Linux')} ${(osVersion.contains('(') ? osVersion.split('(').last.replaceAll(')', '') : osVersion)}', TermColor.white));
+    
+    final kernelName = (os == 'macos' || os == 'ios') ? 'Darwin' : (os == 'windows' ? 'Windows' : 'Linux');
+    final kernelVersion = osVersion.contains('(') ? osVersion.split('(').last.replaceAll(')', '') : osVersion;
+    lines.add(TermLine('  Kernel:  $kernelName $kernelVersion', TermColor.white));
+    
     lines.add(TermLine('  CPU:     $cores cores', TermColor.white));
     lines.add(TermLine('  Dart:    $dartVersion', TermColor.white));
     lines.add(TermLine('  Locale:  $locale', TermColor.white));
-    lines.add(const TermLine('', TermColor.white));
+  }
 
-    lines.add(const TermLine('\$ ip addr show 2>/dev/null || ifconfig -a', TermColor.green));
+  Future<void> _addNetworkInterfaceLines(List<TermLine> lines) async {
     try {
       final interfaces = await NetworkInterface.list();
       for (final iface in interfaces) {
@@ -139,11 +138,10 @@ class _SysInfoTabState extends State<_SysInfoTab> {
     } catch (_) {
       lines.add(const TermLine('    (impossible de lister les interfaces)', TermColor.red));
     }
+  }
 
-    lines.add(const TermLine('', TermColor.white));
-    lines.add(const TermLine('\$ cat /etc/resolv.conf 2>/dev/null', TermColor.green));
+  Future<void> _addDnsLines(List<TermLine> lines) async {
     try {
-      // Try to detect DNS servers
       final result = await InternetAddress.lookup('localhost');
       if (result.isNotEmpty) {
         lines.add(const TermLine('# DNS resolution is working', TermColor.gray));
@@ -152,15 +150,40 @@ class _SysInfoTabState extends State<_SysInfoTab> {
     } catch (_) {
       lines.add(const TermLine('# DNS resolution unavailable', TermColor.red));
     }
+  }
+
+  Future<void> _run() async {
+    if (_running) return;
+    _running = true;
+    final term = _termKey.currentState;
+    if (term == null) { _running = false; return; }
+    term.clear();
+
+    final lines = <TermLine>[];
+    lines.add(const TermLine('\$ neofetch --minimal', TermColor.green));
+    lines.add(const TermLine('', TermColor.white));
+
+    _addNeofetchLines(lines);
+
+    lines.add(const TermLine('', TermColor.white));
+    lines.add(const TermLine('\$ ip addr show 2>/dev/null || ifconfig -a', TermColor.green));
+    await _addNetworkInterfaceLines(lines);
+
+    lines.add(const TermLine('', TermColor.white));
+    lines.add(const TermLine('\$ cat /etc/resolv.conf 2>/dev/null', TermColor.green));
+    await _addDnsLines(lines);
 
     lines.add(const TermLine('', TermColor.white));
     lines.add(const TermLine('\$ uptime', TermColor.green));
     final now = DateTime.now();
+    final cores = Platform.numberOfProcessors;
+    final locale = Platform.localeName;
     lines.add(TermLine(' ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')} up, $cores CPUs, locale $locale', TermColor.white));
 
     await term.playLines(lines, delayMs: 40);
     _running = false;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -215,6 +238,8 @@ class _SysInfoTabState extends State<_SysInfoTab> {
 // ─────────────────────────────────────────────────────────────
 // Tab 2 — Port Scanner (real TCP connect with terminal output)
 // ─────────────────────────────────────────────────────────────
+enum _PortState { open, closed, filtered }
+
 class _PortScannerTab extends StatefulWidget {
   const _PortScannerTab();
   @override
@@ -261,6 +286,34 @@ class _PortScannerTabState extends State<_PortScannerTab> {
     return ports.toList()..sort();
   }
 
+  Future<_PortState> _probePort(String host, int port) async {
+    try {
+      final socket = await Socket.connect(host, port, timeout: const Duration(seconds: 2));
+      socket.destroy();
+      return _PortState.open;
+    } on SocketException {
+      return _PortState.closed;
+    } catch (_) {
+      return _PortState.filtered;
+    }
+  }
+
+  void _printPortResult(TerminalEmulatorState term, int port, _PortState state) {
+    final service = _knownPorts[port] ?? 'unknown';
+    final portStr = port.toString().padRight(5);
+    switch (state) {
+      case _PortState.open:
+        term.addLine(TermLine('$portStr/tcp  open     $service', TermColor.green));
+        break;
+      case _PortState.closed:
+        term.addLine(TermLine('$portStr/tcp  closed   $service', TermColor.gray));
+        break;
+      case _PortState.filtered:
+        term.addLine(TermLine('$portStr/tcp  filtered $service', TermColor.yellow));
+        break;
+    }
+  }
+
   Future<void> _scan() async {
     if (_scanning) return;
     final host = _hostCtrl.text.trim();
@@ -293,28 +346,13 @@ class _PortScannerTabState extends State<_PortScannerTab> {
 
     for (final port in ports) {
       if (!mounted) break;
-      final service = _knownPorts[port] ?? 'unknown';
-      try {
-        final socket = await Socket.connect(host, port, timeout: const Duration(seconds: 2));
-        socket.destroy();
+      final state = await _probePort(host, port);
+      if (state == _PortState.open) {
         openCount++;
-        term.addLine(TermLine(
-          '${port.toString().padRight(5)}/tcp  open     $service',
-          TermColor.green,
-        ));
-      } on SocketException {
+      } else {
         closedCount++;
-        term.addLine(TermLine(
-          '${port.toString().padRight(5)}/tcp  closed   $service',
-          TermColor.gray,
-        ));
-      } catch (_) {
-        closedCount++;
-        term.addLine(TermLine(
-          '${port.toString().padRight(5)}/tcp  filtered $service',
-          TermColor.yellow,
-        ));
       }
+      _printPortResult(term, port, state);
     }
 
     sw.stop();
@@ -324,6 +362,7 @@ class _PortScannerTabState extends State<_PortScannerTab> {
 
     if (mounted) setState(() => _scanning = false);
   }
+
 
   String _now() {
     final n = DateTime.now();
@@ -419,8 +458,9 @@ class _DnsTab extends StatefulWidget {
 }
 
 class _DnsTabState extends State<_DnsTab> {
-  final _ctrl = TextEditingController(text: 'google.com');
+  final _ctrl = TextEditingController(text: _googleCom);
   final GlobalKey<TerminalEmulatorState> _termKey = GlobalKey();
+
   bool _loading = false;
 
   Future<void> _lookup() async {
@@ -494,8 +534,8 @@ class _DnsTabState extends State<_DnsTab> {
     if (term == null) { setState(() => _loading = false); return; }
     term.clear();
 
-    final domains = ['google.com', 'cloudflare.com', 'github.com', 'mozilla.org', 'wikipedia.org'];
-    term.addLine(const TermLine('\$ for d in google.com cloudflare.com github.com mozilla.org wikipedia.org; do dig +short \$d; done', TermColor.green));
+    final domains = [_googleCom, 'cloudflare.com', _githubCom, 'mozilla.org', 'wikipedia.org'];
+    term.addLine(TermLine('\$ for d in $_googleCom cloudflare.com $_githubCom mozilla.org wikipedia.org; do dig +short \$d; done', TermColor.green));
     term.addLine(const TermLine('', TermColor.white));
     term.addLine(const TermLine('DOMAIN                    IPv4              TIME', TermColor.yellow));
     term.addLine(const TermLine('─────────────────────────────────────────────────', TermColor.gray));
@@ -621,20 +661,49 @@ class _DiagnosticTabState extends State<_DiagnosticTab> {
     }
   }
 
-  Future<void> _runDiagnostic() async {
-    if (_running) return;
-    setState(() => _running = true);
-    final term = _termKey.currentState;
-    if (term == null) { setState(() => _running = false); return; }
-    term.clear();
+  String _getConnectionStatus(int svcOk, int svcHostsLength) {
+    if (svcOk == svcHostsLength) return 'OK';
+    if (svcOk > 0) return 'DEGRADED';
+    return 'DOWN';
+  }
 
-    term.addLine(const TermLine('\$ netkit-diagnostic --full', TermColor.green));
-    term.addLine(const TermLine('', TermColor.white));
-    term.addLine(TermLine('T2DECODE Network Diagnostic — ${_now()}', TermColor.bold));
-    term.addLine(const TermLine('════════════════════════════════════════════════════', TermColor.gray));
-    term.addLine(const TermLine('', TermColor.white));
+  TermColor _getConnectionColor(String connStatus) {
+    if (connStatus == 'OK') return TermColor.green;
+    if (connStatus == 'DEGRADED') return TermColor.yellow;
+    return TermColor.red;
+  }
 
-    // 1. Local interfaces
+  String _getDnsStatus(int dnsOk, int dnsTargetsLength) {
+    if (dnsOk == dnsTargetsLength) return 'OK';
+    if (dnsOk > 0) return 'PARTIAL';
+    return 'FAILED';
+  }
+
+  TermColor _getDnsColor(String dnsStatus) {
+    if (dnsStatus == 'OK') return TermColor.green;
+    if (dnsStatus == 'PARTIAL') return TermColor.yellow;
+    return TermColor.red;
+  }
+
+  TermColor _getLatencyColor(double latency) {
+    if (latency < 50) return TermColor.green;
+    if (latency < 150) return TermColor.yellow;
+    return TermColor.red;
+  }
+
+  int _getLatencyPoints(double latency) {
+    if (latency < 100) return 25;
+    if (latency < 300) return 15;
+    return 5;
+  }
+
+  TermColor _getScoreColor(int score) {
+    if (score >= 80) return TermColor.green;
+    if (score >= 50) return TermColor.yellow;
+    return TermColor.red;
+  }
+
+  Future<void> _diagInterfaces(TerminalEmulatorState term) async {
     term.addLine(const TermLine('[1/5] Checking network interfaces...', TermColor.cyan));
     try {
       final interfaces = await NetworkInterface.list(type: InternetAddressType.IPv4);
@@ -651,11 +720,10 @@ class _DiagnosticTabState extends State<_DiagnosticTab> {
     } catch (e) {
       term.addLine(TermLine('  ✗ Error: $e', TermColor.red));
     }
-    term.addLine(const TermLine('', TermColor.white));
+  }
 
-    // 2. DNS resolution
+  Future<int> _diagDns(TerminalEmulatorState term, List<String> dnsTargets) async {
     term.addLine(const TermLine('[2/5] Testing DNS resolution...', TermColor.cyan));
-    final dnsTargets = ['google.com', 'cloudflare.com', 'github.com'];
     int dnsOk = 0;
     for (final target in dnsTargets) {
       if (!mounted) break;
@@ -670,14 +738,12 @@ class _DiagnosticTabState extends State<_DiagnosticTab> {
         term.addLine(TermLine('  ✗ $target FAILED (${sw.elapsedMilliseconds}ms)', TermColor.red));
       }
     }
-    term.addLine(const TermLine('', TermColor.white));
+    return dnsOk;
+  }
 
-    // 3. TCP connectivity (ping via TCP connect)
+  Future<void> _diagLatency(TerminalEmulatorState term, List<String> pingHosts, List<String> pingNames, List<double> latencies) async {
     term.addLine(const TermLine('[3/5] Measuring latency (TCP connect)...', TermColor.cyan));
-    final pingHosts = ['1.1.1.1', '8.8.8.8', '208.67.222.222'];
     final pingPorts = [443, 443, 443];
-    final pingNames = ['Cloudflare DNS', 'Google DNS', 'OpenDNS'];
-    final latencies = <double>[];
     for (int t = 0; t < pingHosts.length; t++) {
       if (!mounted) break;
       final durations = <int>[];
@@ -688,19 +754,17 @@ class _DiagnosticTabState extends State<_DiagnosticTab> {
       if (durations.isNotEmpty) {
         final avg = durations.reduce((a, b) => a + b) / durations.length;
         latencies.add(avg);
-        final color = avg < 50 ? TermColor.green : avg < 150 ? TermColor.yellow : TermColor.red;
+        final color = _getLatencyColor(avg);
         term.addLine(TermLine('  ✓ ${pingNames[t].padRight(18)} ${avg.toStringAsFixed(1)}ms avg (${durations.length}/3 ok)', color));
       } else {
         term.addLine(TermLine('  ✗ ${pingNames[t].padRight(18)} unreachable', TermColor.red));
       }
     }
-    term.addLine(const TermLine('', TermColor.white));
+  }
 
-    // 4. Common services
+  Future<int> _diagServices(TerminalEmulatorState term, List<String> svcHosts, List<String> svcNames) async {
     term.addLine(const TermLine('[4/5] Testing common services...', TermColor.cyan));
-    final svcHosts = ['google.com', 'github.com', '1.1.1.1'];
     final svcPorts = [443, 443, 53];
-    final svcNames = ['HTTPS (Google)', 'HTTPS (GitHub)', 'DNS (Cloudflare)'];
     int svcOk = 0;
     for (int s = 0; s < svcHosts.length; s++) {
       if (!mounted) break;
@@ -712,33 +776,73 @@ class _DiagnosticTabState extends State<_DiagnosticTab> {
         term.addLine(TermLine('  ✗ ${svcNames[s].padRight(22)} unreachable', TermColor.red));
       }
     }
-    term.addLine(const TermLine('', TermColor.white));
+    return svcOk;
+  }
 
-    // 5. Summary
+  void _diagSummary(TerminalEmulatorState term, int dnsOk, int dnsTargetsLength, int svcOk, int svcHostsLength, List<double> latencies, double avgLatency) {
     term.addLine(const TermLine('[5/5] Generating report...', TermColor.cyan));
     term.addLine(const TermLine('', TermColor.white));
     term.addLine(const TermLine('══════════════ RAPPORT ══════════════', TermColor.bold));
     term.addLine(const TermLine('', TermColor.white));
 
-    final avgLatency = latencies.isNotEmpty ? latencies.reduce((a, b) => a + b) / latencies.length : 0.0;
-    final connStatus = svcOk == svcHosts.length ? 'OK' : svcOk > 0 ? 'DEGRADED' : 'DOWN';
-    final connColor = connStatus == 'OK' ? TermColor.green : connStatus == 'DEGRADED' ? TermColor.yellow : TermColor.red;
-    final dnsStatus = dnsOk == dnsTargets.length ? 'OK' : dnsOk > 0 ? 'PARTIAL' : 'FAILED';
-    final dnsColor = dnsStatus == 'OK' ? TermColor.green : dnsStatus == 'PARTIAL' ? TermColor.yellow : TermColor.red;
+    final connStatus = _getConnectionStatus(svcOk, svcHostsLength);
+    final connColor = _getConnectionColor(connStatus);
+    final dnsStatus = _getDnsStatus(dnsOk, dnsTargetsLength);
+    final dnsColor = _getDnsColor(dnsStatus);
 
     term.addLine(TermLine('  Connectivity:    $connStatus', connColor));
-    term.addLine(TermLine('  DNS Resolution:  $dnsStatus ($dnsOk/${dnsTargets.length})', dnsColor));
-    term.addLine(TermLine('  Avg Latency:     ${avgLatency.toStringAsFixed(1)}ms',
-      avgLatency < 50 ? TermColor.green : avgLatency < 150 ? TermColor.yellow : TermColor.red));
-    term.addLine(TermLine('  Services:        $svcOk/${svcHosts.length} reachable', svcOk == svcHosts.length ? TermColor.green : TermColor.yellow));
+    term.addLine(TermLine('  DNS Resolution:  $dnsStatus ($dnsOk/$dnsTargetsLength)', dnsColor));
+    term.addLine(TermLine('  Avg Latency:     ${avgLatency.toStringAsFixed(1)}ms', _getLatencyColor(avgLatency)));
+    term.addLine(TermLine('  Services:        $svcOk/$svcHostsLength reachable', svcOk == svcHostsLength ? TermColor.green : TermColor.yellow));
     term.addLine(const TermLine('', TermColor.white));
 
     // Overall score
-    final score = ((dnsOk / dnsTargets.length) * 25 + (svcOk / svcHosts.length) * 25 + (latencies.isNotEmpty ? 25 : 0) + (avgLatency < 100 ? 25 : avgLatency < 300 ? 15 : 5)).round();
-    final scoreColor = score >= 80 ? TermColor.green : score >= 50 ? TermColor.yellow : TermColor.red;
+    final latencyPoints = _getLatencyPoints(avgLatency);
+    final score = ((dnsOk / dnsTargetsLength) * 25 + (svcOk / svcHostsLength) * 25 + (latencies.isNotEmpty ? 25 : 0) + latencyPoints).round();
+    final scoreColor = _getScoreColor(score);
     term.addLine(TermLine('  Health Score:    $score/100', scoreColor));
     term.addLine(const TermLine('', TermColor.white));
     term.addLine(TermLine('Diagnostic complete at ${_now()}', TermColor.gray));
+  }
+
+  Future<void> _runDiagnostic() async {
+    if (_running) return;
+    setState(() => _running = true);
+    final term = _termKey.currentState;
+    if (term == null) { setState(() => _running = false); return; }
+    term.clear();
+
+    term.addLine(const TermLine('\$ netkit-diagnostic --full', TermColor.green));
+    term.addLine(const TermLine('', TermColor.white));
+    term.addLine(TermLine('T2DECODE Network Diagnostic — ${_now()}', TermColor.bold));
+    term.addLine(const TermLine('════════════════════════════════════════════════════', TermColor.gray));
+    term.addLine(const TermLine('', TermColor.white));
+
+    // 1. Local interfaces
+    await _diagInterfaces(term);
+    term.addLine(const TermLine('', TermColor.white));
+
+    // 2. DNS resolution
+    final dnsTargets = [_googleCom, 'cloudflare.com', _githubCom];
+    final dnsOk = await _diagDns(term, dnsTargets);
+    term.addLine(const TermLine('', TermColor.white));
+
+    // 3. TCP connectivity
+    final pingHosts = [_oneOneOneOne, '8.8.8.8', '208.67.222.222'];
+    final pingNames = ['Cloudflare DNS', 'Google DNS', 'OpenDNS'];
+    final latencies = <double>[];
+    await _diagLatency(term, pingHosts, pingNames, latencies);
+    term.addLine(const TermLine('', TermColor.white));
+
+    // 4. Common services
+    final svcHosts = [_googleCom, _githubCom, _oneOneOneOne];
+    final svcNames = ['HTTPS (Google)', 'HTTPS (GitHub)', 'DNS (Cloudflare)'];
+    final svcOk = await _diagServices(term, svcHosts, svcNames);
+    term.addLine(const TermLine('', TermColor.white));
+
+    // 5. Summary
+    final avgLatency = latencies.isNotEmpty ? latencies.reduce((a, b) => a + b) / latencies.length : 0.0;
+    _diagSummary(term, dnsOk, dnsTargets.length, svcOk, svcHosts.length, latencies, avgLatency);
 
     if (mounted) setState(() => _running = false);
   }
@@ -756,7 +860,7 @@ class _DiagnosticTabState extends State<_DiagnosticTab> {
     final times = <int>[];
     for (int i = 1; i <= 10; i++) {
       if (!mounted) break;
-      final d = await _tcpPing('1.1.1.1', 443);
+      final d = await _tcpPing(_oneOneOneOne, 443);
       if (d != null) {
         times.add(d.inMilliseconds);
         term.addLine(TermLine('tcp_seq=$i ttl=57 time=${d.inMilliseconds}ms', TermColor.white));
@@ -780,6 +884,7 @@ class _DiagnosticTabState extends State<_DiagnosticTab> {
 
     if (mounted) setState(() => _running = false);
   }
+
 
   String _now() {
     final n = DateTime.now();

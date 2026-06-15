@@ -16,7 +16,11 @@ import 'package:tutodecode/features/lab/widgets/simulator_ai_assistant.dart';
 import 'package:tutodecode/features/lab/widgets/interactive_terminal.dart';
 import 'package:tutodecode/features/lab/widgets/terminal_emulator.dart';
 
+const String _validLftForever = '       valid_lft forever preferred_lft forever';
+const String _iptablesHeader = ' pkts bytes target     prot opt in     out     source               destination';
+
 // ─── Modèles ────────────────────────────────────────────────
+
 
 class _Step {
   final String title;
@@ -746,19 +750,19 @@ List<TermLine> _ipAddrLines() => const [
   TermLine('1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000', TermColor.bold),
   TermLine('    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00', TermColor.gray),
   TermLine('    inet 127.0.0.1/8 scope host lo', TermColor.white),
-  TermLine('       valid_lft forever preferred_lft forever', TermColor.gray),
+  TermLine(_validLftForever, TermColor.gray),
   TermLine('    inet6 ::1/128 scope host noprefixroute', TermColor.white),
-  TermLine('       valid_lft forever preferred_lft forever', TermColor.gray),
+  TermLine(_validLftForever, TermColor.gray),
   TermLine('2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000', TermColor.bold),
   TermLine('    link/ether 52:54:00:a1:b2:c3 brd ff:ff:ff:ff:ff:ff', TermColor.gray),
   TermLine('    inet 192.168.1.10/24 brd 192.168.1.255 scope global dynamic noprefixroute eth0', TermColor.cyan),
   TermLine('       valid_lft 86215sec preferred_lft 86215sec', TermColor.gray),
   TermLine('    inet6 fe80::5054:ff:fea1:b2c3/64 scope link', TermColor.white),
-  TermLine('       valid_lft forever preferred_lft forever', TermColor.gray),
+  TermLine(_validLftForever, TermColor.gray),
   TermLine('3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default', TermColor.bold),
   TermLine('    link/ether 02:42:d8:e4:f5:a6 brd ff:ff:ff:ff:ff:ff', TermColor.gray),
   TermLine('    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0', TermColor.cyan),
-  TermLine('       valid_lft forever preferred_lft forever', TermColor.gray),
+  TermLine(_validLftForever, TermColor.gray),
 ];
 
 List<TermLine> _tracerouteLines() => const [
@@ -788,7 +792,7 @@ List<TermLine> _ssLines() => const [
 List<TermLine> _iptablesLines() => const [
   TermLine('\$ sudo iptables -L -n -v', TermColor.green),
   TermLine('Chain INPUT (policy DROP 0 packets, 0 bytes)', TermColor.yellow),
-  TermLine(' pkts bytes target     prot opt in     out     source               destination', TermColor.gray),
+  TermLine(_iptablesHeader, TermColor.gray),
   TermLine(' 1234  98K ACCEPT     all  --  lo     *       0.0.0.0/0            0.0.0.0/0', TermColor.white),
   TermLine('  856  64K ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED', TermColor.white),
   TermLine('   42  2520 ACCEPT    tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:22', TermColor.cyan),
@@ -799,12 +803,12 @@ List<TermLine> _iptablesLines() => const [
   TermLine('   89  5340 DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0', TermColor.red),
   TermLine('', TermColor.white),
   TermLine('Chain FORWARD (policy DROP 0 packets, 0 bytes)', TermColor.yellow),
-  TermLine(' pkts bytes target     prot opt in     out     source               destination', TermColor.gray),
+  TermLine(_iptablesHeader, TermColor.gray),
   TermLine('  456  27K ACCEPT     all  --  docker0 eth0   172.17.0.0/16        0.0.0.0/0', TermColor.white),
   TermLine('  312  19K ACCEPT     all  --  eth0   docker0  0.0.0.0/0           172.17.0.0/16        state RELATED,ESTABLISHED', TermColor.white),
   TermLine('', TermColor.white),
   TermLine('Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)', TermColor.yellow),
-  TermLine(' pkts bytes target     prot opt in     out     source               destination', TermColor.gray),
+  TermLine(_iptablesHeader, TermColor.gray),
 ];
 
 // ─── Permissions ls -la output ──────────────────────────────
@@ -1100,14 +1104,32 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
   }
 
   Widget _termBtn(String label, Color color, VoidCallback? onTap, {bool active = false}) {
+    final Color bgColor;
+    if (active) {
+      bgColor = color.withValues(alpha: 0.25);
+    } else if (onTap != null) {
+      bgColor = color.withValues(alpha: 0.12);
+    } else {
+      bgColor = TdcColors.textPrimary.withValues(alpha: 0.03);
+    }
+
+    final Color borderColor;
+    if (active) {
+      borderColor = color;
+    } else if (onTap != null) {
+      borderColor = color.withValues(alpha: 0.4);
+    } else {
+      borderColor = TdcColors.border;
+    }
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: active ? color.withValues(alpha: 0.25) : onTap != null ? color.withValues(alpha: 0.12) : TdcColors.textPrimary.withValues(alpha: 0.03),
+          color: bgColor,
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: active ? color : onTap != null ? color.withValues(alpha: 0.4) : TdcColors.border),
+          border: Border.all(color: borderColor),
         ),
         child: Text(
           label,

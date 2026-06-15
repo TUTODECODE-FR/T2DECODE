@@ -28,11 +28,16 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
   final TextEditingController _privateKeyController = TextEditingController();
   final TextEditingController _publicKeyController = TextEditingController();
 
+  static const _sha512 = 'SHA-512';
+  static const _sha1 = 'SHA-1';
+  static const _copiedMsg = 'Copié';
+
   bool _isEncrypting = false;
   bool _isDecrypting = false;
   bool _isHashing = false;
   bool _isSigning = false;
   bool _isVerifying = false;
+
 
   String _hashResult = '';
   String _signatureResult = '';
@@ -179,6 +184,15 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
   }
 
   Widget _buildHeader() {
+    final Color entropyColor;
+    if (_keyEntropy > 40) {
+      entropyColor = TdcColors.system;
+    } else if (_keyEntropy > 20) {
+      entropyColor = TdcColors.crypto;
+    } else {
+      entropyColor = TdcColors.security;
+    }
+
     return LabGlassContainer(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
@@ -221,7 +235,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                   'Entropie clé',
                   '${_keyEntropy.toStringAsFixed(1)} bits',
                   Icons.analytics,
-                  _keyEntropy > 40 ? TdcColors.system : (_keyEntropy > 20 ? TdcColors.crypto : TdcColors.security),
+                  entropyColor,
                 ),
               ],
             ),
@@ -230,6 +244,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
       ),
     );
   }
+
 
   Widget _buildBadge(String text, Color color) {
     return Container(
@@ -490,8 +505,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
             dropdownColor: TdcColors.surface,
             items: const [
               DropdownMenuItem(value: 'SHA-256', child: Text('SHA-256 — standard actuel (Bitcoin, TLS)')),
-              DropdownMenuItem(value: 'SHA-512', child: Text('SHA-512 — version 512 bits')),
-              DropdownMenuItem(value: 'SHA-1', child: Text('SHA-1 ⚠️ OBSOLÈTE — collisions trouvées en 2017')),
+              DropdownMenuItem(value: _sha512, child: Text('$_sha512 — version 512 bits')),
+              DropdownMenuItem(value: _sha1, child: Text('$_sha1 ⚠️ OBSOLÈTE — collisions trouvées en 2017')),
               DropdownMenuItem(value: 'MD5', child: Text('MD5 ⚠️ CASSÉ — ne jamais utiliser pour la sécurité')),
               DropdownMenuItem(value: 'PBKDF2', child: Text('PBKDF2-SHA256 — dérivation de mot de passe')),
             ],
@@ -628,14 +643,14 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
             'Utilisé par Bitcoin, TLS, Git, et la signature de code. '
             'Impossible de retrouver le message original à partir du hash (fonction à sens unique). '
             'Le moindre changement dans l\'entrée produit un hash totalement différent (effet avalanche).';
-      case 'SHA-512':
-        return '🔐 SHA-512 est la version 512 bits de SHA-2. '
+      case _sha512:
+        return '🔐 $_sha512 est la version 512 bits de SHA-2. '
             'Plus lent que SHA-256 sur les processeurs 32 bits, mais plus rapide sur 64 bits. '
             'Utilisé pour les signatures de haut niveau de sécurité et les certificats racine.';
-      case 'SHA-1':
-        return '⚠️ SHA-1 est OBSOLÈTE depuis 2017. Google et le CWI ont démontré une collision réelle (SHAttered). '
-            'Deux fichiers PDF différents produisaient le même hash SHA-1. '
-            'Les navigateurs rejettent les certificats SHA-1 depuis 2017. Ne l\'utilisez plus.';
+      case _sha1:
+        return '⚠️ $_sha1 est OBSOLÈTE depuis 2017. Google et le CWI ont démontré une collision réelle (SHAttered). '
+            'Deux fichiers PDF différents produisaient le même hash $_sha1. '
+            'Les navigateurs rejettent les certificats $_sha1 depuis 2017. Ne l\'utilisez plus.';
       case 'MD5':
         return '⛔ MD5 est CASSÉ depuis 2004. Des collisions peuvent être générées en quelques secondes sur un laptop. '
             'Flame (malware d\'état) a exploité une collision MD5 pour usurper un certificat Microsoft. '
@@ -1127,13 +1142,13 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
           hash = CryptoEngine.hashSha256(input);
           _hashSteps.add('✓ Empreinte de 256 bits (32 octets)');
           break;
-        case 'SHA-512':
+        case _sha512:
           _hashSteps.add('Padding à un multiple de 1024 bits');
           _hashSteps.add('80 rounds de compression');
           hash = CryptoEngine.hashSha512(input);
           _hashSteps.add('✓ Empreinte de 512 bits (64 octets)');
           break;
-        case 'SHA-1':
+        case _sha1:
           _hashSteps.add('⚠️ Algorithme obsolète — collisions démontrées (SHAttered, 2017)');
           hash = CryptoEngine.hashSha1(input);
           _hashSteps.add('Empreinte de 160 bits — NE PAS utiliser en production');
@@ -1235,23 +1250,26 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
     setState(() => _keyController.text = base64.encode(keyBytes));
   }
 
-  void _showError(String msg) {
+  void _showSnackBar(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), behavior: SnackBarBehavior.floating));
   }
 
+  void _showError(String msg) => _showSnackBar(msg);
+
   void _copyCipherText() {
     Clipboard.setData(ClipboardData(text: _cipherTextController.text));
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copié'), behavior: SnackBarBehavior.floating));
+    _showSnackBar(_copiedMsg);
   }
 
   void _copyHash() {
     Clipboard.setData(ClipboardData(text: _hashResult));
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copié'), behavior: SnackBarBehavior.floating));
+    _showSnackBar(_copiedMsg);
   }
 
   void _copySignature() {
     Clipboard.setData(ClipboardData(text: _signatureResult));
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copié'), behavior: SnackBarBehavior.floating));
+    _showSnackBar(_copiedMsg);
   }
 }
+
