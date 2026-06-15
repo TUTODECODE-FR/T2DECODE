@@ -607,7 +607,7 @@ jobs:
         run: |
           TAG="${{ github.event.inputs.target_tag || github.ref_name }}"
           gh release notes "$TAG" --exclude-drafts > raw_notes.md || echo "* Mises à jour de la version" > raw_notes.md
-          python3 -c "
+          cat <<'EOF' > clean_notes.py
           import re, os
           if not os.path.exists('raw_notes.md'):
               with open('cleaned_notes.md', 'w') as f:
@@ -622,7 +622,10 @@ jobs:
           cleaned = parts[0]
           with open('cleaned_notes.md', 'w') as f:
               f.write(cleaned.strip())
-          "
+          EOF
+          # Remove 10 leading spaces of indentation
+          sed -i '' 's/^[[:space:]]\{10\}//' clean_notes.py || sed -i 's/^[[:space:]]\{10\}//' clean_notes.py
+          python3 clean_notes.py
           cat cleaned_notes.md
 
       - name: Create or update release
