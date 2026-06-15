@@ -97,6 +97,9 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
       if (_historyIndex < _cmdHistory.length - 1) {
         _historyIndex++;
         _inputController.text = _cmdHistory[_historyIndex];
+        _inputController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _inputController.text.length),
+        );
       } else {
         _historyIndex = _cmdHistory.length;
         _inputController.clear();
