@@ -345,27 +345,11 @@ jobs:
       - name: Get dependencies
         run: flutter pub get # NOSONAR
 
-      - name: Cache CocoaPods spec repo
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
-        with:
-          path: ~/.cocoapods/repos/trunk
-          key: cocoapods-trunk-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            cocoapods-trunk-
-
       - name: Setup CocoaPods spec repo
         shell: bash
         run: |
-          # S'assurer que le repo trunk est disponible localement avant flutter build
-          # (évite l'échec DNS sur cdn.cocoapods.org lors du pod install automatique)
-          if [ ! -d "$HOME/.cocoapods/repos/trunk" ]; then
-            echo "Clonage du spec repo CocoaPods..."
-            pod repo add-cdn trunk https://cdn.cocoapods.org/ --silent || \
-              pod repo add trunk https://github.com/CocoaPods/Specs.git --silent || \
-              (echo "❌ Échec de la configuration du repo CocoaPods" && exit 1)
-          else
-            echo "Spec repo CocoaPods déjà en cache."
-          fi
+          # Initialisation rapide du CDN CocoaPods
+          pod repo add-cdn trunk https://cdn.cocoapods.org/ --silent || true
 
       - name: Run tests
         run: flutter test --dart-define=SKIP_GOLDENS=true
@@ -475,9 +459,6 @@ jobs:
 
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/Runner.mobileprovision"
-
-          # Pré-installer les pods sans accès CDN (specs locaux Flutter)
-          cd ios && pod install --no-repo-update && cd ..
 
           flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
 
@@ -603,12 +584,13 @@ jobs:
       - name: Generate and clean release notes
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.inputs.target_tag || github.ref_name }}
         shell: bash
         run: |
-          TAG="${{ github.event.inputs.target_tag || github.ref_name }}"
           gh release notes "$TAG" --exclude-drafts > raw_notes.md || echo "* Mises à jour de la version" > raw_notes.md
           cat <<'EOF' > clean_notes.py
           import re, os
+          tag = os.environ.get('TAG', '')
           if not os.path.exists('raw_notes.md'):
               with open('cleaned_notes.md', 'w') as f:
                   f.write('* Mises à jour de la version')
@@ -620,8 +602,15 @@ jobs:
           cleaned = parts[0]
           parts = re.split(r'##\s+Nouveaux\s+contributeurs', cleaned, flags=re.IGNORECASE)
           cleaned = parts[0]
+          
+          # Ajout du message explicatif pour les sous-versions à 4 segments (ex: v1.0.2.18)
+          final_content = ""
+          if re.match(r'^v?\d+\.\d+\.\d+\.\d+$', tag):
+              final_content += "> [!NOTE]\n> Cette version (" + tag + ") est une mise à jour de maintenance automatisée. Il n'est pas nécessaire de la réinstaller si vous disposez déjà d'une version stable récente (ex: v1.0.2).\n\n"
+          
+          final_content += cleaned.strip()
           with open('cleaned_notes.md', 'w') as f:
-              f.write(cleaned.strip())
+              f.write(final_content)
           EOF
           # Remove 10 leading spaces of indentation
           sed -i '' 's/^[[:space:]]\{10\}//' clean_notes.py || sed -i 's/^[[:space:]]\{10\}//' clean_notes.py
