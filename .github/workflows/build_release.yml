@@ -556,18 +556,14 @@ jobs:
   publish-sourceforge:
     name: Publish to SourceForge
     needs: release
-    # Ne tourne que si les secrets SourceForge sont configurés
-    if: |
-      always() &&
-      needs.release.result == 'success' &&
-      vars.SF_USER != '' &&
-      vars.SF_PROJECT != ''
+    # Ne tourne que si la clé SSH SourceForge est configurée
+    if: always() && needs.release.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: read
     env:
-      SF_USER: ${{ vars.SF_USER }}
-      SF_PROJECT: ${{ vars.SF_PROJECT }}
+      SF_USER: winancher
+      SF_PROJECT: t2decode
       SF_PRIVATE_KEY: ${{ secrets.SF_PRIVATE_KEY }}
     steps:
       - name: Harden Runner
@@ -575,15 +571,14 @@ jobs:
         with:
           egress-policy: audit
 
-      - name: Skip if SourceForge not configured
-        if: env.SF_USER == '' || env.SF_PROJECT == '' || env.SF_PRIVATE_KEY == ''
+      - name: Skip if SourceForge SSH key not configured
+        if: env.SF_PRIVATE_KEY == ''
         run: |
-          echo "::notice::SourceForge secrets not configured — skipping upload."
-          echo "To enable, add SF_USER and SF_PROJECT as repository variables,"
-          echo "and SF_PRIVATE_KEY as a repository secret."
+          echo "::notice::Secret SF_PRIVATE_KEY manquant — upload SourceForge ignoré."
+          echo "Pour activer : Settings → Secrets → SF_PRIVATE_KEY = clé SSH privée enregistrée sur sourceforge.net/account"
 
       - name: Download release assets
-        if: env.SF_USER != '' && env.SF_PROJECT != '' && env.SF_PRIVATE_KEY != ''
+        if: env.SF_PRIVATE_KEY != ''
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           path: artifacts
@@ -591,7 +586,7 @@ jobs:
           merge-multiple: true
 
       - name: Prepare assets for SourceForge
-        if: env.SF_USER != '' && env.SF_PROJECT != '' && env.SF_PRIVATE_KEY != ''
+        if: env.SF_PRIVATE_KEY != ''
         shell: bash
         run: |
           mkdir -p sf_assets
@@ -616,7 +611,7 @@ jobs:
           ls -lh sf_assets/
 
       - name: Upload to SourceForge via SFTP
-        if: env.SF_USER != '' && env.SF_PROJECT != '' && env.SF_PRIVATE_KEY != ''
+        if: env.SF_PRIVATE_KEY != ''
         shell: bash
         run: |
           TAG="${{ github.event.inputs.target_tag || github.ref_name }}"
