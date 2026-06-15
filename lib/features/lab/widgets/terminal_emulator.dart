@@ -92,6 +92,8 @@ class TerminalEmulatorState extends State<TerminalEmulator> {
 
   bool get isPlaying => _playing;
 
+  String get plainText => _lines.map((l) => l.text).join('\n');
+
   void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 30), () {
       if (_scrollCtrl.hasClients) {
