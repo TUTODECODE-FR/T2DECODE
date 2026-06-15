@@ -268,26 +268,30 @@ class _PortScannerTabState extends State<_PortScannerTab> {
     9200: 'elasticsearch', 27017: 'mongodb',
   };
 
+  void _parsePortRange(String rangeStr, Set<int> ports) {
+    final range = rangeStr.split('-');
+    if (range.length != 2) return;
+    final start = int.tryParse(range[0].trim());
+    final end = int.tryParse(range[1].trim());
+    if (start == null || end == null) return;
+    if (start > end || end > 65535) return;
+    if (end - start + 1 > 256) return;
+    for (int p = start; p <= end; p++) {
+      ports.add(p);
+    }
+  }
+
   List<int> _parsePorts(String input) {
     final ports = <int>{};
     for (final part in input.split(',')) {
       final trimmed = part.trim();
       if (trimmed.contains('-')) {
-        final range = trimmed.split('-');
-        if (range.length == 2) {
-          final start = int.tryParse(range[0].trim());
-          final end = int.tryParse(range[1].trim());
-          if (start != null && end != null && start <= end && end <= 65535) {
-            // Prevent huge expansions; _scan() enforces a 256-port limit.
-            if (end - start + 1 > 256) continue;
-            for (int p = start; p <= end; p++) {
-              ports.add(p);
-            }
-          }
-        }
+        _parsePortRange(trimmed, ports);
       } else {
         final p = int.tryParse(trimmed);
-        if (p != null && p > 0 && p <= 65535) ports.add(p);
+        if (p != null && p > 0 && p <= 65535) {
+          ports.add(p);
+        }
       }
     }
     return ports.toList()..sort();

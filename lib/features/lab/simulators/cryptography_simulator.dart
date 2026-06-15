@@ -668,200 +668,218 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
 
   // ── Signature Tab ────────────────────────────────────────
 
-  Widget _buildSignatureTab() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        _buildExplainer(
-          _selectedSignature == 'Ed25519'
-              ? '🔐 Ed25519 utilise la courbe elliptique Curve25519 (conçue par Daniel Bernstein). '
-                'Signatures compactes (64 octets), clés courtes (32 octets), et vérification très rapide. '
-                'Utilisé par SSH, Signal, WireGuard, et la blockchain Solana. '
-                'La clé privée signe, la clé publique vérifie — personne d\'autre ne peut forger votre signature.'
-              : '🔐 HMAC-SHA256 est un code d\'authentification basé sur le hashage. '
-                'Contrairement à Ed25519, la même clé secrète sert à signer ET vérifier. '
-                'Utilisé dans JWT, les API (AWS Signature V4), et les cookies signés.',
-          color: TdcColors.crypto,
+  Widget _buildSignatureExplainer() {
+    return _buildExplainer(
+      _selectedSignature == 'Ed25519'
+          ? '🔐 Ed25519 utilise la courbe elliptique Curve25519 (conçue par Daniel Bernstein). '
+            'Signatures compactes (64 octets), clés courtes (32 octets), et vérification très rapide. '
+            'Utilisé par SSH, Signal, WireGuard, et la blockchain Solana. '
+            'La clé privée signe, la clé publique vérifie — personne d\'autre ne peut forger votre signature.'
+          : '🔐 HMAC-SHA256 est un code d\'authentification basé sur le hashage. '
+            'Contrairement à Ed25519, la même clé secrète sert à signer ET vérifier. '
+            'Utilisé dans JWT, les API (AWS Signature V4), et les cookies signés.',
+      color: TdcColors.crypto,
+    );
+  }
+
+  Widget _buildSignatureAlgoSection() {
+    return _buildSection('Algorithme de signature', Icons.draw, [
+      DropdownButton<String>(
+        value: _selectedSignature,
+        isExpanded: true,
+        dropdownColor: TdcColors.surface,
+        items: const [
+          DropdownMenuItem(value: 'Ed25519', child: Text('Ed25519 — signature asymétrique (clé privée/publique)')),
+          DropdownMenuItem(value: 'HMAC', child: Text('HMAC-SHA256 — authentification symétrique (clé partagée)')),
+        ],
+        onChanged: (v) => setState(() {
+          _selectedSignature = v!;
+          _signSteps.clear();
+          _signatureResult = '';
+          _verificationResult = null;
+        }),
+      ),
+    ]);
+  }
+
+  Widget _buildKeyPairSection() {
+    return _buildSection('Paire de clés Ed25519', Icons.vpn_key, [
+      const Text(
+        'Clé privée (secrète — ne jamais partager) :',
+        style: TextStyle(color: TdcColors.security, fontSize: 11, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 4),
+      _buildKeyDisplay(_privateKeyController.text),
+      const SizedBox(height: 12),
+      const Text(
+        'Clé publique (partageable librement) :',
+        style: TextStyle(color: TdcColors.system, fontSize: 11, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 4),
+      _buildKeyDisplay(_publicKeyController.text),
+      const SizedBox(height: 8),
+      TextButton.icon(
+        onPressed: () async {
+          final kp = await CryptoEngine.generateEd25519KeyPair();
+          if (!mounted) return;
+          setState(() {
+            _signKeyPair = kp;
+            _privateKeyController.text = kp.privateKey;
+            _publicKeyController.text = kp.publicKey;
+            _signatureResult = '';
+            _verificationResult = null;
+          });
+        },
+        icon: const Icon(Icons.refresh, size: 14),
+        label: const Text('Regénérer la paire de clés'),
+      ),
+    ]);
+  }
+
+  Widget _buildSignMessageSection() {
+    return _buildSection('Message à signer', Icons.edit, [
+      TextField(
+        controller: _signInputController,
+        maxLines: 3,
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          hintText: 'Tapez un message, un contrat, n\'importe quoi...',
+          hintStyle: TextStyle(color: TdcColors.textMuted),
         ),
-        const SizedBox(height: 12),
-
-        _buildSection('Algorithme de signature', Icons.draw, [
-          DropdownButton<String>(
-            value: _selectedSignature,
-            isExpanded: true,
-            dropdownColor: TdcColors.surface,
-            items: const [
-              DropdownMenuItem(value: 'Ed25519', child: Text('Ed25519 — signature asymétrique (clé privée/publique)')),
-              DropdownMenuItem(value: 'HMAC', child: Text('HMAC-SHA256 — authentification symétrique (clé partagée)')),
-            ],
-            onChanged: (v) => setState(() {
-              _selectedSignature = v!;
-              _signSteps.clear();
-              _signatureResult = '';
-              _verificationResult = null;
-            }),
-          ),
-        ]),
-        const SizedBox(height: 12),
-
-        if (_selectedSignature == 'Ed25519') ...[
-          _buildSection('Paire de clés Ed25519', Icons.vpn_key, [
-            const Text(
-              'Clé privée (secrète — ne jamais partager) :',
-              style: TextStyle(color: TdcColors.security, fontSize: 11, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            _buildKeyDisplay(_privateKeyController.text),
-            const SizedBox(height: 12),
-            const Text(
-              'Clé publique (partageable librement) :',
-              style: TextStyle(color: TdcColors.system, fontSize: 11, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            _buildKeyDisplay(_publicKeyController.text),
-            const SizedBox(height: 8),
-            TextButton.icon(
-              onPressed: () async {
-                final kp = await CryptoEngine.generateEd25519KeyPair();
-                if (!mounted) return;
-                setState(() {
-                  _signKeyPair = kp;
-                  _privateKeyController.text = kp.privateKey;
-                  _publicKeyController.text = kp.publicKey;
-                  _signatureResult = '';
-                  _verificationResult = null;
-                });
-              },
-              icon: const Icon(Icons.refresh, size: 14),
-              label: const Text('Regénérer la paire de clés'),
-            ),
-          ]),
-          const SizedBox(height: 12),
-        ],
-
-        _buildSection('Message à signer', Icons.edit, [
-          TextField(
-            controller: _signInputController,
-            maxLines: 3,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Tapez un message, un contrat, n\'importe quoi...',
-              hintStyle: TextStyle(color: TdcColors.textMuted),
+      ),
+      const SizedBox(height: 12),
+      Row(
+        children: [
+          Expanded(
+            child: ElevatedButton.icon(
+              onPressed: _isSigning ? null : _signMessage,
+              icon: _isSigning
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.draw),
+              label: Text(_isSigning ? 'Signature...' : 'Signer le message'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: TdcColors.crypto,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
             ),
           ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: _isSigning ? null : _signMessage,
-                  icon: _isSigning
-                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Icon(Icons.draw),
-                  label: Text(_isSigning ? 'Signature...' : 'Signer le message'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: TdcColors.crypto,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: ElevatedButton.icon(
+              onPressed: (_isVerifying || _signatureResult.isEmpty) ? null : _verifySignature,
+              icon: _isVerifying
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.verified),
+              label: Text(_isVerifying ? 'Vérification...' : 'Vérifier'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: TdcColors.network,
+                padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: (_isVerifying || _signatureResult.isEmpty) ? null : _verifySignature,
-                  icon: _isVerifying
-                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Icon(Icons.verified),
-                  label: Text(_isVerifying ? 'Vérification...' : 'Vérifier'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: TdcColors.network,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ]),
-
-        if (_signSteps.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          _buildStepsPanel('Étapes', _signSteps, TdcColors.crypto),
         ],
+      ),
+    ]);
+  }
 
-        if (_signatureResult.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          _buildSection('Signature', Icons.fingerprint, [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: TdcColors.surfaceAlt,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: TdcColors.border),
-              ),
-              child: SelectableText(
-                _signatureResult,
-                style: const TextStyle(color: TdcColors.system, fontSize: 11, fontFamily: 'monospace'),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${_signatureResult.length} caractères base64 (${(base64.decode(_signatureResult).length)} octets)',
-              style: const TextStyle(color: TdcColors.textMuted, fontSize: 11),
-            ),
-            const SizedBox(height: 8),
-            TextButton.icon(onPressed: _copySignature, icon: const Icon(Icons.copy, size: 14), label: const Text('Copier')),
-          ]),
-        ],
+  Widget _buildSignatureResultSection() {
+    return _buildSection('Signature', Icons.fingerprint, [
+      Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: TdcColors.surfaceAlt,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: TdcColors.border),
+        ),
+        child: SelectableText(
+          _signatureResult,
+          style: const TextStyle(color: TdcColors.system, fontSize: 11, fontFamily: 'monospace'),
+        ),
+      ),
+      const SizedBox(height: 4),
+      Text(
+        '${_signatureResult.length} caractères base64 (${(base64.decode(_signatureResult).length)} octets)',
+        style: const TextStyle(color: TdcColors.textMuted, fontSize: 11),
+      ),
+      const SizedBox(height: 8),
+      TextButton.icon(onPressed: _copySignature, icon: const Icon(Icons.copy, size: 14), label: const Text('Copier')),
+    ]);
+  }
 
-        if (_verificationResult != null) ...[
-          const SizedBox(height: 12),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: (_verificationResult! ? TdcColors.system : TdcColors.security).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: (_verificationResult! ? TdcColors.system : TdcColors.security).withValues(alpha: 0.3),
-              ),
-            ),
-            child: Row(
+  Widget _buildVerificationResultSection() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: (_verificationResult! ? TdcColors.system : TdcColors.security).withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: (_verificationResult! ? TdcColors.system : TdcColors.security).withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            _verificationResult! ? Icons.check_circle : Icons.cancel,
+            color: _verificationResult! ? TdcColors.system : TdcColors.security,
+            size: 28,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  _verificationResult! ? Icons.check_circle : Icons.cancel,
-                  color: _verificationResult! ? TdcColors.system : TdcColors.security,
-                  size: 28,
+                Text(
+                  _verificationResult! ? 'Signature VALIDE ✓' : 'Signature INVALIDE ✗',
+                  style: TextStyle(
+                    color: _verificationResult! ? TdcColors.system : TdcColors.security,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _verificationResult! ? 'Signature VALIDE ✓' : 'Signature INVALIDE ✗',
-                        style: TextStyle(
-                          color: _verificationResult! ? TdcColors.system : TdcColors.security,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _verificationResult!
-                            ? 'Le message n\'a pas été altéré et provient bien du détenteur de la clé privée.'
-                            : 'Le message a été modifié, ou la signature ne correspond pas à la clé publique.',
-                        style: TextStyle(
-                          color: (_verificationResult! ? TdcColors.system : TdcColors.security).withValues(alpha: 0.8),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 4),
+                Text(
+                  _verificationResult!
+                      ? 'Le message n\'a pas été altéré et provient bien du détenteur de la clé privée.'
+                      : 'Le message a été modifié, ou la signature ne correspond pas à la clé publique.',
+                  style: TextStyle(
+                    color: (_verificationResult! ? TdcColors.system : TdcColors.security).withValues(alpha: 0.8),
+                    fontSize: 12,
                   ),
                 ),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSignatureTab() {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        _buildSignatureExplainer(),
+        const SizedBox(height: 12),
+        _buildSignatureAlgoSection(),
+        const SizedBox(height: 12),
+        if (_selectedSignature == 'Ed25519') ...[
+          _buildKeyPairSection(),
+          const SizedBox(height: 12),
+        ],
+        _buildSignMessageSection(),
+        if (_signSteps.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _buildStepsPanel('Étapes', _signSteps, TdcColors.crypto),
+        ],
+        if (_signatureResult.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _buildSignatureResultSection(),
+        ],
+        if (_verificationResult != null) ...[
+          const SizedBox(height: 12),
+          _buildVerificationResultSection(),
         ],
       ],
     );
