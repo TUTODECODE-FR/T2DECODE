@@ -4,15 +4,20 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'LICENSE'
-      - 'LICENSE.txt'
-      - 'DCO.md'
-      - '.gitignore'
-      - '.claudeignore'
-      - '.ci-trigger'
+    # Déclenche uniquement si du vrai code de l'app est modifié.
+    # Les fichiers CI, docs, README, licences ne génèrent PAS de release.
+    paths:
+      - 'lib/**'
+      - 'assets/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'android/**'
+      - 'ios/**'
+      - 'macos/**'
+      - 'windows/**'
+      - 'linux/**'
+      - 'web/**'
+      - 'test/**'
 
 permissions:
   contents: read
@@ -33,18 +38,23 @@ jobs:
         id: next_tag
         shell: bash
         run: |
-          # 1. Read version from pubspec.yaml
+          # 1. Lire la version de base depuis pubspec.yaml (ex: 1.0.2)
           VERSION_LINE=$(grep '^version:' pubspec.yaml)
           BASE_VERSION=$(echo "$VERSION_LINE" | cut -d' ' -f2 | cut -d'+' -f1)
           echo "Base version: $BASE_VERSION"
 
-          # 2. Get matching tags starting with the base version (e.g., v1.0.2)
-          MATCHING_TAGS=$(git tag -l "v$BASE_VERSION*")
+          # 2. Récupérer tous les tags correspondant à cette version de base
+          MATCHING_TAGS=$(git tag -l "v$BASE_VERSION.*")
 
           if [ -z "$MATCHING_TAGS" ]; then
             NEXT_TAG="v$BASE_VERSION.1"
           else
-            LATEST_SUFFIX=$(echo "$MATCHING_TAGS" | grep -E "^v$BASE_VERSION\.[0-9]+$" | sed "s/^v$BASE_VERSION\.//" | sort -n | tail -n1)
+            # Trouver le plus grand suffixe existant et incrémenter
+            LATEST_SUFFIX=$(echo "$MATCHING_TAGS" \
+              | grep -E "^v$BASE_VERSION\.[0-9]+$" \
+              | sed "s/^v$BASE_VERSION\.//" \
+              | sort -n \
+              | tail -n1)
             if [ -z "$LATEST_SUFFIX" ]; then
               NEXT_TAG="v$BASE_VERSION.1"
             else
@@ -64,7 +74,7 @@ jobs:
           TAG="${{ steps.next_tag.outputs.NEXT_TAG }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
+
           git tag -a "$TAG" -m "Automated release tag $TAG"
           git push origin "$TAG"
 
@@ -74,6 +84,6 @@ jobs:
         shell: bash
         run: |
           TAG="${{ steps.next_tag.outputs.NEXT_TAG }}"
-          # Attente courte pour que GitHub enregistre le tag poussé
+          # Courte attente pour que GitHub enregistre le tag
           sleep 5
           gh workflow run build_release.yml --ref "refs/tags/$TAG" -f target_tag="$TAG"
