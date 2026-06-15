@@ -184,7 +184,7 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
                         ),
                         Expanded(
                           child: KeyboardListener(
-                            focusNode: FocusNode(),
+                            focusNode: _keyListenerNode,
                             onKeyEvent: _handleKeyEvent,
                             child: TextField(
                               controller: _inputController,
