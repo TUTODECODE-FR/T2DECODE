@@ -4,20 +4,8 @@ on:
   push:
     branches:
       - main
-    # Déclenche uniquement si du vrai code de l'app est modifié.
-    # Les fichiers CI, docs, README, licences ne génèrent PAS de release.
     paths:
-      - 'lib/**'
-      - 'assets/**'
       - 'pubspec.yaml'
-      - 'pubspec.lock'
-      - 'android/**'
-      - 'ios/**'
-      - 'macos/**'
-      - 'windows/**'
-      - 'linux/**'
-      - 'web/**'
-      - 'test/**'
 
 permissions:
   contents: read
