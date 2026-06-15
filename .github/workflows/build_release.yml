@@ -210,7 +210,7 @@ jobs:
 
           cp -R build/linux/x64/release/bundle/* "$STAGE/opt/t2decode/"
 
-          cat > "$STAGE/usr/share/applications/t2decode.desktop" <<'EOF'
+          cat > "$STAGE/usr/share/applications/org.tutodecode.T2DECODE.desktop" <<'EOF'
           [Desktop Entry]
           Name=T2DECODE
           Comment=T2DECODE learning platform
@@ -243,17 +243,17 @@ jobs:
           STAGE_APPIMAGE="$RUNNER_TEMP/AppDir"
           mkdir -p "$STAGE_APPIMAGE"
           cp -R build/linux/x64/release/bundle/* "$STAGE_APPIMAGE/"
-          cat > "$STAGE_APPIMAGE/t2decode.desktop" <<'EOF'
+          cat > "$STAGE_APPIMAGE/org.tutodecode.T2DECODE.desktop" <<'EOF'
           [Desktop Entry]
           Name=T2DECODE
           Comment=T2DECODE learning platform
           Exec=AppRun
-          Icon=t2decode
+          Icon=org.tutodecode.T2DECODE
           Terminal=false
           Type=Application
           Categories=Education;Development;
           EOF
-          cp "assets/logo.png" "$STAGE_APPIMAGE/t2decode.png"
+          cp "assets/logo.png" "$STAGE_APPIMAGE/org.tutodecode.T2DECODE.png"
           ln -s T2DECODE "$STAGE_APPIMAGE/AppRun"
           APPIMAGETOOL=./appimagetool-x86_64.AppImage
           if ! $APPIMAGETOOL --version >/dev/null 2>&1; then
@@ -721,7 +721,7 @@ jobs:
               f.write(final_content.strip())
           EOF
           # Remove 10 leading spaces of indentation
-          sed -i '' 's/^[[:space:]]\{10\}//' clean_notes.py || sed -i 's/^[[:space:]]\{10\}//' clean_notes.py
+          sed -i 's/^[[:space:]]\{10\}//' clean_notes.py
           python3 clean_notes.py
           cat cleaned_notes.md
 
