@@ -24,6 +24,7 @@ class InteractiveTerminal extends StatefulWidget {
 class _InteractiveTerminalState extends State<InteractiveTerminal> {
   final TextEditingController _inputController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  final FocusNode _keyListenerNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
 
   final List<_TermLine> _lines = [];
