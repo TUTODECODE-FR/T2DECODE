@@ -1,0 +1,67 @@
+name: Auto Tag and Trigger Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  auto-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history and tags
+
+      - name: Determine Next Tag
+        id: next_tag
+        shell: bash
+        run: |
+          # 1. Read version from pubspec.yaml
+          VERSION_LINE=$(grep '^version:' pubspec.yaml)
+          BASE_VERSION=$(echo "$VERSION_LINE" | cut -d' ' -f2 | cut -d'+' -f1)
+          echo "Base version: $BASE_VERSION"
+
+          # 2. Get matching tags starting with the base version (e.g., v1.0.2)
+          MATCHING_TAGS=$(git tag -l "v$BASE_VERSION*")
+
+          if [ -z "$MATCHING_TAGS" ]; then
+            NEXT_TAG="v$BASE_VERSION.1"
+          else
+            LATEST_SUFFIX=$(echo "$MATCHING_TAGS" | grep -E "^v$BASE_VERSION\.[0-9]+$" | sed "s/^v$BASE_VERSION\.//" | sort -n | tail -n1)
+            if [ -z "$LATEST_SUFFIX" ]; then
+              NEXT_TAG="v$BASE_VERSION.1"
+            else
+              NEXT_SUFFIX=$((LATEST_SUFFIX + 1))
+              NEXT_TAG="v$BASE_VERSION.$NEXT_SUFFIX"
+            fi
+          fi
+
+          echo "NEXT_TAG=$NEXT_TAG" >> $GITHUB_OUTPUT
+          echo "Determined next tag: $NEXT_TAG"
+
+      - name: Create and Push Tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          TAG="${{ steps.next_tag.outputs.NEXT_TAG }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Automated release tag $TAG"
+          git push origin "$TAG"
+
+      - name: Trigger Release Workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          TAG="${{ steps.next_tag.outputs.NEXT_TAG }}"
+          # Attente courte pour que GitHub enregistre le tag poussé
+          sleep 5
+          gh workflow run build_release.yml --ref "refs/tags/$TAG" -f target_tag="$TAG"
