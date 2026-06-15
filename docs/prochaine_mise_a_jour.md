@@ -8,11 +8,11 @@
 ### Comment les mises à jour sont-elles signées ?
 Actuellement, il n'y a pas de mécanisme de signature cryptographique asymétrique (par exemple, via un couple de clés privée/publique de l'association) pour signer les fichiers de cours à la source. Les mises à jour s'effectuent par défaut via HTTPS sur le dépôt officiel. 
 
-Lors de la sauvegarde locale d'un module par le [ModuleService](file:///Users/winancher/Documents/T2DECODE/lib/core/services/module_service.dart), l'application génère un hachage SHA-256 du contenu et le stocke localement dans un fichier de contrôle de métadonnées `.module_shas.json`.
+Lors de la sauvegarde locale d'un module par le [ModuleService](../lib/core/services/module_service.dart), l'application génère un hachage SHA-256 du contenu et le stocke localement dans un fichier de contrôle de métadonnées `.module_shas.json`.
 
 ### Comment les signatures sont-elles vérifiées ?
 L'application effectue deux niveaux de vérification d'intégrité basés sur SHA-256 :
-1. **Assets d'origine (intégrés au build) :** Au démarrage, le système anti-altération ([AntiTamperingSystem](file:///Users/winancher/Documents/T2DECODE/lib/core/security/anti_tampering.dart)) et le service de vérification d'identité ([IdentityVerificationService](file:///Users/winancher/Documents/T2DECODE/lib/core/security/identity_verification.dart)) comparent les empreintes SHA-256 réelles des fichiers critiques (`assets/courses.json`, `assets/manifest.json`, etc.) pour s'assurer qu'ils n'ont pas été modifiés.
+1. **Assets d'origine (intégrés au build) :** Au démarrage, le système anti-altération ([AntiTamperingSystem](../lib/core/security/anti_tampering.dart)) et le service de vérification d'identité ([IdentityVerificationService](../lib/core/security/identity_verification.dart)) comparent les empreintes SHA-256 réelles des fichiers critiques (`assets/courses.json`, `assets/manifest.json`, etc.) pour s'assurer qu'ils n'ont pas été modifiés.
 2. **Modules additionnels (téléchargés ou importés) :** À chaque chargement d'un module présent dans le dossier local `TUTODECODE_Modules`, l'application recalcule son empreinte SHA-256 et la compare à celle stockée dans `.module_shas.json`. Si les empreintes diffèrent, le module est ignoré (`checksum mismatch`).
 
 ### Peut-on injecter un faux contenu ?
