@@ -21,8 +21,8 @@ void main() {
     test('wrong passphrase fails to decrypt', () async {
       const plaintext = 'Secret message';
       final encrypted = await CryptoEngine.aesGcmEncrypt(plaintext, 'rightkey');
-      expect(
-        () => CryptoEngine.aesGcmDecrypt(encrypted, 'wrongkey'),
+      await expectLater(
+        CryptoEngine.aesGcmDecrypt(encrypted, 'wrongkey'),
         throwsA(anything),
       );
     });
