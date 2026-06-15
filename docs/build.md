@@ -1,4 +1,4 @@
-# Build & Tests
+# Compilation et tests
 
 ## Prérequis
 - Flutter SDK (stable)

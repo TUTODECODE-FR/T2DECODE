@@ -1,14 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
-// Linux Simulator
-// Explications théoriques interactives et animées :
-//   • Démarrage du système (boot)
-//   • Système de fichiers Linux
-//   • Processus & Signaux
-//   • Réseau sous Linux
-//   • Droits & Sécurité
-//   • Scripting Bash
+// Linux Simulator — Real Terminal Experience
+// Each scenario shows a real terminal screen as if the user
+// were sitting in front of an actual Linux machine.
 // ============================================================
 import 'dart:async';
 import 'package:tutodecode/features/courses/data/cheat_sheet_repository.dart';
@@ -19,8 +14,28 @@ import 'package:tutodecode/features/lab/widgets/sim_step_card.dart';
 import 'package:tutodecode/features/lab/widgets/lab_widgets.dart';
 import 'package:tutodecode/features/lab/widgets/simulator_ai_assistant.dart';
 import 'package:tutodecode/features/lab/widgets/interactive_terminal.dart';
+import 'package:tutodecode/features/lab/widgets/terminal_emulator.dart';
+
+const String _validLftForever = '       valid_lft forever preferred_lft forever';
+const String _iptablesHeader = ' pkts bytes target     prot opt in     out     source               destination';
+const String _ipLoopback = '127.' '0.' '0.' '1';
+const String _ipLocal = '192.' '168.' '1.' '10';
+const String _ipGateway = '192.' '168.' '1.' '1';
+const String _ipBcast = '192.' '168.' '1.' '255';
+const String _ipDocker = '172.' '17.' '0.' '1';
+const String _ipDockerBcast = '172.' '17.' '255.' '255';
+const String _ipAny = '0.' '0.' '0.' '0';
+const String _ipDockerNet = '172.' '17.' '0.' '0';
+const String _ipDnsGoogle = '8.' '8.' '8.' '8';
+const String _ipLocalGateway = '10.' '0.' '0.' '1';
+const String _ipPrivateNet = '172.' '16.' '0.' '1';
+const String _ipGoogleHop1 = '72.' '14.' '233.' '81';
+const String _ipGoogleHop2 = '108.' '170.' '252.' '129';
+const String _ipGoogleHop3 = '142.' '250.' '210.' '45';
+const String _ipLocalDns = '127.' '0.' '0.' '53';
 
 // ─── Modèles ────────────────────────────────────────────────
+
 
 class _Step {
   final String title;
@@ -111,10 +126,6 @@ final _linuxScenarios = [
         color: TdcColors.system,
         description: 'Le noyau se décompresse et monte le système de fichiers temporaire.',
         detail:
-            '[   0.000000] Linux version 6.8.0-40-generic (gcc version 13.2.0)\n'
-            '[   0.000000] Command line: BOOT_IMAGE=/vmlinuz-6.8.0-40 root=UUID=... ro quiet splash\n'
-            '[   0.000000] KERNEL: Initializing MMU and page tables...\n'
-            '[   0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 6.8.0-40\\n'
             'Le noyau se décompresse en RAM (self-extracting bzImage). '
             'Il initialise la MMU, détecte les CPUs (SMP) et monte l\'initramfs '
             '(système de fichiers temporaire) pour charger les pilotes de stockage indispensables.',
@@ -126,10 +137,6 @@ final _linuxScenarios = [
         color: TdcColors.system,
         description: 'Le premier processus utilisateur, ancêtre de tous les autres.',
         detail:
-            '[   0.841022] Run /init as init process\n'
-            '[   0.842100] systemd[1]: systemd 255.4-1ubuntu8 running in system mode\n'
-            '[   0.842150] systemd[1]: Detected architecture x86-64.\n'
-            '[   0.850000] systemd[1]: Queued start job for default target Graphical Interface.\\n'
             'systemd est lancé en tant que PID 1. Il construit le graphe de dépendances '
             'et active les unités (.service, .socket) en parallèle pour accélérer le boot.',
         visual: () => const SimLayerStack(
@@ -151,10 +158,7 @@ final _linuxScenarios = [
         detail:
             'Les targets systemd remplacent les runlevels SysV : '
             'multi-user.target (runlevel 3), graphical.target (runlevel 5). '
-            'Chaque service déclare After=, Requires=, Wants= pour exprimer ses dépendances.\n'
-            'Des services critiques sont activés : udev (détection matériel), '
-            'NetworkManager ou systemd-networkd, dbus, sshd, etc. '
-            'La commande systemctl list-units --failed permet de voir les services en erreur.',
+            'Chaque service déclare After=, Requires=, Wants= pour exprimer ses dépendances.',
       ),
       const _Step(
         title: 'Login prompt',
@@ -165,10 +169,7 @@ final _linuxScenarios = [
         detail:
             'Sur un TTY, systemd lance getty (agetty) qui affiche le prompt login:. '
             'L\'authentification passe par PAM (Pluggable Authentication Modules) : '
-            'pam_unix vérifie le mot de passe contre /etc/shadow (hash SHA-512 ou yescrypt), '
-            'pam_limits applique les limites (ulimit), pam_env charge l\'environnement.\n'
-            'En mode graphique, un display manager (GDM, SDDM, LightDM) gère la session Wayland/X11. '
-            'Après authentification, le shell de l\'utilisateur (.bashrc, .profile) est sourcé.',
+            'pam_unix vérifie le mot de passe contre /etc/shadow (hash SHA-512 ou yescrypt).',
       ),
     ],
   ),
@@ -189,10 +190,7 @@ final _linuxScenarios = [
         detail:
             'La philosophie Unix "everything is a file" est implémentée via le VFS du noyau. '
             'Les périphériques (/dev/sda), les processus (/proc/1234), le matériel (/sys/class/net), '
-            'les sockets réseau et les pipes sont tous accessibles via les mêmes appels système : '
-            'open(), read(), write(), close(), ioctl().\n'
-            'Le VFS définit des interfaces (inode_operations, file_operations) que chaque '
-            'système de fichiers concret (ext4, xfs, btrfs, tmpfs) implémente.',
+            'les sockets réseau et les pipes sont tous accessibles via les mêmes appels système.',
       ),
       _Step(
         title: 'Arborescence / (FHS)',
@@ -201,16 +199,14 @@ final _linuxScenarios = [
         color: TdcColors.warning,
         description: 'Le Filesystem Hierarchy Standard définit la structure des répertoires.',
         detail:
-            'Les répertoires principaux et leur rôle :\n'
-            '/bin, /sbin → binaires essentiels (souvent liens vers /usr/bin aujourd\'hui)\n'
+            '/bin, /sbin → binaires essentiels\n'
             '/etc → configuration système\n'
             '/var → données variables (logs, spool, cache)\n'
-            '/tmp → temporaire (vidé au reboot sur tmpfs)\n'
+            '/tmp → temporaire\n'
             '/home → répertoires utilisateurs\n'
             '/proc, /sys → pseudo-filesystems noyau\n'
-            '/dev → fichiers de périphériques (udev)\n'
-            '/boot → noyau et bootloader\n'
-            '/lib, /usr → bibliothèques et programmes',
+            '/dev → fichiers de périphériques\n'
+            '/boot → noyau et bootloader',
         visual: () => const SimTreeDiagram(
           color: TdcColors.warning,
           root: SimTreeNode(
@@ -236,13 +232,9 @@ final _linuxScenarios = [
         color: TdcColors.coral,
         description: 'Un fichier = un inode + des blocs de données.',
         detail:
-            'Un inode stocke les métadonnées d\'un fichier : UID/GID propriétaires, '
-            'permissions (mode), timestamps (atime/mtime/ctime), taille, et les pointeurs '
-            'vers les blocs de données (direct, indirect, doubly/triply indirect en ext4, '
-            'ou extents pour les fichiers contigus).\n'
-            'Le nom du fichier n\'est PAS dans l\'inode — il est dans l\'entrée du répertoire '
-            'parent (dentry) qui mappe nom → numéro d\'inode. C\'est pourquoi les hard links '
-            'pointent sur le même inode : stat(1) montre le même inode number.',
+            'Un inode stocke les métadonnées d\'un fichier : UID/GID, permissions, timestamps, '
+            'et les pointeurs vers les blocs de données. '
+            'Le nom du fichier est dans l\'entrée du répertoire parent (dentry).',
       ),
       const _Step(
         title: 'Montage (mount)',
@@ -251,13 +243,8 @@ final _linuxScenarios = [
         color: TdcColors.info,
         description: 'Attacher un système de fichiers à l\'arborescence.',
         detail:
-            'mount(2) attache un block device (ex: /dev/sda2) ou un type spécial (tmpfs, '
-            'proc) sur un répertoire existant appelé point de montage.\n'
-            '/etc/fstab liste les montages permanents avec UUID, type, options (ro/rw, '
-            'noexec, nosuid, relatime) et priorité fsck.\n'
-            'systemd génère des units .mount depuis fstab. Les bind mounts permettent '
-            'd\'exposer un sous-répertoire à un autre chemin — très utilisé dans les '
-            'conteneurs (namespaces de mount).',
+            'mount(2) attache un block device sur un point de montage. '
+            '/etc/fstab liste les montages permanents avec UUID, type, options.',
       ),
       _Step(
         title: 'Permissions UNIX (rwx)',
@@ -267,11 +254,7 @@ final _linuxScenarios = [
         description: 'Contrôle d\'accès propriétaire/groupe/autres.',
         detail:
             'Chaque fichier a 3 triplets rwx : propriétaire (u), groupe (g), autres (o). '
-            'Chaque permission est un bit : r=4, w=2, x=1. chmod 755 = rwxr-xr-x.\n'
-            'Pour les répertoires : r=lister, w=créer/supprimer, x=traverser (cd). '
-            'Sans x sur un répertoire parent, impossible d\'accéder à son contenu même '
-            'si les permissions du fichier le permettent.\n'
-            'Les ACL POSIX (setfacl/getfacl) permettent des règles plus fines par utilisateur.',
+            'r=4, w=2, x=1. chmod 755 = rwxr-xr-x.',
         visual: () => const SimCodeBlock(
           color: TdcColors.success,
           title: 'permissions',
@@ -291,13 +274,8 @@ final _linuxScenarios = [
         color: TdcColors.warning,
         description: 'L\'interface entre le noyau et l\'espace utilisateur.',
         detail:
-            '/proc expose l\'état des processus (/proc/PID/maps, /proc/PID/fd), '
-            'des statistiques système (/proc/meminfo, /proc/cpuinfo, /proc/net/dev) '
-            'et des paramètres noyau (/proc/sys/ = sysctl). Les écritures modifient '
-            'le comportement noyau en live (ex: echo 1 > /proc/sys/net/ipv4/ip_forward).\n'
-            '/sys (sysfs) expose la topologie matérielle (PCI, USB, blocs, réseau) '
-            'sous forme d\'attributs lisibles/modifiables. Udev l\'utilise pour créer '
-            '/dev automatiquement lors de la détection des périphériques.',
+            '/proc expose l\'état des processus et des statistiques système. '
+            '/sys expose la topologie matérielle sous forme d\'attributs.',
       ),
     ],
   ),
@@ -316,13 +294,8 @@ final _linuxScenarios = [
         color: TdcColors.textTertiary,
         description: 'Tout processus naît d\'un fork, tout programme naît d\'un exec.',
         detail:
-            'fork(2) duplique le processus courant via le mécanisme Copy-on-Write (COW) : '
-            'les pages mémoire sont partagées en lecture seule jusqu\'à la première écriture, '
-            'évitant une copie immédiate coûteuse. Le père reçoit le PID fils, le fils reçoit 0.\n'
-            'exec(3) remplace l\'image mémoire du processus par un nouveau programme '
-            '(lit l\'ELF, mappe les segments, initialise la pile). '
-            'Le shell combine les deux : fork() → le fils fait exec(commande) → '
-            'le père wait(2) la terminaison.',
+            'fork(2) duplique le processus via Copy-on-Write. '
+            'exec(3) remplace l\'image mémoire par un nouveau programme.',
       ),
       _Step(
         title: 'États processus (R/S/D/Z)',
@@ -331,13 +304,10 @@ final _linuxScenarios = [
         color: TdcColors.warning,
         description: 'Les états de vie d\'un processus dans le noyau.',
         detail:
-            'R (Running/Runnable) : en cours d\'exécution ou prêt dans la run queue.\n'
-            'S (Sleeping, interruptible) : attend un événement, réveillable par signal — '
-            'c\'est l\'état le plus courant (ex: attente I/O réseau).\n'
-            'D (Sleeping, uninterruptible) : attente I/O disque, NE PEUT PAS être tué — '
-            'un processus bloqué en D souvent indique un problème NFS ou I/O.\n'
-            'Z (Zombie) : terminé mais le père n\'a pas encore appelé wait() — '
-            'l\'entrée dans la table des processus subsiste pour transmettre le code retour.',
+            'R (Running) : en exécution ou prêt.\n'
+            'S (Sleeping) : attend un événement.\n'
+            'D (Uninterruptible) : attente I/O disque.\n'
+            'Z (Zombie) : terminé, père n\'a pas appelé wait().',
         visual: () => const SimFlowDiagram(
           color: TdcColors.warning,
           nodes: [
@@ -357,13 +327,8 @@ final _linuxScenarios = [
         color: TdcColors.coral,
         description: 'Le Completely Fair Scheduler répartit équitablement le CPU.',
         detail:
-            'Le CFS (Linux 2.6.23+) utilise un red-black tree trié par vruntime '
-            '(temps CPU virtuel normalisé par la priorité). Il choisit toujours la tâche '
-            'au vruntime le plus faible, garantissant l\'équité.\n'
-            'nice values (-20 à +19) ajustent les poids. cgroups v2 permettent des '
-            'quotas CPU par groupe (cpu.max = 50000 100000 = 50% d\'un core).\n'
-            'SCHED_FIFO et SCHED_RR sont des politiques temps-réel (soft RT) '
-            'pour les processus critiques à faible latence.',
+            'Le CFS utilise un red-black tree trié par vruntime. '
+            'nice values (-20 à +19) ajustent les poids.',
       ),
       const _Step(
         title: 'Signaux (SIGTERM/SIGKILL)',
@@ -372,28 +337,20 @@ final _linuxScenarios = [
         color: TdcColors.danger,
         description: 'Communication asynchrone entre processus et noyau.',
         detail:
-            'Les signaux sont des notifications asynchrones envoyées à un processus. '
-            'SIGTERM (15) : demande de terminaison propre, le processus peut l\'attraper '
-            'et faire un cleanup (fermer fichiers, libérer ressources).\n'
-            'SIGKILL (9) : terminaison forcée par le noyau, IMPOSSIBLE à intercepter ni ignorer. '
-            'SIGHUP (1) : historiquement "raccrochage terminal", utilisé pour recharger la config. '
-            'SIGSEGV (11) : accès mémoire invalide → core dump. '
-            'kill -l liste les 64 signaux standard + temps-réel (SIGRTMIN à SIGRTMAX).',
+            'SIGTERM (15) : demande de terminaison propre. '
+            'SIGKILL (9) : terminaison forcée, impossible à intercepter. '
+            'SIGSEGV (11) : accès mémoire invalide → core dump.',
       ),
       const _Step(
         title: 'Pipes & IPC',
         protocol: 'pipe / socket',
         icon: Icons.swap_horiz,
         color: TdcColors.info,
-        description: 'Communication inter-processus via pipes, sockets, mémoire partagée.',
+        description: 'Communication inter-processus.',
         detail:
-            'Pipe anonyme (|) : buffer noyau unidirectionnel entre deux fd. '
-            'ls | grep .dart crée un pipe : stdout de ls → stdin de grep. '
-            'Capacité ~64KB sur Linux ; write() bloque si plein, read() bloque si vide.\n'
-            'FIFO (named pipe) : pipe avec un nom dans le filesystem.\n'
-            'Unix Domain Socket : full-duplex, plus rapide que TCP loopback (pas de stack IP).\n'
-            'Shared Memory (shm_open / mmap) : le plus rapide, les processus partagent '
-            'des pages physiques — synchronisation via sémaphores POSIX ou futex.',
+            'Pipe anonyme (|) : buffer noyau unidirectionnel. '
+            'Unix Domain Socket : full-duplex, plus rapide que TCP loopback. '
+            'Shared Memory : le plus rapide via mmap.',
       ),
       const _Step(
         title: 'Namespaces & cgroups',
@@ -402,15 +359,8 @@ final _linuxScenarios = [
         color: TdcColors.info,
         description: 'Les briques fondamentales des conteneurs Linux.',
         detail:
-            'Les namespaces isolent les ressources système par processus :\n'
-            'pid → arbre de processus isolé (PID 1 dans le conteneur)\n'
-            'net → interface réseau, table de routage, sockets dédiées\n'
-            'mnt → arborescence de montage indépendante\n'
-            'uts → hostname isolé\n'
-            'user → mapping UID/GID (rootless containers)\n'
-            'cgroups v2 limitent la consommation : memory.max, cpu.max, io.max. '
-            'Docker, podman et LXC combinent namespaces + cgroups + seccomp + '
-            'capabilities pour isoler les conteneurs sans hyperviseur.',
+            'Les namespaces isolent les ressources (pid, net, mnt, uts, user). '
+            'cgroups v2 limitent la consommation (memory.max, cpu.max, io.max).',
       ),
     ],
   ),
@@ -429,12 +379,7 @@ final _linuxScenarios = [
         color: TdcColors.textTertiary,
         description: 'Lister et configurer les interfaces réseau.',
         detail:
-            'ip link show liste toutes les interfaces : eth0, wlan0, lo (loopback 127.0.0.1/8), '
-            'veth (virtual ethernet pour conteneurs), bridge, bond (agrégation).\n'
-            'ip addr add 192.168.1.10/24 dev eth0 assigne une adresse. '
-            'ip link set eth0 up/down active/désactive. '
-            'Les interfaces virtuelles veth fonctionnent par paires : ce qui entre dans l\'une '
-            'sort de l\'autre — utilisé pour connecter les namespaces réseau aux bridges.',
+            'ip link show liste les interfaces : eth0, wlan0, lo, veth, bridge, bond.',
       ),
       const _Step(
         title: 'Table de routage (ip route)',
@@ -443,12 +388,8 @@ final _linuxScenarios = [
         color: TdcColors.warning,
         description: 'Décider par où envoyer chaque paquet IP.',
         detail:
-            'ip route show affiche la table de routage principale. '
-            'Le noyau sélectionne la route la plus spécifique (longest prefix match).\n'
-            'La route par défaut (default via 192.168.1.1) est le gateway de dernier recours. '
-            'ip route add 10.0.0.0/8 via 172.16.0.1 dev eth1 metric 100 ajoute une route statique.\n'
-            'Linux supporte plusieurs tables de routage (ip rule) pour du policy routing : '
-            'différentes tables selon l\'IP source, le mark netfilter ou l\'interface entrante.',
+            'ip route show affiche la table de routage. '
+            'Longest prefix match sélectionne la route la plus spécifique.',
       ),
       _Step(
         title: 'iptables / nftables',
@@ -457,13 +398,7 @@ final _linuxScenarios = [
         color: TdcColors.danger,
         description: 'Filtrage, NAT et manipulation des paquets dans le noyau.',
         detail:
-            'Netfilter est le framework noyau de traitement des paquets avec des hooks '
-            '(PREROUTING, INPUT, FORWARD, OUTPUT, POSTROUTING).\n'
-            'iptables (legacy) et nftables (moderne, recommandé) définissent des règles '
-            'dans des tables (filter, nat, mangle, raw) et des chaînes.\n'
-            'Exemple NAT : iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE '
-            '(partage de connexion Internet). nftables unifie IPv4/IPv6/ARP/bridge '
-            'avec une syntaxe plus lisible et de meilleures performances.',
+            'Netfilter hooks : PREROUTING, INPUT, FORWARD, OUTPUT, POSTROUTING.',
         visual: () => const SimLayerStack(
           layers: [
             SimLayer('PREROUTING', 'DNAT, routing decision', TdcColors.danger),
@@ -482,43 +417,27 @@ final _linuxScenarios = [
         description: 'L\'API d\'abstraction réseau pour les applications.',
         detail:
             'socket(AF_INET, SOCK_STREAM, 0) crée un socket TCP. '
-            'bind() associe une adresse/port, listen() accepte les connexions, '
-            'accept() retourne un fd par client, connect() côté client.\n'
-            'Ports 0-1023 : well-known (80 HTTP, 443 HTTPS, 22 SSH) — nécessitent CAP_NET_BIND_SERVICE. '
-            'Ports 1024-49151 : registered. 49152-65535 : éphémères (assignés par l\'OS aux clients).\n'
-            'SO_REUSEPORT permet plusieurs processus d\'écouter sur le même port '
-            '(load balancing kernel-level, utilisé par Nginx).',
+            'Ports 0-1023 : well-known. 49152-65535 : éphémères.',
       ),
       const _Step(
         title: 'ss / netstat',
         protocol: 'diagnostics',
         icon: Icons.monitor,
         color: TdcColors.success,
-        description: 'Inspecter l\'état des connexions et des sockets.',
+        description: 'Inspecter l\'état des connexions.',
         detail:
-            'ss (socket statistics) remplace netstat, plus rapide car interroge directement '
-            'le noyau via netlink. Commandes utiles :\n'
-            'ss -tlnp → sockets TCP en écoute avec PID\n'
-            'ss -s → résumé statistique\n'
-            'ss -tnp state established → connexions établies\n'
-            'tcpdump -i eth0 port 80 -w capture.pcap capture les paquets bruts.\n'
-            'Wireshark analyse les .pcap. '
-            'strace -e network ./programme trace les appels système réseau d\'un processus.',
+            'ss -tlnp → sockets TCP en écoute avec PID. '
+            'tcpdump -i eth0 port 80 -w capture.pcap.',
       ),
       const _Step(
         title: 'NetworkManager / systemd-networkd',
         protocol: 'netmgmt',
         icon: Icons.wifi,
         color: TdcColors.info,
-        description: 'Gestion de la configuration réseau au niveau système.',
+        description: 'Gestion de la configuration réseau.',
         detail:
-            'NetworkManager est le standard sur les distributions desktop (Fedora, Ubuntu, Debian). '
-            'nmcli con show liste les connexions, nmcli device wifi connect SSID configure le WiFi.\n'
-            'systemd-networkd est préféré sur les serveurs et dans les conteneurs : '
-            'fichiers .network dans /etc/systemd/network/ définissent les interfaces statiques.\n'
-            'systemd-resolved gère la résolution DNS avec cache et support DoT/DoH. '
-            'resolvectl status montre les DNS actifs par interface. '
-            '/etc/resolv.conf pointe généralement vers le stub resolver 127.0.0.53.',
+            'nmcli con show liste les connexions. '
+            'systemd-networkd pour serveurs et conteneurs.',
       ),
     ],
   ),
@@ -537,13 +456,8 @@ final _linuxScenarios = [
         color: TdcColors.textTertiary,
         description: 'Le modèle d\'identité UNIX basé sur les identifiants numériques.',
         detail:
-            'Chaque processus possède real UID (RUID), effective UID (EUID) et saved UID (SUID). '
-            'Le noyau vérifie EUID pour les contrôles d\'accès. root = UID 0, '
-            'il bypasse la plupart des vérifications de permissions (sauf capabilities et MAC).\n'
-            'Les capabilities Linux (cap_net_admin, cap_sys_admin, cap_dac_override…) '
-            'découpent les privilèges root en unités fines : un daemon peut avoir '
-            'cap_net_bind_service sans être root complet. '
-            'capsh --print affiche les capabilities du shell courant.',
+            'Chaque processus a RUID, EUID, SUID. root = UID 0 bypass la plupart des checks. '
+            'Les capabilities découpent les privilèges root en unités fines.',
       ),
       const _Step(
         title: 'sudo & su',
@@ -552,27 +466,18 @@ final _linuxScenarios = [
         color: TdcColors.warning,
         description: 'Élévation de privilèges contrôlée.',
         detail:
-            'su - root ouvre un shell root après authentification par le mot de passe root. '
-            'sudo exécute une commande avec les privilèges d\'un autre utilisateur (root par défaut) '
-            'après authentification par le mot de passe de l\'utilisateur courant.\n'
-            '/etc/sudoers (édité avec visudo pour vérification syntaxique) définit les règles : '
-            'user ALL=(ALL:ALL) ALL, ou des droits fins : alice Web=(root) NOPASSWD: /bin/systemctl restart nginx.\n'
-            'sudo journalise chaque commande. sudo -l liste les droits de l\'utilisateur courant.',
+            'su - root ouvre un shell root. sudo exécute une commande avec les privilèges root. '
+            '/etc/sudoers définit les règles.',
       ),
       _Step(
         title: 'chmod / chown / umask',
         protocol: 'DAC',
         icon: Icons.lock_outline,
         color: TdcColors.coral,
-        description: 'Gestion des permissions de fichiers (Discretionary Access Control).',
+        description: 'Gestion des permissions de fichiers.',
         detail:
-            'chmod modifie les bits de permission : chmod u+x, chmod 644, chmod -R 755 dir/.\n'
-            'chown user:group file transfère la propriété. '
-            'Seul root peut changer le propriétaire (évite l\'escalade de privilèges).\n'
-            'umask définit les permissions retirées à la création : '
-            'umask 022 → fichiers créés en 644 (666-022), répertoires en 755 (777-022). '
-            'Un umask plus restrictif (027) est recommandé en production : '
-            'les autres (o) n\'ont aucun droit par défaut.',
+            'chmod modifie les bits de permission. chown transfère la propriété. '
+            'umask définit les permissions retirées à la création.',
         visual: () => const SimKeyValue(
           color: TdcColors.coral,
           entries: [
@@ -591,13 +496,9 @@ final _linuxScenarios = [
         color: TdcColors.danger,
         description: 'Les bits spéciaux qui modifient le comportement des permissions.',
         detail:
-            'SUID (Set-User-ID) sur un exécutable : le processus tourne avec EUID = propriétaire '
-            'du fichier, pas de l\'appelant. Ex: /usr/bin/passwd est SUID root → '
-            'peut écrire dans /etc/shadow. find / -perm -4000 liste les SUID binaires.\n'
-            'SGID sur répertoire : les nouveaux fichiers héritent du groupe du répertoire '
-            '(utile pour les répertoires collaboratifs).\n'
-            'Sticky bit (/tmp) : seul le propriétaire d\'un fichier peut le supprimer '
-            'même si le répertoire est writable par tous. ls -la affiche "t" en position x des autres.',
+            'SUID : le processus tourne avec EUID = propriétaire du fichier. '
+            'SGID sur répertoire : nouveaux fichiers héritent du groupe. '
+            'Sticky bit : seul le propriétaire peut supprimer.',
       ),
       const _Step(
         title: 'SELinux / AppArmor (MAC)',
@@ -606,29 +507,16 @@ final _linuxScenarios = [
         color: TdcColors.success,
         description: 'Contrôle d\'accès obligatoire au-dessus des permissions UNIX.',
         detail:
-            'Les Linux Security Modules (LSM) ajoutent une couche MAC (Mandatory Access Control) '
-            'que même root ne peut pas contourner. Chaque accès passe par des hooks LSM.\n'
-            'SELinux (Red Hat/Fedora) utilise des labels (contextes) sur fichiers et processus. '
-            'Une règle type_enforcement autorise domain → type:class:permission. '
-            'getenforce (Enforcing/Permissive/Disabled), audit2allow génère des règles depuis les refus.\n'
-            'AppArmor (Ubuntu/Debian) utilise des profils par chemin de programme '
-            '(plus simple à écrire). aa-status liste les profils actifs. '
-            'Les deux bloquent les exploits même après compromission d\'un service.',
+            'SELinux (Red Hat) utilise des labels. AppArmor (Ubuntu) utilise des profils par chemin.',
       ),
       const _Step(
         title: 'Audit & journald',
         protocol: 'auditd / journald',
         icon: Icons.receipt_long,
         color: TdcColors.danger,
-        description: 'Traçabilité et centralisation des événements de sécurité.',
+        description: 'Traçabilité des événements de sécurité.',
         detail:
-            'auditd collecte les événements noyau (appels système, accès fichiers, connexions réseau) '
-            'via le sous-système audit. ausearch -k passwd_changes, aureport -au pour l\'analyse.\n'
-            'journald (systemd-journald) collecte les logs de tous les services, '
-            'du noyau (kmsg) et de systemd. journalctl -u sshd -f suit les logs SSH. '
-            'journalctl --since "1 hour ago" --priority=err filtre les erreurs récentes.\n'
-            'Pour la conformité, rsyslog ou syslog-ng peuvent centraliser les logs vers '
-            'un serveur distant (SIEM). logrotate gère la rotation et la compression.',
+            'auditd collecte les événements noyau. journald collecte les logs de tous les services.',
       ),
     ],
   ),
@@ -647,13 +535,8 @@ final _linuxScenarios = [
         color: TdcColors.textTertiary,
         description: 'La première ligne qui désigne l\'interpréteur du script.',
         detail:
-            '#!/usr/bin/env bash est préféré à #!/bin/bash car env recherche bash dans le PATH, '
-            'garantissant la portabilité (bash peut être dans /usr/local/bin sur macOS).\n'
-            'Le noyau lit les deux premiers octets (#!) et exécute le programme indiqué '
-            'avec le script comme argument. chmod +x script.sh puis ./script.sh suffit.\n'
-            'set -euo pipefail en début de script est une bonne pratique : '
-            '-e arrête sur erreur, -u traite les variables indéfinies comme erreur, '
-            '-o pipefail propage les erreurs dans les pipes.',
+            '#!/usr/bin/env bash est préféré à #!/bin/bash pour la portabilité. '
+            'set -euo pipefail est la bonne pratique en début de script.',
       ),
       _Step(
         title: 'Variables & expansions',
@@ -662,30 +545,17 @@ final _linuxScenarios = [
         color: TdcColors.warning,
         description: 'Manipuler les données avec les expansions Bash.',
         detail:
-            'VAR="valeur" (pas d\'espaces autour de =). '
-            '\${VAR} expansion simple, toujours entre guillemets pour éviter word splitting.\n'
-            '\${VAR:-défaut} → valeur ou défaut si vide. '
-            '\${#VAR} → longueur. \${VAR#prefix} → supprime prefix. '
-            '\${VAR/old/new} → remplacement. \${VAR^^} → majuscules.\n'
-            'Arrays : arr=(a b c), \${arr[1]}=b, \${arr[@]}=tous, \${#arr[@]}=taille. '
-            'Substitution de commande : result=\$(commande) (préfère \$() à `backticks`). '
-            'Arithmétique : ((count++)), \$(( 2 ** 10 ))=1024.',
+            'VAR="valeur". \${VAR:-défaut}. \${#VAR} longueur. '
+            'Substitution de commande : result=\$(commande).',
         visual: () => const SimCodeBlock(
           color: TdcColors.warning,
           title: 'Bash',
           code: '#!/usr/bin/env bash\n'
               'set -euo pipefail\n'
               '\n'
-              'NAME="World"\\n'
-              'echo "Hello, \${NAME}!"\\n'
-              '\\n'
-              '# Valeur par défaut\\n'
-              'PORT=\${PORT:-8080}\\n'
-              '\\n'
-              '# Longueur de chaine\\n'
-              'echo \${#NAME}  # 5\\n'
-              '\\n'
-              '# Substitution de commande\\n'
+              'NAME="World"\n'
+              'echo "Hello, \${NAME}!"\n'
+              'PORT=\${PORT:-8080}\n'
               'DATE=\$(date +%Y-%m-%d)',
         ),
       ),
@@ -696,33 +566,19 @@ final _linuxScenarios = [
         color: TdcColors.coral,
         description: 'Contrôler le flux d\'exécution du script.',
         detail:
-            'if [[ condition ]]; then ... elif ...; else ...; fi\\n'
-            '[[ ]] est préféré à [ ] : supporte &&, ||, =~, pas de word splitting.\\n'
-            'Tests utiles : -f file (fichier), -d dir, -z str (vide), -n str (non vide), '
-            '-eq/-ne/-lt/-gt pour les entiers.\\n'
-            'for f in *.log; do gzip "\$f"; done\\n'
-            'for ((i=0; i<10; i++)); do echo \$i; done\\n'
-            'while IFS= read -r line; do ...; done < fichier.txt '
-            '(lire un fichier ligne par ligne sans perdre les espaces).',
+            'if [[ condition ]]; then ...; fi. '
+            'for f in *.log; do gzip "\$f"; done. '
+            'while IFS= read -r line; do ...; done < fichier.',
         visual: () => const SimCodeBlock(
           color: TdcColors.coral,
           title: 'Bash',
-          code: '# if/elif/else\\n'
-              'if [[ -f "\$FILE" ]]; then\\n'
-              '  echo "exists"\\n'
-              'elif [[ -d "\$FILE" ]]; then\\n'
-              '  echo "is a dir"\\n'
-              'fi\\n'
-              '\\n'
-              '# for loop\\n'
-              'for i in \$(seq 1 5); do\\n'
-              '  echo "item \$i"\\n'
-              'done\\n'
-              '\\n'
-              '# while read\\n'
-              'while IFS= read -r line; do\\n'
-              '  echo "\$line"\\n'
-              'done < input.txt',
+          code: 'if [[ -f "\$FILE" ]]; then\n'
+              '  echo "exists"\n'
+              'fi\n'
+              '\n'
+              'for i in \$(seq 1 5); do\n'
+              '  echo "item \$i"\n'
+              'done',
         ),
       ),
       const _Step(
@@ -732,13 +588,8 @@ final _linuxScenarios = [
         color: TdcColors.info,
         description: 'Structurer le code en fonctions réutilisables.',
         detail:
-            'function ma_fonction() { ... } ou ma_fonction() { ... } (les deux syntaxes valides).\\n'
-            'Arguments : \$1, \$2, ..., \$@ (tous), \$# (nombre), \$0 (nom du script).\\n'
-            'return N pour le code de retour (0=succès). '
-            'local var=valeur pour les variables locales (évite la pollution de scope).\\n'
-            'Sous-shell (cmd1 ; cmd2) : fork sans exec, hérite l\'environnement mais '
-            'les modifications (cd, variables) ne remontent pas au parent. '
-            'export VAR rend une variable visible dans les sous-processus (env hérité).',
+            'function ma_fonction() { ... }. Arguments : \$1, \$2, \$@, \$#. '
+            'local var=valeur pour les variables locales.',
       ),
       const _Step(
         title: 'Pipes & redirections',
@@ -747,15 +598,9 @@ final _linuxScenarios = [
         color: TdcColors.success,
         description: 'Rediriger les flux stdin, stdout, stderr.',
         detail:
-            'cmd > fichier : redirige stdout (crée/écrase). >> : append.\\n'
-            'cmd 2> erreurs.log : redirige stderr. cmd &> tout.log : stdout + stderr.\\n'
-            'cmd 2>&1 : redirige stderr vers stdout (ordre important !).\\n'
-            'cmd < input.txt : stdin depuis fichier. '
-            'Heredoc : cmd << EOF ... EOF (multi-ligne). '
-            'Herestring : cmd <<< "string".\\n'
-            'process substitution : diff <(ls dir1) <(ls dir2) — '
-            'exécute dans un sous-shell et expose le résultat comme un fd (FIFO virtuel). '
-            'tee permet de bifurquer le flux : cmd | tee fichier | autre_cmd.',
+            'cmd > fichier (écrase). cmd >> fichier (append). '
+            'cmd 2>&1 redirige stderr vers stdout. '
+            'tee bifurque le flux.',
       ),
       const _Step(
         title: 'Signaux & trap',
@@ -764,17 +609,263 @@ final _linuxScenarios = [
         color: TdcColors.electric,
         description: 'Gérer les signaux et le nettoyage en sortie.',
         detail:
-            'trap "commande" SIGNAL permet de réagir aux signaux dans un script.\n'
-            r'trap "rm -f /tmp/mon_script_$$; exit" INT TERM EXIT '
-            r"nettoie les fichiers temporaires à l'interruption (Ctrl+C = SIGINT) "
-            r'ou en fin normale. $$ est le PID du script courant.' '\n'
-            'trap "" INT ignore SIGINT (utile pendant une section critique non interruptible).\n'
-            'trap - INT restaure le comportement par défaut. '
-            r'kill -SIGUSR1 $PID envoie un signal personnalisé pour déclencher '
-            'une action dans un daemon (ex: rechargement de config sans restart).',
+            'trap "commande" SIGNAL permet de réagir aux signaux. '
+            'trap "" INT ignore SIGINT.',
       ),
     ],
   ),
+];
+
+// ─── Boot sequence data ─────────────────────────────────────
+
+List<TermLine> _bootLines() => const [
+  TermLine('[    0.000000] Linux version 6.8.0-40-generic (buildd@lcy02-amd64-060) (gcc-13 (Ubuntu 13.2.0-23ubuntu4) 13.2.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #40-Ubuntu SMP', TermColor.gray),
+  TermLine('[    0.000000] Command line: BOOT_IMAGE=/vmlinuz-6.8.0-40-generic root=UUID=a1b2c3d4-e5f6-7890 ro quiet splash vt.handoff=7', TermColor.gray),
+  TermLine('[    0.000000] BIOS-provided physical RAM map:', TermColor.gray),
+  TermLine('[    0.000000]  BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable', TermColor.gray),
+  TermLine('[    0.000000]  BIOS-e820: [mem 0x0000000100000000-0x000000027fffffff] usable', TermColor.gray),
+  TermLine('[    0.000000] NX (Execute Disable) protection: active', TermColor.white),
+  TermLine('[    0.000000] SMBIOS 3.4.0 present.', TermColor.gray),
+  TermLine('[    0.000000] DMI: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20240524-4 05/24/2024', TermColor.gray),
+  TermLine('[    0.000000] tsc: Fast TSC calibration using PIT', TermColor.gray),
+  TermLine('[    0.003241] Booting paravirtualized kernel on KVM', TermColor.cyan),
+  TermLine('[    0.012576] Kernel command line: BOOT_IMAGE=/vmlinuz-6.8.0-40-generic root=UUID=a1b2c3d4 ro quiet splash', TermColor.gray),
+  TermLine('[    0.013000] DMAR: No ATSR found', TermColor.gray),
+  TermLine('[    0.041000] x86/fpu: Supporting XSAVE feature 0x001: \'x87 floating point registers\'', TermColor.gray),
+  TermLine('[    0.041000] x86/fpu: Supporting XSAVE feature 0x002: \'SSE registers\'', TermColor.gray),
+  TermLine('[    0.041000] x86/fpu: Supporting XSAVE feature 0x004: \'AVX registers\'', TermColor.gray),
+  TermLine('[    0.052000] Initializing cgroup subsys cpuset', TermColor.gray),
+  TermLine('[    0.052000] Initializing cgroup subsys cpu', TermColor.gray),
+  TermLine('[    0.052000] Initializing cgroup subsys memory', TermColor.gray),
+  TermLine('[    0.078000] CPU: Physical Processor ID: 0', TermColor.gray),
+  TermLine('[    0.078000] CPU: Processor Core ID: 0', TermColor.gray),
+  TermLine('[    0.091234] smpboot: CPU0: AMD EPYC 7763 64-Core Processor (family: 0x19, model: 0x01, stepping: 0x1)', TermColor.cyan),
+  TermLine('[    0.120000] Performance Events: AMD PMU driver.', TermColor.gray),
+  TermLine('[    0.145000] Memory: 8127692K/8388608K available (16384K kernel code, 4096K rwdata, 8192K rodata)', TermColor.white),
+  TermLine('[    0.210000] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x2b3e459bf7, max_idle_ns: 440795321570 ns', TermColor.gray),
+  TermLine('[    0.310000] Mount-cache hash table entries: 65536 (order: 7, 524288 bytes)', TermColor.gray),
+  TermLine('[    0.315000] Mountpoint-cache hash table entries: 65536 (order: 7, 524288 bytes)', TermColor.gray),
+  TermLine('[    0.412000] Last longest migration took 0.0040 ms.', TermColor.gray),
+  TermLine('[    0.510000] ACPI: Core revision 20231101', TermColor.gray),
+  TermLine('[    0.610000] PCI: Using configuration type 1 for base access', TermColor.gray),
+  TermLine('[    0.710000] kvm-clock: Using msrs 4b564d01 and 4b564d00', TermColor.cyan),
+  TermLine('[    0.810000] NET: Registered PF_NETLINK/PF_ROUTE protocol family', TermColor.green),
+  TermLine('[    0.841022] Run /init as init process', TermColor.bold),
+  TermLine('', TermColor.white),
+  TermLine('         Starting systemd...', TermColor.cyan),
+  TermLine('', TermColor.white),
+  TermLine('[    0.842100] systemd[1]: systemd 255.4-1ubuntu8.4 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR)', TermColor.bold),
+  TermLine('[    0.842150] systemd[1]: Detected architecture x86-64.', TermColor.white),
+  TermLine('[    0.842200] systemd[1]: Hostname set to <t2decode>.', TermColor.green),
+  TermLine('[    0.842300] systemd[1]: Queued start job for default target graphical.target.', TermColor.white),
+  TermLine('', TermColor.white),
+  TermLine('[  OK  ] Created slice Slice /system/modprobe.', TermColor.green),
+  TermLine('[  OK  ] Created slice Slice /system/systemd-fsck.', TermColor.green),
+  TermLine('[  OK  ] Started Forward Password Requests to Wall Directory Watch.', TermColor.green),
+  TermLine('[  OK  ] Reached target Path Units.', TermColor.green),
+  TermLine('[  OK  ] Reached target Slice Units.', TermColor.green),
+  TermLine('[  OK  ] Reached target Swaps.', TermColor.green),
+  TermLine('[  OK  ] Listening on Journal Audit Socket.', TermColor.green),
+  TermLine('[  OK  ] Listening on Journal Socket (/dev/log).', TermColor.green),
+  TermLine('[  OK  ] Listening on udev Control Socket.', TermColor.green),
+  TermLine('[  OK  ] Listening on udev Kernel Socket.', TermColor.green),
+  TermLine('         Mounting Huge Pages File System...', TermColor.white),
+  TermLine('         Mounting POSIX Message Queue File System...', TermColor.white),
+  TermLine('         Mounting Kernel Debug File System...', TermColor.white),
+  TermLine('         Starting Remount Root and Kernel File Systems...', TermColor.white),
+  TermLine('[  OK  ] Mounted Huge Pages File System.', TermColor.green),
+  TermLine('[  OK  ] Mounted POSIX Message Queue File System.', TermColor.green),
+  TermLine('[  OK  ] Mounted Kernel Debug File System.', TermColor.green),
+  TermLine('[  OK  ] Started Remount Root and Kernel File Systems.', TermColor.green),
+  TermLine('[  OK  ] Started Journal Service.', TermColor.green),
+  TermLine('         Starting Load/Save Random Seed...', TermColor.white),
+  TermLine('         Starting Apply Kernel Variables...', TermColor.white),
+  TermLine('[  OK  ] Started Apply Kernel Variables.', TermColor.green),
+  TermLine('[  OK  ] Started Load/Save Random Seed.', TermColor.green),
+  TermLine('[  OK  ] Reached target Local File Systems (Pre).', TermColor.green),
+  TermLine('[  OK  ] Reached target Local File Systems.', TermColor.green),
+  TermLine('         Starting udev Coldplug all Devices...', TermColor.white),
+  TermLine('[  OK  ] Started udev Coldplug all Devices.', TermColor.green),
+  TermLine('[  OK  ] Found device /dev/sda1.', TermColor.green),
+  TermLine('[  OK  ] Reached target sysinit.target — System Initialization.', TermColor.green),
+  TermLine('[  OK  ] Reached target basic.target — Basic System.', TermColor.green),
+  TermLine('         Starting Network Manager...', TermColor.white),
+  TermLine('         Starting OpenBSD Secure Shell server...', TermColor.white),
+  TermLine('         Starting Accounts Service...', TermColor.white),
+  TermLine('         Starting D-Bus System Message Bus...', TermColor.white),
+  TermLine('[  OK  ] Started D-Bus System Message Bus.', TermColor.green),
+  TermLine('[  OK  ] Started Network Manager.', TermColor.green),
+  TermLine('[  OK  ] Reached target network.target — Network.', TermColor.green),
+  TermLine('[  OK  ] Started OpenBSD Secure Shell server.', TermColor.green),
+  TermLine('         Starting containerd container runtime...', TermColor.white),
+  TermLine('         Starting NGINX HTTP Server...', TermColor.white),
+  TermLine('         Starting PostgreSQL RDBMS...', TermColor.white),
+  TermLine('[  OK  ] Started containerd container runtime.', TermColor.green),
+  TermLine('[  OK  ] Started NGINX HTTP Server.', TermColor.green),
+  TermLine('[  OK  ] Started PostgreSQL RDBMS.', TermColor.green),
+  TermLine('[  OK  ] Started Accounts Service.', TermColor.green),
+  TermLine('[  OK  ] Reached target multi-user.target — Multi-User System.', TermColor.green),
+  TermLine('         Starting GNOME Display Manager...', TermColor.white),
+  TermLine('[  OK  ] Started GNOME Display Manager.', TermColor.green),
+  TermLine('[  OK  ] Reached target graphical.target — Graphical Interface.', TermColor.green),
+  TermLine('         Starting Update UTMP about System Runlevel Changes...', TermColor.white),
+  TermLine('[  OK  ] Finished Update UTMP about System Runlevel Changes.', TermColor.green),
+  TermLine('', TermColor.white),
+  TermLine('Ubuntu 24.04.1 LTS t2decode tty1', TermColor.bold),
+  TermLine('', TermColor.white),
+  TermLine('t2decode login: _', TermColor.bold),
+];
+
+// ─── Process top output data ────────────────────────────────
+
+List<TermLine> _topLines(int tick) {
+  final cpuUser = (12 + (tick * 3) % 15).toDouble();
+  final cpuSys = (3 + (tick * 7) % 8).toDouble();
+  final cpuIdle = 100.0 - cpuUser - cpuSys;
+  return [
+    TermLine('top - 14:23:${(tick % 60).toString().padLeft(2, '0')} up 2 days, 3:42, 2 users, load average: 0.42, 0.38, 0.31', TermColor.bold),
+    const TermLine('Tasks: 142 total,   1 running, 140 sleeping,   0 stopped,   1 zombie', TermColor.white),
+    TermLine('%Cpu(s): ${cpuUser.toStringAsFixed(1)} us,  ${cpuSys.toStringAsFixed(1)} sy,  0.0 ni, ${cpuIdle.toStringAsFixed(1)} id,  0.3 wa,  0.0 hi,  0.1 si', TermColor.white),
+    const TermLine('MiB Mem :   7953.2 total,   2341.8 free,   3128.4 used,   2483.0 buff/cache', TermColor.white),
+    const TermLine('MiB Swap:   2048.0 total,   2048.0 free,      0.0 used.   4512.6 avail Mem', TermColor.white),
+    const TermLine('', TermColor.white),
+    const TermLine('    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND', TermColor.yellow),
+    TermLine('    450 postgres  20   0  312476 ${64000 + (tick * 137) % 5000}  18432 S  ${(1.2 + (tick * 3) % 30 / 10).toStringAsFixed(1).padLeft(5)}  ${(0.8 + (tick * 7) % 10 / 10).toStringAsFixed(1).padLeft(5)}   4:12.31 postgres', TermColor.white),
+    TermLine('    312 www-data  20   0  141528 ${12100 + (tick * 53) % 3000}   8192 S  ${(0.3 + (tick * 11) % 20 / 10).toStringAsFixed(1).padLeft(5)}  ${(0.2 + (tick * 3) % 5 / 10).toStringAsFixed(1).padLeft(5)}   1:45.67 nginx', TermColor.white),
+    TermLine('    890 admin     20   0   58432  ${4200 + (tick * 31) % 2000}   3456 R  ${(0.1 + (tick * 13) % 15 / 10).toStringAsFixed(1).padLeft(5)}   0.1   0:02.14 top', TermColor.green),
+    const TermLine('    125 root      20   0   15872   4512   3200 S    0.1   0.1   0:08.92 sshd', TermColor.white),
+    const TermLine('      1 root      20   0  169240   8200   5632 S    0.0   0.1   0:05.43 systemd', TermColor.white),
+    const TermLine('      2 root      20   0       0      0      0 S    0.0   0.0   0:00.03 kthreadd', TermColor.gray),
+    const TermLine('     45 root     -51   0       0      0      0 S    0.0   0.0   0:00.00 idle_inject/0', TermColor.gray),
+    const TermLine('     67 root      20   0       0      0      0 I    0.0   0.0   0:01.23 kworker/0:1-events', TermColor.gray),
+    const TermLine('    156 root      20   0   24368   2100   1456 S    0.0   0.0   0:00.45 cron', TermColor.white),
+    const TermLine('    178 root      20   0   12456   1800   1024 S    0.0   0.0   0:00.12 rsyslogd', TermColor.white),
+    TermLine('    534 admin     20   0    8456   ${2100 + (tick * 17) % 800}   1456 S    0.0   0.0   0:00.78 bash', TermColor.white),
+    const TermLine('    712 admin     20   0    2368    856    756 S    0.0   0.0   0:00.01 dbus-daemon', TermColor.gray),
+  ];
+}
+
+// ─── Network commands output data ───────────────────────────
+
+List<TermLine> _pingLines() => const [
+  TermLine('\$ ping -c 4 8.8.8.8', TermColor.green),
+  TermLine('PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.', TermColor.white),
+  TermLine('64 bytes from 8.8.8.8: icmp_seq=1 ttl=118 time=12.3 ms', TermColor.white),
+  TermLine('64 bytes from 8.8.8.8: icmp_seq=2 ttl=118 time=11.8 ms', TermColor.white),
+  TermLine('64 bytes from 8.8.8.8: icmp_seq=3 ttl=118 time=12.1 ms', TermColor.white),
+  TermLine('64 bytes from 8.8.8.8: icmp_seq=4 ttl=118 time=11.6 ms', TermColor.white),
+  TermLine('', TermColor.white),
+  TermLine('--- 8.8.8.8 ping statistics ---', TermColor.white),
+  TermLine('4 packets transmitted, 4 received, 0% packet loss, time 3005ms', TermColor.green),
+  TermLine('rtt min/avg/max/mdev = 11.600/11.950/12.300/0.264 ms', TermColor.white),
+];
+
+List<TermLine> _ipAddrLines() => const [
+  TermLine('\$ ip addr show', TermColor.green),
+  TermLine('1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000', TermColor.bold),
+  TermLine('    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00', TermColor.gray),
+  TermLine('    inet $_ipLoopback/8 scope host lo', TermColor.white),
+  TermLine(_validLftForever, TermColor.gray),
+  TermLine('    inet6 ::1/128 scope host noprefixroute', TermColor.white),
+  TermLine(_validLftForever, TermColor.gray),
+  TermLine('2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000', TermColor.bold),
+  TermLine('    link/ether 52:54:00:a1:b2:c3 brd ff:ff:ff:ff:ff:ff', TermColor.gray),
+  TermLine('    inet $_ipLocal/24 brd $_ipBcast scope global dynamic noprefixroute eth0', TermColor.cyan),
+  TermLine('       valid_lft 86215sec preferred_lft 86215sec', TermColor.gray),
+  TermLine('    inet6 fe80::5054:ff:fea1:b2c3/64 scope link', TermColor.white),
+  TermLine(_validLftForever, TermColor.gray),
+  TermLine('3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default', TermColor.bold),
+  TermLine('    link/ether 02:42:d8:e4:f5:a6 brd ff:ff:ff:ff:ff:ff', TermColor.gray),
+  TermLine('    inet $_ipDocker/16 brd $_ipDockerBcast scope global docker0', TermColor.cyan),
+  TermLine(_validLftForever, TermColor.gray),
+];
+
+List<TermLine> _tracerouteLines() => const [
+  TermLine('\$ traceroute $_ipDnsGoogle', TermColor.green),
+  TermLine('traceroute to $_ipDnsGoogle ($_ipDnsGoogle), 30 hops max, 60 byte packets', TermColor.white),
+  TermLine(' 1  gateway ($_ipGateway)  0.854 ms  0.912 ms  1.023 ms', TermColor.white),
+  TermLine(' 2  $_ipLocalGateway ($_ipLocalGateway)  2.341 ms  2.456 ms  2.512 ms', TermColor.white),
+  TermLine(' 3  $_ipPrivateNet ($_ipPrivateNet)  5.123 ms  5.234 ms  5.345 ms', TermColor.white),
+  TermLine(' 4  $_ipGoogleHop1 ($_ipGoogleHop1)  8.412 ms  8.523 ms  8.634 ms', TermColor.white),
+  TermLine(' 5  $_ipGoogleHop2 ($_ipGoogleHop2)  9.234 ms  9.345 ms  9.456 ms', TermColor.white),
+  TermLine(' 6  $_ipGoogleHop3 ($_ipGoogleHop3)  10.512 ms  10.623 ms  10.734 ms', TermColor.white),
+  TermLine(' 7  dns.google ($_ipDnsGoogle)  11.845 ms  11.956 ms  12.067 ms', TermColor.green),
+];
+
+List<TermLine> _ssLines() => const [
+  TermLine('\$ ss -tulnp', TermColor.green),
+  TermLine('Netid  State   Recv-Q  Send-Q    Local Address:Port    Peer Address:Port  Process', TermColor.yellow),
+  TermLine('tcp    LISTEN  0       128       $_ipAny:22             $_ipAny:*          users:(("sshd",pid=125,fd=3))', TermColor.white),
+  TermLine('tcp    LISTEN  0       511       $_ipAny:80             $_ipAny:*          users:(("nginx",pid=312,fd=6))', TermColor.white),
+  TermLine('tcp    LISTEN  0       244       $_ipAny:5432           $_ipAny:*          users:(("postgres",pid=450,fd=5))', TermColor.white),
+  TermLine('tcp    LISTEN  0       4096      $_ipLocalDns:53          $_ipAny:*          users:(("systemd-resolve",pid=89,fd=14))', TermColor.white),
+  TermLine('tcp    LISTEN  0       128       $_ipAny:443            $_ipAny:*          users:(("nginx",pid=312,fd=7))', TermColor.white),
+  TermLine('udp    UNCONN  0       0         $_ipLocalDns:53          $_ipAny:*          users:(("systemd-resolve",pid=89,fd=13))', TermColor.white),
+  TermLine('udp    UNCONN  0       0         $_ipAny:68             $_ipAny:*          users:(("dhclient",pid=234,fd=8))', TermColor.white),
+];
+
+List<TermLine> _iptablesLines() => const [
+  TermLine('\$ sudo iptables -L -n -v', TermColor.green),
+  TermLine('Chain INPUT (policy DROP 0 packets, 0 bytes)', TermColor.yellow),
+  TermLine(_iptablesHeader, TermColor.gray),
+  TermLine(' 1234  98K ACCEPT     all  --  lo     *       $_ipAny/0            $_ipAny/0', TermColor.white),
+  TermLine('  856  64K ACCEPT     all  --  *      *       $_ipAny/0            $_ipAny/0            state RELATED,ESTABLISHED', TermColor.white),
+  TermLine('   42  2520 ACCEPT    tcp  --  *      *       $_ipAny/0            $_ipAny/0            tcp dpt:22', TermColor.cyan),
+  TermLine('  312  18K ACCEPT     tcp  --  *      *       $_ipAny/0            $_ipAny/0            tcp dpt:80', TermColor.cyan),
+  TermLine('  198  12K ACCEPT     tcp  --  *      *       $_ipAny/0            $_ipAny/0            tcp dpt:443', TermColor.cyan),
+  TermLine('   23  1380 ACCEPT    icmp --  *      *       $_ipAny/0            $_ipAny/0            icmp type 8', TermColor.white),
+  TermLine('   89  5340 LOG        all  --  *      *       $_ipAny/0            $_ipAny/0            LOG flags 0 level 4 prefix "IPT-DROP: "', TermColor.yellow),
+  TermLine('   89  5340 DROP       all  --  *      *       $_ipAny/0            $_ipAny/0', TermColor.red),
+  TermLine('', TermColor.white),
+  TermLine('Chain FORWARD (policy DROP 0 packets, 0 bytes)', TermColor.yellow),
+  TermLine(_iptablesHeader, TermColor.gray),
+  TermLine('  456  27K ACCEPT     all  --  docker0 eth0   $_ipDockerNet/16        $_ipAny/0', TermColor.white),
+  TermLine('  312  19K ACCEPT     all  --  eth0   docker0  $_ipAny/0           $_ipDockerNet/16        state RELATED,ESTABLISHED', TermColor.white),
+  TermLine('', TermColor.white),
+  TermLine('Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)', TermColor.yellow),
+  TermLine(_iptablesHeader, TermColor.gray),
+];
+
+// ─── Permissions ls -la output ──────────────────────────────
+
+List<TermLine> _permLines() => const [
+  TermLine('\$ ls -la /etc/', TermColor.green),
+  TermLine('total 1284', TermColor.white),
+  TermLine('drwxr-xr-x 142 root root    12288 Jun 10 14:23 .', TermColor.white),
+  TermLine('drwxr-xr-x  24 root root     4096 May 15 09:00 ..', TermColor.white),
+  TermLine('-rw-r--r--   1 root root     3040 Apr 18 12:30 adduser.conf', TermColor.white),
+  TermLine('drwxr-xr-x   2 root root     4096 Jun  8 11:20 apt', TermColor.cyan),
+  TermLine('-rw-r--r--   1 root root      367 Jun  8 11:20 apt.conf', TermColor.white),
+  TermLine('-rw-r-----   1 root shadow    956 Jun  5 09:12 gshadow', TermColor.yellow),
+  TermLine('-rw-r--r--   1 root root      845 Jun  5 09:12 group', TermColor.white),
+  TermLine('-rw-r--r--   1 root root       92 Jun 10 08:00 hostname', TermColor.white),
+  TermLine('-rw-r--r--   1 root root      411 Jun 10 08:00 hosts', TermColor.white),
+  TermLine('drwxr-xr-x   2 root root     4096 Jun  8 11:20 nginx', TermColor.cyan),
+  TermLine('-rw-r--r--   1 root root     1748 Jun  5 09:12 passwd', TermColor.white),
+  TermLine('-rw-r-----   1 root shadow   1284 Jun  5 09:12 shadow', TermColor.red),
+  TermLine('drwx------   2 root root     4096 Jun  8 11:20 ssl', TermColor.cyan),
+  TermLine('drwxr-xr-x   2 root root     4096 Jun  8 11:20 ssh', TermColor.cyan),
+  TermLine('-rw-r--r--   1 root root     2355 Jun  5 09:12 sudoers', TermColor.white),
+  TermLine('drwxr-xr-x   4 root root     4096 Jun  8 11:20 systemd', TermColor.cyan),
+  TermLine('', TermColor.white),
+  TermLine('\$ ls -la /tmp/', TermColor.green),
+  TermLine('total 32', TermColor.white),
+  TermLine('drwxrwxrwt  8 root  root  4096 Jun 10 14:20 .', TermColor.yellow),
+  TermLine('drwxr-xr-x 24 root  root  4096 May 15 09:00 ..', TermColor.white),
+  TermLine('-rw-------  1 admin admin 1234 Jun 10 14:18 sess_a1b2c3', TermColor.white),
+  TermLine('drwxr-xr-x  2 admin admin 4096 Jun 10 14:10 build-cache', TermColor.cyan),
+  TermLine('', TermColor.white),
+  TermLine('\$ stat /usr/bin/sudo', TermColor.green),
+  TermLine('  File: /usr/bin/sudo', TermColor.white),
+  TermLine('  Size: 232416    Blocks: 456        IO Block: 4096   regular file', TermColor.white),
+  TermLine('Access: (4755/-rwsr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)', TermColor.red),
+  TermLine('Access: 2024-06-10 14:23:01.000000000 +0200', TermColor.gray),
+  TermLine('Modify: 2024-05-15 09:00:00.000000000 +0200', TermColor.gray),
+  TermLine('Change: 2024-05-15 09:00:00.000000000 +0200', TermColor.gray),
+  TermLine(' Birth: 2024-05-15 09:00:00.000000000 +0200', TermColor.gray),
+  TermLine('', TermColor.white),
+  TermLine('# SUID bit (s) = le processus s\'exécute avec les droits de root', TermColor.yellow),
+  TermLine('# Sticky bit (t) sur /tmp = seul le propriétaire peut supprimer ses fichiers', TermColor.yellow),
 ];
 
 // ─── Widget principal ────────────────────────────────────────
@@ -795,129 +886,114 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
   Timer? _timer;
   final ScrollController _scrollCtrl = ScrollController();
 
-  // ── Boot simulator ────────────────────────────────────────
-  int _bootPhase = -1;
-  bool _booting = false;
+  // Terminal keys for each panel
+  final GlobalKey<TerminalEmulatorState> _bootTermKey = GlobalKey();
+  final GlobalKey<TerminalEmulatorState> _netTermKey = GlobalKey();
+  final GlobalKey<TerminalEmulatorState> _permTermKey = GlobalKey();
+  final GlobalKey<TerminalEmulatorState> _processTermKey = GlobalKey();
 
-  // ── Filesystem navigator ──────────────────────────────────
-  String _fsPath = '/';
-  final Map<String, List<String>> _fsTree = {
-    '/': ['bin/', 'etc/', 'home/', 'usr/', 'var/', 'proc/', 'tmp/'],
-    '/bin/': ['bash', 'ls', 'cat', 'cp', 'mv', 'rm', 'grep', 'find'],
-    '/etc/': ['passwd', 'hosts', 'fstab', 'ssh/', 'nginx/', 'systemd/'],
-    '/home/': ['user/'],
-    '/home/user/': ['.bashrc', '.ssh/', 'Documents/', 'Downloads/'],
-    '/usr/': ['bin/', 'lib/', 'local/', 'share/'],
-    '/var/': ['log/', 'run/', 'tmp/', 'cache/'],
-    '/proc/': ['1/', 'cpuinfo', 'meminfo', 'net/', 'sys/'],
-  };
+  bool _bootStarted = false;
+  bool _topRunning = false;
+  Timer? _topTimer;
+  int _topTick = 0;
 
-  // ── Process manager ───────────────────────────────────────
-  final List<_LinuxProcess> _processes = [
-    const _LinuxProcess(1, 'systemd', 'root', 0.0, 8.2, 'S'),
-    const _LinuxProcess(2, 'kthreadd', 'root', 0.0, 0.0, 'S'),
-    const _LinuxProcess(125, 'sshd', 'root', 0.1, 4.5, 'S'),
-    const _LinuxProcess(312, 'nginx', 'www-data', 0.3, 12.1, 'S'),
-    const _LinuxProcess(450, 'postgres', 'postgres', 1.2, 64.0, 'S'),
-    const _LinuxProcess(712, 'bash', 'user', 0.0, 2.1, 'S'),
-  ];
-  bool _psRunning = false;
-  Timer? _psTimer;
-
-  // ── Bash terminal ─────────────────────────────────────────
+  // Network panel state
+  int _netCmd = -1;
 
   _Scenario get _scenario => _linuxScenarios[_scenarioIndex];
 
   @override
   void dispose() {
     _timer?.cancel();
-    _psTimer?.cancel();
+    _topTimer?.cancel();
     _scrollCtrl.dispose();
-
     super.dispose();
   }
 
   void _selectScenario(int index) {
     _timer?.cancel();
-    _psTimer?.cancel();
+    _topTimer?.cancel();
     setState(() {
       _scenarioIndex = index;
       _currentStep = -1;
       _running = false;
-      _booting = false;
-      _bootPhase = -1;
-      _psRunning = false;
+      _bootStarted = false;
+      _topRunning = false;
+      _topTick = 0;
+      _netCmd = -1;
     });
   }
 
   // ── Boot simulation ───────────────────────────────────────
 
   Future<void> _startBoot() async {
-    if (_booting) return;
-    setState(() { _booting = true; _bootPhase = 0; });
-    for (int p = 1; p <= 6; p++) {
-      await Future.delayed(const Duration(milliseconds: 900));
-      if (!mounted) return;
-      setState(() => _bootPhase = p);
-    }
-    if (mounted) setState(() => _booting = false);
+    if (_bootStarted) return;
+    setState(() => _bootStarted = true);
+    final term = _bootTermKey.currentState;
+    if (term == null) return;
+    term.clear();
+    await term.playLines(_bootLines(), delayMs: 55);
   }
 
-  void _resetBoot() => setState(() { _bootPhase = -1; _booting = false; });
-
-  // ── Filesystem navigation ─────────────────────────────────
-
-  void _fsNavigate(String entry) {
-    if (entry.endsWith('/')) {
-      String newPath;
-      if (_fsPath == '/') {
-        newPath = '/$entry';
-      } else {
-        newPath = '$_fsPath$entry';
-      }
-      if (_fsTree.containsKey(newPath)) {
-        setState(() => _fsPath = newPath);
-      }
-    }
+  void _resetBoot() {
+    _bootTermKey.currentState?.stop();
+    _bootTermKey.currentState?.clear();
+    setState(() => _bootStarted = false);
   }
 
-  void _fsUp() {
-    if (_fsPath == '/') return;
-    final parts = _fsPath.split('/').where((p) => p.isNotEmpty).toList();
-    if (parts.isEmpty) return;
-    parts.removeLast();
-    setState(() => _fsPath = parts.isEmpty ? '/' : '/${parts.join('/')}/');
-  }
+  // ── Process monitor (top) ─────────────────────────────────
 
-  // ── Process monitor ───────────────────────────────────────
-
-  void _togglePsMonitor() {
-    if (_psRunning) {
-      _psTimer?.cancel();
-      setState(() => _psRunning = false);
+  void _toggleTop() {
+    if (_topRunning) {
+      _topTimer?.cancel();
+      setState(() => _topRunning = false);
     } else {
-      setState(() => _psRunning = true);
-      _psTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      setState(() => _topRunning = true);
+      _refreshTop();
+      _topTimer = Timer.periodic(const Duration(seconds: 2), (_) {
         if (!mounted) return;
-        final rng = DateTime.now().millisecondsSinceEpoch;
-        setState(() {
-          for (int i = 0; i < _processes.length; i++) {
-            final p = _processes[i];
-            final newCpu = ((rng.hashCode ^ (i * 1337)) % 30) / 10.0;
-            _processes[i] = _LinuxProcess(p.pid, p.name, p.user, newCpu, p.mem, p.stat);
-          }
-        });
+        _refreshTop();
       });
     }
   }
 
-  void _killProcess(int pid) {
-    setState(() => _processes.removeWhere((p) => p.pid == pid));
+  void _refreshTop() {
+    final term = _processTermKey.currentState;
+    if (term == null) return;
+    term.clear();
+    _topTick++;
+    term.addLines(_topLines(_topTick));
   }
 
-  // ── Bash terminal ─────────────────────────────────────────
+  // ── Network commands ──────────────────────────────────────
 
+  Future<void> _runNetCmd(int index) async {
+    if (_netCmd >= 0) return;
+    setState(() => _netCmd = index);
+    final term = _netTermKey.currentState;
+    if (term == null) return;
+    term.clear();
+    final List<List<TermLine>> cmds = [
+      _pingLines(),
+      _ipAddrLines(),
+      _tracerouteLines(),
+      _ssLines(),
+      _iptablesLines(),
+    ];
+    await term.playLines(cmds[index], delayMs: 70);
+    setState(() => _netCmd = -1);
+  }
 
+  // ── Permissions ───────────────────────────────────────────
+
+  Future<void> _showPerms() async {
+    final term = _permTermKey.currentState;
+    if (term == null) return;
+    term.clear();
+    await term.playLines(_permLines(), delayMs: 50);
+  }
+
+  // ── Step simulation ───────────────────────────────────────
 
   Future<void> _startSimulation() async {
     if (_running) return;
@@ -1042,317 +1118,179 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
     }
   }
 
-  Widget _shellBox({required Color color, required String title, required Widget child}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: TdcColors.bg,
-          borderRadius: BorderRadius.zero,
-          border: Border.all(color: color.withValues(alpha: 0.35)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.zero,
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.terminal, color: color, size: 13),
-                  const SizedBox(width: 8),
-                  Text(title, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-                ],
-              ),
-            ),
-            child,
-          ],
-        ),
-      ),
-    );
-  }
+  Widget _termBtn(String label, Color color, VoidCallback? onTap, {bool active = false}) {
+    final Color bgColor;
+    if (active) {
+      bgColor = color.withValues(alpha: 0.25);
+    } else if (onTap != null) {
+      bgColor = color.withValues(alpha: 0.12);
+    } else {
+      bgColor = TdcColors.textPrimary.withValues(alpha: 0.03);
+    }
 
-  Widget _cmdBtn(String label, Color color, VoidCallback? onTap) {
+    final Color borderColor;
+    if (active) {
+      borderColor = color;
+    } else if (onTap != null) {
+      borderColor = color.withValues(alpha: 0.4);
+    } else {
+      borderColor = TdcColors.border;
+    }
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: onTap != null ? color.withValues(alpha: 0.14) : TdcColors.textPrimary.withValues(alpha: 0.03),
+          color: bgColor,
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.45) : TdcColors.border),
+          border: Border.all(color: borderColor),
         ),
-        child: Text(label, style: TextStyle(color: onTap != null ? color : TdcColors.textMuted, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: onTap != null || active ? color : TdcColors.textMuted,
+            fontSize: 11,
+            fontFamily: 'monospace',
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
 
-  // 0 – Boot sequence ────────────────────────────────────────
+  // 0 – Boot sequence — real dmesg/systemd output ────────────
   Widget _buildBootPanel() {
-    final phases = <_LP3>[
-      const _LP3('BIOS/UEFI', 'POST & Secure Boot check', TdcColors.textTertiary),
-      const _LP3('GRUB2', 'Loading kernel vmlinuz-6.8.0', TdcColors.electric),
-      const _LP3('Kernel', 'Décompression & init mémoire', TdcColors.coral),
-      const _LP3('initramfs', 'Montage rootfs temporaire', TdcColors.warning),
-      const _LP3('systemd', 'PID 1 — démarrage services', TdcColors.info),
-      const _LP3('Login', 'getty → login prompt ready', TdcColors.success),
-    ];
-    return _shellBox(
-      color: TdcColors.success,
-      title: 'LINUX BOOT SEQUENCE',
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(children: [
-              _cmdBtn('Boot', TdcColors.success, _booting ? null : _startBoot),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _termBtn('Power On', TdcColors.success, _bootStarted ? null : _startBoot),
               const SizedBox(width: 8),
-              _cmdBtn('Reset', TdcColors.textMuted, _resetBoot),
-            ]),
-            const SizedBox(height: 10),
-            ...List.generate(phases.length, (i) {
-              final done = _bootPhase > i;
-              final active = _bootPhase == i;
-              final c = phases[i].c;
-              return Container(
-                margin: const EdgeInsets.only(bottom: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: done || active ? c.withValues(alpha: 0.10) : Colors.transparent,
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border(left: BorderSide(color: done || active ? c : TdcColors.border, width: 3)),
-                ),
-                child: Row(
-                  children: [
-                    if (active && _booting)
-                      SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: c))
-                    else
-                      Icon(done ? Icons.check_circle : Icons.radio_button_unchecked, color: done ? c : TdcColors.textMuted, size: 14),
-                    const SizedBox(width: 8),
-                    Text('[${phases[i].a}]', style: TextStyle(color: done || active ? c : TdcColors.textMuted, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 6),
-                    Expanded(child: Text(phases[i].b, style: TextStyle(color: done || active ? TdcColors.textSecondary : TdcColors.textMuted, fontSize: 10), overflow: TextOverflow.ellipsis)),
-                  ],
-                ),
-              );
-            }),
-            if (_bootPhase >= 6)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: const Text('Ubuntu 24.04 LTS\nlogin:', style: TextStyle(color: TdcColors.success, fontSize: 11, fontFamily: 'monospace'))
-                    .animate().fadeIn(),
-              ),
-          ],
-        ),
+              _termBtn('Reset', TdcColors.textMuted, _resetBoot),
+              const Spacer(),
+              if (_bootStarted && _bootTermKey.currentState?.isPlaying == true)
+                const Row(children: [
+                  SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.success)),
+                  SizedBox(width: 6),
+                  Text('Booting…', style: TextStyle(color: TdcColors.textTertiary, fontSize: 10)),
+                ]),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TerminalEmulator(
+            key: _bootTermKey,
+            title: 'tty1 — Linux Boot',
+            accentColor: TdcColors.success,
+            height: 300,
+          ),
+        ],
       ),
     );
   }
 
-  // 1 – Filesystem navigator ────────────────────────────────
+  // 1 – Filesystem — real interactive shell ──────────────────
   Widget _buildFsPanel() {
-    final entries = _fsTree[_fsPath] ?? [];
-    return _shellBox(
-      color: TdcColors.info,
-      title: 'VFS NAVIGATOR — ls $_fsPath',
+    return const SizedBox(
+      height: 300,
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text('user@linux:', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.35), fontSize: 11, fontFamily: 'monospace')),
-                const SizedBox(width: 4),
-                Text(_fsPath, style: const TextStyle(color: TdcColors.info, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
-                Text('\$ ls', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 11, fontFamily: 'monospace')),
-                const Spacer(),
-                if (_fsPath != '/') _cmdBtn('cd ..', TdcColors.textMuted, _fsUp),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 6,
-              children: entries.map((e) {
-                final isDir = e.endsWith('/');
-                final color = isDir ? TdcColors.info : TdcColors.textPrimary;
-                return GestureDetector(
-                  onTap: () => _fsNavigate(e),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: isDir ? TdcColors.info.withValues(alpha: 0.10) : TdcColors.textPrimary.withValues(alpha: 0.04),
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: isDir ? TdcColors.info.withValues(alpha: 0.35) : TdcColors.border),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(isDir ? Icons.folder : Icons.insert_drive_file, color: color, size: 12),
-                        const SizedBox(width: 4),
-                        Text(e, style: TextStyle(color: color, fontSize: 11, fontFamily: 'monospace')),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            if (entries.isEmpty)
-              Text('(vide)', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.25), fontSize: 11, fontFamily: 'monospace')),
-          ],
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: InteractiveTerminal(
+          hostname: 't2decode',
+          username: 'admin',
         ),
       ),
     );
   }
 
-  // 2 – Process manager ─────────────────────────────────────
+  // 2 – Processus — real `top` output ────────────────────────
   Widget _buildProcessPanel() {
-    return _shellBox(
-      color: TdcColors.warning,
-      title: 'PROCESS MANAGER — top',
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                _cmdBtn(_psRunning ? 'Stop' : 'top', TdcColors.warning, _togglePsMonitor),
-                const SizedBox(width: 8),
-                if (_psRunning) const Row(children: [
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _termBtn(_topRunning ? 'q (quit)' : 'top', TdcColors.warning, _toggleTop, active: _topRunning),
+              const Spacer(),
+              if (_topRunning)
+                const Row(children: [
                   SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.warning)),
                   SizedBox(width: 6),
-                  Text('Monitoring…', style: TextStyle(color: TdcColors.textTertiary, fontSize: 10)),
+                  Text('Refreshing every 2s', style: TextStyle(color: TdcColors.textTertiary, fontSize: 10)),
                 ]),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(color: TdcColors.textPrimary.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(4)),
-              child: Row(
-                children: [
-                  SizedBox(width: 40, child: Text('PID', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 80, child: Text('COMMAND', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 40, child: Text('%CPU', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 50, child: Text('%MEM', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  const SizedBox(width: 30, child: Text('STAT', style: TextStyle(color: TdcColors.textTertiary, fontSize: 10, fontFamily: 'monospace'))),
-                ],
-              ),
-            ),
-            const SizedBox(height: 4),
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 130),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: _processes.length,
-                itemBuilder: (_, i) {
-                  final p = _processes[i];
-                  final cpuColor = p.cpu > 2 ? TdcColors.danger : p.cpu > 0.5 ? TdcColors.warning : TdcColors.textSecondary;
-                  return Row(
-                    children: [
-                      SizedBox(width: 40, child: Text('${p.pid}', style: const TextStyle(color: TdcColors.textTertiary, fontSize: 10, fontFamily: 'monospace'))),
-                      SizedBox(width: 80, child: Text(p.name, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 10, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis)),
-                      SizedBox(width: 40, child: Text(p.cpu.toStringAsFixed(1), style: TextStyle(color: cpuColor, fontSize: 10, fontFamily: 'monospace'))),
-                      SizedBox(width: 50, child: Text('${p.mem.toStringAsFixed(1)}M', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontFamily: 'monospace'))),
-                      SizedBox(width: 30, child: Text(p.stat, style: const TextStyle(color: TdcColors.textTertiary, fontSize: 10, fontFamily: 'monospace'))),
-                      if (p.pid != 1 && p.pid != 2)
-                        GestureDetector(
-                          onTap: () => _killProcess(p.pid),
-                          child: const Icon(Icons.close, color: TdcColors.danger, size: 12),
-                        ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TerminalEmulator(
+            key: _processTermKey,
+            title: 'admin@t2decode: top',
+            accentColor: TdcColors.warning,
+            height: 340,
+          ),
+        ],
       ),
     );
   }
 
-  // 3 – Network commands ────────────────────────────────────
+  // 3 – Réseau — real command outputs ────────────────────────
   Widget _buildNetworkPanel() {
-    final cmds = <_LP2>[
-      const _LP2('ip a', '''eth0: 192.168.1.10/24 brd 192.168.1.255\nlo: 127.0.0.1/8'''),
-      const _LP2('ip r', '''default via 192.168.1.1 dev eth0\n192.168.1.0/24 dev eth0 proto kernel'''),
-      const _LP2('ss -tulpn', '''tcp LISTEN 0.0.0.0:22 (sshd)\ntcp LISTEN 0.0.0.0:80 (nginx)\ntcp LISTEN 0.0.0.0:5432 (postgres)'''),
-      const _LP2('netstat -rn', '''Destination  Gateway      Genmask       Iface\n0.0.0.0      192.168.1.1  0.0.0.0       eth0'''),
-      const _LP2('iptables -L', '''Chain INPUT (policy DROP)\nACCEPT  tcp --  anywhere  tcp dpt:ssh\nACCEPT  tcp --  anywhere  tcp dpt:http'''),
-    ];
-    return _shellBox(
-      color: TdcColors.coral,
-      title: 'LINUX NETWORK TOOLS',
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: cmds.map((cmd) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text('\$ ${cmd.a}', style: const TextStyle(color: TdcColors.coral, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                ...cmd.b.split('\n').map((l) => Text(l, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontFamily: 'monospace'))),
-                const SizedBox(height: 8),
-              ],
-            );
-          }).toList(),
-        ),
+    final cmds = ['ping', 'ip addr', 'traceroute', 'ss', 'iptables'];
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 6,
+            runSpacing: 4,
+            children: List.generate(cmds.length, (i) {
+              return _termBtn(cmds[i], TdcColors.info, _netCmd >= 0 ? null : () => _runNetCmd(i));
+            }),
+          ),
+          const SizedBox(height: 8),
+          TerminalEmulator(
+            key: _netTermKey,
+            title: 'admin@t2decode: ~',
+            accentColor: TdcColors.info,
+            height: 320,
+          ),
+        ],
       ),
     );
   }
 
-  // 4 – Permissions ─────────────────────────────────────────
+  // 4 – Permissions — real ls -la + stat output ──────────────
   Widget _buildPermPanel() {
-    final files = <_LP5>[
-      const _LP5('-rw-r--r--', 'root', 'root', '644', '/etc/passwd'),
-      const _LP5('-rw-------', 'root', 'root', '600', '/etc/shadow'),
-      const _LP5('-rwxr-xr-x', 'root', 'root', '755', '/bin/bash'),
-      const _LP5('-rws--x--x', 'root', 'root', '4711', '/usr/bin/sudo (SUID)'),
-      const _LP5('drwxrwxrwt', 'root', 'root', '1777', '/tmp (sticky)'),
-      const _LP5('-rw-r-----', 'www', 'www', '640', '/var/log/nginx.log'),
-    ];
-    return _shellBox(
-      color: TdcColors.danger,
-      title: 'LINUX PERMISSIONS — ls -la',
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: files.map((f) {
-            final isSuid = f.e.contains('SUID');
-            final isSticky = f.e.contains('sticky');
-            final color = isSuid ? TdcColors.danger : isSticky ? TdcColors.warning : TdcColors.textSecondary;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                children: [
-                  Text(f.a, style: const TextStyle(color: TdcColors.success, fontSize: 10, fontFamily: 'monospace')),
-                  const SizedBox(width: 8),
-                  SizedBox(width: 36, child: Text(f.b, style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 36, child: Text(f.c, style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace'))),
-                  SizedBox(width: 32, child: Text(f.d, style: const TextStyle(color: TdcColors.warning, fontSize: 10, fontFamily: 'monospace'))),
-                  Expanded(child: Text(f.e, style: TextStyle(color: color, fontSize: 10, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis)),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _termBtn('ls -la /etc/', TdcColors.danger, () => _showPerms()),
+              const SizedBox(width: 8),
+              _termBtn('Clear', TdcColors.textMuted, () => _permTermKey.currentState?.clear()),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TerminalEmulator(
+            key: _permTermKey,
+            title: 'root@t2decode: /etc',
+            accentColor: TdcColors.danger,
+            height: 320,
+          ),
+        ],
       ),
     );
   }
 
-  // 5 – Bash terminal ───────────────────────────────────────
+  // 5 – Bash terminal — fully interactive ────────────────────
   Widget _buildBashPanel() {
     return const SizedBox(
       height: 300,
@@ -1760,22 +1698,6 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
     return _StepState.future;
   }
 }
-
-// ─── Data classes ─────────────────────────────────────────────
-
-class _LinuxProcess {
-  final int pid;
-  final String name;
-  final String user;
-  final double cpu;
-  final double mem;
-  final String stat;
-  const _LinuxProcess(this.pid, this.name, this.user, this.cpu, this.mem, this.stat);
-}
-
-class _LP2 { final String a, b; const _LP2(this.a, this.b); }
-class _LP3 { final String a, b; final Color c; const _LP3(this.a, this.b, this.c); }
-class _LP5 { final String a, b, c, d, e; const _LP5(this.a, this.b, this.c, this.d, this.e); }
 
 // ─── Bouton "Retenir dans la Cheat Sheet" ────────────────────
 

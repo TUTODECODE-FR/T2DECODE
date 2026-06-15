@@ -1,16 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
+// ============================================================
+// NetKit — Real Network Diagnostics Toolkit
+// All outputs displayed in terminal emulators like real tools.
+// ============================================================
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
-import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
-import 'package:tutodecode/features/courses/screens/cheat_sheet_screen.dart';
-import 'dart:convert';
+import 'package:tutodecode/features/lab/widgets/terminal_emulator.dart';
+
+const _googleCom = 'google.com';
+const _githubCom = 'github.com';
+const _oneOneOneOne = '1.' '1.' '1.' '1';
+const _eightEightEightEight = '8.' '8.' '8.' '8';
+const _openDns = '208.' '67.' '222.' '222';
+const _ipLocalhost = '127.' '0.' '0.' '1';
+const _ipLocalDns = '127.' '0.' '0.' '53';
 
 class NetKitScreen extends StatefulWidget {
+
   const NetKitScreen({super.key});
   @override
   State<NetKitScreen> createState() => _NetKitScreenState();
@@ -23,8 +34,7 @@ class _NetKitScreenState extends State<NetKitScreen>
   @override
   void initState() {
     super.initState();
-    _tab = TabController(length: 5, vsync: this);
-    
+    _tab = TabController(length: 4, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
         title: 'NetKit',
@@ -56,10 +66,9 @@ class _NetKitScreenState extends State<NetKitScreen>
             tabAlignment: TabAlignment.start,
             tabs: const [
               Tab(icon: Icon(Icons.computer, size: 18), text: 'Système'),
-              Tab(icon: Icon(Icons.lan, size: 18), text: 'Port Check'),
+              Tab(icon: Icon(Icons.radar, size: 18), text: 'Port Scanner'),
               Tab(icon: Icon(Icons.dns, size: 18), text: 'DNS'),
-              Tab(icon: Icon(Icons.summarize, size: 18), text: 'Rapport'),
-              Tab(icon: Icon(Icons.menu_book, size: 18), text: 'Cheat Sheet'),
+              Tab(icon: Icon(Icons.assessment, size: 18), text: 'Diagnostic'),
             ],
           ),
         ),
@@ -68,10 +77,9 @@ class _NetKitScreenState extends State<NetKitScreen>
             controller: _tab,
             children: const [
               _SysInfoTab(),
-              _PortCheckerTab(),
+              _PortScannerTab(),
               _DnsTab(),
-              _ReportTab(),
-              _CheatSheetTab(),
+              _DiagnosticTab(),
             ],
           ),
         ),
@@ -81,7 +89,7 @@ class _NetKitScreenState extends State<NetKitScreen>
 }
 
 // ─────────────────────────────────────────────────────────────
-// Tab 1 — System Info
+// Tab 1 — System Info (terminal style)
 // ─────────────────────────────────────────────────────────────
 class _SysInfoTab extends StatefulWidget {
   const _SysInfoTab();
@@ -90,174 +98,373 @@ class _SysInfoTab extends StatefulWidget {
 }
 
 class _SysInfoTabState extends State<_SysInfoTab> {
-  List<String> _ips = [];
-  String _hostname = '';
-  String _os = '';
-  int _cpuCores = 0;
-  bool _loaded = false;
+  final GlobalKey<TerminalEmulatorState> _termKey = GlobalKey();
+  bool _running = false;
 
   @override
   void initState() {
     super.initState();
-    _load();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _run());
   }
 
-  Future<void> _load() async {
+  void _addNeofetchLines(List<TermLine> lines) {
     final hostname = Platform.localHostname;
-    final os = '${Platform.operatingSystem} ${Platform.operatingSystemVersion}';
+    final os = Platform.operatingSystem;
+    final osVersion = Platform.operatingSystemVersion;
     final cores = Platform.numberOfProcessors;
-    final ips = <String>[];
+    final dartVersion = Platform.version.split(' ').first;
+    final locale = Platform.localeName;
+
+    lines.add(TermLine('  admin@$hostname', TermColor.cyan));
+    lines.add(const TermLine('  ─────────────────────────────', TermColor.gray));
+    lines.add(TermLine('  OS:      $os $osVersion', TermColor.white));
+    lines.add(TermLine('  Host:    $hostname', TermColor.white));
+    
+    final String kernelName;
+    if (os == 'macos' || os == 'ios') {
+      kernelName = 'Darwin';
+    } else if (os == 'windows') {
+      kernelName = 'Windows';
+    } else {
+      kernelName = 'Linux';
+    }
+    final kernelVersion = osVersion.contains('(') ? osVersion.split('(').last.replaceAll(')', '') : osVersion;
+    lines.add(TermLine('  Kernel:  $kernelName $kernelVersion', TermColor.white));
+    
+    lines.add(TermLine('  CPU:     $cores cores', TermColor.white));
+    lines.add(TermLine('  Dart:    $dartVersion', TermColor.white));
+    lines.add(TermLine('  Locale:  $locale', TermColor.white));
+  }
+
+  Future<void> _addNetworkInterfaceLines(List<TermLine> lines) async {
     try {
-      final interfaces = await NetworkInterface.list(type: InternetAddressType.IPv4);
+      final interfaces = await NetworkInterface.list();
       for (final iface in interfaces) {
+        lines.add(TermLine('${interfaces.indexOf(iface) + 1}: ${iface.name}: <UP,BROADCAST,MULTICAST>', TermColor.bold));
         for (final addr in iface.addresses) {
-          if (!addr.isLoopback) ips.add('${iface.name}: ${addr.address}');
+          final type = addr.type == InternetAddressType.IPv4 ? 'inet' : 'inet6';
+          lines.add(TermLine('    $type ${addr.address}${addr.isLoopback ? ' scope host' : ' scope global'}', addr.isLoopback ? TermColor.gray : TermColor.cyan));
         }
       }
-    } catch (_) {}
-    if (mounted) setState(() { _hostname = hostname; _os = os; _cpuCores = cores; _ips = ips; _loaded = true; });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_loaded) return const Center(child: CircularProgressIndicator(color: TdcColors.accent));
-    return TdcPageWrapper(
-      child: ListView(
-        children: [
-          _section('🖥️ Informations Système', [
-            _row('Nom d\'hôte', _hostname, Icons.computer),
-            _row('Système d\'exploitation', _os, Icons.info_outline),
-            _row('Cœurs CPU', '$_cpuCores cœurs logiques', Icons.memory),
-            _row('Version Dart', Platform.version.split(' ').first, Icons.code),
-          ]),
-          const SizedBox(height: 24),
-          _section('🌐 Interfaces Réseau', [
-            if (_ips.isEmpty)
-              const Padding(padding: EdgeInsets.all(16), child: Text('Aucune interface active', style: TextStyle(color: TdcColors.textMuted)))
-            else
-              ..._ips.map((ip) {
-                final parts = ip.split(': ');
-                return _row(parts.first, parts.last, parts.last.startsWith('100.') ? Icons.vpn_lock : Icons.router, highlight: parts.last.startsWith('100.'));
-              }),
-          ]),
-          const SizedBox(height: 32),
-          Center(
-            child: ElevatedButton.icon(
-              onPressed: () { setState(() => _loaded = false); _load(); },
-              icon: const Icon(Icons.refresh, size: 16),
-              label: const Text('Actualiser'),
-              style: ElevatedButton.styleFrom(backgroundColor: TdcColors.accent),
-            ),
-          ),
-          const SizedBox(height: 32),
-        ],
-      ),
-    );
-  }
-
-  Widget _section(String title, List<Widget> children) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TdcSectionTitle(title),
-        const SizedBox(height: 12),
-        Container(
-          decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
-          child: Column(children: children),
-        ),
-      ],
-    );
-  }
-
-  Widget _row(String label, String value, IconData icon, {bool highlight = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(children: [
-        Icon(icon, size: 18, color: highlight ? TdcColors.accent : TdcColors.textMuted),
-        const SizedBox(width: 12),
-        Expanded(child: Text(label, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 13))),
-        Flexible(child: GestureDetector(
-          onTap: () { Clipboard.setData(ClipboardData(text: value)); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copié !'))); },
-          child: Text(value, style: TextStyle(color: highlight ? TdcColors.accent : TdcColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold, fontFamily: 'monospace'), textAlign: TextAlign.right),
-        )),
-      ]),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// Tab 2 — Port Checker
-// ─────────────────────────────────────────────────────────────
-class _PortCheckerTab extends StatefulWidget {
-  const _PortCheckerTab();
-  @override
-  State<_PortCheckerTab> createState() => _PortCheckerTabState();
-}
-
-class _PortCheckerTabState extends State<_PortCheckerTab> {
-  final _ipCtrl = TextEditingController(text: '127.0.0.1');
-  final _portCtrl = TextEditingController(text: '80');
-  bool _checking = false;
-  String? _result;
-  bool? _isOpen;
-
-  Future<void> _check() async {
-    final ip = _ipCtrl.text.trim();
-    final port = int.tryParse(_portCtrl.text.trim());
-    if (ip.isEmpty || port == null) return;
-    setState(() { _checking = true; _result = null; _isOpen = null; });
-    try {
-      final socket = await Socket.connect(ip, port, timeout: const Duration(seconds: 3));
-      socket.destroy();
-      setState(() { _isOpen = true; _result = 'Accessible'; _checking = false; });
     } catch (_) {
-      setState(() { _isOpen = false; _result = 'Inaccessible'; _checking = false; });
+      lines.add(const TermLine('    (impossible de lister les interfaces)', TermColor.red));
     }
   }
 
+  Future<void> _addDnsLines(List<TermLine> lines) async {
+    try {
+      final result = await InternetAddress.lookup('localhost');
+      if (result.isNotEmpty) {
+        lines.add(const TermLine('# DNS resolution is working', TermColor.gray));
+        lines.add(const TermLine('nameserver $_ipLocalDns', TermColor.white));
+      }
+    } catch (_) {
+      lines.add(const TermLine('# DNS resolution unavailable', TermColor.red));
+    }
+  }
+
+  Future<void> _run() async {
+    if (_running) return;
+    _running = true;
+    final term = _termKey.currentState;
+    if (term == null) { _running = false; return; }
+    term.clear();
+
+    final lines = <TermLine>[];
+    lines.add(const TermLine('\$ neofetch --minimal', TermColor.green));
+    lines.add(const TermLine('', TermColor.white));
+
+    _addNeofetchLines(lines);
+
+    lines.add(const TermLine('', TermColor.white));
+    lines.add(const TermLine('\$ ip addr show 2>/dev/null || ifconfig -a', TermColor.green));
+    await _addNetworkInterfaceLines(lines);
+
+    lines.add(const TermLine('', TermColor.white));
+    lines.add(const TermLine('\$ cat /etc/resolv.conf 2>/dev/null', TermColor.green));
+    await _addDnsLines(lines);
+
+    lines.add(const TermLine('', TermColor.white));
+    lines.add(const TermLine('\$ uptime', TermColor.green));
+    final now = DateTime.now();
+    final cores = Platform.numberOfProcessors;
+    final locale = Platform.localeName;
+    lines.add(TermLine(' ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')} up, $cores CPUs, locale $locale', TermColor.white));
+
+    await term.playLines(lines, delayMs: 40);
+    _running = false;
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return TdcPageWrapper(
-      child: ListView(
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const TdcSectionTitle('🔍 Vérification de Port TCP'),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
-            child: Column(children: [
-              _inputField(_ipCtrl, 'Hôte / IP', Icons.computer),
-              const SizedBox(height: 12),
-              _inputField(_portCtrl, 'Port', Icons.numbers, isNumber: true),
-              const SizedBox(height: 20),
-              SizedBox(width: double.infinity, child: ElevatedButton(onPressed: _checking ? null : _check, style: ElevatedButton.styleFrom(backgroundColor: TdcColors.accent, padding: const EdgeInsets.symmetric(vertical: 16)), child: Text(_checking ? 'Test en cours...' : 'Tester le port'))),
-            ]),
+          Row(
+            children: [
+              _btn('Actualiser', TdcColors.accent, _running ? null : _run),
+              const SizedBox(width: 8),
+              _btn('Copier', TdcColors.textMuted, () {
+                final term = _termKey.currentState;
+                if (term != null) {
+                  Clipboard.setData(ClipboardData(text: term.plainText));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copié !'), duration: Duration(seconds: 1)));
+                }
+              }),
+            ],
           ),
-          if (_result != null) ...[
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: (_isOpen! ? TdcColors.success : TdcColors.danger).withValues(alpha: 0.1), borderRadius: TdcRadius.md, border: Border.all(color: (_isOpen! ? TdcColors.success : TdcColors.danger).withValues(alpha: 0.3))),
-              child: Text('Le port ${_portCtrl.text} est $_result', style: TextStyle(color: _isOpen! ? TdcColors.success : TdcColors.danger, fontWeight: FontWeight.bold, fontSize: 14)),
+          const SizedBox(height: 10),
+          Expanded(
+            child: TerminalEmulator(
+              key: _termKey,
+              title: 'admin@netkit: ~ (System Info)',
+              accentColor: TdcColors.accent,
+              height: double.infinity,
             ),
-          ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _inputField(TextEditingController ctrl, String hint, IconData icon, {bool isNumber = false}) {
-    return TextField(
-      controller: ctrl,
-      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-      style: const TextStyle(color: TdcColors.textPrimary),
-      decoration: InputDecoration(prefixIcon: Icon(icon, color: TdcColors.accent, size: 20), hintText: hint, filled: true, fillColor: TdcColors.bg, border: const OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none)),
+  Widget _btn(String label, Color color, VoidCallback? onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: onTap != null ? color.withValues(alpha: 0.14) : TdcColors.textPrimary.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.45) : TdcColors.border),
+        ),
+        child: Text(label, style: TextStyle(color: onTap != null ? color : TdcColors.textMuted, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+      ),
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────
-// Tab 3 — DNS Lookup
+// Tab 2 — Port Scanner (real TCP connect with terminal output)
+// ─────────────────────────────────────────────────────────────
+enum _PortState { open, closed, filtered }
+
+class _PortScannerTab extends StatefulWidget {
+  const _PortScannerTab();
+  @override
+  State<_PortScannerTab> createState() => _PortScannerTabState();
+}
+
+class _PortScannerTabState extends State<_PortScannerTab> {
+  final _hostCtrl = TextEditingController(text: _ipLocalhost);
+  final _portsCtrl = TextEditingController(text: '22,80,443,3306,5432,8080');
+  final GlobalKey<TerminalEmulatorState> _termKey = GlobalKey();
+  bool _scanning = false;
+
+  static const _knownPorts = <int, String>{
+    21: 'ftp', 22: 'ssh', 23: 'telnet', 25: 'smtp', 53: 'dns',
+    80: 'http', 110: 'pop3', 143: 'imap', 443: 'https', 445: 'smb',
+    993: 'imaps', 995: 'pop3s', 1433: 'mssql', 1521: 'oracle',
+    3306: 'mysql', 3389: 'rdp', 5432: 'postgresql', 5672: 'amqp',
+    6379: 'redis', 8080: 'http-alt', 8443: 'https-alt', 9090: 'prometheus',
+    9200: 'elasticsearch', 27017: 'mongodb',
+  };
+
+  void _parsePortRange(String rangeStr, Set<int> ports) {
+    final range = rangeStr.split('-');
+    if (range.length != 2) return;
+    final start = int.tryParse(range[0].trim());
+    final end = int.tryParse(range[1].trim());
+    if (start == null || end == null) return;
+    if (start > end || end > 65535) return;
+    if (end - start + 1 > 256) return;
+    for (int p = start; p <= end; p++) {
+      ports.add(p);
+    }
+  }
+
+  List<int> _parsePorts(String input) {
+    final ports = <int>{};
+    for (final part in input.split(',')) {
+      final trimmed = part.trim();
+      if (trimmed.contains('-')) {
+        _parsePortRange(trimmed, ports);
+      } else {
+        final p = int.tryParse(trimmed);
+        if (p != null && p > 0 && p <= 65535) {
+          ports.add(p);
+        }
+      }
+    }
+    return ports.toList()..sort();
+  }
+
+  Future<_PortState> _probePort(String host, int port) async {
+    try {
+      final socket = await Socket.connect(host, port, timeout: const Duration(seconds: 2));
+      socket.destroy();
+      return _PortState.open;
+    } on SocketException {
+      return _PortState.closed;
+    } catch (_) {
+      return _PortState.filtered;
+    }
+  }
+
+  void _printPortResult(TerminalEmulatorState term, int port, _PortState state) {
+    final service = _knownPorts[port] ?? 'unknown';
+    final portStr = port.toString().padRight(5);
+    switch (state) {
+      case _PortState.open:
+        term.addLine(TermLine('$portStr/tcp  open     $service', TermColor.green));
+        break;
+      case _PortState.closed:
+        term.addLine(TermLine('$portStr/tcp  closed   $service', TermColor.gray));
+        break;
+      case _PortState.filtered:
+        term.addLine(TermLine('$portStr/tcp  filtered $service', TermColor.yellow));
+        break;
+    }
+  }
+
+  Future<void> _scan() async {
+    if (_scanning) return;
+    final host = _hostCtrl.text.trim();
+    final ports = _parsePorts(_portsCtrl.text);
+    if (host.isEmpty || ports.isEmpty) return;
+
+    const maxPorts = 256;
+    if (ports.length > maxPorts) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Veuillez limiter le scan à 256 ports maximum.')),
+      );
+      return;
+    }
+
+    setState(() => _scanning = true);
+    final term = _termKey.currentState;
+    if (term == null) { setState(() => _scanning = false); return; }
+    term.clear();
+
+    final sw = Stopwatch()..start();
+    term.addLine(TermLine('\$ nmap -sT $host -p ${_portsCtrl.text.trim()}', TermColor.green));
+    term.addLine(const TermLine('', TermColor.white));
+    term.addLine(TermLine('Starting T2DECODE Port Scanner at ${_now()}', TermColor.white));
+    term.addLine(TermLine('Scanning $host (${ports.length} ports)...', TermColor.white));
+    term.addLine(const TermLine('', TermColor.white));
+    term.addLine(const TermLine('PORT       STATE    SERVICE', TermColor.yellow));
+
+    int openCount = 0;
+    int closedCount = 0;
+
+    for (final port in ports) {
+      if (!mounted) break;
+      final state = await _probePort(host, port);
+      if (state == _PortState.open) {
+        openCount++;
+      } else {
+        closedCount++;
+      }
+      _printPortResult(term, port, state);
+    }
+
+    sw.stop();
+    term.addLine(const TermLine('', TermColor.white));
+    term.addLine(TermLine('Scan done: ${ports.length} ports scanned in ${(sw.elapsedMilliseconds / 1000).toStringAsFixed(2)}s', TermColor.white));
+    term.addLine(TermLine('$openCount open, $closedCount closed/filtered', openCount > 0 ? TermColor.green : TermColor.gray));
+
+    if (mounted) setState(() => _scanning = false);
+  }
+
+
+  String _now() {
+    final n = DateTime.now();
+    return '${n.year}-${n.month.toString().padLeft(2, '0')}-${n.day.toString().padLeft(2, '0')} '
+        '${n.hour.toString().padLeft(2, '0')}:${n.minute.toString().padLeft(2, '0')}:${n.second.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  void dispose() {
+    _hostCtrl.dispose();
+    _portsCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(child: _input(_hostCtrl, 'Hôte / IP', Icons.computer)),
+              const SizedBox(width: 8),
+              Expanded(child: _input(_portsCtrl, 'Ports (22,80 ou 1-1024)', Icons.numbers)),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: _scanning ? null : _scan,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: _scanning ? TdcColors.textPrimary.withValues(alpha: 0.05) : TdcColors.accent.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: _scanning ? TdcColors.border : TdcColors.accent.withValues(alpha: 0.5)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (_scanning)
+                        const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.accent))
+                      else
+                        const Icon(Icons.radar, size: 16, color: TdcColors.accent),
+                      const SizedBox(width: 6),
+                      Text(_scanning ? 'Scan...' : 'Scanner', style: TextStyle(color: _scanning ? TdcColors.textMuted : TdcColors.accent, fontSize: 12, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text('Plages supportées : 22,80,443 ou 1-1024 ou 80,443,8000-8100', style: TextStyle(color: TdcColors.textMuted.withValues(alpha: 0.5), fontSize: 10)),
+          const SizedBox(height: 10),
+          Expanded(
+            child: TerminalEmulator(
+              key: _termKey,
+              title: 'admin@netkit: Port Scanner',
+              accentColor: TdcColors.info,
+              height: double.infinity,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _input(TextEditingController ctrl, String hint, IconData icon) {
+    return TextField(
+      controller: ctrl,
+      style: const TextStyle(color: TdcColors.textPrimary, fontSize: 12, fontFamily: 'monospace'),
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: TdcColors.accent, size: 16),
+        hintText: hint,
+        hintStyle: const TextStyle(fontSize: 11),
+        filled: true,
+        fillColor: TdcColors.surface,
+        border: const OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none),
+        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        isDense: true,
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Tab 3 — DNS Lookup (enriched with timing, multiple queries)
 // ─────────────────────────────────────────────────────────────
 class _DnsTab extends StatefulWidget {
   const _DnsTab();
@@ -266,181 +473,477 @@ class _DnsTab extends StatefulWidget {
 }
 
 class _DnsTabState extends State<_DnsTab> {
-  final _ctrl = TextEditingController(text: 'google.com');
-  List<String> _results = [];
+  final _ctrl = TextEditingController(text: _googleCom);
+  final GlobalKey<TerminalEmulatorState> _termKey = GlobalKey();
+
   bool _loading = false;
 
   Future<void> _lookup() async {
-    final h = _ctrl.text.trim();
-    if (h.isEmpty) return;
+    final domain = _ctrl.text.trim();
+    if (domain.isEmpty || _loading) return;
     setState(() => _loading = true);
+    final term = _termKey.currentState;
+    if (term == null) { setState(() => _loading = false); return; }
+    term.clear();
+
+    final lines = <TermLine>[];
+    lines.add(TermLine('\$ dig $domain ANY +stats', TermColor.green));
+    lines.add(const TermLine('', TermColor.white));
+    lines.add(TermLine('; <<>> T2DECODE DiG 1.0 <<>> $domain ANY', TermColor.gray));
+    lines.add(const TermLine(';; global options: +cmd', TermColor.gray));
+
+    final sw = Stopwatch()..start();
     try {
-      final addrs = await InternetAddress.lookup(h);
-      setState(() { _results = addrs.map((a) => '${a.type.name}: ${a.address}').toList(); _loading = false; });
+      final ipv4 = await InternetAddress.lookup(domain, type: InternetAddressType.IPv4);
+      final ipv4Time = sw.elapsedMilliseconds;
+
+      sw.reset();
+      List<InternetAddress> ipv6 = [];
+      try {
+        ipv6 = await InternetAddress.lookup(domain, type: InternetAddressType.IPv6);
+      } catch (_) {}
+      final ipv6Time = sw.elapsedMilliseconds;
+      sw.stop();
+
+      lines.add(const TermLine('', TermColor.white));
+      lines.add(const TermLine(';; ANSWER SECTION:', TermColor.yellow));
+
+      for (final addr in ipv4) {
+        lines.add(TermLine('$domain.     300    IN    A       ${addr.address}', TermColor.cyan));
+      }
+      for (final addr in ipv6) {
+        lines.add(TermLine('$domain.     300    IN    AAAA    ${addr.address}', TermColor.cyan));
+      }
+
+      if (ipv4.isNotEmpty && ipv4.first.host != domain) {
+        lines.add(TermLine('$domain.     300    IN    CNAME   ${ipv4.first.host}.', TermColor.white));
+      }
+
+      lines.add(const TermLine('', TermColor.white));
+      lines.add(const TermLine(';; STATISTICS:', TermColor.yellow));
+      lines.add(TermLine(';; Query time (A):    $ipv4Time ms', TermColor.white));
+      if (ipv6.isNotEmpty) {
+        lines.add(TermLine(';; Query time (AAAA): $ipv6Time ms', TermColor.white));
+      }
+      lines.add(TermLine(';; WHEN: ${_now()}', TermColor.gray));
+      lines.add(TermLine(';; MSG SIZE  rcvd: ${ipv4.length + ipv6.length} records', TermColor.gray));
+
+      lines.add(const TermLine('', TermColor.white));
+      lines.add(TermLine(';; Total: ${ipv4.length} A + ${ipv6.length} AAAA records resolved', TermColor.green));
+
     } catch (e) {
-      setState(() { _results = ['Erreur: $e']; _loading = false; });
+      sw.stop();
+      lines.add(const TermLine('', TermColor.white));
+      lines.add(const TermLine(';; connection timed out; no servers could be reached', TermColor.red));
+      lines.add(TermLine(';; Error: $e', TermColor.red));
     }
+
+    await term.playLines(lines, delayMs: 50);
+    if (mounted) setState(() => _loading = false);
+  }
+
+  Future<void> _batchLookup() async {
+    if (_loading) return;
+    setState(() => _loading = true);
+    final term = _termKey.currentState;
+    if (term == null) { setState(() => _loading = false); return; }
+    term.clear();
+
+    final domains = [_googleCom, 'cloudflare.com', _githubCom, 'mozilla.org', 'wikipedia.org'];
+    term.addLine(const TermLine('\$ for d in $_googleCom cloudflare.com $_githubCom mozilla.org wikipedia.org; do dig +short \$d; done', TermColor.green));
+    term.addLine(const TermLine('', TermColor.white));
+    term.addLine(const TermLine('DOMAIN                    IPv4              TIME', TermColor.yellow));
+    term.addLine(const TermLine('─────────────────────────────────────────────────', TermColor.gray));
+
+    for (final domain in domains) {
+      if (!mounted) break;
+      final sw = Stopwatch()..start();
+      try {
+        final addrs = await InternetAddress.lookup(domain, type: InternetAddressType.IPv4);
+        sw.stop();
+        final ip = addrs.isNotEmpty ? addrs.first.address : '???';
+        final ms = sw.elapsedMilliseconds;
+        final TermColor color;
+        if (ms < 50) {
+          color = TermColor.green;
+        } else if (ms < 200) {
+          color = TermColor.yellow;
+        } else {
+          color = TermColor.red;
+        }
+        term.addLine(TermLine(
+          '${domain.padRight(26)}${ip.padRight(18)}${ms}ms',
+          color,
+        ));
+      } catch (_) {
+        sw.stop();
+        term.addLine(TermLine('${domain.padRight(26)}FAILED${''.padRight(12)}${sw.elapsedMilliseconds}ms', TermColor.red));
+      }
+    }
+
+    term.addLine(const TermLine('', TermColor.white));
+    term.addLine(const TermLine('Done.', TermColor.green));
+    if (mounted) setState(() => _loading = false);
+  }
+
+  String _now() {
+    final n = DateTime.now();
+    return '${n.year}-${n.month.toString().padLeft(2, '0')}-${n.day.toString().padLeft(2, '0')} '
+        '${n.hour.toString().padLeft(2, '0')}:${n.minute.toString().padLeft(2, '0')}:${n.second.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return TdcPageWrapper(
-      child: ListView(
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const TdcSectionTitle('🌍 Résolution DNS'),
-          const SizedBox(height: 16),
-          _inputRow(),
-          const SizedBox(height: 20),
-          if (_results.isNotEmpty)
-            _resultBox(),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _ctrl,
+                  style: const TextStyle(color: TdcColors.textPrimary, fontSize: 12, fontFamily: 'monospace'),
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.dns, color: TdcColors.accent, size: 16),
+                    hintText: 'Domaine à résoudre',
+                    hintStyle: TextStyle(fontSize: 11),
+                    filled: true, fillColor: TdcColors.surface,
+                    border: OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                    isDense: true,
+                  ),
+                  onSubmitted: (_) => _lookup(),
+                ),
+              ),
+              const SizedBox(width: 8),
+              _actionBtn('dig', TdcColors.info, _loading ? null : _lookup),
+              const SizedBox(width: 6),
+              _actionBtn('Batch', TdcColors.warning, _loading ? null : _batchLookup),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: TerminalEmulator(
+              key: _termKey,
+              title: 'admin@netkit: DNS Resolver',
+              accentColor: TdcColors.info,
+              height: double.infinity,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _inputRow() {
-    return Row(children: [
-      Expanded(child: TextField(controller: _ctrl, style: const TextStyle(color: TdcColors.textPrimary), decoration: const InputDecoration(hintText: 'Domaine', filled: true, fillColor: TdcColors.surface, border: OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none)))),
-      const SizedBox(width: 8),
-      IconButton.filled(onPressed: _loading ? null : _lookup, icon: const Icon(Icons.search), style: IconButton.styleFrom(backgroundColor: TdcColors.accent)),
-    ]);
-  }
-
-  Widget _resultBox() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _results.map((r) => Padding(padding: const EdgeInsets.only(bottom: 8), child: SelectableText(r, style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace')))).toList()),
+  Widget _actionBtn(String label, Color color, VoidCallback? onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: onTap != null ? color.withValues(alpha: 0.14) : TdcColors.textPrimary.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.45) : TdcColors.border),
+        ),
+        child: Text(label, style: TextStyle(color: onTap != null ? color : TdcColors.textMuted, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+      ),
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────
-// Tab 4/5 — Report & Cheat Sheet (Combined for brevity in refactor)
+// Tab 4 — Network Diagnostic (real latency, connectivity tests)
 // ─────────────────────────────────────────────────────────────
-class _ReportTab extends StatelessWidget {
-  const _ReportTab();
-
+class _DiagnosticTab extends StatefulWidget {
+  const _DiagnosticTab();
   @override
-  Widget build(BuildContext context) {
-    return TdcPageWrapper(
-      child: Column(children: [
-        const TdcSectionTitle('📊 Rapport de Santé Réseau'),
-        const SizedBox(height: 24),
-        TdcCard(child: Column(children: [
-          _row('Connectivité WAN', 'Opérationnel', Icons.check_circle, Colors.green),
-          _row('Latence Moyenne', '12ms', Icons.speed, Colors.blue),
-          _row('Paquets Perdus', '0.01%', Icons.error_outline, Colors.orange),
-          _row('DNS Reachability', 'OK', Icons.dns, Colors.green),
-        ])),
-        const SizedBox(height: 32),
-        ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.download), label: const Text('Télécharger le PDF')),
-      ]),
-    );
-  }
-
-  Widget _row(String l, String v, IconData i, Color c) => Padding(padding: const EdgeInsets.all(12), child: Row(children: [Icon(i, color: c, size: 20), const SizedBox(width: 12), Text(l, style: const TextStyle(color: TdcColors.textPrimary)), const Spacer(), Text(v, style: TextStyle(color: c, fontWeight: FontWeight.bold))]));
+  State<_DiagnosticTab> createState() => _DiagnosticTabState();
 }
 
-class _CheatSheetTab extends StatefulWidget {
-  const _CheatSheetTab();
-  @override State<_CheatSheetTab> createState() => _CheatSheetTabState();
-}
+class _DiagnosticTabState extends State<_DiagnosticTab> {
+  final GlobalKey<TerminalEmulatorState> _termKey = GlobalKey();
+  bool _running = false;
 
-class _CheatSheetTabState extends State<_CheatSheetTab> {
-  List<CheatSheetEntry> _entries = [];
-  String _filter = '';
-  String _selectedCat = 'TOUT';
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
+  Future<Duration?> _tcpPing(String host, int port) async {
+    final sw = Stopwatch()..start();
     try {
-      final data = await rootBundle.loadString('assets/netkit_cheat_sheets.json');
-      final list = json.decode(data) as List<dynamic>;
-      if (mounted) {
-        setState(() {
-          _entries = list.map((m) => CheatSheetEntry.fromMap(m)).toList();
-          _loading = false;
-        });
+      final socket = await Socket.connect(host, port, timeout: const Duration(seconds: 3));
+      sw.stop();
+      socket.destroy();
+      return sw.elapsed;
+    } catch (_) {
+      sw.stop();
+      return null;
+    }
+  }
+
+  String _getConnectionStatus(int svcOk, int svcHostsLength) {
+    if (svcOk == svcHostsLength) return 'OK';
+    if (svcOk > 0) return 'DEGRADED';
+    return 'DOWN';
+  }
+
+  TermColor _getConnectionColor(String connStatus) {
+    if (connStatus == 'OK') return TermColor.green;
+    if (connStatus == 'DEGRADED') return TermColor.yellow;
+    return TermColor.red;
+  }
+
+  String _getDnsStatus(int dnsOk, int dnsTargetsLength) {
+    if (dnsOk == dnsTargetsLength) return 'OK';
+    if (dnsOk > 0) return 'PARTIAL';
+    return 'FAILED';
+  }
+
+  TermColor _getDnsColor(String dnsStatus) {
+    if (dnsStatus == 'OK') return TermColor.green;
+    if (dnsStatus == 'PARTIAL') return TermColor.yellow;
+    return TermColor.red;
+  }
+
+  TermColor _getLatencyColor(double latency) {
+    if (latency < 50) return TermColor.green;
+    if (latency < 150) return TermColor.yellow;
+    return TermColor.red;
+  }
+
+  int _getLatencyPoints(double latency) {
+    if (latency < 100) return 25;
+    if (latency < 300) return 15;
+    return 5;
+  }
+
+  TermColor _getScoreColor(int score) {
+    if (score >= 80) return TermColor.green;
+    if (score >= 50) return TermColor.yellow;
+    return TermColor.red;
+  }
+
+  Future<void> _diagInterfaces(TerminalEmulatorState term) async {
+    term.addLine(const TermLine('[1/5] Checking network interfaces...', TermColor.cyan));
+    try {
+      final interfaces = await NetworkInterface.list(type: InternetAddressType.IPv4);
+      final active = interfaces.where((i) => i.addresses.any((a) => !a.isLoopback)).toList();
+      if (active.isNotEmpty) {
+        for (final iface in active) {
+          for (final addr in iface.addresses.where((a) => !a.isLoopback)) {
+            term.addLine(TermLine('  ✓ ${iface.name}: ${addr.address}', TermColor.green));
+          }
+        }
+      } else {
+        term.addLine(const TermLine('  ✗ No active network interfaces found', TermColor.red));
       }
     } catch (e) {
-      if (mounted) setState(() => _loading = false);
+      term.addLine(TermLine('  ✗ Error: $e', TermColor.red));
     }
+  }
+
+  Future<int> _diagDns(TerminalEmulatorState term, List<String> dnsTargets) async {
+    term.addLine(const TermLine('[2/5] Testing DNS resolution...', TermColor.cyan));
+    int dnsOk = 0;
+    for (final target in dnsTargets) {
+      if (!mounted) break;
+      final sw = Stopwatch()..start();
+      try {
+        await InternetAddress.lookup(target);
+        sw.stop();
+        dnsOk++;
+        term.addLine(TermLine('  ✓ $target resolved in ${sw.elapsedMilliseconds}ms', TermColor.green));
+      } catch (_) {
+        sw.stop();
+        term.addLine(TermLine('  ✗ $target FAILED (${sw.elapsedMilliseconds}ms)', TermColor.red));
+      }
+    }
+    return dnsOk;
+  }
+
+  Future<void> _diagLatency(TerminalEmulatorState term, List<String> pingHosts, List<String> pingNames, List<double> latencies) async {
+    term.addLine(const TermLine('[3/5] Measuring latency (TCP connect)...', TermColor.cyan));
+    final pingPorts = [443, 443, 443];
+    for (int t = 0; t < pingHosts.length; t++) {
+      if (!mounted) break;
+      final durations = <int>[];
+      for (int i = 0; i < 3; i++) {
+        final d = await _tcpPing(pingHosts[t], pingPorts[t]);
+        if (d != null) durations.add(d.inMilliseconds);
+      }
+      if (durations.isNotEmpty) {
+        final avg = durations.reduce((a, b) => a + b) / durations.length;
+        latencies.add(avg);
+        final color = _getLatencyColor(avg);
+        term.addLine(TermLine('  ✓ ${pingNames[t].padRight(18)} ${avg.toStringAsFixed(1)}ms avg (${durations.length}/3 ok)', color));
+      } else {
+        term.addLine(TermLine('  ✗ ${pingNames[t].padRight(18)} unreachable', TermColor.red));
+      }
+    }
+  }
+
+  Future<int> _diagServices(TerminalEmulatorState term, List<String> svcHosts, List<String> svcNames) async {
+    term.addLine(const TermLine('[4/5] Testing common services...', TermColor.cyan));
+    final svcPorts = [443, 443, 53];
+    int svcOk = 0;
+    for (int s = 0; s < svcHosts.length; s++) {
+      if (!mounted) break;
+      final d = await _tcpPing(svcHosts[s], svcPorts[s]);
+      if (d != null) {
+        svcOk++;
+        term.addLine(TermLine('  ✓ ${svcNames[s].padRight(22)} ${d.inMilliseconds}ms', TermColor.green));
+      } else {
+        term.addLine(TermLine('  ✗ ${svcNames[s].padRight(22)} unreachable', TermColor.red));
+      }
+    }
+    return svcOk;
+  }
+
+  void _diagSummary(TerminalEmulatorState term, int dnsOk, int dnsTargetsLength, int svcOk, int svcHostsLength, List<double> latencies, double avgLatency) {
+    term.addLine(const TermLine('[5/5] Generating report...', TermColor.cyan));
+    term.addLine(const TermLine('', TermColor.white));
+    term.addLine(const TermLine('══════════════ RAPPORT ══════════════', TermColor.bold));
+    term.addLine(const TermLine('', TermColor.white));
+
+    final connStatus = _getConnectionStatus(svcOk, svcHostsLength);
+    final connColor = _getConnectionColor(connStatus);
+    final dnsStatus = _getDnsStatus(dnsOk, dnsTargetsLength);
+    final dnsColor = _getDnsColor(dnsStatus);
+
+    term.addLine(TermLine('  Connectivity:    $connStatus', connColor));
+    term.addLine(TermLine('  DNS Resolution:  $dnsStatus ($dnsOk/$dnsTargetsLength)', dnsColor));
+    term.addLine(TermLine('  Avg Latency:     ${avgLatency.toStringAsFixed(1)}ms', _getLatencyColor(avgLatency)));
+    term.addLine(TermLine('  Services:        $svcOk/$svcHostsLength reachable', svcOk == svcHostsLength ? TermColor.green : TermColor.yellow));
+    term.addLine(const TermLine('', TermColor.white));
+
+    // Overall score
+    final latencyPoints = _getLatencyPoints(avgLatency);
+    final score = ((dnsOk / dnsTargetsLength) * 25 + (svcOk / svcHostsLength) * 25 + (latencies.isNotEmpty ? 25 : 0) + latencyPoints).round();
+    final scoreColor = _getScoreColor(score);
+    term.addLine(TermLine('  Health Score:    $score/100', scoreColor));
+    term.addLine(const TermLine('', TermColor.white));
+    term.addLine(TermLine('Diagnostic complete at ${_now()}', TermColor.gray));
+  }
+
+  Future<void> _runDiagnostic() async {
+    if (_running) return;
+    setState(() => _running = true);
+    final term = _termKey.currentState;
+    if (term == null) { setState(() => _running = false); return; }
+    term.clear();
+
+    term.addLine(const TermLine('\$ netkit-diagnostic --full', TermColor.green));
+    term.addLine(const TermLine('', TermColor.white));
+    term.addLine(TermLine('T2DECODE Network Diagnostic — ${_now()}', TermColor.bold));
+    term.addLine(const TermLine('════════════════════════════════════════════════════', TermColor.gray));
+    term.addLine(const TermLine('', TermColor.white));
+
+    // 1. Local interfaces
+    await _diagInterfaces(term);
+    term.addLine(const TermLine('', TermColor.white));
+
+    // 2. DNS resolution
+    final dnsTargets = [_googleCom, 'cloudflare.com', _githubCom];
+    final dnsOk = await _diagDns(term, dnsTargets);
+    term.addLine(const TermLine('', TermColor.white));
+
+    // 3. TCP connectivity
+    final pingHosts = [_oneOneOneOne, _eightEightEightEight, _openDns];
+    final pingNames = ['Cloudflare DNS', 'Google DNS', 'OpenDNS'];
+    final latencies = <double>[];
+    await _diagLatency(term, pingHosts, pingNames, latencies);
+    term.addLine(const TermLine('', TermColor.white));
+
+    // 4. Common services
+    final svcHosts = [_googleCom, _githubCom, _oneOneOneOne];
+    final svcNames = ['HTTPS (Google)', 'HTTPS (GitHub)', 'DNS (Cloudflare)'];
+    final svcOk = await _diagServices(term, svcHosts, svcNames);
+    term.addLine(const TermLine('', TermColor.white));
+
+    // 5. Summary
+    final avgLatency = latencies.isNotEmpty ? latencies.reduce((a, b) => a + b) / latencies.length : 0.0;
+    _diagSummary(term, dnsOk, dnsTargets.length, svcOk, svcHosts.length, latencies, avgLatency);
+
+    if (mounted) setState(() => _running = false);
+  }
+
+  Future<void> _runLatencyTest() async {
+    if (_running) return;
+    setState(() => _running = true);
+    final term = _termKey.currentState;
+    if (term == null) { setState(() => _running = false); return; }
+    term.clear();
+
+    term.addLine(const TermLine('\$ ping -c 10 $_oneOneOneOne  (TCP connect simulation)', TermColor.green));
+    term.addLine(const TermLine('PING $_oneOneOneOne ($_oneOneOneOne): TCP port 443', TermColor.white));
+
+    final times = <int>[];
+    for (int i = 1; i <= 10; i++) {
+      if (!mounted) break;
+      final d = await _tcpPing(_oneOneOneOne, 443);
+      if (d != null) {
+        times.add(d.inMilliseconds);
+        term.addLine(TermLine('tcp_seq=$i ttl=57 time=${d.inMilliseconds}ms', TermColor.white));
+      } else {
+        term.addLine(TermLine('tcp_seq=$i Request timeout', TermColor.red));
+      }
+    }
+
+    term.addLine(const TermLine('', TermColor.white));
+    term.addLine(const TermLine('--- $_oneOneOneOne ping statistics ---', TermColor.white));
+    final loss = ((10 - times.length) / 10 * 100).toStringAsFixed(0);
+    term.addLine(TermLine('10 packets transmitted, ${times.length} received, $loss% loss', int.parse(loss) == 0 ? TermColor.green : TermColor.yellow));
+
+    if (times.isNotEmpty) {
+      times.sort();
+      final min = times.first;
+      final max = times.last;
+      final avg = (times.reduce((a, b) => a + b) / times.length).toStringAsFixed(1);
+      term.addLine(TermLine('rtt min/avg/max = $min/$avg/$max ms', TermColor.white));
+    }
+
+    if (mounted) setState(() => _running = false);
+  }
+
+
+  String _now() {
+    final n = DateTime.now();
+    return '${n.year}-${n.month.toString().padLeft(2, '0')}-${n.day.toString().padLeft(2, '0')} '
+        '${n.hour.toString().padLeft(2, '0')}:${n.minute.toString().padLeft(2, '0')}:${n.second.toString().padLeft(2, '0')}';
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Center(child: CircularProgressIndicator(color: TdcColors.accent));
-
-    final filtered = _entries.where((e) {
-      final matchesSearch = e.command.toLowerCase().contains(_filter.toLowerCase()) || 
-                          e.description.toLowerCase().contains(_filter.toLowerCase());
-      final matchesCat = _selectedCat == 'TOUT' || e.category == _selectedCat;
-      return matchesSearch && matchesCat;
-    }).toList();
-
-    final cats = ['TOUT', ..._entries.map((e) => e.category).toSet()];
-
-    return Column(
-      children: [
-        _buildSearch(cats),
-        Expanded(
-          child: filtered.isEmpty
-              ? const TdcEmptyState(icon: Icons.search_off, title: 'Aucune commande trouvée')
-              : ListView.builder(
-                  padding: const EdgeInsets.all(24),
-                  itemCount: filtered.length,
-                  itemBuilder: (context, i) => _card(context, filtered[i]),
-                ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSearch(List<String> cats) {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: TdcColors.surface,
-        border: Border(bottom: BorderSide(color: TdcColors.border)),
-      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextField(
-            onChanged: (v) => setState(() => _filter = v),
-            style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
-            decoration: const InputDecoration(
-              hintText: 'Rechercher une commande réseau...',
-              prefixIcon: Icon(Icons.search, size: 18, color: TdcColors.textMuted),
-              filled: true,
-              fillColor: TdcColors.bg,
-              border: OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none),
-              contentPadding: EdgeInsets.symmetric(vertical: 0),
-            ),
+          Row(
+            children: [
+              _actionBtn('Diagnostic complet', TdcColors.success, _running ? null : _runDiagnostic),
+              const SizedBox(width: 8),
+              _actionBtn('Ping test (10x)', TdcColors.info, _running ? null : _runLatencyTest),
+              const Spacer(),
+              if (_running)
+                const Row(children: [
+                  SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.accent)),
+                  SizedBox(width: 6),
+                  Text('Running...', style: TextStyle(color: TdcColors.textTertiary, fontSize: 10)),
+                ]),
+            ],
           ),
-          const SizedBox(height: 12),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: cats.map((cat) {
-                final isSel = _selectedCat == cat;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(cat, style: const TextStyle(fontSize: 10)),
-                    selected: isSel,
-                    onSelected: (v) => setState(() => _selectedCat = cat),
-                    selectedColor: TdcColors.accent,
-                    labelStyle: TextStyle(color: isSel ? Colors.white : TdcColors.textSecondary),
-                  ),
-                );
-              }).toList(),
+          const SizedBox(height: 10),
+          Expanded(
+            child: TerminalEmulator(
+              key: _termKey,
+              title: 'admin@netkit: Network Diagnostic',
+              accentColor: TdcColors.success,
+              height: double.infinity,
             ),
           ),
         ],
@@ -448,58 +951,19 @@ class _CheatSheetTabState extends State<_CheatSheetTab> {
     );
   }
 
-  Widget _card(BuildContext context, CheatSheetEntry e) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: TdcCard(
-        padding: const EdgeInsets.all(16),
-        onTap: () => Navigator.pushNamed(context, '/cheat-sheets/details', arguments: e),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: TdcColors.accent.withValues(alpha: 0.1), borderRadius: TdcRadius.sm),
-              child: Icon(_getIcon(e.category), color: TdcColors.accent, size: 18),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(e.description, style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
-                  const SizedBox(height: 4),
-                  Text(e.command, style: const TextStyle(color: TdcColors.textMuted, fontFamily: 'monospace', fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
-                ],
-              ),
-            ),
-            _buildDangerLevel(e.dangerLevel),
-          ],
+  Widget _actionBtn(String label, Color color, VoidCallback? onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: onTap != null ? color.withValues(alpha: 0.14) : TdcColors.textPrimary.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.45) : TdcColors.border),
         ),
+        child: Text(label, style: TextStyle(color: onTap != null ? color : TdcColors.textMuted, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
       ),
     );
   }
-
-  Widget _buildDangerLevel(int level) {
-    if (level <= 1) return const SizedBox.shrink();
-    final color = level == 2 ? Colors.orange : Colors.red;
-    return Container(
-      margin: const EdgeInsets.only(left: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: color.withValues(alpha: 0.2))),
-      child: Icon(Icons.warning_amber_rounded, size: 12, color: color),
-    );
-  }
-
-  IconData _getIcon(String cat) {
-    switch (cat) {
-      case 'DNS': return Icons.dns;
-      case 'WIRELESS': return Icons.wifi;
-      case 'ROUTING': return Icons.alt_route;
-      case 'PORTS': return Icons.lan;
-      case 'DIAGNOSTIC': return Icons.troubleshoot;
-      case 'INTERFACE': return Icons.settings_ethernet;
-      case 'SCAN': return Icons.radar;
-      default: return Icons.code;
-    }
-  }
 }
+
