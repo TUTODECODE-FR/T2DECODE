@@ -361,9 +361,9 @@ jobs:
           # (évite l'échec DNS sur cdn.cocoapods.org lors du pod install automatique)
           if [ ! -d "$HOME/.cocoapods/repos/trunk" ]; then
             echo "Clonage du spec repo CocoaPods..."
-            pod repo add trunk https://cdn.cocoapods.org/ --silent || \
+            pod repo add-cdn trunk https://cdn.cocoapods.org/ --silent || \
               pod repo add trunk https://github.com/CocoaPods/Specs.git --silent || \
-              true
+              (echo "❌ Échec de la configuration du repo CocoaPods" && exit 1)
           else
             echo "Spec repo CocoaPods déjà en cache."
           fi
