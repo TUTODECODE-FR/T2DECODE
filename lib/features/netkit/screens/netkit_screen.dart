@@ -246,6 +246,8 @@ class _PortScannerTabState extends State<_PortScannerTab> {
           final start = int.tryParse(range[0].trim());
           final end = int.tryParse(range[1].trim());
           if (start != null && end != null && start <= end && end <= 65535) {
+            // Prevent huge expansions; _scan() enforces a 256-port limit.
+            if (end - start + 1 > 256) continue;
             for (int p = start; p <= end; p++) {
               ports.add(p);
             }
