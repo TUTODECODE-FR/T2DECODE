@@ -105,6 +105,30 @@ jobs:
       - name: Get dependencies
         run: flutter pub get # NOSONAR
 
+      - name: Cache CocoaPods spec repo
+        if: matrix.platform == 'macos' || matrix.platform == 'ios'
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ~/.cocoapods/repos/trunk
+          key: cocoapods-trunk-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            cocoapods-trunk-
+
+      - name: Setup CocoaPods spec repo
+        if: matrix.platform == 'macos' || matrix.platform == 'ios'
+        shell: bash
+        run: |
+          # S'assurer que le repo trunk est disponible localement avant flutter build
+          # (évite l'échec DNS sur cdn.cocoapods.org lors du pod install automatique)
+          if [ ! -d "$HOME/.cocoapods/repos/trunk" ]; then
+            echo "Clonage du spec repo CocoaPods..."
+            pod repo add trunk https://cdn.cocoapods.org/ --silent || \
+              pod repo add trunk https://github.com/CocoaPods/Specs.git --silent || \
+              true
+          else
+            echo "Spec repo CocoaPods déjà en cache."
+          fi
+
       - name: Run tests
         run: flutter test --dart-define=SKIP_GOLDENS=true
 
