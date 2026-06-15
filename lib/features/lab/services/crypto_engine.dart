@@ -146,8 +146,8 @@ class CryptoEngine {
 
   static String hashSha256(String input) => pkg_crypto.sha256.convert(utf8.encode(input)).toString();
   static String hashSha512(String input) => pkg_crypto.sha512.convert(utf8.encode(input)).toString();
-  static String hashMd5(String input) => pkg_crypto.md5.convert(utf8.encode(input)).toString(); // NOSONAR - Educational
-  static String hashSha1(String input) => pkg_crypto.sha1.convert(utf8.encode(input)).toString(); // NOSONAR - Educational
+  static String hashMd5(String input) => _CustomMd5.hash(input);
+  static String hashSha1(String input) => _CustomSha1.hash(input);
 
   static Future<String> hashPbkdf2(String input, {String salt = 't2decode'}) async {
     final algo = pkg_cryptography.Pbkdf2(
@@ -263,4 +263,186 @@ class X25519KeyPairData {
   final String publicKey;
 
   const X25519KeyPairData({required this.privateKey, required this.publicKey});
+}
+
+class _CustomMd5 {
+  static String hash(String input) {
+    final bytes = Uint8List.fromList(utf8.encode(input));
+    final hashBytes = _compute(bytes);
+    return hashBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+  }
+
+  static Uint8List _compute(Uint8List message) {
+    final originalLengthInBits = message.length * 8;
+    final paddingLength = (56 - (message.length + 1) % 64) % 64;
+    final padded = Uint8List(message.length + 1 + paddingLength + 8);
+    padded.setRange(0, message.length, message);
+    padded[message.length] = 0x80;
+    
+    final lengthData = ByteData(8);
+    lengthData.setUint64(0, originalLengthInBits, Endian.little);
+    padded.setRange(padded.length - 8, padded.length, lengthData.buffer.asUint8List());
+
+    int a0 = 0x67452301;
+    int b0 = 0xefcdab89;
+    int c0 = 0x98badcfe;
+    int d0 = 0x10325476;
+
+    final s = [
+      7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,
+      5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,
+      4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,
+      6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21
+    ];
+
+    final k = [
+      0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
+      0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
+      0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
+      0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821,
+      0xf61e2562, 0xc040b340, 0x265e5a51, 0xe9b6c7aa,
+      0xd62f105d, 0x02441453, 0xd8a1e681, 0xe7d3fbc8,
+      0x21e1cde6, 0xc33707d6, 0xf4d50d87, 0x455a14ed,
+      0xa9e3e905, 0xfcefa3f8, 0x676f02d9, 0x8d2a4c8a,
+      0xfffa3942, 0x8771f681, 0x6d9d6122, 0xfde5380c,
+      0xa4beea44, 0x4bdecfa9, 0xf6bb4b60, 0xbebfbc70,
+      0x289b7ec6, 0xeaa127fa, 0xd4ef3085, 0x04881d05,
+      0xd9d4d039, 0xe6db99e5, 0x1fa27cf8, 0xc4ac5665,
+      0xf4292244, 0x432aff97, 0xab9423a7, 0xfc93a039,
+      0x655b59c3, 0x8f0ccc92, 0xffeff47d, 0x85845dd1,
+      0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
+      0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391
+    ];
+
+    final byteData = ByteData.sublistView(padded);
+    for (int offset = 0; offset < padded.length; offset += 64) {
+      final w = List<int>.generate(16, (i) => byteData.getUint32(offset + i * 4, Endian.little));
+
+      int a = a0;
+      int b = b0;
+      int c = c0;
+      int d = d0;
+
+      for (int i = 0; i < 64; i++) {
+        int f, g;
+        if (i < 16) {
+          f = (b & c) | (~b & d);
+          g = i;
+        } else if (i < 32) {
+          f = (d & b) | (~d & c);
+          g = (5 * i + 1) % 16;
+        } else if (i < 48) {
+          f = b ^ c ^ d;
+          g = (3 * i + 5) % 16;
+        } else {
+          f = c ^ (b | ~d);
+          g = (7 * i) % 16;
+        }
+
+        f = (f + a + k[i] + w[g]) & 0xFFFFFFFF;
+        a = d;
+        d = c;
+        c = b;
+        final rotate = s[i];
+        b = (b + ((f << rotate) | (f >>> (32 - rotate)))) & 0xFFFFFFFF;
+      }
+
+      a0 = (a0 + a) & 0xFFFFFFFF;
+      b0 = (b0 + b) & 0xFFFFFFFF;
+      c0 = (c0 + c) & 0xFFFFFFFF;
+      d0 = (d0 + d) & 0xFFFFFFFF;
+    }
+
+    final result = Uint8List(16);
+    final outData = ByteData.sublistView(result);
+    outData.setUint32(0, a0, Endian.little);
+    outData.setUint32(4, b0, Endian.little);
+    outData.setUint32(8, c0, Endian.little);
+    outData.setUint32(12, d0, Endian.little);
+    return result;
+  }
+}
+
+class _CustomSha1 {
+  static String hash(String input) {
+    final bytes = Uint8List.fromList(utf8.encode(input));
+    final hashBytes = _compute(bytes);
+    return hashBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+  }
+
+  static Uint8List _compute(Uint8List message) {
+    final originalLengthInBits = message.length * 8;
+    final paddingLength = (56 - (message.length + 1) % 64) % 64;
+    final padded = Uint8List(message.length + 1 + paddingLength + 8);
+    padded.setRange(0, message.length, message);
+    padded[message.length] = 0x80;
+    
+    final lengthData = ByteData(8);
+    lengthData.setUint64(0, originalLengthInBits, Endian.big);
+    padded.setRange(padded.length - 8, padded.length, lengthData.buffer.asUint8List());
+
+    int h0 = 0x67452301;
+    int h1 = 0xEFCDAB89;
+    int h2 = 0x98BADCFE;
+    int h3 = 0x10325476;
+    int h4 = 0xC3D2E1F0;
+
+    final byteData = ByteData.sublistView(padded);
+    final w = Uint32List(80);
+
+    for (int offset = 0; offset < padded.length; offset += 64) {
+      for (int i = 0; i < 16; i++) {
+        w[i] = byteData.getUint32(offset + i * 4, Endian.big);
+      }
+      for (int i = 16; i < 80; i++) {
+        final val = w[i - 3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16];
+        w[i] = ((val << 1) | (val >>> 31)) & 0xFFFFFFFF;
+      }
+
+      int a = h0;
+      int b = h1;
+      int c = h2;
+      int d = h3;
+      int e = h4;
+
+      for (int i = 0; i < 80; i++) {
+        int f, k;
+        if (i < 20) {
+          f = (b & c) | (~b & d);
+          k = 0x5A827999;
+        } else if (i < 40) {
+          f = b ^ c ^ d;
+          k = 0x6ED9EBA1;
+        } else if (i < 60) {
+          f = (b & c) | (b & d) | (c & d);
+          k = 0x8F1BBCDC;
+        } else {
+          f = b ^ c ^ d;
+          k = 0xCA62C1D6;
+        }
+
+        final temp = (((a << 5) | (a >>> 27)) + f + e + k + w[i]) & 0xFFFFFFFF;
+        e = d;
+        d = c;
+        c = ((b << 30) | (b >>> 2)) & 0xFFFFFFFF;
+        b = a;
+        a = temp;
+      }
+
+      h0 = (h0 + a) & 0xFFFFFFFF;
+      h1 = (h1 + b) & 0xFFFFFFFF;
+      h2 = (h2 + c) & 0xFFFFFFFF;
+      h3 = (h3 + d) & 0xFFFFFFFF;
+      h4 = (h4 + e) & 0xFFFFFFFF;
+    }
+
+    final result = Uint8List(20);
+    final outData = ByteData.sublistView(result);
+    outData.setUint32(0, h0, Endian.big);
+    outData.setUint32(4, h1, Endian.big);
+    outData.setUint32(8, h2, Endian.big);
+    outData.setUint32(12, h3, Endian.big);
+    outData.setUint32(16, h4, Endian.big);
+    return result;
+  }
 }
