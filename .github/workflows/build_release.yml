@@ -552,3 +552,95 @@ jobs:
           draft: false
           prerelease: false
           fail_on_unmatched_files: false
+
+  publish-sourceforge:
+    name: Publish to SourceForge
+    needs: release
+    # Ne tourne que si les secrets SourceForge sont configurés
+    if: |
+      always() &&
+      needs.release.result == 'success' &&
+      vars.SF_USER != '' &&
+      vars.SF_PROJECT != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      SF_USER: ${{ vars.SF_USER }}
+      SF_PROJECT: ${{ vars.SF_PROJECT }}
+      SF_PRIVATE_KEY: ${{ secrets.SF_PRIVATE_KEY }}
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+
+      - name: Skip if SourceForge not configured
+        if: env.SF_USER == '' || env.SF_PROJECT == '' || env.SF_PRIVATE_KEY == ''
+        run: |
+          echo "::notice::SourceForge secrets not configured — skipping upload."
+          echo "To enable, add SF_USER and SF_PROJECT as repository variables,"
+          echo "and SF_PRIVATE_KEY as a repository secret."
+
+      - name: Download release assets
+        if: env.SF_USER != '' && env.SF_PROJECT != '' && env.SF_PRIVATE_KEY != ''
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          path: artifacts
+          pattern: build-*
+          merge-multiple: true
+
+      - name: Prepare assets for SourceForge
+        if: env.SF_USER != '' && env.SF_PROJECT != '' && env.SF_PRIVATE_KEY != ''
+        shell: bash
+        run: |
+          mkdir -p sf_assets
+          TAG="${{ github.event.inputs.target_tag || github.ref_name }}"
+
+          # Copier les artifacts dans sf_assets (même liste que GitHub Release)
+          APK_SRC="$(find artifacts -name 'app-release.apk' -print -quit || true)"
+          if [ -n "$APK_SRC" ]; then cp -f "$APK_SRC" sf_assets/T2DECODE-Android.apk; fi
+          AAB_SRC="$(find artifacts -name 'app-release.aab' -print -quit || true)"
+          if [ -n "$AAB_SRC" ]; then cp -f "$AAB_SRC" sf_assets/T2DECODE-Android.aab; fi
+          cp -f artifacts/T2DECODE-Windows.zip  sf_assets/ 2>/dev/null || true
+          cp -f artifacts/T2DECODE-Setup.exe    sf_assets/ 2>/dev/null || true
+          cp -f artifacts/T2DECODE-macOS.zip    sf_assets/ 2>/dev/null || true
+          cp -f artifacts/T2DECODE-macOS.dmg    sf_assets/ 2>/dev/null || true
+          cp -f artifacts/T2DECODE-macOS.pkg    sf_assets/ 2>/dev/null || true
+          cp -f artifacts/T2DECODE-Linux.tar.gz sf_assets/ 2>/dev/null || true
+          cp -f artifacts/T2DECODE-Linux.deb    sf_assets/ 2>/dev/null || true
+          cp -f artifacts/T2DECODE-Linux.AppImage sf_assets/ 2>/dev/null || true
+          cp -f artifacts/*.ipa                 sf_assets/T2DECODE-iOS.ipa 2>/dev/null || true
+
+          echo "Assets à uploader sur SourceForge ($TAG) :"
+          ls -lh sf_assets/
+
+      - name: Upload to SourceForge via SFTP
+        if: env.SF_USER != '' && env.SF_PROJECT != '' && env.SF_PRIVATE_KEY != ''
+        shell: bash
+        run: |
+          TAG="${{ github.event.inputs.target_tag || github.ref_name }}"
+          SF_PATH="/home/frs/project/$SF_PROJECT/$TAG"
+
+          # Configurer la clé SSH
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "$SF_PRIVATE_KEY" > ~/.ssh/sf_key
+          chmod 600 ~/.ssh/sf_key
+
+          # Accepter automatiquement la clé de frs.sourceforge.net
+          ssh-keyscan -t rsa,ecdsa frs.sourceforge.net >> ~/.ssh/known_hosts 2>/dev/null
+
+          # Créer le dossier distant et uploader tous les fichiers
+          sftp -i ~/.ssh/sf_key -b - "$SF_USER@frs.sourceforge.net" <<SFTP_COMMANDS
+          -mkdir $SF_PATH
+          cd $SF_PATH
+          $(for f in sf_assets/*; do echo "put $f"; done)
+          bye
+          SFTP_COMMANDS
+
+          echo "✅ Upload SourceForge terminé pour $TAG"
+          echo "🔗 https://sourceforge.net/projects/$SF_PROJECT/files/$TAG/"
+
+          # Nettoyer la clé SSH
+          rm -f ~/.ssh/sf_key
