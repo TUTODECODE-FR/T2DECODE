@@ -191,7 +191,7 @@ class VirtualShell {
   final Map<String, String> env = {};
   final List<String> _commandHistory = [];
   final List<_VirtualProcess> _processes;
-  final Random _rng = Random();
+  final Random _rng = Random.secure();
 
 
   VirtualShell({VirtualFileSystem? fileSystem})

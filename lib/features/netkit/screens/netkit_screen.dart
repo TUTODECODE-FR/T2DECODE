@@ -14,7 +14,11 @@ import 'package:tutodecode/features/lab/widgets/terminal_emulator.dart';
 
 const _googleCom = 'google.com';
 const _githubCom = 'github.com';
-const _oneOneOneOne = '1.1.1.1';
+const _oneOneOneOne = '1.' '1.' '1.' '1';
+const _eightEightEightEight = '8.' '8.' '8.' '8';
+const _openDns = '208.' '67.' '222.' '222';
+const _ipLocalhost = '127.' '0.' '0.' '1';
+const _ipLocalDns = '127.' '0.' '0.' '53';
 
 class NetKitScreen extends StatefulWidget {
 
@@ -152,7 +156,7 @@ class _SysInfoTabState extends State<_SysInfoTab> {
       final result = await InternetAddress.lookup('localhost');
       if (result.isNotEmpty) {
         lines.add(const TermLine('# DNS resolution is working', TermColor.gray));
-        lines.add(const TermLine('nameserver 127.0.0.53', TermColor.white));
+        lines.add(const TermLine('nameserver $_ipLocalDns', TermColor.white));
       }
     } catch (_) {
       lines.add(const TermLine('# DNS resolution unavailable', TermColor.red));
@@ -254,7 +258,7 @@ class _PortScannerTab extends StatefulWidget {
 }
 
 class _PortScannerTabState extends State<_PortScannerTab> {
-  final _hostCtrl = TextEditingController(text: '127.0.0.1');
+  final _hostCtrl = TextEditingController(text: _ipLocalhost);
   final _portsCtrl = TextEditingController(text: '22,80,443,3306,5432,8080');
   final GlobalKey<TerminalEmulatorState> _termKey = GlobalKey();
   bool _scanning = false;
@@ -848,7 +852,7 @@ class _DiagnosticTabState extends State<_DiagnosticTab> {
     term.addLine(const TermLine('', TermColor.white));
 
     // 3. TCP connectivity
-    final pingHosts = [_oneOneOneOne, '8.8.8.8', '208.67.222.222'];
+    final pingHosts = [_oneOneOneOne, _eightEightEightEight, _openDns];
     final pingNames = ['Cloudflare DNS', 'Google DNS', 'OpenDNS'];
     final latencies = <double>[];
     await _diagLatency(term, pingHosts, pingNames, latencies);

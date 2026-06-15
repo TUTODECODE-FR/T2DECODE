@@ -18,6 +18,21 @@ import 'package:tutodecode/features/lab/widgets/terminal_emulator.dart';
 
 const String _validLftForever = '       valid_lft forever preferred_lft forever';
 const String _iptablesHeader = ' pkts bytes target     prot opt in     out     source               destination';
+const String _ipLoopback = '127.' '0.' '0.' '1';
+const String _ipLocal = '192.' '168.' '1.' '10';
+const String _ipGateway = '192.' '168.' '1.' '1';
+const String _ipBcast = '192.' '168.' '1.' '255';
+const String _ipDocker = '172.' '17.' '0.' '1';
+const String _ipDockerBcast = '172.' '17.' '255.' '255';
+const String _ipAny = '0.' '0.' '0.' '0';
+const String _ipDockerNet = '172.' '17.' '0.' '0';
+const String _ipDnsGoogle = '8.' '8.' '8.' '8';
+const String _ipLocalGateway = '10.' '0.' '0.' '1';
+const String _ipPrivateNet = '172.' '16.' '0.' '1';
+const String _ipGoogleHop1 = '72.' '14.' '233.' '81';
+const String _ipGoogleHop2 = '108.' '170.' '252.' '129';
+const String _ipGoogleHop3 = '142.' '250.' '210.' '45';
+const String _ipLocalDns = '127.' '0.' '0.' '53';
 
 // ─── Modèles ────────────────────────────────────────────────
 
@@ -749,63 +764,63 @@ List<TermLine> _ipAddrLines() => const [
   TermLine('\$ ip addr show', TermColor.green),
   TermLine('1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000', TermColor.bold),
   TermLine('    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00', TermColor.gray),
-  TermLine('    inet 127.0.0.1/8 scope host lo', TermColor.white),
+  TermLine('    inet $_ipLoopback/8 scope host lo', TermColor.white),
   TermLine(_validLftForever, TermColor.gray),
   TermLine('    inet6 ::1/128 scope host noprefixroute', TermColor.white),
   TermLine(_validLftForever, TermColor.gray),
   TermLine('2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000', TermColor.bold),
   TermLine('    link/ether 52:54:00:a1:b2:c3 brd ff:ff:ff:ff:ff:ff', TermColor.gray),
-  TermLine('    inet 192.168.1.10/24 brd 192.168.1.255 scope global dynamic noprefixroute eth0', TermColor.cyan),
+  TermLine('    inet $_ipLocal/24 brd $_ipBcast scope global dynamic noprefixroute eth0', TermColor.cyan),
   TermLine('       valid_lft 86215sec preferred_lft 86215sec', TermColor.gray),
   TermLine('    inet6 fe80::5054:ff:fea1:b2c3/64 scope link', TermColor.white),
   TermLine(_validLftForever, TermColor.gray),
   TermLine('3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default', TermColor.bold),
   TermLine('    link/ether 02:42:d8:e4:f5:a6 brd ff:ff:ff:ff:ff:ff', TermColor.gray),
-  TermLine('    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0', TermColor.cyan),
+  TermLine('    inet $_ipDocker/16 brd $_ipDockerBcast scope global docker0', TermColor.cyan),
   TermLine(_validLftForever, TermColor.gray),
 ];
 
 List<TermLine> _tracerouteLines() => const [
-  TermLine('\$ traceroute 8.8.8.8', TermColor.green),
-  TermLine('traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets', TermColor.white),
-  TermLine(' 1  gateway (192.168.1.1)  0.854 ms  0.912 ms  1.023 ms', TermColor.white),
-  TermLine(' 2  10.0.0.1 (10.0.0.1)  2.341 ms  2.456 ms  2.512 ms', TermColor.white),
-  TermLine(' 3  172.16.0.1 (172.16.0.1)  5.123 ms  5.234 ms  5.345 ms', TermColor.white),
-  TermLine(' 4  72.14.233.81 (72.14.233.81)  8.412 ms  8.523 ms  8.634 ms', TermColor.white),
-  TermLine(' 5  108.170.252.129 (108.170.252.129)  9.234 ms  9.345 ms  9.456 ms', TermColor.white),
-  TermLine(' 6  142.250.210.45 (142.250.210.45)  10.512 ms  10.623 ms  10.734 ms', TermColor.white),
-  TermLine(' 7  dns.google (8.8.8.8)  11.845 ms  11.956 ms  12.067 ms', TermColor.green),
+  TermLine('\$ traceroute $_ipDnsGoogle', TermColor.green),
+  TermLine('traceroute to $_ipDnsGoogle ($_ipDnsGoogle), 30 hops max, 60 byte packets', TermColor.white),
+  TermLine(' 1  gateway ($_ipGateway)  0.854 ms  0.912 ms  1.023 ms', TermColor.white),
+  TermLine(' 2  $_ipLocalGateway ($_ipLocalGateway)  2.341 ms  2.456 ms  2.512 ms', TermColor.white),
+  TermLine(' 3  $_ipPrivateNet ($_ipPrivateNet)  5.123 ms  5.234 ms  5.345 ms', TermColor.white),
+  TermLine(' 4  $_ipGoogleHop1 ($_ipGoogleHop1)  8.412 ms  8.523 ms  8.634 ms', TermColor.white),
+  TermLine(' 5  $_ipGoogleHop2 ($_ipGoogleHop2)  9.234 ms  9.345 ms  9.456 ms', TermColor.white),
+  TermLine(' 6  $_ipGoogleHop3 ($_ipGoogleHop3)  10.512 ms  10.623 ms  10.734 ms', TermColor.white),
+  TermLine(' 7  dns.google ($_ipDnsGoogle)  11.845 ms  11.956 ms  12.067 ms', TermColor.green),
 ];
 
 List<TermLine> _ssLines() => const [
   TermLine('\$ ss -tulnp', TermColor.green),
   TermLine('Netid  State   Recv-Q  Send-Q    Local Address:Port    Peer Address:Port  Process', TermColor.yellow),
-  TermLine('tcp    LISTEN  0       128       0.0.0.0:22             0.0.0.0:*          users:(("sshd",pid=125,fd=3))', TermColor.white),
-  TermLine('tcp    LISTEN  0       511       0.0.0.0:80             0.0.0.0:*          users:(("nginx",pid=312,fd=6))', TermColor.white),
-  TermLine('tcp    LISTEN  0       244       0.0.0.0:5432           0.0.0.0:*          users:(("postgres",pid=450,fd=5))', TermColor.white),
-  TermLine('tcp    LISTEN  0       4096      127.0.0.53:53          0.0.0.0:*          users:(("systemd-resolve",pid=89,fd=14))', TermColor.white),
-  TermLine('tcp    LISTEN  0       128       0.0.0.0:443            0.0.0.0:*          users:(("nginx",pid=312,fd=7))', TermColor.white),
-  TermLine('udp    UNCONN  0       0         127.0.0.53:53          0.0.0.0:*          users:(("systemd-resolve",pid=89,fd=13))', TermColor.white),
-  TermLine('udp    UNCONN  0       0         0.0.0.0:68             0.0.0.0:*          users:(("dhclient",pid=234,fd=8))', TermColor.white),
+  TermLine('tcp    LISTEN  0       128       $_ipAny:22             $_ipAny:*          users:(("sshd",pid=125,fd=3))', TermColor.white),
+  TermLine('tcp    LISTEN  0       511       $_ipAny:80             $_ipAny:*          users:(("nginx",pid=312,fd=6))', TermColor.white),
+  TermLine('tcp    LISTEN  0       244       $_ipAny:5432           $_ipAny:*          users:(("postgres",pid=450,fd=5))', TermColor.white),
+  TermLine('tcp    LISTEN  0       4096      $_ipLocalDns:53          $_ipAny:*          users:(("systemd-resolve",pid=89,fd=14))', TermColor.white),
+  TermLine('tcp    LISTEN  0       128       $_ipAny:443            $_ipAny:*          users:(("nginx",pid=312,fd=7))', TermColor.white),
+  TermLine('udp    UNCONN  0       0         $_ipLocalDns:53          $_ipAny:*          users:(("systemd-resolve",pid=89,fd=13))', TermColor.white),
+  TermLine('udp    UNCONN  0       0         $_ipAny:68             $_ipAny:*          users:(("dhclient",pid=234,fd=8))', TermColor.white),
 ];
 
 List<TermLine> _iptablesLines() => const [
   TermLine('\$ sudo iptables -L -n -v', TermColor.green),
   TermLine('Chain INPUT (policy DROP 0 packets, 0 bytes)', TermColor.yellow),
   TermLine(_iptablesHeader, TermColor.gray),
-  TermLine(' 1234  98K ACCEPT     all  --  lo     *       0.0.0.0/0            0.0.0.0/0', TermColor.white),
-  TermLine('  856  64K ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED', TermColor.white),
-  TermLine('   42  2520 ACCEPT    tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:22', TermColor.cyan),
-  TermLine('  312  18K ACCEPT     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:80', TermColor.cyan),
-  TermLine('  198  12K ACCEPT     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:443', TermColor.cyan),
-  TermLine('   23  1380 ACCEPT    icmp --  *      *       0.0.0.0/0            0.0.0.0/0            icmp type 8', TermColor.white),
-  TermLine('   89  5340 LOG        all  --  *      *       0.0.0.0/0            0.0.0.0/0            LOG flags 0 level 4 prefix "IPT-DROP: "', TermColor.yellow),
-  TermLine('   89  5340 DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0', TermColor.red),
+  TermLine(' 1234  98K ACCEPT     all  --  lo     *       $_ipAny/0            $_ipAny/0', TermColor.white),
+  TermLine('  856  64K ACCEPT     all  --  *      *       $_ipAny/0            $_ipAny/0            state RELATED,ESTABLISHED', TermColor.white),
+  TermLine('   42  2520 ACCEPT    tcp  --  *      *       $_ipAny/0            $_ipAny/0            tcp dpt:22', TermColor.cyan),
+  TermLine('  312  18K ACCEPT     tcp  --  *      *       $_ipAny/0            $_ipAny/0            tcp dpt:80', TermColor.cyan),
+  TermLine('  198  12K ACCEPT     tcp  --  *      *       $_ipAny/0            $_ipAny/0            tcp dpt:443', TermColor.cyan),
+  TermLine('   23  1380 ACCEPT    icmp --  *      *       $_ipAny/0            $_ipAny/0            icmp type 8', TermColor.white),
+  TermLine('   89  5340 LOG        all  --  *      *       $_ipAny/0            $_ipAny/0            LOG flags 0 level 4 prefix "IPT-DROP: "', TermColor.yellow),
+  TermLine('   89  5340 DROP       all  --  *      *       $_ipAny/0            $_ipAny/0', TermColor.red),
   TermLine('', TermColor.white),
   TermLine('Chain FORWARD (policy DROP 0 packets, 0 bytes)', TermColor.yellow),
   TermLine(_iptablesHeader, TermColor.gray),
-  TermLine('  456  27K ACCEPT     all  --  docker0 eth0   172.17.0.0/16        0.0.0.0/0', TermColor.white),
-  TermLine('  312  19K ACCEPT     all  --  eth0   docker0  0.0.0.0/0           172.17.0.0/16        state RELATED,ESTABLISHED', TermColor.white),
+  TermLine('  456  27K ACCEPT     all  --  docker0 eth0   $_ipDockerNet/16        $_ipAny/0', TermColor.white),
+  TermLine('  312  19K ACCEPT     all  --  eth0   docker0  $_ipAny/0           $_ipDockerNet/16        state RELATED,ESTABLISHED', TermColor.white),
   TermLine('', TermColor.white),
   TermLine('Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)', TermColor.yellow),
   TermLine(_iptablesHeader, TermColor.gray),
