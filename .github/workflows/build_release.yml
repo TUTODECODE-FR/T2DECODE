@@ -223,6 +223,11 @@ jobs:
         if: matrix.platform == 'macos'
         shell: bash
         run: |
+          # Tous les pods Flutter utilisent des specs locaux (Flutter ephemeral).
+          # On pré-installe avec --no-repo-update pour contourner le clonage de
+          # cdn.cocoapods.org qui échoue sur les runners GitHub Actions macOS.
+          cd macos && pod install --no-repo-update && cd ..
+
           flutter build macos --release
 
           APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
@@ -421,6 +426,9 @@ jobs:
 
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/Runner.mobileprovision"
+
+          # Pré-installer les pods sans accès CDN (specs locaux Flutter)
+          cd ios && pod install --no-repo-update && cd ..
 
           flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
 
