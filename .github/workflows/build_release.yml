@@ -600,12 +600,38 @@ jobs:
             fi
           done
 
+      - name: Generate and clean release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          TAG="${{ github.event.inputs.target_tag || github.ref_name }}"
+          gh release notes "$TAG" --exclude-drafts > raw_notes.md || echo "* Mises à jour de la version" > raw_notes.md
+          python3 -c "
+          import re, os
+          if not os.path.exists('raw_notes.md'):
+              with open('cleaned_notes.md', 'w') as f:
+                  f.write('* Mises à jour de la version')
+              exit(0)
+          with open('raw_notes.md', 'r') as f:
+              content = f.read()
+          cleaned = re.sub(r' by @[a-zA-Z0-9_-]+', '', content)
+          parts = re.split(r'##\s+(?:New\s+)?Contributors', cleaned, flags=re.IGNORECASE)
+          cleaned = parts[0]
+          parts = re.split(r'##\s+Nouveaux\s+contributeurs', cleaned, flags=re.IGNORECASE)
+          cleaned = parts[0]
+          with open('cleaned_notes.md', 'w') as f:
+              f.write(cleaned.strip())
+          "
+          cat cleaned_notes.md
+
       - name: Create or update release
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe
         with:
           tag_name: ${{ github.event.inputs.target_tag || github.ref_name }}
           files: release_assets/*
-          generate_release_notes: true
+          body_path: cleaned_notes.md
+          generate_release_notes: false
           draft: false
           prerelease: false
           fail_on_unmatched_files: false
