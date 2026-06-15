@@ -176,7 +176,7 @@ class _SysInfoTabState extends State<_SysInfoTab> {
               _btn('Copier', TdcColors.textMuted, () {
                 final term = _termKey.currentState;
                 if (term != null) {
-                  Clipboard.setData(const ClipboardData(text: 'System info copied'));
+                  Clipboard.setData(ClipboardData(text: term.plainText));
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copié !'), duration: Duration(seconds: 1)));
                 }
               }),
