@@ -31,6 +31,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
   static const _sha512 = 'SHA-512';
   static const _sha1 = 'SHA-1';
   static const _copiedMsg = 'Copié';
+  static const _aesGcm = 'AES-GCM';
 
   bool _isEncrypting = false;
   bool _isDecrypting = false;
@@ -43,7 +44,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
   String _signatureResult = '';
   bool? _verificationResult;
 
-  String _selectedCipher = 'AES-GCM';
+  String _selectedCipher = _aesGcm;
   String _selectedHash = 'SHA-256';
   String _selectedSignature = 'Ed25519';
 
@@ -90,11 +91,11 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
 
   // --- Info helpers ---
 
-  bool get _isRealCrypto => _selectedCipher == 'AES-GCM' || _selectedCipher == 'ChaCha20';
+  bool get _isRealCrypto => _selectedCipher == _aesGcm || _selectedCipher == 'ChaCha20';
 
   String get _securityLevel {
     switch (_selectedCipher) {
-      case 'AES-GCM': return '256 bits';
+      case _aesGcm: return '256 bits';
       case 'ChaCha20': return '256 bits';
       case 'Caesar': return 'Aucune';
       case 'Vigenere': return 'Faible';
@@ -105,7 +106,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
 
   String get _cipherFamily {
     switch (_selectedCipher) {
-      case 'AES-GCM': return 'Symétrique';
+      case _aesGcm: return 'Symétrique';
       case 'ChaCha20': return 'Symétrique';
       case 'Caesar': return 'Substitution';
       case 'Vigenere': return 'Substitution';
@@ -291,7 +292,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
             isExpanded: true,
             dropdownColor: TdcColors.surface,
             items: const [
-              DropdownMenuItem(value: 'AES-GCM', child: Text('AES-256-GCM — chiffrement authentifié moderne')),
+              DropdownMenuItem(value: _aesGcm, child: Text('$_aesGcm-GCM — chiffrement authentifié moderne')),
               DropdownMenuItem(value: 'ChaCha20', child: Text('ChaCha20-Poly1305 — alternative mobile/IoT')),
               DropdownMenuItem(value: 'Caesar', child: Text('César — substitution mono-alphabétique')),
               DropdownMenuItem(value: 'Vigenere', child: Text('Vigenère — substitution poly-alphabétique')),
@@ -457,8 +458,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
 
   String get _cipherExplanation {
     switch (_selectedCipher) {
-      case 'AES-GCM':
-        return '🔐 AES-GCM (Galois/Counter Mode) est le standard actuel. '
+      case _aesGcm:
+        return '🔐 $_aesGcm (Galois/Counter Mode) est le standard actuel. '
             'Il chiffre ET authentifie les données en une seule opération. '
             'Utilisé dans TLS 1.3, Wi-Fi WPA3, et la plupart des VPN modernes. '
             'Chaque chiffrement génère un nonce unique (jamais réutilisé) et un tag MAC qui détecte toute altération.';
@@ -991,7 +992,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
     try {
       String result;
       switch (_selectedCipher) {
-        case 'AES-GCM':
+        case _aesGcm:
           _addEncryptStep('Dérivation de la clé via PBKDF2 (100 000 itérations SHA-256 + sel)');
           _addEncryptStep('Génération d\'un nonce aléatoire de 96 bits (unique par opération)');
           _addEncryptStep('Chiffrement AES-256 en mode Galois/Counter Mode');
@@ -1064,7 +1065,7 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
     try {
       String result;
       switch (_selectedCipher) {
-        case 'AES-GCM':
+        case _aesGcm:
           if (_lastEncryptResult == null) {
             _showError('Chiffrez d\'abord un texte pour conserver le nonce et le MAC.');
             return;
@@ -1118,6 +1119,45 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
     }
   }
 
+  String _hashSha256(String input) {
+    _hashSteps.add('Padding du message à un multiple de 512 bits');
+    _hashSteps.add('64 rounds de compression avec constantes dérivées des nombres premiers');
+    final hash = CryptoEngine.hashSha256(input);
+    _hashSteps.add('✓ Empreinte de 256 bits (32 octets)');
+    return hash;
+  }
+
+  String _hashSha512(String input) {
+    _hashSteps.add('Padding à un multiple de 1024 bits');
+    _hashSteps.add('80 rounds de compression');
+    final hash = CryptoEngine.hashSha512(input);
+    _hashSteps.add('✓ Empreinte de 512 bits (64 octets)');
+    return hash;
+  }
+
+  String _hashSha1(String input) {
+    _hashSteps.add('⚠️ Algorithme obsolète — collisions démontrées (SHAttered, 2017)');
+    final hash = CryptoEngine.hashSha1(input);
+    _hashSteps.add('Empreinte de 160 bits — NE PAS utiliser en production');
+    return hash;
+  }
+
+  String _hashMd5(String input) {
+    _hashSteps.add('⛔ Algorithme cassé — collisions triviales depuis 2004');
+    final hash = CryptoEngine.hashMd5(input);
+    _hashSteps.add('Empreinte de 128 bits — à bannir pour la sécurité');
+    return hash;
+  }
+
+  Future<String> _hashPbkdf2(String input) async {
+    _hashSteps.add('Sel fixe "t2decode" (en production, utilisez un sel aléatoire par utilisateur)');
+    _hashSteps.add('100 000 itérations de HMAC-SHA256');
+    _hashSteps.add('Chaque itération ralentit volontairement le brute-force');
+    final hash = await CryptoEngine.hashPbkdf2(input);
+    _hashSteps.add('✓ Clé dérivée de 256 bits en base64');
+    return hash;
+  }
+
   Future<void> _hashData() async {
     if (_hashInputController.text.isEmpty) {
       _showError('Entrez des données à hasher.');
@@ -1137,36 +1177,22 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
 
       switch (_selectedHash) {
         case 'SHA-256':
-          _hashSteps.add('Padding du message à un multiple de 512 bits');
-          _hashSteps.add('64 rounds de compression avec constantes dérivées des nombres premiers');
-          hash = CryptoEngine.hashSha256(input);
-          _hashSteps.add('✓ Empreinte de 256 bits (32 octets)');
+          hash = _hashSha256(input);
           break;
         case _sha512:
-          _hashSteps.add('Padding à un multiple de 1024 bits');
-          _hashSteps.add('80 rounds de compression');
-          hash = CryptoEngine.hashSha512(input);
-          _hashSteps.add('✓ Empreinte de 512 bits (64 octets)');
+          hash = _hashSha512(input);
           break;
         case _sha1:
-          _hashSteps.add('⚠️ Algorithme obsolète — collisions démontrées (SHAttered, 2017)');
-          hash = CryptoEngine.hashSha1(input);
-          _hashSteps.add('Empreinte de 160 bits — NE PAS utiliser en production');
+          hash = _hashSha1(input);
           break;
         case 'MD5':
-          _hashSteps.add('⛔ Algorithme cassé — collisions triviales depuis 2004');
-          hash = CryptoEngine.hashMd5(input);
-          _hashSteps.add('Empreinte de 128 bits — à bannir pour la sécurité');
+          hash = _hashMd5(input);
           break;
         case 'PBKDF2':
-          _hashSteps.add('Sel fixe "t2decode" (en production, utilisez un sel aléatoire par utilisateur)');
-          _hashSteps.add('100 000 itérations de HMAC-SHA256');
-          _hashSteps.add('Chaque itération ralentit volontairement le brute-force');
-          hash = await CryptoEngine.hashPbkdf2(input);
-          _hashSteps.add('✓ Clé dérivée de 256 bits en base64');
+          hash = await _hashPbkdf2(input);
           break;
         default:
-          hash = CryptoEngine.hashSha256(input);
+          hash = _hashSha256(input);
       }
       setState(() {
         _hashResult = hash;

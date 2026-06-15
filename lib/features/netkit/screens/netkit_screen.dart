@@ -116,7 +116,14 @@ class _SysInfoTabState extends State<_SysInfoTab> {
     lines.add(TermLine('  OS:      $os $osVersion', TermColor.white));
     lines.add(TermLine('  Host:    $hostname', TermColor.white));
     
-    final kernelName = (os == 'macos' || os == 'ios') ? 'Darwin' : (os == 'windows' ? 'Windows' : 'Linux');
+    final String kernelName;
+    if (os == 'macos' || os == 'ios') {
+      kernelName = 'Darwin';
+    } else if (os == 'windows') {
+      kernelName = 'Windows';
+    } else {
+      kernelName = 'Linux';
+    }
     final kernelVersion = osVersion.contains('(') ? osVersion.split('(').last.replaceAll(')', '') : osVersion;
     lines.add(TermLine('  Kernel:  $kernelName $kernelVersion', TermColor.white));
     
@@ -535,7 +542,7 @@ class _DnsTabState extends State<_DnsTab> {
     term.clear();
 
     final domains = [_googleCom, 'cloudflare.com', _githubCom, 'mozilla.org', 'wikipedia.org'];
-    term.addLine(TermLine('\$ for d in $_googleCom cloudflare.com $_githubCom mozilla.org wikipedia.org; do dig +short \$d; done', TermColor.green));
+    term.addLine(const TermLine('\$ for d in $_googleCom cloudflare.com $_githubCom mozilla.org wikipedia.org; do dig +short \$d; done', TermColor.green));
     term.addLine(const TermLine('', TermColor.white));
     term.addLine(const TermLine('DOMAIN                    IPv4              TIME', TermColor.yellow));
     term.addLine(const TermLine('─────────────────────────────────────────────────', TermColor.gray));
@@ -547,9 +554,18 @@ class _DnsTabState extends State<_DnsTab> {
         final addrs = await InternetAddress.lookup(domain, type: InternetAddressType.IPv4);
         sw.stop();
         final ip = addrs.isNotEmpty ? addrs.first.address : '???';
+        final ms = sw.elapsedMilliseconds;
+        final TermColor color;
+        if (ms < 50) {
+          color = TermColor.green;
+        } else if (ms < 200) {
+          color = TermColor.yellow;
+        } else {
+          color = TermColor.red;
+        }
         term.addLine(TermLine(
-          '${domain.padRight(26)}${ip.padRight(18)}${sw.elapsedMilliseconds}ms',
-          sw.elapsedMilliseconds < 50 ? TermColor.green : sw.elapsedMilliseconds < 200 ? TermColor.yellow : TermColor.red,
+          '${domain.padRight(26)}${ip.padRight(18)}${ms}ms',
+          color,
         ));
       } catch (_) {
         sw.stop();
@@ -854,8 +870,8 @@ class _DiagnosticTabState extends State<_DiagnosticTab> {
     if (term == null) { setState(() => _running = false); return; }
     term.clear();
 
-    term.addLine(const TermLine('\$ ping -c 10 1.1.1.1  (TCP connect simulation)', TermColor.green));
-    term.addLine(const TermLine('PING 1.1.1.1 (1.1.1.1): TCP port 443', TermColor.white));
+    term.addLine(const TermLine('\$ ping -c 10 $_oneOneOneOne  (TCP connect simulation)', TermColor.green));
+    term.addLine(const TermLine('PING $_oneOneOneOne ($_oneOneOneOne): TCP port 443', TermColor.white));
 
     final times = <int>[];
     for (int i = 1; i <= 10; i++) {
@@ -870,7 +886,7 @@ class _DiagnosticTabState extends State<_DiagnosticTab> {
     }
 
     term.addLine(const TermLine('', TermColor.white));
-    term.addLine(const TermLine('--- 1.1.1.1 ping statistics ---', TermColor.white));
+    term.addLine(const TermLine('--- $_oneOneOneOne ping statistics ---', TermColor.white));
     final loss = ((10 - times.length) / 10 * 100).toStringAsFixed(0);
     term.addLine(TermLine('10 packets transmitted, ${times.length} received, $loss% loss', int.parse(loss) == 0 ? TermColor.green : TermColor.yellow));
 

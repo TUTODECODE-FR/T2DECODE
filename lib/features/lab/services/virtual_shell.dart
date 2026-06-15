@@ -177,8 +177,8 @@ class _FSNode {
   final String? content;
   final int permissions;
 
-  _FSNode.file(this.path, this.content, {this.permissions = 0x1A4}) : isDirectory = false; // 644
-  _FSNode.directory(this.path, {this.permissions = 0x1ED}) : isDirectory = true, content = null; // 755
+  _FSNode.file(this.path, this.content) : permissions = 0x1A4, isDirectory = false; // 644
+  _FSNode.directory(this.path) : permissions = 0x1ED, isDirectory = true, content = null; // 755
 
   bool get isFile => !isDirectory;
 }
@@ -350,77 +350,90 @@ class VirtualShell {
     return args;
   }
 
+  List<String> _suCmd(List<String> rest) {
+    if (rest.contains('root') || rest.contains('-')) {
+      _user = 'root';
+      _cwd = '/root';
+      return [];
+    }
+    return ['su: Authentication failure'];
+  }
+
+  List<String> _sudoCmd(List<String> rest) {
+    if (rest.isEmpty) return ['usage: sudo <command>'];
+    return ['[sudo] password for $_user: ✓', ..._executeSingle(rest.join(' '))];
+  }
+
   List<String> _executeSingle(String cmd) {
     final args = _parseArgs(cmd);
     if (args.isEmpty) return [];
     final base = args[0];
     final rest = args.sublist(1);
 
+    final handlers = <String, List<String> Function(List<String>)>{
+      'ls': _ls,
+      'cd': _cd,
+      'cat': _cat,
+      'mkdir': _mkdir,
+      'touch': _touch,
+      'rm': _rm,
+      'cp': _cp,
+      'mv': _mv,
+      'head': _head,
+      'tail': _tail,
+      'wc': _wc,
+      'find': _find,
+      'grep': _grep,
+      'chmod': _chmod,
+      'uname': _uname,
+      'du': _du,
+      'ps': _ps,
+      'kill': _kill,
+      'ping': _ping,
+      'ip': _ip,
+      'ss': _ss,
+      'curl': _curl,
+      'wget': _wget,
+      'dig': _dig,
+      'nslookup': _nslookup,
+      'traceroute': _traceroute,
+      'export': _export,
+      'unset': _unset,
+      'which': _which,
+      'file': _file,
+      'stat': _stat,
+      'sort': _sortCmd,
+      'uniq': _uniqCmd,
+      'su': _suCmd,
+      'sudo': _sudoCmd,
+      'man': _man,
+      'tar': _tar,
+      'ssh': _ssh,
+    };
+
+    if (handlers.containsKey(base)) {
+      return handlers[base]!(rest);
+    }
+
     switch (base) {
-      case 'ls': return _ls(rest);
-      case 'cd': return _cd(rest);
       case 'pwd': return [_cwd];
-      case 'cat': return _cat(rest);
       case 'echo': return [rest.join(' ')];
-      case 'mkdir': return _mkdir(rest);
-      case 'touch': return _touch(rest);
-      case 'rm': return _rm(rest);
-      case 'cp': return _cp(rest);
-      case 'mv': return _mv(rest);
-      case 'head': return _head(rest);
-      case 'tail': return _tail(rest);
-      case 'wc': return _wc(rest);
-      case 'find': return _find(rest);
-      case 'grep': return _grep(rest);
-      case 'chmod': return _chmod(rest);
       case 'whoami': return [_user];
       case 'hostname': return [_hostname];
       case 'id': return ['uid=1000($_user) gid=1000($_user) groups=1000($_user),27(sudo)'];
-      case 'uname': return _uname(rest);
       case 'uptime': return ['08:12:33 up 2 days, 4:21, 1 user, load average: 0.15, 0.10, 0.05'];
       case 'date': return [_date()];
       case 'cal': return _cal();
       case 'df': return _df();
-      case 'du': return _du(rest);
       case 'free': return _free();
-      case 'ps': return _ps(rest);
       case 'top': return _top();
-      case 'kill': return _kill(rest);
-      case 'ping': return _ping(rest);
-      case 'ip': return _ip(rest);
-      case 'ss': return _ss(rest);
       case 'ifconfig': return _ifconfig();
       case 'netstat': return ['(obsolète — utilisez ss)'];
-      case 'curl': return _curl(rest);
-      case 'wget': return _wget(rest);
-      case 'dig': return _dig(rest);
-      case 'nslookup': return _nslookup(rest);
-      case 'traceroute': return _traceroute(rest);
       case 'env': return _env();
-      case 'export': return _export(rest);
-      case 'unset': return _unset(rest);
       case 'history': return _history();
-      case 'which': return _which(rest);
-      case 'file': return _file(rest);
-      case 'stat': return _stat(rest);
-      case 'sort': return _sortCmd(rest);
-      case 'uniq': return _uniqCmd(rest);
       case 'clear': return ['__CLEAR__'];
       case 'exit': return ['logout'];
-      case 'su':
-        if (rest.contains('root') || rest.contains('-')) {
-          _user = 'root';
-          _cwd = '/root';
-          return [];
-        }
-        return ['su: Authentication failure'];
-      case 'sudo':
-        if (rest.isEmpty) return ['usage: sudo <command>'];
-        return ['[sudo] password for $_user: ✓', ..._executeSingle(rest.join(' '))];
-      case 'man': return _man(rest);
       case 'help': return _help();
-      case 'tar': return _tar(rest);
-      case 'ssh': return _ssh(rest);
       case 'scp': return ['scp: simulation — transfert non disponible'];
       default: return ['bash: $base: command not found'];
     }

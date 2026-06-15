@@ -25,7 +25,7 @@ class AppNavigator {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       try {
         final f = nav.pushNamed<T>(routeName, arguments: arguments);
-        f?.then((v) => completer.complete(v)).catchError((e, s) => completer.completeError(e, s));
+        f.then((v) => completer.complete(v)).catchError((e, s) => completer.completeError(e, s));
       } catch (e, s) {
         completer.completeError(e, s);
       }
@@ -40,7 +40,7 @@ class AppNavigator {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       try {
         final f = nav.pushReplacementNamed<T, TO>(routeName, result: result, arguments: arguments);
-        f?.then((v) => completer.complete(v)).catchError((e, s) => completer.completeError(e, s));
+        f.then((v) => completer.complete(v)).catchError((e, s) => completer.completeError(e, s));
       } catch (e, s) {
         completer.completeError(e, s);
       }
