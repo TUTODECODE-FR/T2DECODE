@@ -120,7 +120,7 @@ class _SysInfoTabState extends State<_SysInfoTab> {
     lines.add(const TermLine('  ─────────────────────────────', TermColor.gray));
     lines.add(TermLine('  OS:      $os $osVersion', TermColor.white));
     lines.add(TermLine('  Host:    $hostname', TermColor.white));
-    lines.add(TermLine('  Kernel:  ${os == 'macos' ? 'Darwin' : 'Linux'} ${osVersion.split('(').last.replaceAll(')', '')}', TermColor.white));
+    lines.add(TermLine('  Kernel:  ${(os == 'macos' || os == 'ios') ? 'Darwin' : (os == 'windows' ? 'Windows' : 'Linux')} ${(osVersion.contains('(') ? osVersion.split('(').last.replaceAll(')', '') : osVersion)}', TermColor.white));
     lines.add(TermLine('  CPU:     $cores cores', TermColor.white));
     lines.add(TermLine('  Dart:    $dartVersion', TermColor.white));
     lines.add(TermLine('  Locale:  $locale', TermColor.white));
