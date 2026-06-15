@@ -4,6 +4,15 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - 'LICENSE.txt'
+      - 'DCO.md'
+      - '.gitignore'
+      - '.claudeignore'
+      - '.ci-trigger'
 
 permissions:
   contents: write
