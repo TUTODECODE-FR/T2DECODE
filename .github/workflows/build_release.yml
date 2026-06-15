@@ -186,7 +186,6 @@ jobs:
 
           & $signtool sign /f $pfxPath /p "${{ env.WINDOWS_PFX_PASSWORD }}" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v T2DECODE-Setup.exe
           & $signtool verify /pa /v T2DECODE-Setup.exe
-
       - name: Build Linux artifact
         if: matrix.platform == 'linux'
         shell: bash
@@ -476,6 +475,9 @@ jobs:
 
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/Runner.mobileprovision"
+
+          # Pré-installer les pods sans accès CDN (specs locaux Flutter)
+          cd ios && pod install --no-repo-update && cd ..
 
           flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
 
