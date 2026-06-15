@@ -45,6 +45,7 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
   void dispose() {
     _inputController.dispose();
     _focusNode.dispose();
+    _keyListenerNode.dispose();
     _scrollController.dispose();
     super.dispose();
   }
