@@ -511,7 +511,7 @@ class _DnsTabState extends State<_DnsTab> {
         ));
       } catch (_) {
         sw.stop();
-        term.addLine(TermLine('${domain.padRight(26)}FAILED${' ' * 12}${sw.elapsedMilliseconds}ms', TermColor.red));
+        term.addLine(TermLine('${domain.padRight(26)}FAILED${''.padRight(12)}${sw.elapsedMilliseconds}ms', TermColor.red));
       }
     }
 
