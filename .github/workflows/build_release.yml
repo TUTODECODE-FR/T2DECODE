@@ -18,7 +18,7 @@ env:
         default: ""
 
 jobs:
-  build:
+  build-non-macos:
     name: Build and sign ${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
     permissions:
@@ -30,19 +30,9 @@ jobs:
       ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
       WINDOWS_PFX_BASE64: ${{ secrets.WINDOWS_PFX_BASE64 }}
       WINDOWS_PFX_PASSWORD: ${{ secrets.WINDOWS_PFX_PASSWORD }}
-      MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
-      MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
-      MACOS_CERT_IDENTITY: ${{ secrets.MACOS_CERT_IDENTITY }}
-      APPLE_ID: ${{ secrets.APPLE_ID }}
-      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       LINUX_GPG_PRIVATE_KEY_BASE64: ${{ secrets.LINUX_GPG_PRIVATE_KEY_BASE64 }}
       LINUX_GPG_PASSPHRASE: ${{ secrets.LINUX_GPG_PASSPHRASE }}
       LINUX_GPG_KEY_ID: ${{ secrets.LINUX_GPG_KEY_ID }}
-      IOS_CERT_P12_BASE64: ${{ secrets.IOS_CERT_P12_BASE64 }}
-      IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
-      IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
-      IOS_EXPORT_OPTIONS_PLIST_BASE64: ${{ secrets.IOS_EXPORT_OPTIONS_PLIST_BASE64 }}
     strategy:
       fail-fast: false
       matrix:
@@ -57,12 +47,6 @@ jobs:
             artifact_glob: |
               T2DECODE-Windows.zip
               T2DECODE-Setup.exe
-          - platform: macos
-            os: macos-latest
-            artifact_glob: |
-              T2DECODE-macOS.zip
-              T2DECODE-macOS.dmg
-              T2DECODE-macOS.pkg
           - platform: linux
             os: ubuntu-latest
             artifact_glob: |
@@ -71,14 +55,9 @@ jobs:
               T2DECODE-Linux.AppImage
               T2DECODE-Linux.tar.gz.sig
               T2DECODE-Linux.deb.sig
-          - platform: ios
-            os: macos-latest
-            artifact_glob: |
-              build/ios/ipa/*.ipa
 
     steps:
       - name: Harden Runner
-        if: runner.os != 'macOS'
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
         with:
           egress-policy: audit
@@ -104,30 +83,6 @@ jobs:
 
       - name: Get dependencies
         run: flutter pub get # NOSONAR
-
-      - name: Cache CocoaPods spec repo
-        if: matrix.platform == 'macos' || matrix.platform == 'ios'
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
-        with:
-          path: ~/.cocoapods/repos/trunk
-          key: cocoapods-trunk-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            cocoapods-trunk-
-
-      - name: Setup CocoaPods spec repo
-        if: matrix.platform == 'macos' || matrix.platform == 'ios'
-        shell: bash
-        run: |
-          # S'assurer que le repo trunk est disponible localement avant flutter build
-          # (évite l'échec DNS sur cdn.cocoapods.org lors du pod install automatique)
-          if [ ! -d "$HOME/.cocoapods/repos/trunk" ]; then
-            echo "Clonage du spec repo CocoaPods..."
-            pod repo add trunk https://cdn.cocoapods.org/ --silent || \
-              pod repo add trunk https://github.com/CocoaPods/Specs.git --silent || \
-              true
-          else
-            echo "Spec repo CocoaPods déjà en cache."
-          fi
 
       - name: Run tests
         run: flutter test --dart-define=SKIP_GOLDENS=true
@@ -231,81 +186,6 @@ jobs:
 
           & $signtool sign /f $pfxPath /p "${{ env.WINDOWS_PFX_PASSWORD }}" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v T2DECODE-Setup.exe
           & $signtool verify /pa /v T2DECODE-Setup.exe
-
-      - name: Require macOS signing/notarization secrets
-        if: matrix.platform == 'macos' && env.MACOS_CERT_P12_BASE64 != '' && env.MACOS_CERT_PASSWORD != '' && env.MACOS_CERT_IDENTITY != '' && env.APPLE_ID != '' && env.APPLE_APP_SPECIFIC_PASSWORD != '' && env.APPLE_TEAM_ID != ''
-        shell: bash
-        run: |
-          test -n "${{ env.MACOS_CERT_P12_BASE64 }}"
-          test -n "${{ env.MACOS_CERT_PASSWORD }}"
-          test -n "${{ env.MACOS_CERT_IDENTITY }}"
-          test -n "${{ env.APPLE_ID }}"
-          test -n "${{ env.APPLE_APP_SPECIFIC_PASSWORD }}"
-          test -n "${{ env.APPLE_TEAM_ID }}"
-
-      - name: Build macOS app (unsigned by default)
-        if: matrix.platform == 'macos'
-        shell: bash
-        run: |
-          flutter build macos --release
-
-          APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
-
-          # DMG
-          chmod +x scripts/build_dmg.sh
-          ./scripts/build_dmg.sh
-          cp -f build/macos/Build/Products/Release/T2DECODE-macOS.dmg T2DECODE-macOS.dmg
-
-          # PKG (unsigned by default)
-          chmod +x scripts/build_pkg.sh
-          APP_VERSION="${TARGET_TAG#v}" ./scripts/build_pkg.sh
-          mv build/macos/Build/Products/Release/T2DECODE_Installer.pkg T2DECODE-macOS-Installer.pkg
-          cp -f T2DECODE-macOS-Installer.pkg T2DECODE-macOS.pkg
-
-          # Zip
-          ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
-
-      - name: Sign and notarize macOS artifacts
-        if: matrix.platform == 'macos' && env.MACOS_CERT_P12_BASE64 != '' && env.MACOS_CERT_PASSWORD != '' && env.MACOS_CERT_IDENTITY != '' && env.APPLE_ID != '' && env.APPLE_APP_SPECIFIC_PASSWORD != '' && env.APPLE_TEAM_ID != ''
-        shell: bash
-        run: |
-          APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
-          KEYCHAIN_PATH="$RUNNER_TEMP/build.keychain-db"
-          CERT_PATH="$RUNNER_TEMP/macos_cert.p12"
-
-          echo "${{ env.MACOS_CERT_P12_BASE64 }}" | base64 --decode > "$CERT_PATH"
-
-          security create-keychain -p "" "$KEYCHAIN_PATH"
-          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-          security unlock-keychain -p "" "$KEYCHAIN_PATH"
-          security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
-          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "${{ env.MACOS_CERT_PASSWORD }}" -T /usr/bin/codesign -T /usr/bin/security
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "$KEYCHAIN_PATH"
-
-          codesign --force --deep --options runtime --timestamp --sign "${{ env.MACOS_CERT_IDENTITY }}" "$APP_PATH"
-          codesign --verify --deep --strict --verbose=2 "$APP_PATH"
-          spctl --assess --type execute --verbose "$APP_PATH"
-
-          rm -f T2DECODE-macOS.zip
-          ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
-
-          xcrun notarytool submit T2DECODE-macOS.zip \
-            --apple-id "${{ env.APPLE_ID }}" \
-            --password "${{ env.APPLE_APP_SPECIFIC_PASSWORD }}" \
-            --team-id "${{ env.APPLE_TEAM_ID }}" \
-            --wait
-          xcrun stapler staple "$APP_PATH"
-
-          xcrun stapler staple T2DECODE-macOS.dmg
-
-          productsign --sign "${{ env.MACOS_CERT_IDENTITY }}" T2DECODE-macOS-Installer.pkg T2DECODE-macOS-Installer-Signed.pkg
-          xcrun notarytool submit T2DECODE-macOS-Installer-Signed.pkg \
-            --apple-id "${{ env.APPLE_ID }}" \
-            --password "${{ env.APPLE_APP_SPECIFIC_PASSWORD }}" \
-            --team-id "${{ env.APPLE_TEAM_ID }}" \
-            --wait
-          xcrun stapler staple T2DECODE-macOS-Installer-Signed.pkg
-          mv T2DECODE-macOS-Installer-Signed.pkg T2DECODE-macOS.pkg
 
       - name: Build Linux artifact
         if: matrix.platform == 'linux'
@@ -415,6 +295,157 @@ jobs:
             --output T2DECODE-Linux.deb.sig \
             --detach-sign T2DECODE-Linux.deb
 
+      - name: Upload platform artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: build-${{ matrix.platform }}
+          path: ${{ matrix.artifact_glob }}
+
+  build-macos:
+    name: Build and sign ${{ matrix.platform }}
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    env:
+      MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
+      MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+      MACOS_CERT_IDENTITY: ${{ secrets.MACOS_CERT_IDENTITY }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      IOS_CERT_P12_BASE64: ${{ secrets.IOS_CERT_P12_BASE64 }}
+      IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+      IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+      IOS_EXPORT_OPTIONS_PLIST_BASE64: ${{ secrets.IOS_EXPORT_OPTIONS_PLIST_BASE64 }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos
+            artifact_glob: |
+              T2DECODE-macOS.zip
+              T2DECODE-macOS.dmg
+              T2DECODE-macOS.pkg
+          - platform: ios
+            artifact_glob: |
+              build/ios/ipa/*.ipa
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          # On workflow_dispatch, build the exact tag the user asked for (avoid uploading main builds to an older tag release).
+          ref: ${{ env.TARGET_TAG }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@0ca7a949e71ae44c8e688a51c5e7e93b2c87e295
+        with:
+          flutter-version: "3.41.4"
+          channel: "stable"
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get # NOSONAR
+
+      - name: Cache CocoaPods spec repo
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ~/.cocoapods/repos/trunk
+          key: cocoapods-trunk-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            cocoapods-trunk-
+
+      - name: Setup CocoaPods spec repo
+        shell: bash
+        run: |
+          # S'assurer que le repo trunk est disponible localement avant flutter build
+          # (évite l'échec DNS sur cdn.cocoapods.org lors du pod install automatique)
+          if [ ! -d "$HOME/.cocoapods/repos/trunk" ]; then
+            echo "Clonage du spec repo CocoaPods..."
+            pod repo add trunk https://cdn.cocoapods.org/ --silent || \
+              pod repo add trunk https://github.com/CocoaPods/Specs.git --silent || \
+              true
+          else
+            echo "Spec repo CocoaPods déjà en cache."
+          fi
+
+      - name: Run tests
+        run: flutter test --dart-define=SKIP_GOLDENS=true
+
+      - name: Require macOS signing/notarization secrets
+        if: matrix.platform == 'macos' && env.MACOS_CERT_P12_BASE64 != '' && env.MACOS_CERT_PASSWORD != '' && env.MACOS_CERT_IDENTITY != '' && env.APPLE_ID != '' && env.APPLE_APP_SPECIFIC_PASSWORD != '' && env.APPLE_TEAM_ID != ''
+        shell: bash
+        run: |
+          test -n "${{ env.MACOS_CERT_P12_BASE64 }}"
+          test -n "${{ env.MACOS_CERT_PASSWORD }}"
+          test -n "${{ env.MACOS_CERT_IDENTITY }}"
+          test -n "${{ env.APPLE_ID }}"
+          test -n "${{ env.APPLE_APP_SPECIFIC_PASSWORD }}"
+          test -n "${{ env.APPLE_TEAM_ID }}"
+
+      - name: Build macOS app (unsigned by default)
+        if: matrix.platform == 'macos'
+        shell: bash
+        run: |
+          flutter build macos --release
+
+          APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
+
+          # DMG
+          chmod +x scripts/build_dmg.sh
+          ./scripts/build_dmg.sh
+          cp -f build/macos/Build/Products/Release/T2DECODE-macOS.dmg T2DECODE-macOS.dmg
+
+          # PKG (unsigned by default)
+          chmod +x scripts/build_pkg.sh
+          APP_VERSION="${TARGET_TAG#v}" ./scripts/build_pkg.sh
+          mv build/macos/Build/Products/Release/T2DECODE_Installer.pkg T2DECODE-macOS-Installer.pkg
+          cp -f T2DECODE-macOS-Installer.pkg T2DECODE-macOS.pkg
+
+          # Zip
+          ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
+
+      - name: Sign and notarize macOS artifacts
+        if: matrix.platform == 'macos' && env.MACOS_CERT_P12_BASE64 != '' && env.MACOS_CERT_PASSWORD != '' && env.MACOS_CERT_IDENTITY != '' && env.APPLE_ID != '' && env.APPLE_APP_SPECIFIC_PASSWORD != '' && env.APPLE_TEAM_ID != ''
+        shell: bash
+        run: |
+          APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
+          KEYCHAIN_PATH="$RUNNER_TEMP/build.keychain-db"
+          CERT_PATH="$RUNNER_TEMP/macos_cert.p12"
+
+          echo "${{ env.MACOS_CERT_P12_BASE64 }}" | base64 --decode > "$CERT_PATH"
+
+          security create-keychain -p "" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "" "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
+          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "${{ env.MACOS_CERT_PASSWORD }}" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "$KEYCHAIN_PATH"
+
+          codesign --force --deep --options runtime --timestamp --sign "${{ env.MACOS_CERT_IDENTITY }}" "$APP_PATH"
+          codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+          spctl --assess --type execute --verbose "$APP_PATH"
+
+          rm -f T2DECODE-macOS.zip
+          ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
+
+          xcrun notarytool submit T2DECODE-macOS.zip \
+            --apple-id "${{ env.APPLE_ID }}" \
+            --password "${{ env.APPLE_APP_SPECIFIC_PASSWORD }}" \
+            --team-id "${{ env.APPLE_TEAM_ID }}" \
+            --wait
+          xcrun stapler staple "$APP_PATH"
+
+          xcrun stapler staple T2DECODE-macOS.dmg
+
+          productsign --sign "${{ env.MACOS_CERT_IDENTITY }}" T2DECODE-macOS-Installer.pkg T2DECODE-macOS-Installer-Signed.pkg
+          xcrun notarytool submit T2DECODE-macOS-Installer-Signed.pkg \
+            --apple-id "${{ env.APPLE_ID }}" \
+            --password "${{ env.APPLE_APP_SPECIFIC_PASSWORD }}" \
+            --team-id "${{ env.APPLE_TEAM_ID }}" \
+            --wait
+          xcrun stapler staple T2DECODE-macOS-Installer-Signed.pkg
+          mv T2DECODE-macOS-Installer-Signed.pkg T2DECODE-macOS.pkg
+
       - name: Require iOS signing secrets
         if: matrix.platform == 'ios' && env.IOS_CERT_P12_BASE64 != '' && env.IOS_CERT_PASSWORD != '' && env.IOS_PROVISIONING_PROFILE_BASE64 != '' && env.IOS_EXPORT_OPTIONS_PLIST_BASE64 != ''
         shell: bash
@@ -456,7 +487,7 @@ jobs:
 
   release:
     name: Create GitHub Release
-    needs: build
+    needs: [build-non-macos, build-macos]
     if: always() && (github.event_name == 'workflow_dispatch' || github.ref_type == 'tag' || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
     permissions:
