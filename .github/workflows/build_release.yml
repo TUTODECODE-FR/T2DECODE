@@ -348,8 +348,9 @@ jobs:
       - name: Setup CocoaPods spec repo
         shell: bash
         run: |
-          # Initialisation rapide du CDN CocoaPods
-          pod repo add-cdn trunk https://cdn.cocoapods.org/ --silent || true
+          # Ensure CocoaPods uses the GitHub Specs repo (avoids CDN DNS issues)
+          pod repo remove trunk || true
+          pod repo add trunk https://github.com/CocoaPods/Specs.git --silent
 
       - name: Run tests
         run: flutter test --dart-define=SKIP_GOLDENS=true
