@@ -1,9 +1,7 @@
 name: Auto Tag and Trigger Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 permissions:
   contents: read
