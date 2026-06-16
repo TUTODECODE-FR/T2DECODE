@@ -21,7 +21,7 @@ const Map<String, dynamic> officialDeveloper = {
   'website': 'https://www.tutodecode.org',
   'contact': 'contact@tutodecode.org',
   'github': 'https://github.com/TUTODECODE-FR/T2DECODE',
-  'license': 'AGPL-3.0',
+  'license': 'GPL-3.0',
   'developer_id': 'TUTODECODE_OFFICIAL_DEV_001',
 };
 
