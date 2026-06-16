@@ -1,0 +1,103 @@
+name: PR Validation Build
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-non-macos:
+    name: Compile ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: android
+            os: ubuntu-latest
+          - platform: windows
+            os: windows-latest
+          - platform: linux
+            os: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Setup Java
+        if: matrix.platform == 'android'
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@0ca7a949e71ae44c8e688a51c5e7e93b2c87e295
+        with:
+          flutter-version: "3.41.4"
+          channel: "stable"
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test --dart-define=SKIP_GOLDENS=true
+
+      - name: Compile Android APK (unsigned)
+        if: matrix.platform == 'android'
+        run: flutter build apk --release
+
+      - name: Compile Windows App
+        if: matrix.platform == 'windows'
+        run: flutter build windows --release
+
+      - name: Compile Linux App
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev
+          flutter build linux --release
+
+  build-macos:
+    name: Compile ${{ matrix.platform }}
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos
+          - platform: ios
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@0ca7a949e71ae44c8e688a51c5e7e93b2c87e295
+        with:
+          flutter-version: "3.41.4"
+          channel: "stable"
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Flush DNS cache
+        shell: bash
+        run: |
+          sudo dscacheutil -flushcache
+          sudo killall -HUP mDNSResponder || true
+
+      - name: Run tests
+        run: flutter test --dart-define=SKIP_GOLDENS=true
+
+      - name: Compile macOS App (unsigned)
+        if: matrix.platform == 'macos'
+        run: flutter build macos --release
+
+      - name: Compile iOS IPA (unsigned)
+        if: matrix.platform == 'ios'
+        run: flutter build ios --no-codesign --release

@@ -345,11 +345,11 @@ jobs:
       - name: Get dependencies
         run: flutter pub get # NOSONAR
 
-      - name: Setup CocoaPods spec repo
+      - name: Flush DNS cache
         shell: bash
         run: |
-          # Ensure CocoaPods uses the GitHub Specs repo (avoids CDN DNS issues)
-          pod repo add cocoapods https://github.com/CocoaPods/Specs.git --silent || true
+          sudo dscacheutil -flushcache
+          sudo killall -HUP mDNSResponder || true
 
       - name: Run tests
         run: flutter test --dart-define=SKIP_GOLDENS=true
