@@ -348,6 +348,9 @@ jobs:
       - name: Flush DNS cache
         shell: bash
         run: |
+          sudo networksetup -listallnetworkservices | grep -v '\*' | tail -n +2 | while read -r service; do
+            sudo networksetup -setdnsservers "$service" 8.8.8.8 8.8.4.4 || true
+          done
           sudo dscacheutil -flushcache
           sudo killall -HUP mDNSResponder || true
 
