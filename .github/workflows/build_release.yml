@@ -397,12 +397,13 @@ jobs:
 
           echo "${{ env.MACOS_CERT_P12_BASE64 }}" | base64 --decode > "$CERT_PATH"
 
-          security create-keychain -p "" "$KEYCHAIN_PATH"
+          security create-keychain -p "build" "$KEYCHAIN_PATH"
+          security default-keychain -s "$KEYCHAIN_PATH"
           security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-          security unlock-keychain -p "" "$KEYCHAIN_PATH"
+          security unlock-keychain -p "build" "$KEYCHAIN_PATH"
           security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
-          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "${{ env.MACOS_CERT_PASSWORD }}" -T /usr/bin/codesign -T /usr/bin/security
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "${{ env.MACOS_CERT_PASSWORD }}" -T /usr/bin/codesign -T /usr/bin/security -T /usr/bin/productsign
+          security set-key-partition-list -S apple-tool:,apple:,codesign:,productsign: -s -k "build" "$KEYCHAIN_PATH"
 
           codesign --force --deep --options runtime --timestamp --sign "${{ env.MACOS_CERT_IDENTITY }}" "$APP_PATH"
           codesign --verify --deep --strict --verbose=2 "$APP_PATH"
@@ -450,12 +451,13 @@ jobs:
           echo "${{ env.IOS_PROVISIONING_PROFILE_BASE64 }}" | base64 --decode > "$PROFILE_PATH"
           echo "${{ env.IOS_EXPORT_OPTIONS_PLIST_BASE64 }}" | base64 --decode > ios/ExportOptions.plist
 
-          security create-keychain -p "" "$KEYCHAIN_PATH"
+          security create-keychain -p "build" "$KEYCHAIN_PATH"
+          security default-keychain -s "$KEYCHAIN_PATH"
           security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-          security unlock-keychain -p "" "$KEYCHAIN_PATH"
+          security unlock-keychain -p "build" "$KEYCHAIN_PATH"
           security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
           security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "${{ env.IOS_CERT_PASSWORD }}" -T /usr/bin/codesign -T /usr/bin/security
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "build" "$KEYCHAIN_PATH"
 
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/Runner.mobileprovision"
