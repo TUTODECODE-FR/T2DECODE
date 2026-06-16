@@ -824,3 +824,19 @@ jobs:
 
           # Nettoyer la clé SSH
           rm -f ~/.ssh/sf_key
+
+  cleanup-tag:
+    name: Delete Git Tag on Failure
+    needs: [build-non-macos, build-macos]
+    if: failure() && (github.event_name == 'workflow_dispatch' || github.ref_type == 'tag' || startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Delete Tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ github.event.inputs.target_tag || github.ref_name }}"
+          echo "Build failed. Deleting tag $TAG from repository..."
+          gh api -X DELETE "/repos/${{ github.repository }}/git/refs/tags/$TAG" || true
