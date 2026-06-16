@@ -349,8 +349,7 @@ jobs:
         shell: bash
         run: |
           # Ensure CocoaPods uses the GitHub Specs repo (avoids CDN DNS issues)
-          pod repo remove trunk || true
-          pod repo add trunk https://github.com/CocoaPods/Specs.git --silent
+          pod repo add cocoapods https://github.com/CocoaPods/Specs.git --silent || true
 
       - name: Run tests
         run: flutter test --dart-define=SKIP_GOLDENS=true
