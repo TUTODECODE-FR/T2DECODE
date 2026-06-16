@@ -348,7 +348,8 @@ jobs:
       - name: Setup CocoaPods spec repo
         shell: bash
         run: |
-          # Initialisation rapide du CDN CocoaPods
+          # Initialisation propre et rapide du CDN CocoaPods en nettoyant tout conflit preexistant
+          pod repo remove trunk || true
           pod repo add-cdn trunk https://cdn.cocoapods.org/ --silent || true
 
       - name: Run tests
