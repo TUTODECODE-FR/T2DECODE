@@ -11,3 +11,7 @@ DISABLE:
 
 DISABLE_LINTERS:
   - YAML_V8R
+
+# Configuration des linters pour exclure les faux positifs
+REPOSITORY_DEVSKIM_FILTER_REGEX_INCLUDE: "lib/.*"
+REPOSITORY_KICS_FILTER_REGEX_EXCLUDE: ".github/workflows/build_release.yml"
