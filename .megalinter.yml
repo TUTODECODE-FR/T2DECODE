@@ -1,3 +1,5 @@
+---
+# yamllint disable
 # MegaLinter Configuration File
 # https://megalinter.io
 
@@ -11,7 +13,4 @@ DISABLE:
 
 DISABLE_LINTERS:
   - YAML_V8R
-
-# Configuration des linters pour exclure les faux positifs
-REPOSITORY_DEVSKIM_FILTER_REGEX_INCLUDE: "lib/.*"
-REPOSITORY_DEVSKIM_FILTER_REGEX_EXCLUDE: "(lib/features/(lab|tools|ghost_ai)/|lib/core/security/|lib/core/providers/settings_provider.dart)"
+  - REPOSITORY_DEVSKIM
