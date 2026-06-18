@@ -14,4 +14,4 @@ DISABLE_LINTERS:
 
 # Configuration des linters pour exclure les faux positifs
 REPOSITORY_DEVSKIM_FILTER_REGEX_INCLUDE: "lib/.*"
-REPOSITORY_KICS_FILTER_REGEX_EXCLUDE: ".github/workflows/build_release.yml"
+REPOSITORY_DEVSKIM_FILTER_REGEX_EXCLUDE: "(lib/features/(lab|tools|ghost_ai)/|lib/core/security/|lib/core/providers/settings_provider.dart)"

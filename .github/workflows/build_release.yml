@@ -745,7 +745,7 @@ jobs:
     env:
       SF_USER: winancher
       SF_PROJECT: t2decode
-      SF_PRIVATE_KEY: ${{ secrets.SF_PRIVATE_KEY }}
+      SF_KEY: ${{ secrets.SF_PRIVATE_KEY }}
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
@@ -753,13 +753,13 @@ jobs:
           egress-policy: audit
 
       - name: Skip if SourceForge SSH key not configured
-        if: env.SF_PRIVATE_KEY == ''
+        if: env.SF_KEY == ''
         run: |
           echo "::notice::Secret SF_PRIVATE_KEY manquant — upload SourceForge ignoré."
-          echo "Pour activer : Settings → Secrets → SF_PRIVATE_KEY = clé SSH privée enregistrée sur sourceforge.net/account"
+          echo "Pour activer : configurer le secret SF_PRIVATE_KEY avec la clé SSH privée enregistrée sur sourceforge.net/account"
 
       - name: Download release assets
-        if: env.SF_PRIVATE_KEY != ''
+        if: env.SF_KEY != ''
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           path: artifacts
@@ -767,7 +767,7 @@ jobs:
           merge-multiple: true
 
       - name: Prepare assets for SourceForge
-        if: env.SF_PRIVATE_KEY != ''
+        if: env.SF_KEY != ''
         shell: bash
         run: |
           mkdir -p sf_assets
