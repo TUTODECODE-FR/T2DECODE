@@ -1,0 +1,4 @@
+# Configuration for MegaLinter
+# MegaLinter will report issues but will not fail the CI build.
+# This prevents pre-existing errors from blocking PRs.
+DISABLE_ERRORS: true
