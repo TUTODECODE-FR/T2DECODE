@@ -338,15 +338,11 @@ jobs:
           # On workflow_dispatch, build the exact tag the user asked for (avoid uploading main builds to an older tag release).
           ref: ${{ env.TARGET_TAG }}
 
-      - name: Flush DNS cache
+      - name: Pre-resolve CocoaPods CDN
         if: runner.os == 'macOS'
         shell: bash
         run: |
-          sudo networksetup -listallnetworkservices | grep -v '\*' | tail -n +2 | while read -r service; do
-            sudo networksetup -setdnsservers "$service" 8.8.8.8 8.8.4.4 || true
-          done
-          sudo dscacheutil -flushcache
-          sudo killall -HUP mDNSResponder || true
+          for i in 1 2 3; do curl -s -I https://cdn.cocoapods.org && break || sleep 5; done
 
       - name: Setup Flutter
         uses: subosito/flutter-action@0ca7a949e71ae44c8e688a51c5e7e93b2c87e295
