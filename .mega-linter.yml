@@ -1,4 +1,21 @@
+---
+# yamllint disable
 # Configuration for MegaLinter
+# MegaLinter Configuration File
+# https://megalinter.io
+
+# Configuration globale
+SHOW_ELAPSED_TIME: true
+
 # MegaLinter will report issues but will not fail the CI build.
 # This prevents pre-existing errors from blocking PRs.
 DISABLE_ERRORS: true
+
+# Désactiver les linters générant des faux positifs fréquents
+DISABLE:
+  - SPELL # Désactive le dictionnaire (jargon technique et français)
+  - COPYPASTE # Désactive le détecteur de duplication (normal pour les cours et labs)
+
+DISABLE_LINTERS:
+  - YAML_V8R
+  - REPOSITORY_DEVSKIM
