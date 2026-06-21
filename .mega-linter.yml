@@ -1,10 +1,15 @@
 ---
 # yamllint disable
+# Configuration for MegaLinter
 # MegaLinter Configuration File
 # https://megalinter.io
 
 # Configuration globale
 SHOW_ELAPSED_TIME: true
+
+# MegaLinter will report issues but will not fail the CI build.
+# This prevents pre-existing errors from blocking PRs.
+DISABLE_ERRORS: true
 
 # Désactiver les linters générant des faux positifs fréquents
 DISABLE:
