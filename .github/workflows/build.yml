@@ -22,8 +22,8 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Enable Swift Package Manager
-        run: flutter config --enable-swift-package-manager
+      - name: Disable Swift Package Manager
+        run: flutter config --no-enable-swift-package-manager
       # The analysis requires to retrieve dependencies and build successfully
       - name: Build
         run: make get

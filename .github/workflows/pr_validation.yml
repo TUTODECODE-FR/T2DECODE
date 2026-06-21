@@ -42,8 +42,8 @@ jobs:
           channel: "stable"
           cache: true
 
-      - name: Enable Swift Package Manager
-        run: flutter config --enable-swift-package-manager
+      - name: Disable Swift Package Manager
+        run: flutter config --no-enable-swift-package-manager
 
       - name: Get dependencies
         run: flutter pub get
@@ -95,8 +95,8 @@ jobs:
           channel: "stable"
           cache: true
 
-      - name: Enable Swift Package Manager
-        run: flutter config --enable-swift-package-manager
+      - name: Disable Swift Package Manager
+        run: flutter config --no-enable-swift-package-manager
 
       - name: Get dependencies
         run: flutter pub get

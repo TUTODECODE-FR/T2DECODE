@@ -34,8 +34,8 @@ jobs:
           flutter-version: "3.41.4"
           channel: "stable"
 
-      - name: Enable Swift Package Manager
-        run: flutter config --enable-swift-package-manager
+      - name: Disable Swift Package Manager
+        run: flutter config --no-enable-swift-package-manager
 
       - name: Get dependencies
         run: flutter pub get # NOSONAR
