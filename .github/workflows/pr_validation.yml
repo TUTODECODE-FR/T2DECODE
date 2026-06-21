@@ -78,11 +78,11 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
-      - name: Pre-resolve CocoaPods CDN
+      - name: Workaround CocoaPods CDN issue
         if: runner.os == 'macOS'
         shell: bash
         run: |
-          for i in 1 2 3; do curl -s -I https://cdn.cocoapods.org && break || sleep 5; done
+          echo "104.18.191.9 cdn.cocoapods.org" | sudo tee -a /etc/hosts
 
       - name: Setup Flutter
         uses: subosito/flutter-action@0ca7a949e71ae44c8e688a51c5e7e93b2c87e295
