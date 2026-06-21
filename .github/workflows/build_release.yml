@@ -84,6 +84,9 @@ jobs:
           channel: "stable"
           cache: true
 
+      - name: Enable Swift Package Manager
+        run: flutter config --enable-swift-package-manager
+
       - name: Get dependencies
         run: flutter pub get # NOSONAR
 
@@ -344,6 +347,9 @@ jobs:
           flutter-version: "3.41.4"
           channel: "stable"
           cache: true
+
+      - name: Enable Swift Package Manager
+        run: flutter config --enable-swift-package-manager
 
       - name: Get dependencies
         run: flutter pub get # NOSONAR
