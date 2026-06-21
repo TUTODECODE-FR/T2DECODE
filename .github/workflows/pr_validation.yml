@@ -74,7 +74,6 @@ jobs:
       matrix:
         include:
           - platform: macos
-          - platform: ios
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -99,6 +98,3 @@ jobs:
         if: matrix.platform == 'macos'
         run: flutter build macos --release
 
-      - name: Compile iOS IPA (unsigned)
-        if: matrix.platform == 'ios'
-        run: flutter build ios --no-codesign --release
