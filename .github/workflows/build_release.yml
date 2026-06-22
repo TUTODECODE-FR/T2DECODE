@@ -399,6 +399,10 @@ jobs:
           sleep 2
           ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
           echo "🏁 Fin de l'étape Build macOS app"
+          
+          # Force kill any lingering background processes that hold stdout open
+          pkill -f flutter || true
+          pkill -f dart || true
 
       - name: Sign and notarize macOS artifacts
         if: matrix.platform == 'macos' && env.MACOS_CERT_P12_BASE64 != '' && env.MACOS_CERT_PASSWORD != '' && env.MACOS_CERT_IDENTITY != '' && env.APPLE_ID != '' && env.APPLE_APP_SPECIFIC_PASSWORD != '' && env.APPLE_TEAM_ID != ''
