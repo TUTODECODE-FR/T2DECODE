@@ -365,6 +365,10 @@ jobs:
           test -n "${{ env.APPLE_APP_SPECIFIC_PASSWORD }}"
           test -n "${{ env.APPLE_TEAM_ID }}"
 
+      - name: Clear corrupted CocoaPods cache
+        if: matrix.platform == 'macos'
+        run: rm -rf ~/.cocoapods/repos
+
       - name: Build macOS app (unsigned by default)
         if: matrix.platform == 'macos'
         shell: bash
