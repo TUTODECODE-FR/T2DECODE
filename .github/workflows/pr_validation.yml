@@ -94,6 +94,10 @@ jobs:
       - name: Run tests
         run: flutter test --dart-define=SKIP_GOLDENS=true
 
+      - name: Clear corrupted CocoaPods cache
+        if: matrix.platform == 'macos'
+        run: rm -rf ~/.cocoapods/repos
+
       - name: Compile macOS App (unsigned)
         if: matrix.platform == 'macos'
         run: flutter build macos --release
