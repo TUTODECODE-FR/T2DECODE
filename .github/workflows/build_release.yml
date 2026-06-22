@@ -338,14 +338,6 @@ jobs:
           # On workflow_dispatch, build the exact tag the user asked for (avoid uploading main builds to an older tag release).
           ref: ${{ env.TARGET_TAG }}
 
-      - name: Workaround CocoaPods CDN issue
-        if: runner.os == 'macOS'
-        shell: bash
-        run: |
-          echo "" | sudo tee -a /etc/hosts
-          echo "104.18.191.9 cdn.cocoapods.org" | sudo tee -a /etc/hosts
-          echo "104.16.86.20 cdn.jsdelivr.net" | sudo tee -a /etc/hosts
-
       - name: Setup Flutter
         uses: subosito/flutter-action@0ca7a949e71ae44c8e688a51c5e7e93b2c87e295
         with:
