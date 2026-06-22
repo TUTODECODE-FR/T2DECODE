@@ -32,6 +32,8 @@ ln -s /Applications "$DMG_STAGING_DIR/Applications"
 
 # 5. Créer le DMG
 echo "💿 Création de l'image disque (.dmg)..."
+sync
+sleep 2
 hdiutil create -volname "T2DECODE" -srcfolder "$DMG_STAGING_DIR" -ov -format UDZO "$BUILD_DIR/$DMG_NAME"
 
 echo "✅ DMG créé avec succès : $BUILD_DIR/$DMG_NAME"

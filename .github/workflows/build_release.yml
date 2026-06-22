@@ -377,6 +377,9 @@ jobs:
         shell: bash
         run: |
           flutter build macos --release
+          killall dart || true
+          sync
+          sleep 2
 
           APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
 
