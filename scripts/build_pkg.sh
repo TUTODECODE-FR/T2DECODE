@@ -21,6 +21,8 @@ fi
 
 # 2. Créer le package composant (invisible)
 echo "🏗 Création du composant de base..."
+sync
+sleep 2
 pkgbuild --component "$BUILD_DIR/$APP_BUNDLE_NAME" \
          --install-location "/Applications" \
          --identifier "$BUNDLE_ID" \
@@ -29,6 +31,8 @@ pkgbuild --component "$BUILD_DIR/$APP_BUNDLE_NAME" \
 
 # 3. Créer le package produit (avec UI)
 echo "💎 Assemblage de l'installeur avec UI (productbuild)..."
+sync
+sleep 2
 productbuild --distribution "$RESOURCES_DIR/distribution.xml" \
              --resources "$RESOURCES_DIR" \
              --package-path "$BUILD_DIR" \
