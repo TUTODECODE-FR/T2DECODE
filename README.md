@@ -1,4 +1,7 @@
 <div align="center">
+  <p>
+    <strong>🇫🇷 Français</strong> | <a href="README_EN.md">🇬🇧 English</a>
+  </p>
   <a href="https://github.com/TUTODECODE-FR/T2DECODE">
     <img src="https://raw.githubusercontent.com/TUTODECODE-FR/T2DECODE/main/assets/TDC.png" width="160" height="160" alt="T2C Logo">
   </a>
