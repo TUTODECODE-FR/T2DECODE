@@ -65,7 +65,7 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           # On workflow_dispatch, build the exact tag the user asked for (avoid uploading main builds to an older tag release).
           ref: ${{ env.TARGET_TAG }}
@@ -333,7 +333,7 @@ jobs:
               T2DECODE-macOS.pkg
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           # On workflow_dispatch, build the exact tag the user asked for (avoid uploading main builds to an older tag release).
           ref: ${{ env.TARGET_TAG }}
@@ -470,7 +470,7 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           ref: ${{ github.event.inputs.target_tag != '' && github.event.inputs.target_tag || github.ref }}
           fetch-depth: 0
