@@ -11,72 +11,33 @@ class CryptoEngine {
   static const String _errKey = 'Key cannot be null or empty';
   static const String _errMessage = 'Message cannot be null or empty';
   static const String _errText = 'Text cannot be null or empty';
+  static const String _errPlaintext = 'Plaintext cannot be null or empty';
+  static const String _errEncrypted = 'Encrypted data cannot be null or empty';
 
   // --- Symmetric: AES-GCM (real) ---
 
-  static Future<AesGcmResult> aesGcmEncrypt(String plaintext, String passphrase) async {
-    if (plaintext == null || plaintext.isEmpty) {
-      throw ArgumentError('Plaintext cannot be null or empty');
-    }
-    if (passphrase == null || passphrase.isEmpty) {
-      throw ArgumentError(_errPassphrase);
-    }
+  static Future<AesGcmResult> aesGcmEncrypt(String plaintext, String passphrase) =>
+      _symmetricEncrypt(pkg_cryptography.AesGcm.with256bits(), plaintext, passphrase);
 
-    final algo = pkg_cryptography.AesGcm.with256bits();
-    final salt = _generateRandomBytes(16);
-    final key = await _deriveKey(passphrase, salt);
-    final secretKey = pkg_cryptography.SecretKey(key);
-    final nonce = algo.newNonce();
-    final secretBox = await algo.encrypt(
-      utf8.encode(plaintext),
-      secretKey: secretKey,
-      nonce: nonce,
-    );
-    final combinedCiphertext = Uint8List.fromList(salt + secretBox.cipherText);
-    return AesGcmResult(
-      ciphertext: base64.encode(combinedCiphertext),
-      nonce: base64.encode(secretBox.nonce),
-      mac: base64.encode(secretBox.mac.bytes),
-    );
-  }
-
-  static Future<String> aesGcmDecrypt(AesGcmResult encrypted, String passphrase) async {
-    if (encrypted == null || encrypted.ciphertext.isEmpty || encrypted.nonce.isEmpty || encrypted.mac.isEmpty) {
-      throw ArgumentError('Encrypted data cannot be null or empty');
-    }
-    if (passphrase == null || passphrase.isEmpty) {
-      throw ArgumentError(_errPassphrase);
-    }
-
-    final algo = pkg_cryptography.AesGcm.with256bits();
-    final decodedCiphertext = base64.decode(encrypted.ciphertext);
-    if (decodedCiphertext.length < 16) {
-      throw ArgumentError('Invalid ciphertext length');
-    }
-    final salt = decodedCiphertext.sublist(0, 16);
-    final ciphertextBytes = decodedCiphertext.sublist(16);
-    final key = await _deriveKey(passphrase, salt);
-    final secretKey = pkg_cryptography.SecretKey(key);
-    final secretBox = pkg_cryptography.SecretBox(
-      ciphertextBytes,
-      nonce: base64.decode(encrypted.nonce),
-      mac: pkg_cryptography.Mac(base64.decode(encrypted.mac)),
-    );
-    final decrypted = await algo.decrypt(secretBox, secretKey: secretKey);
-    return utf8.decode(decrypted);
-  }
+  static Future<String> aesGcmDecrypt(AesGcmResult encrypted, String passphrase) =>
+      _symmetricDecrypt(pkg_cryptography.AesGcm.with256bits(), encrypted, passphrase);
 
   // --- Symmetric: ChaCha20-Poly1305 ---
 
-  static Future<AesGcmResult> chacha20Encrypt(String plaintext, String passphrase) async {
+  static Future<AesGcmResult> chacha20Encrypt(String plaintext, String passphrase) =>
+      _symmetricEncrypt(pkg_cryptography.Chacha20.poly1305Aead(), plaintext, passphrase);
+
+  static Future<String> chacha20Decrypt(AesGcmResult encrypted, String passphrase) =>
+      _symmetricDecrypt(pkg_cryptography.Chacha20.poly1305Aead(), encrypted, passphrase);
+
+  static Future<AesGcmResult> _symmetricEncrypt(pkg_cryptography.Cipher algo, String plaintext, String passphrase) async {
     if (plaintext == null || plaintext.isEmpty) {
-      throw ArgumentError('Plaintext cannot be null or empty');
+      throw ArgumentError(_errPlaintext);
     }
     if (passphrase == null || passphrase.isEmpty) {
       throw ArgumentError(_errPassphrase);
     }
 
-    final algo = pkg_cryptography.Chacha20.poly1305Aead();
     final salt = _generateRandomBytes(16);
     final key = await _deriveKey(passphrase, salt);
     final secretKey = pkg_cryptography.SecretKey(key);
@@ -94,15 +55,14 @@ class CryptoEngine {
     );
   }
 
-  static Future<String> chacha20Decrypt(AesGcmResult encrypted, String passphrase) async {
+  static Future<String> _symmetricDecrypt(pkg_cryptography.Cipher algo, AesGcmResult encrypted, String passphrase) async {
     if (encrypted == null || encrypted.ciphertext.isEmpty || encrypted.nonce.isEmpty || encrypted.mac.isEmpty) {
-      throw ArgumentError('Encrypted data cannot be null or empty');
+      throw ArgumentError(_errEncrypted);
     }
     if (passphrase == null || passphrase.isEmpty) {
       throw ArgumentError(_errPassphrase);
     }
 
-    final algo = pkg_cryptography.Chacha20.poly1305Aead();
     final decodedCiphertext = base64.decode(encrypted.ciphertext);
     if (decodedCiphertext.length < 16) {
       throw ArgumentError('Invalid ciphertext length');
