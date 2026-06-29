@@ -216,4 +216,37 @@ void main() {
       expect(secretA, secretB);
     });
   });
+
+  group('Input Validation Coverage', () {
+    test('AES-GCM validates inputs', () async {
+      await expectLater(() => CryptoEngine.aesGcmEncrypt('', 'pass'), throwsArgumentError);
+      await expectLater(() => CryptoEngine.aesGcmEncrypt('text', ''), throwsArgumentError);
+      await expectLater(() => CryptoEngine.aesGcmDecrypt(const AesGcmResult(ciphertext: '', nonce: '1', mac: '1'), 'pass'), throwsArgumentError);
+      await expectLater(() => CryptoEngine.aesGcmDecrypt(const AesGcmResult(ciphertext: '1', nonce: '1', mac: '1'), ''), throwsArgumentError);
+    });
+
+    test('Classic Ciphers validate inputs', () {
+      expect(() => CryptoEngine.caesarEncrypt('', 3), throwsArgumentError);
+      expect(() => CryptoEngine.caesarDecrypt('', 3), throwsArgumentError);
+      expect(() => CryptoEngine.caesarEncrypt('text', -1), throwsArgumentError);
+      expect(() => CryptoEngine.vigenereEncrypt('', 'key'), throwsArgumentError);
+      expect(() => CryptoEngine.vigenereDecrypt('', 'key'), throwsArgumentError);
+      expect(() => CryptoEngine.xorEncrypt('', 'key'), throwsArgumentError);
+      expect(() => CryptoEngine.xorEncrypt('text', ''), throwsArgumentError);
+      expect(() => CryptoEngine.xorDecrypt('', 'key'), throwsArgumentError);
+      expect(() => CryptoEngine.xorDecrypt('text', ''), throwsArgumentError);
+    });
+
+    test('Asymmetric & HMAC validate inputs', () async {
+      expect(() => CryptoEngine.hmacSha256('', 'key'), throwsArgumentError);
+      expect(() => CryptoEngine.hmacSha256('text', ''), throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Sign('', 'key'), throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Sign('text', ''), throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Verify('', 'sig', 'pub'), throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Verify('text', '', 'pub'), throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Verify('text', 'sig', ''), throwsArgumentError);
+      await expectLater(() => CryptoEngine.x25519SharedSecret('', 'pub'), throwsArgumentError);
+      await expectLater(() => CryptoEngine.x25519SharedSecret('priv', ''), throwsArgumentError);
+    });
+  });
 }
