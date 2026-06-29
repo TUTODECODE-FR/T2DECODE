@@ -34,6 +34,14 @@ void main() {
       final r2 = await CryptoEngine.aesGcmEncrypt(plaintext, passphrase);
       expect(r1.nonce, isNot(equals(r2.nonce)));
     });
+
+    test('different encryptions produce different ciphertexts (due to random salt)', () async {
+      const plaintext = 'Same text';
+      const passphrase = 'key';
+      final r1 = await CryptoEngine.aesGcmEncrypt(plaintext, passphrase);
+      final r2 = await CryptoEngine.aesGcmEncrypt(plaintext, passphrase);
+      expect(r1.ciphertext, isNot(equals(r2.ciphertext)));
+    });
   });
 
   group('ChaCha20-Poly1305', () {
@@ -44,6 +52,14 @@ void main() {
       final encrypted = await CryptoEngine.chacha20Encrypt(plaintext, passphrase);
       final decrypted = await CryptoEngine.chacha20Decrypt(encrypted, passphrase);
       expect(decrypted, plaintext);
+    });
+
+    test('different encryptions produce different ciphertexts (due to random salt)', () async {
+      const plaintext = 'Same text';
+      const passphrase = 'key';
+      final r1 = await CryptoEngine.chacha20Encrypt(plaintext, passphrase);
+      final r2 = await CryptoEngine.chacha20Encrypt(plaintext, passphrase);
+      expect(r1.ciphertext, isNot(equals(r2.ciphertext)));
     });
   });
 

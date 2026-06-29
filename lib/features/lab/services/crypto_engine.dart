@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart' as pkg_crypto;
 import 'package:cryptography/cryptography.dart' as pkg_cryptography;
@@ -17,7 +18,8 @@ class CryptoEngine {
     }
 
     final algo = pkg_cryptography.AesGcm.with256bits();
-    final key = await _deriveKey(passphrase);
+    final salt = _generateRandomBytes(16);
+    final key = await _deriveKey(passphrase, salt);
     final secretKey = pkg_cryptography.SecretKey(key);
     final nonce = algo.newNonce();
     final secretBox = await algo.encrypt(
@@ -25,8 +27,9 @@ class CryptoEngine {
       secretKey: secretKey,
       nonce: nonce,
     );
+    final combinedCiphertext = Uint8List.fromList(salt + secretBox.cipherText);
     return AesGcmResult(
-      ciphertext: base64.encode(secretBox.cipherText),
+      ciphertext: base64.encode(combinedCiphertext),
       nonce: base64.encode(secretBox.nonce),
       mac: base64.encode(secretBox.mac.bytes),
     );
@@ -41,10 +44,16 @@ class CryptoEngine {
     }
 
     final algo = pkg_cryptography.AesGcm.with256bits();
-    final key = await _deriveKey(passphrase);
+    final decodedCiphertext = base64.decode(encrypted.ciphertext);
+    if (decodedCiphertext.length < 16) {
+      throw ArgumentError('Invalid ciphertext length');
+    }
+    final salt = decodedCiphertext.sublist(0, 16);
+    final ciphertextBytes = decodedCiphertext.sublist(16);
+    final key = await _deriveKey(passphrase, salt);
     final secretKey = pkg_cryptography.SecretKey(key);
     final secretBox = pkg_cryptography.SecretBox(
-      base64.decode(encrypted.ciphertext),
+      ciphertextBytes,
       nonce: base64.decode(encrypted.nonce),
       mac: pkg_cryptography.Mac(base64.decode(encrypted.mac)),
     );
@@ -63,7 +72,8 @@ class CryptoEngine {
     }
 
     final algo = pkg_cryptography.Chacha20.poly1305Aead();
-    final key = await _deriveKey(passphrase);
+    final salt = _generateRandomBytes(16);
+    final key = await _deriveKey(passphrase, salt);
     final secretKey = pkg_cryptography.SecretKey(key);
     final nonce = algo.newNonce();
     final secretBox = await algo.encrypt(
@@ -71,8 +81,9 @@ class CryptoEngine {
       secretKey: secretKey,
       nonce: nonce,
     );
+    final combinedCiphertext = Uint8List.fromList(salt + secretBox.cipherText);
     return AesGcmResult(
-      ciphertext: base64.encode(secretBox.cipherText),
+      ciphertext: base64.encode(combinedCiphertext),
       nonce: base64.encode(secretBox.nonce),
       mac: base64.encode(secretBox.mac.bytes),
     );
@@ -87,10 +98,16 @@ class CryptoEngine {
     }
 
     final algo = pkg_cryptography.Chacha20.poly1305Aead();
-    final key = await _deriveKey(passphrase);
+    final decodedCiphertext = base64.decode(encrypted.ciphertext);
+    if (decodedCiphertext.length < 16) {
+      throw ArgumentError('Invalid ciphertext length');
+    }
+    final salt = decodedCiphertext.sublist(0, 16);
+    final ciphertextBytes = decodedCiphertext.sublist(16);
+    final key = await _deriveKey(passphrase, salt);
     final secretKey = pkg_cryptography.SecretKey(key);
     final secretBox = pkg_cryptography.SecretBox(
-      base64.decode(encrypted.ciphertext),
+      ciphertextBytes,
       nonce: base64.decode(encrypted.nonce),
       mac: pkg_cryptography.Mac(base64.decode(encrypted.mac)),
     );
@@ -130,8 +147,11 @@ class CryptoEngine {
     if (text == null || text.isEmpty) {
       throw ArgumentError('Text cannot be null or empty');
     }
-    if (key == null || key.isEmpty) {
-      throw ArgumentError('Key cannot be null or empty');
+    if (key == null) {
+      throw ArgumentError('Key cannot be null');
+    }
+    if (key.isEmpty) {
+      return text;
     }
 
     final keyUpper = key.toUpperCase();
@@ -155,8 +175,11 @@ class CryptoEngine {
     if (text == null || text.isEmpty) {
       throw ArgumentError('Text cannot be null or empty');
     }
-    if (key == null || key.isEmpty) {
-      throw ArgumentError('Key cannot be null or empty');
+    if (key == null) {
+      throw ArgumentError('Key cannot be null');
+    }
+    if (key.isEmpty) {
+      return text;
     }
 
     final keyUpper = key.toUpperCase();
@@ -322,9 +345,14 @@ class CryptoEngine {
     return base64.encode(bytes);
   }
 
+  static List<int> _generateRandomBytes(int length) {
+    final rng = Random.secure();
+    return List<int>.generate(length, (_) => rng.nextInt(256));
+  }
+
   // --- Key derivation helper ---
 
-  static Future<List<int>> _deriveKey(String passphrase) async {
+  static Future<List<int>> _deriveKey(String passphrase, List<int> salt) async {
     if (passphrase == null || passphrase.isEmpty) {
       throw ArgumentError('Passphrase cannot be null or empty');
     }
@@ -337,7 +365,7 @@ class CryptoEngine {
     final secretKey = pkg_cryptography.SecretKey(utf8.encode(passphrase));
     final derived = await algo.deriveKey(
       secretKey: secretKey,
-      nonce: utf8.encode('t2decode-aes-salt'),
+      nonce: salt,
     );
     return derived.extractBytes();
   }
@@ -368,6 +396,7 @@ class X25519KeyPairData {
   const X25519KeyPairData({required this.privateKey, required this.publicKey});
 }
 
+// SECURITY NOTE: Educational implementation for simulation purposes only. DO NOT use for actual cryptographic operations.
 class _CustomMd5 {
   static String hash(String input) {
     final bytes = Uint8List.fromList(utf8.encode(input));
@@ -466,6 +495,7 @@ class _CustomMd5 {
   }
 }
 
+// SECURITY NOTE: Educational implementation for simulation purposes only. DO NOT use for actual cryptographic operations.
 class _CustomSha1 {
   static String hash(String input) {
     final bytes = Uint8List.fromList(utf8.encode(input));
