@@ -383,7 +383,13 @@ jobs:
         if: matrix.platform == 'macos'
         shell: bash
         run: |
-          flutter build macos --release
+          for i in {1..3}; do
+            flutter build macos --release && break
+            echo "Build failed. Restarting macOS DNS responder and retrying..."
+            sudo dscacheutil -flushcache || true
+            sudo killall -HUP mDNSResponder || true
+            sleep 15
+          done
           killall dart || true
           sync
           sleep 2
