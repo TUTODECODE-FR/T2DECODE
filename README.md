@@ -1,3 +1,5 @@
+<meta name="fediverse:creator" content="@TUTODECODE@mastodon.social">
+
 <div align="center">
   <p>
     <strong>🇫🇷 Français</strong> | <a href="README_EN.md">🇬🇧 English</a>
@@ -270,6 +272,7 @@ Notre mission est de démocratiser la maîtrise des infrastructures informatique
 - **Site Web Officiel** : [https://tutodecode.org](https://tutodecode.org)
 - **Preuve Légale** : [Annonce de création parue au JOAFE](https://www.journal-officiel.gouv.fr/pages/associations-detail-annonce/?q.id=id:202600110336)
 - **Engagement de Confidentialité** : [Consulter notre Politique RGPD](RGPD.md)
+- **Réseaux Sociaux** : <a rel="me" href="https://mastodon.social/@TUTODECODE">Mastodon</a>
 
 <img src="assets/separator.svg" width="100%" height="4">
 
