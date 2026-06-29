@@ -813,7 +813,7 @@ jobs:
           ls -lh sf_assets/
 
       - name: Upload to SourceForge via SFTP
-        if: env.SF_PRIVATE_KEY != ''
+        if: env.SF_KEY != ''
         shell: bash
         run: |
           TAG="${{ github.event.inputs.target_tag || github.ref_name }}"
@@ -822,7 +822,7 @@ jobs:
           # Configurer la clé SSH
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          echo "$SF_PRIVATE_KEY" > ~/.ssh/sf_key
+          echo "$SF_KEY" > ~/.ssh/sf_key
           chmod 600 ~/.ssh/sf_key
 
           # Accepter automatiquement la clé de frs.sourceforge.net
