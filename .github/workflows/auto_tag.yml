@@ -2,12 +2,19 @@ name: Auto Tag and Trigger Release
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Post-Merge Release Validation"]
+    types:
+      - completed
+    branches:
+      - main
 
 permissions:
   contents: read
 
 jobs:
   auto-tag:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
