@@ -99,7 +99,14 @@ jobs:
         run: |
           rm -rf ~/.cocoapods/repos
           mkdir -p ~/.cocoapods/repos
-          git clone --depth 1 https://github.com/CocoaPods/Specs.git ~/.cocoapods/repos/trunk
+          for i in {1..5}; do
+            git clone --depth 1 https://github.com/CocoaPods/Specs.git ~/.cocoapods/repos/trunk && break
+            echo "Git clone failed. Restarting macOS DNS responder..."
+            sudo dscacheutil -flushcache || true
+            sudo killall -HUP mDNSResponder || true
+            sleep 10
+            rm -rf ~/.cocoapods/repos/trunk
+          done
 
       - name: Compile macOS App (unsigned)
         if: matrix.platform == 'macos'
