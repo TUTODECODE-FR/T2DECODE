@@ -368,6 +368,7 @@ jobs:
       - name: Clear corrupted CocoaPods cache
         if: matrix.platform == 'macos'
         run: |
+          echo "104.26.0.240 cdn.cocoapods.org" | sudo tee -a /etc/hosts
           rm -rf ~/.cocoapods/repos
           for i in {1..5}; do pod repo add-cdn trunk https://cdn.cocoapods.org/ && break || sleep 10; done
 
