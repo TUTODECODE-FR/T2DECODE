@@ -1,48 +1,45 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart' as pkg_crypto;
 import 'package:cryptography/cryptography.dart' as pkg_cryptography;
 
 class CryptoEngine {
+  static const String _errPassphrase = 'Passphrase cannot be null or empty';
+  static const String _errKey = 'Key cannot be null or empty';
+  static const String _errMessage = 'Message cannot be null or empty';
+  static const String _errText = 'Text cannot be null or empty';
+  static const String _errPlaintext = 'Plaintext cannot be null or empty';
+  static const String _errEncrypted = 'Encrypted data cannot be null or empty';
+
   // --- Symmetric: AES-GCM (real) ---
 
-  static Future<AesGcmResult> aesGcmEncrypt(String plaintext, String passphrase) async {
-    final algo = pkg_cryptography.AesGcm.with256bits();
-    final key = await _deriveKey(passphrase);
-    final secretKey = pkg_cryptography.SecretKey(key);
-    final nonce = algo.newNonce();
-    final secretBox = await algo.encrypt(
-      utf8.encode(plaintext),
-      secretKey: secretKey,
-      nonce: nonce,
-    );
-    return AesGcmResult(
-      ciphertext: base64.encode(secretBox.cipherText),
-      nonce: base64.encode(secretBox.nonce),
-      mac: base64.encode(secretBox.mac.bytes),
-    );
-  }
+  static Future<AesGcmResult> aesGcmEncrypt(String plaintext, String passphrase) =>
+      _symmetricEncrypt(pkg_cryptography.AesGcm.with256bits(), plaintext, passphrase);
 
-  static Future<String> aesGcmDecrypt(AesGcmResult encrypted, String passphrase) async {
-    final algo = pkg_cryptography.AesGcm.with256bits();
-    final key = await _deriveKey(passphrase);
-    final secretKey = pkg_cryptography.SecretKey(key);
-    final secretBox = pkg_cryptography.SecretBox(
-      base64.decode(encrypted.ciphertext),
-      nonce: base64.decode(encrypted.nonce),
-      mac: pkg_cryptography.Mac(base64.decode(encrypted.mac)),
-    );
-    final decrypted = await algo.decrypt(secretBox, secretKey: secretKey);
-    return utf8.decode(decrypted);
-  }
+  static Future<String> aesGcmDecrypt(AesGcmResult encrypted, String passphrase) =>
+      _symmetricDecrypt(pkg_cryptography.AesGcm.with256bits(), encrypted, passphrase);
 
   // --- Symmetric: ChaCha20-Poly1305 ---
 
-  static Future<AesGcmResult> chacha20Encrypt(String plaintext, String passphrase) async {
-    final algo = pkg_cryptography.Chacha20.poly1305Aead();
-    final key = await _deriveKey(passphrase);
+  static Future<AesGcmResult> chacha20Encrypt(String plaintext, String passphrase) =>
+      _symmetricEncrypt(pkg_cryptography.Chacha20.poly1305Aead(), plaintext, passphrase);
+
+  static Future<String> chacha20Decrypt(AesGcmResult encrypted, String passphrase) =>
+      _symmetricDecrypt(pkg_cryptography.Chacha20.poly1305Aead(), encrypted, passphrase);
+
+  static Future<AesGcmResult> _symmetricEncrypt(pkg_cryptography.Cipher algo, String plaintext, String passphrase) async {
+    if (plaintext == null || plaintext.isEmpty) {
+      throw ArgumentError(_errPlaintext);
+    }
+    if (passphrase == null || passphrase.isEmpty) {
+      throw ArgumentError(_errPassphrase);
+    }
+
+    final salt = _generateRandomBytes(16);
+    final key = await _deriveKey(passphrase, salt);
     final secretKey = pkg_cryptography.SecretKey(key);
     final nonce = algo.newNonce();
     final secretBox = await algo.encrypt(
@@ -50,19 +47,32 @@ class CryptoEngine {
       secretKey: secretKey,
       nonce: nonce,
     );
+    final combinedCiphertext = Uint8List.fromList(salt + secretBox.cipherText);
     return AesGcmResult(
-      ciphertext: base64.encode(secretBox.cipherText),
+      ciphertext: base64.encode(combinedCiphertext),
       nonce: base64.encode(secretBox.nonce),
       mac: base64.encode(secretBox.mac.bytes),
     );
   }
 
-  static Future<String> chacha20Decrypt(AesGcmResult encrypted, String passphrase) async {
-    final algo = pkg_cryptography.Chacha20.poly1305Aead();
-    final key = await _deriveKey(passphrase);
+  static Future<String> _symmetricDecrypt(pkg_cryptography.Cipher algo, AesGcmResult encrypted, String passphrase) async {
+    if (encrypted == null || encrypted.ciphertext.isEmpty || encrypted.nonce.isEmpty || encrypted.mac.isEmpty) {
+      throw ArgumentError(_errEncrypted);
+    }
+    if (passphrase == null || passphrase.isEmpty) {
+      throw ArgumentError(_errPassphrase);
+    }
+
+    final decodedCiphertext = base64.decode(encrypted.ciphertext);
+    if (decodedCiphertext.length < 16) {
+      throw ArgumentError('Invalid ciphertext length');
+    }
+    final salt = decodedCiphertext.sublist(0, 16);
+    final ciphertextBytes = decodedCiphertext.sublist(16);
+    final key = await _deriveKey(passphrase, salt);
     final secretKey = pkg_cryptography.SecretKey(key);
     final secretBox = pkg_cryptography.SecretBox(
-      base64.decode(encrypted.ciphertext),
+      ciphertextBytes,
       nonce: base64.decode(encrypted.nonce),
       mac: pkg_cryptography.Mac(base64.decode(encrypted.mac)),
     );
@@ -73,6 +83,13 @@ class CryptoEngine {
   // --- Classic ciphers (educational) ---
 
   static String caesarEncrypt(String text, int shift) {
+    if (text == null || text.isEmpty) {
+      throw ArgumentError(_errText);
+    }
+    if (shift < 0) {
+      throw ArgumentError('Shift must be a non-negative integer');
+    }
+
     return String.fromCharCodes(text.codeUnits.map((c) {
       if (c >= 65 && c <= 90) return (c - 65 + shift) % 26 + 65;
       if (c >= 97 && c <= 122) return (c - 97 + shift) % 26 + 97;
@@ -80,10 +97,28 @@ class CryptoEngine {
     }));
   }
 
-  static String caesarDecrypt(String text, int shift) => caesarEncrypt(text, 26 - (shift % 26));
+  static String caesarDecrypt(String text, int shift) {
+    if (text == null || text.isEmpty) {
+      throw ArgumentError(_errText);
+    }
+    if (shift < 0) {
+      throw ArgumentError('Shift must be a non-negative integer');
+    }
+
+    return caesarEncrypt(text, 26 - (shift % 26));
+  }
 
   static String vigenereEncrypt(String text, String key) {
-    if (key.isEmpty) return text;
+    if (text == null || text.isEmpty) {
+      throw ArgumentError(_errText);
+    }
+    if (key == null) {
+      throw ArgumentError('Key cannot be null');
+    }
+    if (key.isEmpty) {
+      return text;
+    }
+
     final keyUpper = key.toUpperCase();
     final result = StringBuffer();
     int ki = 0;
@@ -102,7 +137,16 @@ class CryptoEngine {
   }
 
   static String vigenereDecrypt(String text, String key) {
-    if (key.isEmpty) return text;
+    if (text == null || text.isEmpty) {
+      throw ArgumentError(_errText);
+    }
+    if (key == null) {
+      throw ArgumentError('Key cannot be null');
+    }
+    if (key.isEmpty) {
+      return text;
+    }
+
     final keyUpper = key.toUpperCase();
     final result = StringBuffer();
     int ki = 0;
@@ -121,7 +165,13 @@ class CryptoEngine {
   }
 
   static String xorEncrypt(String text, String key) {
-    if (key.isEmpty) return text;
+    if (text == null || text.isEmpty) {
+      throw ArgumentError(_errText);
+    }
+    if (key == null || key.isEmpty) {
+      throw ArgumentError(_errKey);
+    }
+
     final keyBytes = utf8.encode(key);
     final textBytes = utf8.encode(text);
     final result = Uint8List(textBytes.length);
@@ -132,7 +182,13 @@ class CryptoEngine {
   }
 
   static String xorDecrypt(String cipherB64, String key) {
-    if (key.isEmpty) return cipherB64;
+    if (cipherB64 == null || cipherB64.isEmpty) {
+      throw ArgumentError('Cipher cannot be null or empty');
+    }
+    if (key == null || key.isEmpty) {
+      throw ArgumentError(_errKey);
+    }
+
     final keyBytes = utf8.encode(key);
     final cipherBytes = base64.decode(cipherB64);
     final result = Uint8List(cipherBytes.length);
@@ -167,6 +223,13 @@ class CryptoEngine {
   // --- HMAC ---
 
   static String hmacSha256(String message, String key) {
+    if (message == null || message.isEmpty) {
+      throw ArgumentError(_errMessage);
+    }
+    if (key == null || key.isEmpty) {
+      throw ArgumentError(_errKey);
+    }
+
     final hmacAlgo = pkg_crypto.Hmac(pkg_crypto.sha256, utf8.encode(key));
     final digest = hmacAlgo.convert(utf8.encode(message));
     return digest.toString();
@@ -186,6 +249,13 @@ class CryptoEngine {
   }
 
   static Future<String> ed25519Sign(String message, String privateKeyB64) async {
+    if (message == null || message.isEmpty) {
+      throw ArgumentError(_errMessage);
+    }
+    if (privateKeyB64 == null || privateKeyB64.isEmpty) {
+      throw ArgumentError('Private key cannot be null or empty');
+    }
+
     final algo = pkg_cryptography.Ed25519();
     final privateBytes = base64.decode(privateKeyB64);
     final keyPair = await algo.newKeyPairFromSeed(privateBytes);
@@ -194,6 +264,16 @@ class CryptoEngine {
   }
 
   static Future<bool> ed25519Verify(String message, String signatureB64, String publicKeyB64) async {
+    if (message == null || message.isEmpty) {
+      throw ArgumentError(_errMessage);
+    }
+    if (signatureB64 == null || signatureB64.isEmpty) {
+      throw ArgumentError('Signature cannot be null or empty');
+    }
+    if (publicKeyB64 == null || publicKeyB64.isEmpty) {
+      throw ArgumentError('Public key cannot be null or empty');
+    }
+
     final algo = pkg_cryptography.Ed25519();
     final publicKey = pkg_cryptography.SimplePublicKey(base64.decode(publicKeyB64), type: pkg_cryptography.KeyPairType.ed25519);
     final signature = pkg_cryptography.Signature(base64.decode(signatureB64), publicKey: publicKey);
@@ -214,6 +294,13 @@ class CryptoEngine {
   }
 
   static Future<String> x25519SharedSecret(String myPrivateKeyB64, String theirPublicKeyB64) async {
+    if (myPrivateKeyB64 == null || myPrivateKeyB64.isEmpty) {
+      throw ArgumentError('My private key cannot be null or empty');
+    }
+    if (theirPublicKeyB64 == null || theirPublicKeyB64.isEmpty) {
+      throw ArgumentError('Their public key cannot be null or empty');
+    }
+
     final algo = pkg_cryptography.X25519();
     final myPrivateBytes = base64.decode(myPrivateKeyB64);
     final keyPair = await algo.newKeyPairFromSeed(myPrivateBytes);
@@ -223,9 +310,18 @@ class CryptoEngine {
     return base64.encode(bytes);
   }
 
+  static List<int> _generateRandomBytes(int length) {
+    final rng = Random.secure();
+    return List<int>.generate(length, (_) => rng.nextInt(256));
+  }
+
   // --- Key derivation helper ---
 
-  static Future<List<int>> _deriveKey(String passphrase) async {
+  static Future<List<int>> _deriveKey(String passphrase, List<int> salt) async {
+    if (passphrase == null || passphrase.isEmpty) {
+      throw ArgumentError(_errPassphrase);
+    }
+
     final algo = pkg_cryptography.Pbkdf2(
       macAlgorithm: pkg_cryptography.Hmac.sha256(),
       iterations: 100000,
@@ -234,7 +330,7 @@ class CryptoEngine {
     final secretKey = pkg_cryptography.SecretKey(utf8.encode(passphrase));
     final derived = await algo.deriveKey(
       secretKey: secretKey,
-      nonce: utf8.encode('t2decode-aes-salt'),
+      nonce: salt,
     );
     return derived.extractBytes();
   }
@@ -265,6 +361,7 @@ class X25519KeyPairData {
   const X25519KeyPairData({required this.privateKey, required this.publicKey});
 }
 
+// SECURITY NOTE: Educational implementation for simulation purposes only. DO NOT use for actual cryptographic operations.
 class _CustomMd5 {
   static String hash(String input) {
     final bytes = Uint8List.fromList(utf8.encode(input));
@@ -363,6 +460,7 @@ class _CustomMd5 {
   }
 }
 
+// SECURITY NOTE: Educational implementation for simulation purposes only. DO NOT use for actual cryptographic operations.
 class _CustomSha1 {
   static String hash(String input) {
     final bytes = Uint8List.fromList(utf8.encode(input));

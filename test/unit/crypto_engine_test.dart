@@ -34,6 +34,14 @@ void main() {
       final r2 = await CryptoEngine.aesGcmEncrypt(plaintext, passphrase);
       expect(r1.nonce, isNot(equals(r2.nonce)));
     });
+
+    test('different encryptions produce different ciphertexts (due to random salt)', () async {
+      const plaintext = 'Same text';
+      const passphrase = 'key';
+      final r1 = await CryptoEngine.aesGcmEncrypt(plaintext, passphrase);
+      final r2 = await CryptoEngine.aesGcmEncrypt(plaintext, passphrase);
+      expect(r1.ciphertext, isNot(equals(r2.ciphertext)));
+    });
   });
 
   group('ChaCha20-Poly1305', () {
@@ -44,6 +52,14 @@ void main() {
       final encrypted = await CryptoEngine.chacha20Encrypt(plaintext, passphrase);
       final decrypted = await CryptoEngine.chacha20Decrypt(encrypted, passphrase);
       expect(decrypted, plaintext);
+    });
+
+    test('different encryptions produce different ciphertexts (due to random salt)', () async {
+      const plaintext = 'Same text';
+      const passphrase = 'key';
+      final r1 = await CryptoEngine.chacha20Encrypt(plaintext, passphrase);
+      final r2 = await CryptoEngine.chacha20Encrypt(plaintext, passphrase);
+      expect(r1.ciphertext, isNot(equals(r2.ciphertext)));
     });
   });
 
@@ -198,6 +214,39 @@ void main() {
       final secretB = await CryptoEngine.x25519SharedSecret(bob.privateKey, alice.publicKey);
 
       expect(secretA, secretB);
+    });
+  });
+
+  group('Input Validation Coverage', () {
+    test('AES-GCM validates inputs', () async {
+      await expectLater(() => CryptoEngine.aesGcmEncrypt('', 'pass'), throwsArgumentError);
+      await expectLater(() => CryptoEngine.aesGcmEncrypt('text', ''), throwsArgumentError);
+      await expectLater(() => CryptoEngine.aesGcmDecrypt(const AesGcmResult(ciphertext: '', nonce: '1', mac: '1'), 'pass'), throwsArgumentError);
+      await expectLater(() => CryptoEngine.aesGcmDecrypt(const AesGcmResult(ciphertext: '1', nonce: '1', mac: '1'), ''), throwsArgumentError);
+    });
+
+    test('Classic Ciphers validate inputs', () {
+      expect(() => CryptoEngine.caesarEncrypt('', 3), throwsArgumentError);
+      expect(() => CryptoEngine.caesarDecrypt('', 3), throwsArgumentError);
+      expect(() => CryptoEngine.caesarEncrypt('text', -1), throwsArgumentError);
+      expect(() => CryptoEngine.vigenereEncrypt('', 'key'), throwsArgumentError);
+      expect(() => CryptoEngine.vigenereDecrypt('', 'key'), throwsArgumentError);
+      expect(() => CryptoEngine.xorEncrypt('', 'key'), throwsArgumentError);
+      expect(() => CryptoEngine.xorEncrypt('text', ''), throwsArgumentError);
+      expect(() => CryptoEngine.xorDecrypt('', 'key'), throwsArgumentError);
+      expect(() => CryptoEngine.xorDecrypt('text', ''), throwsArgumentError);
+    });
+
+    test('Asymmetric & HMAC validate inputs', () async {
+      expect(() => CryptoEngine.hmacSha256('', 'key'), throwsArgumentError);
+      expect(() => CryptoEngine.hmacSha256('text', ''), throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Sign('', 'key'), throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Sign('text', ''), throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Verify('', 'sig', 'pub'), throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Verify('text', '', 'pub'), throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Verify('text', 'sig', ''), throwsArgumentError);
+      await expectLater(() => CryptoEngine.x25519SharedSecret('', 'pub'), throwsArgumentError);
+      await expectLater(() => CryptoEngine.x25519SharedSecret('priv', ''), throwsArgumentError);
     });
   });
 }

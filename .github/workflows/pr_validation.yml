@@ -96,7 +96,9 @@ jobs:
 
       - name: Clear corrupted CocoaPods cache
         if: matrix.platform == 'macos'
-        run: rm -rf ~/.cocoapods/repos
+        run: |
+          rm -rf ~/.cocoapods/repos
+          for i in {1..5}; do pod repo add-cdn trunk https://cdn.cocoapods.org/ && break || sleep 10; done
 
       - name: Compile macOS App (unsigned)
         if: matrix.platform == 'macos'
