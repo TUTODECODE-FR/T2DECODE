@@ -94,12 +94,12 @@ jobs:
       - name: Run tests
         run: flutter test --dart-define=SKIP_GOLDENS=true
 
-      - name: Clear corrupted CocoaPods cache
+      - name: Setup CocoaPods Git Specs
         if: matrix.platform == 'macos'
         run: |
-          echo "104.26.0.240 cdn.cocoapods.org" | sudo tee -a /etc/hosts
           rm -rf ~/.cocoapods/repos
-          for i in {1..5}; do pod repo add-cdn trunk https://cdn.cocoapods.org/ && break || sleep 10; done
+          mkdir -p ~/.cocoapods/repos
+          git clone --depth 1 https://github.com/CocoaPods/Specs.git ~/.cocoapods/repos/trunk
 
       - name: Compile macOS App (unsigned)
         if: matrix.platform == 'macos'
