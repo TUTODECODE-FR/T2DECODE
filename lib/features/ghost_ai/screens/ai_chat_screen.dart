@@ -3,11 +3,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tutodecode/features/ghost_ai/providers/ai_tutor_provider.dart';
 import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 import 'package:tutodecode/features/courses/service/rag_service.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
-import 'package:tutodecode/core/providers/settings_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 // ─── Prompt système ──────────────────────────────────────────────────────────
@@ -33,14 +33,8 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   final _inputFocus   = FocusNode();
   final List<_Msg>    _msgs    = [];
 
-  OllamaStatus? _status;
-  String?       _model;
-  bool          _checking = true;
   bool          _streaming = false;
-  bool          _demoMode = false;
   StreamSubscription? _sub;
-  Timer? _pollTimer;
-  bool _polling = false;
 
   late final AnimationController _pulseCtrl;
 
@@ -49,15 +43,11 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     super.initState();
     _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900))
       ..repeat(reverse: true);
-    _init();
-    _pollTimer = Timer.periodic(const Duration(seconds: 10), (_) => _pollStatus());
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateShell();
-      final settings = context.read<SettingsProvider>();
-      setState(() => _demoMode = settings.demoMode);
-      
-      // Fix focus macOS : plusieurs tentatives pour garantir la capture
+      final aiTutor = context.read<AiTutorProvider>();
+      aiTutor.checkOllamaConnection();
+      _updateShell(aiTutor);
       _requestInputFocus();
     });
   }
@@ -65,7 +55,6 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   void _requestInputFocus() {
     if (!mounted) return;
     _inputFocus.requestFocus();
-    // Deuxième tentative après un court délai pour contrer les animations de transition
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) _inputFocus.requestFocus();
     });
@@ -74,18 +63,18 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     });
   }
 
-  void _updateShell() {
-    final running = _status?.running ?? false;
+  void _updateShell(AiTutorProvider aiTutor) {
+    final running = aiTutor.isConnected;
     context.read<ShellProvider>().updateShell(
       title: 'Ghost AI',
       showBackButton: true,
       actions: [
-        if (running && (_status?.models.isNotEmpty ?? false))
-          _buildModelPicker(context),
+        if (running && aiTutor.availableModels.isNotEmpty)
+          _buildModelPicker(context, aiTutor),
         if (_msgs.isNotEmpty)
           IconButton(
             icon: const Icon(Icons.delete_sweep_outlined, color: TdcColors.textMuted),
-            onPressed: _clear,
+            onPressed: () => _clear(aiTutor),
             tooltip: 'Effacer la conversation',
           ),
       ],
@@ -95,7 +84,6 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   @override
   void dispose() {
     _sub?.cancel();
-    _pollTimer?.cancel();
     _pulseCtrl.dispose();
     _inputCtrl.dispose();
     _scrollCtrl.dispose();
@@ -103,55 +91,8 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     super.dispose();
   }
 
-  Future<void> _init() async {
-    final s = await OllamaService.checkStatus();
-    if (!mounted) return;
-    setState(() {
-      _status   = s;
-      _checking = false;
-      if (s.running && s.models.isNotEmpty) _model = s.models.first;
-    });
-    _updateShell();
-  }
-
-  Future<void> _pollStatus() async {
-    if (_polling || !mounted) return;
-    _polling = true;
-    try {
-      final prevRunning = _status?.running;
-      final s = await OllamaService.checkStatus(
-        includeModels: false,
-        versionTimeout: const Duration(seconds: 3),
-        tagsTimeout: const Duration(seconds: 5),
-      );
-
-      if (!mounted) return;
-      final runningChanged = prevRunning != s.running;
-      if (runningChanged || (_status == null)) {
-        setState(() {
-          _status = OllamaStatus(running: s.running, version: s.version, models: _status?.models ?? const [], error: s.error);
-          if (!s.running) _model = null;
-        });
-        _updateShell();
-      }
-
-      // Si Ollama vient de revenir, charger la liste de modèles une fois.
-      if (runningChanged && s.running) {
-        final full = await OllamaService.checkStatus(
-          includeModels: true,
-          versionTimeout: const Duration(seconds: 8),
-          tagsTimeout: const Duration(seconds: 10),
-        );
-        if (!mounted) return;
-        setState(() {
-          _status = full;
-          if (full.models.isNotEmpty) _model ??= full.models.first;
-        });
-        _updateShell();
-      }
-    } finally {
-      _polling = false;
-    }
+  void _detect() {
+    context.read<AiTutorProvider>().checkOllamaConnection();
   }
 
   void _scrollBottom() {
@@ -166,29 +107,107 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     });
   }
 
-  Future<void> _send() async {
+  void _handleUnconnectedOllama(String text, AiTutorProvider aiTutor) {
+    setState(() {
+      _msgs.add(_Msg(role: 'user', text: text));
+      _msgs.add(const _Msg(
+        role: 'assistant',
+        text: 'Bonjour ! Je suis Ghost AI. 🤖\n\n'
+            'Il semble que l\'IA locale (Ollama) ne soit pas encore configurée ou active. '
+            'Pour une réponse complète et intelligente, allez dans **Paramètres > IA** pour l\'activer, '
+            'ou lancez `ollama serve` sur votre Mac.',
+      ));
+    });
+    _scrollBottom();
+    _updateShell(aiTutor);
+  }
+
+  void _onStreamData(dynamic chunk) {
+    if (!mounted) return;
+    setState(() {
+      final last = _msgs.last;
+      if (chunk.isThinking) {
+        _msgs[_msgs.length - 1] = last.withThinking(last.thinking + chunk.text);
+      } else {
+        _msgs[_msgs.length - 1] = last.withText(last.text + chunk.text);
+      }
+    });
+    _scrollBottom();
+  }
+
+  void _onStreamDone() {
+    if (!mounted) return;
+    final last = _msgs.isNotEmpty ? _msgs.last : null;
+    if (last != null && last.role == 'assistant' && last.text.isEmpty && last.thinking.isNotEmpty) {
+      setState(() {
+        _msgs[_msgs.length - 1] = _Msg(role: 'assistant', text: last.thinking, thinking: '');
+      });
+    }
+    setState(() => _streaming = false);
+  }
+
+  void _onStreamError(dynamic e, AiTutorProvider aiTutor) {
+    if (!mounted) return;
+    setState(() {
+      _msgs[_msgs.length - 1] = _Msg(
+        role: 'error',
+        text: "⚠️ **Erreur IA:**\n\n${e.toString()}\n\n"
+            "Vérifiez qu'Ollama est bien installé et en cours d'exécution sur votre Mac.\n"
+            "_Commande : `ollama serve`_",
+      );
+      _streaming = false;
+    });
+    aiTutor.checkOllamaConnection();
+    _updateShell(aiTutor);
+  }
+
+  Future<void> _startOllamaStream(String text, String modelSelected, AiTutorProvider aiTutor) async {
+    final history = _msgs
+        .where((m) => m.role != 'error' && m.text.isNotEmpty)
+        .map((m) => {'role': m.role, 'content': m.text})
+        .toList(growable: false);
+
+    try {
+      final contextText = await RagService().findRelevantContext(text);
+      final finalSystemPrompt = contextText != null 
+          ? "$_kSystem\n\nCONTEXTE RELEVANT DES COURS :\n$contextText"
+          : _kSystem;
+
+      _sub = OllamaService.stream(modelSelected, history, system: finalSystemPrompt).listen(
+        _onStreamData,
+        onDone: _onStreamDone,
+        onError: (e) => _onStreamError(e, aiTutor),
+        cancelOnError: true,
+      );
+    } catch (e) {
+      setState(() {
+        _msgs[_msgs.length - 1] = _Msg(
+          role: 'error',
+          text: "⚠️ **Erreur IA:**\n\n${e.toString()}\n\n"
+              "Vérifiez qu'Ollama est bien installé et en cours d'exécution sur votre Mac.",
+        );
+        _streaming = false;
+      });
+    }
+  }
+
+  Future<void> _send(AiTutorProvider aiTutor) async {
     final text = _inputCtrl.text.trim();
     if (text.isEmpty || _streaming) return;
 
     _inputCtrl.clear();
-    
-    // Fix Focus macOS : redemander le focus immédiatement après l'envoi
     _requestInputFocus();
 
-    // En mode normal (sans mode démo), si l'IA locale n'est pas connectée
-    if (!_demoMode && _model == null) {
-      setState(() {
-        _msgs.add(_Msg(role: 'user', text: text));
-        _msgs.add(const _Msg(
-          role: 'assistant',
-          text: 'Bonjour ! Je suis Ghost AI. 🤖\\n\\n'
-              'Il semble que l\'IA locale (Ollama) ne soit pas encore configurée ou active. '
-              'Pour une réponse complète et intelligente, allez dans **Paramètres > IA** pour l\'activer, '
-              'ou lancez `ollama serve` sur votre Mac.',
-        ));
-      });
-      _scrollBottom();
-      _updateShell();
+    final hasModels = aiTutor.availableModels.isNotEmpty;
+    String? modelSelected;
+    if (aiTutor.availableModels.contains(aiTutor.selectedModel)) {
+      modelSelected = aiTutor.selectedModel;
+    } else {
+      modelSelected = hasModels ? aiTutor.availableModels.first : null;
+    }
+
+    if (!aiTutor.isConnected || modelSelected == null) {
+      _handleUnconnectedOllama(text, aiTutor);
       return;
     }
 
@@ -198,87 +217,9 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       _streaming = true;
     });
     _scrollBottom();
-    _updateShell();
+    _updateShell(aiTutor);
 
-    // ── Mode Démo : réponse mock après 2 secondes ─────────────────────────
-    if (_demoMode) {
-      await Future.delayed(const Duration(seconds: 2));
-      if (!mounted) return;
-      setState(() {
-        _msgs[_msgs.length - 1] = const _Msg(
-          role: 'assistant',
-          text: '🧪 **Mode Démo actif** — Ceci est une réponse simulée.\\n\\n'
-              'En production, Ghost AI utilise Ollama (moteur IA 100% local) '
-              'pour répondre à vos questions techniques en temps réel. '
-              'Aucune donnée ne quitte votre appareil.',
-        );
-        _streaming = false;
-      });
-      return;
-    }
-
-    // ── Mode Normal : appel à Ollama ─────────────────────────────────────
-    final history = _msgs
-        .where((m) => m.role != 'error' && m.text.isNotEmpty)
-        .map((m) => {'role': m.role, 'content': m.text})
-        .toList(growable: false);
-
-    try {
-      final contextText = await RagService().findRelevantContext(text);
-      final finalSystemPrompt = contextText != null 
-          ? "$_kSystem\\n\\nCONTEXTE RELEVANT DES COURS :\\n$contextText"
-          : _kSystem;
-
-      _sub = OllamaService.stream(_model!, history, system: finalSystemPrompt).listen(
-        (chunk) {
-          if (!mounted) return;
-          setState(() {
-            final last = _msgs.last;
-            if (chunk.isThinking) {
-              _msgs[_msgs.length - 1] = last.withThinking(last.thinking + chunk.text);
-            } else {
-              _msgs[_msgs.length - 1] = last.withText(last.text + chunk.text);
-            }
-          });
-          _scrollBottom();
-        },
-        onDone: () {
-          if (!mounted) return;
-          final last = _msgs.isNotEmpty ? _msgs.last : null;
-          if (last != null && last.role == 'assistant' && last.text.isEmpty && last.thinking.isNotEmpty) {
-            setState(() {
-              _msgs[_msgs.length - 1] = _Msg(role: 'assistant', text: last.thinking, thinking: '');
-            });
-          }
-          setState(() => _streaming = false);
-        },
-        onError: (e) {
-          if (!mounted) return;
-          setState(() {
-            _msgs[_msgs.length - 1] = const _Msg(
-              role: 'error',
-              text: "⚠️ **Impossible de se connecter à l'IA.**\n\n"
-                  "Vérifiez qu'Ollama est bien installé et en cours d'exécution sur votre Mac.\n"
-                  "_Commande : `ollama serve`_",
-            );
-            _status = const OllamaStatus(running: false, error: 'Ollama indisponible');
-            _model = null;
-            _streaming = false;
-          });
-          _updateShell();
-        },
-        cancelOnError: true,
-      );
-    } catch (e) {
-      setState(() {
-        _msgs[_msgs.length - 1] = const _Msg(
-          role: 'error',
-          text: "⚠️ **Impossible de se connecter à l'IA.**\n\n"
-              "Vérifiez qu'Ollama est bien installé et en cours d'exécution sur votre Mac.",
-        );
-        _streaming = false;
-      });
-    }
+    await _startOllamaStream(text, modelSelected, aiTutor);
   }
 
   void _stop() {
@@ -286,60 +227,39 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     setState(() => _streaming = false);
   }
 
-  void _clear() {
+  void _clear(AiTutorProvider aiTutor) {
     setState(() => _msgs.clear());
-    _updateShell();
+    _updateShell(aiTutor);
   }
 
   @override
   Widget build(BuildContext context) {
+    final aiTutor = context.watch<AiTutorProvider>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateShell(aiTutor);
+    });
+
     final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final courseTitle = args?['title'] as String?;
 
     return Material(
       color: TdcColors.bg,
-      child: SelectionArea( // Permet la sélection de texte sur Desktop
+      child: SelectionArea(
         child: Column(children: [
-          if (_checking) const LinearProgressIndicator(color: TdcColors.accent, backgroundColor: Colors.transparent, minHeight: 1),
-        if (_demoMode) _buildDemoBanner(),
-        _buildStatusHeader(),
-        if (courseTitle != null) _buildContextBadge(context, courseTitle),
-        Expanded(child: _msgs.isEmpty ? _buildEmpty(context) : _buildMessages(context)),
-        if (_streaming) _buildStreamingBar(context),
-          _buildInput(context),
+          if (aiTutor.isCheckingOllama) const LinearProgressIndicator(color: TdcColors.accent, backgroundColor: Colors.transparent, minHeight: 1),
+          _buildStatusHeader(aiTutor),
+          if (courseTitle != null) _buildContextBadge(context, courseTitle),
+          Expanded(child: _msgs.isEmpty ? _buildEmpty(aiTutor) : _buildMessages(context)),
+          if (_streaming) _buildStreamingBar(context),
+          _buildInput(context, aiTutor),
         ]),
       ),
     );
   }
 
-  Widget _buildDemoBanner() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      color: const Color(0xFF2A1F00),
-      child: Row(children: [
-        const Icon(Icons.science_outlined, size: 14, color: Color(0xFFFFB300)),
-        const SizedBox(width: 8),
-        const Expanded(
-          child: Text(
-            'MODE DÉMO ACTIF — Les réponses sont simulées. Aucun appel réseau.',
-            style: TextStyle(color: Color(0xFFFFB300), fontSize: 10, fontWeight: FontWeight.bold),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            final settings = context.read<SettingsProvider>();
-            settings.setDemoMode(false);
-            setState(() => _demoMode = false);
-          },
-          child: const Icon(Icons.close, size: 14, color: Color(0xFFFFB300)),
-        ),
-      ]),
-    );
-  }
-
-  Widget _buildStatusHeader() {
-    final running = _demoMode || (_status?.running ?? false);
+  Widget _buildStatusHeader(AiTutorProvider aiTutor) {
+    final running = aiTutor.isConnected;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -356,25 +276,23 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
         ),
         const SizedBox(width: 8),
         Text(
-          _demoMode
-              ? 'Mode Démo — Réponses simulées'
-              : running ? 'IA locale disponible' : 'IA locale indisponible (Ollama)',
+          running ? 'IA locale disponible' : 'IA locale indisponible (Ollama)',
           style: TextStyle(
             color: running ? TdcColors.info : TdcColors.textSecondary,
             fontSize: 10,
             fontWeight: FontWeight.bold,
           ),
         ),
-        if (!running && !_checking && !_demoMode) ...[
+        if (!running && !aiTutor.isCheckingOllama) ...[
           const Spacer(),
           TextButton.icon(
-            onPressed: _init,
+            onPressed: _detect,
             icon: const Icon(Icons.refresh, size: 14),
             label: const Text('Réessayer', style: TextStyle(fontSize: 10)),
             style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
           ),
         ],
-        if (!running && !_checking && !_demoMode) ...[
+        if (!running && !aiTutor.isCheckingOllama) ...[
           const SizedBox(width: 8),
           TextButton.icon(
             onPressed: () => Navigator.pushNamed(context, '/ai-config'),
@@ -387,7 +305,15 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     );
   }
 
-  Widget _buildModelPicker(BuildContext context) {
+  Widget _buildModelPicker(BuildContext context, AiTutorProvider aiTutor) {
+    final hasModels = aiTutor.availableModels.isNotEmpty;
+    String? modelSelected;
+    if (aiTutor.availableModels.contains(aiTutor.selectedModel)) {
+      modelSelected = aiTutor.selectedModel;
+    } else {
+      modelSelected = hasModels ? aiTutor.availableModels.first : null;
+    }
+
     return Center(
       child: Container(
         height: 32,
@@ -400,14 +326,16 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
-            value: _model,
-            items: (_status?.models ?? []).map((m) => DropdownMenuItem(
+            value: modelSelected,
+            items: aiTutor.availableModels.map((m) => DropdownMenuItem(
               value: m,
               child: Text(m.split(':').first, style: const TextStyle(color: Colors.white, fontSize: 12)),
             )).toList(),
             onChanged: (v) {
-              setState(() => _model = v);
-              _updateShell();
+              if (v != null) {
+                aiTutor.selectModel(v);
+                _updateShell(aiTutor);
+              }
             },
             dropdownColor: TdcColors.surface,
             icon: const Icon(Icons.keyboard_arrow_down, size: 16),
@@ -431,7 +359,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     );
   }
 
-  Widget _buildEmpty(BuildContext context) {
+  Widget _buildEmpty(AiTutorProvider aiTutor) {
     return Center(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         const Icon(Icons.auto_awesome, color: TdcColors.accent, size: 64).animate(onPlay: (c) => c.repeat()).shimmer(duration: 3.seconds),
@@ -439,12 +367,12 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
         const Text('Ghost AI', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Text(
-          _status?.running == true
+          aiTutor.isConnected
               ? 'Prêt à vous aider (IA 100% locale).'
               : 'Ollama est optionnel. Sans lui, l’application reste 100% utilisable.',
           style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 14),
         ),
-        if (_status?.running != true) ...[
+        if (!aiTutor.isConnected) ...[
           const SizedBox(height: 20),
           Container(
             constraints: const BoxConstraints(maxWidth: 520),
@@ -465,17 +393,17 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
                 'Activez Ollama pour débloquer le chat IA. Sinon, ignorez cette section: rien n’est bloquant.',
                 style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 12, height: 1.4),
               ),
-              if ((_status?.error ?? '').isNotEmpty) ...[
+              if ((aiTutor.errorMessage ?? '').isNotEmpty) ...[
                 const SizedBox(height: 10),
                 Text(
-                  'Détail: ${_status?.error}',
+                  'Détail: ${aiTutor.errorMessage}',
                   style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11, height: 1.3),
                 ),
               ],
               const SizedBox(height: 12),
               Row(children: [
                 OutlinedButton.icon(
-                  onPressed: _init,
+                  onPressed: _detect,
                   icon: const Icon(Icons.refresh, size: 16),
                   label: const Text('Détecter'),
                   style: OutlinedButton.styleFrom(
@@ -553,7 +481,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     );
   }
 
-  Widget _buildInput(BuildContext context) {
+  Widget _buildInput(BuildContext context, AiTutorProvider aiTutor) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
@@ -569,13 +497,13 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
               focusNode: _inputFocus,
               enabled: true,
               autofocus: true,
-              onSubmitted: (_) => _send(),
+              onSubmitted: (_) => _send(aiTutor),
               onTap: _requestInputFocus, // Forcer le focus au clic
               onTapOutside: (_) => FocusScope.of(context).unfocus(),
               style: const TextStyle(color: Colors.white, fontSize: 14),
               cursorColor: TdcColors.accent,
               decoration: InputDecoration(
-                hintText: _demoMode ? 'Posez une question (mode démo)...' : 'Posez une question...',
+                hintText: 'Posez une question...',
                 hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                 border: InputBorder.none,
                 isDense: true,
@@ -585,7 +513,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
           ),
         ),
         IconButton(
-          onPressed: _streaming ? null : _send,
+          onPressed: _streaming ? null : () => _send(aiTutor),
           icon: Icon(Icons.send, color: _streaming ? TdcColors.textMuted : TdcColors.accent),
         ),
       ]),

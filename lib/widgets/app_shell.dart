@@ -9,6 +9,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../core/theme/app_theme.dart';
 import '../core/responsive/responsive.dart';
 import '../features/courses/providers/courses_provider.dart';
@@ -20,16 +21,15 @@ import '../core/providers/settings_provider.dart';
 import '../features/tools/tool_catalog.dart';
 
 class AppShell extends StatefulWidget {
-  final Widget child;
+  const AppShell({super.key, required this.child});
 
-  const AppShell({
-    super.key,
-    required this.child,
-  });
+  final Widget child;
 
   @override
   State<AppShell> createState() => _AppShellState();
 }
+
+const String _menuHome = 'menu.home';
 
 class _AppShellState extends State<AppShell> {
   static final Map<String, String> _toolRouteNames = buildToolBreadcrumbMap();
@@ -42,22 +42,22 @@ class _AppShellState extends State<AppShell> {
   // ── Items de navigation ───────────────────────────────────
   // Note: Icônes harmonisées (smart_toy pour IA partout)
   List<_NavItem> get _navItems => [
-        const _NavItem(Icons.home_filled, 'Accueil', '/'),
-        const _NavItem(Icons.build, 'Outils', '/tools'),
-        const _NavItem(Icons.description, 'Cheat Sheets', '/cheat-sheets'),
-        const _NavItem(Icons.network_check, 'NetKit', '/netkit'),
+        _NavItem(Icons.home_filled, _menuHome.tr(), '/'),
+        _NavItem(Icons.build, 'menu.tools'.tr(), '/tools'),
+        _NavItem(Icons.description, 'menu.cheat_sheets'.tr(), '/cheat-sheets'),
+        _NavItem(Icons.network_check, 'menu.netkit'.tr(), '/netkit'),
         _NavItem(
           Icons.smart_toy,
-          'Chat IA',
+          'menu.ai_chat'.tr(),
           '/ai',
           trailing: Consumer<AiTutorProvider>(
             builder: (context, ai, _) => _aiDot(ai),
           ),
         ),
-        const _NavItem(Icons.settings, 'Paramètres', '/settings'),
-        const _NavItem(Icons.map, 'Roadmap', '/roadmap'),
-        const _NavItem(Icons.science, 'Simulations', '/lab'),
-        const _NavItem(Icons.wifi_tethering, 'Ghost Link', '/ghost-link'),
+        _NavItem(Icons.settings, 'menu.settings'.tr(), '/settings'),
+        _NavItem(Icons.map, 'menu.roadmap'.tr(), '/roadmap'),
+        _NavItem(Icons.science, 'menu.lab'.tr(), '/lab'),
+        _NavItem(Icons.wifi_tethering, 'menu.ghost_link'.tr(), '/ghost-link'),
       ];
 
   // ── Petites icônes de statut IA ───────────────────────────
@@ -82,18 +82,18 @@ class _AppShellState extends State<AppShell> {
 
   Widget _buildBreadcrumbs(BuildContext context, String activeRoute) {
     final Map<String, String> routeNames = {
-      '/': 'Accueil',
-      '/tools': 'Outils',
+      '/': _menuHome.tr(),
+      '/tools': 'menu.tools'.tr(),
       ..._toolRouteNames,
-      '/cheat-sheets': 'Cheat Sheets',
-      '/netkit': 'NetKit',
-      '/ai': 'Chat IA',
+      '/cheat-sheets': 'menu.cheat_sheets'.tr(),
+      '/netkit': 'menu.netkit'.tr(),
+      '/ai': 'menu.ai_chat'.tr(),
       '/ai-config': 'Config IA',
-      '/roadmap': 'Roadmap',
-      '/lab': 'Simulations',
+      '/roadmap': 'menu.roadmap'.tr(),
+      '/lab': 'menu.lab'.tr(),
       '/dashboard': 'Diagnostic',
       '/chapter': 'Cours',
-      '/settings': 'Paramètres',
+      '/settings': 'menu.settings'.tr(),
     };
 
     final items = routeNames.entries
@@ -107,10 +107,10 @@ class _AppShellState extends State<AppShell> {
       children: [
         GestureDetector(
           onTap: () => AppNavigator.pushReplacementNamed('/'),
-          child: const MouseRegion(
+          child: MouseRegion(
             cursor: SystemMouseCursors.click,
-            child: Text('Accueil',
-                style: TextStyle(
+            child: Text(_menuHome.tr(),
+                style: const TextStyle(
                     color: TdcColors.textMuted,
                     fontSize: 13,
                     fontWeight: FontWeight.w500)),

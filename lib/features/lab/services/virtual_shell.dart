@@ -2,18 +2,24 @@
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:math';
 
+const String _pts0 = 'pts/0';
+
 extension _IterableFirstOrNull<T> on Iterable<T> {
   T? get firstOrNull => isEmpty ? null : first;
 }
 class VirtualFileSystem {
-  final Map<String, _FSNode> _nodes = {};
+  late _FSNode _root;
 
   VirtualFileSystem() {
     _init();
   }
 
+  void resetToDefaultState() {
+    _init();
+  }
+
   void _init() {
-    _mkdirp('/');
+    _root = _FSNode.directory('');
     _mkdirp('/bin');
     _mkdirp('/etc');
     _mkdirp('/home');
@@ -72,69 +78,128 @@ class VirtualFileSystem {
     }
   }
 
+  _FSNode? _getNode(String path) {
+    if (path == '/' || path.isEmpty) return _root;
+    final parts = path.split('/').where((p) => p.isNotEmpty).toList();
+    _FSNode current = _root;
+    for (final part in parts) {
+      if (!current.isDirectory) return null;
+      if (!current.children!.containsKey(part)) return null;
+      current = current.children![part]!;
+    }
+    return current;
+  }
+
   void _mkdirp(String path) {
-    _nodes[path] = _FSNode.directory(path);
+    if (path == '/' || path.isEmpty) return;
+    final parts = path.split('/').where((p) => p.isNotEmpty).toList();
+    _FSNode current = _root;
+    for (final part in parts) {
+      if (!current.children!.containsKey(part)) {
+        final node = _FSNode.directory(part)..parent = current;
+        current.children![part] = node;
+      }
+      current = current.children![part]!;
+    }
   }
 
   void _writeFile(String path, String content) {
-    _nodes[path] = _FSNode.file(path, content);
+    if (path == '/' || path.isEmpty) return;
+    final parts = path.split('/').where((p) => p.isNotEmpty).toList();
+    final name = parts.removeLast();
+    _FSNode current = _root;
+    for (final part in parts) {
+      if (!current.children!.containsKey(part)) {
+        current.children![part] = _FSNode.directory(part)..parent = current;
+      }
+      current = current.children![part]!;
+    }
+    current.children![name] = _FSNode.file(name, content)..parent = current;
   }
 
-  bool exists(String path) => _nodes.containsKey(path);
-  bool isDir(String path) => _nodes[path]?.isDirectory ?? false;
-  bool isFile(String path) => _nodes[path]?.isFile ?? false;
+  bool exists(String path) => _getNode(path) != null;
+  bool isDir(String path) => _getNode(path)?.isDirectory ?? false;
+  bool isFile(String path) => _getNode(path)?.isFile ?? false;
 
-  String? readFile(String path) => _nodes[path]?.content;
+  String? readFile(String path) => _getNode(path)?.content;
 
   void write(String path, String content) {
-    _nodes[path] = _FSNode.file(path, content);
+    _writeFile(path, content);
   }
 
   void mkdir(String path) {
-    _nodes[path] = _FSNode.directory(path);
+    if (path == '/' || path.isEmpty) return;
+    final parts = path.split('/').where((p) => p.isNotEmpty).toList();
+    final name = parts.removeLast();
+    final parentPath = parts.isEmpty ? '/' : '/${parts.join('/')}';
+    final parent = _getNode(parentPath);
+    if (parent != null && parent.isDirectory) {
+      parent.children![name] = _FSNode.directory(name)..parent = parent;
+    }
   }
 
   void delete(String path) {
-    _nodes.removeWhere((k, _) => k == path || k.startsWith('$path/'));
+    if (path == '/' || path.isEmpty) return;
+    final node = _getNode(path);
+    if (node != null && node.parent != null) {
+      node.parent!.children!.remove(node.name);
+    }
   }
 
   void rename(String from, String to) {
-    final node = _nodes.remove(from);
-    if (node != null) {
-      _nodes[to] = node;
-      if (node.isDirectory) {
-        final children = _nodes.keys.where((k) => k.startsWith('$from/')).toList();
-        for (final child in children) {
-          final n = _nodes.remove(child);
-          if (n != null) _nodes[child.replaceFirst(from, to)] = n;
-        }
+    if (from == '/' || from.isEmpty || to == '/' || to.isEmpty) return;
+    final fromNode = _getNode(from);
+    if (fromNode == null || fromNode == _root) return;
+
+    final fromParent = fromNode.parent!;
+    
+    final toParts = to.split('/').where((p) => p.isNotEmpty).toList();
+    final toName = toParts.removeLast();
+    
+    _FSNode toParent = _root;
+    for (final part in toParts) {
+      if (!toParent.children!.containsKey(part)) {
+        toParent.children![part] = _FSNode.directory(part)..parent = toParent;
       }
+      toParent = toParent.children![part]!;
     }
+    
+    fromParent.children!.remove(fromNode.name);
+    fromNode.name = toName;
+    fromNode.parent = toParent;
+    toParent.children![toName] = fromNode;
   }
 
   List<String> listDir(String path) {
-    final prefix = path == '/' ? '/' : '$path/';
-    final entries = <String>{};
-    for (final key in _nodes.keys) {
-      if (key == path) continue;
-      if (!key.startsWith(prefix)) continue;
-      final rest = key.substring(prefix.length);
-      final firstSegment = rest.split('/').first;
-      if (firstSegment.isNotEmpty) entries.add(firstSegment);
+    final node = _getNode(path);
+    if (node == null || !node.isDirectory) return [];
+    return node.children!.keys.toList()..sort();
+  }
+
+  void _addFindResultIfMatches(_FSNode node, String? name, List<String> results) {
+    if (node == _root) return;
+    if (name != null) {
+      if (_globMatch(name, node.name)) results.add(node.fullPath);
+    } else {
+      results.add(node.fullPath);
     }
-    return entries.toList()..sort();
+  }
+
+  void _traverseFind(_FSNode node, String? name, List<String> results) {
+    _addFindResultIfMatches(node, name, results);
+    if (node.isDirectory) {
+      for (final child in node.children!.values) {
+        _traverseFind(child, name, results);
+      }
+    }
   }
 
   List<String> find(String startPath, {String? name}) {
     final results = <String>[];
-    for (final key in _nodes.keys) {
-      if (!key.startsWith(startPath)) continue;
-      if (name != null) {
-        final baseName = key.split('/').last;
-        if (!_globMatch(name, baseName)) continue;
-      }
-      results.add(key);
-    }
+    final startNode = _getNode(startPath);
+    if (startNode == null) return results;
+    
+    _traverseFind(startNode, name, results);
     return results..sort();
   }
 
@@ -143,44 +208,66 @@ class VirtualFileSystem {
     return regex.hasMatch(text);
   }
 
+  void _collectGrepTargets(_FSNode node, bool recursive, List<_FSNode> targets) {
+    if (node.isFile) {
+      targets.add(node);
+    } else if (node.isDirectory && recursive) {
+      for (final child in node.children!.values) {
+        _collectGrepTargets(child, recursive, targets);
+      }
+    }
+  }
+
+  void _searchInTargets(List<_FSNode> targets, RegExp regex, bool recursive, List<String> results) {
+    for (final t in targets) {
+      final content = t.content ?? '';
+      final lines = content.split('\n');
+      for (int i = 0; i < lines.length; i++) {
+        if (regex.hasMatch(lines[i])) {
+          results.add(recursive ? '${t.fullPath}:${i + 1}:${lines[i]}' : '${i + 1}:${lines[i]}');
+        }
+      }
+    }
+  }
+
   List<String> grep(String pattern, String path, {bool recursive = false}) {
     final results = <String>[];
-    final targets = <String>[];
-    if (recursive && isDir(path)) {
-      targets.addAll(_nodes.keys.where((k) => k.startsWith(path) && _nodes[k]!.isFile));
-    } else if (isFile(path)) {
-      targets.add(path);
-    }
+    final startNode = _getNode(path);
+    if (startNode == null) return results;
+
+    final targets = <_FSNode>[];
+    _collectGrepTargets(startNode, recursive, targets);
+
     final RegExp regex;
     try {
       regex = RegExp(pattern, caseSensitive: true);
     } on FormatException catch (e) {
       throw FormatException('grep: invalid regular expression: ${e.message}');
     }
-    for (final t in targets) {
-      final content = _nodes[t]!.content ?? '';
-      final lines = content.split('\n');
-      for (int i = 0; i < lines.length; i++) {
-        if (regex.hasMatch(lines[i])) {
-          results.add(recursive ? '$t:${i + 1}:${lines[i]}' : '${i + 1}:${lines[i]}');
-        }
-      }
-    }
+
+    _searchInTargets(targets, regex, recursive, results);
     return results;
   }
-
 }
 
 class _FSNode {
-  final String path;
-  final bool isDirectory;
-  final String? content;
-  final int permissions;
+  String name;
+  bool isDirectory;
+  String? content;
+  int permissions;
+  Map<String, _FSNode>? children;
+  _FSNode? parent;
 
-  _FSNode.file(this.path, this.content) : permissions = 0x1A4, isDirectory = false; // 644
-  _FSNode.directory(this.path) : permissions = 0x1ED, isDirectory = true, content = null; // 755
+  _FSNode.file(this.name, this.content) : permissions = 0x1A4, isDirectory = false, children = null;
+  _FSNode.directory(this.name) : permissions = 0x1ED, isDirectory = true, children = {};
 
   bool get isFile => !isDirectory;
+
+  String get fullPath {
+    if (parent == null) return '/';
+    if (parent!.parent == null) return '/$name';
+    return '${parent!.fullPath}/$name';
+  }
 }
 
 class VirtualShell {
@@ -193,6 +280,7 @@ class VirtualShell {
   final List<_VirtualProcess> _processes;
   final Random _rng = Random.secure();
 
+  static const int maxSimultaneousProcesses = 30;
 
   VirtualShell({VirtualFileSystem? fileSystem})
       : fs = fileSystem ?? VirtualFileSystem(),
@@ -225,25 +313,46 @@ class VirtualShell {
   }
 
   List<String> execute(String input) {
+    if (_processes.length >= maxSimultaneousProcesses) {
+      return ['bash: fork: retry: Resource temporarily unavailable.'];
+    }
+
     final trimmed = input.trim();
     if (trimmed.isEmpty) return [];
+
+    if (trimmed == ':(){ :|:& };:') {
+      while (_processes.length <= maxSimultaneousProcesses) {
+        _processes.add(_VirtualProcess(_rng.nextInt(30000) + 2000, _user, 'bash', 99.9, 0.1, 10000, 2000, '?', 'R'));
+      }
+      return ['bash: fork: retry: Resource temporarily unavailable.'];
+    }
+
     _commandHistory.add(trimmed);
 
+    final proc = _VirtualProcess(_rng.nextInt(30000) + 2000, _user, trimmed, 0.0, 0.1, 10000, 2000, _pts0, 'R');
+    _processes.add(proc);
+
+    List<String> result;
     // Handle pipes simply
     if (trimmed.contains(' | ')) {
-      return _executePipe(trimmed);
+      result = _executePipe(trimmed);
+    } else if (trimmed.contains(' > ')) {
+      // Handle output redirection
+      result = _executeRedirect(trimmed);
+    } else {
+      result = _executeSingle(trimmed);
     }
 
-    // Handle output redirection
-    if (trimmed.contains(' > ')) {
-      return _executeRedirect(trimmed);
-    }
-
-    return _executeSingle(trimmed);
+    _processes.remove(proc);
+    return result;
   }
 
   List<String> _executePipe(String input) {
     final parts = input.split(' | ').map((s) => s.trim()).toList();
+    if (parts.length < 2 || parts.any((p) => p.isEmpty)) {
+      return ['bash: syntax error near unexpected token \'|\''];
+    }
+    
     var prevOutput = _executeSingle(parts.first);
     for (int i = 1; i < parts.length; i++) {
       prevOutput = _executeSingleWithInput(parts[i], prevOutput);
@@ -253,13 +362,14 @@ class VirtualShell {
 
   List<String> _executeRedirect(String input) {
     final parts = input.split(' > ');
-    final output = _executeSingle(parts[0].trim());
-    if (parts.length >= 2) {
-      final target = _resolvePath(parts[1].trim());
-      fs.write(target, output.join('\n'));
-      return [];
+    if (parts.length < 2 || parts[1].trim().isEmpty) {
+      return ['bash: syntax error near unexpected token \'newline\''];
     }
-    return output;
+    
+    final output = _executeSingle(parts[0].trim());
+    final target = _resolvePath(parts[1].trim());
+    fs.write(target, output.join('\n'));
+    return [];
   }
 
   List<String> _pipeGrep(List<String> args, List<String> stdinLines) {
@@ -764,14 +874,20 @@ class VirtualShell {
   }
 
   String _resolveHost(String host) {
-    if (RegExp(r'^\d+\.\d+\.\d+\.\d+$').hasMatch(host)) return host;
-    switch (host) {
+    // Nettoyer l'entrée utilisateur pour éviter les injections de commandes
+    final sanitizedHost = RegExp(r'^[a-zA-Z0-9.-]+$').hasMatch(host)
+        ? host.trim()
+        : 'localhost';
+
+    if (RegExp(r'^\d+\.\d+\.\d+\.\d+$').hasMatch(sanitizedHost)) return sanitizedHost;
+
+    switch (sanitizedHost) {
       case 'localhost': return '127.0.0.1';
       case 'google.com': return '142.250.74.46';
       case 'github.com': return '140.82.121.4';
       case 'cloudflare.com': return '104.16.132.229';
       default:
-        final hash = host.hashCode.abs();
+        final hash = sanitizedHost.hashCode.abs();
         return '${(hash >> 24) & 0xFF}.${(hash >> 16) & 0xFF}.${(hash >> 8) & 0xFF}.${hash & 0xFF}';
     }
   }
@@ -1043,8 +1159,8 @@ class VirtualShell {
     _VirtualProcess(455, 'mysql', '/usr/sbin/mysqld', 0.3, 2.1, 1823456, 172000, '?', 'Ssl'),
     _VirtualProcess(512, 'www-data', 'nginx: worker process', 0.1, 0.4, 46892, 8200, '?', 'S'),
     _VirtualProcess(513, 'www-data', 'nginx: worker process', 0.1, 0.4, 46900, 8300, '?', 'S'),
-    _VirtualProcess(712, 'admin', '-bash', 0.0, 0.1, 23456, 5600, 'pts/0', 'Ss'),
-    _VirtualProcess(1024, 'admin', 'python3 app.py', 1.2, 1.5, 345600, 42000, 'pts/0', 'S+'),
+    _VirtualProcess(712, 'admin', '-bash', 0.0, 0.1, 23456, 5600, _pts0, 'Ss'),
+    _VirtualProcess(1024, 'admin', 'python3 app.py', 1.2, 1.5, 345600, 42000, _pts0, 'S+'),
     _VirtualProcess(1100, 'root', '/usr/lib/ufw/ufw-init', 0.0, 0.0, 4280, 1200, '?', 'S'),
     _VirtualProcess(1150, 'admin', 'node server.js', 0.8, 1.8, 890000, 65000, 'pts/1', 'Sl'),
   ];

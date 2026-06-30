@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
+import 'package:tutodecode/core/providers/settings_provider.dart';
 import 'package:tutodecode/features/ghost_ai/providers/ai_tutor_provider.dart';
 
 class AiTutorScreen extends StatefulWidget {
@@ -157,7 +158,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
               children: [
                 _buildNewSessionTab(provider),
                 _buildSessionsTab(provider),
-                _buildSettingsTab(provider),
+                _buildSettingsTab(context, provider),
               ],
             ),
           ),
@@ -714,7 +715,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
     );
   }
 
-  Widget _buildSettingsTab(AiTutorProvider provider) {
+  Widget _buildSettingsTab(BuildContext context, AiTutorProvider provider) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -753,7 +754,12 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                 borderSide: BorderSide.none,
               ),
             ),
-            onFieldSubmitted: (value) => provider.updateOllamaUrl(value),
+            onFieldSubmitted: (value) async {
+              await provider.updateOllamaUrl(value);
+              if (context.mounted) {
+                await Provider.of<SettingsProvider>(context, listen: false).reload();
+              }
+            },
           ),
           
           const SizedBox(height: 24),

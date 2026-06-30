@@ -27,7 +27,8 @@ const Map<String, dynamic> officialDeveloper = {
 
 /// Assets bundlés utilisés pour l'authentification du code source.
 const List<String> _kSourceAssets = [
-  'assets/courses.json',
+  'assets/courses/courses_fr.json',
+  'assets/courses/courses_en.json',
   'assets/cheat_sheets.json',
   'assets/netkit_cheat_sheets.json',
   'assets/manifest.json',

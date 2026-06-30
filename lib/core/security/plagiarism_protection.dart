@@ -14,7 +14,8 @@ import 'anti_tampering.dart';
 
 /// Assets utilisés pour l'analyse d'originalité.
 const List<String> _kPlagiarismAssets = [
-  'assets/courses.json',
+  'assets/courses/courses_fr.json',
+  'assets/courses/courses_en.json',
   'assets/cheat_sheets.json',
   'assets/netkit_cheat_sheets.json',
   'assets/manifest.json',

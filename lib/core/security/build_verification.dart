@@ -15,7 +15,8 @@ import 'anti_tampering.dart';
 
 /// Assets bundlés utilisés pour vérifier l'intégrité du build.
 const List<String> _kBuildAssets = [
-  'assets/courses.json',
+  'assets/courses/courses_fr.json',
+  'assets/courses/courses_en.json',
   'assets/manifest.json',
   'assets/asset_checksums.json',
 ];

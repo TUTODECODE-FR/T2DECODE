@@ -30,6 +30,7 @@ dependencies:
   crypto: ^3.0.3
   flutter_native_splash: ^2.4.0
   path: ^1.9.1
+  easy_localization: ^3.0.8
 
 
 dev_dependencies:
@@ -43,7 +44,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/courses.json
+    - assets/translations/
+    - assets/courses/
     - assets/cheat_sheets.json
     - assets/netkit_cheat_sheets.json
     - assets/manifest.json
