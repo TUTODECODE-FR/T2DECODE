@@ -11,6 +11,7 @@ class ModuleService {
   static const String _moduleFolder = 'TUTODECODE_Modules';
   static const String _backupFolder = 'TUTODECODE_ModuleBackups';
   static const String _shaFile = '.module_shas.json';
+  static const String _jsonExtension = '.json';
   static const int _maxModuleBytes = 5 * 1024 * 1024; // 5 MB
   static const int _maxBackupsPerModule = 5;
 
@@ -43,7 +44,7 @@ class ModuleService {
       final List<FileSystemEntity> files = dir.listSync();
 
       for (final file in files) {
-        if (file is File && file.path.endsWith('.json')) {
+        if (file is File && file.path.endsWith(_jsonExtension)) {
           try {
             final len = await file.length();
             if (len > _maxModuleBytes) {
@@ -99,6 +100,29 @@ class ModuleService {
   }
 
   /// Scans the modules directory for .json files and loads them as lightweight Courses (without full chapter content).
+  Future<bool> _verifyChecksum(File file, String fileName) async {
+    final meta = await getSavedMeta(fileName);
+    if (meta == null || meta.sha256B64 == null) return true;
+    final bytes = await file.readAsBytes();
+    final actualB64 = await _sha256B64(bytes);
+    if (actualB64 != meta.sha256B64) {
+      if (kDebugMode) debugPrint('Skipping module (checksum mismatch): ${file.path}');
+      return false;
+    }
+    return true;
+  }
+
+  void _applyLazyLoading(Map<String, dynamic> data) {
+    if (data['content'] is! List) return;
+    for (var chapter in data['content']) {
+      if (chapter is Map) {
+        chapter['content'] = ''; // Épargne la RAM
+        chapter['codeBlocks'] = null;
+        chapter['quiz'] = null;
+      }
+    }
+  }
+
   Future<Course?> _processExternalModuleLight(File file) async {
     try {
       final len = await file.length();
@@ -106,19 +130,12 @@ class ModuleService {
         if (kDebugMode) debugPrint('Skipping module (too large: $len bytes): ${file.path}');
         return null;
       }
-      final content = await file.readAsString();
-      final Map<String, dynamic> data = json.decode(content);
 
       final fileName = file.path.split(Platform.pathSeparator).last;
-      final meta = await getSavedMeta(fileName);
-      if (meta != null && meta.sha256B64 != null) {
-        final bytes = await file.readAsBytes();
-        final actualB64 = await _sha256B64(bytes);
-        if (actualB64 != meta.sha256B64) {
-          if (kDebugMode) debugPrint('Skipping module (checksum mismatch): ${file.path}');
-          return null;
-        }
-      }
+      if (!await _verifyChecksum(file, fileName)) return null;
+
+      final content = await file.readAsString();
+      final Map<String, dynamic> data = json.decode(content);
 
       final validationError = _validateModuleMap(data);
       if (validationError != null) {
@@ -126,24 +143,11 @@ class ModuleService {
         return null;
       }
 
-      // Vider le contenu pour le chargement léger (Lazy-loading)
-      if (data['content'] is List) {
-        for (var chapter in data['content']) {
-          if (chapter is Map) {
-            chapter['content'] = ''; // Épargne la RAM
-            chapter['codeBlocks'] = null;
-            chapter['quiz'] = null;
-          }
-        }
-      }
+      _applyLazyLoading(data);
       
       final course = Course.fromMap(data);
-      if (!course.keywords.contains('EXTERNAL')) {
-        course.keywords.add('EXTERNAL');
-      }
-      if (!course.keywords.contains('LAZY_LOADED')) {
-        course.keywords.add('LAZY_LOADED');
-      }
+      if (!course.keywords.contains('EXTERNAL')) course.keywords.add('EXTERNAL');
+      if (!course.keywords.contains('LAZY_LOADED')) course.keywords.add('LAZY_LOADED');
       
       return course;
     } catch (e) {
@@ -162,7 +166,7 @@ class ModuleService {
       final List<FileSystemEntity> files = dir.listSync();
 
       for (final file in files) {
-        if (file is File && file.path.endsWith('.json')) {
+        if (file is File && file.path.endsWith(_jsonExtension)) {
           final course = await _processExternalModuleLight(file);
           if (course != null) {
             externalCourses.add(course);
@@ -204,7 +208,7 @@ class ModuleService {
       final List<FileSystemEntity> files = dir.listSync();
 
       for (final file in files) {
-        if (file is File && file.path.endsWith('.json')) {
+        if (file is File && file.path.endsWith(_jsonExtension)) {
           final course = await _processFullCourseFile(file, courseId);
           if (course != null) return course;
         }
@@ -322,7 +326,7 @@ class ModuleService {
     final moduleFiles = modulesDir
         .listSync()
         .whereType<File>()
-        .where((f) => f.path.endsWith('.json'))
+        .where((f) => f.path.endsWith(_jsonExtension))
         .map((f) => f.path.split(Platform.pathSeparator).last)
         .toList();
     final out = <String>[];

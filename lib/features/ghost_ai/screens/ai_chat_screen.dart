@@ -107,6 +107,90 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     });
   }
 
+  void _handleUnconnectedOllama(String text, AiTutorProvider aiTutor) {
+    setState(() {
+      _msgs.add(_Msg(role: 'user', text: text));
+      _msgs.add(const _Msg(
+        role: 'assistant',
+        text: 'Bonjour ! Je suis Ghost AI. 🤖\n\n'
+            'Il semble que l\'IA locale (Ollama) ne soit pas encore configurée ou active. '
+            'Pour une réponse complète et intelligente, allez dans **Paramètres > IA** pour l\'activer, '
+            'ou lancez `ollama serve` sur votre Mac.',
+      ));
+    });
+    _scrollBottom();
+    _updateShell(aiTutor);
+  }
+
+  void _onStreamData(dynamic chunk) {
+    if (!mounted) return;
+    setState(() {
+      final last = _msgs.last;
+      if (chunk.isThinking) {
+        _msgs[_msgs.length - 1] = last.withThinking(last.thinking + chunk.text);
+      } else {
+        _msgs[_msgs.length - 1] = last.withText(last.text + chunk.text);
+      }
+    });
+    _scrollBottom();
+  }
+
+  void _onStreamDone() {
+    if (!mounted) return;
+    final last = _msgs.isNotEmpty ? _msgs.last : null;
+    if (last != null && last.role == 'assistant' && last.text.isEmpty && last.thinking.isNotEmpty) {
+      setState(() {
+        _msgs[_msgs.length - 1] = _Msg(role: 'assistant', text: last.thinking, thinking: '');
+      });
+    }
+    setState(() => _streaming = false);
+  }
+
+  void _onStreamError(dynamic e, AiTutorProvider aiTutor) {
+    if (!mounted) return;
+    setState(() {
+      _msgs[_msgs.length - 1] = _Msg(
+        role: 'error',
+        text: "⚠️ **Erreur IA:**\n\n${e.toString()}\n\n"
+            "Vérifiez qu'Ollama est bien installé et en cours d'exécution sur votre Mac.\n"
+            "_Commande : `ollama serve`_",
+      );
+      _streaming = false;
+    });
+    aiTutor.checkOllamaConnection();
+    _updateShell(aiTutor);
+  }
+
+  Future<void> _startOllamaStream(String text, String modelSelected, AiTutorProvider aiTutor) async {
+    final history = _msgs
+        .where((m) => m.role != 'error' && m.text.isNotEmpty)
+        .map((m) => {'role': m.role, 'content': m.text})
+        .toList(growable: false);
+
+    try {
+      final contextText = await RagService().findRelevantContext(text);
+      final finalSystemPrompt = contextText != null 
+          ? "$_kSystem\n\nCONTEXTE RELEVANT DES COURS :\n$contextText"
+          : _kSystem;
+
+      _sub = OllamaService.stream(modelSelected, history, system: finalSystemPrompt).listen(
+        _onStreamData,
+        onDone: _onStreamDone,
+        onError: (e) => _onStreamError(e, aiTutor),
+        cancelOnError: true,
+      );
+    } catch (e) {
+      setState(() {
+        _msgs[_msgs.length - 1] = _Msg(
+          role: 'error',
+          text: "⚠️ **Erreur IA:**\n\n${e.toString()}\n\n"
+              "Vérifiez qu'Ollama est bien installé et en cours d'exécution sur votre Mac.",
+        );
+        _streaming = false;
+      });
+    }
+  }
+
   Future<void> _send(AiTutorProvider aiTutor) async {
     final text = _inputCtrl.text.trim();
     if (text.isEmpty || _streaming) return;
@@ -122,20 +206,8 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       modelSelected = hasModels ? aiTutor.availableModels.first : null;
     }
 
-    // Si l'IA locale n'est pas connectée ou pas de modèle
     if (!aiTutor.isConnected || modelSelected == null) {
-      setState(() {
-        _msgs.add(_Msg(role: 'user', text: text));
-        _msgs.add(const _Msg(
-          role: 'assistant',
-          text: 'Bonjour ! Je suis Ghost AI. 🤖\n\n'
-              'Il semble que l\'IA locale (Ollama) ne soit pas encore configurée ou active. '
-              'Pour une réponse complète et intelligente, allez dans **Paramètres > IA** pour l\'activer, '
-              'ou lancez `ollama serve` sur votre Mac.',
-        ));
-      });
-      _scrollBottom();
-      _updateShell(aiTutor);
+      _handleUnconnectedOllama(text, aiTutor);
       return;
     }
 
@@ -147,67 +219,7 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     _scrollBottom();
     _updateShell(aiTutor);
 
-    // ── Mode Normal : appel à Ollama ─────────────────────────────────────
-    final history = _msgs
-        .where((m) => m.role != 'error' && m.text.isNotEmpty)
-        .map((m) => {'role': m.role, 'content': m.text})
-        .toList(growable: false);
-
-    try {
-      final contextText = await RagService().findRelevantContext(text);
-      final finalSystemPrompt = contextText != null 
-          ? "$_kSystem\n\nCONTEXTE RELEVANT DES COURS :\n$contextText"
-          : _kSystem;
-
-      _sub = OllamaService.stream(modelSelected, history, system: finalSystemPrompt).listen(
-        (chunk) {
-          if (!mounted) return;
-          setState(() {
-            final last = _msgs.last;
-            if (chunk.isThinking) {
-              _msgs[_msgs.length - 1] = last.withThinking(last.thinking + chunk.text);
-            } else {
-              _msgs[_msgs.length - 1] = last.withText(last.text + chunk.text);
-            }
-          });
-          _scrollBottom();
-        },
-        onDone: () {
-          if (!mounted) return;
-          final last = _msgs.isNotEmpty ? _msgs.last : null;
-          if (last != null && last.role == 'assistant' && last.text.isEmpty && last.thinking.isNotEmpty) {
-            setState(() {
-              _msgs[_msgs.length - 1] = _Msg(role: 'assistant', text: last.thinking, thinking: '');
-            });
-          }
-          setState(() => _streaming = false);
-        },
-        onError: (e) {
-          if (!mounted) return;
-          setState(() {
-            _msgs[_msgs.length - 1] = _Msg(
-              role: 'error',
-              text: "⚠️ **Erreur IA:**\n\n${e.toString()}\n\n"
-                  "Vérifiez qu'Ollama est bien installé et en cours d'exécution sur votre Mac.\n"
-                  "_Commande : `ollama serve`_",
-            );
-            _streaming = false;
-          });
-          aiTutor.checkOllamaConnection();
-          _updateShell(aiTutor);
-        },
-        cancelOnError: true,
-      );
-    } catch (e) {
-      setState(() {
-        _msgs[_msgs.length - 1] = _Msg(
-          role: 'error',
-          text: "⚠️ **Erreur IA:**\n\n${e.toString()}\n\n"
-              "Vérifiez qu'Ollama est bien installé et en cours d'exécution sur votre Mac.",
-        );
-        _streaming = false;
-      });
-    }
+    await _startOllamaStream(text, modelSelected, aiTutor);
   }
 
   void _stop() {

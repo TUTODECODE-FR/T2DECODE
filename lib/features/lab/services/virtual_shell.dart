@@ -2,6 +2,8 @@
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
 import 'dart:math';
 
+const String _pts0 = 'pts/0';
+
 extension _IterableFirstOrNull<T> on Iterable<T> {
   T? get firstOrNull => isEmpty ? null : first;
 }
@@ -174,27 +176,30 @@ class VirtualFileSystem {
     return node.children!.keys.toList()..sort();
   }
 
+  void _addFindResultIfMatches(_FSNode node, String? name, List<String> results) {
+    if (node == _root) return;
+    if (name != null) {
+      if (_globMatch(name, node.name)) results.add(node.fullPath);
+    } else {
+      results.add(node.fullPath);
+    }
+  }
+
+  void _traverseFind(_FSNode node, String? name, List<String> results) {
+    _addFindResultIfMatches(node, name, results);
+    if (node.isDirectory) {
+      for (final child in node.children!.values) {
+        _traverseFind(child, name, results);
+      }
+    }
+  }
+
   List<String> find(String startPath, {String? name}) {
     final results = <String>[];
     final startNode = _getNode(startPath);
     if (startNode == null) return results;
     
-    void traverse(_FSNode node) {
-      if (node != _root) {
-        if (name != null) {
-          if (_globMatch(name, node.name)) results.add(node.fullPath);
-        } else {
-          results.add(node.fullPath);
-        }
-      }
-      if (node.isDirectory) {
-        for (final child in node.children!.values) {
-          traverse(child);
-        }
-      }
-    }
-    
-    traverse(startNode);
+    _traverseFind(startNode, name, results);
     return results..sort();
   }
 
@@ -203,31 +208,17 @@ class VirtualFileSystem {
     return regex.hasMatch(text);
   }
 
-  List<String> grep(String pattern, String path, {bool recursive = false}) {
-    final results = <String>[];
-    final startNode = _getNode(path);
-    if (startNode == null) return results;
-
-    final targets = <_FSNode>[];
-    
-    void collectTargets(_FSNode node) {
-      if (node.isFile) {
-        targets.add(node);
-      } else if (node.isDirectory && recursive) {
-        for (final child in node.children!.values) {
-          collectTargets(child);
-        }
+  void _collectGrepTargets(_FSNode node, bool recursive, List<_FSNode> targets) {
+    if (node.isFile) {
+      targets.add(node);
+    } else if (node.isDirectory && recursive) {
+      for (final child in node.children!.values) {
+        _collectGrepTargets(child, recursive, targets);
       }
     }
-    collectTargets(startNode);
+  }
 
-    final RegExp regex;
-    try {
-      regex = RegExp(pattern, caseSensitive: true);
-    } on FormatException catch (e) {
-      throw FormatException('grep: invalid regular expression: ${e.message}');
-    }
-
+  void _searchInTargets(List<_FSNode> targets, RegExp regex, bool recursive, List<String> results) {
     for (final t in targets) {
       final content = t.content ?? '';
       final lines = content.split('\n');
@@ -237,6 +228,24 @@ class VirtualFileSystem {
         }
       }
     }
+  }
+
+  List<String> grep(String pattern, String path, {bool recursive = false}) {
+    final results = <String>[];
+    final startNode = _getNode(path);
+    if (startNode == null) return results;
+
+    final targets = <_FSNode>[];
+    _collectGrepTargets(startNode, recursive, targets);
+
+    final RegExp regex;
+    try {
+      regex = RegExp(pattern, caseSensitive: true);
+    } on FormatException catch (e) {
+      throw FormatException('grep: invalid regular expression: ${e.message}');
+    }
+
+    _searchInTargets(targets, regex, recursive, results);
     return results;
   }
 }
@@ -320,7 +329,7 @@ class VirtualShell {
 
     _commandHistory.add(trimmed);
 
-    final proc = _VirtualProcess(_rng.nextInt(30000) + 2000, _user, trimmed, 0.0, 0.1, 10000, 2000, 'pts/0', 'R');
+    final proc = _VirtualProcess(_rng.nextInt(30000) + 2000, _user, trimmed, 0.0, 0.1, 10000, 2000, _pts0, 'R');
     _processes.add(proc);
 
     List<String> result;
@@ -1150,8 +1159,8 @@ class VirtualShell {
     _VirtualProcess(455, 'mysql', '/usr/sbin/mysqld', 0.3, 2.1, 1823456, 172000, '?', 'Ssl'),
     _VirtualProcess(512, 'www-data', 'nginx: worker process', 0.1, 0.4, 46892, 8200, '?', 'S'),
     _VirtualProcess(513, 'www-data', 'nginx: worker process', 0.1, 0.4, 46900, 8300, '?', 'S'),
-    _VirtualProcess(712, 'admin', '-bash', 0.0, 0.1, 23456, 5600, 'pts/0', 'Ss'),
-    _VirtualProcess(1024, 'admin', 'python3 app.py', 1.2, 1.5, 345600, 42000, 'pts/0', 'S+'),
+    _VirtualProcess(712, 'admin', '-bash', 0.0, 0.1, 23456, 5600, _pts0, 'Ss'),
+    _VirtualProcess(1024, 'admin', 'python3 app.py', 1.2, 1.5, 345600, 42000, _pts0, 'S+'),
     _VirtualProcess(1100, 'root', '/usr/lib/ufw/ufw-init', 0.0, 0.0, 4280, 1200, '?', 'S'),
     _VirtualProcess(1150, 'admin', 'node server.js', 0.8, 1.8, 890000, 65000, 'pts/1', 'Sl'),
   ];

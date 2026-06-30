@@ -21,16 +21,15 @@ import '../core/providers/settings_provider.dart';
 import '../features/tools/tool_catalog.dart';
 
 class AppShell extends StatefulWidget {
-  final Widget child;
+  const AppShell({super.key, required this.child});
 
-  const AppShell({
-    super.key,
-    required this.child,
-  });
+  final Widget child;
 
   @override
   State<AppShell> createState() => _AppShellState();
 }
+
+const String _menuHome = 'menu.home';
 
 class _AppShellState extends State<AppShell> {
   static final Map<String, String> _toolRouteNames = buildToolBreadcrumbMap();
@@ -43,7 +42,7 @@ class _AppShellState extends State<AppShell> {
   // ── Items de navigation ───────────────────────────────────
   // Note: Icônes harmonisées (smart_toy pour IA partout)
   List<_NavItem> get _navItems => [
-        _NavItem(Icons.home_filled, 'menu.home'.tr(), '/'),
+        _NavItem(Icons.home_filled, _menuHome.tr(), '/'),
         _NavItem(Icons.build, 'menu.tools'.tr(), '/tools'),
         _NavItem(Icons.description, 'menu.cheat_sheets'.tr(), '/cheat-sheets'),
         _NavItem(Icons.network_check, 'menu.netkit'.tr(), '/netkit'),
@@ -83,7 +82,7 @@ class _AppShellState extends State<AppShell> {
 
   Widget _buildBreadcrumbs(BuildContext context, String activeRoute) {
     final Map<String, String> routeNames = {
-      '/': 'menu.home'.tr(),
+      '/': _menuHome.tr(),
       '/tools': 'menu.tools'.tr(),
       ..._toolRouteNames,
       '/cheat-sheets': 'menu.cheat_sheets'.tr(),
@@ -110,7 +109,7 @@ class _AppShellState extends State<AppShell> {
           onTap: () => AppNavigator.pushReplacementNamed('/'),
           child: MouseRegion(
             cursor: SystemMouseCursors.click,
-            child: Text('menu.home'.tr(),
+            child: Text(_menuHome.tr(),
                 style: const TextStyle(
                     color: TdcColors.textMuted,
                     fontSize: 13,
