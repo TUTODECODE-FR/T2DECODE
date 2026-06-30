@@ -157,6 +157,17 @@ void main() {
       final result = shell.execute('find /etc -name hostname');
       expect(result, contains('/etc/hostname'));
     });
+
+    test('find lists all files without name', () {
+      final result = shell.execute('find /etc');
+      expect(result, contains('/etc/hostname'));
+      expect(result.length, greaterThan(1));
+    });
+
+    test('grep with invalid regex returns error', () {
+      final result = shell.execute('grep [invalid /etc/hostname');
+      expect(result.first, contains('invalid regular expression'));
+    });
   });
 
   group('Pipes', () {
