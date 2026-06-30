@@ -98,6 +98,105 @@ class ModuleService {
     return externalCourses;
   }
 
+  /// Scans the modules directory for .json files and loads them as lightweight Courses (without full chapter content).
+  Future<List<Course>> loadExternalModulesLight() async {
+    final List<Course> externalCourses = [];
+    try {
+      final dir = await getModulesDirectory();
+      if (!await dir.exists()) return [];
+
+      final List<FileSystemEntity> files = dir.listSync();
+
+      for (final file in files) {
+        if (file is File && file.path.endsWith('.json')) {
+          try {
+            final len = await file.length();
+            if (len > _maxModuleBytes) {
+              if (kDebugMode) debugPrint('Skipping module (too large: $len bytes): ${file.path}');
+              continue;
+            }
+            final content = await file.readAsString();
+            final Map<String, dynamic> data = json.decode(content);
+
+            final fileName = file.path.split(Platform.pathSeparator).last;
+            final meta = await getSavedMeta(fileName);
+            if (meta != null && meta.sha256B64 != null) {
+              final bytes = await file.readAsBytes();
+              final actualB64 = await _sha256B64(bytes);
+              if (actualB64 != meta.sha256B64) {
+                if (kDebugMode) debugPrint('Skipping module (checksum mismatch): ${file.path}');
+                continue;
+              }
+            }
+
+            final validationError = _validateModuleMap(data);
+            if (validationError != null) {
+              if (kDebugMode) debugPrint('Rejet du module ($validationError): ${file.path}');
+              continue;
+            }
+
+            // Vider le contenu pour le chargement léger (Lazy-loading)
+            if (data['content'] is List) {
+              for (var chapter in data['content']) {
+                if (chapter is Map) {
+                  chapter['content'] = ''; // Épargne la RAM
+                  chapter['codeBlocks'] = null;
+                  chapter['quiz'] = null;
+                }
+              }
+            }
+            
+            final course = Course.fromMap(data);
+            if (!course.keywords.contains('EXTERNAL')) {
+              course.keywords.add('EXTERNAL');
+            }
+            if (!course.keywords.contains('LAZY_LOADED')) {
+              course.keywords.add('LAZY_LOADED');
+            }
+            
+            externalCourses.add(course);
+          } catch (e) {
+            if (kDebugMode) debugPrint('Error loading module ${file.path}: $e');
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error scanning modules directory: $e');
+    }
+    return externalCourses;
+  }
+
+  /// Loads a full course from an external module file, given its ID.
+  Future<Course?> loadFullCourse(String courseId) async {
+    try {
+      final dir = await getModulesDirectory();
+      if (!await dir.exists()) return null;
+
+      final List<FileSystemEntity> files = dir.listSync();
+
+      for (final file in files) {
+        if (file is File && file.path.endsWith('.json')) {
+          try {
+            final content = await file.readAsString();
+            final Map<String, dynamic> data = json.decode(content);
+
+            if (data['id'] == courseId) {
+              final validationError = _validateModuleMap(data);
+              if (validationError != null) return null;
+              
+              final course = Course.fromMap(data);
+              if (!course.keywords.contains('EXTERNAL')) {
+                course.keywords.add('EXTERNAL');
+              }
+              return course;
+            }
+          } catch (_) {}
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+
   /// Saves a module's content and its SHA hash.
   Future<void> saveModule(String fileName, String content, String sha) async {
     // Sécurité : Extraire uniquement le nom de fichier pour éviter le Path Traversal

@@ -109,53 +109,6 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                       'Données synthétiques. Aucun scan réseau réel ni capture de paquets.',
                   icon: Icons.info_outline,
                 ),
-                const SizedBox(height: 12),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 130,
-                        child: LabMetricCard(
-                          title: 'Bande Passante',
-                          value: '${_bandwidthUsage.toStringAsFixed(1)} Mbps',
-                          icon: Icons.speed,
-                          color: TdcColors.network,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      SizedBox(
-                        width: 130,
-                        child: LabMetricCard(
-                          title: 'Latence',
-                          value: '$_latency ms',
-                          icon: Icons.timer,
-                          color: TdcColors.warning,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      SizedBox(
-                        width: 130,
-                        child: LabMetricCard(
-                          title: 'Perte Paquets',
-                          value: '$_packetLoss%',
-                          icon: Icons.warning,
-                          color: TdcColors.danger,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      SizedBox(
-                        width: 130,
-                        child: LabMetricCard(
-                          title: 'Paquets Total',
-                          value: '$_totalPackets',
-                          icon: Icons.data_usage,
-                          color: TdcColors.info,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),

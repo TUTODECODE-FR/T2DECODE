@@ -180,12 +180,22 @@ void main() {
       final result = shell.execute('cat /tmp/unsorted | sort');
       expect(result, ['apple', 'banana', 'cherry']);
     });
+
+    test('malformed pipes return syntax error', () {
+      final result = shell.execute('cat /etc/passwd |  | grep');
+      expect(result.first, contains("syntax error near unexpected token '|'"));
+    });
   });
 
   group('Redirection', () {
     test('echo > file writes to file', () {
       shell.execute('echo Hello World > /tmp/out.txt');
       expect(shell.fs.readFile('/tmp/out.txt'), 'Hello World');
+    });
+
+    test('malformed redirection returns syntax error', () {
+      final result = shell.execute('echo Hello >  >  >');
+      expect(result.first, contains("syntax error near unexpected token 'newline'"));
     });
   });
 
@@ -291,6 +301,11 @@ void main() {
     test('wget downloads file', () {
       shell.execute('wget http://example.com/test.html');
       expect(shell.fs.exists('/home/admin/test.html'), true);
+    });
+
+    test('ping with potentially malicious host sanitizes target to localhost/127.0.0.1', () {
+      final result = shell.execute('ping google.com;whoami');
+      expect(result.first, contains('PING google.com;whoami (127.0.0.1)'));
     });
   });
 
