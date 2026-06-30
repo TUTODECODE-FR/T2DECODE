@@ -37,10 +37,6 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
   final List<CapturedPacket> _capturedPackets = [];
   
   // Métriques réseau
-  double _bandwidthUsage = 0.0;
-  final int _packetLoss = 0;
-  int _latency = 0;
-  int _totalPackets = 0;
   
   late AnimationController _scanController;
   late AnimationController _packetController;
@@ -1015,7 +1011,6 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
         _capturedPackets.insert(0, packet);
         if (_capturedPackets.length > 50) _capturedPackets.removeLast();
         _totalPackets++;
-        _bandwidthUsage = 0.5 + (DateTime.now().second % 5) / 2.0;
       });
     }
   }

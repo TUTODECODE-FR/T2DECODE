@@ -8,7 +8,6 @@ import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 import 'package:tutodecode/features/courses/service/rag_service.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
-import 'package:tutodecode/core/providers/settings_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 // ─── Prompt système ──────────────────────────────────────────────────────────
@@ -116,7 +115,12 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     _requestInputFocus();
 
     final hasModels = aiTutor.availableModels.isNotEmpty;
-    final modelSelected = aiTutor.availableModels.contains(aiTutor.selectedModel) ? aiTutor.selectedModel : (hasModels ? aiTutor.availableModels.first : null);
+    String? modelSelected;
+    if (aiTutor.availableModels.contains(aiTutor.selectedModel)) {
+      modelSelected = aiTutor.selectedModel;
+    } else {
+      modelSelected = hasModels ? aiTutor.availableModels.first : null;
+    }
 
     // Si l'IA locale n'est pas connectée ou pas de modèle
     if (!aiTutor.isConnected || modelSelected == null) {
@@ -291,7 +295,12 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
 
   Widget _buildModelPicker(BuildContext context, AiTutorProvider aiTutor) {
     final hasModels = aiTutor.availableModels.isNotEmpty;
-    final modelSelected = aiTutor.availableModels.contains(aiTutor.selectedModel) ? aiTutor.selectedModel : (hasModels ? aiTutor.availableModels.first : null);
+    String? modelSelected;
+    if (aiTutor.availableModels.contains(aiTutor.selectedModel)) {
+      modelSelected = aiTutor.selectedModel;
+    } else {
+      modelSelected = hasModels ? aiTutor.availableModels.first : null;
+    }
 
     return Center(
       child: Container(

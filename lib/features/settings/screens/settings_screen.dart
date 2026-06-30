@@ -171,7 +171,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   }
                   
                   return DropdownButtonFormField<String>(
-                    value: selectedValue,
+                    initialValue: selectedValue,
                     decoration: const InputDecoration(labelText: 'Sélecteur de modèle'),
                     items: availableModels.toSet().toList().map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
                     onChanged: (val) => val != null ? settings.setOllamaModel(val) : null,
