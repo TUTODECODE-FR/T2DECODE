@@ -95,11 +95,11 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       child: Column(
         children: [
           // Header avec métriques simulées
-          Padding(
-            padding: const EdgeInsets.all(16),
+          const Padding(
+            padding: EdgeInsets.all(16),
             child: Column(
               children: [
-                const LabNotice(
+                LabNotice(
                   title: 'Simulation pédagogique',
                   message:
                       'Données synthétiques. Aucun scan réseau réel ni capture de paquets.',
@@ -953,7 +953,6 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       
       setState(() {
         _pingResults.add(result);
-        _latency = result.time;
       });
     }
     
@@ -1010,7 +1009,6 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       setState(() {
         _capturedPackets.insert(0, packet);
         if (_capturedPackets.length > 50) _capturedPackets.removeLast();
-        _totalPackets++;
       });
     }
   }

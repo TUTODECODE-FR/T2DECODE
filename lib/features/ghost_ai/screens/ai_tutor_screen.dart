@@ -158,7 +158,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
               children: [
                 _buildNewSessionTab(provider),
                 _buildSessionsTab(provider),
-                _buildSettingsTab(provider),
+                _buildSettingsTab(context, provider),
               ],
             ),
           ),
@@ -715,7 +715,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
     );
   }
 
-  Widget _buildSettingsTab(AiTutorProvider provider) {
+  Widget _buildSettingsTab(BuildContext context, AiTutorProvider provider) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
