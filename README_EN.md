@@ -29,6 +29,7 @@
 
   <!-- CI & Distribution Badges -->
   <p>
+    <a href="https://about.gitlab.com/solutions/open-source/"><img src="https://img.shields.io/badge/GitLab_Open_Source-Partner-554488?style=for-the-badge&logo=gitlab&logoColor=white&labelColor=1A1D2E&color=FC6D26" alt="GitLab Open Source Partner"></a>
     <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/pipelines"><img src="https://gitlab.com/tutodecode-org/T2DECODE/badges/main/pipeline.svg" alt="pipeline status" /></a>
     <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/releases"><img src="https://gitlab.com/tutodecode-org/T2DECODE/-/badges/release.svg" alt="Latest Release"></a>
     <a href="https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12"><img src="https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6" alt="Mac App Store"></a>
