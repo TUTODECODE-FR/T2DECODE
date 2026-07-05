@@ -3,6 +3,9 @@ image: ghcr.io/cirruslabs/flutter:stable
 variables:
   GIT_DEPTH: "0"
 
+default:
+  interruptible: true
+
 stages:
   - validate
   - build-test
