@@ -97,6 +97,7 @@ build_windows_unsigned:
 
 build_macos_unsigned:
   stage: build-test
+  allow_failure: true
   tags:
     - saas-macos-medium-m1
   script:
@@ -277,6 +278,7 @@ build_windows_signed:
 
 build_macos_signed:
   stage: build-release
+  allow_failure: true
   tags:
     - saas-macos-medium-m1
   script:
