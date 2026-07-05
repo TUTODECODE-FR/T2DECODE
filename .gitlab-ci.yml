@@ -85,8 +85,8 @@ build_windows_unsigned:
   tags:
     - saas-windows-medium-amd64
   script:
-    - git clone https://github.com/flutter/flutter.git -b stable C:\flutter
-    - $env:Path += ";C:\flutter\bin"
+    - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
+    - $env:Path += ";C:/flutter/bin"
     - flutter config --no-enable-swift-package-manager
     - flutter pub get
     - flutter build windows --release
@@ -241,14 +241,14 @@ build_windows_signed:
     - saas-windows-medium-amd64
   script:
     - choco install innosetup --no-progress -y
-    - git clone https://github.com/flutter/flutter.git -b stable C:\flutter
-    - $env:Path += ";C:\flutter\bin"
+    - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
+    - $env:Path += ";C:/flutter/bin"
     - flutter config --no-enable-swift-package-manager
     - flutter pub get
     - flutter build windows --release
-    - $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+    - $iscc = "C:/Program Files (x86)/Inno Setup 6/ISCC.exe"
     - $ver = $env:CI_COMMIT_TAG.TrimStart("v")
-    - $iss = "windows\installer\tutodecode.iss"
+    - $iss = "windows/installer/tutodecode.iss"
     - |
       if (Test-Path $iss) {
         $txt = Get-Content -Raw $iss
@@ -258,13 +258,13 @@ build_windows_signed:
           Set-Content -NoNewline -Encoding UTF8 $iss $txt
         }
       }
-    - '& $iscc /DMyAppVersion=$ver windows\installer\tutodecode.iss'
-    - Copy-Item -Force "windows\installer\T2DECODE-Setup.exe" "T2DECODE-Setup.exe"
-    - Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath T2DECODE-Windows.zip
-    - $pfxPath = "$env:TEMP\codesign.pfx"
-    - [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String("$env:WINDOWS_PFX_BASE64"))
-    - $signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter "signtool.exe" -ErrorAction SilentlyContinue | Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1 -ExpandProperty FullName
-    - $exePath = "build\windows\x64\runner\Release\T2DECODE.exe"
+    - '& $iscc /DMyAppVersion=$ver windows/installer/tutodecode.iss'
+    - Copy-Item -Force "windows/installer/T2DECODE-Setup.exe" "T2DECODE-Setup.exe"
+    - Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath T2DECODE-Windows.zip
+    - $pfxPath = "$env:TEMP/codesign.pfx"
+    - '[IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String("$env:WINDOWS_PFX_BASE64"))'
+    - $signtool = Get-ChildItem "C:/Program Files (x86)/Windows Kits/10/bin" -Recurse -Filter "signtool.exe" -ErrorAction SilentlyContinue | Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1 -ExpandProperty FullName
+    - $exePath = "build/windows/x64/runner/Release/T2DECODE.exe"
     - '& $signtool sign /f $pfxPath /p "$env:WINDOWS_PFX_PASSWORD" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v $exePath'
     - '& $signtool sign /f $pfxPath /p "$env:WINDOWS_PFX_PASSWORD" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v T2DECODE-Setup.exe'
   artifacts:
