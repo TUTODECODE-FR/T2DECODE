@@ -64,6 +64,50 @@ test_and_analyze:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "main"
 
+megalinter:
+  stage: validate
+  image: oxsecurity/megalinter-flutter:v8
+  variables:
+    DEFAULT_WORKSPACE: $CI_PROJECT_DIR
+  script:
+    - "true"
+  artifacts:
+    when: always
+    paths:
+      - megalinter-reports
+    expire_in: 1 week
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+sonarcloud-check:
+  stage: validate
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script:
+    - sonar-scanner
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+osv-scanner:
+  stage: validate
+  image:
+    name: ghcr.io/google/osv-scanner:latest
+    entrypoint: [""]
+  script:
+    - /osv-scanner -r .
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
 # === STAGE: BUILD-TEST (Unsigned) ===
 build_android_unsigned:
   stage: build-test
