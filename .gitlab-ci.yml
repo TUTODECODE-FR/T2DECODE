@@ -67,7 +67,7 @@ test_and_analyze:
 
 megalinter:
   stage: validate
-  image: oxsecurity/megalinter-flutter:v8
+  image: oxsecurity/megalinter:v8
   variables:
     DEFAULT_WORKSPACE: $CI_PROJECT_DIR
   script:
