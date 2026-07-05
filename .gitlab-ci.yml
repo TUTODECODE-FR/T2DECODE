@@ -103,6 +103,7 @@ build_windows_unsigned:
 build_macos_unsigned:
   stage: build-test
   allow_failure: true
+  image: macos-15-xcode-16
   tags:
     - saas-macos-large-m2pro
   script:
@@ -284,6 +285,7 @@ build_windows_signed:
 build_macos_signed:
   stage: build-release
   allow_failure: true
+  image: macos-15-xcode-16
   tags:
     - saas-macos-large-m2pro
   script:
