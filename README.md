@@ -4,8 +4,8 @@
   <p>
     <strong>🇫🇷 Français</strong> | <a href="README_EN.md">🇬🇧 English</a>
   </p>
-  <a href="https://github.com/TUTODECODE-FR/T2DECODE">
-    <img src="https://raw.githubusercontent.com/TUTODECODE-FR/T2DECODE/main/assets/TDC.png" width="160" height="160" alt="T2C Logo">
+  <a href="https://gitlab.com/tutodecode-org/T2DECODE">
+    <img src="https://gitlab.com/tutodecode-org/T2DECODE/-/raw/main/assets/TDC.png" width="160" height="160" alt="T2C Logo">
   </a>
 
   <h1>T2DECODE</h1>
@@ -30,24 +30,22 @@
 
   <!-- CI & Distribution Badges -->
   <p>
-    <a href="https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1A1D2E&color=3DDC84" alt="CI"></a>
-    <a href="https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/mobsf.yml"><img src="https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/mobsf.yml?label=MobSF%20Pentest&style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1b1510" alt="MobSF Pentest"></a>
-    <a href="https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/osv-scanner.yml"><img src="https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/osv-scanner.yml?label=Google%20OSV&style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1b1510" alt="OSV Scanner"></a>
-    <a href="https://github.com/TUTODECODE-FR/T2DECODE/releases/latest"><img src="https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=for-the-badge&logo=github&color=F5EBDA&labelColor=1A1D2E&logoColor=F5EBDA" alt="Release"></a>
+    <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/pipelines"><img src="https://gitlab.com/tutodecode-org/T2DECODE/badges/main/pipeline.svg" alt="pipeline status" /></a>
+    <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/releases"><img src="https://gitlab.com/tutodecode-org/T2DECODE/-/badges/release.svg" alt="Latest Release"></a>
     <a href="https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12"><img src="https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6" alt="Mac App Store"></a>
     <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=1A1D2E&color=02569B" alt="Flutter"></a>
-    <a href="https://github.com/TUTODECODE-FR/T2DECODE/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-FCC624?style=for-the-badge&labelColor=1A1D2E&color=FCC624" alt="License"></a>
+    <a href="https://gitlab.com/tutodecode-org/T2DECODE/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-FCC624?style=for-the-badge&labelColor=1A1D2E&color=FCC624" alt="License"></a>
   </p>
 
   <!-- OpenSSF Badges -->
   <p>
     <a href="https://www.bestpractices.dev/projects/12999"><img src="https://www.bestpractices.dev/projects/12999/badge" alt="OpenSSF Best Practices"></a>
     <a href="https://www.bestpractices.dev/projects/12999"><img src="https://www.bestpractices.dev/projects/12999/baseline" alt="OpenSSF Baseline"></a>
-    <a href="https://scorecard.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE"><img src="https://api.scorecard.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge" alt="OpenSSF Scorecard"></a>
+    <a href="https://scorecard.dev/viewer/?uri=gitlab.com/tutodecode-org/T2DECODE"><img src="https://api.scorecard.dev/projects/gitlab.com/tutodecode-org/T2DECODE/badge" alt="OpenSSF Scorecard"></a>
   </p>
 
   <p>
-    <a href="https://github.com/TUTODECODE-FR/T2DECODE/releases/latest">Releases</a> · 
+    <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/releases">Releases</a> · 
     <a href="docs/resume.md">Résumé</a> ·
     <a href="docs/build.md">Build & Compilation</a> · 
     <a href="docs/architecture.md">Architecture</a> · 
@@ -153,7 +151,7 @@ Nous construisons l'avenir de la formation souveraine :
 
 Si vous ne souhaitez pas compiler l'application vous-même, voici les trois étapes pour démarrer en un éclair :
 
-1. **📥 Télécharger** : Récupérez la [dernière release](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) correspondant à votre système (Windows, macOS, Linux, Android).
+1. **📥 Télécharger** : Récupérez la [dernière release](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) correspondant à votre système (Windows, macOS, Linux, Android).
 2. **⚡ Lancer** : L'application est autonome, installez-la ou exécutez le binaire directement selon votre plateforme.
 3. **🎓 Utiliser** : C'est fait ! Vous pouvez instantanément utiliser la boîte à outils, jouer avec les simulateurs, et discuter avec l'IA locale (Ollama).
 
@@ -179,7 +177,7 @@ T2DECODE (Application Flutter)
 
 ## 📥 Téléchargements & Plateformes
 
-➡️ [**Télécharger les binaires précompilés (Releases GitHub)**](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest)
+➡️ [**Télécharger les binaires précompilés (Releases GitLab)**](https://gitlab.com/tutodecode-org/T2DECODE/-/releases)
 
 | Plateforme | Format de Distribution | Statut CI | Accessibilité |
 | :--- | :--- | :---: | :---: |
@@ -229,7 +227,7 @@ L'application repose sur Flutter et des librairies natives. Assurez-vous d'insta
 
 ```bash
 # Clonage du dépôt officiel
-git clone https://github.com/TUTODECODE-FR/T2DECODE.git
+git clone https://gitlab.com/tutodecode-org/T2DECODE.git
 cd T2DECODE
 
 # Vérification de l'environnement de build

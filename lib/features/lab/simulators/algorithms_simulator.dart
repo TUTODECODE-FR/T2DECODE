@@ -1187,7 +1187,7 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
             ]),
             const SizedBox(height: 12),
             SizedBox(
-              height: 80,
+              height: 95,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: List.generate(_sortArr.length, (i) {
@@ -1196,11 +1196,14 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                   final color = isComparing ? TdcColors.warning : TdcColors.info;
                   return Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 1),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text('${_sortArr[i]}', style: TextStyle(color: color, fontSize: 9, fontFamily: 'monospace')),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text('${_sortArr[i]}', style: TextStyle(color: color, fontSize: 9, fontFamily: 'monospace')),
+                          ),
                           AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             height: h,
