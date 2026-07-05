@@ -22,7 +22,9 @@ dco_check:
   script:
     - echo "Checking commits for DCO (Signed-off-by) signature..."
     - MISSING_DCO=0
+    - git config --global --add safe.directory "$CI_PROJECT_DIR"
     - |
+      git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
       for commit in $(git rev-list origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME..HEAD); do
         if ! git log -1 --format=%B $commit | grep -qi "Signed-off-by:"; then
           echo "❌ Error: Commit $commit is missing the 'Signed-off-by:' line."
