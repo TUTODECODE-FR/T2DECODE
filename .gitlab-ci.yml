@@ -21,7 +21,9 @@ cache:
 # === STAGE: VALIDATE ===
 dco_check:
   stage: validate
-  image: alpine/git
+  image:
+    name: alpine/git
+    entrypoint: [""]
   script:
     - echo "Checking commits for DCO (Signed-off-by) signature..."
     - MISSING_DCO=0
