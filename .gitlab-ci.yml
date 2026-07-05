@@ -99,7 +99,7 @@ build_macos_unsigned:
   stage: build-test
   allow_failure: true
   tags:
-    - saas-macos-medium-m1
+    - saas-macos-large-m2pro
   script:
     - git clone https://github.com/flutter/flutter.git -b stable $HOME/flutter
     - export PATH="$PATH:$HOME/flutter/bin"
@@ -280,7 +280,7 @@ build_macos_signed:
   stage: build-release
   allow_failure: true
   tags:
-    - saas-macos-medium-m1
+    - saas-macos-large-m2pro
   script:
     - git clone https://github.com/flutter/flutter.git -b stable $HOME/flutter
     - export PATH="$PATH:$HOME/flutter/bin"
