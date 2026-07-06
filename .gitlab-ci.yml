@@ -63,7 +63,6 @@ test_and_analyze:
       --binary-files=without-match && exit 1 || exit 0
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "main"
 
 megalinter:
   stage: validate
@@ -79,7 +78,6 @@ megalinter:
     expire_in: 1 week
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "main"
 
 osv-scanner:
   stage: validate
@@ -91,7 +89,6 @@ osv-scanner:
   allow_failure: true
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "main"
 
 # === STAGE: BUILD-TEST (Unsigned) ===
 build_android_unsigned:
@@ -101,7 +98,6 @@ build_android_unsigned:
     - flutter build apk --release
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "main"
 
 build_linux_unsigned:
   stage: build-test
@@ -112,7 +108,6 @@ build_linux_unsigned:
     - flutter build linux --release
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "main"
 
 build_windows_unsigned:
   stage: build-test
@@ -127,7 +122,6 @@ build_windows_unsigned:
     - flutter build windows --release
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "main"
   allow_failure: true
 
 build_macos_unsigned:
@@ -144,7 +138,6 @@ build_macos_unsigned:
     - flutter build macos --release
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "main"
   allow_failure: true
 
 # === STAGE: AUTO-TAG ===
