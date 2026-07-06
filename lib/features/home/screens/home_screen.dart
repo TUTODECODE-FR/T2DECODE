@@ -22,6 +22,7 @@ import 'package:tutodecode/core/services/snapshot_service.dart';
 import 'package:tutodecode/core/providers/search_provider.dart';
 import 'package:tutodecode/core/services/asset_integrity_service.dart';
 import 'package:tutodecode/core/navigation/nav_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -1025,7 +1026,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Outils & Services',
+        Text('home.sections.tools_services'.tr(),
             style: TextStyle(
                 color: TdcColors.textPrimary,
                 fontWeight: FontWeight.bold,
@@ -1373,7 +1374,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 size: TdcAdaptive.icon(context, 16), color: TdcColors.accent),
           ),
           SizedBox(width: TdcAdaptive.space(context, 10)),
-          Text('Outils & Services',
+          Text('home.sections.tools_services'.tr(),
               style: TextStyle(
                   color: TdcColors.textPrimary,
                   fontWeight: FontWeight.bold,
@@ -1518,7 +1519,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Icon(Icons.bar_chart,
               size: TdcAdaptive.icon(context, 15), color: TdcColors.accent),
           SizedBox(width: TdcAdaptive.space(context, 7)),
-          Text('Ma progression',
+          Text('home.sections.my_progress'.tr(),
               style: TextStyle(
                   color: TdcColors.textPrimary,
                   fontWeight: FontWeight.bold,

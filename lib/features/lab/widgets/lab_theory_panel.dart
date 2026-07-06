@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
+import 'package:tutodecode/utils/markdown_sanitizer.dart';
 
 class LabTheoryPanel extends StatelessWidget {
   final String title;
@@ -99,7 +100,7 @@ class LabTheoryPanel extends StatelessWidget {
           // Content
           Expanded(
             child: Markdown(
-              data: markdownContent,
+              data: MarkdownSanitizer.sanitize(markdownContent),
               selectable: true,
               styleSheet: MarkdownStyleSheet(
                 p: const TextStyle(color: TdcColors.textSecondary, fontSize: 15, height: 1.6),

@@ -15,8 +15,8 @@
     </choices-outline>
     
     <choice id="default" visible="true" title="T2DECODE Application">
-        <pkg-ref id="org.tutodecode.macos"/>
+        <pkg-ref id="org.t2decode.app"/>
     </choice>
     
-    <pkg-ref id="org.tutodecode.macos" onConclusion="none">T2DECODE_Component.pkg</pkg-ref>
+    <pkg-ref id="org.t2decode.app" onConclusion="none">T2DECODE_Component.pkg</pkg-ref>
 </installer-gui-script>

@@ -1,0 +1,398 @@
+image: ghcr.io/cirruslabs/flutter:stable
+
+variables:
+  GIT_DEPTH: "0"
+
+default:
+  interruptible: true
+
+stages:
+  - validate
+  - test
+  - build-test
+  - auto-tag
+  - build-release
+  - release
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .pub-cache/global_packages
+
+# === STAGE: VALIDATE ===
+dco_check:
+  stage: validate
+  image:
+    name: alpine/git
+    entrypoint: [""]
+  script:
+    - echo "Checking commits for DCO (Signed-off-by) signature..."
+    - MISSING_DCO=0
+    - git config --global --add safe.directory "$CI_PROJECT_DIR"
+    - |
+      git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+      for commit in $(git rev-list origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME..HEAD); do
+        if ! git log -1 --format=%B $commit | grep -qi "Signed-off-by:"; then
+          echo "❌ Error: Commit $commit is missing the 'Signed-off-by:' line."
+          MISSING_DCO=1
+        else
+          echo "✅ Commit $commit is signed."
+        fi
+      done
+    - |
+      if [ $MISSING_DCO -eq 1 ]; then
+        echo "Please amend your commits with 'git commit --amend -s' and force push."
+        exit 1
+      fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+test_and_analyze:
+  stage: validate
+  script:
+    - flutter pub get
+    - python3 scripts/verify_checksums.py
+    - flutter pub outdated || true
+    - flutter analyze --no-fatal-infos --no-fatal-warnings || true
+    - flutter test --dart-define=SKIP_GOLDENS=true
+    - |
+      # Secrets Scan
+      grep -rE "(AKIA|GH[A-Z0-9]{38}|SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}|sk_live_[0-9a-zA-Z]{24})" . \
+      --exclude-dir=".git" --exclude-dir=".dart_tool" --exclude-dir="build" \
+      --exclude-dir=".github/workflows" --exclude=".gitlab-ci.yml" \
+      --binary-files=without-match && exit 1 || exit 0
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+megalinter:
+  stage: validate
+  image: oxsecurity/megalinter:v8
+  variables:
+    DEFAULT_WORKSPACE: $CI_PROJECT_DIR
+  script:
+    - "true"
+  artifacts:
+    when: always
+    paths:
+      - megalinter-reports
+    expire_in: 1 week
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+osv-scanner:
+  stage: validate
+  image:
+    name: ghcr.io/google/osv-scanner:latest
+    entrypoint: [""]
+  script:
+    - /osv-scanner -r .
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# === STAGE: BUILD-TEST (Unsigned) ===
+build_android_unsigned:
+  stage: build-test
+  script:
+    - flutter pub get
+    - flutter build apk --release
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+build_linux_unsigned:
+  stage: build-test
+  script:
+    - sudo apt-get update -y
+    - sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev
+    - flutter pub get
+    - flutter build linux --release
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+build_windows_unsigned:
+  stage: build-test
+  tags:
+    - saas-windows-medium-amd64
+  allow_failure: true
+  script:
+    - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
+    - $env:Path += ";C:/flutter/bin"
+    - flutter config --no-enable-swift-package-manager
+    - flutter pub get
+    - flutter build windows --release
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  allow_failure: true
+
+build_macos_unsigned:
+  stage: build-test
+  allow_failure: true
+  image: macos-15-xcode-16
+  tags:
+    - saas-macos-large-m2pro
+  script:
+    - git clone https://github.com/flutter/flutter.git -b stable $HOME/flutter
+    - export PATH="$PATH:$HOME/flutter/bin"
+    - flutter config --no-enable-swift-package-manager
+    - flutter pub get
+    - flutter build macos --release
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  allow_failure: true
+
+# === STAGE: AUTO-TAG ===
+auto_tag:
+  stage: auto-tag
+  image: alpine/git
+  script:
+    - VERSION_LINE=$(grep '^version:' pubspec.yaml)
+    - BASE_VERSION=$(echo "$VERSION_LINE" | cut -d' ' -f2 | cut -d'+' -f1)
+    - echo "Base version $BASE_VERSION"
+    - MATCHING_TAGS=$(git tag -l "v$BASE_VERSION.*")
+    - |
+      if [ -z "$MATCHING_TAGS" ]; then
+        NEXT_TAG="v$BASE_VERSION.1"
+      else
+        LATEST_SUFFIX=$(echo "$MATCHING_TAGS" | grep -E "^v$BASE_VERSION\.[0-9]+$" | sed "s/^v$BASE_VERSION\.//" | sort -n | tail -n1)
+        if [ -z "$LATEST_SUFFIX" ]; then
+          NEXT_TAG="v$BASE_VERSION.1"
+        else
+          NEXT_SUFFIX=$((LATEST_SUFFIX + 1))
+          NEXT_TAG="v$BASE_VERSION.$NEXT_SUFFIX"
+        fi
+      fi
+    - echo "Determined next tag $NEXT_TAG"
+    - git config user.name "gitlab-ci[bot]"
+    - git config user.email "gitlab-ci[bot]@tutodecode.org"
+    - git config remote.origin.url "https://oauth2:${PROJECT_ACCESS_TOKEN:-$CI_JOB_TOKEN}@gitlab.com/$CI_PROJECT_PATH.git"
+    - git tag -a "$NEXT_TAG" -m "Automated release tag $NEXT_TAG"
+    - git push origin "$NEXT_TAG"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE != "schedule"
+
+# === STAGE: BUILD-RELEASE (Signed builds triggered by tags) ===
+build_android_signed:
+  stage: build-release
+  script:
+    - flutter pub get
+    - echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/release-keystore.jks
+    - |
+      cat > android/key.properties <<EOF
+      storeFile=app/release-keystore.jks
+      storePassword=$ANDROID_KEYSTORE_PASSWORD
+      keyAlias=$ANDROID_KEY_ALIAS
+      keyPassword=$ANDROID_KEY_PASSWORD
+      EOF
+    - flutter build apk --release
+    - flutter build appbundle --release
+  artifacts:
+    paths:
+      - build/app/outputs/flutter-apk/app-release.apk
+      - build/app/outputs/bundle/release/app-release.aab
+    expire_in: 1 day
+  rules:
+    - if: $CI_COMMIT_TAG
+
+build_linux_signed:
+  stage: build-release
+  script:
+    - sudo apt-get update -y
+    - sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev gnupg ruby ruby-dev build-essential
+    - sudo apt-get install -y libfuse2 || sudo apt-get install -y libfuse2t64
+    - sudo gem install --no-document fpm
+    - flutter pub get
+    - flutter build linux --release
+    - tar -czvf T2DECODE-Linux.tar.gz -C build/linux/x64/release/bundle/ .
+    - VERSION_RAW="${CI_COMMIT_TAG#v}"
+    - VERSION="${VERSION_RAW//-/_}"
+    - STAGE="/tmp/linuxpkg"
+    - mkdir -p "$STAGE/opt/t2decode" "$STAGE/usr/share/applications" "$STAGE/usr/bin"
+    - cp -R build/linux/x64/release/bundle/* "$STAGE/opt/t2decode/"
+    - |
+      cat > "$STAGE/usr/share/applications/org.tutodecode.T2DECODE.desktop" <<EOF
+      [Desktop Entry]
+      Name=T2DECODE
+      Comment=T2DECODE learning platform
+      Exec=/opt/t2decode/T2DECODE
+      Icon=/opt/t2decode/data/flutter_assets/assets/logo.png
+      Terminal=false
+      Type=Application
+      Categories=Education;Development;
+      EOF
+    - |
+      cat > "$STAGE/usr/bin/t2decode" <<EOF
+      #!/usr/bin/env bash
+      exec /opt/t2decode/T2DECODE "\$@"
+      EOF
+    - chmod +x "$STAGE/usr/bin/t2decode"
+    - fpm -s dir -t deb -n t2decode -v "$VERSION" --architecture amd64 --description "T2DECODE learning platform" --maintainer "T2DECODE <contact@tutodecode.org>" -C "$STAGE" -p T2DECODE-Linux.deb .
+    - curl -L -o appimagetool-x86_64.AppImage https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+    - chmod +x appimagetool-x86_64.AppImage
+    - STAGE_APPIMAGE="/tmp/AppDir"
+    - mkdir -p "$STAGE_APPIMAGE"
+    - cp -R build/linux/x64/release/bundle/* "$STAGE_APPIMAGE/"
+    - |
+      cat > "$STAGE_APPIMAGE/org.tutodecode.T2DECODE.desktop" <<EOF
+      [Desktop Entry]
+      Name=T2DECODE
+      Comment=T2DECODE learning platform
+      Exec=AppRun
+      Icon=org.tutodecode.T2DECODE
+      Terminal=false
+      Type=Application
+      Categories=Education;Development;
+      EOF
+    - cp "assets/logo.png" "$STAGE_APPIMAGE/org.tutodecode.T2DECODE.png"
+    - ln -s T2DECODE "$STAGE_APPIMAGE/AppRun"
+    - APPIMAGETOOL=./appimagetool-x86_64.AppImage
+    - if ! $APPIMAGETOOL --version >/dev/null 2>&1; then $APPIMAGETOOL --appimage-extract && APPIMAGETOOL=./squashfs-root/AppRun; fi
+    - ARCH=x86_64 $APPIMAGETOOL "$STAGE_APPIMAGE" T2DECODE-Linux.AppImage
+    - export GNUPGHOME="/tmp/gnupg"
+    - mkdir -p "$GNUPGHOME" && chmod 700 "$GNUPGHOME"
+    - echo "$LINUX_GPG_PRIVATE_KEY_BASE64" | base64 --decode > "/tmp/linux.key"
+    - gpg --batch --import "/tmp/linux.key"
+    - printf '%s' "$LINUX_GPG_PASSPHRASE" > "/tmp/gpg.pass"
+    - gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.tar.gz.sig --detach-sign T2DECODE-Linux.tar.gz
+    - gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.deb.sig --detach-sign T2DECODE-Linux.deb
+  artifacts:
+    paths:
+      - T2DECODE-Linux.tar.gz
+      - T2DECODE-Linux.deb
+      - T2DECODE-Linux.AppImage
+      - T2DECODE-Linux.tar.gz.sig
+      - T2DECODE-Linux.deb.sig
+    expire_in: 1 day
+  rules:
+    - if: $CI_COMMIT_TAG
+
+build_windows_signed:
+  stage: build-release
+  tags:
+    - saas-windows-medium-amd64
+  script:
+    - choco install innosetup --no-progress -y
+    - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
+    - $env:Path += ";C:/flutter/bin"
+    - flutter config --no-enable-swift-package-manager
+    - flutter pub get
+    - flutter build windows --release
+    - $iscc = "C:/Program Files (x86)/Inno Setup 6/ISCC.exe"
+    - $ver = $env:CI_COMMIT_TAG.TrimStart("v")
+    - $iss = "windows/installer/tutodecode.iss"
+    - |
+      if (Test-Path $iss) {
+        $txt = Get-Content -Raw $iss
+        if ($txt -match '#define\s+MyAppVersion\s+\"' -and $txt -notmatch '#ifndef\s+MyAppVersion') {
+          $replacement = "#ifndef MyAppVersion`n  #define MyAppVersion ""0.0.0""`n#endif"
+          $txt = $txt -replace '#define\s+MyAppVersion\s+\"[^\"]*\"', $replacement
+          Set-Content -NoNewline -Encoding UTF8 $iss $txt
+        }
+      }
+    - '& $iscc /DMyAppVersion=$ver windows/installer/tutodecode.iss'
+    - Copy-Item -Force "windows/installer/T2DECODE-Setup.exe" "T2DECODE-Setup.exe"
+    - Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath T2DECODE-Windows.zip
+    - $pfxPath = "$env:TEMP/codesign.pfx"
+    - '[IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String("$env:WINDOWS_PFX_BASE64"))'
+    - $signtool = Get-ChildItem "C:/Program Files (x86)/Windows Kits/10/bin" -Recurse -Filter "signtool.exe" -ErrorAction SilentlyContinue | Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1 -ExpandProperty FullName
+    - $exePath = "build/windows/x64/runner/Release/T2DECODE.exe"
+    - '& $signtool sign /f $pfxPath /p "$env:WINDOWS_PFX_PASSWORD" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v $exePath'
+    - '& $signtool sign /f $pfxPath /p "$env:WINDOWS_PFX_PASSWORD" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v T2DECODE-Setup.exe'
+  artifacts:
+    paths:
+      - T2DECODE-Windows.zip
+      - T2DECODE-Setup.exe
+    expire_in: 1 day
+  rules:
+    - if: $CI_COMMIT_TAG
+
+build_macos_signed:
+  stage: build-release
+  allow_failure: true
+  image: macos-15-xcode-16
+  tags:
+    - saas-macos-large-m2pro
+  script:
+    - git clone https://github.com/flutter/flutter.git -b stable $HOME/flutter
+    - export PATH="$PATH:$HOME/flutter/bin"
+    - flutter config --no-enable-swift-package-manager
+    - flutter pub get
+    - flutter build macos --release
+    - APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
+    - chmod +x scripts/build_dmg.sh
+    - ./scripts/build_dmg.sh
+    - cp -f build/macos/Build/Products/Release/T2DECODE-macOS.dmg T2DECODE-macOS.dmg
+    - chmod +x scripts/build_pkg.sh
+    - APP_VERSION="${CI_COMMIT_TAG#v}" ./scripts/build_pkg.sh
+    - mv build/macos/Build/Products/Release/T2DECODE_Installer.pkg T2DECODE-macOS-Installer.pkg
+    - cp -f T2DECODE-macOS-Installer.pkg T2DECODE-macOS.pkg
+    - ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
+    - KEYCHAIN_PATH="/tmp/build.keychain-db"
+    - CERT_PATH="/tmp/macos_cert.p12"
+    - echo "$MACOS_CERT_P12_BASE64" | base64 --decode > "$CERT_PATH"
+    - security create-keychain -p "build" "$KEYCHAIN_PATH"
+    - security default-keychain -s "$KEYCHAIN_PATH"
+    - security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+    - security unlock-keychain -p "build" "$KEYCHAIN_PATH"
+    - security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
+    - security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$MACOS_CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security -T /usr/bin/productsign
+    - 'security set-key-partition-list -S apple-tool:,apple:,codesign:,productsign: -s -k "build" "$KEYCHAIN_PATH"'
+    - codesign --force --deep --options runtime --timestamp --sign "$MACOS_CERT_IDENTITY" "$APP_PATH"
+    - rm -f T2DECODE-macOS.zip
+    - ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
+    - xcrun notarytool submit T2DECODE-macOS.zip --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
+    - xcrun stapler staple "$APP_PATH"
+    - xcrun stapler staple T2DECODE-macOS.dmg
+    - productsign --sign "$MACOS_CERT_IDENTITY" T2DECODE-macOS-Installer.pkg T2DECODE-macOS.pkg
+    - xcrun notarytool submit T2DECODE-macOS.pkg --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
+    - xcrun stapler staple T2DECODE-macOS.pkg
+  artifacts:
+    paths:
+      - T2DECODE-macOS.zip
+      - T2DECODE-macOS.dmg
+      - T2DECODE-macOS.pkg
+    expire_in: 1 day
+  rules:
+    - if: $CI_COMMIT_TAG
+
+# === STAGE: RELEASE ===
+release_gitlab:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  script:
+    - echo "Creating GitLab Release for $CI_COMMIT_TAG"
+    - |
+      release-cli create --name "Release $CI_COMMIT_TAG" \
+        --tag-name "$CI_COMMIT_TAG" \
+        --assets-link "{\"name\":\"T2DECODE-Android.apk\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/app/outputs/flutter-apk/app-release.apk\"}" \
+        --assets-link "{\"name\":\"T2DECODE-Linux.tar.gz\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/T2DECODE-Linux.tar.gz\"}" \
+        --assets-link "{\"name\":\"T2DECODE-Windows.zip\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/T2DECODE-Windows.zip\"}" \
+        --assets-link "{\"name\":\"T2DECODE-Windows-Setup.exe\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/T2DECODE-Setup.exe\"}" \
+        --assets-link "{\"name\":\"T2DECODE-macOS.dmg\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/T2DECODE-macOS.dmg\"}"
+  rules:
+    - if: $CI_COMMIT_TAG
+
+publish_sourceforge:
+  stage: release
+  image: alpine:latest
+  script:
+    - apk add --no-cache openssh-client rsync
+    - eval $(ssh-agent -s)
+    - echo "$SF_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
+    - mkdir -p sf_assets
+    - cp build/app/outputs/flutter-apk/app-release.apk sf_assets/T2DECODE-Android.apk || true
+    - cp T2DECODE-Windows.zip sf_assets/ || true
+    - cp T2DECODE-Setup.exe sf_assets/ || true
+    - cp T2DECODE-Linux* sf_assets/ || true
+    - cp T2DECODE-macOS* sf_assets/ || true
+    - rsync -avP sf_assets/ $SF_USER@frs.sourceforge.net:/home/frs/project/$SF_PROJECT/$CI_COMMIT_TAG/
+  rules:
+    - if: $CI_COMMIT_TAG
+
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
+  - template: Jobs/Dependency-Scanning.gitlab-ci.yml
+  - template: Jobs/Code-Quality.gitlab-ci.yml

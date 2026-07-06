@@ -1,0 +1,40 @@
+Categories:
+  - Education
+  - Security
+  - System
+License: MIT
+AuthorName: T2DECODE
+WebSite: https://tutodecode.org/
+SourceCode: https://gitlab.com/tutodecode-org/T2DECODE
+IssueTracker: https://gitlab.com/tutodecode-org/T2DECODE/-/issues
+Changelog: https://gitlab.com/tutodecode-org/T2DECODE/-/releases
+
+AutoName: T2DECODE
+Summary: Local learning platform
+Description: |-
+    T2DECODE is a fully offline, air-gapped learning platform designed for IT enthusiasts, cybersecurity students, and network administrators.
+
+    Features:
+    * Completely offline: No internet connection required, no analytics, no tracking.
+    * Interactive Labs: Network, System, Cloud, and Cryptography simulators.
+    * Local AI Assistant: Integrate with your local Ollama models (Phi-3, Llama 3) for an air-gapped AI tutor.
+    * P2P Communication: GhostLink feature allows local LAN encrypted communication without servers.
+    * Offline Tools: Built-in utilities (Subnet calculators, Hash generators, CRON helpers, and more).
+    * Comprehensive Courses: Learn at your own pace with markdown-based courses and quizzes.
+
+Builds:
+  - versionName: 1.0.2
+    versionCode: 19
+    commit: v1.0.2
+    sudo:
+      - sysupdate
+    build:
+      - flutter config --no-analytics
+      - flutter pub get
+      - flutter build apk --release
+    output: build/app/outputs/flutter-apk/app-release.apk
+
+AutoUpdateMode: Version v%v
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.2
+CurrentVersionCode: 19

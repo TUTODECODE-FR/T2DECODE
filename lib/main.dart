@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animations/animations.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 // Screens
 import 'features/home/screens/home_screen.dart';
@@ -68,12 +69,60 @@ import 'core/theme/app_theme.dart';
 import 'core/navigation/nav_keys.dart';
 import 'core/security/identity_verification.dart';
 
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'core/localization/hybrid_asset_loader.dart';
+
+Future<List<Locale>> _getDynamicLocales() async {
+  List<Locale> locales = const [
+    Locale('fr'),
+    Locale('en'),
+    Locale('es'),
+    Locale('de'),
+    Locale('ar'),
+    Locale('zh')
+  ].toList();
+
+  try {
+    final docDir = await getApplicationDocumentsDirectory();
+    final transDir = Directory('${docDir.path}/T2DECODE/translations');
+    if (await transDir.exists()) {
+      final files = await transDir.list().toList();
+      for (var file in files) {
+        if (file is File && file.path.endsWith('.json')) {
+          final code = file.path.split('/').last.replaceAll('.json', '');
+          final loc = Locale(code);
+          if (!locales.contains(loc)) {
+            locales.add(loc);
+          }
+        }
+      }
+    }
+  } catch (e) {
+    debugPrint('Erreur scan traductions locales: $e');
+  }
+  return locales;
+}
+
 void main() async {
   // _t2dSyncRef: T2D-AUTH-7734-MAX-MC
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   // Vérification d'intégrité des assets au démarrage (100% local, aucun réseau).
   await IdentityVerificationService.verifyIdentity();
-  runApp(const TutoDeCodeApp());
+  
+  final dynamicLocales = await _getDynamicLocales();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: dynamicLocales,
+      path: 'assets/translations',
+      assetLoader: const HybridAssetLoader(),
+      fallbackLocale: const Locale('fr'),
+      useOnlyLangCode: true,
+      child: const TutoDeCodeApp(),
+    ),
+  );
 }
 
 class TutoDeCodeApp extends StatelessWidget {
@@ -97,16 +146,24 @@ class TutoDeCodeApp extends StatelessWidget {
           theme: buildAppLightTheme(),
           darkTheme: buildAppTheme(),
           themeMode: settings.themeMode,
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
           navigatorKey: AppNavigator.key,
           navigatorObservers: [AppNavigator.observer],
           initialRoute: '/',
-          builder: (context, child) => Overlay(
-            initialEntries: [
-              OverlayEntry(
+          builder: (context, child) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (context.mounted) {
+                context.read<CoursesProvider>().updateLocale(context.locale.languageCode);
+              }
+            });
+            return Navigator(
+              onGenerateRoute: (settings) => MaterialPageRoute(
                 builder: (context) => AppShell(child: child!),
               ),
-            ],
-          ),
+            );
+          },
           onGenerateRoute: (settings) {
             return PageRouteBuilder(
               settings: settings,

@@ -86,8 +86,12 @@ class AiTutorProvider with ChangeNotifier {
   Map<String, dynamic> get userProgress => _userProgress;
 
   AiTutorProvider() {
-    _loadSettings();
-    _initializeTutor();
+    _init();
+  }
+
+  Future<void> _init() async {
+    await _loadSettings();
+    await _initializeTutor();
     _startConnectionCheck();
   }
 
@@ -491,14 +495,26 @@ Il semble que je sois hors-ligne pour le moment car Ollama n'est pas détecté. 
     final messages = <Map<String, String>>[
       {'role': 'system', 'content': systemPrompt},
     ];
-    // Limiter à 10 messages pour éviter les tokens excessifs
-    final recent = _currentMessages.length > 10
-        ? _currentMessages.sublist(_currentMessages.length - 10)
-        : _currentMessages;
-    for (final msg in recent) {
-      if (msg.content.isNotEmpty) {
-        messages.add({'role': msg.isFromUser ? 'user' : 'assistant', 'content': msg.content});
+    
+    // Limiter l'historique par nombre de caractères (~4000) pour éviter les erreurs Out-Of-Memory
+    const maxChars = 4000;
+    int currentChars = 0;
+    final recentMessages = <TutorMessage>[];
+
+    // On parcourt de la fin vers le début pour garder les messages les plus récents
+    for (int i = _currentMessages.length - 1; i >= 0; i--) {
+      final msg = _currentMessages[i];
+      if (msg.content.isEmpty) continue;
+      
+      if (currentChars + msg.content.length > maxChars && recentMessages.isNotEmpty) {
+        break; // Dépassement de la limite, on s'arrête (sauf si on a 0 message)
       }
+      currentChars += msg.content.length;
+      recentMessages.insert(0, msg);
+    }
+
+    for (final msg in recentMessages) {
+      messages.add({'role': msg.isFromUser ? 'user' : 'assistant', 'content': msg.content});
     }
     return messages;
   }

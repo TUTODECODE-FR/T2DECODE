@@ -12,6 +12,7 @@ import '../widgets/qcm_widget.dart';
 import 'package:tutodecode/features/courses/practice/course_practice_engine.dart';
 import 'package:tutodecode/features/courses/data/course_repository.dart';
 import 'package:tutodecode/features/courses/practice/widgets/practice_flow.dart';
+import 'package:tutodecode/utils/markdown_sanitizer.dart';
 
 class ChapterScreen extends StatefulWidget {
   const ChapterScreen({super.key});
@@ -190,7 +191,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
 
   Widget _markdown(String content) {
     return MarkdownBody(
-      data: content,
+      data: MarkdownSanitizer.sanitize(content),
       // Sécurité : Désactiver les images distantes et les liens non-contrôlés
       imageBuilder: (uri, title, alt) => Container(
         padding: const EdgeInsets.all(12),

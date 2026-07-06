@@ -31,10 +31,10 @@ class CryptoEngine {
       _symmetricDecrypt(pkg_cryptography.Chacha20.poly1305Aead(), encrypted, passphrase);
 
   static Future<AesGcmResult> _symmetricEncrypt(pkg_cryptography.Cipher algo, String plaintext, String passphrase) async {
-    if (plaintext == null || plaintext.isEmpty) {
+    if (plaintext.isEmpty) {
       throw ArgumentError(_errPlaintext);
     }
-    if (passphrase == null || passphrase.isEmpty) {
+    if (passphrase.isEmpty) {
       throw ArgumentError(_errPassphrase);
     }
 
@@ -56,10 +56,10 @@ class CryptoEngine {
   }
 
   static Future<String> _symmetricDecrypt(pkg_cryptography.Cipher algo, AesGcmResult encrypted, String passphrase) async {
-    if (encrypted == null || encrypted.ciphertext.isEmpty || encrypted.nonce.isEmpty || encrypted.mac.isEmpty) {
+    if (encrypted.ciphertext.isEmpty || encrypted.nonce.isEmpty || encrypted.mac.isEmpty) {
       throw ArgumentError(_errEncrypted);
     }
-    if (passphrase == null || passphrase.isEmpty) {
+    if (passphrase.isEmpty) {
       throw ArgumentError(_errPassphrase);
     }
 
@@ -83,7 +83,7 @@ class CryptoEngine {
   // --- Classic ciphers (educational) ---
 
   static String caesarEncrypt(String text, int shift) {
-    if (text == null || text.isEmpty) {
+    if (text.isEmpty) {
       throw ArgumentError(_errText);
     }
     if (shift < 0) {
@@ -98,7 +98,7 @@ class CryptoEngine {
   }
 
   static String caesarDecrypt(String text, int shift) {
-    if (text == null || text.isEmpty) {
+    if (text.isEmpty) {
       throw ArgumentError(_errText);
     }
     if (shift < 0) {
@@ -109,12 +109,10 @@ class CryptoEngine {
   }
 
   static String vigenereEncrypt(String text, String key) {
-    if (text == null || text.isEmpty) {
+    if (text.isEmpty) {
       throw ArgumentError(_errText);
     }
-    if (key == null) {
-      throw ArgumentError('Key cannot be null');
-    }
+    
     if (key.isEmpty) {
       return text;
     }
@@ -137,12 +135,10 @@ class CryptoEngine {
   }
 
   static String vigenereDecrypt(String text, String key) {
-    if (text == null || text.isEmpty) {
+    if (text.isEmpty) {
       throw ArgumentError(_errText);
     }
-    if (key == null) {
-      throw ArgumentError('Key cannot be null');
-    }
+    
     if (key.isEmpty) {
       return text;
     }
@@ -165,10 +161,10 @@ class CryptoEngine {
   }
 
   static String xorEncrypt(String text, String key) {
-    if (text == null || text.isEmpty) {
+    if (text.isEmpty) {
       throw ArgumentError(_errText);
     }
-    if (key == null || key.isEmpty) {
+    if (key.isEmpty) {
       throw ArgumentError(_errKey);
     }
 
@@ -182,10 +178,10 @@ class CryptoEngine {
   }
 
   static String xorDecrypt(String cipherB64, String key) {
-    if (cipherB64 == null || cipherB64.isEmpty) {
+    if (cipherB64.isEmpty) {
       throw ArgumentError('Cipher cannot be null or empty');
     }
-    if (key == null || key.isEmpty) {
+    if (key.isEmpty) {
       throw ArgumentError(_errKey);
     }
 
@@ -223,10 +219,10 @@ class CryptoEngine {
   // --- HMAC ---
 
   static String hmacSha256(String message, String key) {
-    if (message == null || message.isEmpty) {
+    if (message.isEmpty) {
       throw ArgumentError(_errMessage);
     }
-    if (key == null || key.isEmpty) {
+    if (key.isEmpty) {
       throw ArgumentError(_errKey);
     }
 
@@ -249,10 +245,10 @@ class CryptoEngine {
   }
 
   static Future<String> ed25519Sign(String message, String privateKeyB64) async {
-    if (message == null || message.isEmpty) {
+    if (message.isEmpty) {
       throw ArgumentError(_errMessage);
     }
-    if (privateKeyB64 == null || privateKeyB64.isEmpty) {
+    if (privateKeyB64.isEmpty) {
       throw ArgumentError('Private key cannot be null or empty');
     }
 
@@ -264,13 +260,13 @@ class CryptoEngine {
   }
 
   static Future<bool> ed25519Verify(String message, String signatureB64, String publicKeyB64) async {
-    if (message == null || message.isEmpty) {
+    if (message.isEmpty) {
       throw ArgumentError(_errMessage);
     }
-    if (signatureB64 == null || signatureB64.isEmpty) {
+    if (signatureB64.isEmpty) {
       throw ArgumentError('Signature cannot be null or empty');
     }
-    if (publicKeyB64 == null || publicKeyB64.isEmpty) {
+    if (publicKeyB64.isEmpty) {
       throw ArgumentError('Public key cannot be null or empty');
     }
 
@@ -294,10 +290,10 @@ class CryptoEngine {
   }
 
   static Future<String> x25519SharedSecret(String myPrivateKeyB64, String theirPublicKeyB64) async {
-    if (myPrivateKeyB64 == null || myPrivateKeyB64.isEmpty) {
+    if (myPrivateKeyB64.isEmpty) {
       throw ArgumentError('My private key cannot be null or empty');
     }
-    if (theirPublicKeyB64 == null || theirPublicKeyB64.isEmpty) {
+    if (theirPublicKeyB64.isEmpty) {
       throw ArgumentError('Their public key cannot be null or empty');
     }
 
@@ -318,7 +314,7 @@ class CryptoEngine {
   // --- Key derivation helper ---
 
   static Future<List<int>> _deriveKey(String passphrase, List<int> salt) async {
-    if (passphrase == null || passphrase.isEmpty) {
+    if (passphrase.isEmpty) {
       throw ArgumentError(_errPassphrase);
     }
 

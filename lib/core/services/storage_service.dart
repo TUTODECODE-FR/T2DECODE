@@ -31,9 +31,6 @@ class StorageService {
   static const _terminalThemeKey = 'terminal_theme';
   static const _appThemeKey = 'app_theme';
 
-  // Demo Mode (Apple Review)
-  static const _demoModeKey = 'demo_mode_enabled';
-
   // Backup/Snapshots
   static const _secureSnapshotKeyKey = 'secure_snapshot_key_b64';
   static const _snapshotKeyFallback = 'snapshot_key_b64_fallback';
@@ -148,6 +145,7 @@ class StorageService {
 
   Future<double> getTerminalFontSize() =>
       getDouble(_terminalFontSizeKey, defaultValue: 14.0);
+
   Future<void> setTerminalFontSize(double value) =>
       setDouble(_terminalFontSizeKey, value);
 
@@ -159,10 +157,6 @@ class StorageService {
   Future<String> getAppTheme() =>
       getString(_appThemeKey, defaultValue: 'System');
   Future<void> setAppTheme(String value) => setString(_appThemeKey, value);
-
-  // Demo Mode (Apple Review) — court-circuite les appels Ollama avec des réponses mock.
-  Future<bool> getDemoMode() => getBool(_demoModeKey, defaultValue: false);
-  Future<void> setDemoMode(bool value) => setBool(_demoModeKey, value);
 
   // --- Security Logs & Telemetry ---
   // Stockés dans flutter_secure_storage pour empêcher la lecture en clair.

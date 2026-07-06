@@ -11,6 +11,7 @@ import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/features/lab/lab_catalog.dart';
 import 'package:tutodecode/features/lab/widgets/lab_theory_panel.dart';
 import 'package:tutodecode/features/lab/data/lab_theory_data.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 // ── Widget principal ─────────────────────────────────────────
 
@@ -29,7 +30,7 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
-        title: 'Simulations Professionnelles',
+        title: 'home.sections.simulations'.tr(),
         showBackButton: true,
         actions: [],
       );

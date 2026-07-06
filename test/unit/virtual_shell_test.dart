@@ -157,6 +157,17 @@ void main() {
       final result = shell.execute('find /etc -name hostname');
       expect(result, contains('/etc/hostname'));
     });
+
+    test('find lists all files without name', () {
+      final result = shell.execute('find /etc');
+      expect(result, contains('/etc/hostname'));
+      expect(result.length, greaterThan(1));
+    });
+
+    test('grep with invalid regex returns error', () {
+      final result = shell.execute('grep [invalid /etc/hostname');
+      expect(result.first, contains('invalid regular expression'));
+    });
   });
 
   group('Pipes', () {
@@ -180,12 +191,22 @@ void main() {
       final result = shell.execute('cat /tmp/unsorted | sort');
       expect(result, ['apple', 'banana', 'cherry']);
     });
+
+    test('malformed pipes return syntax error', () {
+      final result = shell.execute('cat /etc/passwd |  | grep');
+      expect(result.first, contains("syntax error near unexpected token '|'"));
+    });
   });
 
   group('Redirection', () {
     test('echo > file writes to file', () {
       shell.execute('echo Hello World > /tmp/out.txt');
       expect(shell.fs.readFile('/tmp/out.txt'), 'Hello World');
+    });
+
+    test('malformed redirection returns syntax error', () {
+      final result = shell.execute('echo Hello >  >  >');
+      expect(result.first, contains("syntax error near unexpected token 'newline'"));
     });
   });
 
@@ -292,6 +313,11 @@ void main() {
       shell.execute('wget http://example.com/test.html');
       expect(shell.fs.exists('/home/admin/test.html'), true);
     });
+
+    test('ping with potentially malicious host sanitizes target to localhost/127.0.0.1', () {
+      final result = shell.execute('ping google.com;whoami');
+      expect(result.first, contains('PING google.com;whoami (127.0.0.1)'));
+    });
   });
 
   group('User switching', () {
@@ -351,6 +377,155 @@ void main() {
     test('clear returns clear signal', () {
       final result = shell.execute('clear');
       expect(result, ['__CLEAR__']);
+    });
+    
+    test('uniq filters duplicate lines', () {
+      shell.fs.write('/tmp/dup', 'a\na\nb\nc\nc');
+      final result = shell.execute('uniq /tmp/dup');
+      expect(result, ['a', 'b', 'c']);
+      
+      final emptyResult = shell.execute('uniq /no/such/file');
+      expect(emptyResult.first, contains('No such file or directory'));
+      
+      final missingOperand = shell.execute('uniq');
+      expect(missingOperand.first, contains('missing operand'));
+    });
+
+    test('sort orders lines', () {
+      shell.fs.write('/tmp/unsorted2', 'b\na\nc');
+      final result = shell.execute('sort /tmp/unsorted2');
+      expect(result, ['a', 'b', 'c']);
+      
+      final resultR = shell.execute('sort -r /tmp/unsorted2');
+      expect(resultR, ['c', 'b', 'a']);
+      
+      final emptyResult = shell.execute('sort /no/such/file');
+      expect(emptyResult.first, contains('No such file or directory'));
+      
+      final missingOperand = shell.execute('sort');
+      expect(missingOperand.first, contains('missing operand'));
+    });
+
+    test('file identifies types', () {
+      shell.fs.write('/tmp/script', '#!/bin/bash\n');
+      expect(shell.execute('file /tmp/script').first, contains('script'));
+      
+      shell.fs.write('/tmp/bin', 'ELF binary');
+      expect(shell.execute('file /tmp/bin').first, contains('ELF'));
+      
+      shell.fs.write('/tmp/cert', '-----BEGIN CERTIFICATE-----');
+      expect(shell.execute('file /tmp/cert').first, contains('PEM'));
+      
+      shell.execute('mkdir /tmp/dir');
+      expect(shell.execute('file /tmp/dir').first, contains('directory'));
+      
+      expect(shell.execute('file /no/file').first, contains('cannot open'));
+      
+      expect(shell.execute('file').first, contains('missing operand'));
+    });
+
+    test('stat shows info', () {
+      shell.execute('mkdir /tmp/sdir');
+      expect(shell.execute('stat /tmp/sdir').length, greaterThan(2));
+      
+      expect(shell.execute('stat /no/file').first, contains('cannot stat'));
+      expect(shell.execute('stat').first, contains('missing operand'));
+    });
+
+    test('tar simulation', () {
+      expect(shell.execute('tar -czf out.tar.gz file').first, contains('created'));
+      expect(shell.execute('tar -xzf out.tar.gz').first, contains('extracted'));
+      expect(shell.execute('tar').first, contains('usage'));
+    });
+
+    test('ssh simulation', () {
+      expect(shell.execute('ssh user@host').first, contains('Connection refused'));
+      expect(shell.execute('ssh').first, contains('usage: ssh destination'));
+    });
+
+    test('man pages', () {
+      expect(shell.execute('man ls').length, greaterThan(1));
+      expect(shell.execute('man doesnt_exist').first, contains('No manual entry'));
+      expect(shell.execute('man').first, contains('What manual page'));
+    });
+    
+    test('su returns auth failure if not root', () {
+      expect(shell.execute('su someuser').first, contains('Authentication failure'));
+    });
+
+    test('sudo usage', () {
+      expect(shell.execute('sudo').first, contains('usage: sudo <command>'));
+    });
+
+    test('pipe cut, grep format error, uniq pipe, sort pipe', () {
+      shell.fs.write('/tmp/csv', 'a,b,c\nd,e,f');
+      final resultCut = shell.execute('cat /tmp/csv | cut -d , -f 2');
+      expect(resultCut, ['b', 'e']);
+      
+      final resultUniqPipe = shell.execute('cat /tmp/csv | uniq');
+      expect(resultUniqPipe.length, 2);
+      
+      final resultSortPipe = shell.execute('cat /tmp/csv | sort -r');
+      expect(resultSortPipe, ['d,e,f', 'a,b,c']);
+      
+      final errPipeGrep = shell.execute('cat /tmp/csv | grep [');
+      expect(errPipeGrep.first, contains('invalid regular expression'));
+    });
+    test('more pipes: tail and full wc', () {
+      shell.fs.write('/tmp/words', 'one two three\nfour five');
+      final rTail = shell.execute('cat /tmp/words | tail -n 1');
+      expect(rTail, ['four five']);
+      
+      final rWcFull = shell.execute('cat /tmp/words | wc');
+      expect(rWcFull.first, contains('2  5  24')); // 2 lines, 5 words, 24 chars
+    });
+
+    test('ls variants', () {
+      final r1 = shell.execute('ls -l /etc/hostname');
+      expect(r1.first, contains('-rw-r--r--'));
+      
+      final r2 = shell.execute('ls /nonexistent');
+      expect(r2.first, contains('cannot access'));
+    });
+
+    test('cd variants', () {
+      shell.execute('cd /tmp');
+      expect(shell.execute('pwd').first, '/tmp');
+    });
+
+    test('mkdir and rm variants', () {
+      final rMkdir = shell.execute('mkdir /etc');
+      expect(rMkdir.isEmpty || rMkdir.first.contains('exists'), isTrue);
+      
+      final rRm = shell.execute('rm /nonexistent');
+      expect(rRm.isEmpty || rRm.first.contains('No such file'), isTrue);
+      
+      final rTouch = shell.execute('touch /etc');
+      expect(rTouch.isEmpty || rTouch.first.contains('cannot touch'), isTrue);
+    });
+
+    test('ps without aux', () {
+      final r = shell.execute('ps');
+      expect(r.isNotEmpty, true);
+    });
+
+    test('kill invalid', () {
+      expect(shell.execute('kill nonum').first, contains('arguments must be process'));
+      expect(shell.execute('kill 99999').first, contains('No such process'));
+    });
+
+    test('ping with count', () {
+      final r = shell.execute('ping -c 2 localhost');
+      expect(r.length, lessThan(20));
+    });
+
+    test('unset', () {
+      shell.execute('export TEST=1');
+      shell.execute('unset TEST');
+      expect(shell.execute('env').any((l) => l.startsWith('TEST=')), false);
+      
+      final rUnset = shell.execute('unset');
+      expect(rUnset.isEmpty || rUnset.first.contains('not enough arguments'), isTrue);
     });
   });
 }

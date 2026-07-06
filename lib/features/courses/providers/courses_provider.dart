@@ -20,8 +20,17 @@ class CoursesProvider with ChangeNotifier {
   String? _errorMessage;
   bool _startupUpdateCheckDone = false;
 
+  String _currentLocale = 'fr';
+
   CoursesProvider() {
     _load();
+  }
+
+  void updateLocale(String locale) {
+    if (_currentLocale != locale) {
+      _currentLocale = locale;
+      _load();
+    }
   }
 
   // ── Getters ─────────────────────────────────────────────
@@ -143,7 +152,7 @@ class CoursesProvider with ChangeNotifier {
       _loaded = false;
       _completed = await _storage.loadCompleted();
       
-      final assetCourses = await Course.loadAll();
+      final assetCourses = await Course.loadAll(_currentLocale);
       final externalCourses = await _moduleService.loadExternalModules();
       
       _courses = [...assetCourses, ...externalCourses];

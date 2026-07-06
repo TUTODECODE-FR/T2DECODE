@@ -37,10 +37,6 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
   final List<CapturedPacket> _capturedPackets = [];
   
   // Métriques réseau
-  double _bandwidthUsage = 0.0;
-  final int _packetLoss = 0;
-  int _latency = 0;
-  int _totalPackets = 0;
   
   late AnimationController _scanController;
   late AnimationController _packetController;
@@ -99,62 +95,15 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       child: Column(
         children: [
           // Header avec métriques simulées
-          Padding(
-            padding: const EdgeInsets.all(16),
+          const Padding(
+            padding: EdgeInsets.all(16),
             child: Column(
               children: [
-                const LabNotice(
+                LabNotice(
                   title: 'Simulation pédagogique',
                   message:
                       'Données synthétiques. Aucun scan réseau réel ni capture de paquets.',
                   icon: Icons.info_outline,
-                ),
-                const SizedBox(height: 12),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 130,
-                        child: LabMetricCard(
-                          title: 'Bande Passante',
-                          value: '${_bandwidthUsage.toStringAsFixed(1)} Mbps',
-                          icon: Icons.speed,
-                          color: TdcColors.network,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      SizedBox(
-                        width: 130,
-                        child: LabMetricCard(
-                          title: 'Latence',
-                          value: '$_latency ms',
-                          icon: Icons.timer,
-                          color: TdcColors.warning,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      SizedBox(
-                        width: 130,
-                        child: LabMetricCard(
-                          title: 'Perte Paquets',
-                          value: '$_packetLoss%',
-                          icon: Icons.warning,
-                          color: TdcColors.danger,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      SizedBox(
-                        width: 130,
-                        child: LabMetricCard(
-                          title: 'Paquets Total',
-                          value: '$_totalPackets',
-                          icon: Icons.data_usage,
-                          color: TdcColors.info,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ],
             ),
@@ -1004,7 +953,6 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       
       setState(() {
         _pingResults.add(result);
-        _latency = result.time;
       });
     }
     
@@ -1061,8 +1009,6 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       setState(() {
         _capturedPackets.insert(0, packet);
         if (_capturedPackets.length > 50) _capturedPackets.removeLast();
-        _totalPackets++;
-        _bandwidthUsage = 0.5 + (DateTime.now().second % 5) / 2.0;
       });
     }
   }

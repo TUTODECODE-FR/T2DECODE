@@ -73,7 +73,7 @@ class OllamaService {
             .timeout(tagsTimeout);
         if (mRes.statusCode == 200) {
           final list = ((jsonDecode(mRes.body) as Map)['models'] as List?) ?? [];
-          models = list.map((m) => m['name']?.toString() ?? '').where((s) => s.isNotEmpty).toList();
+          models = list.map((m) => m['name']?.toString() ?? '').where((s) => s.isNotEmpty).toSet().toList();
         }
       }
 
@@ -121,7 +121,6 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
       'model': model,
       'messages': msgs,
       'stream': true,
-      'think': false,          // Desactive la reflexion interne (qwen3)
       'options': {
         'num_predict': 600,    // Reponses courtes
         'temperature': 0.5,    // Moins creatif, plus direct
@@ -137,10 +136,10 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
 
     final client = http.Client();
     try {
-      // Timeout strict à 8s — Ollama est local, un délai > 8s = service absent.
+      // Timeout étendu à 60s pour permettre le chargement du modèle en RAM la première fois
       final response = await client.send(req).timeout(
-        const Duration(seconds: 8),
-        onTimeout: () => throw TimeoutException('Ollama ne répond pas (timeout 8s). Vérifiez qu\'il est bien lancé.'),
+        const Duration(seconds: 60),
+        onTimeout: () => throw TimeoutException('Ollama ne répond pas (timeout 60s). Le modèle est peut-être trop lourd ou en cours de chargement.'),
       );
       if (response.statusCode != 200) {
         // Lire le corps d'erreur
@@ -150,38 +149,25 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
 
       // État du parsing thinking
       bool inThink   = false;
-      var  lineBuf   = StringBuffer();
 
-      await for (final raw in response.stream.transform(utf8.decoder)) {
-        lineBuf.write(raw);
-        final full = lineBuf.toString();
-        lineBuf.clear();
-
-        // Séparer les lignes JSON
-        final lines = full.split('\n');
+      await for (final line in response.stream.transform(utf8.decoder).transform(const LineSplitter())) {
         // Protection contre les flux malveillants sans saut de ligne (DoS)
-        if (full.length > 50000) {
+        if (line.length > 50000) {
           throw Exception('Buffer overflow: Réponse du serveur trop longue sans saut de ligne.');
         }
 
-        // La dernière ligne peut être incomplète
-        for (var i = 0; i < lines.length; i++) {
-          final line = lines[i].trim();
-          if (line.isEmpty) continue;
-          if (i == lines.length - 1 && !line.endsWith('}')) {
-            lineBuf.write(lines[i]); // reprendre au prochain chunk
-            break;
-          }
+        final trimmed = line.trim();
+        if (trimmed.isEmpty) continue;
 
-          Map<String, dynamic> data;
-          try { data = jsonDecode(line) as Map<String, dynamic>; }
-          catch (_) { continue; }
+        Map<String, dynamic> data;
+        try { data = jsonDecode(trimmed) as Map<String, dynamic>; }
+        catch (_) { continue; }
 
-          final done    = data['done'] as bool? ?? false;
-          final content = data['message']?['content']?.toString() ?? '';
+        final done    = data['done'] as bool? ?? false;
+        final content = data['message']?['content']?.toString() ?? '';
 
-          if (content.isNotEmpty) {
-            // Traitement token par token des balises <think>
+        if (content.isNotEmpty) {
+          // Traitement token par token des balises <think>
             var buf = content;
 
             while (buf.isNotEmpty) {
@@ -216,7 +202,6 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
 
           if (done) return;
         }
-      }
     } finally {
       client.close();
     }
@@ -244,20 +229,24 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
       req.body = body;
 
       final client = http.Client();
-      final res = await client.send(req).timeout(const Duration(seconds: 30));
-      final str = await res.stream.bytesToString();
-      final data = jsonDecode(str);
-      final msg = data['message']['content'].toString();
-      
-      String jsonStr = msg.trim();
-      if (jsonStr.contains('```json')) {
-        jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
-      } else if (jsonStr.contains('```')) {
-        jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
+      try {
+        final res = await client.send(req).timeout(const Duration(seconds: 30));
+        final str = await res.stream.bytesToString();
+        final data = jsonDecode(str);
+        final msg = data['message']['content'].toString();
+        
+        String jsonStr = msg.trim();
+        if (jsonStr.contains('```json')) {
+          jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
+        } else if (jsonStr.contains('```')) {
+          jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
+        }
+        
+        final arr = jsonDecode(jsonStr) as List;
+        return arr.map((e) => QuizQuestion.fromMap(e as Map<String, dynamic>)).toList();
+      } finally {
+        client.close();
       }
-      
-      final arr = jsonDecode(jsonStr) as List;
-      return arr.map((e) => QuizQuestion.fromMap(e as Map<String, dynamic>)).toList();
     } catch (e) {
       return null;
     }

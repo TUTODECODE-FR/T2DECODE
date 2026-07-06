@@ -113,9 +113,17 @@ class Course {
     return course;
   }
 
-  static Future<List<Course>> loadAll() async {
-    final data = await rootBundle.loadString('assets/courses.json');
-    final list = json.decode(data) as List<dynamic>;
-    return list.map((m) => Course.fromMap(m as Map<String, dynamic>)).toList();
+  static Future<List<Course>> loadAll([String locale = 'fr']) async {
+    String filename = 'assets/courses/courses_$locale.json';
+    try {
+      final data = await rootBundle.loadString(filename);
+      final list = json.decode(data) as List<dynamic>;
+      return list.map((m) => Course.fromMap(m as Map<String, dynamic>)).toList();
+    } catch (e) {
+      // Fallback
+      final fallback = await rootBundle.loadString('assets/courses/courses_en.json');
+      final list = json.decode(fallback) as List<dynamic>;
+      return list.map((m) => Course.fromMap(m as Map<String, dynamic>)).toList();
+    }
   }
 }
