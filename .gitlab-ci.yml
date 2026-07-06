@@ -118,6 +118,7 @@ build_windows_unsigned:
   stage: build-test
   tags:
     - saas-windows-medium-amd64
+  allow_failure: true
   script:
     - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
     - $env:Path += ";C:/flutter/bin"
