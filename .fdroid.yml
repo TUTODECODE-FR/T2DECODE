@@ -27,7 +27,9 @@ Builds:
       - web
       - windows
     prebuild:
-      - git -C $$flutter$$ checkout -f 3.29.3
+      - flutterVersion=$(cat .flutter-version)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
       - export PUB_CACHE=$(pwd)/.pub-cache
       - $$flutter$$/bin/flutter config --no-analytics
       - $$flutter$$/bin/flutter pub get
