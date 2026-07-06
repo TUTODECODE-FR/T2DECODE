@@ -1,21 +1,17 @@
 <div align="center">
 
-<img src="https://gitlab.com/tutodecode-org/T2DECODE/-/raw/main/assets/logo.png" alt="TUTODECODE" width="300"/>
+<img src="https://gitlab.com/tutodecode-org/T2DECODE/-/raw/main/assets/logo.png" alt="TUTODECODE" width="180"/>
 
 <br/>
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=30&pause=1000&color=F5EBDA&center=true&vCenter=true&width=800&height=60&lines=LE+D%C3%89P%C3%94T+T2DECODE+A+MIGR%C3%89+SUR+GITLAB;LE+COUTEAU+SUISSE+CYBER+100%25+OFFLINE;OPEN+SOURCE.+SOUVERAINET%C3%89+TOTALE.)](https://gitlab.com/tutodecode-org/T2DECODE)
+# T2DECODE EST SUR GITLAB
 
-### ⚠️ `[ DÉPÔT GITHUB DÉSACTIVÉ ]` ⚠️
-
-<br/>
-
-> *« Reprenez le contrôle de vos données, de vos outils et de votre apprentissage. »*
+**Souveraineté Numérique • Open Source • Zéro Cloud**
 
 <br/>
 
 <a href="https://gitlab.com/tutodecode-org/T2DECODE">
-  <img src="https://img.shields.io/badge/ACCÉDER_AU_CODE_SOURCE_SUR_GITLAB-FC6D26?style=for-the-badge&logo=gitlab&logoColor=white&logoWidth=30" alt="GitLab"/>
+  <img src="https://img.shields.io/badge/Accéder_au_code_source_sur_GitLab-FC6D26?style=for-the-badge&logo=gitlab&logoColor=white" alt="GitLab"/>
 </a>
 
 <br/><br/>
@@ -24,35 +20,18 @@
 
 ---
 
-<div align="center">
-  <h2>SYSTEM.LOG :: CHANGEMENT D'HÉBERGEUR</h2>
-</div>
+### Avis de Migration
 
-```bash
-$ ./t2decode status --remote
-[ERROR] Platform policy violation: Proprietary infrastructure detected.
-[INFO] Rerouting connection to Open Core infrastructure (GitLab)...
-[SUCCESS] Secure connection established with gitlab.com/tutodecode-org/T2DECODE
-```
+En accord avec nos principes de transparence et d'indépendance technologique, le code source de l'application **T2DECODE** n'est plus hébergé sur GitHub.
 
-> **T2DECODE** est plus qu'une simple application. C'est une plateforme d'apprentissage technique et cybersécurité **Air-Gapped**, intégrant des simulateurs interactifs, des outils de sécurité, et une **IA locale** autonome.
->
-> Pour rester fidèles à notre philosophie **Zero Cloud**, il était devenu évident que le code de l'application elle-même ne pouvait plus être hébergé sur une plateforme fermée. L'ensemble du code source est désormais hébergé de manière transparente sur **GitLab**.
+**T2DECODE** est une plateforme d'apprentissage technique et de cybersécurité conçue pour fonctionner strictement hors-ligne (Air-Gapped). Pour rester cohérents avec cette philosophie de souveraineté numérique (Zéro Cloud), nous avons déplacé le développement collaboratif vers l'écosystème **GitLab**, basé sur un modèle plus ouvert (Open Core).
+
+Toutes les mises à jour, le code source et les releases sont désormais publiés exclusivement sur GitLab.
 
 <br/>
 
 <div align="center">
 
-| 🛡️ OFFLINE FIRST | 🧠 GHOST AI | 🔧 CYBER LAB |
-| :---: | :---: | :---: |
-| 100% Fonctionnel sans Internet | Tuteur LLM Local Intégré | 9 Simulateurs Réseau/Sys/Crypto |
-
-<br/>
-
-### 🔗 [ TÉLÉCHARGER T2DECODE DEPUIS GITLAB ](https://gitlab.com/tutodecode-org/T2DECODE) 🔗
-
-<br/>
-
-`[ CLÉ PGP DÉSACTIVÉE ICI - RENDEZ-VOUS SUR GITLAB ]`
+### ➡️ [https://gitlab.com/tutodecode-org/T2DECODE](https://gitlab.com/tutodecode-org/T2DECODE) ⬅️
 
 </div>
