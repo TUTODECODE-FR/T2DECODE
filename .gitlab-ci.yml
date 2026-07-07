@@ -115,6 +115,8 @@ build_windows_unsigned:
     - saas-windows-medium-amd64
   allow_failure: true
   script:
+    - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+    - Start-Process -FilePath "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --quiet --norestart --nocache" -Wait -PassThru
     - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
     - $env:Path += ";C:/flutter/bin"
     - flutter config --no-enable-swift-package-manager
@@ -270,6 +272,8 @@ build_windows_signed:
   tags:
     - saas-windows-medium-amd64
   script:
+    - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+    - Start-Process -FilePath "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --quiet --norestart --nocache" -Wait -PassThru
     - choco install innosetup --no-progress -y
     - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
     - $env:Path += ";C:/flutter/bin"
