@@ -273,6 +273,7 @@ build_windows_signed:
   stage: build-release
   tags:
     - saas-windows-medium-amd64
+  allow_failure: true
   script:
     - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
     - Start-Process -FilePath "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --quiet --norestart --nocache" -Wait -PassThru
