@@ -182,7 +182,7 @@ build_android_signed:
     - echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/release-keystore.jks
     - |
       cat > android/key.properties <<EOF
-      storeFile=app/release-keystore.jks
+      storeFile=release-keystore.jks
       storePassword=$ANDROID_KEYSTORE_PASSWORD
       keyAlias=$ANDROID_KEY_ALIAS
       keyPassword=$ANDROID_KEY_PASSWORD
