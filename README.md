@@ -34,8 +34,14 @@
     <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/pipelines"><img src="https://gitlab.com/tutodecode-org/T2DECODE/badges/main/pipeline.svg" alt="pipeline status" /></a>
     <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/releases"><img src="https://gitlab.com/tutodecode-org/T2DECODE/-/badges/release.svg" alt="Latest Release"></a>
     <a href="https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12"><img src="https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6" alt="Mac App Store"></a>
+    <a href="https://f-droid.org/packages/org.t2decode.app/"><img src="https://img.shields.io/badge/F--Droid-v1.0.2-1976D2?style=for-the-badge&logo=f-droid&logoColor=white&labelColor=1A1D2E" alt="F-Droid"></a>
     <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=1A1D2E&color=02569B" alt="Flutter"></a>
     <a href="https://gitlab.com/tutodecode-org/T2DECODE/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-FCC624?style=for-the-badge&labelColor=1A1D2E&color=FCC624" alt="License"></a>
+  </p>
+
+  <p>
+    <img src="https://img.shields.io/badge/100%25_Offline-Ready-2e7d32?style=for-the-badge&labelColor=1A1D2E" alt="100% Offline">
+    <img src="https://img.shields.io/badge/Zero_Cloud-No_Tracking-2e7d32?style=for-the-badge&labelColor=1A1D2E" alt="Zero Cloud">
   </p>
 
   <!-- OpenSSF Badges -->
