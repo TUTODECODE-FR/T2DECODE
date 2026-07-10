@@ -45,7 +45,10 @@ dco_check:
         exit 1
       fi
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
 
 test_and_analyze:
   stage: validate
@@ -62,7 +65,10 @@ test_and_analyze:
       --exclude-dir=".github/workflows" --exclude=".gitlab-ci.yml" \
       --binary-files=without-match && exit 1 || exit 0
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
 
 megalinter:
   stage: validate
@@ -77,7 +83,10 @@ megalinter:
       - megalinter-reports
     expire_in: 1 week
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
 
 osv-scanner:
   stage: validate
@@ -88,7 +97,10 @@ osv-scanner:
     - /osv-scanner -r .
   allow_failure: true
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
 
 # === STAGE: BUILD-TEST (Unsigned) ===
 build_android_unsigned:
@@ -97,7 +109,10 @@ build_android_unsigned:
     - flutter pub get
     - flutter build apk --release
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
 
 build_linux_unsigned:
   stage: build-test
@@ -107,7 +122,10 @@ build_linux_unsigned:
     - flutter pub get
     - flutter build linux --release
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
 
 build_windows_unsigned:
   stage: build-test
@@ -123,7 +141,10 @@ build_windows_unsigned:
     - flutter pub get
     - flutter build windows --release
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
   allow_failure: true
 
 build_macos_unsigned:
@@ -139,7 +160,10 @@ build_macos_unsigned:
     - flutter pub get
     - flutter build macos --release
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
   allow_failure: true
 
 # === STAGE: AUTO-TAG ===
