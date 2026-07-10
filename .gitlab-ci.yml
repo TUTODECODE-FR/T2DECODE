@@ -203,7 +203,18 @@ build_android_signed:
   stage: build-release
   script:
     - flutter pub get
-    - echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/release-keystore.jks
+    - |
+      if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+        echo "Error: ANDROID_KEYSTORE_BASE64 is not set or empty."
+        exit 1
+      fi
+      if [ -f "$ANDROID_KEYSTORE_BASE64" ]; then
+        echo "ANDROID_KEYSTORE_BASE64 is a file path. Copying directly..."
+        cp "$ANDROID_KEYSTORE_BASE64" android/app/release-keystore.jks
+      else
+        echo "Decoding ANDROID_KEYSTORE_BASE64 string..."
+        printf "%s" "$ANDROID_KEYSTORE_BASE64" | tr -d '\n\r ' | base64 -d > android/app/release-keystore.jks
+      fi
     - |
       cat > android/key.properties <<EOF
       storeFile=release-keystore.jks
@@ -280,7 +291,16 @@ build_linux_signed:
     - ARCH=x86_64 $APPIMAGETOOL "$STAGE_APPIMAGE" T2DECODE-Linux.AppImage
     - export GNUPGHOME="/tmp/gnupg"
     - mkdir -p "$GNUPGHOME" && chmod 700 "$GNUPGHOME"
-    - echo "$LINUX_GPG_PRIVATE_KEY_BASE64" | base64 --decode > "/tmp/linux.key"
+    - |
+      if [ -z "$LINUX_GPG_PRIVATE_KEY_BASE64" ]; then
+        echo "Error: LINUX_GPG_PRIVATE_KEY_BASE64 is not set."
+        exit 1
+      fi
+      if [ -f "$LINUX_GPG_PRIVATE_KEY_BASE64" ]; then
+        cp "$LINUX_GPG_PRIVATE_KEY_BASE64" "/tmp/linux.key"
+      else
+        printf "%s" "$LINUX_GPG_PRIVATE_KEY_BASE64" | tr -d '\n\r ' | base64 --decode > "/tmp/linux.key"
+      fi
     - gpg --batch --import "/tmp/linux.key"
     - printf '%s' "$LINUX_GPG_PASSPHRASE" > "/tmp/gpg.pass"
     - gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.tar.gz.sig --detach-sign T2DECODE-Linux.tar.gz
@@ -362,7 +382,16 @@ build_macos_signed:
     - ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
     - KEYCHAIN_PATH="/tmp/build.keychain-db"
     - CERT_PATH="/tmp/macos_cert.p12"
-    - echo "$MACOS_CERT_P12_BASE64" | base64 --decode > "$CERT_PATH"
+    - |
+      if [ -z "$MACOS_CERT_P12_BASE64" ]; then
+        echo "Error: MACOS_CERT_P12_BASE64 is not set."
+        exit 1
+      fi
+      if [ -f "$MACOS_CERT_P12_BASE64" ]; then
+        cp "$MACOS_CERT_P12_BASE64" "$CERT_PATH"
+      else
+        printf "%s" "$MACOS_CERT_P12_BASE64" | tr -d '\n\r ' | base64 --decode > "$CERT_PATH"
+      fi
     - security create-keychain -p "build" "$KEYCHAIN_PATH"
     - security default-keychain -s "$KEYCHAIN_PATH"
     - security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
