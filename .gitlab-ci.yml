@@ -2,6 +2,7 @@ image: ghcr.io/cirruslabs/flutter:stable
 
 variables:
   GIT_DEPTH: "0"
+  DS_EXCLUDED_PATHS: "android/**,ios/**,macos/**,windows/**,linux/**"
 
 default:
   interruptible: true
