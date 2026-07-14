@@ -443,9 +443,11 @@ publish_sourceforge:
   script:
     - apk add --no-cache openssh-client rsync
     - eval $(ssh-agent -s)
-    - echo "$SF_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
+    - echo "$SF_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/sf_key
+    - chmod 600 ~/.ssh/sf_key
+    - ssh-add ~/.ssh/sf_key
     - ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
     - mkdir -p sf_assets
     - cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk sf_assets/T2DECODE-Android-armeabi-v7a.apk || true
