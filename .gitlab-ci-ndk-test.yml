@@ -1,0 +1,5 @@
+image: ghcr.io/cirruslabs/flutter:stable
+test_ndk:
+  script:
+    - echo "NDK path: $ANDROID_NDK_HOME"
+    - cat $ANDROID_NDK_HOME/source.properties
