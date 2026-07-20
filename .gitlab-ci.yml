@@ -317,6 +317,20 @@ build_linux_signed:
   rules:
     - if: $CI_COMMIT_TAG
 
+build_snap_signed:
+  stage: build-release
+  allow_failure: true
+  image: snapcore/snapcraft:stable
+  script:
+    - export SNAPCRAFT_BUILD_ENVIRONMENT=host
+    - snapcraft
+  artifacts:
+    paths:
+      - "*.snap"
+    expire_in: 1 day
+  rules:
+    - if: $CI_COMMIT_TAG
+
 build_windows_signed:
   stage: build-release
   tags:
