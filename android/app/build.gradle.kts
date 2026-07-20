@@ -24,6 +24,11 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
     kotlinOptions {
         jvmTarget = "17"
     }
