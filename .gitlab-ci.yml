@@ -475,6 +475,62 @@ publish_sourceforge:
   rules:
     - if: $CI_COMMIT_TAG
 
+publish_homebrew_tap:
+  stage: release
+  image: alpine:latest
+  script:
+    - apk add --no-cache git curl
+    - |
+      if [ -z "$HOMEBREW_TAP_TOKEN" ]; then
+        echo "Error: HOMEBREW_TAP_TOKEN is not set. Skipping Homebrew Tap update."
+        exit 0
+      fi
+    - |
+      if [ ! -f "T2DECODE-macOS.dmg" ]; then
+        echo "T2DECODE-macOS.dmg not found locally! Downloading it from SourceForge to calculate SHA256..."
+        DOWNLOAD_URL="https://downloads.sourceforge.net/project/t2decode/v${CI_COMMIT_TAG#v}/T2DECODE-macOS.dmg"
+        curl -L -o T2DECODE-macOS.dmg "$DOWNLOAD_URL"
+      fi
+    - SHA256_HASH=$(sha256sum T2DECODE-macOS.dmg | awk '{print $1}')
+    - echo "Computed SHA256 $SHA256_HASH"
+    - VERSION="${CI_COMMIT_TAG#v}"
+    - git clone "https://oauth2:${HOMEBREW_TAP_TOKEN}@gitlab.com/tutodecode-org/homebrew-tap.git" /tmp/homebrew-tap || { echo "Failed to clone homebrew-tap"; exit 1; }
+    - mkdir -p /tmp/homebrew-tap/Casks
+    - |
+      cat > /tmp/homebrew-tap/Casks/t2decode.rb <<EOF
+      cask "t2decode" do
+        version "$VERSION"
+        sha256 "$SHA256_HASH"
+
+        url "https://downloads.sourceforge.net/project/t2decode/v#{version}/T2DECODE-macOS.dmg",
+            verified: "downloads.sourceforge.net/t2decode/"
+        name "T2DECODE"
+        desc "Offline simulator and toolkit for networking and cybersecurity"
+        homepage "https://tutodecode.org/"
+
+        app "T2DECODE.app"
+
+        zap trash: [
+          "~/Library/Application Support/org.t2decode.app",
+          "~/Library/Preferences/org.t2decode.app.plist",
+          "~/Library/Saved Application State/org.t2decode.app.savedState",
+        ]
+      end
+      EOF
+    - cd /tmp/homebrew-tap
+    - git config user.name "gitlab-ci[bot]"
+    - git config user.email "gitlab-ci[bot]@tutodecode.org"
+    - git add Casks/t2decode.rb
+    - |
+      if git diff-index --quiet HEAD --; then
+        echo "No changes to commit for Homebrew Tap."
+      else
+        git commit -m "chore: update t2decode cask to version $VERSION [skip ci]"
+        git push origin main || git push origin master
+      fi
+  rules:
+    - if: $CI_COMMIT_TAG
+
 include:
   - template: Jobs/SAST.gitlab-ci.yml
   - template: Jobs/Secret-Detection.gitlab-ci.yml
