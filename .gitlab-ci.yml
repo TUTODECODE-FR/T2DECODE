@@ -324,6 +324,13 @@ build_snap_signed:
   script:
     - export SNAPCRAFT_BUILD_ENVIRONMENT=host
     - snapcraft
+    - |
+      if [ -n "$SNAPCRAFT_STORE_CREDENTIALS" ]; then
+        echo "Uploading to Snap Store..."
+        snapcraft upload --release=stable *.snap
+      else
+        echo "SNAPCRAFT_STORE_CREDENTIALS not set. Skipping Snap Store upload."
+      fi
   artifacts:
     paths:
       - "*.snap"
