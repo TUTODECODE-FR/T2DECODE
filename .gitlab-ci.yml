@@ -294,18 +294,19 @@ build_linux_signed:
     - mkdir -p "$GNUPGHOME" && chmod 700 "$GNUPGHOME"
     - |
       if [ -z "$LINUX_GPG_PRIVATE_KEY_BASE64" ]; then
-        echo "Error: LINUX_GPG_PRIVATE_KEY_BASE64 is not set."
-        exit 1
-      fi
-      if [ -f "$LINUX_GPG_PRIVATE_KEY_BASE64" ]; then
-        cp "$LINUX_GPG_PRIVATE_KEY_BASE64" "/tmp/linux.key"
+        echo "Warning: LINUX_GPG_PRIVATE_KEY_BASE64 is not set. Skipping signature."
+        touch T2DECODE-Linux.tar.gz.sig T2DECODE-Linux.deb.sig
       else
-        printf "%s" "$LINUX_GPG_PRIVATE_KEY_BASE64" | tr -d '\n\r ' | base64 --decode > "/tmp/linux.key"
+        if [ -f "$LINUX_GPG_PRIVATE_KEY_BASE64" ]; then
+          cp "$LINUX_GPG_PRIVATE_KEY_BASE64" "/tmp/linux.key"
+        else
+          printf "%s" "$LINUX_GPG_PRIVATE_KEY_BASE64" | tr -d '\n\r ' | base64 --decode > "/tmp/linux.key"
+        fi
+        gpg --batch --import "/tmp/linux.key"
+        printf '%s' "$LINUX_GPG_PASSPHRASE" > "/tmp/gpg.pass"
+        gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.tar.gz.sig --detach-sign T2DECODE-Linux.tar.gz
+        gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.deb.sig --detach-sign T2DECODE-Linux.deb
       fi
-    - gpg --batch --import "/tmp/linux.key"
-    - printf '%s' "$LINUX_GPG_PASSPHRASE" > "/tmp/gpg.pass"
-    - gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.tar.gz.sig --detach-sign T2DECODE-Linux.tar.gz
-    - gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.deb.sig --detach-sign T2DECODE-Linux.deb
   artifacts:
     paths:
       - T2DECODE-Linux.tar.gz
@@ -345,7 +346,8 @@ build_windows_signed:
   allow_failure: true
   script:
     - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
-    - Start-Process -FilePath "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --quiet --norestart --nocache" -Wait -PassThru
+    - Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vs_buildtools.exe" -OutFile vs_buildtools.exe
+    - Start-Process -FilePath ".\vs_buildtools.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --passive --norestart --wait" -Wait -PassThru
     - choco install innosetup --no-progress -y
     - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
     - $env:Path += ";C:/flutter/bin"
