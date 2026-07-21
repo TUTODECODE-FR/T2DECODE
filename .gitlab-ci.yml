@@ -321,10 +321,9 @@ build_linux_signed:
 build_snap_signed:
   stage: build-release
   allow_failure: true
-  image: snapcore/snapcraft:stable
+  image: ghcr.io/canonical/snapcraft:core22
   script:
-    - export SNAPCRAFT_BUILD_ENVIRONMENT=host
-    - snapcraft
+    - snapcraft --destructive-mode
     - |
       if [ -n "$SNAPCRAFT_STORE_CREDENTIALS" ]; then
         echo "Uploading to Snap Store..."
