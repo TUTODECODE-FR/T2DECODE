@@ -88,13 +88,8 @@ Pre-compiled and signed binaries are distributed through official channels:
 ### Homebrew Installation (macOS)
 
 ```bash
-# Add official tap
+# Add official tap and install Cask
 brew tap tutodecode-org/homebrew-tap
-
-# Trust the tap
-brew trust tutodecode-org/tap
-
-# Install Cask
 brew install --cask t2decode
 ```
 

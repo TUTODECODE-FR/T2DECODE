@@ -88,13 +88,8 @@ Les binaires compilés et authentifiés sont distribués via les canaux officiel
 ### Installation via Homebrew (macOS)
 
 ```bash
-# Ajout du tap officiel
+# Ajout du tap et installation du Cask
 brew tap tutodecode-org/homebrew-tap
-
-# Validation du tap
-brew trust tutodecode-org/tap
-
-# Installation du Cask
 brew install --cask t2decode
 ```
 
