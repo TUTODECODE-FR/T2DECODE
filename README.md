@@ -34,6 +34,7 @@
     <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/pipelines"><img src="https://gitlab.com/tutodecode-org/T2DECODE/badges/main/pipeline.svg" alt="pipeline status" /></a>
     <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/releases"><img src="https://gitlab.com/tutodecode-org/T2DECODE/-/badges/release.svg" alt="Latest Release"></a>
     <a href="https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12"><img src="https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6" alt="Mac App Store"></a>
+    <a href="https://gitlab.com/tutodecode-org/homebrew-tap"><img src="https://img.shields.io/badge/Homebrew-Cask-F05032?style=for-the-badge&logo=homebrew&logoColor=white&labelColor=1A1D2E" alt="Homebrew"></a>
     <a href="https://f-droid.org/packages/org.t2decode.app/"><img src="https://img.shields.io/badge/F--Droid-v1.0.2-1976D2?style=for-the-badge&logo=f-droid&logoColor=white&labelColor=1A1D2E" alt="F-Droid"></a>
     <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=1A1D2E&color=02569B" alt="Flutter"></a>
     <a href="https://gitlab.com/tutodecode-org/T2DECODE/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-FCC624?style=for-the-badge&labelColor=1A1D2E&color=FCC624" alt="License"></a>
@@ -190,8 +191,25 @@ T2DECODE (Application Flutter)
 | :--- | :--- | :---: | :---: |
 | ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white) | **APK** / AAB (64-bit) | Actif | Disponible |
 | ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white) | **ZIP** / Installateur EXE | Actif | Disponible |
-| ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) | **[App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)** / PKG / ZIP Universel | Actif | Disponible |
+| ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) | **[App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)** / **Homebrew Cask** / PKG / DMG | Actif | Disponible |
 | ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | **AppImage** / DEB (64-bit) | Actif | Disponible |
+
+### 🍺 Installation Rapide via Homebrew (macOS)
+
+Vous pouvez installer et maintenir à jour **T2DECODE** facilement en une seule commande via Homebrew :
+
+```bash
+# 1. Ajouter le dépôt (Tap) officiel TUTODECODE
+brew tap tutodecode-org/homebrew-tap
+
+# 2. Autoriser le Tap (nécessaire 1 seule fois sur votre Mac)
+brew trust tutodecode-org/tap
+
+# 3. Installer T2DECODE
+brew install --cask t2decode
+```
+
+> 💡 **Mise à jour rapide** : Pour mettre à jour T2DECODE ultérieurement vers la dernière version, lancez simplement `brew upgrade --cask t2decode`.
 
 > 🔒 **Garantie d'intégrité** : Chaque version s'accompagne d'un fichier `SHA256SUMS.txt` et de signatures cryptographiques pour authentifier la provenance des binaires.
 
