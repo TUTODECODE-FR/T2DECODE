@@ -321,7 +321,9 @@ build_linux_signed:
 build_snap_signed:
   stage: build-release
   allow_failure: true
-  image: ghcr.io/canonical/snapcraft:8_core22
+  image:
+    name: ghcr.io/canonical/snapcraft:8_core22
+    entrypoint: [""]
   script:
     - snapcraft --destructive-mode
     - |
@@ -345,7 +347,9 @@ build_windows_signed:
   allow_failure: true
   script:
     - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
-    - Start-Process -FilePath "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --quiet --norestart --nocache --wait" -Wait -PassThru
+    - Start-Process -FilePath "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --quiet --norestart --nocache"
+    - Start-Sleep -Seconds 5
+    - while (Get-Process -Name "vs_installer", "vs_installershell" -ErrorAction SilentlyContinue) { Start-Sleep -Seconds 5 }
     - choco install innosetup --no-progress -y
     - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
     - $env:Path += ";C:/flutter/bin"
@@ -402,34 +406,34 @@ build_macos_signed:
     - mv build/macos/Build/Products/Release/T2DECODE_Installer.pkg T2DECODE-macOS-Installer.pkg
     - cp -f T2DECODE-macOS-Installer.pkg T2DECODE-macOS.pkg
     - ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
-    - KEYCHAIN_PATH="/tmp/build.keychain-db"
-    - CERT_PATH="/tmp/macos_cert.p12"
     - |
       if [ -z "$MACOS_CERT_P12_BASE64" ]; then
-        echo "Error: MACOS_CERT_P12_BASE64 is not set."
-        exit 1
-      fi
-      if [ -f "$MACOS_CERT_P12_BASE64" ]; then
-        cp "$MACOS_CERT_P12_BASE64" "$CERT_PATH"
+        echo "Warning: MACOS_CERT_P12_BASE64 is not set. Skipping macOS signing."
       else
-        printf "%s" "$MACOS_CERT_P12_BASE64" | tr -d '\n\r ' | base64 --decode > "$CERT_PATH"
+        KEYCHAIN_PATH="/tmp/build.keychain-db"
+        CERT_PATH="/tmp/macos_cert.p12"
+        if [ -f "$MACOS_CERT_P12_BASE64" ]; then
+          cp "$MACOS_CERT_P12_BASE64" "$CERT_PATH"
+        else
+          printf "%s" "$MACOS_CERT_P12_BASE64" | tr -d '\n\r ' | base64 --decode > "$CERT_PATH"
+        fi
+        security create-keychain -p "build" "$KEYCHAIN_PATH"
+        security default-keychain -s "$KEYCHAIN_PATH"
+        security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+        security unlock-keychain -p "build" "$KEYCHAIN_PATH"
+        security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
+        security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$MACOS_CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security -T /usr/bin/productsign
+        security set-key-partition-list -S apple-tool:,apple:,codesign:,productsign: -s -k "build" "$KEYCHAIN_PATH"
+        codesign --force --deep --options runtime --timestamp --sign "$MACOS_CERT_IDENTITY" "$APP_PATH"
+        rm -f T2DECODE-macOS.zip
+        ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
+        xcrun notarytool submit T2DECODE-macOS.zip --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
+        xcrun stapler staple "$APP_PATH"
+        xcrun stapler staple T2DECODE-macOS.dmg
+        productsign --sign "$MACOS_CERT_IDENTITY" T2DECODE-macOS-Installer.pkg T2DECODE-macOS.pkg
+        xcrun notarytool submit T2DECODE-macOS.pkg --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
+        xcrun stapler staple T2DECODE-macOS.pkg
       fi
-    - security create-keychain -p "build" "$KEYCHAIN_PATH"
-    - security default-keychain -s "$KEYCHAIN_PATH"
-    - security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-    - security unlock-keychain -p "build" "$KEYCHAIN_PATH"
-    - security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
-    - security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$MACOS_CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security -T /usr/bin/productsign
-    - 'security set-key-partition-list -S apple-tool:,apple:,codesign:,productsign: -s -k "build" "$KEYCHAIN_PATH"'
-    - codesign --force --deep --options runtime --timestamp --sign "$MACOS_CERT_IDENTITY" "$APP_PATH"
-    - rm -f T2DECODE-macOS.zip
-    - ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
-    - xcrun notarytool submit T2DECODE-macOS.zip --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
-    - xcrun stapler staple "$APP_PATH"
-    - xcrun stapler staple T2DECODE-macOS.dmg
-    - productsign --sign "$MACOS_CERT_IDENTITY" T2DECODE-macOS-Installer.pkg T2DECODE-macOS.pkg
-    - xcrun notarytool submit T2DECODE-macOS.pkg --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
-    - xcrun stapler staple T2DECODE-macOS.pkg
   artifacts:
     paths:
       - T2DECODE-macOS.zip
