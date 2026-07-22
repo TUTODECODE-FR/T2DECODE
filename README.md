@@ -194,22 +194,23 @@ T2DECODE (Application Flutter)
 | ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) | **[App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)** / **Homebrew Cask** / PKG / DMG | Actif | Disponible |
 | ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | **AppImage** / DEB (64-bit) | Actif | Disponible |
 
-### 🍺 Installation Rapide via Homebrew (macOS)
-
-Vous pouvez installer et maintenir à jour **T2DECODE** facilement en une seule commande via Homebrew :
+### Installation via Homebrew (macOS)
 
 ```bash
-# 1. Ajouter le dépôt (Tap) officiel TUTODECODE
+# Ajout du tap officiel TUTODECODE
 brew tap tutodecode-org/homebrew-tap
 
-# 2. Autoriser le Tap (nécessaire 1 seule fois sur votre Mac)
+# Validation du tap (première installation)
 brew trust tutodecode-org/tap
 
-# 3. Installer T2DECODE
+# Installation du Cask T2DECODE
 brew install --cask t2decode
 ```
 
-> 💡 **Mise à jour rapide** : Pour mettre à jour T2DECODE ultérieurement vers la dernière version, lancez simplement `brew upgrade --cask t2decode`.
+Pour mettre à jour l'application :
+```bash
+brew upgrade --cask t2decode
+```
 
 > 🔒 **Garantie d'intégrité** : Chaque version s'accompagne d'un fichier `SHA256SUMS.txt` et de signatures cryptographiques pour authentifier la provenance des binaires.
 
