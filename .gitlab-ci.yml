@@ -325,6 +325,13 @@ build_snap_signed:
     name: ghcr.io/canonical/snapcraft:8_core22
     entrypoint: [""]
   script:
+    - |
+      EXT_DIR=$(find /usr /usr/local -type d -name "extensions" 2>/dev/null | grep snapcraft | head -n 1)
+      echo "Found snapcraft extensions at: $EXT_DIR"
+      if [ -n "$EXT_DIR" ] && [ "$EXT_DIR" != "/usr/share/snapcraft/extensions" ]; then
+        mkdir -p /usr/share/snapcraft
+        ln -s "$EXT_DIR" /usr/share/snapcraft/extensions
+      fi
     - snapcraft --destructive-mode
     - |
       if [ -n "$SNAPCRAFT_STORE_CREDENTIALS" ]; then
@@ -346,10 +353,15 @@ build_windows_signed:
     - saas-windows-medium-amd64
   allow_failure: true
   script:
+    - $ProductId = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property productId
     - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
-    - Start-Process -FilePath "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --quiet --norestart --nocache"
-    - Start-Sleep -Seconds 5
-    - while (Get-Process -Name "vs_installer", "vs_installershell" -ErrorAction SilentlyContinue) { Start-Sleep -Seconds 5 }
+    - echo "Product ID: $ProductId"
+    - echo "Install Path: $InstallPath"
+    - if ($ProductId -eq "Microsoft.VisualStudio.Product.Community") { $url = "https://aka.ms/vs/17/release/vs_community.exe" } elseif ($ProductId -eq "Microsoft.VisualStudio.Product.Professional") { $url = "https://aka.ms/vs/17/release/vs_professional.exe" } elseif ($ProductId -eq "Microsoft.VisualStudio.Product.Enterprise") { $url = "https://aka.ms/vs/17/release/vs_enterprise.exe" } else { $url = "https://aka.ms/vs/17/release/vs_buildtools.exe" }
+    - echo "Downloading bootstrapper from $url"
+    - Invoke-WebRequest -Uri $url -OutFile vs_bootstrapper.exe
+    - echo "Running bootstrapper..."
+    - Start-Process -FilePath ".\vs_bootstrapper.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --passive --norestart --wait" -Wait -PassThru
     - choco install innosetup --no-progress -y
     - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
     - $env:Path += ";C:/flutter/bin"
@@ -464,7 +476,7 @@ release_gitlab:
 
 publish_sourceforge:
   stage: release
-  image: alpine:3.19
+  image: alpine:3.17
   script:
     - apk add --no-cache openssh-client rsync
     - eval $(ssh-agent -s)
