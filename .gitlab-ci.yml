@@ -294,18 +294,19 @@ build_linux_signed:
     - mkdir -p "$GNUPGHOME" && chmod 700 "$GNUPGHOME"
     - |
       if [ -z "$LINUX_GPG_PRIVATE_KEY_BASE64" ]; then
-        echo "Error: LINUX_GPG_PRIVATE_KEY_BASE64 is not set."
-        exit 1
-      fi
-      if [ -f "$LINUX_GPG_PRIVATE_KEY_BASE64" ]; then
-        cp "$LINUX_GPG_PRIVATE_KEY_BASE64" "/tmp/linux.key"
+        echo "Warning: LINUX_GPG_PRIVATE_KEY_BASE64 is not set. Skipping signature."
+        touch T2DECODE-Linux.tar.gz.sig T2DECODE-Linux.deb.sig
       else
-        printf "%s" "$LINUX_GPG_PRIVATE_KEY_BASE64" | tr -d '\n\r ' | base64 --decode > "/tmp/linux.key"
+        if [ -f "$LINUX_GPG_PRIVATE_KEY_BASE64" ]; then
+          cp "$LINUX_GPG_PRIVATE_KEY_BASE64" "/tmp/linux.key"
+        else
+          printf "%s" "$LINUX_GPG_PRIVATE_KEY_BASE64" | tr -d '\n\r ' | base64 --decode > "/tmp/linux.key"
+        fi
+        gpg --batch --import "/tmp/linux.key"
+        printf '%s' "$LINUX_GPG_PASSPHRASE" > "/tmp/gpg.pass"
+        gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.tar.gz.sig --detach-sign T2DECODE-Linux.tar.gz
+        gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.deb.sig --detach-sign T2DECODE-Linux.deb
       fi
-    - gpg --batch --import "/tmp/linux.key"
-    - printf '%s' "$LINUX_GPG_PASSPHRASE" > "/tmp/gpg.pass"
-    - gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.tar.gz.sig --detach-sign T2DECODE-Linux.tar.gz
-    - gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.deb.sig --detach-sign T2DECODE-Linux.deb
   artifacts:
     paths:
       - T2DECODE-Linux.tar.gz
@@ -320,10 +321,18 @@ build_linux_signed:
 build_snap_signed:
   stage: build-release
   allow_failure: true
-  image: snapcore/snapcraft:stable
+  image:
+    name: snapcore/snapcraft:stable
+    entrypoint: [""]
   script:
-    - export SNAPCRAFT_BUILD_ENVIRONMENT=host
-    - snapcraft
+    - snapcraft --destructive-mode
+    - |
+      if [ -n "$SNAPCRAFT_STORE_CREDENTIALS" ]; then
+        echo "Uploading to Snap Store..."
+        snapcraft upload --release=stable *.snap
+      else
+        echo "SNAPCRAFT_STORE_CREDENTIALS not set. Skipping Snap Store upload."
+      fi
   artifacts:
     paths:
       - "*.snap"
@@ -337,8 +346,15 @@ build_windows_signed:
     - saas-windows-medium-amd64
   allow_failure: true
   script:
-    - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
-    - Start-Process -FilePath "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --quiet --norestart --nocache" -Wait -PassThru
+    - $ProductId = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property productId
+    - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property installationPath
+    - 'echo "Product ID: $ProductId"'
+    - 'echo "Install Path: $InstallPath"'
+    - 'if ($ProductId -eq "Microsoft.VisualStudio.Product.Community") { $url = "https://aka.ms/vs/17/release/vs_community.exe" } elseif ($ProductId -eq "Microsoft.VisualStudio.Product.Professional") { $url = "https://aka.ms/vs/17/release/vs_professional.exe" } elseif ($ProductId -eq "Microsoft.VisualStudio.Product.Enterprise") { $url = "https://aka.ms/vs/17/release/vs_enterprise.exe" } else { $url = "https://aka.ms/vs/17/release/vs_buildtools.exe" }'
+    - echo "Downloading bootstrapper from $url"
+    - Invoke-WebRequest -Uri $url -OutFile vs_bootstrapper.exe
+    - echo "Running bootstrapper..."
+    - Start-Process -FilePath ".\vs_bootstrapper.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --passive --norestart --wait" -Wait -PassThru
     - choco install innosetup --no-progress -y
     - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
     - $env:Path += ";C:/flutter/bin"
@@ -395,34 +411,34 @@ build_macos_signed:
     - mv build/macos/Build/Products/Release/T2DECODE_Installer.pkg T2DECODE-macOS-Installer.pkg
     - cp -f T2DECODE-macOS-Installer.pkg T2DECODE-macOS.pkg
     - ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
-    - KEYCHAIN_PATH="/tmp/build.keychain-db"
-    - CERT_PATH="/tmp/macos_cert.p12"
     - |
       if [ -z "$MACOS_CERT_P12_BASE64" ]; then
-        echo "Error: MACOS_CERT_P12_BASE64 is not set."
-        exit 1
-      fi
-      if [ -f "$MACOS_CERT_P12_BASE64" ]; then
-        cp "$MACOS_CERT_P12_BASE64" "$CERT_PATH"
+        echo "Warning: MACOS_CERT_P12_BASE64 is not set. Skipping macOS signing."
       else
-        printf "%s" "$MACOS_CERT_P12_BASE64" | tr -d '\n\r ' | base64 --decode > "$CERT_PATH"
+        KEYCHAIN_PATH="/tmp/build.keychain-db"
+        CERT_PATH="/tmp/macos_cert.p12"
+        if [ -f "$MACOS_CERT_P12_BASE64" ]; then
+          cp "$MACOS_CERT_P12_BASE64" "$CERT_PATH"
+        else
+          printf "%s" "$MACOS_CERT_P12_BASE64" | tr -d '\n\r ' | base64 --decode > "$CERT_PATH"
+        fi
+        security create-keychain -p "build" "$KEYCHAIN_PATH"
+        security default-keychain -s "$KEYCHAIN_PATH"
+        security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+        security unlock-keychain -p "build" "$KEYCHAIN_PATH"
+        security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
+        security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$MACOS_CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security -T /usr/bin/productsign
+        security set-key-partition-list -S apple-tool:,apple:,codesign:,productsign: -s -k "build" "$KEYCHAIN_PATH"
+        codesign --force --deep --options runtime --timestamp --sign "$MACOS_CERT_IDENTITY" "$APP_PATH"
+        rm -f T2DECODE-macOS.zip
+        ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
+        xcrun notarytool submit T2DECODE-macOS.zip --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
+        xcrun stapler staple "$APP_PATH"
+        xcrun stapler staple T2DECODE-macOS.dmg
+        productsign --sign "$MACOS_CERT_IDENTITY" T2DECODE-macOS-Installer.pkg T2DECODE-macOS.pkg
+        xcrun notarytool submit T2DECODE-macOS.pkg --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
+        xcrun stapler staple T2DECODE-macOS.pkg
       fi
-    - security create-keychain -p "build" "$KEYCHAIN_PATH"
-    - security default-keychain -s "$KEYCHAIN_PATH"
-    - security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-    - security unlock-keychain -p "build" "$KEYCHAIN_PATH"
-    - security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
-    - security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$MACOS_CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security -T /usr/bin/productsign
-    - 'security set-key-partition-list -S apple-tool:,apple:,codesign:,productsign: -s -k "build" "$KEYCHAIN_PATH"'
-    - codesign --force --deep --options runtime --timestamp --sign "$MACOS_CERT_IDENTITY" "$APP_PATH"
-    - rm -f T2DECODE-macOS.zip
-    - ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
-    - xcrun notarytool submit T2DECODE-macOS.zip --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
-    - xcrun stapler staple "$APP_PATH"
-    - xcrun stapler staple T2DECODE-macOS.dmg
-    - productsign --sign "$MACOS_CERT_IDENTITY" T2DECODE-macOS-Installer.pkg T2DECODE-macOS.pkg
-    - xcrun notarytool submit T2DECODE-macOS.pkg --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
-    - xcrun stapler staple T2DECODE-macOS.pkg
   artifacts:
     paths:
       - T2DECODE-macOS.zip
@@ -453,16 +469,17 @@ release_gitlab:
 
 publish_sourceforge:
   stage: release
-  image: alpine:latest
+  image: alpine:3.16
   script:
     - apk add --no-cache openssh-client rsync
-    - eval $(ssh-agent -s)
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SF_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/sf_key
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - |
+      if echo "$SF_PRIVATE_KEY" | grep -q "BEGIN"; then
+        echo "$SF_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/sf_key
+      else
+        echo "$SF_PRIVATE_KEY" | base64 -d > ~/.ssh/sf_key
+      fi
     - chmod 600 ~/.ssh/sf_key
-    - ssh-add ~/.ssh/sf_key
-    - ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
     - mkdir -p sf_assets
     - cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk sf_assets/T2DECODE-Android-armeabi-v7a.apk || true
     - cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk sf_assets/T2DECODE-Android-arm64-v8a.apk || true
@@ -471,7 +488,63 @@ publish_sourceforge:
     - cp T2DECODE-Setup.exe sf_assets/ || true
     - cp T2DECODE-Linux* sf_assets/ || true
     - cp T2DECODE-macOS* sf_assets/ || true
-    - rsync -avP sf_assets/ $SF_USER@frs.sourceforge.net:/home/frs/project/$SF_PROJECT/$CI_COMMIT_TAG/
+    - rsync -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/sf_key" -avP sf_assets/ $SF_USER@frs.sourceforge.net:/home/frs/project/$SF_PROJECT/$CI_COMMIT_TAG/
+  rules:
+    - if: $CI_COMMIT_TAG
+
+publish_homebrew_tap:
+  stage: release
+  image: alpine:latest
+  script:
+    - apk add --no-cache git curl
+    - |
+      if [ -z "$HOMEBREW_TAP_TOKEN" ]; then
+        echo "Error: HOMEBREW_TAP_TOKEN is not set. Skipping Homebrew Tap update."
+        exit 0
+      fi
+    - |
+      if [ ! -f "T2DECODE-macOS.dmg" ]; then
+        echo "T2DECODE-macOS.dmg not found locally! Downloading it from SourceForge to calculate SHA256..."
+        DOWNLOAD_URL="https://downloads.sourceforge.net/project/t2decode/v${CI_COMMIT_TAG#v}/T2DECODE-macOS.dmg"
+        curl -L -o T2DECODE-macOS.dmg "$DOWNLOAD_URL"
+      fi
+    - SHA256_HASH=$(sha256sum T2DECODE-macOS.dmg | awk '{print $1}')
+    - echo "Computed SHA256 $SHA256_HASH"
+    - VERSION="${CI_COMMIT_TAG#v}"
+    - git clone "https://oauth2:${HOMEBREW_TAP_TOKEN}@gitlab.com/tutodecode-org/homebrew-tap.git" /tmp/homebrew-tap || { echo "Failed to clone homebrew-tap"; exit 1; }
+    - mkdir -p /tmp/homebrew-tap/Casks
+    - |
+      cat > /tmp/homebrew-tap/Casks/t2decode.rb <<EOF
+      cask "t2decode" do
+        version "$VERSION"
+        sha256 "$SHA256_HASH"
+
+        url "https://downloads.sourceforge.net/project/t2decode/v#{version}/T2DECODE-macOS.dmg",
+            verified: "downloads.sourceforge.net/t2decode/"
+        name "T2DECODE"
+        desc "Offline simulator and toolkit for networking and cybersecurity"
+        homepage "https://tutodecode.org/"
+
+        app "T2DECODE.app"
+
+        zap trash: [
+          "~/Library/Application Support/org.t2decode.app",
+          "~/Library/Preferences/org.t2decode.app.plist",
+          "~/Library/Saved Application State/org.t2decode.app.savedState",
+        ]
+      end
+      EOF
+    - cd /tmp/homebrew-tap
+    - git config user.name "gitlab-ci[bot]"
+    - git config user.email "gitlab-ci[bot]@tutodecode.org"
+    - git add Casks/t2decode.rb
+    - |
+      if git diff-index --quiet HEAD --; then
+        echo "No changes to commit for Homebrew Tap."
+      else
+        git commit -m "chore: update t2decode cask to version $VERSION [skip ci]"
+        git push origin main || git push origin master
+      fi
   rules:
     - if: $CI_COMMIT_TAG
 

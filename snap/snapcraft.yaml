@@ -1,0 +1,23 @@
+name: t2decode
+version: '1.0.2.4'
+summary: Simulateur et boite a outils hors-ligne pour les reseaux et la cybersecurite
+description: |
+  T2DECODE est une plateforme d'apprentissage hors-ligne pour la cybersecurite et les reseaux.
+
+confinement: strict
+base: core22
+grade: stable
+
+apps:
+  t2decode:
+    command: t2decode
+    extensions: [gnome]
+    plugs:
+      - network
+      - network-bind
+
+parts:
+  t2decode:
+    source: .
+    plugin: flutter
+    flutter-target: lib/main.dart

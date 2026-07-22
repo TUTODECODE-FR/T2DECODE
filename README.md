@@ -9,52 +9,11 @@
   </a>
 
   <h1>T2DECODE</h1>
-  <p><strong>T2DECODE — Plateforme pédagogique hors‑ligne pour réseaux, Linux et cybersécurité.</strong></p>
-
-  <p>T2DECODE est une suite logicielle autonome destinée aux étudiants, formateurs et professionnels IT. Elle regroupe cours interactifs, simulateurs techniques, outils spécialisés et un assistant IA local (Ollama), conçus pour fonctionner sans connexion et garantir la confidentialité et l'intégrité des données.</p>
-
-  <p><strong>Points forts :</strong></p>
-  <ul>
-    <li>Fonctionne 100% hors ligne — aucune dépendance cloud.</li>
-    <li>Simulateurs interactifs : réseau, Linux, cryptographie.</li>
-    <li>Outils métier intégrés : CIDR, hachage, chmod, cron.</li>
-    <li>Ghost AI : assistant LLM local via Ollama, sans envoi de données externes.</li>
-    <li>Intégrité et sécurité : contrôles SHA‑256 et anti‑altération au démarrage.</li>
-  </ul>
-
-  <p><strong>Multi‑plateforme • Air‑gapped ready • Open‑source (GPLv3)</strong></p>
-
-  <br>
-  <img src="docs/images/t2decode_demo.gif" width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" alt="Démo vidéo - T2DECODE en action">
-  <br><br>
-
-  <!-- CI & Distribution Badges -->
-  <p>
-    <a href="https://about.gitlab.com/solutions/open-source/"><img src="https://img.shields.io/badge/GitLab_Open_Source-Partner-554488?style=for-the-badge&logo=gitlab&logoColor=white&labelColor=1A1D2E&color=FC6D26" alt="GitLab Open Source Partner"></a>
-    <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/pipelines"><img src="https://gitlab.com/tutodecode-org/T2DECODE/badges/main/pipeline.svg" alt="pipeline status" /></a>
-    <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/releases"><img src="https://gitlab.com/tutodecode-org/T2DECODE/-/badges/release.svg" alt="Latest Release"></a>
-    <a href="https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12"><img src="https://img.shields.io/badge/Mac_App_Store-Available-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=1A1D2E&color=0078D6" alt="Mac App Store"></a>
-    <a href="https://f-droid.org/packages/org.t2decode.app/"><img src="https://img.shields.io/badge/F--Droid-v1.0.2-1976D2?style=for-the-badge&logo=f-droid&logoColor=white&labelColor=1A1D2E" alt="F-Droid"></a>
-    <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-Multi--Platform-02569B?style=for-the-badge&logo=flutter&logoColor=white&labelColor=1A1D2E&color=02569B" alt="Flutter"></a>
-    <a href="https://gitlab.com/tutodecode-org/T2DECODE/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-FCC624?style=for-the-badge&labelColor=1A1D2E&color=FCC624" alt="License"></a>
-  </p>
-
-  <p>
-    <img src="https://img.shields.io/badge/100%25_Offline-Ready-2e7d32?style=for-the-badge&labelColor=1A1D2E" alt="100% Offline">
-    <img src="https://img.shields.io/badge/Zero_Cloud-No_Tracking-2e7d32?style=for-the-badge&labelColor=1A1D2E" alt="Zero Cloud">
-  </p>
-
-  <!-- OpenSSF Badges -->
-  <p>
-    <a href="https://www.bestpractices.dev/projects/12999"><img src="https://www.bestpractices.dev/projects/12999/badge" alt="OpenSSF Best Practices"></a>
-    <a href="https://www.bestpractices.dev/projects/12999"><img src="https://www.bestpractices.dev/projects/12999/baseline" alt="OpenSSF Baseline"></a>
-    <a href="https://scorecard.dev/viewer/?uri=gitlab.com/tutodecode-org/T2DECODE"><img src="https://api.scorecard.dev/projects/gitlab.com/tutodecode-org/T2DECODE/badge" alt="OpenSSF Scorecard"></a>
-  </p>
+  <p><strong>Plateforme pédagogique autonome et souveraine pour les réseaux, la cybersécurité et l'administration système.</strong></p>
 
   <p>
     <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/releases">Releases</a> · 
-    <a href="docs/resume.md">Résumé</a> ·
-    <a href="docs/build.md">Build & Compilation</a> · 
+    <a href="docs/build.md">Compilation</a> · 
     <a href="docs/architecture.md">Architecture</a> · 
     <a href="RGPD.md">Confidentialité</a> · 
     <a href="CONTRIBUTING.md">Contribuer</a>
@@ -63,247 +22,120 @@
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 📊 En chiffres
+## Présentation
 
-- 📚 **120+** fiches pédagogiques
-- 🔬 **9** simulateurs
-- 🛠️ **15+** outils intégrés
-- 💻 **Windows / Linux / macOS / Android**
- - 🌐 **0** dépendances cloud
-- 🔒 **100%** open source
+**T2DECODE** est un environnement d'apprentissage et d'expérimentation technique conçu pour fonctionner en mode strictement hors-ligne (air-gapped). La plateforme rassemble des modules interactifs, des simulateurs d'infrastructures et un assistant IA local, sans aucune dépendance envers des services cloud tiers.
 
-
-<img src="assets/separator.svg" width="100%" height="4">
-
-## ⚙️ Fonctionnalités
-
-| Module | Description |
-|----------|------------|
-| **Ghost AI** | Assistant IA local (LLM Ollama) avec RAG sur les cours |
-| **NetKit** | Simulateur réseau (Topologie, Routage, Ping) |
-| **CryptoLab** | Simulateur cryptographie (Chiffrement symétrique/asymétrique) |
-| **LinuxLab** | Simulateur terminal Linux |
-| **CIDR** | Calculateur de sous-réseaux IPv4/IPv6 |
-| **Hash** | Utilitaires de hachage (SHA256, MD5, etc.) |
-| **Chmod** | Calculateur de permissions système Linux |
-| **Cron** | Générateur et validateur de tâches planifiées |
-| **T2C-Phantom** | Réseau P2P décentralisé de mise à jour des cours |
-
-### 🔄 Mises à jour P2P autonomes avec T2C-Phantom
-
-Le protocole **T2C-Phantom** (moteur de synchronisation P2P via proxy Go/libp2p) est actuellement répertorié dans les prochaines étapes de développement (Phase 2). 
-
-Pour en savoir plus sur la sécurité réseau, la validation d'intégrité (SHA-256) des cours et les détails techniques de cette implémentation, veuillez consulter la documentation dédiée : [FAQ Sécurité & Intégrité des Cours](docs/prochaine_mise_a_jour.md).
-
+- **Conception Air-Gapped** : Aucun appel réseau externe, zéro télémétrie, respect strict du RGPD.
+- **Intelligence Artificielle Locale (Ghost AI)** : Intégration du moteur LLM Ollama avec support RAG sur la base de connaissances.
+- **Simulateurs Techniques Integrés** : Modélisation dynamique de réseaux (NetKit), cryptographie et environnements système Linux.
+- **Sécurité et Contrôle d'Intégrité** : Audit des assets au démarrage (SHA-256) et mécanismes anti-altération natifs.
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🖼️ T2DECODE en Action
+## Interface
 
 <p align="center">
-  <img width="48%" src="docs/images/screenshots/app-home-full.png" style="border-radius: 8px;" alt="Accueil">
-  <img width="48%" src="docs/images/screenshots/section-tools.png" style="border-radius: 8px;" alt="Outils">
+  <img width="48%" src="docs/images/screenshots/app-home-full.png" style="border-radius: 8px;" alt="Accueil T2DECODE">
+  <img width="48%" src="docs/images/screenshots/section-tools.png" style="border-radius: 8px;" alt="Outils Métier">
 </p>
 <p align="center">
-  <img width="48%" src="docs/images/screenshots/section-chat-ia.png" style="border-radius: 8px;" alt="Ghost AI">
-  <img width="48%" src="docs/images/screenshots/section-cheat-sheets.png" style="border-radius: 8px;" alt="Fiches">
+  <img width="48%" src="docs/images/screenshots/section-chat-ia.png" style="border-radius: 8px;" alt="Ghost AI Local">
+  <img width="48%" src="docs/images/screenshots/section-cheat-sheets.png" style="border-radius: 8px;" alt="Cheat Sheets">
 </p>
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🎯 Pourquoi T2DECODE ?
+## Modules et Fonctionnalités
 
-Contrairement aux plateformes de formation classiques :
-
-| Plateforme Cloud | T2DECODE |
-|------------------|-----------|
-| Internet obligatoire | Fonctionne **hors ligne** |
-| Données hébergées chez un tiers | Données **locales** |
-| IA distante (SaaS) | IA **locale** Ollama |
-| Peu utilisable en environnement sécurisé | **Air-Gapped Ready** |
-| Dépendance à un abonnement | Logiciel **autonome** |
-
-<img src="assets/separator.svg" width="100%" height="4">
-
-## 👨‍💻 Cas d'Usage
-
-**🎓 L'Étudiant**
-- Réviser les concepts réseaux (OSI, TCP/IP) sans connexion Internet.
-- Faire des exercices pratiques sur les simulateurs (NetKit, Linux).
-
-**🛠️ L'Administrateur Système**
-- Utiliser rapidement les calculateurs CIDR IPv4/v6.
-- Vérifier des permissions Linux (chmod) ou générer des requêtes CRON depuis une interface propre.
-
-**👨‍🏫 Le Formateur**
-- Distribuer des supports de cours complets sur des clés USB (Air-gapped).
-- Construire et fournir des laboratoires pédagogiques virtuels autonomes.
+| Composant | Rôle Technique |
+| :--- | :--- |
+| **Ghost AI** | Assistant LLM local (Ollama) exploitant un pipeline RAG basé sur les cours intégrés. |
+| **NetKit** | Simulation de topologies réseau (adressage, routage, analyse de paquets). |
+| **CryptoLab** | Expérimentation d'algorithmes cryptographiques (chiffrement symétrique, asymétrique, hachage). |
+| **LinuxLab** | Environnement d'entraînement aux commandes et à l'administration système POSIX. |
+| **Outils Métier** | Calculateur CIDR IPv4/v6, convertisseur Chmod, générateur CRON, vérificateur de hash. |
+| **T2C-Phantom** | Protocole de synchronisation décentralisé P2P pour les mises à jour hors-ligne (WIP). |
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🗺️ Roadmap Visuelle
+## Téléchargements & Distribution
 
-Nous construisons l'avenir de la formation souveraine :
+Les binaires compilés et authentifiés sont distribués via les canaux officiels ci-dessous :
 
-- [x] Simulateurs interactifs
-- [x] IA locale (Ollama)
-- [x] Boîte à outils offline
-- [ ] Moteur de synchronisation (T2C-Phantom)
-- [ ] Messagerie locale P2P (Ghost Link)
-- [ ] Marketplace de modules pédagogiques communautaires
+| Plateforme | Canal de Distribution | Format |
+| :--- | :--- | :--- |
+| **macOS** | [App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12) / **Homebrew Cask** / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | PKG / DMG / Cask |
+| **Android** | [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | APK (per-ABI) / AAB |
+| **Linux** | [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | AppImage / DEB / Snap |
+| **Windows** | [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Installateur EXE / ZIP |
 
-<img src="assets/separator.svg" width="100%" height="4">
+### Installation via Homebrew (macOS)
 
-## 🚀 Démarrage Rapide (Utilisateur)
+```bash
+# Ajout du tap et installation du Cask
+brew tap tutodecode-org/homebrew-tap
+brew install --cask t2decode
+```
 
-Si vous ne souhaitez pas compiler l'application vous-même, voici les trois étapes pour démarrer en un éclair :
-
-1. **📥 Télécharger** : Récupérez la [dernière release](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) correspondant à votre système (Windows, macOS, Linux, Android).
-2. **⚡ Lancer** : L'application est autonome, installez-la ou exécutez le binaire directement selon votre plateforme.
-3. **🎓 Utiliser** : C'est fait ! Vous pouvez instantanément utiliser la boîte à outils, jouer avec les simulateurs, et discuter avec l'IA locale (Ollama).
-
-<img src="assets/separator.svg" width="100%" height="4">
-
-## 🏗️ Architecture Visuelle
-
-T2DECODE est structuré de manière modulaire, séparant l'interface des services sous-jacents fonctionnant en local.
-
-```text
-Utilisateur
-   │
-   ▼
-T2DECODE (Application Flutter)
- ├── 📚 Cours (Markdown, QCM, Progression locale)
- ├── 🔬 Simulateurs (Réseau, Crypto, Système)
- ├── 🛠️ Outils (Hash, CIDR, Chmod, CRON...)
- ├── 🧠 Ghost AI (Client HTTP vers Ollama local)
- └── 🔗 Ghost Link (Service P2P LAN - WIP)
+Mise à jour de l'application :
+```bash
+brew upgrade --cask t2decode
 ```
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 📥 Téléchargements & Plateformes
+## Architecture & Sécurité
 
-➡️ [**Télécharger les binaires précompilés (Releases GitLab)**](https://gitlab.com/tutodecode-org/T2DECODE/-/releases)
+### 1. Sécurité Applicative (Runtime)
+- **Vérification d'Intégrité** : Le service `AssetIntegrityService` valide la somme de contrôle SHA-256 de chaque ressource embarquée à partir du manifeste `assets/asset_checksums.json`.
+- **Isolation Réseau** : L'assistant Ghost AI communique exclusivement via `http://localhost:11434` sans transmission sortante.
 
-| Plateforme | Format de Distribution | Statut CI | Accessibilité |
-| :--- | :--- | :---: | :---: |
-| ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white) | **APK** / AAB (64-bit) | Actif | Disponible |
-| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white) | **ZIP** / Installateur EXE | Actif | Disponible |
-| ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) | **[App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12)** / PKG / ZIP Universel | Actif | Disponible |
-| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | **AppImage** / DEB (64-bit) | Actif | Disponible |
-
-> 🔒 **Garantie d'intégrité** : Chaque version s'accompagne d'un fichier `SHA256SUMS.txt` et de signatures cryptographiques pour authentifier la provenance des binaires.
+### 2. Audit Continu (CI/CD)
+- **SAST & Analyse Statique** : Scan continu du code source via SonarQube et CodeQL.
+- **Analyse des Dépendances** : Audit des vulnérabilités connues par Google OSV-Scanner (`osv-scanner.yml`).
+- **Analyse de l'APK** : Contrôle de l'exécutable Android par MobSF.
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🛡️ Posture de Sécurité & Audits Continus
+## Compilation depuis les Sources
 
-La sécurité est au cœur de l'architecture de T2DECODE. Nous appliquons des standards de développement rigoureux pour viser un haut niveau de fiabilité.
+### Prérequis Système
+- **Linux (Debian/Ubuntu)** : `clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev`
+- **macOS** : Command Line Tools (`xcode-select --install`)
+- **Windows** : Git et Visual Studio 2022 (*Développement Desktop C++* et composant *ATL*)
 
-### 1. Sécurité CI/CD (Pipelines Automatisés)
-- **Analyse Statique (SAST)** : SonarQube et CodeQL s'exécutent à chaque Pull Request pour garantir la fiabilité du code.
-- **Scan de Vulnérabilités** : Google OSV-Scanner audite continuellement les dépendances (`osv-scanner.yml`).
-- **Pentest Automatisé** : MobSF effectue une analyse dynamique de l'APK Android généré (`mobsf.yml`).
-- **OpenSSF Scorecard** : Audit continu des bonnes pratiques de sécurité Open Source.
-
-### 2. Sécurité au Runtime (In-App)
-Notre architecture est implémentée en Dart natif directement dans [`lib/core/security/`](lib/core/security/).
-- **Anti-Tampering Actif** : Au démarrage, le système recalcule les empreintes SHA-256 de tous les assets via `assets/asset_checksums.json`. Toute modification malveillante est détectée.
-- **Authenticité & Certificats** : Vérification stricte des signatures stockées de manière chiffrée.
-- **Conception Air-Gapped** : Aucune télémétrie, aucun SDK de pistage, aucun appel API cloud.
-
-<img src="assets/separator.svg" width="100%" height="4">
-
-## 👨‍💻 Environnement de Développement & Compilation
-
-### 1. Dépendances Système Nécessaires
-
-L'application repose sur Flutter et des librairies natives. Assurez-vous d'installer les prérequis selon votre système :
-
-- **Linux (Debian / Ubuntu)** :
-  ```bash
-  sudo apt-get update && sudo apt-get install -y clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
-  ```
-- **macOS** : `xcode-select --install`
-- **Windows** : Git et Visual Studio 2022 avec la charge de travail *Développement Desktop en C++*.
-
-> 📖 *Pour des instructions détaillées par distribution, consultez [OS_DEPENDENCIES.md](OS_DEPENDENCIES.md).*
-
-### 2. Démarrage Rapide
+### Inscription et Build
 
 ```bash
-# Clonage du dépôt officiel
 git clone https://gitlab.com/tutodecode-org/T2DECODE.git
 cd T2DECODE
 
-# Vérification de l'environnement de build
+# Vérification et installation des dépendances
 make setup
-
-# Installation des dépendances Flutter
 make get
 
-# Exécution de la suite de tests unitaires
+# Exécution des tests unitaires
 make test
 
-# Lancement de l'application en mode débogage
+# Lancement en mode développement
 flutter run
 ```
 
-### 🛠️ Automatisation des Tâches (Makefile)
-
-Le projet intègre un `Makefile` complet pour faciliter la compilation sur l'ensemble des cibles :
-
+Commandes principales du `Makefile` :
 ```bash
-make setup          # Diagnostic des dépendances (Flutter, Dart, Ollama)
-make clean          # Nettoyage complet des répertoires de build
-make test           # Lancement des tests automatisés
-make build-android  # Construction de l'archive APK release
-make build-macos    # Construction du binaire .app macOS
-make build-dmg      # Création de l'image disque d'installation .dmg (macOS)
-make build-linux    # Construction de l'exécutable natif Linux
+make build-android  # Génération de l'APK Release
+make build-macos    # Génération du binaire macOS .app
+make build-dmg      # Création du paquet .dmg
+make build-linux    # Compilation de l'exécutable Linux
 ```
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🏛️ L'Association TUTODECODE (Mentions Légales)
+## Mentions Légales & Licence
 
-Le projet T2DECODE est développé et soutenu par l'**Association TUTODECODE**, structure relevant de l'Économie Sociale et Solidaire (ESS).  
-Notre mission est de démocratiser la maîtrise des infrastructures informatiques et de la cybersécurité en fournissant des outils souverains et respectueux de la vie privée.
+Le projet T2DECODE est édité par l'**Association TUTODECODE** (Loi 1901, SIREN 102 763 133).
 
-- **Éditeur** : Association Loi 1901 TUTODECODE
-- **Directeur de Publication** : Maxime MARTIN CIVET
-- **SIREN** : 102 763 133
-- **Site Web Officiel** : [https://tutodecode.org](https://tutodecode.org)
-- **Preuve Légale** : [Annonce de création parue au JOAFE](https://www.journal-officiel.gouv.fr/pages/associations-detail-annonce/?q.id=id:202600110336)
-- **Engagement de Confidentialité** : [Consulter notre Politique RGPD](RGPD.md)
-- **Réseaux Sociaux** : <a rel="me" href="https://mastodon.social/@TUTODECODE">Mastodon</a>
-
-<img src="assets/separator.svg" width="100%" height="4">
-
-## 🤝 Contribuer & Normes Communautaires
-
-T2DECODE est un bien commun open source construit par et pour sa communauté. Toutes les contributions sont chaleureusement accueillies !
-
-### 📜 Standards et Santé du Projet
-- 🛡️ **[Sécurité & Vulnérabilités](SECURITY.md)** : Notre politique stricte de gestion des failles.
-- ⚖️ **[Licence Libre](LICENSE)** : Vos droits et obligations (GPLv3).
-- 🤝 **[Code de Conduite](CODE_OF_CONDUCT.md)** : Pour un environnement sain et inclusif.
-- 📖 **[Guide de Contribution](CONTRIBUTING.md)** : Comment ajouter des cours ou du code.
-- 🏛️ **[Gouvernance](GOVERNANCE.md)** : Modèle de décision de l'association.
-- 🆘 **[Support](SUPPORT.md)** : Où trouver de l'aide en cas de besoin.
-- 🗺️ **[Roadmap](ROADMAP.md)** : Nos prochaines étapes et nos offres de missions ciblées.
-
-### 💖 Soutien Financier (Dons)
-Si T2DECODE vous fait gagner du temps ou enrichit votre parcours, vous pouvez soutenir l'association TUTODECODE. Les dons servent exclusivement à pérenniser l'hébergement de nos services.
-- ➡️ **[Faire un don sécurisé via HelloAsso](https://www.helloasso.com/associations/tutodecode)**
-
-<img src="assets/separator.svg" width="100%" height="4">
-
-## 🔐 Sécurité
-Tous les commits de ce dépôt sont signés GPG pour en garantir l'authenticité.
-
-<img src="assets/separator.svg" width="100%" height="4">
-
-## 📄 Licence & Droits
-Ce projet est distribué sous licence **[GNU General Public License v3.0 (GPLv3)](LICENSE)**.
+- **Site officiel** : [tutodecode.org](https://tutodecode.org)
+- **Parution JOAFE** : [Annonce légale n°202600110336](https://www.journal-officiel.gouv.fr/pages/associations-detail-annonce/?q.id=id:202600110336)
+- **Licence** : [GNU General Public License v3.0 (GPLv3)](LICENSE)
