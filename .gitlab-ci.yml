@@ -355,8 +355,8 @@ build_windows_signed:
   script:
     - $ProductId = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property productId
     - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
-    - echo "Product ID: $ProductId"
-    - echo "Install Path: $InstallPath"
+    - 'echo "Product ID: $ProductId"'
+    - 'echo "Install Path: $InstallPath"'
     - 'if ($ProductId -eq "Microsoft.VisualStudio.Product.Community") { $url = "https://aka.ms/vs/17/release/vs_community.exe" } elseif ($ProductId -eq "Microsoft.VisualStudio.Product.Professional") { $url = "https://aka.ms/vs/17/release/vs_professional.exe" } elseif ($ProductId -eq "Microsoft.VisualStudio.Product.Enterprise") { $url = "https://aka.ms/vs/17/release/vs_enterprise.exe" } else { $url = "https://aka.ms/vs/17/release/vs_buildtools.exe" }'
     - echo "Downloading bootstrapper from $url"
     - Invoke-WebRequest -Uri $url -OutFile vs_bootstrapper.exe
