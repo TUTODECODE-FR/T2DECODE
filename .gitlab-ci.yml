@@ -322,16 +322,9 @@ build_snap_signed:
   stage: build-release
   allow_failure: true
   image:
-    name: ghcr.io/canonical/snapcraft:8_core22
+    name: snapcore/snapcraft:stable
     entrypoint: [""]
   script:
-    - |
-      EXT_DIR=$(find /usr /usr/local -type d -name "extensions" 2>/dev/null | grep snapcraft | head -n 1)
-      echo "Found snapcraft extensions at: $EXT_DIR"
-      if [ -n "$EXT_DIR" ] && [ "$EXT_DIR" != "/usr/share/snapcraft/extensions" ]; then
-        mkdir -p /usr/share/snapcraft
-        ln -s "$EXT_DIR" /usr/share/snapcraft/extensions
-      fi
     - snapcraft --destructive-mode
     - |
       if [ -n "$SNAPCRAFT_STORE_CREDENTIALS" ]; then
@@ -353,8 +346,8 @@ build_windows_signed:
     - saas-windows-medium-amd64
   allow_failure: true
   script:
-    - $ProductId = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property productId
-    - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+    - $ProductId = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property productId
+    - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property installationPath
     - 'echo "Product ID: $ProductId"'
     - 'echo "Install Path: $InstallPath"'
     - 'if ($ProductId -eq "Microsoft.VisualStudio.Product.Community") { $url = "https://aka.ms/vs/17/release/vs_community.exe" } elseif ($ProductId -eq "Microsoft.VisualStudio.Product.Professional") { $url = "https://aka.ms/vs/17/release/vs_professional.exe" } elseif ($ProductId -eq "Microsoft.VisualStudio.Product.Enterprise") { $url = "https://aka.ms/vs/17/release/vs_enterprise.exe" } else { $url = "https://aka.ms/vs/17/release/vs_buildtools.exe" }'
