@@ -321,7 +321,7 @@ build_linux_signed:
 build_snap_signed:
   stage: build-release
   allow_failure: true
-  image: ghcr.io/canonical/snapcraft:core22
+  image: ghcr.io/canonical/snapcraft:8_core22
   script:
     - snapcraft --destructive-mode
     - |
@@ -345,8 +345,7 @@ build_windows_signed:
   allow_failure: true
   script:
     - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
-    - Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vs_buildtools.exe" -OutFile vs_buildtools.exe
-    - Start-Process -FilePath ".\vs_buildtools.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --passive --norestart --wait" -Wait -PassThru
+    - Start-Process -FilePath "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --quiet --norestart --nocache --wait" -Wait -PassThru
     - choco install innosetup --no-progress -y
     - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
     - $env:Path += ";C:/flutter/bin"
@@ -461,7 +460,7 @@ release_gitlab:
 
 publish_sourceforge:
   stage: release
-  image: alpine:latest
+  image: alpine:3.19
   script:
     - apk add --no-cache openssh-client rsync
     - eval $(ssh-agent -s)
