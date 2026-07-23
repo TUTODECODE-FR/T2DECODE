@@ -14,9 +14,18 @@ apps:
     plugs:
       - network
       - network-bind
+      - desktop
+      - x11
 
 parts:
   t2decode:
+    plugin: dump
     source: .
-    plugin: flutter
-    flutter-target: lib/main.dart
+    override-build: |
+      git clone https://github.com/flutter/flutter.git -b stable $CRAFT_STAGE/flutter
+      export PATH="$PATH:$CRAFT_STAGE/flutter/bin"
+      flutter config --no-enable-swift-package-manager
+      flutter pub get
+      flutter build linux --release
+      mkdir -p $CRAFT_PART_INSTALL
+      cp -r build/linux/x64/release/bundle/* $CRAFT_PART_INSTALL/
