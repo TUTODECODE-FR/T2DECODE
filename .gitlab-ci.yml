@@ -376,12 +376,17 @@ build_windows_signed:
     - '& $iscc /DMyAppVersion=$ver windows/installer/tutodecode.iss'
     - Copy-Item -Force "windows/installer/T2DECODE-Setup.exe" "T2DECODE-Setup.exe"
     - Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath T2DECODE-Windows.zip
-    - $pfxPath = "$env:TEMP/codesign.pfx"
-    - '[IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String("$env:WINDOWS_PFX_BASE64"))'
-    - $signtool = Get-ChildItem "C:/Program Files (x86)/Windows Kits/10/bin" -Recurse -Filter "signtool.exe" -ErrorAction SilentlyContinue | Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1 -ExpandProperty FullName
-    - $exePath = "build/windows/x64/runner/Release/T2DECODE.exe"
-    - '& $signtool sign /f $pfxPath /p "$env:WINDOWS_PFX_PASSWORD" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v $exePath'
-    - '& $signtool sign /f $pfxPath /p "$env:WINDOWS_PFX_PASSWORD" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v T2DECODE-Setup.exe'
+    - |
+      if ($env:WINDOWS_PFX_BASE64 -and $env:WINDOWS_PFX_PASSWORD) {
+        $pfxPath = "$env:TEMP/codesign.pfx"
+        [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String("$env:WINDOWS_PFX_BASE64"))
+        $signtool = Get-ChildItem "C:/Program Files (x86)/Windows Kits/10/bin" -Recurse -Filter "signtool.exe" -ErrorAction SilentlyContinue | Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1 -ExpandProperty FullName
+        $exePath = "build/windows/x64/runner/Release/T2DECODE.exe"
+        & $signtool sign /f $pfxPath /p "$env:WINDOWS_PFX_PASSWORD" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v $exePath
+        & $signtool sign /f $pfxPath /p "$env:WINDOWS_PFX_PASSWORD" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v T2DECODE-Setup.exe
+      } else {
+        echo "WINDOWS_PFX_BASE64 not configured. Skipping Windows code signing."
+      }
   artifacts:
     paths:
       - T2DECODE-Windows.zip
