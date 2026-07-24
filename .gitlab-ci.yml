@@ -329,7 +329,7 @@ build_snap_signed:
   stage: build-release
   allow_failure: true
   image:
-    name: snapcore/snapcraft:ubuntu-22.04
+    name: ghcr.io/canonical/snapcraft:8_core22
     entrypoint: [""]
   script:
     - snapcraft --destructive-mode
