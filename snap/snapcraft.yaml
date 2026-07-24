@@ -26,9 +26,12 @@ parts:
       - curl
       - unzip
       - build-essential
+      - cmake
+      - ninja-build
+      - pkg-config
       - libgtk-3-dev
       - liblzma-dev
-      - pkg-config
+      - libsecret-1-dev
     override-build: |
       git clone https://github.com/flutter/flutter.git -b stable $CRAFT_STAGE/flutter
       export PATH="$PATH:$CRAFT_STAGE/flutter/bin"
