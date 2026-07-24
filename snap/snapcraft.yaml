@@ -32,9 +32,10 @@ parts:
       - liblzma-dev
       - libsecret-1-dev
     override-build: |
-      curl -sL https://github.com/Kitware/CMake/releases/download/v3.28.3/cmake-3.28.3-linux-x86_64.tar.gz | tar -xz -C $CRAFT_STAGE
-      git clone https://github.com/flutter/flutter.git -b stable $CRAFT_STAGE/flutter
-      export PATH="$CRAFT_STAGE/cmake-3.28.3-linux-x86_64/bin:$CRAFT_STAGE/flutter/bin:$PATH"
+      mkdir -p /tmp/cmake /tmp/flutter
+      curl -sL https://github.com/Kitware/CMake/releases/download/v3.28.3/cmake-3.28.3-linux-x86_64.tar.gz | tar -xz -C /tmp/cmake --strip-components=1
+      git clone https://github.com/flutter/flutter.git -b stable /tmp/flutter
+      export PATH="/tmp/cmake/bin:/tmp/flutter/bin:$PATH"
       flutter config --no-enable-swift-package-manager
       flutter pub get
       flutter build linux --release
