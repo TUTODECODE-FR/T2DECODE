@@ -332,7 +332,8 @@ build_snap_signed:
     name: ghcr.io/canonical/snapcraft:8_core22
     entrypoint: [""]
   script:
-    - snapcraft --destructive-mode
+    - apt-get update -y
+    - snapcraft pack --destructive-mode
     - |
       if [ -n "$SNAPCRAFT_STORE_CREDENTIALS" ]; then
         echo "Uploading to Snap Store..."
