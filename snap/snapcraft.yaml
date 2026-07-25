@@ -10,7 +10,8 @@ grade: stable
 
 apps:
   t2decode:
-    command: t2decode
+    command: T2DECODE
+    extensions: [gnome]
     plugs:
       - network
       - network-bind
@@ -33,6 +34,17 @@ parts:
       - libgtk-3-dev
       - liblzma-dev
       - libsecret-1-dev
+    stage-packages:
+      - libgtk-3-0
+      - libglib2.0-0
+      - libsecret-1-0
+      - libx11-6
+      - libxcursor1
+      - libxinerama1
+      - libxrandr2
+      - libxi6
+      - libepoxy0
+      - liblzma5
     override-build: |
       git clone https://github.com/flutter/flutter.git -b stable /tmp/flutter
       export PATH="/tmp/flutter/bin:$PATH"
