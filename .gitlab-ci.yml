@@ -333,6 +333,12 @@ build_snap_signed:
     entrypoint: [""]
   script:
     - apt-get update -y
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        VERSION="${CI_COMMIT_TAG#v}"
+        echo "Updating snapcraft.yaml version to $VERSION"
+        sed -i "s/^version: .*/version: '$VERSION'/" snap/snapcraft.yaml
+      fi
     - snapcraft pack --destructive-mode
     - |
       if [ -n "$SNAPCRAFT_STORE_CREDENTIALS" ]; then
