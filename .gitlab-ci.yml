@@ -181,6 +181,15 @@ auto_tag:
     name: alpine/git
     entrypoint: [""]
   script:
+    - CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD)
+    - echo "Changed files in commit:"
+    - echo "$CHANGED_FILES"
+    - NON_DOC_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '\.(md|png|jpg|jpeg|svg)$|^docs/|^\.gitignore$|^LICENSE$|^AGENTS\.md$' || true)
+    - |
+      if [ -z "$NON_DOC_CHANGES" ]; then
+        echo "Only documentation, asset, or metadata files were modified. Skipping automated release tag creation."
+        exit 0
+      fi
     - VERSION_LINE=$(grep '^version:' pubspec.yaml)
     - BASE_VERSION=$(echo "$VERSION_LINE" | cut -d' ' -f2 | cut -d'+' -f1)
     - echo "Base version $BASE_VERSION"
@@ -474,9 +483,22 @@ release_gitlab:
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   script:
     - echo "Creating GitLab Release for $CI_COMMIT_TAG"
+    - apk add --no-cache git
+    - |
+      PREV_TAG=$(git describe --tags --abbrev=0 ${CI_COMMIT_TAG}^ 2>/dev/null || echo "")
+      if [ -n "$PREV_TAG" ]; then
+        CHANGELOG=$(git log --oneline --no-merges ${PREV_TAG}..${CI_COMMIT_TAG} | sed 's/^/- /')
+      else
+        CHANGELOG=$(git log --oneline --no-merges -n 5 | sed 's/^/- /')
+      fi
+      if [ -z "$CHANGELOG" ]; then
+        CHANGELOG="- Release $CI_COMMIT_TAG update"
+      fi
+      RELEASE_DESC="## 🚀 Nouveautés & Modifications ($CI_COMMIT_TAG)\n\n$CHANGELOG"
     - |
       release-cli create --name "Release $CI_COMMIT_TAG" \
         --tag-name "$CI_COMMIT_TAG" \
+        --description "$RELEASE_DESC" \
         --assets-link "{\"name\":\"T2DECODE-Android-armeabi-v7a.apk\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk\"}" \
         --assets-link "{\"name\":\"T2DECODE-Android-arm64-v8a.apk\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk\"}" \
         --assets-link "{\"name\":\"T2DECODE-Android-x86_64.apk\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/app/outputs/flutter-apk/app-x86_64-release.apk\"}" \
