@@ -67,8 +67,22 @@ Pre-compiled and signed binaries are distributed through official channels:
 | :--- | :--- | :--- |
 | **macOS** | [App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12) / **Homebrew Cask** / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | PKG / DMG / Cask |
 | **Android** | [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | APK (per-ABI) / AAB |
-| **Linux** | [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | AppImage / DEB / Snap |
+| **Linux** | [Snap Store](https://snapcraft.io/t2decode) / [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Snap / AppImage / DEB |
 | **Windows** | [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | EXE Installer / ZIP |
+
+### Snapcraft Installation (Linux)
+
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/t2decode)
+
+```bash
+# Install from official Snap Store
+sudo snap install t2decode
+```
+
+Updating the application:
+```bash
+sudo snap refresh t2decode
+```
 
 ### Homebrew Installation (macOS)
 

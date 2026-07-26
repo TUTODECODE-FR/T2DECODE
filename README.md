@@ -67,8 +67,22 @@ Les binaires compilés et authentifiés sont distribués via les canaux officiel
 | :--- | :--- | :--- |
 | **macOS** | [App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12) / **Homebrew Cask** / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | PKG / DMG / Cask |
 | **Android** | [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | APK (per-ABI) / AAB |
-| **Linux** | [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | AppImage / DEB / Snap |
+| **Linux** | [Snap Store](https://snapcraft.io/t2decode) / [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Snap / AppImage / DEB |
 | **Windows** | [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Installateur EXE / ZIP |
+
+### Installation via Snapcraft (Linux)
+
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/t2decode)
+
+```bash
+# Installation depuis le Snap Store
+sudo snap install t2decode
+```
+
+Mise à jour de l'application :
+```bash
+sudo snap refresh t2decode
+```
 
 ### Installation via Homebrew (macOS)
 
