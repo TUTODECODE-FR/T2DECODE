@@ -12,28 +12,66 @@
   <p><strong>Plateforme pédagogique autonome et souveraine pour les réseaux, la cybersécurité et l'administration système.</strong></p>
 
   <p>
-    <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/releases">Releases</a> · 
-    <a href="docs/build.md">Compilation</a> · 
+    <a href="#-téléchargement--installation-utilisateurs">Téléchargement</a> · 
+    <a href="#-présentation--modules">Présentation</a> · 
+    <a href="#-code-source--compilation-développeurs">Code & Compilation</a> · 
     <a href="docs/architecture.md">Architecture</a> · 
-    <a href="RGPD.md">Confidentialité</a> · 
-    <a href="CONTRIBUTING.md">Contribuer</a>
+    <a href="RGPD.md">Confidentialité</a>
   </p>
 </div>
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## Présentation
+## 📦 Téléchargement & Installation (Utilisateurs)
+
+Les binaires compilés et authentifiés sont distribués via les canaux officiels ci-dessous :
+
+| Plateforme | Canal de Distribution | Format | Commande rapide |
+| :--- | :--- | :--- | :--- |
+| **Linux** | [Snap Store](https://snapcraft.io/t2decode) / [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Snap / AppImage / DEB | `sudo snap install t2decode` |
+| **macOS** | [App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12) / **Homebrew** / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | PKG / DMG / Cask | `brew install --cask t2decode` |
+| **Android** | [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | APK / AAB | *Via F-Droid Client* |
+| **Windows** | [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Installateur EXE / ZIP | *Téléchargement direct* |
+
+---
+
+### 🐧 Installation Linux (Snapcraft)
+
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/t2decode)
+
+```bash
+# Installation depuis le Snap Store officiel
+sudo snap install t2decode
+
+# Mise à jour
+sudo snap refresh t2decode
+```
+
+---
+
+### 🍏 Installation macOS (Homebrew)
+
+```bash
+# Ajout du tap et installation du Cask
+brew tap tutodecode-org/homebrew-tap
+brew install --cask t2decode
+
+# Mise à jour
+brew upgrade --cask t2decode
+```
+
+<img src="assets/separator.svg" width="100%" height="4">
+
+## 🛠️ Présentation & Modules
 
 **T2DECODE** est un environnement d'apprentissage et d'expérimentation technique conçu pour fonctionner en mode strictement hors-ligne (air-gapped). La plateforme rassemble des modules interactifs, des simulateurs d'infrastructures et un assistant IA local, sans aucune dépendance envers des services cloud tiers.
 
 - **Conception Air-Gapped** : Aucun appel réseau externe, zéro télémétrie, respect strict du RGPD.
 - **Intelligence Artificielle Locale (Ghost AI)** : Intégration du moteur LLM Ollama avec support RAG sur la base de connaissances.
-- **Simulateurs Techniques Integrés** : Modélisation dynamique de réseaux (NetKit), cryptographie et environnements système Linux.
-- **Sécurité et Contrôle d'Intégrité** : Audit des assets au démarrage (SHA-256) et mécanismes anti-altération natifs.
+- **Simulateurs Techniques Intégrés** : Modélisation dynamique de réseaux (NetKit), cryptographie et environnements système Linux.
+- **Sécurité & Contrôle d'Intégrité** : Audit des assets au démarrage (SHA-256) et mécanismes anti-altération natifs.
 
-<img src="assets/separator.svg" width="100%" height="4">
-
-## Interface
+### Interface
 
 <p align="center">
   <img width="48%" src="docs/images/screenshots/app-home-full.png" style="border-radius: 8px;" alt="Accueil T2DECODE">
@@ -44,9 +82,7 @@
   <img width="48%" src="docs/images/screenshots/section-cheat-sheets.png" style="border-radius: 8px;" alt="Cheat Sheets">
 </p>
 
-<img src="assets/separator.svg" width="100%" height="4">
-
-## Modules et Fonctionnalités
+### Modules & Rôle Technique
 
 | Composant | Rôle Technique |
 | :--- | :--- |
@@ -59,73 +95,35 @@
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## Téléchargements & Distribution
+## 💻 Code Source & Compilation (Développeurs)
 
-Les binaires compilés et authentifiés sont distribués via les canaux officiels ci-dessous :
+### Architecture & Sécurité
 
-| Plateforme | Canal de Distribution | Format |
-| :--- | :--- | :--- |
-| **macOS** | [App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12) / **Homebrew Cask** / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | PKG / DMG / Cask |
-| **Android** | [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | APK (per-ABI) / AAB |
-| **Linux** | [Snap Store](https://snapcraft.io/t2decode) / [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Snap / AppImage / DEB |
-| **Windows** | [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Installateur EXE / ZIP |
+1. **Sécurité Applicative (Runtime)**
+   - **Vérification d'Intégrité** : Le service `AssetIntegrityService` valide la somme de contrôle SHA-256 de chaque ressource embarquée à partir du manifeste `assets/asset_checksums.json`.
+   - **Isolation Réseau** : L'assistant Ghost AI communique exclusivement via `http://localhost:11434` sans transmission sortante.
 
-### Installation via Snapcraft (Linux)
+2. **Audit Continu (CI/CD)**
+   - **SAST & Analyse Statique** : Scan continu du code source via SonarQube et CodeQL.
+   - **Analyse des Dépendances** : Audit des vulnérabilités connues par Google OSV-Scanner (`osv-scanner.yml`).
+   - **Analyse de l'APK** : Contrôle de l'exécutable Android par MobSF.
 
-[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/t2decode)
+---
 
-```bash
-# Installation depuis le Snap Store
-sudo snap install t2decode
-```
+### Compilation depuis les Sources
 
-Mise à jour de l'application :
-```bash
-sudo snap refresh t2decode
-```
-
-### Installation via Homebrew (macOS)
-
-```bash
-# Ajout du tap et installation du Cask
-brew tap tutodecode-org/homebrew-tap
-brew install --cask t2decode
-```
-
-Mise à jour de l'application :
-```bash
-brew upgrade --cask t2decode
-```
-
-<img src="assets/separator.svg" width="100%" height="4">
-
-## Architecture & Sécurité
-
-### 1. Sécurité Applicative (Runtime)
-- **Vérification d'Intégrité** : Le service `AssetIntegrityService` valide la somme de contrôle SHA-256 de chaque ressource embarquée à partir du manifeste `assets/asset_checksums.json`.
-- **Isolation Réseau** : L'assistant Ghost AI communique exclusivement via `http://localhost:11434` sans transmission sortante.
-
-### 2. Audit Continu (CI/CD)
-- **SAST & Analyse Statique** : Scan continu du code source via SonarQube et CodeQL.
-- **Analyse des Dépendances** : Audit des vulnérabilités connues par Google OSV-Scanner (`osv-scanner.yml`).
-- **Analyse de l'APK** : Contrôle de l'exécutable Android par MobSF.
-
-<img src="assets/separator.svg" width="100%" height="4">
-
-## Compilation depuis les Sources
-
-### Prérequis Système
+#### Prérequis Système
 - **Linux (Debian/Ubuntu)** : `clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev`
 - **macOS** : Command Line Tools (`xcode-select --install`)
 - **Windows** : Git et Visual Studio 2022 (*Développement Desktop C++* et composant *ATL*)
 
-### Inscription et Build
+#### Initialisation et Lancement
 
 ```bash
 git clone https://gitlab.com/tutodecode-org/T2DECODE.git
 cd T2DECODE
 
-# Vérification et installation des dépendances
+# Vérification de l'environnement et des dépendances
 make setup
 make get
 
@@ -136,17 +134,18 @@ make test
 flutter run
 ```
 
-Commandes principales du `Makefile` :
+#### Commandes du Makefile
+
 ```bash
-make build-android  # Génération de l'APK Release
-make build-macos    # Génération du binaire macOS .app
-make build-dmg      # Création du paquet .dmg
-make build-linux    # Compilation de l'exécutable Linux
+make build-android  # Génération des APK Release (per-ABI)
+make build-linux    # Compilation du binaire Linux
+make build-macos    # Compilation du binaire macOS .app
+make build-dmg      # Création de l'installateur DMG (macOS)
 ```
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## Mentions Légales & Licence
+## ⚖️ Mentions Légales & Licence
 
 Le projet T2DECODE est édité par l'**Association TUTODECODE** (Loi 1901, SIREN 102 763 133).
 
