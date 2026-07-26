@@ -56,6 +56,7 @@ class _AppShellState extends State<AppShell> {
         ),
         _NavItem(Icons.settings, 'menu.settings'.tr(), '/settings'),
         _NavItem(Icons.map, 'menu.roadmap'.tr(), '/roadmap'),
+        _NavItem(Icons.school, 'Éducation (Prof)', '/education'),
         _NavItem(Icons.science, 'menu.lab'.tr(), '/lab'),
         _NavItem(Icons.wifi_tethering, 'menu.ghost_link'.tr(), '/ghost-link'),
       ];
