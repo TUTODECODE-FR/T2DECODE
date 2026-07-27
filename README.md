@@ -91,7 +91,7 @@ brew upgrade --cask t2decode
 | **CryptoLab** | Expérimentation d'algorithmes cryptographiques (chiffrement symétrique, asymétrique, hachage). |
 | **LinuxLab** | Environnement d'entraînement aux commandes et à l'administration système POSIX. |
 | **Outils Métier** | Calculateur CIDR IPv4/v6, convertisseur Chmod, générateur CRON, vérificateur de hash. |
-| **T2C-Phantom** | Protocole de synchronisation décentralisé P2P pour les mises à jour hors-ligne (WIP). |
+| **T2C-Phantom** | Protocole de synchronisation décentralisé P2P pour les mises à jour hors-ligne (Prochainement). |
 
 <img src="assets/separator.svg" width="100%" height="4">
 

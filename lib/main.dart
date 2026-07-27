@@ -56,6 +56,8 @@ import 'features/settings/screens/settings_screen.dart'; // To be moved later if
 import 'features/ghost_link/screens/ghost_link_screen.dart';
 import 'features/ghost_link/screens/ghost_chat_screen.dart';
 import 'features/ghost_link/service/ghost_link_service.dart';
+import 'features/education/providers/education_provider.dart';
+import 'features/education/screens/education_screen.dart';
 
 // Providers
 import 'features/courses/providers/courses_provider.dart';
@@ -138,6 +140,7 @@ class TutoDeCodeApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SearchProvider()),
         ChangeNotifierProvider(create: (_) => GhostLinkService()),
         ChangeNotifierProvider(create: (_) => AiTutorProvider()),
+        ChangeNotifierProvider(create: (_) => EducationProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, _) => MaterialApp(
@@ -176,6 +179,7 @@ class TutoDeCodeApp extends StatelessWidget {
                   case '/ai-config':            return const AIConfigScreen();
                   case '/netkit':               return const NetKitScreen();
                   case '/roadmap':              return const RoadmapScreen();
+                  case '/education':            return const EducationScreen();
                   case '/lab':                  return const ProfessionalLabScreen();
                   case '/cheat-sheets':         return const CheatSheetScreen();
                   case '/cheat-sheets/details':
