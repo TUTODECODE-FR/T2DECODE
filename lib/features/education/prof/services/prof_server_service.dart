@@ -44,16 +44,16 @@ class StudentSubmission {
         id: json['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
         studentName: json['studentName'] ?? 'Élève anonyme',
         studentIp: json['studentIp'] ?? '127.0.0.1',
-        courseTitle: json['courseTitle'] ?? 'QCM',
+        courseTitle: json['courseTitle'] ?? 'Évaluation',
         score: (json['score'] as num?)?.toInt() ?? 0,
-        total: (json['total'] as num?)?.toInt() ?? 10,
+        total: (json['total'] as num?)?.toInt() ?? 20,
         timestamp: json['timestamp'] != null ? DateTime.parse(json['timestamp']) : DateTime.now(),
         cheatAlert: json['cheatAlert'] as bool? ?? false,
         cheatReason: json['cheatReason']?.toString() ?? '',
       );
 }
 
-class EducationServerService {
+class ProfServerService {
   HttpServer? _server;
   final List<StudentSubmission> _submissions = [];
   final StreamController<StudentSubmission> _submissionController = StreamController.broadcast();
@@ -64,7 +64,6 @@ class EducationServerService {
   List<Map<String, dynamic>> get publishedCourses => List.unmodifiable(_publishedCourses);
   bool get isRunning => _server != null;
 
-  /// Obtient les adresses IP locales de la machine
   static Future<List<String>> getLocalIpAddresses() async {
     final ips = <String>[];
     try {
@@ -74,9 +73,7 @@ class EducationServerService {
       );
       for (final interface in interfaces) {
         for (final addr in interface.addresses) {
-          if (!addr.isLoopback) {
-            ips.add(addr.address);
-          }
+          if (!addr.isLoopback) ips.add(addr.address);
         }
       }
     } catch (_) {}
@@ -84,10 +81,11 @@ class EducationServerService {
     return ips;
   }
 
-  /// Démarre le serveur local HTTP pour la classe
+  /// Démarre le serveur local HTTP Professeur
   Future<bool> startServer({int port = 8080}) async {
     if (_server != null) return true;
     try {
+      await _loadPersistentSubmissions();
       _server = await HttpServer.bind(InternetAddress.anyIPv4, port);
       _server!.listen(_handleRequest);
       return true;
@@ -97,25 +95,23 @@ class EducationServerService {
     }
   }
 
-  /// Arrête le serveur HTTP
+  /// Arrête le serveur
   Future<void> stopServer() async {
     await _server?.close(force: true);
     _server = null;
   }
 
-  /// Publie un cours généré sur le serveur local
   void publishCourse(Map<String, dynamic> courseJson) {
     _publishedCourses.removeWhere((c) => c['id'] == courseJson['id']);
     _publishedCourses.add(courseJson);
   }
 
-  /// Efface les soumissions enregistrées
   void clearSubmissions() {
     _submissions.clear();
+    _savePersistentSubmissions();
   }
 
   void _handleRequest(HttpRequest request) async {
-    // CORS headers pour autoriser le réseau LAN
     request.response.headers.add('Access-Control-Allow-Origin', '*');
     request.response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     request.response.headers.add('Access-Control-Allow-Headers', 'Content-Type');
@@ -132,8 +128,9 @@ class EducationServerService {
     if (path == '/api/status' && request.method == 'GET') {
       _jsonResponse(request, {
         'status': 'online',
-        'role': 'T2DECODE Educator Server',
-        'coursesCount': _publishedCourses.length,
+        'role': 'T2DECODE PROF LMS Server',
+        'version': '1.0.2.21',
+        'publishedCourses': _publishedCourses.length,
         'submissionsCount': _submissions.length,
       });
     } else if (path == '/api/courses' && request.method == 'GET') {
@@ -146,14 +143,18 @@ class EducationServerService {
 
         final sub = StudentSubmission.fromJson(json);
         _submissions.insert(0, sub);
+        _savePersistentSubmissions();
         _submissionController.add(sub);
 
-        _jsonResponse(request, {'success': true, 'message': 'Note enregistrée avec succès par le Professeur.'});
+        _jsonResponse(request, {
+          'success': true,
+          'message': 'Copie déchiffrée et enregistrée avec succès par T2DECODE PROF.',
+        });
       } catch (e) {
         _jsonResponse(request, {'success': false, 'error': e.toString()}, status: HttpStatus.badRequest);
       }
     } else {
-      _jsonResponse(request, {'error': 'Endpoint introuvable'}, status: HttpStatus.notFound);
+      _jsonResponse(request, {'error': 'Endpoint non reconnu'}, status: HttpStatus.notFound);
     }
   }
 
@@ -164,38 +165,49 @@ class EducationServerService {
     request.response.close();
   }
 
-  /// Méthode client statique pour envoyer une note au professeur
-  static Future<Map<String, dynamic>> sendScoreToTeacher({
-    required String teacherIp,
-    int port = 8080,
-    required String studentName,
-    required String courseTitle,
-    required int score,
-    required int total,
-  }) async {
-    final client = HttpClient();
-    client.connectionTimeout = const Duration(seconds: 5);
-    try {
-      final cleanIp = teacherIp.replaceAll('http://', '').replaceAll('https://', '').split(':')[0].trim();
-      final uri = Uri.parse('http://$cleanIp:$port/api/submit-score');
-      final request = await client.postUrl(uri);
-      request.headers.contentType = ContentType.json;
-      request.write(jsonEncode({
-        'studentName': studentName,
-        'courseTitle': courseTitle,
-        'score': score,
-        'total': total,
-        'timestamp': DateTime.now().toIso8601String(),
-      }));
+  // ── Persistance locale crash-proof ─────────────────────────────────────────
+  static Future<File> get _storageFile async {
+    final dir = Directory.systemTemp;
+    return File('${dir.path}/.t2decode_prof_grades.json');
+  }
 
-      final response = await request.close();
-      final resBody = await response.transform(utf8.decoder).join();
-      return jsonDecode(resBody) as Map<String, dynamic>;
-    } catch (e) {
-      return {'success': false, 'error': 'Impossible de joindre le serveur du Professeur ($e)'};
-    } finally {
-      client.close();
+  Future<void> _savePersistentSubmissions() async {
+    try {
+      final file = await _storageFile;
+      final jsonList = _submissions.map((s) => s.toJson()).toList();
+      await file.writeAsString(jsonEncode(jsonList));
+    } catch (_) {}
+  }
+
+  Future<void> _loadPersistentSubmissions() async {
+    try {
+      final file = await _storageFile;
+      if (await file.exists()) {
+        final content = await file.readAsString();
+        final list = jsonDecode(content) as List;
+        _submissions.clear();
+        _submissions.addAll(list.map((e) => StudentSubmission.fromJson(e as Map<String, dynamic>)));
+      }
+    } catch (_) {}
+  }
+
+  /// Export universel Pronote / ENT (.CSV séparé par des points-virgules)
+  String exportPronoteCsv() {
+    final buffer = StringBuffer();
+    // En-tête officiel Pronote / LMS
+    buffer.write('Nom;Prénom;Note/20;Total;Pourcentage;Statut Anti-Triche;Date\n');
+    for (final s in _submissions) {
+      final nameParts = s.studentName.trim().split(' ');
+      final nom = nameParts.first;
+      final prenom = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : 'Élève';
+      final note20 = (s.score / s.total * 20).toStringAsFixed(2);
+      final pct = (s.score / s.total * 100).toStringAsFixed(1);
+      final cheatText = s.cheatAlert ? '⚠️ ALERTE TRICHE (${s.cheatReason})' : '✅ Valide';
+      final dateStr = '${s.timestamp.day.toString().padLeft(2, '0')}/${s.timestamp.month.toString().padLeft(2, '0')}/${s.timestamp.year} ${s.timestamp.hour}:${s.timestamp.minute}';
+
+      buffer.write('$nom;$prenom;$note20;${s.total};$pct%;$cheatText;$dateStr\n');
     }
+    return buffer.toString();
   }
 
   void dispose() {

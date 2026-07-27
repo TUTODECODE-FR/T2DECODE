@@ -425,7 +425,7 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
           ),
           const SizedBox(height: 12),
           if (edu.submissions.isEmpty)
-            const Container(
+            Container(
               width: double.infinity,
               padding: EdgeInsets.all(32),
               decoration: BoxDecoration(
