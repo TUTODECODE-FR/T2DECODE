@@ -54,6 +54,26 @@ class _NetKitScreenState extends State<NetKitScreen>
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // ── Bandeau pédagogique ───────────────────────────────
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+          decoration: BoxDecoration(
+            color: TdcColors.info.withValues(alpha: 0.06),
+            border: const Border(bottom: BorderSide(color: TdcColors.border)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.cable, color: TdcColors.info, size: 16),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Outils de diagnostic réseau réels — les commandes s\'exécutent sur votre machine. Aucune donnée n\'est envoyée à l\'extérieur.',
+                  style: TextStyle(color: TdcColors.info.withValues(alpha: 0.85), fontSize: 11),
+                ),
+              ),
+            ],
+          ),
+        ),
         Container(
           color: TdcColors.surface,
           child: TabBar(
@@ -87,6 +107,7 @@ class _NetKitScreenState extends State<NetKitScreen>
     );
   }
 }
+
 
 // ─────────────────────────────────────────────────────────────
 // Tab 1 — System Info (terminal style)

@@ -1166,12 +1166,13 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               _termBtn('Power On', TdcColors.success, _bootStarted ? null : _startBoot),
-              const SizedBox(width: 8),
               _termBtn('Reset', TdcColors.textMuted, _resetBoot),
-              const Spacer(),
               if (_bootStarted && _bootTermKey.currentState?.isPlaying == true)
                 const Row(children: [
                   SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.success)),
@@ -1191,6 +1192,7 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
       ),
     );
   }
+
 
   // 1 – Filesystem — real interactive shell ──────────────────
   Widget _buildFsPanel() {
