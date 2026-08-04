@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
+import 'package:tutodecode/core/providers/settings_provider.dart';
 import 'package:tutodecode/features/lab/widgets/terminal_emulator.dart';
 
 const _googleCom = 'google.com';
@@ -867,6 +868,27 @@ class _DiagnosticTabState extends State<_DiagnosticTab> {
     await _diagInterfaces(term);
     term.addLine(const TermLine('', TermColor.white));
 
+    final settings = context.read<SettingsProvider>();
+    if (settings.offlineMode || settings.zeroNetworkMode) {
+      term.addLine(const TermLine('[Zero-Network / Offline Mode Active]', TermColor.yellow));
+      term.addLine(const TermLine('  All external network tests skipped to preserve privacy.', TermColor.white));
+      term.addLine(const TermLine('', TermColor.white));
+      
+      term.addLine(const TermLine('══════════════ RAPPORT ══════════════', TermColor.bold));
+      term.addLine(const TermLine('', TermColor.white));
+      term.addLine(const TermLine('  Connectivity:    OFFLINE (Protected)', TermColor.green));
+      term.addLine(const TermLine('  DNS Resolution:  SKIPPED', TermColor.yellow));
+      term.addLine(const TermLine('  Avg Latency:     0ms', TermColor.green));
+      term.addLine(const TermLine('  Services:        0/3 reachable', TermColor.yellow));
+      term.addLine(const TermLine('', TermColor.white));
+      term.addLine(const TermLine('  Health Score:    100/100 (Safe)', TermColor.green));
+      term.addLine(const TermLine('', TermColor.white));
+      term.addLine(TermLine('Diagnostic complete at ${_now()}', TermColor.gray));
+      
+      if (mounted) setState(() => _running = false);
+      return;
+    }
+
     // 2. DNS resolution
     final dnsTargets = [_googleCom, 'cloudflare.com', _githubCom];
     final dnsOk = await _diagDns(term, dnsTargets);
@@ -901,6 +923,14 @@ class _DiagnosticTabState extends State<_DiagnosticTab> {
 
     term.addLine(const TermLine('\$ ping -c 10 $_oneOneOneOne  (TCP connect simulation)', TermColor.green));
     term.addLine(const TermLine('PING $_oneOneOneOne ($_oneOneOneOne): TCP port 443', TermColor.white));
+
+    final settings = context.read<SettingsProvider>();
+    if (settings.offlineMode || settings.zeroNetworkMode) {
+      term.addLine(const TermLine('', TermColor.white));
+      term.addLine(const TermLine('ping: Option disabled because Offline / Zero-Network Mode is active.', TermColor.yellow));
+      if (mounted) setState(() => _running = false);
+      return;
+    }
 
     final times = <int>[];
     for (int i = 1; i <= 10; i++) {

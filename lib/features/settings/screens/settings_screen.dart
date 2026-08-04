@@ -399,11 +399,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const SizedBox(height: 16),
         ListTile(
           title: const Text('Langue de l\'application'),
-          trailing: OutlinedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/language-selection');
+          trailing: DropdownButton<Locale>(
+            value: context.locale,
+            dropdownColor: TdcColors.bg,
+            style: const TextStyle(color: TdcColors.textPrimary),
+            underline: Container(
+              height: 1,
+              color: TdcColors.accent,
+            ),
+            items: context.supportedLocales.map((Locale loc) {
+              String name = loc.languageCode.toUpperCase();
+              if (loc.languageCode == 'fr') name = 'Français';
+              if (loc.languageCode == 'en') name = 'English';
+              if (loc.languageCode == 'es') name = 'Español';
+              if (loc.languageCode == 'de') name = 'Deutsch';
+              if (loc.languageCode == 'zh') name = '中文';
+              if (loc.languageCode == 'ar') name = 'العربية';
+              return DropdownMenuItem<Locale>(
+                value: loc,
+                child: Text(
+                  name,
+                  style: const TextStyle(color: TdcColors.textPrimary),
+                ),
+              );
+            }).toList(),
+            onChanged: (Locale? newLocale) {
+              if (newLocale != null) {
+                context.setLocale(newLocale);
+                context.read<CoursesProvider>().updateLocale(newLocale.languageCode);
+              }
             },
-            child: Text(context.locale.languageCode.toUpperCase()),
           ),
         ),
       ],
