@@ -66,7 +66,7 @@ brew upgrade --cask t2decode
 
 **T2DECODE** is an offline-first learning and technical experimentation platform designed for air-gapped environments. The platform features interactive simulators, infrastructure modeling, and a local AI assistant without external cloud dependencies.
 
-- **Air-Gapped Architecture**: Zero telemetry, no external API calls, full privacy compliance.
+- **Local-First Architecture**: Runs autonomously without cloud servers. Zero telemetry, zero tracking. Optional network utility features (NetKit diagnostics, course sync) respect user privacy and can be fully disabled.
 - **Local AI Engine (Ghost AI)**: Integrated Ollama LLM client with local RAG capabilities over course materials.
 - **Technical Simulators**: Dynamic modeling for networks (NetKit), cryptography, and Linux POSIX environments.
 - **Security & Integrity Controls**: Built-in runtime asset verification (SHA-256) and anti-tampering enforcement.
