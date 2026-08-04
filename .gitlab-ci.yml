@@ -534,17 +534,14 @@ publish_sourceforge:
         exit 0
       fi
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
-    - |
-      if echo "$SF_PRIVATE_KEY" | grep -q "BEGIN"; then
-        echo "$SF_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/sf_key
-      else
-        echo "$SF_PRIVATE_KEY" | base64 -d > ~/.ssh/sf_key
-      fi
+    - |-
+      printf '%s\n' "$SF_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/sf_key
     - chmod 600 ~/.ssh/sf_key
+    - ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts 2>/dev/null
     - mkdir -p sf_assets
     - find . -maxdepth 4 \( -name "*.apk" -o -name "*.aab" -o -name "*.dmg" -o -name "*.pkg" -o -name "*.exe" -o -name "*.AppImage" -o -name "T2DECODE-Linux.tar.gz" -o -name "T2DECODE-Windows.zip" -o -name "T2DECODE-macOS.zip" \) -exec cp {} sf_assets/ \;
     - ls -la sf_assets/
-    - rsync -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/sf_key" -avP sf_assets/ $SF_USER@frs.sourceforge.net:/home/frs/project/$SF_PROJECT/$CI_COMMIT_TAG/ || true
+    - rsync -e "ssh -i ~/.ssh/sf_key -o StrictHostKeyChecking=yes" -avP sf_assets/ $SF_USER@frs.sourceforge.net:/home/frs/project/$SF_PROJECT/$CI_COMMIT_TAG/ || true
   rules:
     - if: $CI_COMMIT_TAG
 
