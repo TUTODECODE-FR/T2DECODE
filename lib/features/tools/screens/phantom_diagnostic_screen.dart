@@ -32,7 +32,6 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
       );
     });
   }
-
   void _log(String message) {
     if (!mounted) return;
     setState(() {
@@ -43,8 +42,7 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
   Future<void> _connectAndLoad() async {
     final passphrase = _passphraseController.text;
     if (passphrase.isEmpty) {
-      _log("Erreur: Le mot de passe ou la clé de coffre est requis.");
-      return;
+      _log("Clé de coffre vide. Tentative de déchiffrement via la clé machine locale...");
     }
 
     setState(() {
@@ -71,7 +69,6 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
       }
     }
   }
-
   @override
   void dispose() {
     _passphraseController.dispose();
