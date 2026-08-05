@@ -58,6 +58,7 @@ class _AppShellState extends State<AppShell> {
         _NavItem(Icons.map, 'menu.roadmap'.tr(), '/roadmap'),
         _NavItem(Icons.science, 'menu.lab'.tr(), '/lab'),
         _NavItem(Icons.wifi_tethering, 'menu.ghost_link'.tr(), '/ghost-link'),
+        _NavItem(Icons.terminal, 'T2C-Phantom', '/phantom'),
       ];
 
   // ── Petites icônes de statut IA ───────────────────────────

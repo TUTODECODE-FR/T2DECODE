@@ -39,6 +39,7 @@ import 'features/tools/screens/dns_ref_tool_screen.dart';
 import 'features/tools/screens/anonymity_tool_screen.dart';
 import 'features/tools/screens/regex_tester_screen.dart';
 import 'features/tools/screens/cyber_converter_screen.dart';
+import 'features/tools/screens/phantom_diagnostic_screen.dart';
 import 'features/ghost_ai/screens/ai_chat_screen.dart';
 import 'features/ghost_ai/screens/ai_config_screen.dart';
 import 'features/ghost_ai/screens/ai_tutor_screen.dart';
@@ -218,7 +219,8 @@ class TutoDeCodeApp extends StatelessWidget {
                   case '/legal/build-verification': return const BuildVerificationScreen();
                   case '/mentions-legales':     return const MentionsLegalesScreen();
                   case '/settings':             return const SettingsScreen();
-                  case '/ghost-link':            return const GhostLinkScreen();
+                  case '/phantom':              return const PhantomDiagnosticScreen();
+                  case '/ghost-link':           return const GhostLinkScreen();
                   case '/ghost-link/chat':
                     final peer = settings.arguments as GhostPeer;
                     return GhostChatScreen(peer: peer);
