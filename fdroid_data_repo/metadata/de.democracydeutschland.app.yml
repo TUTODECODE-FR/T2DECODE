@@ -1,0 +1,223 @@
+AntiFeatures:
+  TetheredNet:
+    en-US: App is tethered to api.democracy-app.de (cannot be configured)
+Categories:
+  - Science & Education
+License: Apache-2.0
+WebSite: https://www.democracy-deutschland.de/
+SourceCode: https://github.com/demokratie-live/democracy-client
+IssueTracker: https://github.com/demokratie-live/democracy-client/issues
+Changelog: https://github.com/demokratie-live/democracy-client/blob/HEAD/CHANGELOG.md
+
+AutoName: DEMOCRACY
+Description: |-
+  <b>DEMOCRACY+ ist da!</b>
+
+  <b>WAHL-O-METER</b>
+  Du wolltest schon immer wissen, ob die Partei, die Du gewählt hast, auch während der Legislaturperiode noch auf Deiner politischen Linie liegt und wie stark Du mit dem Abstimmungsverhalten Deines Direktkandidaten übereinstimmst, dem Du Dein Vertrauen zugesprochen hast? Der Wahl-O-Meter macht's möglich, denn mit diesem Release enthält die App endlich auch den systematischen Vergleich des eigenen Abstimmungsverhaltens mit dem der Fraktionen bzw. dem jeweiligen Direktkandidaten.
+
+  <b>WAHLKREISERGEBNISSE & ABGEORDNETENPROFILE</b>
+  Um den bürgerlobbyistischen Einfluss auf die Politik zu erhöhen, schlüsseln wir ab sofort das Community-Ergebnis zusätzlich nach Wahlkreisen auf. Hast du zuvor Deine Postleitzahl eingegeben, siehst Du ab sofort eine weitere Grafik, die Dich über das Abstimmungsergebnis der User in Deinem Wahlkreis informiert. Auf diese Weise möchten wir den Druck auf die Direktkandidaten erhöhen, sich regelmäßig mit den Meinungen ihrer Wähler zu beschäftigen und ihnen Rede und Antwort zu stehen. Dafür stehen in den Abgeordnetenprofilen In-App-Kontaktmöglichkeiten zur Verfügung.
+
+  <b>NEUE INTERAKTIONEN</b>
+  Hast Du zu einem Vorgang Deine Stimme abgegeben, bieten wir Dir mit DEMOCRACY+ jetzt schnelle weitere Interaktionsmöglichkeiten an: Du kannst ab sofort mit einem Klick die Benachrichtigungen aktivieren und/oder das Gesetz teilen. Für Anträge in Vorbereitung haben wir diese Logik um das Upvoten erweitert.
+
+  Aber jetzt, sieh selbst, was DEMOCRACY+ für Dich bereithält!
+
+RepoType: git
+Repo: https://github.com/demokratie-live/democracy-client.git
+
+Builds:
+  - versionName: 1.0.5
+    versionCode: 102715
+    commit: d629dea78fe38fa977593ae21a737de231f935a8
+    subdir: android/app/
+    sudo:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v8.11.1/node-v8.11.1-linux-x64.tar.xz
+      - echo "6617e245fa0f7fbe0e373e71d543fea878315324ab31dc64b4eba10e42d04c11 node.tar.xz"
+        | sha256sum -c -
+      - tar xJf node.tar.xz
+      - cp -a node-v8.11.1-linux-x64/. /usr/local/
+      - npm -g install yarn
+    init: yarn install
+    gradle:
+      - production
+    rm:
+      - node_modules/react-native-notifications/android/src/main/java/com/wix/reactnativenotifications/gcm/
+      - node_modules/react-native-device-info/android/build/
+    prebuild:
+      - echo -e 
+        "GRAPHQL_URL=https://api.democracy-app.de/\nPHONE_NUMBER=+4917647040213\nGITHUB_URL=https://github.com/demokratie-live/democracy-client\nCONTACT_EMAIL=prototyping@democracy-deutschland.de"
+        >> ../../.env.production
+      - sed -i -e 's#../package.json#../../package.json#' ../build.gradle
+      - sed -i -e '/play-services-gcm/,+2d' -e 's/getVersionCode()/$$VERCODE$$/' build.gradle
+      - sed -i -e '/play-services/d' ../../node_modules/react-native-device-info/android/build.gradle
+        ../../node_modules/react-native-notifications/android/build.gradle
+      - sed -i -e '/hasPermission/d' -e '/tokenFetchIntent/d' -e '/GcmInstance/d'
+        ../../node_modules/react-native-notifications/android/src/main/java/com/wix/reactnativenotifications/RNNotificationsModule.java
+      - sed -i -e '/com.google.android.gms.iid.InstanceID.getInstance/d' 
+        ../../node_modules/react-native-device-info/android/src/main/java/com/learnium/RNDeviceInfo/RNDeviceModule.java
+      - truncate -s 0 ../../node_modules/react-native/local-cli/server/util/external/xsel
+    scanignore:
+      - android/build.gradle
+      - node_modules/react-native-navigation/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - node_modules/
+
+  - versionName: 1.2.2
+    versionCode: 103578
+    commit: 2fb093bf76a2672232a5e543fd6d6e9053fa51e1
+    subdir: android/app/
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288
+      - sysctl -p
+      - curl -Lo node.tar.xz https://nodejs.org/download/release/v10.5.0/node-v10.5.0-linux-x64.tar.xz
+      - echo "8b12be967f5962a8173dca235e1a6f642ee29dcf5fc27697004af898ffeca187 node.tar.xz"
+        | sha256sum -c -
+      - tar xJf node.tar.xz
+      - cp -a node-v10.5.0-linux-x64/. /usr/local/
+      - npm -g install yarn
+    init: yarn install
+    gradle:
+      - production
+    rm:
+      - node_modules/react-native-notifications/android/src/main/java/com/wix/reactnativenotifications/gcm/
+      - node_modules/react-native-device-info/android/build/
+    prebuild:
+      - echo -e 
+        "GRAPHQL_URL=https://api.democracy-app.de/\nPHONE_NUMBER=+4917647040213\nGITHUB_URL=https://github.com/demokratie-live/democracy-client\nCONTACT_EMAIL=prototyping@democracy-deutschland.de"
+        >> ../../.env.production
+      - sed -i -e 's#../package.json#../../package.json#' ../build.gradle
+      - sed -i -e '/play-services-gcm/,+2d' -e 's/getVersionCode()/$$VERCODE$$/' build.gradle
+      - sed -i -e '/play-services/d' ../../node_modules/react-native-device-info/android/build.gradle
+        ../../node_modules/react-native-notifications/android/build.gradle
+      - sed -i -e '/hasPermission/d' -e '/tokenFetchIntent/d' -e '/GcmInstance/d'
+        ../../node_modules/react-native-notifications/android/src/main/java/com/wix/reactnativenotifications/RNNotificationsModule.java
+      - sed -i -e '/com.google.android.gms.iid.InstanceID.getInstance/d' 
+        ../../node_modules/react-native-device-info/android/src/main/java/com/learnium/RNDeviceInfo/RNDeviceModule.java
+      - truncate -s 0 ../../node_modules/react-native/local-cli/server/util/external/xsel
+    scanignore:
+      - android/build.gradle
+      - node_modules/react-native-navigation/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - node_modules/
+
+  - versionName: 1.5.11
+    versionCode: 103579
+    commit: e7c7d1c0277308c00538f9534664f0acbb710320
+    sudo:
+      - apt-get update
+      - apt-get install npm
+      - npm -g install corepack
+    output: android/app/build/outputs/apk/release/*.apk
+    srclibs:
+      - firebase-stub@4ae5aec1bf1fc3f2dfbc8e545b00b83d8a15dab8
+    rm:
+      - src/lib/rateApp.ts
+    prebuild:
+      - sed -i -e '/googleServicesFile/d' app.config.ts
+      - sed -i -e '/rateApp/d' src/components/Sidebar/Sidebar.tsx
+      - yarn remove react-native-rate
+      - yarn
+      - sed -i -e '/installreferrer/,+12d' node_modules/react-native-device-info/android/build.gradle
+      - sed -i -e '/installreferrer/d' node_modules/expo-application/android/build.gradle
+      - sed -i -e '/com.android.installreferrer.api/d' -e '/StringBuilder()/,/^      })/d'
+        -e '/getInstallReferrerAsync/apromise.resolve("")' 
+        node_modules/expo-application/android/src/main/java/expo/modules/application/ApplicationModule.kt
+      - sed -i -e '/firebase/d' node_modules/expo-notifications/android/build.gradle
+      - cp -a $$firebase-stub$$/firebase-messaging/src node_modules/expo-notifications/android
+      - yarn expo prebuild -p android
+      - sed -i -e '/signingConfig /d' -e '/versionCode/s/1/$$VERCODE$$/' android/app/build.gradle
+    scanignore:
+      - node_modules/jsc-android
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-device-info/android/build.gradle
+      - node_modules/react-native-pdf/android/build.gradle
+      - node_modules/react-native-pager-view/android/build.gradle
+      - node_modules/expo-dev-launcher/android/build.gradle
+      - node_modules/react-native-sha256/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/expo-dev-menu/android/build.gradle
+      - node_modules/react-native-blob-util/android/build.gradle
+    scandelete:
+      - node_modules/
+    build:
+      - cd android/app
+      - gradle assembleRelease
+
+  - versionName: 1.5.13
+    versionCode: 103580
+    commit: 029e5fc8e9d994b2cb9d16c060f3a638fa532d92
+    sudo:
+      - apt-get update
+      - apt-get install npm
+      - npm -g install corepack
+    output: android/app/build/outputs/apk/release/*.apk
+    srclibs:
+      - firebase-stub@4ae5aec1bf1fc3f2dfbc8e545b00b83d8a15dab8
+    rm:
+      - src/lib/rateApp.ts
+    prebuild:
+      - sed -i -e '/googleServicesFile/d' app.config.ts
+      - sed -i -e '/rateApp/d' src/components/Sidebar/Sidebar.tsx
+      - pnpm remove expo-store-review
+      - pnpm install
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - sed -i -e '/installreferrer/,+12d' node_modules/react-native-device-info/android/build.gradle
+      - sed -i -e '/installreferrer/d' node_modules/expo-application/android/build.gradle
+      - sed -i -e '/com.android.installreferrer.api/d' -e '/StringBuilder()/,/^      })/d'
+        -e '/getInstallReferrerAsync/apromise.resolve("")' 
+        node_modules/expo-application/android/src/main/java/expo/modules/application/ApplicationModule.kt
+      - sed -i -e '/firebase/d' node_modules/expo-notifications/android/build.gradle
+      - cp -a $$firebase-stub$$/firebase-messaging/src node_modules/expo-notifications/android
+      - pnpm expo prebuild -p android
+      - sed -i -e '/signingConfig /d' -e '/versionCode/s/1/$$VERCODE$$/' android/app/build.gradle
+    scanignore:
+      - node_modules/jsc-android
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-device-info/android/build.gradle
+      - node_modules/react-native-pdf/android/build.gradle
+      - node_modules/react-native-pager-view/android/build.gradle
+      - node_modules/expo-dev-launcher/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/expo-dev-menu/android/build.gradle
+      - node_modules/react-native-blob-util/android/build.gradle
+    scandelete:
+      - node_modules/
+    build:
+      - cd android/app
+      - gradle assembleRelease
+
+MaintainerNotes: |-
+  sed is used to:
+  * Remove push notifications (see <a href="https://github.com/wix/react-native-notifications/issues/207">this issue</a>)
+  * Remove Play Services from Device Information (see <a href="https://github.com/rebeccahughes/react-native-device-info/issues/381">this issue</a>)
+
+  scanignore is used to allow the "node_modules/react-native/android" local Maven repository.
+
+  Tags are centralized in the <a href="https://github.com/demokratie-live/democracy-development">democracy-development</a> repository but version code is set manually so it wouldn't be enough to enable auto update anyway.
+
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.5.13
+CurrentVersionCode: 103580

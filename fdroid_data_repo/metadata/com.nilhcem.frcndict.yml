@@ -1,0 +1,33 @@
+Categories:
+  - Reading
+  - Science & Education
+License: BSD-3-Clause
+SourceCode: https://github.com/Nilhcem/frcndict-android
+IssueTracker: https://github.com/Nilhcem/frcndict-android/issues
+
+AutoName: Chinese French Dictionary
+Description: |-
+  Older versions require a modified version of the
+  <a href="http://www.chine-informations.com/chinois/open/CFDICT">CFDICT</a> dictionary to be
+  downloaded.
+
+RepoType: git
+Repo: https://github.com/Nilhcem/frcndict-android
+
+Builds:
+  - versionName: 1.7.1
+    versionCode: 10
+    commit: v1.7.1
+    prebuild:
+      - sed -i 's/logging\.level=4/logging.level=0/' ant.properties
+      - ant clean config
+
+  - versionName: 1.8.0
+    versionCode: 11
+    commit: v1.8
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.8.0
+CurrentVersionCode: 11

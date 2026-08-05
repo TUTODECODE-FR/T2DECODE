@@ -1,0 +1,186 @@
+Categories:
+  - Sports & Health
+License: GPL-3.0-only
+AuthorName: Tilman Sinning
+AuthorEmail: namlitdev@gmail.com
+SourceCode: https://github.com/namlit/siteswap_generator
+IssueTracker: https://github.com/namlit/siteswap_generator/issues
+
+AutoName: Siteswap Generator
+Description: |-
+  The Siteswap Generator is designed for passing Siteswap generation and analysis. The following features are supported:
+  * Find all possible Siteswaps for a given period length and number of objects
+  * Easy filtering of zips, zaps and holds via check boxes
+  * Automatic filtering of non-passable patterns
+  * Support for pattern and interface filters
+  * Generation of local Siteswaps and calculation of start position
+  * Support for asynchronous passing patters with more than two jugglers
+  * Generation of very long patterns in a random mode
+
+RepoType: git
+Repo: https://github.com/namlit/siteswap_generator
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 11
+    commit: v1.0-fdroid
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.2-beta
+    versionCode: 13
+    commit: v1.0.2-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.3-beta
+    versionCode: 14
+    commit: v1.0.3-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.4-beta
+    versionCode: 15
+    commit: v1.0.4-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.5-beta
+    versionCode: 16
+    commit: v1.0.5-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.1'
+    versionCode: 17
+    commit: v1.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.2-beta
+    versionCode: 19
+    commit: v1.1.2-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.5-beta
+    versionCode: 22
+    commit: v1.1.5-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.7-beta
+    versionCode: 24
+    commit: v1.1.7-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.9-beta
+    versionCode: 26
+    commit: v1.1.9-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.10-beta
+    versionCode: 27
+    commit: v1.1.10-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.11-beta
+    versionCode: 28
+    commit: v1.1.11-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.13-beta
+    versionCode: 30
+    commit: v1.1.13-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.0
+    versionCode: 32
+    commit: v1.2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.0
+    versionCode: 33
+    commit: dc9684418b9fddd829f06aa5d610a03eb71c781b
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.1
+    versionCode: 34
+    commit: 37ead2386aa8d61ddc1a2bcc6d1d820eafc4593f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.1
+    versionCode: 36
+    commit: 7d9bdf68bee5cc8f49397949394f8bb7f2cd14f7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 1.5.0
+    versionCode: 37
+    commit: e7f94a9a59da9becd949586974b11a33855ed210
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 38
+    commit: 246d775b23d3bddbcac11a49c54f5af6e0d2324b
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.1
+    versionCode: 39
+    commit: 0738835e6fd8764a3bf7b7fae54fe1a64c891b1d
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.0
+    versionCode: 40
+    commit: 841ceaf64cbf68ef214b15c780913a59005c0e38
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.7.0
+CurrentVersionCode: 40

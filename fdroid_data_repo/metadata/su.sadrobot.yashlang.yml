@@ -1,0 +1,154 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on Youtube.
+Categories:
+  - Internet
+  - Multimedia
+License: GPL-3.0-only
+AuthorName: Anton
+AuthorEmail: ii1i7@yandex.ru
+AuthorWebSite: https://1i7.livejournal.com/
+SourceCode: https://github.com/sadr0b0t/yashlang
+IssueTracker: https://github.com/sadr0b0t/yashlang/issues
+Changelog: https://github.com/sadr0b0t/yashlang/releases
+
+AutoName: YaShlang
+Description: |-
+  <b>NOTE:</b> Can no longer play videos.
+
+  Online PeerTube and YouTube video player for Android with local playlists and whitelisted recommendations
+
+  * Add fave channels and playlists
+  * Switch off videos inside added playlists if you don't like them
+  * Watch videos you only want to
+
+  Turns YouTube to a safe place for you and your children.
+
+  Does not use Google services account, takes info directly from youtube site with NewPipeExtractor library. Plays video with ExoPlayer library.
+
+  Major features:
+  * On the main screen and on the player screen: random recommendations from chosen channels
+  * Instant search in local database
+  * Add channels or playlists: search online by name or insert known address
+  * Dynamic playlist — play search results
+  * Playlists and channels can be temporarily switched off and on
+  * Blacklist videos from added channels
+  * Starred videos (faves) and watch history
+  * Context menus in activity titles and on long click in lists and galleries
+  * Quick start — add recommended channels and playlists
+  * Download streams for offline playback
+
+RepoType: git
+Repo: https://github.com/sadr0b0t/yashlang
+
+Builds:
+  - versionName: 0.1.0-beta3
+    versionCode: 5
+    commit: v0.1.0-beta3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.0-beta5
+    versionCode: 7
+    commit: v0.1.0-beta5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.0-beta6
+    versionCode: 8
+    commit: v0.1.0-beta6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.0-beta7
+    versionCode: 9
+    commit: v0.1.0-beta7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.0
+    versionCode: 10
+    commit: v0.1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.2.0
+    versionCode: 11
+    commit: v0.2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.3.0
+    versionCode: 12
+    commit: v0.3.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.4.0
+    versionCode: 13
+    commit: v0.4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.0
+    versionCode: 14
+    commit: v0.5.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.6.0
+    versionCode: 15
+    commit: v0.6.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.7.0
+    versionCode: 16
+    commit: 7f0636cdcbb7d700e8cacf27dbb44877f0558d64
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.8.0
+    versionCode: 17
+    commit: b9851d19830f91f0b7a77b2070fa924e76afdc44
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.9.0
+    versionCode: 18
+    commit: 2e22899723d3e91f6db92c5fd0426ab5dd202717
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.10.0
+    versionCode: 19
+    commit: 05f239c82e87b282fb366d2181c1b470fd241b80
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.11.0
+    versionCode: 20
+    commit: b772942ba9f932080272fb16b36507e7c5877ab8
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 0.11.0
+CurrentVersionCode: 20

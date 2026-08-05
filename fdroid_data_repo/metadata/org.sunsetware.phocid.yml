@@ -1,0 +1,665 @@
+Categories:
+  - Local Media Player
+  - Multimedia
+License: GPL-3.0-or-later
+AuthorName: tjysunset
+AuthorWebSite: https://sunsetware.org/phocid
+SourceCode: https://github.com/tjysunset/phocid
+IssueTracker: https://github.com/TJYSunset/Phocid/issues
+
+AutoName: Phocid
+
+RepoType: git
+Repo: https://github.com/tjysunset/phocid
+Binaries: https://github.com/tjysunset/phocid/releases/download/v%v/app-release.apk
+
+Builds:
+  - versionName: '20241125'
+    versionCode: 20241125
+    commit: v20241125
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20241205'
+    versionCode: 20241205
+    commit: ef727168ec38a391a6aee57998c06a970f6da212
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20241209'
+    versionCode: 20241209
+    commit: 98142facafb817e060c8aee8780f9e2c8fd60402
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20241212'
+    versionCode: 20241212
+    commit: 446f2e6f3e67a177b35031be60c5445d1d51a2d4
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20241217'
+    versionCode: 20241217
+    commit: 570ef57cac4a198c2e9048f2e93fb426a66ba4b8
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20241221'
+    versionCode: 20241221
+    commit: ed637a6ba8927caefe5574ecc1bece3b64d102db
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20241228'
+    versionCode: 20241228
+    commit: 6c0e69c583853fa2467f0e9ad840104381cfcb56
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250103'
+    versionCode: 20250103
+    commit: fb279c6dee67ff2ecf8c4b85acfe519d17a59aad
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250107'
+    versionCode: 20250107
+    commit: 4990c8ce27390c5b896067256fb0cff4e2f8da66
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250117'
+    versionCode: 20250117
+    commit: 4b758c5abfec573993242d32d0846b24f3d53b34
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250120'
+    versionCode: 20250120
+    commit: 8fb57355d00d85ec727141ee5672eea8956699e4
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250121'
+    versionCode: 20250121
+    commit: bd0459b9167feeafddc058a56b1012bd7799e47b
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250124'
+    versionCode: 20250124
+    commit: b526ba4cf8164f11133263bc9591e68a73453b83
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250128'
+    versionCode: 20250128
+    commit: d02bae94e4db79afdcd65054b0af60cc83b32c85
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250130'
+    versionCode: 20250130
+    commit: 717f8ff40b6e3e6ccf40835563137cd44e341562
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250205'
+    versionCode: 20250205
+    commit: a28d8b55f262e1871fedecc37eb9ba5cf2f8dc9a
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250208'
+    versionCode: 20250208
+    commit: 24b969a3444ccd172e3b36bdd8ba9ca7de8621a6
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250219'
+    versionCode: 20250219
+    commit: 3718cae10d6ec5eef9e126e34be8147bfe231450
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250223'
+    versionCode: 20250223
+    commit: 9ea49bda4f0771d97292868d26f1808fc3c1b8a0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250226'
+    versionCode: 20250226
+    commit: 03ab592f2720ce95500e17bb3e0c870e6a54e25c
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250310'
+    versionCode: 20250310
+    commit: fe686922248d3c80f7df91efaf492b71ad620cdb
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250325'
+    versionCode: 20250325
+    commit: 07b794b34eced1d370fd1ed23ab5ba1f74a90ac0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250403'
+    versionCode: 20250403
+    commit: 1edc6e5485c52b770a69be7d7605a099a4e19380
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250409'
+    versionCode: 20250409
+    commit: f57d7d72f28ef572e0811b0ac19d4ffac0eba30c
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250416'
+    versionCode: 20250416
+    commit: 319ae8f3daf2b235f5485a0c082990a99a250dbb
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250422'
+    versionCode: 20250422
+    commit: 601090067b7ee2f629e9891c1ab1166c06abd1f0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250430'
+    versionCode: 20250430
+    commit: 43ab88761756acd6745cad0ccfb9d48d07490ccc
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250505.1'
+    versionCode: 20250505
+    commit: 9c95c45148b52d167ddee97d74e7a0468b588ed6
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250512'
+    versionCode: 20250512
+    commit: aa2ba15a81886f10b2cb537229767e970fdcfaba
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250517'
+    versionCode: 20250517
+    commit: 70b69c47fdcda5d1604a4f66a02f97583fb65555
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250521'
+    versionCode: 20250521
+    commit: 9c4b2aab1c57612f9fd4ff5bfd0c0d512e7d610a
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250605'
+    versionCode: 20250605
+    commit: 95be4e0eef94302ff10b1f88e048911943420120
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250610'
+    versionCode: 20250610
+    commit: b5a1ae032b0f88dbc4742eef6a4303e353c90929
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250617.1'
+    versionCode: 20250617
+    commit: 6351a0a0a77cf1b120295f6291272de3e5169fe6
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250621'
+    versionCode: 20250621
+    commit: 72e797dfab07888beed68ebb9043b4b8e5f85dfc
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250624'
+    versionCode: 20250624
+    commit: 9abb80022e3f9e832e9e2dc80f0ee485fc959d45
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250629'
+    versionCode: 20250629
+    commit: 3e0c02233e9a1dd5eeade9991ff09648e61c7a91
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250701'
+    versionCode: 20250701
+    commit: 9efd324fd690305ccb9afbe10f3e024f2a6c82fe
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250715'
+    versionCode: 20250715
+    commit: 6bcffd3af6ac1e1ac4213873ba7ebaa26ca2a847
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250716'
+    versionCode: 20250716
+    commit: 90a2dce3778a0736edddaf406507d40129c50505
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250721'
+    versionCode: 20250721
+    commit: 091ed4aa360b68aa02d827a718f25917921f9a3d
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250729'
+    versionCode: 20250729
+    commit: 74372813d336ddf23ba59298d86a86dd67514393
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250806.1'
+    versionCode: 20250806
+    commit: 0d2a0287028f4120fabcdd99d9ec50e05dc8effc
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250819'
+    versionCode: 20250819
+    commit: 194c147fceb86c08e190a39264156fb5b4b49e23
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250823'
+    versionCode: 20250823
+    commit: f1106fe47fce8bb1f85a75d1d1327800a89ec4bc
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250829'
+    versionCode: 20250829
+    commit: 3a9c771a4e88706a15c928bc6ed808dbcc24f92d
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250920'
+    versionCode: 20250920
+    commit: e6235b6bd40dbbec37e00ec0d3981f522daf1192
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20250929'
+    versionCode: 20250929
+    commit: 7123c4939445f72075cb24f0569e18c9effa3822
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20251130'
+    versionCode: 20251130
+    commit: a2f7c2ed2afaa18fdedc3fda988c1eb51ed81e14
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20251206'
+    versionCode: 20251206
+    commit: eef76080d1475d1c17efb04acbbbb6b57a32dfec
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20260526'
+    versionCode: 20260526
+    commit: 7a872523469b7a5ce4d67edf009b198eb6d3a416
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/jvmToolchain/s/8/17/' ../deps/OpusMetadataIo/build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'assets/*.json' 'assets/*.txt'
+
+  - versionName: '20260610'
+    versionCode: 20260610
+    commit: b0d120aad574bc39672bc01c07a47b08a279d50f
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'assets/*.json' 'assets/*.txt'
+
+AllowedAPKSigningKeys: ed20b176709c0e632400eed8d5bdb3abd510086719fe97fe9046b922f8faaf4f
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '20260610'
+CurrentVersionCode: 20260610

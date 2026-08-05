@@ -1,0 +1,225 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on geonames.org and api.met.no or weather.gov
+Categories:
+  - Internet
+  - Weather
+License: CC0-1.0
+AuthorName: Gitsaibot
+SourceCode: https://github.com/Gitsaibot/AF-Weather-Widget
+IssueTracker: https://github.com/Gitsaibot/AF-Weather-Widget/issues
+Changelog: https://github.com/Gitsaibot/AF-Weather-Widget/releases
+
+AutoName: AF Weather
+
+RepoType: git
+Repo: https://github.com/Gitsaibot/AF-Weather-Widget
+
+Builds:
+  - versionName: '1.1'
+    versionCode: 2
+    commit: v1.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.2'
+    versionCode: 3
+    commit: v1.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.3'
+    versionCode: 4
+    commit: v1.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.4'
+    versionCode: 5
+    commit: e9436890d59401b2d370c6900d7622da7a91dbc1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.5'
+    versionCode: 6
+    commit: ab9614297a9c2a781e03b09c1675736ac2556138
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.6'
+    versionCode: 7
+    commit: 38a22520e81e54f4c8876908f7ec881ac9e5c465
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.7'
+    versionCode: 8
+    commit: d3b47b5eb92441d69deb03dcfdd1bda1540d8e1c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.8'
+    versionCode: 9
+    commit: 0e7e15cb1233db64db731470887cfc125e612edd
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.9'
+    versionCode: 10
+    commit: a7fcf6e0c5f7f45296db0acbb7f5ba5a49730b11
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '2.0'
+    versionCode: 11
+    commit: 4fe4ade062c9be399ce4e5d3939e870aa9ef3ba6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '2.1'
+    versionCode: 12
+    commit: 7f3b536ca8dec1b8bc5529a0efcc2708a9806c1d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '2.2'
+    versionCode: 13
+    commit: a5019dc506f54eab099a721525f926b793115bc9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '2.3'
+    versionCode: 14
+    commit: 795aaf1058ac9fbbdcd3f5be9a28d939d4a6029b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '2.4'
+    versionCode: 15
+    commit: 7b32ebf7dd0cfbd0e5458d8e5157c1fddc1648d8
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '2.5'
+    versionCode: 16
+    commit: 50073df8f6122bc91472a923f021d7ed313fc543
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '2.6'
+    versionCode: 17
+    commit: 14ba44f6ccc60ac961d934cf3b405d9c2547d6ef
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.7'
+    versionCode: 18
+    commit: c2d797a071fce39841761cad753c8dbd9bc6e011
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.8'
+    versionCode: 19
+    commit: 198a78fbb05f0556f8acebcabe1e2dfd22af3a32
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.9'
+    versionCode: 20
+    commit: be76c09a537bec52a572cd8fc8b1250537b984a1
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/8.12.2/8.11.1/' ../build.gradle.kts
+
+  - versionName: '3.0'
+    versionCode: 21
+    commit: db5eeef1acd509b53e5de5f862d29953117215ca
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '3.1'
+    versionCode: 22
+    commit: 3d7795973192bca14956976cd833c04b95ab155f
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '3.2'
+    versionCode: 23
+    commit: 63b5bfd929a7469ecd67abfff3f5acb7c5916a1d
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '3.2'
+CurrentVersionCode: 23

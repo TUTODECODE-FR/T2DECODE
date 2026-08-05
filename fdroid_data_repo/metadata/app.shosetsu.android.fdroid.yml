@@ -1,0 +1,94 @@
+Categories:
+  - Reading
+License: GPL-3.0-only
+AuthorName: Doomsdayrs
+WebSite: https://shosetsu.app
+SourceCode: https://gitlab.com/shosetsuorg/shosetsu
+IssueTracker: https://gitlab.com/shosetsuorg/shosetsu/issues
+Changelog: https://gitlab.com/shosetsuorg/shosetsu/releases
+
+AutoName: Shosetsu
+
+RepoType: git
+Repo: https://gitlab.com/shosetsuorg/shosetsu.git
+
+Builds:
+  - versionName: 2.2.0-fdroid
+    versionCode: 37
+    commit: v2.2.0
+    subdir: android
+    gradle:
+      - fdroid
+
+  - versionName: 2.2.2-fdroid
+    versionCode: 39
+    commit: 8cd4ff88b3f55da3350bf9328b07c4c7b4092ef0
+    subdir: android
+    gradle:
+      - fdroid
+
+  - versionName: 2.3.0-fdroid
+    versionCode: 40
+    commit: 5f4839e710914400e8bf7a70295359a3685f14e3
+    subdir: android
+    gradle:
+      - fdroid
+
+  - versionName: 2.4.1-fdroid
+    versionCode: 42
+    commit: 78d637a6a7e4ebed74a0b9b9184c91293534ac7a
+    subdir: android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+
+  - versionName: 2.4.2-fdroid
+    versionCode: 43
+    commit: adf61405be4fdfb15ccdeb23dd91b5c27c031689
+    subdir: android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+
+  - versionName: 2.4.3-fdroid
+    versionCode: 44
+    commit: d4686e6272541f01fa02ddcd625c2cc6666d37b4
+    subdir: android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+
+  - versionName: 2.4.4-fdroid
+    versionCode: 45
+    commit: ad5a7fa01c37f89fe299ec4f0ae77d275643fb8a
+    subdir: android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+
+  - versionName: 2.5.3-fdroid
+    versionCode: 50
+    commit: f1036d2b177afbcb7b6d77d8f163479d327fa131
+    subdir: android
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/12585416/,+4d' ../build.gradle.kts
+      - sed -i -e 's/val USE_JENKINS = .*/val USE_JENKINS = true/' build.gradle.kts
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.5.3-fdroid
+CurrentVersionCode: 50

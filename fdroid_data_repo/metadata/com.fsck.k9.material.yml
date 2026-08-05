@@ -1,0 +1,65 @@
+Categories:
+  - Internet
+License: GPL-3.0-only
+SourceCode: 
+  https://archive.softwareheritage.org/browse/origin/https://github.com/scoute-dich/K9-MailClient/directory/
+IssueTracker: https://github.com/scoute-dich/K9-MailClient/issues
+
+AutoName: K9 Material (unofficial)
+Description: |-
+  <b>Note: Since 10/2017, this app is no longer maintained.</b>
+
+  This is a unofficial fork of the https://f-droid.org/packages/com.fsck.k9 email client with a material
+  design style instead of the normal one. It will be updated in tandem with the
+  main repository.
+
+Builds:
+  - versionName: '5.205'
+    versionCode: 23250
+    commit: da9f7e9f22b98a2b0ec8c0acf5d557cca83185c4
+    subdir: k9mail
+    gradle:
+      - yes
+
+  - versionName: '5.205'
+    versionCode: 24000
+    commit: v5.205
+    subdir: k9mail
+    gradle:
+      - yes
+
+  - versionName: '5.206'
+    versionCode: 24001
+    commit: v5.206
+    subdir: k9mail
+    gradle:
+      - yes
+
+  - versionName: 5.207.2
+    versionCode: 24004
+    commit: v5.207.2
+    subdir: k9mail
+    gradle:
+      - yes
+
+  - versionName: 5.207.3
+    versionCode: 24005
+    commit: 5.207.3
+    subdir: k9mail
+    gradle:
+      - yes
+
+  - versionName: 5.207.4
+    versionCode: 24006
+    commit: v5.207.4
+    subdir: k9mail
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 5.207.4
+CurrentVersionCode: 24006
+
+NoSourceSince: 5.207.4

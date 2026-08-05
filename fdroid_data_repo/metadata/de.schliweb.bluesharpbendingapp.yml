@@ -1,0 +1,187 @@
+Categories:
+  - Music Practice Tool
+  - Science & Education
+License: MIT
+AuthorName: egdels
+WebSite: https://www.letsbend.de/
+SourceCode: https://github.com/egdels/bluesharpbendingapp
+IssueTracker: https://github.com/egdels/bluesharpbendingapp/issues
+
+AutoName: Let's Bend
+
+RepoType: git
+Repo: https://github.com/egdels/bluesharpbendingapp.git
+Binaries: 
+  https://github.com/egdels/bluesharpbendingapp/releases/download/v%v/android-release.apk
+
+Builds:
+  - versionName: 2.2.3
+    versionCode: 48
+    commit: 7952b5c67b09b921955829c5748c7e387893b2a5
+    subdir: android/app
+    gradle:
+      - yes
+    prebuild: cp -R ../../gradle ..
+    scandelete:
+      - webapp/src/main/resources/static/.well-known/openpgpkey/hu/ojh6kdjcnhbkwngahaofctprbw3qm63n
+
+  - versionName: 3.0.0
+    versionCode: 49
+    commit: 5d44ba620842c681d30a19a346c4ee9a944bab22
+    subdir: android/app
+    gradle:
+      - yes
+    prebuild: cp -R ../../gradle ..
+    scandelete:
+      - webapp/src/main/resources/static/.well-known/openpgpkey/hu/ojh6kdjcnhbkwngahaofctprbw3qm63n
+
+  - versionName: 3.1.4
+    versionCode: 55
+    commit: ef50ecd437b687b4922137a2521f9fa557760b84
+    subdir: android/app
+    gradle:
+      - yes
+    prebuild: cp -R ../../gradle ..
+    scandelete:
+      - webapp/src/main/resources/static/.well-known/openpgpkey/hu/ojh6kdjcnhbkwngahaofctprbw3qm63n
+
+  - versionName: 3.2.2
+    versionCode: 58
+    commit: aeedfeb633ff175d8b68c6c293a0407d6c584bc9
+    subdir: android/app
+    gradle:
+      - yes
+    prebuild: cp -R ../../gradle ..
+    scandelete:
+      - webapp/src/main/resources/static/.well-known/openpgpkey/hu/ojh6kdjcnhbkwngahaofctprbw3qm63n
+
+  - versionName: 3.2.3
+    versionCode: 59
+    commit: c9ae6625b5085212033857b8fcef1ee86ade4f93
+    subdir: android/app
+    gradle:
+      - yes
+    prebuild: cp -R ../../gradle ..
+    scandelete:
+      - webapp/src/main/resources/static/.well-known/openpgpkey/hu/ojh6kdjcnhbkwngahaofctprbw3qm63n
+
+  - versionName: 3.3.2
+    versionCode: 62
+    commit: 05e01130314cccc535a0e8fa87dbf515e9d67325
+    subdir: android/app
+    gradle:
+      - yes
+    prebuild: cp -R ../../gradle ..
+    scandelete:
+      - webapp/src/main/resources/static/.well-known/openpgpkey/hu/ojh6kdjcnhbkwngahaofctprbw3qm63n
+
+  - versionName: 3.3.3
+    versionCode: 63
+    commit: fa6ecafdea41d608546e2b481a4e40510b2aedc8
+    subdir: android/app
+    gradle:
+      - yes
+    prebuild: cp -R ../../gradle ..
+    scandelete:
+      - webapp/src/main/resources/static/.well-known/openpgpkey/hu/ojh6kdjcnhbkwngahaofctprbw3qm63n
+
+  - versionName: 3.3.4
+    versionCode: 64
+    commit: 5113981fa68b0e90fb12b1fe9c5bba99053e7676
+    subdir: android/app
+    gradle:
+      - yes
+    prebuild: cp -R ../../gradle ..
+    scandelete:
+      - webapp/src/main/resources/static/.well-known/openpgpkey/hu/ojh6kdjcnhbkwngahaofctprbw3qm63n
+
+  - versionName: 3.4.0
+    versionCode: 65
+    commit: e0964c66de3a18623723e4cd2a8df1a85b042ea5
+    subdir: android/app
+    gradle:
+      - yes
+    prebuild: cp -R ../../gradle ..
+    scandelete:
+      - webapp/src/main/resources/static/.well-known/openpgpkey/hu/ojh6kdjcnhbkwngahaofctprbw3qm63n
+
+  - versionName: 3.4.1
+    versionCode: 66
+    commit: f5f3b0179bce97c264cf9cf20933b3fe40c797b2
+    subdir: android/app
+    gradle:
+      - yes
+    prebuild: cp -R ../../gradle ..
+    scandelete:
+      - webapp/src/main/resources/static/.well-known/openpgpkey/hu/ojh6kdjcnhbkwngahaofctprbw3qm63n
+
+  - versionName: 3.4.3
+    versionCode: 69
+    commit: 34ced598252fcd59a203e79044ed0f6a799bcd90
+    subdir: android/app
+    gradle:
+      - yes
+    rm:
+      - npm
+      - desktop
+      - webapp
+      - package.json
+    prebuild: cp -R ../../gradle ..
+
+  - versionName: 3.5.0
+    versionCode: 72
+    commit: 91c6641c1a109fec8e1dfd32f31491d69c0b158b
+    subdir: android/app
+    gradle:
+      - yes
+    rm:
+      - npm
+      - desktop
+      - webapp
+      - package.json
+    prebuild: cp -R ../../gradle ..
+
+  - versionName: 3.6.0
+    versionCode: 30600
+    commit: db74277d422f7d70627ce63808da22bbbd82f42a
+    subdir: android/app
+    gradle:
+      - yes
+    rm:
+      - npm
+      - desktop
+      - webapp
+      - package.json
+
+  - versionName: 3.7.0
+    versionCode: 30700
+    commit: f6962b4ca70be6b2f010d9b514589f825e56f679
+    subdir: android/app
+    gradle:
+      - yes
+    rm:
+      - npm
+      - desktop
+      - webapp
+      - package.json
+
+  - versionName: 3.8.0
+    versionCode: 30800
+    commit: 64fee50266e31304183ed78f4f598fdd5438e70d
+    subdir: android/app
+    gradle:
+      - yes
+    rm:
+      - npm
+      - desktop
+      - webapp
+      - package.json
+
+AllowedAPKSigningKeys: ae322d3fb71afe21df4727e37a5c6803511d5a2fe1fc3135430cee0699fa1b34
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v
+UpdateCheckData: 
+  android/app/build.gradle|versionCode\s*=?\s*(\d+)|build.gradle|version\s*=\s*['"](.+?)['"]
+CurrentVersion: 3.8.0
+CurrentVersionCode: 30800

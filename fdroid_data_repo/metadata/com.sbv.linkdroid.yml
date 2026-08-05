@@ -1,0 +1,192 @@
+Categories:
+  - Bookmark
+  - Internet
+  - Reading
+License: GPL-3.0-only
+AuthorName: David Aderbauer
+SourceCode: https://github.com/Dacid99/LinkDroid-for-Linkwarden
+IssueTracker: https://github.com/Dacid99/LinkDroid-for-Linkwarden/issues
+
+AutoName: LinkDroid for Linkwarden
+
+RepoType: git
+Repo: https://gitlab.com/Dacid99/linkdroid-for-linkwarden.git
+Binaries: 
+  https://gitlab.com/Dacid99/linkdroid-for-linkwarden/-/releases/v%v/downloads/app-release.apk
+
+Builds:
+  - versionName: 1.1.0
+    versionCode: 3
+    commit: 0b1e997f5ca60192a4229b19df6666db7efc7bbd
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.1
+    versionCode: 4
+    commit: f3df9b8bdf601e2e3e74b35894c643cab65533c7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.2
+    versionCode: 5
+    commit: 2af8f4f865dd4ff70a3ce820a1de21e093217edf
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.1
+    versionCode: 7
+    commit: bac73c315e90663339b30b8534cfc02cb964b770
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.0
+    versionCode: 8
+    commit: 1b530faff5c22484c815193ebc8d71d2c2ca9474
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.0
+    versionCode: 9
+    commit: b0891e7993f12c36c0599d10d2f0e5d0689cf52f
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.1
+    versionCode: 10
+    commit: a16bdb6be5b9fde4b6db665ef67253b93feea8fd
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.0
+    versionCode: 11
+    commit: 00eaba8e0d1bc69dd70f95c91ec82141e7043268
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.1
+    versionCode: 12
+    commit: 124f9be577c4f0ba7a56ce85183e149777bbc5ff
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.2
+    versionCode: 13
+    commit: ac39816ca6d025ccc3d9e9a73cc9efa7c01db756
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.3
+    versionCode: 14
+    commit: 52a37d96f2d5da82ddb396c6b986736325247588
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.4
+    versionCode: 15
+    commit: 7a7636a30682b220ab2388c2334eca7532a9926c
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.5
+    versionCode: 16
+    commit: ecee4d050f2b9500acd8b3fec7b462bb9cd83cbb
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.0
+    versionCode: 17
+    commit: 6ca37746dd6f50f17422d823f2d225056c9bb54a
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.1
+    versionCode: 18
+    commit: d19f72737aadcb849b5d4349569957c53821730e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.2
+    versionCode: 19
+    commit: 1beb7a806072256794511c2a4a430b2eee98842c
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.4
+    versionCode: 21
+    commit: f6b1301ccd486f2f52c7ae869d29acfd52bb3543
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.5
+    versionCode: 22
+    commit: a490f2d9a6ce15c84d8806086e2771df833bdedc
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.6
+    versionCode: 23
+    commit: eac3d4b2bbb009c72e7ee1f509a285eba34b7dc9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.7
+    versionCode: 24
+    commit: 156892c66671d5b15da4aac4733b39c196f675d8
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian bookworm main" > /etc/apt/sources.list.d/bookworm.list
+      - apt-get update
+      - apt-get install -y -t bookworm openjdk-17-jdk-headless
+      - update-java-alternatives -s java-1.17.0-openjdk-amd64
+    gradle:
+      - yes
+
+  - versionName: 2.1.9
+    versionCode: 26
+    commit: 5037b90db8184aaefce9cdcba826c03af1fbb650
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian bookworm main" > /etc/apt/sources.list.d/bookworm.list
+      - apt-get update
+      - apt-get install -y -t bookworm openjdk-17-jdk-headless
+      - update-java-alternatives -s java-1.17.0-openjdk-amd64
+    gradle:
+      - yes
+
+  - versionName: 2.2.0
+    versionCode: 27
+    commit: 60e5ca8998855e2edb5e0f75f4e21c7cb9f2c062
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian bookworm main" > /etc/apt/sources.list.d/bookworm.list
+      - apt-get update
+      - apt-get install -y -t bookworm openjdk-17-jdk-headless
+      - update-java-alternatives -s java-1.17.0-openjdk-amd64
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: f9fdd3561b63e897ecf40fcb0efd0f530433b452a0492e077b09deb97dc38723
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.2.0
+CurrentVersionCode: 27

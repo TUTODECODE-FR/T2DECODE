@@ -1,0 +1,225 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Rely on themoviedb.org.
+Categories:
+  - Multimedia
+License: GPL-3.0-only
+AuthorName: Abhilash
+SourceCode: https://github.com/WirelessAlien/MovieDB
+IssueTracker: https://github.com/WirelessAlien/MovieDB/issues
+Changelog: https://github.com/WirelessAlien/MovieDB/releases
+
+AutoName: ShowCase
+
+RepoType: git
+Repo: https://github.com/WirelessAlien/MovieDB.git
+Binaries: https://github.com/WirelessAlien/MovieDB/releases/download/v%v/showcase-v%v.apk
+
+Builds:
+  - versionName: '0.5'
+    versionCode: 1
+    commit: 24cd75767225621077c45fa6b2529739e0461e93
+    subdir: app
+    gradle:
+      - yes
+    binary: https://github.com/WirelessAlien/MovieDB/releases/download/v%v/moviedb-v%v.apk
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'res/x8.properties'
+
+  - versionName: '0.6'
+    versionCode: 2
+    commit: f51cb6684742548bc83e97eb64f2dddf2b0b68c6
+    subdir: app
+    gradle:
+      - yes
+    binary: https://github.com/WirelessAlien/MovieDB/releases/download/v%v/moviedb-v%v.apk
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'res/x8.properties'
+
+  - versionName: '0.7'
+    versionCode: 3
+    commit: a2255bde6068ec6922b6d784c44b8897def0e92d
+    subdir: app
+    gradle:
+      - yes
+    binary: https://github.com/WirelessAlien/MovieDB/releases/download/v%v/moviedb-v%v.apk
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'res/x8.properties'
+
+  - versionName: '0.8'
+    versionCode: 4
+    commit: c82131ab16050babb52364af252394677a7594d7
+    subdir: app
+    gradle:
+      - yes
+    binary: https://github.com/WirelessAlien/MovieDB/releases/download/v%v/moviedb-v%v.apk
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'res/x8.properties'
+
+  - versionName: '0.9'
+    versionCode: 5
+    commit: d2a947d0685d2698b16479b329897d2535192a48
+    subdir: app
+    gradle:
+      - yes
+    binary: https://github.com/WirelessAlien/MovieDB/releases/download/v%v/moviedb-v%v.apk
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'res/x8.properties'
+
+  - versionName: '1.0'
+    versionCode: 7
+    commit: 52cd399cb2a17234de3da6c9d088e537af29bc6b
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'res/x8.properties' 'res/um.properties'
+
+  - versionName: '1.1'
+    versionCode: 8
+    commit: f7b033d3c6cfab30277fe2076d99b9eadeb80d91
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'res/x8.properties' 'res/um.properties' 'META-INF/services/*'
+
+  - versionName: '2.0'
+    versionCode: 9
+    commit: 94d44c83163bda615e2b050cbb6c4b6076566a8b
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: '3.2'
+    versionCode: 12
+    commit: 3a2442526efb193e7a390804c1b1d64532af55eb
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: '3.3'
+    versionCode: 13
+    commit: 59c6a0f1bde8011466ba9da51d141a2fb155b5a2
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: '3.4'
+    versionCode: 14
+    commit: bdb7de8796a98fb8a570fd15ab08ddd425573c6d
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: '3.5'
+    versionCode: 15
+    commit: 425d904c22e71b3267d23cf826a3aef778847e6b
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: '3.6'
+    versionCode: 16
+    commit: 4364fa51ca05fce6b5133d4d76e304e4a47ccca3
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: '4.0'
+    versionCode: 17
+    commit: d259c2a5c0e409971c2ec79861292951a83db86d
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: '4.1'
+    versionCode: 18
+    commit: 4a141b37fbd02b9326f0feed32c51f122e4d2ac3
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: '4.2'
+    versionCode: 19
+    commit: 0a0ebfe8ee9cb0d1971a73c035d859b2b02481bd
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: 4.2.1
+    versionCode: 20
+    commit: 88460c05cd3f1a9d76540ce675dda9d0b1d3cc4c
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: 4.2.3
+    versionCode: 22
+    commit: 5778f6e131d83df9655129b0604a40458e914cae
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: '4.3'
+    versionCode: 24
+    commit: 022cad52da7a4592db47b9c2efc71c8cc05ea5fb
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: 4.3.1
+    versionCode: 25
+    commit: c276b57d579b244d30dbdb764fd6b91ca74de00d
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: 4.4.1
+    versionCode: 31
+    commit: af4b7ad24362db5aa0dc7f3ad0606b495637f0a6
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: 4.4.2
+    versionCode: 32
+    commit: 049b0962ed9a724dbe985aeb071682563890b224
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: '4.5'
+    versionCode: 33
+    commit: 37f58b56e88794247de868274d240efab027e8cc
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: '4.7'
+    versionCode: 42
+    commit: b59cd17986eb5c7b21a240d922389bb26e067164
+    subdir: app
+    gradle:
+      - foss
+
+AllowedAPKSigningKeys: fff2ac2bbfeaed303051caf138c14fcd980a926f56296543df05c255fd89a6b7
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ((?!alpha|beta|rc).)*$
+CurrentVersion: '4.7'
+CurrentVersionCode: 42

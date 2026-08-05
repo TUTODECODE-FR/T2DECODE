@@ -1,0 +1,252 @@
+Categories:
+  - Battery
+  - System
+License: MIT
+AuthorName: Binary Solutions
+AuthorEmail: support+hbc@binarysolutions.biz
+AuthorWebSite: https://binarysolutions.biz
+SourceCode: https://github.com/vbresan/HealthyBatteryCharging
+IssueTracker: https://github.com/vbresan/HealthyBatteryCharging/issues
+Translation: https://hosted.weblate.org/projects/healthy-battery-charging/
+Changelog: https://github.com/vbresan/HealthyBatteryCharging/releases
+
+AutoName: Healthy Battery Charging
+
+RepoType: git
+Repo: https://github.com/vbresan/HealthyBatteryCharging.git
+Binaries: 
+  https://github.com/vbresan/HealthyBatteryCharging/releases/download/%c/biz.binarysolutions.healthybatterycharging-%v-release.apk
+
+Builds:
+  - versionName: 2.0.1
+    versionCode: 3
+    commit: f73baf3f50f6f05aea4e16c1089358f0cb20a6b5
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.2
+    versionCode: 4
+    commit: fed44b8d72b4547852fe496a18160e9c584dcc88
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.3
+    versionCode: 5
+    commit: 5fccd90bc1665399860ddb108b423033acdf9740
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.4
+    versionCode: 6
+    commit: cc1719fde54e5f43a22716a578b21875f6e4ec53
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.5
+    versionCode: 7
+    commit: c12decf5dc0c02c64e957174f6d27f2c77c45afc
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.6
+    versionCode: 8
+    commit: 7a3af21a10db96872c419c5ef56cf1a14d1ec7ec
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.7
+    versionCode: 9
+    commit: 6605fdf7c2e5bda3a9d07c0a4d2de53c8c4918cf
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.8
+    versionCode: 10
+    commit: 0250bde1921e2a5eaf75d772409fffe33f120f4f
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.9
+    versionCode: 11
+    commit: 36c7cbaf294b13f0c1f9193ce06485ce0e4649c8
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.10
+    versionCode: 12
+    commit: f9c26cb18e24ba77c376a01e8ffccbf25bb5dfc7
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.11
+    versionCode: 13
+    commit: 952efa47f2430f48d64d23fb66fcf1b508203f81
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.12
+    versionCode: 14
+    commit: 758d01c5a66b92269ca81674d1e82b3b515a460f
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.13
+    versionCode: 15
+    commit: d15751c34d823c0121843c0380b65522ee86cc9b
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.14
+    versionCode: 16
+    commit: 924a103a513d662bb6166b2b5fa5d28ee13b8480
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.15
+    versionCode: 17
+    commit: bd53aa0cf12eae9e9b060678e677d790946f03a5
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.16
+    versionCode: 18
+    commit: adb341609730ba2800eaa7510b8f8a7055ea1628
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.17
+    versionCode: 19
+    commit: 4952fd22b14ac0fa3e63e0240f6de1d8cebb5d07
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 2.0.18
+    versionCode: 20
+    commit: 4da74e87ca650c13613c4b42ff7b78321309efda
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.7
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --page-size 4 fix-newlines
+      $$OUT$$ 'META-INF/services/*'
+
+  - versionName: '2.1'
+    versionCode: 21
+    commit: 18709b09bb152830b64b66fbeb0f73314f436ebf
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.1
+    versionCode: 22
+    commit: 815279958e481964cd672314ce3dfbbaca21c185
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.2
+    versionCode: 23
+    commit: d2f99ced606aa0ed0e6e06cfdd798facb4b95012
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.3
+    versionCode: 24
+    commit: 637465e9f3aba814e1c4f7f183a46bd9061f0bbb
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: eaf45266864c7fdb07eb33bb8c4a1c87259f7ee28f7d3089100336ad265293c6
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.1.3
+CurrentVersionCode: 24

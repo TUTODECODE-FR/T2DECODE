@@ -1,0 +1,193 @@
+Categories:
+  - Action Game
+License: GPL-3.0-or-later
+AuthorName: DeepDaikon
+AuthorEmail: deepdaikon@tuta.io
+WebSite: https://gitlab.com/deepdaikon/Quinb
+SourceCode: https://gitlab.com/deepdaikon/Quinb/tree/HEAD
+IssueTracker: https://gitlab.com/deepdaikon/Quinb/issues
+Translation: https://translate.deepdaikon.xyz/engage/quinb/
+Changelog: https://gitlab.com/deepdaikon/Quinb/-/blob/HEAD/CHANGELOG
+Donate: https://deepdaikon.xyz/donate
+Liberapay: deepdaikon
+
+AutoName: Quinb
+
+RepoType: git
+Repo: https://gitlab.com/deepdaikon/Quinb.git
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 1
+    commit: v1.0.0
+    output: build/app/outputs/apk/release/app-release.apk
+    srclibs:
+      - flutter@1.17.3
+    rm:
+      - ios
+    prebuild: echo 'android.applicationVariants.all { variant -> variant.outputs.all
+      { output -> outputFileName = "app-${output.baseName}.apk" } }' >> android/app/build.gradle
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.1.0
+    versionCode: 2
+    commit: v1.1.0
+    output: build/app/outputs/apk/release/app-release.apk
+    srclibs:
+      - flutter@1.17.3
+    rm:
+      - ios
+    prebuild: echo 'android.applicationVariants.all { variant -> variant.outputs.all
+      { output -> outputFileName = "app-${output.baseName}.apk" } }' >> android/app/build.gradle
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.1.1
+    versionCode: 3
+    commit: 593467fdbf6442566411f003bcb72fa0bcdd2e3f
+    output: build/app/outputs/apk/release/app-release.apk
+    srclibs:
+      - flutter@1.17.3
+    rm:
+      - ios
+    prebuild: echo 'android.applicationVariants.all { variant -> variant.outputs.all
+      { output -> outputFileName = "app-${output.baseName}.apk" } }' >> android/app/build.gradle
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.1.2
+    versionCode: 4
+    commit: 16cc370b4da33150d8b37b4344377b2bf0358d80
+    output: build/app/outputs/apk/release/app-release.apk
+    srclibs:
+      - flutter@2.5.0
+    rm:
+      - ios
+    prebuild: echo 'android.applicationVariants.all { variant -> variant.outputs.all
+      { output -> outputFileName = "app-${output.baseName}.apk" } }' >> android/app/build.gradle
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.2.0
+    versionCode: 5
+    commit: f1fb89a982e8a74c2094baff3631cf31e61445e2
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.3
+    rm:
+      - ios
+      - linux
+      - web
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.2.1
+    versionCode: 6
+    commit: 09d860420ecacf82fdee3d573b03e5518e1f5260
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.3
+    rm:
+      - ios
+      - linux
+      - web
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.2.2
+    versionCode: 7
+    commit: abffb05a8f2269d468362f33744d07e18961a8d2
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.5
+    rm:
+      - ios
+      - linux
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 1.2.3
+    versionCode: 8
+    commit: b25965193fd4366b2243d9b4822ac006525975d2
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.5
+    rm:
+      - ios
+      - linux
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 1.2.4
+    versionCode: 9
+    commit: 463899148e49aaddada36a7e51208e4851f3a19a
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.5
+    rm:
+      - ios
+      - linux
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 1.2.5
+    versionCode: 10
+    commit: 27860829497188fb2f223c2edf19ceffeba56d16
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.5
+    rm:
+      - ios
+      - linux
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.2.5
+CurrentVersionCode: 10

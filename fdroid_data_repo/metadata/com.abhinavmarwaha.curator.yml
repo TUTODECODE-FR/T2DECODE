@@ -1,0 +1,52 @@
+Categories:
+  - Internet
+  - Reading
+License: GPL-3.0-or-later
+AuthorName: Abhinav
+AuthorEmail: abhinav0@skiff.com
+SourceCode: 
+  https://archive.softwareheritage.org/browse/origin/https://github.com/abhinavmarwaha/curator/directory/
+IssueTracker: https://github.com/abhinavmarwaha/curator/issues
+Changelog: https://github.com/abhinavmarwaha/curator/releases
+
+AutoName: Curator
+
+Builds:
+  - versionName: 0.1.1
+    versionCode: 1
+    commit: v0.1.1
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@1.17.1
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - export PATH=$$flutter$$/bin:$PATH
+      - flutter packages pub get
+      - flutter pub run build_runner build
+      - flutter config --no-analytics
+      - flutter build apk --flavor fdroid
+
+  - versionName: 0.9.1
+    versionCode: 3
+    commit: v0.9.1
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@1.22.5
+    build:
+      - export PATH=$$flutter$$/bin:$PATH
+      - flutter packages pub get
+      - flutter pub run build_runner build
+      - flutter config --no-analytics
+      - flutter build apk --flavor fdroid
+
+MaintainerNotes: |-
+  Builds will fail when the srclib ref of flutter and the version with which
+  upstream has been built with differ.
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 0.9.1
+CurrentVersionCode: 3
+
+NoSourceSince: 0.9.1

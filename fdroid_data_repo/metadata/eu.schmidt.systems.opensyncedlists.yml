@@ -1,0 +1,106 @@
+Categories:
+  - Writing
+License: GPL-3.0-or-later
+AuthorName: Etienne Schmidt
+AuthorEmail: eschmidt@schmidt-ti.eu
+AuthorWebSite: https://schmidt-systems.eu/
+WebSite: https://schmidt-systems.eu/docs/opensyncedlists
+SourceCode: https://gitlab.com/gladion136/opensyncedlists
+IssueTracker: https://gitlab.com/gladion136/opensyncedlists/-/issues
+Changelog: https://gitlab.com/gladion136/opensyncedlists/-/blob/HEAD/CHANGELOG.md
+
+AutoName: OpenSyncedLists
+
+RepoType: git
+Repo: https://gitlab.com/gladion136/opensyncedlists.git
+
+Builds:
+  - versionName: 1.0.6
+    versionCode: 7
+    commit: 87d8653b674ea2b6aca17e90610578ea5589b9c3
+    subdir: Android_Client/OpenSyncedLists/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.7
+    versionCode: 8
+    commit: de9c0c9c06df53822875dbe03bec4ca92e2de6f8
+    subdir: Android_Client/OpenSyncedLists/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.8
+    versionCode: 9
+    commit: 19867f955a2cd379fc7fd00e49f192aa289b529d
+    subdir: Android_Client/OpenSyncedLists/app
+    gradle:
+      - yes
+
+  - versionName: 1.0.9
+    versionCode: 10
+    commit: b7bb0a48e9784fa3723d4bb8e19ca311c6888033
+    subdir: Android_Client/OpenSyncedLists/app
+    gradle:
+      - yes
+
+  - versionName: 1.0.10
+    versionCode: 11
+    commit: 056a8fcefdc5ddf5ca2a91b588021690248929bd
+    subdir: Android_Client/OpenSyncedLists/app
+    gradle:
+      - yes
+
+  - versionName: 1.0.11
+    versionCode: 12
+    commit: 58660180f9e5144a6c8f8a53dd9ba7101f494650
+    subdir: Android_Client/OpenSyncedLists/app
+    gradle:
+      - yes
+
+  - versionName: 1.1.0
+    versionCode: 13
+    commit: 942bfbb7ba9b887c350cabeb09015aac2b45cfc4
+    subdir: Android_Client/OpenSyncedLists/app
+    gradle:
+      - yes
+    rm:
+      - Android_Client/OpenSyncedLists/app/src/main/java/eu/schmidt/systems/opensyncedlists/utils/PlayStore.java
+    prebuild:
+      - sed -i -e '/play:review/d' build.gradle
+      - sed -i -e '/askForPlayStoreReview/d' -e '/PlayStore;/d' src/main/java/eu/schmidt/systems/opensyncedlists/activities/ListsActivity.java
+      - sed -i -e '/askForPlayStoreReview/d' -e '/gms/d' -e '/play.core/d' src/main/java/eu/schmidt/systems/opensyncedlists/activities/AboutActivity.java
+
+  - versionName: 1.2.0
+    versionCode: 14
+    commit: 5d5c64641a7039f4e7ff59203f3e9d7bb7cc159d
+    subdir: Android_Client/OpenSyncedLists/app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/play:review/d' build.gradle
+      - sed -i -e '/askForPlayStoreReview/d' -e '/PlayStore;/d' src/main/java/eu/schmidt/systems/opensyncedlists/activities/ListsActivity.java
+      - sed -i -e '/askForPlayStoreReview/d' -e '/gms/d' -e '/play.core/d' src/main/java/eu/schmidt/systems/opensyncedlists/activities/AboutActivity.java
+
+  - versionName: 1.3.0
+    versionCode: 15
+    commit: aa6e5ddc3f1a19ed62a9576f7e12d6400af1def4
+    subdir: Android_Client/OpenSyncedLists/app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/play:review/d' build.gradle
+      - sed -i -e '/askForPlayStoreReview/d' -e '/PlayStore;/d' src/main/java/eu/schmidt/systems/opensyncedlists/activities/ListsActivity.java
+      - sed -i -e '/askForPlayStoreReview/d' -e '/gms/d' -e '/play.core/d' src/main/java/eu/schmidt/systems/opensyncedlists/activities/AboutActivity.java
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.3.0
+CurrentVersionCode: 15

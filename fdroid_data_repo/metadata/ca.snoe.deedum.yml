@@ -1,0 +1,74 @@
+Categories:
+  - Browser
+  - Internet
+License: GPL-3.0-only
+AuthorName: Case Nelson
+SourceCode: https://github.com/snoe/deedum
+IssueTracker: https://github.com/snoe/deedum/issues
+
+AutoName: deedum
+
+RepoType: git
+Repo: https://github.com/snoe/deedum
+
+Builds:
+  - versionName: 2021.0221.1640
+    versionCode: 16
+    commit: 2021.0221.1640+16
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@1.22.5
+    prebuild: echo "flutter.sdk=$$flutter$$" >> ../local.properties
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 2021.1203.0440
+    versionCode: 18
+    commit: f803fbdf1cbeea30ca281db94cf82b1ab09ac256
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.5.3
+    prebuild: echo "flutter.sdk=$$flutter$$" >> ../local.properties
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 2021.1215.0738
+    versionCode: 19
+    commit: b62fb4879eaa2402dcc7f5f6b80c7cc8adcd8514
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.5.3
+    prebuild: echo "flutter.sdk=$$flutter$$" >> ../local.properties
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 2022.0101.0417
+    versionCode: 20
+    commit: 80243fdec2c0d99e648b848f38680c163c59297f
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.8.1
+    prebuild: echo "flutter.sdk=$$flutter$$" >> ../local.properties
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 2022.0406.0502
+    versionCode: 21
+    commit: 58520ab8888c59398bb4cc5829905ea3b33779a3
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.8.1
+    prebuild: echo "flutter.sdk=$$flutter$$" >> ../local.properties
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 2022.0406.0502
+CurrentVersionCode: 21

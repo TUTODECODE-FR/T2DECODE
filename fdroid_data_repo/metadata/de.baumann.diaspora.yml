@@ -1,0 +1,52 @@
+Categories:
+  - Internet
+License: GPL-3.0-or-later
+WebSite: https://github.com/scoute-dich/Diaspora/wiki
+SourceCode: https://github.com/scoute-dich/Diaspora
+IssueTracker: https://github.com/scoute-dich/Diaspora/issues
+Changelog: https://github.com/scoute-dich/Diaspora/blob/HEAD/CHANGELOG.md
+
+AutoName: Diaspora
+Summary: Client for the Diaspora social network
+Description: |-
+  <b>Warning:</b> This app has been discontinued in favor of
+  https://f-droid.org/packages/com.github.dfa.diaspora_android.
+
+  Unofficial webview based client for the community-run, distributed social
+  network "Diaspora". It's currently under development and should be used with
+  that in mind. Please submit any bugs you might find.
+
+  Based on https://f-droid.org/packages/ar.com.tristeslostrestigres.diasporanativewebapp.
+
+  <a href="https://github.com/scoute-dich/Diaspora/blob/HEAD/SCREENSHOTS.md">Screenshots</a>
+
+RepoType: git
+Repo: https://github.com/scoute-dich/Diaspora
+
+Builds:
+  - versionName: '1.3'
+    versionCode: 17
+    commit: v1.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.4'
+    versionCode: 22
+    commit: v1.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.5'
+    versionCode: 23
+    commit: v1.5
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.5'
+CurrentVersionCode: 23

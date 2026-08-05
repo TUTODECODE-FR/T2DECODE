@@ -1,0 +1,178 @@
+Categories:
+  - Recipe Manager
+  - Sports & Health
+License: GPL-3.0-only
+AuthorName: flauschtrud
+AuthorEmail: support@flauschcode.com
+AuthorWebSite: https://flauschcode.com/
+SourceCode: https://github.com/flauschtrud/broccoli
+IssueTracker: https://github.com/flauschtrud/broccoli/issues
+Changelog: https://github.com/flauschtrud/broccoli/releases
+Donate: https://ko-fi.com/flauschtrud
+
+AutoName: Broccoli
+
+RepoType: git
+Repo: https://github.com/flauschtrud/broccoli.git
+Binaries: 
+  https://github.com/flauschtrud/broccoli/releases/download/v%v-fdroid/app-fdroid-release.apk
+
+Builds:
+  - versionName: 1.2.2
+    versionCode: 1020200
+    commit: v1.2.2-fdroid
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+
+  - versionName: 1.2.4
+    versionCode: 1020400
+    commit: 241257e878c155c126d14643442b99f5f2b278c1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+
+  - versionName: 1.2.6
+    versionCode: 1020600
+    commit: f8ef1d649741fe5de4e7ada956e1a0cc6282b503
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+
+  - versionName: 1.2.8
+    versionCode: 1020800
+    commit: be466c81c87dbd1736c366f9e5b49f2d83af8e6e
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.2.9
+    versionCode: 1020900
+    commit: 09825bd36989308d93dc88e67f3fafd4a03ed928
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.2.10
+    versionCode: 1021000
+    commit: 65c7dd13968b96cbf64db55a976be7f1c4ab21d5
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.2.11
+    versionCode: 1021100
+    commit: e34e6a4cff59aa07017efb759b04e3934d8660eb
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    ndk: 26.3.11579264
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 1.2.12
+    versionCode: 1021200
+    commit: 27de35ebd76368bfbd3389895e99842feb4284f9
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    ndk: 26.3.11579264
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 1.3.1
+    versionCode: 1030100
+    commit: fc930ff829e03e9c08691fa878fe238caa327dee
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    ndk: 26.3.11579264
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 1.4.1
+    versionCode: 1040100
+    commit: 56049da157765927d6f4a4a083302bd7516b78e0
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    ndk: 26.3.11579264
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 1.4.3
+    versionCode: 1040300
+    commit: 94803ee1140b51db004519cee6736ab712ab2c81
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    ndk: 26.3.11579264
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 1.4.4
+    versionCode: 1040400
+    commit: c97bc8904bfa026a98b465cbb1d73aadaafbd457
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    ndk: 26.3.11579264
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 1.4.6
+    versionCode: 1040600
+    commit: f9c491b6798b2bcf2ee96a7f6084a2d44f295cd1
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    ndk: 26.3.11579264
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+AllowedAPKSigningKeys: 738e4f5a7ca828e800c022ab44ab51728e66001e61d350e27ce7d9dfcf0f6b99
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags .*-fdroid
+CurrentVersion: 1.4.6
+CurrentVersionCode: 1040600

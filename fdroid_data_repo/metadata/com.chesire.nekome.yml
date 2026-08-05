@@ -1,0 +1,178 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on Kitsu site.
+Categories:
+  - Internet
+  - Reading
+License: Apache-2.0
+AuthorName: Chesire
+AuthorEmail: troy.rijkaard@gmail.com
+SourceCode: https://github.com/Chesire/Nekome
+IssueTracker: https://github.com/Chesire/Nekome/issues
+Changelog: https://github.com/Chesire/Nekome/releases
+
+RepoType: git
+Repo: https://github.com/Chesire/Nekome.git
+
+Builds:
+  - versionName: 1.4.2
+    versionCode: 21070719
+    commit: 1.4.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.1
+    versionCode: 21091122
+    commit: 1d3ae3811fdaa643940ea13bcd27597d4d4e279a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.5.2
+    versionCode: 21120616
+    commit: 3879def14ec8a2be0d857ef87787d6adc4627f3d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.5.3
+    versionCode: 22040915
+    commit: f0644eb4a37ddebbe01f80e46eb7f2f5265a09a2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 22041422
+    commit: 7f669f9d5da3869bf668aab9a33d108110b3695a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.0.1
+    versionCode: 23050122
+    commit: a8bc1bbfe62a8f547e71036c71ab51b0af993f88
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 2.0.2
+    versionCode: 23052116
+    commit: a7cab6404ed723e2bb7cd8cf0bde70d5a1d18ba1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 2.0.3
+    versionCode: 23062323
+    commit: bc64aafc62b415eb57f1e8764d9b27c28749769d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 2.0.4
+    versionCode: 23062419
+    commit: 63b463da72a09c34ec46fde8b3ad3f71f9a5e4c7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 2.0.5
+    versionCode: 23071421
+    commit: 451ca887d8d81b1aa9b435ef3a0c1fe73a6859da
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 2.1.1
+    versionCode: 23101020
+    commit: 8e07b449f9f423ea7497e2b8d498bb8966dc37a0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 2.2.0
+    versionCode: 24010710
+    commit: 4132ea4107fe6e3b341424a9742cc60adeb47cfd
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 2.2.1
+    versionCode: 24012009
+    commit: 19a91e5ff8deed8e6c7d833b2714e98a773f7f01
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 2.2.2
+    versionCode: 24012317
+    commit: 97bb23fdd38346a7368312057b44dcb0f7bc42d4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 2.2.3
+    versionCode: 24081508
+    commit: 191def4011f659972951d3766bfb4e5af4076ab1
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.2.3
+CurrentVersionCode: 24081508

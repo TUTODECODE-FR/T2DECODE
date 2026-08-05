@@ -1,0 +1,69 @@
+Categories:
+  - Internet
+License: GPL-3.0-only
+AuthorName: Timur
+AuthorEmail: timur@timur.mobi
+AuthorWebSite: https://timur.mobi/webcall/android/#webrtc-check
+SourceCode: https://github.com/mehrvarz/webrtc-check
+IssueTracker: https://github.com/mehrvarz/webrtc-check/issues
+
+AutoName: WebRTCCheck
+
+RepoType: git
+Repo: https://github.com/mehrvarz/webrtc-check.git
+
+Builds:
+  - versionName: 1.0.5
+    versionCode: 5
+    commit: cde69bf498d5f2c73609d910da760093eadfc74c
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.6
+    versionCode: 6
+    commit: d5e968c18a95fe5a2bb0a8bf0038ab9bbb8e8380
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.7
+    versionCode: 7
+    commit: 7fc08b760b18111d3b942a70f13cbd27bbbaf62d
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.9
+    versionCode: 9
+    commit: eec672281cffd8e086d5605a000054bd777d1a26
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.10
+    versionCode: 10
+    commit: 09030efa8f33a3a3d856b1a1d0f59787fe96a329
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.10
+CurrentVersionCode: 10

@@ -1,0 +1,44 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: App downloads data files from Github.
+Categories:
+  - Science & Education
+  - Writing
+License: GPL-3.0-or-later
+WebSite: https://github.com/NyxTrail/aksharam
+SourceCode: https://github.com/NyxTrail/aksharam
+IssueTracker: https://github.com/NyxTrail/aksharam/issues
+Changelog: https://github.com/NyxTrail/aksharam/tree/HEAD/metadata/en-US/changelogs
+
+AutoName: Aksharam
+
+RepoType: git
+Repo: https://github.com/NyxTrail/aksharam.git
+
+Builds:
+  - versionName: 0.9.5.1
+    versionCode: 6
+    commit: 0.9.5.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.1
+    versionCode: 8
+    commit: 1.0.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.1
+CurrentVersionCode: 8

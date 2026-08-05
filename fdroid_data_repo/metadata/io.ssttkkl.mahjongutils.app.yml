@@ -1,0 +1,82 @@
+Categories:
+  - Science & Education
+License: MIT
+AuthorName: ssttkkl
+AuthorEmail: huang.wen.long@hotmail.com
+SourceCode: https://github.com/ssttkkl/mahjong-utils-app
+IssueTracker: https://github.com/ssttkkl/mahjong-utils-app/issues
+Changelog: https://github.com/ssttkkl/mahjong-utils-app/releases
+
+RepoType: git
+Repo: https://github.com/ssttkkl/mahjong-utils-app.git
+Binaries: 
+  https://github.com/ssttkkl/mahjong-utils-app/releases/download/v%v/composeApp-release.apk
+
+Builds:
+  - versionName: 1.0.9
+    versionCode: 10009
+    commit: v1.0.9
+    subdir: composeApp
+    gradle:
+      - yes
+    rm:
+      - iosApp
+
+  - versionName: 1.0.11
+    versionCode: 10011
+    commit: v1.0.11
+    subdir: composeApp
+    submodules: true
+    init: cp ../env.properties.fdroid ../env.properties
+    gradle:
+      - yes
+    rm:
+      - iosApp
+    scandelete:
+      - external/Capturable/docs/capturable/package-list
+      - external/mahjong-utils/docs/mahjong-utils/package-list
+
+  - versionName: 1.0.13
+    versionCode: 10013
+    commit: 6ee959f790eb26eae40158484d577c92f4cd1cb0
+    subdir: composeApp
+    init: cp ../env.properties.fdroid ../env.properties
+    gradle:
+      - yes
+    rm:
+      - iosApp
+    scandelete:
+      - build-logic/convention/build
+
+  - versionName: 1.0.14
+    versionCode: 10014
+    commit: dfd56c1b0a9680414b2b6246d7f8168ce1d748ac
+    subdir: composeApp
+    init: cp ../env.properties.fdroid ../env.properties
+    gradle:
+      - yes
+    rm:
+      - iosApp
+    scandelete:
+      - build-logic/convention/build
+
+  - versionName: 1.1.2
+    versionCode: 10102
+    commit: 3905ee9027f5a84d5fc7ce63c3c873f14cc748fc
+    subdir: composeApp
+    init: cp ../env.properties.fdroid ../env.properties
+    gradle:
+      - yes
+    rm:
+      - iosApp
+    scandelete:
+      - build-logic/convention/build
+      - mahjong-detector/src/wasmJsMain
+
+AllowedAPKSigningKeys: 5c39f22ed1192933884426cc8cd14f3302f0d481573c056a66f0a5bec11e7186
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: composeApp/version.properties|versionCode=(\d+)|.|versionName=(.*)
+CurrentVersion: 1.1.2
+CurrentVersionCode: 10102

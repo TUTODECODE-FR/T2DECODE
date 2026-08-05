@@ -1,0 +1,113 @@
+Categories:
+  - Internet
+License: GPL-3.0-or-later
+AuthorName: Tobias Bielefeld
+AuthorEmail: tobias.bielefeld@gmail.com
+SourceCode: https://github.com/TobiasBielefeld/Simple-Search
+IssueTracker: https://github.com/TobiasBielefeld/Simple-Search/issues
+Translation: https://poeditor.com/join/project/89hq5htivP
+Changelog: https://github.com/TobiasBielefeld/Simple-Search/releases
+
+AutoName: Simple Search
+Description: |-
+  A very basic app designed for people who want to use a search widget with their
+  preferred search engine.
+
+  This app contains a search bar to type in a search query, which will be opened
+  in the Internet browser. A widget for the home screen will simply start the app.
+
+  You can change the search engine in the settings (Default is DuckDuckGo) or type
+  in a custom search string. The app also saves the search queries as a history.
+
+RepoType: git
+Repo: https://github.com/TobiasBielefeld/Simple-Search.git
+
+Builds:
+  - versionName: 1.1.4
+    versionCode: 9
+    commit: v1.1.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.2'
+    versionCode: 10
+    commit: v1.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.0'
+    versionCode: 11
+    commit: b4c69170e4a0d0ad2f5718fbfc84846a910aac83
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.1
+    versionCode: 13
+    commit: 1541df0659985abda34ad3b9a1f0544732d469d9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.2
+    versionCode: 14
+    commit: 2ac2a9eb8ba7ac618165410c248ea33db3891927
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.1'
+    versionCode: 15
+    commit: c57e5eaaad370c8ac7ef1526a796b507323c5c9c
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.2'
+    versionCode: 16
+    commit: 3ca899360b48880288aecefde3aa7db5f011181e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.3'
+    versionCode: 17
+    commit: ee95c30f3b1df756d8907f02702e8dfdb2909606
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.4'
+    versionCode: 18
+    commit: eca749699f270b88bccee7d6a86e08cda3b63c23
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.5'
+    versionCode: 19
+    commit: 9977a7a2f4650601639c66ce2ef05cb4c03a5adf
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.5.1
+    versionCode: 20
+    commit: 56caa46622cdefb26cbcb867f628fc5368f85ff5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.6.0
+    versionCode: 21
+    commit: 90ed21f5cb387c9102deb313536e4bade277835c
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.6.0
+CurrentVersionCode: 21

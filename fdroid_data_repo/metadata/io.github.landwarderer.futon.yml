@@ -1,0 +1,92 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Downloads Manga from non-libre sources.
+Categories:
+  - Ebook Reader
+  - Multimedia
+  - Reading
+License: GPL-3.0-only
+AuthorName: Futon App
+WebSite: https://futonapp.pages.dev
+SourceCode: https://github.com/AppFuton/Futon
+IssueTracker: https://github.com/AppFuton/Futon/issues
+Translation: https://hosted.weblate.org/engage/futon/
+
+AutoName: Futon
+
+RepoType: git
+Repo: https://github.com/AppFuton/Futon.git
+Binaries: https://github.com/AppFuton/Futon/releases/download/v%v/app-release.apk
+
+Builds:
+  - versionName: 9.6.9
+    versionCode: 90609
+    commit: 9fc2ade7a6868321d1799b63cfe4583976c2b9fe
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 9.6.10
+    versionCode: 90610
+    commit: 6eadb1c3250bbe3eedc17503522a63236ff28609
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 9.6.11
+    versionCode: 90611
+    commit: db98cfd31b22f9c08fa841089ef795a9a088f9fe
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 9.6.14
+    versionCode: 90614
+    commit: 2c5833df7783e0f0dcaeea743ee86f6aaaaf18ba
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e "/SENTRY_DSN/s|''|'$(echo 
+      aHR0cHM6Ly9mZDk5MzZkYjYwNzhlMzEzYTlmZTMwZWM1MDcwYmZjM0BvNDUxMDU4MzMxODE4MzkzNi5pbmdlc3QuZGUuc2VudHJ5LmlvLzQ1MTA1ODMzMjY1MDcwODg
+      | base64 --decode)'|" build.gradle
+
+  - versionName: '9.7'
+    versionCode: 90700
+    commit: a5ce8162251ef7d825190602b75cfcd756708a9f
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e "/SENTRY_DSN/s|''|'$(echo 
+      aHR0cHM6Ly9mZDk5MzZkYjYwNzhlMzEzYTlmZTMwZWM1MDcwYmZjM0BvNDUxMDU4MzMxODE4MzkzNi5pbmdlc3QuZGUuc2VudHJ5LmlvLzQ1MTA1ODMzMjY1MDcwODg
+      | base64 --decode)'|" build.gradle
+
+  - versionName: 9.7.1
+    versionCode: 90701
+    commit: a54bb79429dcf51a32677d1fb33ede294d5acb78
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e "/SENTRY_DSN/s|''|'$(echo 
+      aHR0cHM6Ly9mZDk5MzZkYjYwNzhlMzEzYTlmZTMwZWM1MDcwYmZjM0BvNDUxMDU4MzMxODE4MzkzNi5pbmdlc3QuZGUuc2VudHJ5LmlvLzQ1MTA1ODMzMjY1MDcwODg
+      | base64 --decode)'|" build.gradle
+    ndk: r28c
+
+  - versionName: '9.8'
+    versionCode: 90800
+    commit: 26b50184b4b5acbeacde173c95623b3b146584ff
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e "/SENTRY_DSN/s|''|'$(echo 
+      aHR0cHM6Ly9mZDk5MzZkYjYwNzhlMzEzYTlmZTMwZWM1MDcwYmZjM0BvNDUxMDU4MzMxODE4MzkzNi5pbmdlc3QuZGUuc2VudHJ5LmlvLzQ1MTA1ODMzMjY1MDcwODg
+      | base64 --decode)'|" build.gradle
+    ndk: r28c
+
+AllowedAPKSigningKeys: ef48b22ef2c54045531f6e7600c27ec3d03b71221e0b05ffb68e3357cf8e4d40
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: 
+  app/src/main/AndroidManifest.xml|android:versionCode="(\d+)"|.|android:versionName="(.+)"
+CurrentVersion: '9.8'
+CurrentVersionCode: 90800

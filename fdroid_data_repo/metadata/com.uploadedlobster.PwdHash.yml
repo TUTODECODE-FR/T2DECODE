@@ -1,0 +1,86 @@
+Categories:
+  - Internet
+License: BSD-3-Clause
+AuthorName: Philipp Wolfer
+AuthorEmail: ph.wolfer@gmail.com
+SourceCode: https://github.com/phw/Android-PwdHash
+IssueTracker: https://github.com/phw/Android-PwdHash/issues
+Changelog: https://github.com/phw/Android-PwdHash/blob/HEAD/ChangeLog
+
+AutoName: Password Hash
+Description: |-
+  Lightweight tool to generate website specific, theft-resistant passwords. Just
+  use the "Share page" option in the Android browser or open Password Hash
+  directly. Based upon and compatible with <a href="http://www.pwdhash.com">pwdhash.com</a>.
+
+RepoType: git
+Repo: https://github.com/phw/Android-PwdHash.git
+
+Builds:
+  - versionName: 1.3.0
+    versionCode: 9
+    commit: 1.3.0
+
+  - versionName: 1.3.1
+    versionCode: 10
+    commit: 1.3.1
+
+  - versionName: 1.3.2
+    versionCode: 11
+    commit: 1.3.2
+
+  - versionName: 1.3.3
+    versionCode: 13
+    commit: 1.3.3
+
+  - versionName: 1.3.5
+    versionCode: 15
+    commit: 1.3.5
+
+  - versionName: 1.3.8
+    versionCode: 18
+    commit: 1.3.8
+
+  - versionName: 1.3.8.1
+    versionCode: 19
+    commit: 1.3.8.1
+
+  - versionName: 1.3.9
+    versionCode: 20
+    commit: 1.3.9
+
+  - versionName: 1.3.10
+    versionCode: 21
+    commit: 1.3.10
+
+  - versionName: 1.3.11
+    versionCode: 22
+    commit: 1.3.11
+
+  - versionName: 1.3.12
+    versionCode: 23
+    commit: 1.3.12
+
+  - versionName: 1.3.13
+    versionCode: 24
+    commit: 1.3.13
+
+  - versionName: 1.3.14
+    versionCode: 25
+    commit: 1.3.14
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.15
+    versionCode: 26
+    commit: 1.3.15
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.3.15
+CurrentVersionCode: 26

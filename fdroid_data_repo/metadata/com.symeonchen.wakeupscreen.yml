@@ -1,0 +1,43 @@
+Categories:
+  - Notification
+  - System
+License: GPL-3.0-only
+AuthorName: riko
+AuthorEmail: symeonchen@gmail.com
+WebSite: https://riko2chen.github.io/WakeUpScreen/
+SourceCode: https://github.com/riko2chen/WakeUpScreen
+IssueTracker: https://github.com/riko2chen/WakeUpScreen/issues
+Changelog: https://github.com/riko2chen/WakeUpScreen/blob/HEAD/docs/CHANGELOG.md
+
+AutoName: WakeUpScreen
+
+RepoType: git
+Repo: https://github.com/riko2chen/WakeUpScreen.git
+
+Builds:
+  - versionName: 3.0.3
+    versionCode: 30300
+    commit: 456b21655618b0baffc27328e01199aa2c2f9a28
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 3.0.4
+    versionCode: 30400
+    commit: e0e9df488fb8e2c0d36ba44d47dc83628edc95ca
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 3.0.6
+    versionCode: 30600
+    commit: f099355ec3dc8e5e6cb292147bab6467f2f7bf11
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: gradle.properties|AppVersionCode=(\d+)|.|AppVersionName=([\d.]+)
+CurrentVersion: 3.0.6
+CurrentVersionCode: 30600

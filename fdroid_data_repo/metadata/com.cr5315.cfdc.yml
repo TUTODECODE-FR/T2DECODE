@@ -1,0 +1,32 @@
+Categories:
+  - Clock
+License: GPL-3.0-only
+WebSite: http://www.cr5315.com
+SourceCode: https://github.com/cr5315/countdown-for-dashclock
+IssueTracker: https://github.com/cr5315/countdown-for-dashclock/issues
+
+AutoName: Countdown for DashClock
+Description: |-
+  Extension for https://f-droid.org/packages/net.nurik.roman.dashclock that displays the time remaining
+  until an event.
+
+RepoType: git
+Repo: https://github.com/cr5315/countdown-for-dashclock.git
+
+Builds:
+  - versionName: '2.1'
+    versionCode: 27
+    commit: 02ee9fa9f42228ecd34482de07b55de807e1cb46
+    subdir: app
+    gradle:
+      - yes
+
+MaintainerNotes: |-
+  Upstream deleted repo and pushed a new one by the same name which only
+  contains 2.1+.
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '2.1'
+CurrentVersionCode: 27

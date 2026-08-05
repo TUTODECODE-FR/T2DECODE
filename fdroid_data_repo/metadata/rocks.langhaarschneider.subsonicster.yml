@@ -1,0 +1,42 @@
+Categories:
+  - Card Game
+  - Multimedia
+  - Online Media Player
+License: MIT
+AuthorName: langhaarschneider
+AuthorEmail: freak@jonnyfreak.de
+AuthorWebSite: https://langhaarschneider.net
+SourceCode: https://codeberg.org/langhaarschneider/SubSonicSter
+IssueTracker: https://codeberg.org/langhaarschneider/SubSonicSter/issues
+
+AutoName: SubSonicSter
+
+RepoType: git
+Repo: https://codeberg.org/langhaarschneider/SubSonicSter.git
+
+Builds:
+  - versionName: 2.1.7
+    versionCode: 10
+    commit: 6120ee87b51c778684cf0d965fadeb11b412413e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.0
+    versionCode: 11
+    commit: 12de19e4ece384a42f1ca48e5ad55fdc5b13696e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.1
+    versionCode: 12
+    commit: f2a4fe70b8032dea3f1206955277353b338b9733
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.2.1
+CurrentVersionCode: 12

@@ -1,0 +1,184 @@
+Categories:
+  - Connectivity
+License: MPL-2.0
+AuthorName: buttercookie42
+SourceCode: https://github.com/buttercookie42/SimbaDroid
+IssueTracker: https://github.com/buttercookie42/SimbaDroid/issues
+Changelog: https://github.com/buttercookie42/SimbaDroid/releases
+
+AutoName: SimbaDroid
+
+RepoType: git
+Repo: https://github.com/buttercookie42/SimbaDroid.git
+Binaries: 
+  https://github.com/buttercookie42/SimbaDroid/releases/download/%v/de.buttercookie.simbadroid-%v.apk
+
+Builds:
+  - versionName: '0.4'
+    versionCode: 5
+    commit: 39861fa9f2712235ec43b3b7c7b43560636e17ee
+    subdir: app
+    output: build/outputs/apk/release/de.buttercookie.simbadroid-*-release-unsigned.apk
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild:
+      - sed -i -e '/release {/avcsInfo.include = false' build.gradle.kts
+      - gradle clean
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/buttercookie42/SimbaDroid/releases/download/$$VERSION$$/de.buttercookie.simbadroid-$$VERSION$$.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/de.buttercookie.simbadroid-*-release-unsigned.apk;
+        export localhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1);
+        [[ $localhash == $upstreamhash ]] && break ; popd; rm -fr local; done
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'META-INF/services/*'
+
+  - versionName: '0.5'
+    versionCode: 6
+    commit: 8516fa93bb3f8d02d1288f5b0c2079df62881386
+    subdir: app
+    output: build/outputs/apk/release/de.buttercookie.simbadroid-*-release-unsigned.apk
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild:
+      - sed -i -e '/release {/avcsInfo.include = false' build.gradle.kts
+      - gradle clean
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/buttercookie42/SimbaDroid/releases/download/$$VERSION$$/de.buttercookie.simbadroid-$$VERSION$$.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/de.buttercookie.simbadroid-*-release-unsigned.apk;
+        export localhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1);
+        [[ $localhash == $upstreamhash ]] && break ; popd; rm -fr local; done
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'META-INF/services/*'
+
+  - versionName: '0.6'
+    versionCode: 8
+    commit: 732780341f0fda4cf2bc9009df6d038a7370702b
+    subdir: app
+    output: build/outputs/apk/release/de.buttercookie.simbadroid-*-release-unsigned.apk
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild:
+      - sed -i -e '/release {/avcsInfo.include = false' build.gradle.kts
+      - gradle clean
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/buttercookie42/SimbaDroid/releases/download/$$VERSION$$/de.buttercookie.simbadroid-$$VERSION$$.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/de.buttercookie.simbadroid-*-release-unsigned.apk;
+        export localhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1);
+        [[ $localhash == $upstreamhash ]] && break ; popd; rm -fr local; done
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'META-INF/services/*'
+
+  - versionName: '0.7'
+    versionCode: 91
+    commit: a170d7831ca77db0aea184996a6c7253d6e22a7a
+    subdir: app
+    gradle:
+      - oldApi
+    binary: 
+      https://github.com/buttercookie42/SimbaDroid/releases/download/%v/de.buttercookie.simbadroid-%v-oldApi.apk
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - curl -Lo upstream.apk 
+        https://github.com/buttercookie42/SimbaDroid/releases/download/$$VERSION$$/de.buttercookie.simbadroid-$$VERSION$$-oldApi.apk
+      - unzip -q upstream.apk -d apk
+      - export hash=$(sha256sum apk/assets/dexopt/baseline.prof)
+      - rm -rf apk upstream.apk
+      - for i in {1..10}; do unzip -q $$OUT$$ -d apk; sha256sum -c - <<< $hash &&
+        break; sha256sum apk/assets/dexopt/baseline.prof; rm -fr apk; gradle clean
+        assembleOldApiRelease; done
+      - $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+        'META-INF/services/*'
+
+  - versionName: '0.7'
+    versionCode: 92
+    commit: a170d7831ca77db0aea184996a6c7253d6e22a7a
+    subdir: app
+    gradle:
+      - default
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - curl -Lo upstream.apk 
+        https://github.com/buttercookie42/SimbaDroid/releases/download/$$VERSION$$/de.buttercookie.simbadroid-$$VERSION$$.apk
+      - unzip -q upstream.apk -d apk
+      - export hash=$(sha256sum apk/assets/dexopt/baseline.prof)
+      - rm -rf apk upstream.apk
+      - for i in {1..10}; do unzip -q $$OUT$$ -d apk; sha256sum -c - <<< $hash &&
+        break; sha256sum apk/assets/dexopt/baseline.prof; rm -fr apk; gradle clean
+        assembleDefaultRelease; done
+      - $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+        'META-INF/services/*'
+
+  - versionName: '0.8'
+    versionCode: 101
+    commit: f6d54fd5622e782573dc615ecfe604c48982b412
+    subdir: app
+    gradle:
+      - oldApi
+    binary: 
+      https://github.com/buttercookie42/SimbaDroid/releases/download/%v/de.buttercookie.simbadroid-%v-oldApi.apk
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - curl -Lo upstream.apk 
+        https://github.com/buttercookie42/SimbaDroid/releases/download/$$VERSION$$/de.buttercookie.simbadroid-$$VERSION$$-oldApi.apk
+      - unzip -q upstream.apk -d apk
+      - export hash=$(sha256sum apk/assets/dexopt/baseline.prof)
+      - rm -rf apk upstream.apk
+      - for i in {1..10}; do unzip -q $$OUT$$ -d apk; sha256sum -c - <<< $hash &&
+        break; sha256sum apk/assets/dexopt/baseline.prof; rm -fr apk; gradle clean
+        assembleOldApiRelease; done
+      - $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+        'META-INF/services/*'
+
+  - versionName: '0.8'
+    versionCode: 102
+    commit: f6d54fd5622e782573dc615ecfe604c48982b412
+    subdir: app
+    gradle:
+      - default
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - curl -Lo upstream.apk 
+        https://github.com/buttercookie42/SimbaDroid/releases/download/$$VERSION$$/de.buttercookie.simbadroid-$$VERSION$$.apk
+      - unzip -q upstream.apk -d apk
+      - export hash=$(sha256sum apk/assets/dexopt/baseline.prof)
+      - rm -rf apk upstream.apk
+      - for i in {1..10}; do unzip -q $$OUT$$ -d apk; sha256sum -c - <<< $hash &&
+        break; sha256sum apk/assets/dexopt/baseline.prof; rm -fr apk; gradle clean
+        assembleDefaultRelease; done
+      - $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+        'META-INF/services/*'
+
+AllowedAPKSigningKeys: 7baab2feb8ac7fe10fe5414e4d28aa901a525981b1201e2d583df5bb6d9b1b13
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+VercodeOperation:
+  - '%c * 10 + 1'
+  - '%c * 10 + 2'
+CurrentVersion: '0.8'
+CurrentVersionCode: 102

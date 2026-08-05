@@ -1,0 +1,45 @@
+Categories:
+  - Connectivity
+  - Party Game
+License: AGPL-3.0-only
+AuthorName: Sergey Zubarev
+AuthorEmail: info@js-labs.org
+SourceCode: https://github.com/js-labs/ShellsMP
+IssueTracker: https://github.com/js-labs/ShellsMP/issues
+Changelog: https://github.com/js-labs/ShellsMP/blob/HEAD/CHANGELOG.md
+
+AutoName: ShellsMP
+Description: |-
+  This program gives an opportunity to play a Shells game with your friends. Only
+  multiplayer mode is supported, so you will need 2 devices: one for thimblerigger
+  and another one for the victim. Devices should be connected to the same WiFi
+  network segment.
+
+  If you are thimblerigger - start the game, wait for the victim, put ball and few
+  cups then move cups.
+
+  If you are victim - connect the game, watch and guess.
+
+  Source code gives an example how following techonologies can be used:
+
+  * Android NSD for device discovery
+  * OpenGL text rendering
+  * OpenGL ball rendering
+  * OpenGL shadows rendering
+  * JS-Collider: Java network framework <a href="https://github.com/js-labs/js-collider">JS-Collider</a>
+
+RepoType: git
+Repo: https://github.com/js-labs/ShellsMP.git
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: a744db06b1ffbaedf40292714bb85c6caabc9a01
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.0'
+CurrentVersionCode: 1

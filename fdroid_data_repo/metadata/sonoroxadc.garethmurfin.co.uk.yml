@@ -1,0 +1,29 @@
+Categories:
+  - Multimedia
+License: GPL-2.0-or-later
+AuthorName: Gareth Murfin
+AuthorEmail: gareth.murfin@gmail.com
+AuthorWebSite: https://freelanceandroid.wordpress.com/
+SourceCode: https://github.com/amiga/sonorox
+IssueTracker: https://github.com/amiga/sonorox/issues
+
+AutoName: Sonorox
+Description: |-
+  It was inspired by the Yamaha Tenori-on and was a finalist in the Android
+  Developer Challenge 2 in 2009. Sonorox allows to compose short loops, and to
+  upload them to the Sonorox community website. You can also download other
+  peoples' tunes and vote for them. The volume is determined by “Media Volume”.
+
+Builds:
+  - versionName: 1.0.1
+    versionCode: 4
+    commit: 56eb0be122e
+    prebuild: sed -i -e 's/^import java.awt.*;/\/\/import java.awt.*;/' src/sonoroxadc/garethmurfin/co/uk/Water.java
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.0.1
+CurrentVersionCode: 4
+
+NoSourceSince: 1.0.1

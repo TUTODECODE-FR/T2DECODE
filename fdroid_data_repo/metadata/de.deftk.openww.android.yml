@@ -1,0 +1,72 @@
+AntiFeatures:
+  - NonFreeNet
+Categories:
+  - Science & Education
+License: GPL-3.0-only
+AuthorName: deftkHD
+AuthorEmail: deftk@protonmail.com
+SourceCode: https://github.com/deftkHD/OpenWebWeaver-Android
+IssueTracker: https://github.com/deftkHD/OpenWebWeaver-Android/issues
+Changelog: https://github.com/deftkHD/OpenWebWeaver-Android/releases
+
+AutoName: OpenWebWeaver
+
+RepoType: git
+Repo: https://github.com/deftkHD/OpenWebWeaver-Android.git
+
+Builds:
+  - versionName: 0.3.0
+    versionCode: 3
+    commit: 0.3.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.4.1
+    versionCode: 5
+    commit: 8493cd986e0ad38e5fcdc815b61e3c8cad310982
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.4.2
+    versionCode: 6
+    commit: 57243bb82dd01a72db7e4b984d020d5292a36aa3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.4.3
+    versionCode: 7
+    commit: e3a9f1db0a421ccd49267427013e4a90dd7af73b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.4.4
+    versionCode: 8
+    commit: 15737eaaf921024db59d33182462897c2d10a398
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.4.4
+CurrentVersionCode: 8

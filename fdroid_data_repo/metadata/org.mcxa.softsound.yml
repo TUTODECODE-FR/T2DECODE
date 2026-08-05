@@ -1,0 +1,29 @@
+Categories:
+  - Multimedia
+License: Apache-2.0
+AuthorName: Zoe
+AuthorWebSite: https://zoenb.github.io/
+SourceCode: https://codeberg.org/boxedtoast/Soft-Sound
+IssueTracker: https://codeberg.org/boxedtoast/Soft-Sound/issues
+
+AutoName: Soft Sound
+Description: |-
+  Play relaxing sounds to help you sleep, concentrate or stay calm.
+  The sound files used are from soundbible.com and are licensed under Creative Commons
+  or public domain. Sounds recorded by Tim, Mike Koenig, Mark DiAngelo, Lisa Redfern
+
+RepoType: git
+Repo: https://codeberg.org/boxedtoast/Soft-Sound
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: '1.0'
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.0'
+CurrentVersionCode: 1

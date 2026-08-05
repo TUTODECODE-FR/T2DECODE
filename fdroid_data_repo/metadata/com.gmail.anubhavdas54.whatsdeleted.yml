@@ -1,0 +1,61 @@
+AntiFeatures:
+  NonFreeDep:
+    en-US: Requires WhatsApp to be installed on your device.
+Categories:
+  - Internet
+License: GPL-3.0-only
+AuthorName: 4nubhav
+AuthorEmail: anubhavdas54@gmail.com
+SourceCode: https://github.com/4nubhav/WhatsDeleted
+IssueTracker: https://github.com/4nubhav/WhatsDeleted/issues
+Bitcoin: bc1qs50wst8x53ud5lr80wukhjcy6l7zpxf5mz5rtm
+Litecoin: LMJdc2F1E2aKXNyLidnjWjiWFR9gvczXsX
+
+AutoName: WhatsDeleted
+
+RepoType: git
+Repo: https://github.com/4nubhav/WhatsDeleted
+
+Builds:
+  - versionName: '0.1'
+    versionCode: 1
+    commit: v0.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '0.2'
+    versionCode: 2
+    commit: v0.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '0.3'
+    versionCode: 3
+    commit: v0.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '0.4'
+    versionCode: 4
+    commit: v0.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.4.1
+    versionCode: 5
+    commit: v0.4.1
+    subdir: app
+    gradle:
+      - yes
+
+MaintainerNotes: NonFreeDep as it's a helper for WA which must be installed on the
+  same device
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.4.1
+CurrentVersionCode: 5

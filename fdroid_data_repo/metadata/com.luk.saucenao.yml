@@ -1,0 +1,252 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: App depends on the saucenao.com search back-end.
+Categories:
+  - Internet
+  - Multimedia
+License: Apache-2.0
+AuthorName: luk1337
+AuthorEmail: priv.luk@gmail.com
+AuthorWebSite: https://kremowka.xyz
+SourceCode: https://github.com/LuK1337/SauceNAO
+IssueTracker: https://github.com/luk1337/SauceNAO/issues
+Translation: https://crowdin.com/project/saucenao-android
+
+AutoName: SauceNAO
+
+RepoType: git
+Repo: https://github.com/LuK1337/SauceNAO
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: v1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.1'
+    versionCode: 2
+    commit: v1.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.2'
+    versionCode: 3
+    commit: v1.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.3'
+    versionCode: 4
+    commit: v1.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.4'
+    versionCode: 5
+    commit: v1.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.5'
+    versionCode: 6
+    commit: v1.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.6'
+    versionCode: 7
+    commit: v1.6
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/6.8-rc-1/6.7/' ../gradle/wrapper/gradle-wrapper.properties
+
+  - versionName: '1.7'
+    versionCode: 8
+    commit: v1.7
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/6.8-rc-1/6.7/' ../gradle/wrapper/gradle-wrapper.properties
+
+  - versionName: '1.8'
+    versionCode: 9
+    commit: afd6df3397c9665a97a36460db6e48289015a4b2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - github
+
+  - versionName: '1.9'
+    versionCode: 11
+    commit: 9be68c12e6a028c4c73e6358a7ad2b52810688de
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - github
+
+  - versionName: '1.10'
+    versionCode: 12
+    commit: c83fc3389b2826f3d11a5e463877fd74718b19c1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - github
+
+  - versionName: '1.11'
+    versionCode: 13
+    commit: e61e778fe12d3bb6e271000665b1976571e16d89
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - github
+
+  - versionName: '1.12'
+    versionCode: 14
+    commit: d05d1feb84ef8ee4a61caca8f209aabb58bfb1ed
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - github
+
+  - versionName: '1.13'
+    versionCode: 15
+    commit: 93891f229d8c585d4bb62ef63372f34f8e049691
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - github
+
+  - versionName: '1.14'
+    versionCode: 16
+    commit: dadb655d03d5e1daf63d7eb577926265d04646fa
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - github
+
+  - versionName: '1.15'
+    versionCode: 17
+    commit: d1b3d4ff9c9202d0062370cb8a83faf804051f5f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - github
+
+  - versionName: '1.16'
+    versionCode: 18
+    commit: 15ec89cb8301b1b59ce318c90c8188f4d61d12b4
+    subdir: app
+    gradle:
+      - github
+
+  - versionName: '1.17'
+    versionCode: 19
+    commit: 0655e2bdf0ef773043974b81b357c98f40ccd9b7
+    subdir: app
+    gradle:
+      - github
+
+  - versionName: '1.18'
+    versionCode: 20
+    commit: c0a7b9b7d5bd222cbe52cb036c3ae4e857b48014
+    subdir: app
+    gradle:
+      - github
+
+  - versionName: '1.20'
+    versionCode: 22
+    commit: 22adc2c40b65f2b4670f50b011fa02b1453691bb
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - github
+
+  - versionName: '1.21'
+    versionCode: 23
+    commit: 74353da65a2320d0bd9b5558b3356336583a7a64
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - github
+
+  - versionName: '1.22'
+    versionCode: 24
+    commit: 63684768ad9b2de865513a19cca42a0d8957a16b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - github
+
+  - versionName: '1.23'
+    versionCode: 25
+    commit: 989e13a773098ce3d10a97b90f9f5567bdd654bc
+    subdir: app
+    gradle:
+      - github
+
+  - versionName: '1.24'
+    versionCode: 26
+    commit: c66067e4fa574ac0bfeb31d2d12b860996c8a2cc
+    subdir: app
+    gradle:
+      - github
+
+  - versionName: '1.25'
+    versionCode: 27
+    commit: 7baa95de173d2da4693423449d160161e43a2d33
+    subdir: app
+    gradle:
+      - github
+
+  - versionName: '1.26'
+    versionCode: 28
+    commit: b9a0a12ed90ee67964caf524c58ab4a3f7338982
+    subdir: app
+    gradle:
+      - github
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.26'
+CurrentVersionCode: 28

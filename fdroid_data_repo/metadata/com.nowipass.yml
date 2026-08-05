@@ -1,0 +1,70 @@
+Categories:
+  - Password & 2FA
+  - Security
+License: MIT
+SourceCode: https://github.com/cuadratico/NowiPass
+IssueTracker: https://github.com/cuadratico/NowiPass/issues
+
+AutoName: NowiPass
+
+RepoType: git
+Repo: https://github.com/cuadratico/NowiPass.git
+Binaries: https://github.com/cuadratico/NowiPass/releases/download/V%v/app-release.apk
+
+Builds:
+  - versionName: 0.3.10
+    versionCode: 14
+    commit: 3da5f9895b29c1de4ba6d8d3f85b37157e41a3e6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.3.11
+    versionCode: 15
+    commit: ae643a588317fc12230d0e2c3a7f7b5c4c1bc06f
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.3.12
+    versionCode: 16
+    commit: 229dc6f760479455882ab82a6c733b5e4d4a3266
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.3.13
+    versionCode: 17
+    commit: 61d5af71c4cb50d1dbd82d3acfed0c734e4378de
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.4.13
+    versionCode: 18
+    commit: 8a300145f3535e6ae17ea589629b1b0a4a8af63f
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.4.14
+    versionCode: 19
+    commit: 0fe1ae5f7386b9698c9ad4b88f3a6c4b0b004312
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.4.15
+    versionCode: 20
+    commit: 1b109ee8385049f17b4d13b70d4ed0ba40a83794
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: d7dd17acdb3a2d8b57d370475fe02e7901faaf3e4d24c19ba214c0f9f068f77b
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 0.4.15
+CurrentVersionCode: 20

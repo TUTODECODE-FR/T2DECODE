@@ -1,0 +1,303 @@
+Categories:
+  - System
+License: GPL-3.0-only
+AuthorName: lz差不多是条咸鱼了
+AuthorEmail: ohayou@lz233.ac.cn
+AuthorWebSite: https://lz233.ac.cn
+WebSite: https://tarnhelm.project.ac.cn
+SourceCode: https://github.com/lz233/Tarnhelm
+IssueTracker: https://github.com/lz233/Tarnhelm/issues
+Changelog: https://github.com/lz233/Tarnhelm/releases
+
+AutoName: Tarnhelm
+
+RepoType: git
+Repo: https://github.com/lz233/Tarnhelm.git
+
+Builds:
+  - versionName: '1.3'
+    versionCode: 20220829
+    commit: b76bd19c642589ec1b59ff6f1799524740b9dfe9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.3.2
+    versionCode: 20220929
+    commit: ad58a2cafad8a4cf88a1233e34f133ecc30bf58a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.4.0
+    versionCode: 20221218
+    commit: 4dbb05941c5b89d802982af49dc008f652d461ec
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.4.1
+    versionCode: 20221227
+    commit: 1d37f5c8ce8ca95ed15206bc4167b138f069b57f
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.4.2
+    versionCode: 20230114
+    commit: 0834d964a3970ab9bc06bfb9f7f64fbf24cc9bff
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.5.0
+    versionCode: 20230425
+    commit: 195e26b38407522ade61c3f07df960f71a0a907f
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.5.2
+    versionCode: 20230528
+    commit: 5ccf6e37b809a97ff984f74e8b345328dbfff88b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.5.4
+    versionCode: 20230925
+    commit: 40a765b39cc6fdd02ee57db796907db17aac6d26
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.5.5
+    versionCode: 20231015
+    commit: 304fd6673d72ff05609abe31523c9bcff295e049
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.6.0
+    versionCode: 20231120
+    commit: a5bbc9e0e4c030364d0494cf65ea7759a8ac36aa
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.6.0
+    versionCode: 20240111
+    commit: 71382a1cfe0719220117da44c41d213ecae83ea8
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.6.2
+    versionCode: 20240424
+    commit: a399ff51eb65da0240c5011a2656082e37db798d
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.6.5
+    versionCode: 20240628
+    commit: a1eba9fef2bfa5d8d98bb1f0351a83348744224c
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' build.gradle
+
+  - versionName: 1.6.6
+    versionCode: 20241118
+    commit: 14df8eb196f09da3bfb98f442da5cb7deca18659
+    subdir: app
+    sudo:
+      - echo "deb http://deb.debian.org/debian sid main" > /etc/apt/sources.list.d/sid.list
+      - apt-get update
+      - apt-get install -y -t sid openjdk-8-jdk-headless
+    gradle:
+      - fdroid
+    srclibs:
+      - XposedBridge@v82
+    prebuild:
+      - sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' -e "s|'de.robv.android.xposed:api:82'|files('libs/api.jar')|"
+        -e '/fileTree/d' build.gradle
+      - sed -i -e 's/api.xposed.info/maven.google.com/' ../settings.gradle
+      - cd $$XposedBridge$$
+      - sed -i -e 's/1.5.0/3.3.3/' -e '/repositories {/a google()' -e 's/jcenter/mavenCentral/g'
+        build.gradle
+      - sed -i -e 's/2.10/4.10.1/' gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e '/sdkSources/d' -e 's/hiddenapi.assembleRelease/":hiddenapistubs:assembleRelease"/'
+        app/build.gradle
+    build:
+      - pushd $$XposedBridge$$
+      - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 gradle :app:generateAPI
+      - popd
+      - mkdir -p libs
+      - mv $$XposedBridge$$/app/build/api/api.jar libs
+
+  - versionName: 1.7.0
+    versionCode: 20250129
+    commit: df14322b0c948fa8a3a532b39f5652277ead3415
+    subdir: app
+    sudo:
+      - echo "deb http://deb.debian.org/debian sid main" > /etc/apt/sources.list.d/sid.list
+      - apt-get update
+      - apt-get install -y -t sid openjdk-8-jdk-headless
+    gradle:
+      - fdroid
+    srclibs:
+      - XposedBridge@v82
+    prebuild:
+      - sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' -e "s|'de.robv.android.xposed:api:82'|files('libs/api.jar')|"
+        -e '/fileTree/d' build.gradle
+      - sed -i -e 's/api.xposed.info/maven.google.com/' ../settings.gradle
+      - cd $$XposedBridge$$
+      - sed -i -e 's/1.5.0/3.3.3/' -e '/repositories {/a google()' -e 's/jcenter/mavenCentral/g'
+        build.gradle
+      - sed -i -e 's/2.10/4.10.1/' gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e '/sdkSources/d' -e 's/hiddenapi.assembleRelease/":hiddenapistubs:assembleRelease"/'
+        app/build.gradle
+    build:
+      - pushd $$XposedBridge$$
+      - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 gradle :app:generateAPI
+      - popd
+      - mkdir -p libs
+      - mv $$XposedBridge$$/app/build/api/api.jar libs
+
+  - versionName: 1.7.1
+    versionCode: 20250212
+    commit: 5f08ef7c251a60f59412acb96a2bcb50d64f0c28
+    subdir: app
+    sudo:
+      - echo "deb http://deb.debian.org/debian sid main" > /etc/apt/sources.list.d/sid.list
+      - apt-get update
+      - apt-get install -y -t sid openjdk-8-jdk-headless
+    gradle:
+      - fdroid
+    srclibs:
+      - XposedBridge@v82
+    prebuild:
+      - sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' -e "s|'de.robv.android.xposed:api:82'|files('libs/api.jar')|"
+        -e '/fileTree/d' build.gradle
+      - sed -i -e 's/api.xposed.info/maven.google.com/' ../settings.gradle
+      - cd $$XposedBridge$$
+      - sed -i -e 's/1.5.0/3.3.3/' -e '/repositories {/a google()' -e 's/jcenter/mavenCentral/g'
+        build.gradle
+      - sed -i -e 's/2.10/4.10.1/' gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e '/sdkSources/d' -e 's/hiddenapi.assembleRelease/":hiddenapistubs:assembleRelease"/'
+        app/build.gradle
+    build:
+      - pushd $$XposedBridge$$
+      - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 gradle :app:generateAPI
+      - popd
+      - mkdir -p libs
+      - mv $$XposedBridge$$/app/build/api/api.jar libs
+
+  - versionName: 1.8.0
+    versionCode: 20250221
+    commit: f3b123e45dd7f4bc6cf10f98381f4b69da6567d7
+    subdir: app
+    sudo:
+      - echo "deb http://deb.debian.org/debian sid main" > /etc/apt/sources.list.d/sid.list
+      - apt-get update
+      - apt-get install -y -t sid openjdk-8-jdk-headless
+    gradle:
+      - fdroid
+    srclibs:
+      - XposedBridge@v82
+    prebuild:
+      - sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' -e "s|'de.robv.android.xposed:api:82'|files('libs/api.jar')|"
+        -e '/fileTree/d' build.gradle
+      - sed -i -e 's/api.xposed.info/maven.google.com/' ../settings.gradle
+      - cd $$XposedBridge$$
+      - sed -i -e 's/1.5.0/3.3.3/' -e '/repositories {/a google()' -e 's/jcenter/mavenCentral/g'
+        build.gradle
+      - sed -i -e 's/2.10/4.10.1/' gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e '/sdkSources/d' -e 's/hiddenapi.assembleRelease/":hiddenapistubs:assembleRelease"/'
+        app/build.gradle
+    build:
+      - pushd $$XposedBridge$$
+      - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 gradle :app:generateAPI
+      - popd
+      - mkdir -p libs
+      - mv $$XposedBridge$$/app/build/api/api.jar libs
+
+  - versionName: 1.8.2
+    versionCode: 20250630
+    commit: bbe8c4e1ea053e1f3111aa54070ddc0e6fdffd4e
+    subdir: app
+    sudo:
+      - echo "deb http://deb.debian.org/debian sid main" > /etc/apt/sources.list.d/sid.list
+      - apt-get update
+      - apt-get install -y -t sid openjdk-8-jdk-headless
+    gradle:
+      - fdroid
+    srclibs:
+      - XposedBridge@v82
+    prebuild:
+      - sed -i -e '/versionCode/s/date.*/$$VERCODE$$/' -e "s|'de.robv.android.xposed:api:82'|files('libs/api.jar')|"
+        -e '/fileTree/d' build.gradle
+      - sed -i -e 's/api.xposed.info/maven.google.com/' ../settings.gradle
+      - cd $$XposedBridge$$
+      - sed -i -e 's/1.5.0/3.3.3/' -e '/repositories {/a google()' -e 's/jcenter/mavenCentral/g'
+        build.gradle
+      - sed -i -e 's/2.10/4.10.1/' gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e '/sdkSources/d' -e 's/hiddenapi.assembleRelease/":hiddenapistubs:assembleRelease"/'
+        app/build.gradle
+    scanignore:
+      - app/src/main/java/cn/ac/lz233/tarnhelm/extension/MemoryDexLoader.java
+    build:
+      - pushd $$XposedBridge$$
+      - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 gradle :app:generateAPI
+      - popd
+      - mkdir -p libs
+      - mv $$XposedBridge$$/app/build/api/api.jar libs
+
+MaintainerNotes: DexClassLoader in MemoryDexLoader.java is used for extension.
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: '||app/build.gradle|versionName\s"([\d.]+)"'
+CurrentVersion: 1.8.2
+CurrentVersionCode: 20250630

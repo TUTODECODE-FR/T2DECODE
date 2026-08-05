@@ -1,0 +1,463 @@
+Categories:
+  - Security
+License: Apache-2.0
+AuthorName: Alexander Yaburov
+AuthorEmail: dev@impa.me
+SourceCode: https://github.com/impalex/knockonports
+IssueTracker: https://github.com/impalex/knockonports/issues
+
+AutoName: Knock on Ports
+
+RepoType: git
+Repo: https://github.com/impalex/knockonports
+
+Builds:
+  - versionName: 1.0.3
+    versionCode: 6
+    commit: 1.0.3
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+
+  - versionName: 1.0.4
+    versionCode: 7
+    commit: 1.0.4
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+
+  - versionName: 1.0.5
+    versionCode: 8
+    commit: 1.0.5
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+
+  - versionName: 1.0.6
+    versionCode: 9
+    commit: 1.0.6
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+
+  - versionName: 1.0.7
+    versionCode: 10
+    commit: 1.0.7
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+
+  - versionName: 1.0.8
+    versionCode: 11
+    commit: 1.0.8
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+
+  - versionName: 1.0.9
+    versionCode: 12
+    commit: 1.0.9
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+
+  - versionName: 1.0.10
+    versionCode: 14
+    commit: 1.0.10
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+
+  - versionName: '1.1'
+    versionCode: 17
+    commit: '1.1'
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: r19
+
+  - versionName: 1.1.1
+    versionCode: 18
+    commit: 1.1.1
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: r19
+
+  - versionName: 1.1.2
+    versionCode: 19
+    commit: 1.1.2
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: r19c
+
+  - versionName: 1.1.2a
+    versionCode: 20
+    commit: 1.1.2a
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: r19c
+
+  - versionName: 1.1.3
+    versionCode: 23
+    commit: 1.1.3
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: r19c
+
+  - versionName: 1.1.4
+    versionCode: 24
+    commit: 1.1.4
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: r19c
+
+  - versionName: 1.1.5
+    versionCode: 25
+    commit: 1.1.5
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: r19c
+
+  - versionName: 1.1.5a
+    versionCode: 26
+    commit: 1.1.5a
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: r19c
+
+  - versionName: 1.1.6
+    versionCode: 44
+    commit: 1.1.6
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: r19c
+
+  - versionName: 1.1.6a
+    versionCode: 45
+    commit: 1.1.6a
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: r19c
+
+  - versionName: 1.1.6b
+    versionCode: 46
+    commit: 1.1.6b
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: r19c
+
+  - versionName: 2.0.3
+    versionCode: 203
+    commit: 6ddf4c5005437ec8528ff2402449f2fe8bb760a4
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: 27.0.12077973
+
+  - versionName: 2.0.6
+    versionCode: 206
+    commit: 17694da3074610c7c6299ddb87507dd90a33f76a
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: 27.0.12077973
+
+  - versionName: 2.0.7
+    versionCode: 211
+    commit: fb2fb597fb44bca6d7110f54e39354df3adf2cef
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    ndk: 28.1.13356709
+
+  - versionName: 2.0.8
+    versionCode: 216
+    commit: f7687ba2782471ff8e53efa1a8f84ab6fd3e0d5c
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    prebuild: sed -i -e '30,32d' ../settings.gradle.kts
+    ndk: 28.1.13356709
+
+  - versionName: 2.0.9
+    versionCode: 217
+    commit: 9cf7f04f21387049a7fdd83e7abfe45c6c768838
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    prebuild: sed -i -e '30,32d' ../settings.gradle.kts
+    ndk: 28.1.13356709
+
+  - versionName: 2.0.10
+    versionCode: 219
+    commit: c51e88f192cb523e720a2bb1369ce851f6e8c74b
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    prebuild: sed -i -e '30,32d' ../settings.gradle.kts
+    ndk: 28.1.13356709
+
+  - versionName: 2.0.11
+    versionCode: 220
+    commit: d6cc2abd2c56e36f22aae24454a3d5ae62714ea2
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    prebuild: sed -i -e '30,32d' ../settings.gradle.kts
+    ndk: 28.1.13356709
+
+  - versionName: 2.0.12
+    versionCode: 221
+    commit: 66f1d0d525c04da46e53d8db98f65e8942d7329d
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    ndk: r28b
+
+  - versionName: 2.0.13
+    versionCode: 223
+    commit: 3f0818f737422ce4ef3493df3b3e5affb0a49d94
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    ndk: r28b
+
+  - versionName: 2.0.14
+    versionCode: 224
+    commit: 1697013ac6d8de97e7b3bd3296196d13d2bcb55c
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    ndk: r28b
+
+  - versionName: 2.0.15-beta01
+    versionCode: 225
+    commit: 5d5d180367be44fda2ff0d695c45a42c40c3daa6
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - assets/*
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    ndk: r28b
+
+  - versionName: 2.1.0
+    versionCode: 360010400
+    commit: 5ab8a901f0a2480b9969db83d6807a504fb3b8c6
+    subdir: app
+    gradle:
+      - foss
+    rm:
+      - assets
+      - wear
+      - shared
+    prebuild:
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+      - sed -i -e '/:wear/d' ../settings.gradle.kts
+      - sed -i -e '/:shared/d' ../settings.gradle.kts
+      - sed -i -e '/googleImplementation/d' build.gradle.kts
+    ndk: r28b
+
+  - versionName: 2.1.1
+    versionCode: 360010700
+    commit: 03ca2da2c38fc3a937fdc4999a46c1d2cb073d22
+    subdir: app
+    gradle:
+      - foss
+    rm:
+      - assets
+      - wear
+      - shared
+    prebuild:
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+      - sed -i -e '/:wear/d' ../settings.gradle.kts
+      - sed -i -e '/:shared/d' ../settings.gradle.kts
+      - sed -i -e '/googleImplementation/d' build.gradle.kts
+    ndk: r28b
+
+  - versionName: 2.1.2
+    versionCode: 360010800
+    commit: 2b9f3c1fed967aa497465bcbedc6117b15944744
+    subdir: app
+    gradle:
+      - foss
+    rm:
+      - assets
+      - wear
+      - shared
+    prebuild:
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+      - sed -i -e '/:wear/d' ../settings.gradle.kts
+      - sed -i -e '/:shared/d' ../settings.gradle.kts
+      - sed -i -e '/googleImplementation/d' build.gradle.kts
+    ndk: r28b
+
+  - versionName: 2.1.3
+    versionCode: 360010900
+    commit: 28f6254c2442009c3bed03b30a350905fd2726cb
+    subdir: app
+    gradle:
+      - foss
+    rm:
+      - assets
+      - wear
+      - shared
+    prebuild:
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+      - sed -i -e '/:wear/d' ../settings.gradle.kts
+      - sed -i -e '/:shared/d' ../settings.gradle.kts
+      - sed -i -e '/googleImplementation/d' build.gradle.kts
+    ndk: r28b
+
+  - versionName: 2.1.4
+    versionCode: 360011000
+    commit: 838403534f4cfaf9fa5ab8eead3d15b3e9fafe84
+    subdir: app
+    gradle:
+      - foss
+    rm:
+      - assets
+      - wear
+      - shared
+    prebuild:
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+      - sed -i -e '/:wear/d' ../settings.gradle.kts
+      - sed -i -e '/:shared/d' ../settings.gradle.kts
+      - sed -i -e '/googleImplementation/d' build.gradle.kts
+    ndk: r28b
+
+  - versionName: 2.1.5
+    versionCode: 360011200
+    commit: 507081f4f16ed5c16312302edcbb4d51aa78fbdd
+    subdir: app
+    gradle:
+      - foss
+    rm:
+      - assets
+      - wear
+      - shared
+    prebuild:
+      - sed -i -e '/foojay/d' -e '/:wear/d' -e '/:shared/d' ../settings.gradle.kts
+      - sed -i -e '/googleImplementation/d' build.gradle.kts
+    ndk: r28b
+
+  - versionName: 2.1.6
+    versionCode: 360011400
+    commit: f15375a60826d0a991ed2e0251a14b47045e2db2
+    subdir: app
+    gradle:
+      - foss
+    rm:
+      - assets
+      - wear
+      - shared
+    prebuild:
+      - sed -i -e '/foojay/d' -e '/:wear/d' -e '/:shared/d' ../settings.gradle.kts
+      - sed -i -e '/googleImplementation/d' build.gradle.kts
+    ndk: r28b
+
+  - versionName: 2.1.9
+    versionCode: 360011900
+    commit: af3907305f1327ce2dfb65741363b48fe4fd6b56
+    subdir: app
+    gradle:
+      - foss
+    rm:
+      - assets
+      - wear
+      - shared
+    prebuild:
+      - sed -i -e '/foojay/d' -e '/:wear/d' -e '/:shared/d' ../settings.gradle.kts
+      - sed -i -e '/googleImplementation/d' build.gradle.kts
+    ndk: r28b
+
+  - versionName: 2.1.10
+    versionCode: 370012200
+    commit: f56c41613342ed4d26907ff40e40b08c5ae2e293
+    subdir: app
+    gradle:
+      - foss
+    rm:
+      - assets
+      - wear
+      - shared
+    prebuild: sed -i -e '/foojay/d' -e '/:wear/d' -e '/:shared/d' ../settings.gradle.kts
+      build.gradle.kts
+    ndk: r28b
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: app/fdroid-version.txt|versionCode=(\d+)|.|versionName=(.*)
+CurrentVersion: 2.1.10
+CurrentVersionCode: 370012200

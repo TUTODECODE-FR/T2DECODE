@@ -1,0 +1,44 @@
+Categories:
+  - Finance Manager
+License: GPL-3.0-only
+AuthorName: cohenchris
+SourceCode: https://github.com/cohenchris/WeeklyBudget/
+IssueTracker: https://github.com/cohenchris/WeeklyBudget/issues
+Changelog: https://github.com/cohenchris/WeeklyBudget/releases
+
+AutoName: WeeklyBudget
+
+RepoType: git
+Repo: https://github.com/cohenchris/WeeklyBudget.git
+
+Builds:
+  - versionName: '1.4'
+    versionCode: 4
+    commit: v1.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.5'
+    versionCode: 5
+    commit: bdc3210f4cd5313b75945c2a2fdf404aad7c0f06
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.6'
+    versionCode: 6
+    commit: cf25ce29e7405723a0d3ac4ab036980c931638b0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.6'
+CurrentVersionCode: 6

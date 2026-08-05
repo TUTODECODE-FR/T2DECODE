@@ -1,0 +1,471 @@
+AntiFeatures:
+  TetheredNet:
+    en-US: Preconfigured with the Riseup collective provider
+Categories:
+  - Connectivity
+  - Internet
+  - Security
+  - VPN & Proxy
+License: GPL-3.0-only
+AuthorName: LEAP
+AuthorWebSite: https://leap.se/
+WebSite: https://riseup.net/
+SourceCode: https://0xacab.org/leap/bitmask_android
+IssueTracker: https://0xacab.org/leap/bitmask_android/issues
+Translation: https://explore.transifex.com/projects/p/bitmask
+Changelog: https://0xacab.org/leap/bitmask_android/blob/HEAD/CHANGELOG
+Donate: https://riseup.net/vpn/donate
+Liberapay: riseupvpn
+Bitcoin: 3LBqFZpv397VEyDeZo3oneTK1qgJ8hsqvJ
+
+AutoName: RiseupVPN
+
+RepoType: git
+Repo: https://0xacab.org/leap/bitmask_android.git
+
+Builds:
+  - versionName: 0.9.9
+    versionCode: 136
+    commit: 0.9.9
+    subdir: app
+    submodules: true
+    gradle:
+      - customProduction
+    rm:
+      - ics-openvpn/main/src/main/cpp/mbedtls/tests
+    prebuild: sed -i -e "/^task updateSdkLicences/,/^}/d; /commandLine 'git'/d" build.gradle
+    build:
+      - cd ..
+      - echo '/opt/gradle/versions/4.6/bin/gradle "$@"' > ics-openvpn/gradlew
+      - chmod a+x ics-openvpn/gradlew
+      - ./build_deps.sh
+    ndk: r16b
+
+  - versionName: 0.9.10
+    versionCode: 137
+    commit: 0.9.10
+    subdir: app
+    submodules: true
+    gradle:
+      - customProduction
+    rm:
+      - ics-openvpn/main/src/main/cpp/mbedtls/tests
+    prebuild: sed -i -e "/^task updateSdkLicences/,/^}/d; /commandLine 'git'/d" build.gradle
+    build:
+      - cd ..
+      - echo '/opt/gradle/versions/4.6/bin/gradle "$@"' > ics-openvpn/gradlew
+      - chmod a+x ics-openvpn/gradlew
+      - ./build_deps.sh
+    ndk: r16b
+
+  - versionName: 1.0.1
+    versionCode: 141
+    commit: 1.0.1
+    subdir: app
+    submodules: true
+    gradle:
+      - customProduction
+    rm:
+      - ics-openvpn/main/src/main/cpp/mbedtls/tests
+    prebuild: sed -i -e "/^task updateSdkLicences/,/^}/d; /commandLine 'git'/d" build.gradle
+    build:
+      - cd ../ics-openvpn
+      - gradle main:externalNativeBuildCleanNoovpn3Release main:externalNativeBuildNoovpn3Release
+    ndk: r20
+
+  - versionName: 1.0.3
+    versionCode: 147
+    commit: 1.0.3
+    subdir: app
+    submodules: true
+    gradle:
+      - customProductionFat
+    rm:
+      - ics-openvpn/main/src/main/cpp/mbedtls/tests
+      - go/src/golang.org/x/tools/cmd/splitdwarf/internal/macho/testdata
+      - go/src/golang.org/x/tools/go/gccgoexportdata/testdata
+      - go/src/golang.org/x/tools/go/gcexportdata/testdata
+      - go/src/golang.org/x/tools/go/internal/gccgoimporter/testdata/
+      - go/src/golang.org/x/tools/go/internal/gcimporter/testdata/
+      - go/src/github.com/shadowsocks/shadowsocks-go/script/shadowsocks.exe
+      - shapeshifter/*.?ar
+    prebuild: sed -i -e "/^task updateSdkLicences/,/^}/d; /commandLine 'git'/d" build.gradle
+    build:
+      - cd ../go
+      - curl -o go.tar.gz https://dl.google.com/go/go1.12.7.linux-amd64.tar.gz
+      - echo 'b6f9db387340e24f5623e6de0b8aa1387d103277  go.tar.gz' | shasum -c
+      - mkdir -p golang
+      - tar -C golang -xzf go.tar.gz
+      - export GOPATH="$PWD"
+      - export GO_LANG="$PWD/golang/go/bin"
+      - export GO_COMPILED="$PWD/bin"
+      - export PATH="$GO_LANG:$GO_COMPILED:$PATH"
+      - ./golang/go/bin/go get golang.org/x/mobile/cmd/gomobile
+      - ./bin/gomobile init
+      - ./android_build_shapeshifter.sh createLibrary
+      - cd ../ics-openvpn
+      - gradle main:externalNativeBuildCleanNoovpn3Release main:externalNativeBuildNoovpn3Release
+    ndk: r20b
+
+  - versionName: 1.0.5
+    versionCode: 149
+    commit: 1.0.5
+    subdir: app
+    submodules: true
+    gradle:
+      - customProductionFat
+    rm:
+      - go/src/github.com/agl/ed25519/testdata/sign.input.gz
+      - go/src/github.com/shadowsocks/shadowsocks-go/script/shadowsocks.exe
+      - go/src/golang.org/x/crypto/ed25519/testdata/sign.input.gz
+      - go/src/golang.org/x/tools/cmd/splitdwarf/internal/macho/testdata
+      - go/src/golang.org/x/tools/go/gccgoexportdata/testdata
+      - go/src/golang.org/x/tools/go/gcexportdata/testdata
+      - go/src/golang.org/x/tools/go/internal/gccgoimporter/testdata/
+      - go/src/golang.org/x/tools/go/internal/gcimporter/testdata/
+      - go/src/golang.org/x/tools/go/packages/testdata/TestName_ModulesDedup/pkg/mod/cache/download/github.com/heschik/tools-testrepo/@v/*.zip
+      - go/src/golang.org/x/tools/go/packages/testdata/TestName_ModulesDedup/pkg/mod/cache/download/github.com/heschik/tools-testrepo/v2/@v/*.zip
+      - ics-openvpn/main/src/main/cpp/mbedtls/programs/fuzz/corpuses/*
+      - ics-openvpn/main/src/main/cpp/mbedtls/tests
+      - shapeshifter/*.?ar
+    prebuild: sed -i -e "/^task updateSdkLicences/,/^}/d; /commandLine 'git'/d" build.gradle
+    build:
+      - cd ../go
+      - curl -o go.tar.gz https://dl.google.com/go/go1.12.7.linux-amd64.tar.gz
+      - echo 'b6f9db387340e24f5623e6de0b8aa1387d103277  go.tar.gz' | shasum -c
+      - mkdir -p golang
+      - tar -C golang -xzf go.tar.gz
+      - export GOPATH="$PWD"
+      - export GO_LANG="$PWD/golang/go/bin"
+      - export GO_COMPILED="$PWD/bin"
+      - export PATH="$GO_LANG:$GO_COMPILED:$PATH"
+      - ./golang/go/bin/go get golang.org/x/mobile/cmd/gomobile
+      - ./bin/gomobile init
+      - ./android_build_shapeshifter.sh createLibrary
+      - cd ../ics-openvpn
+      - gradle main:externalNativeBuildCleanSkeletonRelease main:externalNativeBuildSkeletonRelease
+    ndk: r20b
+
+  - versionName: 1.0.9
+    versionCode: 155
+    commit: 1.0.9
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t testing golang-go
+    gradle:
+      - customProductionFat
+    prebuild:
+      - $$SDK$$/tools/bin/sdkmanager 'platforms;android-30' 'build-tools;30.0.3' >
+        /dev/null
+      - sed -i -e "/^task updateSdkLicences/,/^}/d; /commandLine 'git'/d" build.gradle
+      - sed -i -e '/android {/a ndkVersion = "20.1.5948944"' ../ics-openvpn/main/build.gradle.kts
+    scandelete:
+      - bitmask-core
+      - bitmask-web-core
+      - go/src
+      - ics-openvpn/main/src/main/cpp
+    build:
+      - cd ../go
+      - export GOPATH="$PWD"
+      - export GO_COMPILED="$PWD/bin"
+      - export PATH="$GO_COMPILED:$PATH"
+      - go get golang.org/x/mobile/cmd/gomobile
+      - gomobile init
+      - mkdir -p ./lib
+      - gomobile bind -target=android -o ./lib/bitmask-web-core.aar se.leap.bitmaskclient/shapeshifter/
+        se.leap.bitmaskclient/pgpverify
+      - cp lib/bitmask-web-core* ../bitmask-web-core/.
+      - gomobile bind -target=android -o ./lib/bitmask-core.aar se.leap.bitmaskclient/shapeshifter/
+      - cp lib/bitmask-core* ../bitmask-core/.
+      - cd ../ics-openvpn
+      - gradle main:externalNativeBuildCleanSkeletonRelease main:externalNativeBuildSkeletonRelease
+    ndk: r20b
+
+  - versionName: 1.1.2
+    versionCode: 160000
+    commit: 4f23849b79ec0801672ff593a15907a6b1505940
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - customProductionFat
+    rm:
+      - tor-android/external/openssl/fuzz
+      - tor-android/external/openssl/boringssl/fuzz
+    prebuild: sed -i -e 's|./gradlew|gradle|' ../scripts/build_deps.sh
+    scandelete:
+      - lib-bitmask-core*
+      - bitmaskcore/IPtProxy
+      - ics-openvpn/main/src/main/cpp
+      - tor-android/external
+    build: ../scripts/build_deps.sh
+    ndk: r21e
+
+  - versionName: 1.1.3
+    versionCode: 161000
+    commit: e3b16b0b1150e4b6153c2de474f2e2a2ba92e03f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - customProductionFat
+    rm:
+      - tor-android/external/openssl/fuzz
+      - tor-android/external/openssl/boringssl/fuzz
+    prebuild: sed -i -e 's|./gradlew|gradle|' ../scripts/build_deps.sh
+    scandelete:
+      - lib-bitmask-core*
+      - bitmaskcore/IPtProxy
+      - ics-openvpn/main/src/main/cpp
+      - tor-android/external
+    build: ../scripts/build_deps.sh
+    ndk: r21e
+
+  - versionName: 1.1.4
+    versionCode: 162000
+    commit: 27ab13a0593ac09dd0552b38c2858db32da263ad
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - customProductionFat
+    rm:
+      - tor-android/external/openssl/fuzz
+      - tor-android/external/openssl/boringssl/fuzz
+    prebuild: sed -i -e 's|./gradlew|gradle|' ../scripts/build_deps.sh
+    scandelete:
+      - lib-bitmask-core*
+      - bitmaskcore/IPtProxy
+      - ics-openvpn/main/src/main/cpp
+      - tor-android/external
+    build: ../scripts/build_deps.sh
+    ndk: r21e
+
+  - versionName: 1.1.8
+    versionCode: 169000
+    commit: 609ea1e6185055d8b67bcdd8f2a029a29b15241e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make gcc swig lib32stdc++6 lib32z1 autogen automake autopoint
+        libtool pkg-config po4a
+    gradle:
+      - customProductionFat
+    rm:
+      - tor-android/external/openssl/fuzz
+      - tor-android/external/openssl/boringssl/fuzz
+    prebuild: sed -i -e 's|./gradlew|gradle|' ../scripts/build_deps.sh
+    scandelete:
+      - bitmaskcore/obfsvpn/mobile/android/obfsvpn-sources.jar
+      - bitmaskcore/obfsvpn/mobile/android/obfsvpn.aar
+      - bitmaskcore/IPtProxy
+      - ics-openvpn/main/src/main/cpp
+      - tor-android/external
+    build: ../scripts/build_deps.sh
+    ndk: r21e
+
+  - versionName: 1.2.0
+    versionCode: 170000
+    commit: a9fb12c34a67092616d6b38a07bd1cfe7a493e24
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make g++ swig lib32stdc++6 lib32z1 autogen automake autopoint
+        libtool pkg-config po4a openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - customProductionFat
+    rm:
+      - tor-android/external/openssl/fuzz
+      - tor-android/external/openssl/boringssl/fuzz
+    prebuild:
+      - sed -i -e 's|./gradlew|gradle|' ../scripts/build_deps.sh
+      - sed -i -e '/signingConfigs.getByName/d' -e 's/isEnable\ =\ true/isEnable\
+        =\ false/' ../ics-openvpn/main/build.gradle.kts
+    scandelete:
+      - bitmaskcore/obfsvpn/mobile/android/obfsvpn-sources.jar
+      - bitmaskcore/obfsvpn/mobile/android/obfsvpn.aar
+      - bitmaskcore/IPtProxy
+      - ics-openvpn/main/src/main/cpp
+      - tor-android/external
+    build: ../scripts/build_deps.sh
+    ndk: r21e
+
+  - versionName: 1.3.1
+    versionCode: 173000
+    commit: 3b3500e82fef981769cc6fff1dddc58cbe66ed48
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make g++ swig lib32stdc++6 lib32z1 autogen automake autopoint
+        libtool pkg-config po4a openjdk-17-jdk-headless
+    gradle:
+      - customProductionFat
+    rm:
+      - tor-android/external/openssl/fuzz
+      - tor-android/external/openssl/boringssl/fuzz
+    prebuild:
+      - sed -i -e 's|./gradlew|gradle|' ../scripts/build_deps.sh
+      - sed -i -e '/signingConfigs.getByName/d' -e 's/isEnable\ =\ true/isEnable\
+        =\ false/' ../ics-openvpn/main/build.gradle.kts
+    scandelete:
+      - bitmaskcore/obfsvpn/mobile/android/obfsvpn-sources.jar
+      - bitmaskcore/obfsvpn/mobile/android/obfsvpn.aar
+      - bitmaskcore/IPtProxy
+      - ics-openvpn/main/src/main/cpp
+      - tor-android/external
+    build: ../scripts/build_deps.sh
+    ndk: r21e
+
+  - versionName: 1.4.1
+    versionCode: 176000
+    commit: e15787e844ffe1c74b0ba783a9e37c7daa72b72a
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make g++ swig lib32stdc++6 lib32z1 autogen automake autopoint
+        libtool pkg-config po4a openjdk-17-jdk-headless
+    gradle:
+      - customProductionFat
+    rm:
+      - tor-android/external/openssl/fuzz
+      - tor-android/external/openssl/boringssl/fuzz
+    prebuild:
+      - sed -i -e 's|./gradlew|gradle|' ../scripts/build_deps.sh
+      - sed -i -e '/signingConfigs.getByName/d' -e 's/isEnable\ =\ true/isEnable\
+        =\ false/' ../ics-openvpn/main/build.gradle.kts
+    scandelete:
+      - bitmask-core-android
+      - ics-openvpn/main/src/main/cpp
+      - tor-android/external
+    build: ../scripts/build_deps.sh
+    ndk: r21e
+
+  - versionName: 1.5.1
+    versionCode: 179000
+    commit: 075ace8258316d73218b63c6369c7942caab1d7b
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make g++ swig lib32stdc++6 lib32z1 autogen automake autopoint
+        libtool pkg-config po4a openjdk-17-jdk-headless
+    gradle:
+      - customProductionFat
+    rm:
+      - tor-android/external/openssl/fuzz
+      - tor-android/external/openssl/boringssl/fuzz
+    prebuild:
+      - sed -i -e 's|./gradlew|gradle|' ../scripts/build_deps.sh
+      - sed -i -e '/signingConfigs.getByName/d' -e 's/isEnable\ =\ true/isEnable\
+        =\ false/' ../ics-openvpn/main/build.gradle.kts
+    scandelete:
+      - bitmask-core-android
+      - ics-openvpn/main/src/main/cpp
+      - tor-android/external
+    build: ../scripts/build_deps.sh
+    ndk: r21e
+
+  - versionName: 1.5.3
+    versionCode: 182000
+    commit: fa49fede06c1f1e2aeee880b5f18f75247e9c11f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make g++ swig lib32stdc++6 lib32z1 autogen automake autopoint
+        libtool pkg-config po4a openjdk-17-jdk-headless
+    gradle:
+      - customProductionFat
+    rm:
+      - tor-android/external/openssl/fuzz
+      - tor-android/external/openssl/boringssl/fuzz
+    prebuild:
+      - sed -i -e 's|./gradlew|gradle|' ../scripts/build_deps.sh
+      - sed -i -e '/signingConfigs.getByName/d' -e 's/isEnable\ =\ true/isEnable\
+        =\ false/' ../ics-openvpn/main/build.gradle.kts
+    scandelete:
+      - bitmask-core-android
+      - ics-openvpn/main/src/main/cpp
+      - tor-android/external
+    build: ../scripts/build_deps.sh
+    ndk: r21e
+
+  - versionName: 1.6.0
+    versionCode: 183000
+    commit: d49f368b046971f35511c7ae08886cb45d302f81
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make g++ swig lib32stdc++6 lib32z1 autogen automake autopoint
+        libtool pkg-config po4a libzstd-dev
+    gradle:
+      - custom
+      - production
+      - fat
+    rm:
+      - tor-android/external/openssl/fuzz
+      - tor-android/external/openssl/cloudflare-quiche/fuzz
+      - tor-android/external/openssl/cloudflare-quiche/quiche/deps/boringssl/src/fuzz
+    prebuild:
+      - sed -i -e 's|./gradlew|gradle|' ../scripts/build_deps.sh
+      - sed -i -e '/signingConfigs.getByName/d' -e '/isEnable/s/true/false/' ../ics-openvpn/main/build.gradle.kts
+    scandelete:
+      - bitmask-core-android
+      - ics-openvpn/main/src/main/cpp
+      - tor-android/external
+      - tor-android/sampletorapp/build.gradle
+    build: ../scripts/build_deps.sh || ../scripts/build_deps.sh
+    ndk: r28c
+
+  - versionName: 1.6.3
+    versionCode: 186000
+    commit: b16726af735bd71d6ddcf45259d868a3a337b2c7
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make g++ swig lib32stdc++6 lib32z1 autogen automake autopoint
+        libtool pkg-config po4a libzstd-dev
+    gradle:
+      - custom
+      - production
+      - fat
+    rm:
+      - tor-android/external/openssl/fuzz
+      - tor-android/external/openssl/cloudflare-quiche/fuzz
+      - tor-android/external/openssl/cloudflare-quiche/quiche/deps/boringssl/src/fuzz
+    prebuild:
+      - sed -i -e 's|./gradlew|gradle|' ../scripts/build_deps.sh
+      - sed -i -e '/signingConfigs.getByName/d' -e '/isEnable/s/true/false/' ../ics-openvpn/main/build.gradle.kts
+    scandelete:
+      - bitmask-core-android
+      - ics-openvpn/main/src/main/cpp
+      - tor-android/external
+      - tor-android/sampletorapp/build.gradle
+    build: ../scripts/build_deps.sh || ../scripts/build_deps.sh
+    ndk: r28c
+
+MaintainerNotes: The "build" commands are extracted from build_deps.sh.
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^[0-9.]+$
+UpdateCheckName: se.leap.bitmaskclient
+CurrentVersion: 1.6.3
+CurrentVersionCode: 186000

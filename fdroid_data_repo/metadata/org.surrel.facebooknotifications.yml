@@ -1,0 +1,115 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: You are required to log in to Facebook
+Categories:
+  - Social Network
+License: MIT
+AuthorName: gsurrel
+AuthorWebSite: https://gregoire.surrel.org/
+SourceCode: https://github.com/gsurrel/FacebookNotifications
+IssueTracker: https://github.com/gsurrel/FacebookNotifications/issues
+Changelog: https://github.com/gsurrel/FacebookNotifications#changelog
+
+AutoName: Notifications for FB
+
+RepoType: git
+Repo: https://github.com/gsurrel/FacebookNotifications.git
+
+Builds:
+  - versionName: 1.5.1
+    versionCode: 1
+    commit: v1.5.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.2
+    versionCode: 2
+    commit: v1.5.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.3
+    versionCode: 3
+    commit: v1.5.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.1
+    versionCode: 4
+    commit: v1.6.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.2
+    versionCode: 5
+    commit: v1.6.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.3
+    versionCode: 6
+    commit: v1.6.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.5
+    versionCode: 8
+    commit: v1.6.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.0
+    versionCode: 9
+    commit: v1.7.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.0
+    versionCode: 10
+    commit: v1.8.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.9.2
+    versionCode: 12
+    commit: v1.9.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.0
+    versionCode: 13
+    commit: v1.10.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.12.0
+    versionCode: 17
+    commit: 3405d016b17f19c965711a97399240188db3d065
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle
+
+  - versionName: 1.12.1
+    versionCode: 18
+    commit: 189660a7a98389039bbe340899344d3bb3cecc0a
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.12.1
+CurrentVersionCode: 18

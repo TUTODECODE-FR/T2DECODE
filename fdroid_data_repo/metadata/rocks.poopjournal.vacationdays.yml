@@ -1,0 +1,140 @@
+Categories:
+  - Calendar & Agenda
+License: Apache-2.0
+AuthorName: Crazy Marvin & Contributors
+AuthorEmail: marvin@poopjournal.rocks
+AuthorWebSite: https://crazymarvin.com/
+WebSite: https://crazymarvin.com/vacation-days/
+SourceCode: https://github.com/Crazy-Marvin/VacationDays
+IssueTracker: https://github.com/Crazy-Marvin/VacationDays/issues
+Translation: https://hosted.weblate.org/engage/vacation-days/
+Changelog: https://github.com/Crazy-Marvin/VacationDays/releases
+Donate: https://poopjournal.rocks/blog/donate/
+Liberapay: PoopJournal
+Bitcoin: bc1q90duwnd6ks9tuyj9d6qyrqzvryus4msf4u3ht8
+Litecoin: ltc1q7euacwhn6ef99vcfa57mute92q572aqsc4c2j5
+
+AutoName: Vacation Days
+
+RepoType: git
+Repo: https://github.com/Crazy-Marvin/VacationDays
+
+Builds:
+  - versionName: '6.0'
+    versionCode: 6
+    commit: c39afb0309fba90299a82ec4bc92bcb095d676e4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '7.0'
+    versionCode: 7
+    commit: bea84d7e75370d507fb578ab3c87296d557659ba
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '8.0'
+    versionCode: 8
+    commit: 743b190dd2ace2909bc87a0d245e35bbce9f6374
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '9.0'
+    versionCode: 9
+    commit: beb4600efb850088633ef5954609f4ec1d47b2f7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '10.0'
+    versionCode: 10
+    commit: 4be9e167e34425ca3f54720674305aeebef54170
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '11.0'
+    versionCode: 11
+    commit: e3aaa668ff88372852573df271568e44d29cfabe
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '12.0'
+    versionCode: 12
+    commit: bc76d13f72ccff255fd03b29f8ef2715c8380f41
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '13.0'
+    versionCode: 13
+    commit: 6c78fc48cdade043bf9384e1dc6f0eecd5defe8e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '14.0'
+    versionCode: 14
+    commit: 02ce5bc1a289d321958762cca545e21a58515b09
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '15.0'
+    versionCode: 15
+    commit: 36b9a4ddc4c7be745ad304c6ce5cb8ba39c66587
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '16.0'
+    versionCode: 16
+    commit: f9ae0c8706b3b84cdda68689d2eb6f4c72b2dcb0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '17.0'
+    versionCode: 17
+    commit: 5df4854e726b322802fac5951118e338246b522d
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '17.1'
+    versionCode: 18
+    commit: f82a938eaf882a7228fdff27308cf534f924056a
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '17.2'
+    versionCode: 19
+    commit: 14b63800d77db494d109676b5f09af56e4973efe
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '17.2'
+CurrentVersionCode: 19

@@ -1,0 +1,72 @@
+Categories:
+  - Development
+License: MIT
+AuthorName: ma7moud3ly
+AuthorEmail: m.aly@gasable.com
+SourceCode: https://github.com/Ma7moud3ly/micro-repl
+IssueTracker: https://github.com/Ma7moud3ly/micro-repl/issues
+
+AutoName: Micro REPL
+
+RepoType: git
+Repo: https://github.com/Ma7moud3ly/micro-repl.git
+Binaries: 
+  https://github.com/Ma7moud3ly/micro-repl/releases/download/v%v/micro-repl-v%v.apk
+
+Builds:
+  - versionName: '1.7'
+    versionCode: 12
+    commit: 18bdd3a9b8853237f5569e79e1fb185f59d368ac
+    subdir: app
+    init: git reset --soft 938daf0d6bf9a95f0c159bda9348c9422ec6c907
+    gradle:
+      - default
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    prebuild: sed -i -e '/gms/d' -e '/firebase/d' ../build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/python/*' 'assets/themes/*'
+
+  - versionName: '1.8'
+    versionCode: 13
+    commit: b35adbbfc033d5960a9ab521250dada4e38228d5
+    subdir: app
+    gradle:
+      - default
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    prebuild: sed -i -e '/gms/d' -e '/firebase/d' ../build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/python/*' 'assets/themes/*'
+
+  - versionName: '1.9'
+    versionCode: 14
+    commit: e9b6bbbd9efe7c044b1d6b76a60cf4a977732a11
+    subdir: app
+    gradle:
+      - default
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    prebuild: sed -i -e '/gms/d' -e '/firebase/d' ../build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/python/*' 'assets/themes/*'
+
+  - versionName: '2.0'
+    versionCode: 15
+    disable: https://github.com/Ma7moud3ly/micro-repl
+    commit: 0d86af1b046366232fd350cc9cf197b21ee942f9
+    subdir: app
+    gradle:
+      - default
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    prebuild: sed -i -e '/gms/d' -e '/firebase/d' ../build.gradle.kts
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'assets/python/*' 'assets/themes/*'
+
+AllowedAPKSigningKeys: e632303f5c22a8aec2165f8ca75cf11d1376eb456bba92dc621e4464c6818489
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '2.0'
+CurrentVersionCode: 15

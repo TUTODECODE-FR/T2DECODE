@@ -1,0 +1,149 @@
+Categories:
+  - File Encryption & Vault
+  - System
+  - Writing
+License: GPL-3.0-only
+AuthorName: 2bllw8
+AuthorEmail: 2bllw8+git@gmail.com
+SourceCode: https://github.com/2bllw8/anemo
+IssueTracker: https://github.com/2bllw8/anemo/issues
+Changelog: https://github.com/2bllw8/anemo/releases
+
+AutoName: Anemo
+
+RepoType: git
+Repo: https://github.com/2bllw8/anemo.git
+
+Builds:
+  - versionName: '2.0'
+    versionCode: 8
+    commit: 2f6c53a706537c02aff8822a2ab214e9171e5ef4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/keyStoreFile/,+3d' ../build.gradle
+      - sed -i -e '/keyStoreFile/,+1d' build.gradle
+
+  - versionName: '2.1'
+    versionCode: 9
+    commit: cd2b5f6deb1d69798b56e4fdf28de0f054598b4e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.1.1
+    versionCode: 10
+    commit: 2a28ff973f6493e41b5cdd0969724fdec8c33138
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.2.0
+    versionCode: 11
+    commit: aeb672e3363dd53a5d6bfbf5ab84b65cdacabbc6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - libs/*.jar
+
+  - versionName: 2.3.0
+    versionCode: 12
+    commit: 66bc683417c89144fa5fc14b9941e94643e6ac81
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - libs/*.jar
+
+  - versionName: 2.3.1
+    versionCode: 13
+    commit: 8d48c093f5c35c4bf06fdd64dd5f09deb1d3247a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - libs/*.jar
+
+  - versionName: 2.4.0
+    versionCode: 14
+    commit: acf48e0f2d9dbd49b36b294f83542b4d474abd54
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - libs/*.jar
+
+  - versionName: 2.5.0
+    versionCode: 15
+    commit: 14b66b3b54d3c917b36acd1cea34e6c34b1344a9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - libs/*.jar
+
+  - versionName: 2.6.0
+    versionCode: 16
+    commit: b3e44888eb4582c62dba69f3a0746ee8fadcbce5
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - libs/*.jar
+
+  - versionName: 2.7.0
+    versionCode: 17
+    commit: d9f56e312ca7914b9d917f40037c76709dd9b1a1
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - libs/*.jar
+
+  - versionName: 2.7.1
+    versionCode: 18
+    commit: 05497d1a8d60a8d5281e265e922ea8063c76be44
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - libs/*.jar
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.7.1
+CurrentVersionCode: 18

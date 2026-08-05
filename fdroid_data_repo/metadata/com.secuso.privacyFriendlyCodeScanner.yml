@@ -1,0 +1,288 @@
+Categories:
+  - Multimedia
+  - System
+License: GPL-3.0-only
+AuthorName: SECUSO - Security Usability Society
+WebSite: https://secuso.org/pfa
+SourceCode: https://github.com/SecUSo/privacy-friendly-qr-scanner
+IssueTracker: https://github.com/SecUSo/privacy-friendly-qr-scanner/issues
+Changelog: https://github.com/SecUSo/privacy-friendly-qr-scanner/blob/HEAD/CHANGELOG.md
+
+AutoName: QR Scanner
+
+RepoType: git
+Repo: https://github.com/SecUSo/privacy-friendly-qr-scanner
+
+Builds:
+  - versionName: '1.5'
+    versionCode: 6
+    commit: b918951037727e542355844a51e96cbae3913b45
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: '1.5'
+    versionCode: 7
+    commit: b42392d838942d0bcc4541ca185e5d18f1bd59bc
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: '1.6'
+    versionCode: 8
+    commit: v1.6
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 1.6.1
+    versionCode: 9
+    commit: v1.6.1
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: '2.2'
+    versionCode: 13
+    commit: v2.2
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 3.0.3
+    versionCode: 18
+    commit: v3.0.3
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 3.1.0
+    versionCode: 20
+    commit: v3.1.0
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 3.2.0
+    versionCode: 21
+    commit: d463da5be11ad5638ab96ad18f1650ec0deff3de
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 3.3.1
+    versionCode: 23
+    commit: 06b890fddb8bc4c27ed6e1d11bf5c0e2fc05636b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.0.0
+    versionCode: 24
+    commit: 6a1989b692e2918c3b8624c701dab0a06a7018bd
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.0.1
+    versionCode: 25
+    commit: cb2ef18dd9d73a1d040f1e9499e26c6e89008fef
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.1.0
+    versionCode: 26
+    commit: 1014ae60073d67f0854b65a60fab2af1149738fa
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.2.0
+    versionCode: 27
+    commit: c307c6a96e6db3f2067f87cb73e9f64d9eefde2d
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.3.0
+    versionCode: 28
+    commit: ef6dee94bf02126a09c08528b043ed90a7f7f2c1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.3.1
+    versionCode: 29
+    commit: c5ad8db1a4b75c45d56b9ca3a8e237ea724ca123
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.4.0
+    versionCode: 30
+    commit: 41daf352c763e9c564e73f33e176ede8e2cb3cab
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.5.0
+    versionCode: 31
+    commit: e15ce4dddbc76846d04e913f7930507e1f635098
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.5.8
+    versionCode: 39
+    commit: a530d30d4a3e44180f6c4449367f263bd20c1304
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.5.9
+    versionCode: 40
+    commit: 2b99d7697f7572a4069dd216ea5f63947be089c0
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.6.0
+    versionCode: 42
+    commit: 8533b1dc5780af09fb0e24440c21eeb074e9b9c3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.6.1
+    versionCode: 43
+    commit: 8b77268cba42294ca99c29e281d600b934eaa76b
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.6.6
+    versionCode: 50
+    commit: f7201792038139600be9a7dd02ffe29d4b91ae83
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.6.7
+    versionCode: 51
+    commit: cdf83015fd820613f1de841800dab21eeeca1747
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.6.12
+    versionCode: 60
+    commit: ea29b948abf9d717f494c9f51d6bfcb39f4d7f3a
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.6.17
+    versionCode: 100
+    commit: 37da8cf1332628de95219354ff10aafdfadb7ef8
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.6.18
+    versionCode: 101
+    commit: 90f72a5e2afd9f0aa3d6d939d8ee7501ba55493e
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven {/,+2d' ../build.gradle
+
+  - versionName: 4.6.19
+    versionCode: 102
+    commit: b35fa21682d76a5e3bdbcf218fdfcda2150596fb
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/maven {/,+2d' ../build.gradle
+      - sed -i -e '/jvmToolchain/d' build.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 4.6.19
+CurrentVersionCode: 102

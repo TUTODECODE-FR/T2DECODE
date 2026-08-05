@@ -1,0 +1,687 @@
+Categories:
+  - Internet
+License: AGPL-3.0-only
+WebSite: https://github.com/nain-F49FF806/sharepaste.oo/wiki/sharepaste.oo-Features
+SourceCode: https://github.com/nain-F49FF806/sharepaste.oo
+IssueTracker: https://github.com/nain-F49FF806/sharepaste.oo/issues
+
+AutoName: Share Paste O2
+
+RepoType: git
+Repo: https://github.com/nain-F49FF806/sharepaste.oo.git
+
+Builds:
+  - versionName: 2024.05.21
+    versionCode: 1716312000
+    commit: 0f1aecd6072a1c428a414a1a2093d7c17d101c24
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: build/outputs/apk/source-fdroid/release/app-source-fdroid-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild: gradle clean
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+        armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+    antifeatures:
+      NonFreeNet:
+        en-US: Tethered to privatebin.net server. Configurable from version 2024.07.02
+
+  - versionName: 2024.06.05
+    versionCode: 1717596000
+    commit: 61b9d7d01842207e437bd6188679622d8bc38d73
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: build/outputs/apk/source-fdroid/release/app-source-fdroid-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild: gradle clean
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+        armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+    antifeatures:
+      NonFreeNet:
+        en-US: Tethered to privatebin.net server. Configurable from version 2024.07.02
+
+  - versionName: 2024.06.20
+    versionCode: 1718903267
+    commit: e9d6eac76035adea1893ce345b6a36a6d9a0e806
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-armeabi-v7a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("armeabi-v7a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm"\]/g' -e 's|jniLibs/arm64-v8a|jniLibs/armeabi-v7a|'
+        ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+    antifeatures:
+      NonFreeNet:
+        en-US: Tethered to privatebin.net server. Configurable from version 2024.07.02
+
+  - versionName: 2024.06.20
+    versionCode: 1718903268
+    commit: e9d6eac76035adea1893ce345b6a36a6d9a0e806
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-arm64-v8a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("arm64-v8a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm64"\]/g' ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+    antifeatures:
+      NonFreeNet:
+        en-US: Tethered to privatebin.net server. Configurable from version 2024.07.02
+
+  - versionName: 2024.07.02
+    versionCode: 1719256267
+    commit: 773199af60b4cb0bd264baf520927fe021c70a6b
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-armeabi-v7a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("armeabi-v7a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm"\]/g' -e 's|jniLibs/arm64-v8a|jniLibs/armeabi-v7a|'
+        ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.07.02
+    versionCode: 1719256268
+    commit: 773199af60b4cb0bd264baf520927fe021c70a6b
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-arm64-v8a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("arm64-v8a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm64"\]/g' ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.07.11
+    versionCode: 1720700267
+    commit: 6d99bb030b98c00a6644bbe318ac76212de9ca34
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-armeabi-v7a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("armeabi-v7a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm"\]/g' -e 's|jniLibs/arm64-v8a|jniLibs/armeabi-v7a|'
+        ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.07.11
+    versionCode: 1720700268
+    commit: 6d99bb030b98c00a6644bbe318ac76212de9ca34
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-arm64-v8a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("arm64-v8a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm64"\]/g' ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.07.14
+    versionCode: 1720960267
+    commit: 9928d0f5fa5d1acda5133e30b14d9fa380cea79b
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-armeabi-v7a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("armeabi-v7a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm"\]/g' -e 's|jniLibs/arm64-v8a|jniLibs/armeabi-v7a|'
+        ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.07.14
+    versionCode: 1720960268
+    commit: 9928d0f5fa5d1acda5133e30b14d9fa380cea79b
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-arm64-v8a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("arm64-v8a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm64"\]/g' ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.07.26
+    versionCode: 1722026267
+    commit: be00557a2b6424211bc64305586bee0f53cb266a
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-armeabi-v7a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("armeabi-v7a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm"\]/g' -e 's|jniLibs/arm64-v8a|jniLibs/armeabi-v7a|'
+        ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.07.26
+    versionCode: 1722026268
+    commit: be00557a2b6424211bc64305586bee0f53cb266a
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-arm64-v8a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("arm64-v8a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm64"\]/g' ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.08.02
+    versionCode: 1722590267
+    commit: 643db9285b517bbcca32891e9a39424c8a7f448b
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-armeabi-v7a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("armeabi-v7a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm"\]/g' -e 's|jniLibs/arm64-v8a|jniLibs/armeabi-v7a|'
+        ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.08.02
+    versionCode: 1722590268
+    commit: 643db9285b517bbcca32891e9a39424c8a7f448b
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-arm64-v8a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("arm64-v8a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm64"\]/g' ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.09.26
+    versionCode: 1727357267
+    commit: 2d3a5dec593c8ca733f60f82c97cb03996bb3ba6
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-armeabi-v7a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("armeabi-v7a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm"\]/g' -e 's|jniLibs/arm64-v8a|jniLibs/armeabi-v7a|'
+        ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.09.26
+    versionCode: 1727357268
+    commit: 2d3a5dec593c8ca733f60f82c97cb03996bb3ba6
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-arm64-v8a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("arm64-v8a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm64"\]/g' ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.10.05
+    versionCode: 1728159267
+    commit: fbd89c5f3446621894ce08b2f3f7412503ea3b6f
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-armeabi-v7a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("armeabi-v7a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm"\]/g' -e 's|jniLibs/arm64-v8a|jniLibs/armeabi-v7a|'
+        ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.10.05
+    versionCode: 1728159268
+    commit: fbd89c5f3446621894ce08b2f3f7412503ea3b6f
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-arm64-v8a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("arm64-v8a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm64"\]/g' ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.10.21
+    versionCode: 1729536267
+    commit: fb5e7377cd6000d148a53984f9784d2875594b63
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-armeabi-v7a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("armeabi-v7a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm"\]/g' -e 's|jniLibs/arm64-v8a|jniLibs/armeabi-v7a|'
+        ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.10.21
+    versionCode: 1729536268
+    commit: fb5e7377cd6000d148a53984f9784d2875594b63
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-arm64-v8a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("arm64-v8a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm64"\]/g' ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.10.29
+    versionCode: 1730225267
+    commit: c31f8e60a4724eddb40661a63ec4d6c73b73672f
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-armeabi-v7a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("armeabi-v7a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm"\]/g' -e 's|jniLibs/arm64-v8a|jniLibs/armeabi-v7a|'
+        ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.10.29
+    versionCode: 1730225268
+    commit: c31f8e60a4724eddb40661a63ec4d6c73b73672f
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-arm64-v8a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("arm64-v8a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm64"\]/g' ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.11.16
+    versionCode: 1731762267
+    commit: b370090d7c4ec948fd956ee7005a120e4b153537
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-armeabi-v7a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("armeabi-v7a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm"\]/g' -e 's|jniLibs/arm64-v8a|jniLibs/armeabi-v7a|'
+        ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.11.16
+    versionCode: 1731762268
+    commit: b370090d7c4ec948fd956ee7005a120e4b153537
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-arm64-v8a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("arm64-v8a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm64"\]/g' ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.12.20
+    versionCode: 1734722267
+    commit: 3921561bb8dee8e1af71935b6f95db6bd430592d
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-armeabi-v7a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("armeabi-v7a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm"\]/g' -e 's|jniLibs/arm64-v8a|jniLibs/armeabi-v7a|'
+        ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target armv7-linux-androideabi
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+  - versionName: 2024.12.20
+    versionCode: 1734722268
+    commit: 3921561bb8dee8e1af71935b6f95db6bd430592d
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+    output: 
+      build/outputs/apk/source-fdroid/release/sharepaste.oo-source-fdroid-arm64-v8a-release-unsigned.apk
+    srclibs:
+      - rustup@1.25.2
+    prebuild:
+      - gradle clean
+      - sed -i -e "s/versionCode = .*/versionCode = $$VERCODE$$/" -e 's/include("armeabi-v7a",
+        "arm64-v8a")/include("arm64-v8a")/' -e '/isUniversalApk/s/true/false/' build.gradle.kts
+      - sed -i -e 's/targets = \["arm64", "arm"\]/targets = \["arm64"\]/g' ../rsnative/build.gradle
+    build:
+      - export ANDROID_NDK_ROOT=$$NDK$$
+      - $$rustup$$/rustup-init.sh -y --default-toolchain 1.77.1 --target aarch64-linux-android
+      - source $HOME/.cargo/env
+      - cargo install cargo-ndk@3.4.0 --locked
+      - gradle assembleSource-FdroidRelease
+    ndk: 25.1.8937393
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+VercodeOperation:
+  - 267 + %c
+  - 268 + %c
+UpdateCheckName: alt.nainapps.sharepaste
+CurrentVersion: 2024.12.20
+CurrentVersionCode: 1734722268

@@ -1,0 +1,2573 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Rely on YouTube and YouTube Music
+Categories:
+  - Internet
+  - Multimedia
+  - Online Media Player
+License: AGPL-3.0-only
+SourceCode: https://github.com/nonbili/NouTube
+IssueTracker: https://github.com/nonbili/NouTube/issues
+Donate: https://github.com/sponsors/rnons
+Liberapay: rnons
+
+RepoType: git
+Repo: https://github.com/nonbili/NouTube
+
+Builds:
+  - versionName: 0.1.12
+    versionCode: 13
+    commit: 76ef4e14f255dcb7eaccf973aafae76c11620f73
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+    scandelete:
+      - node_modules
+
+  - versionName: 0.1.13
+    versionCode: 14
+    commit: 0056d843bfd5a611dfe95169d50d0f8954ed0d91
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+    scandelete:
+      - node_modules
+
+  - versionName: 0.1.15
+    versionCode: 16
+    commit: 7d8bf7ee51872f19c2fb211fcec382aa0042f3cf
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+    scandelete:
+      - node_modules
+
+  - versionName: 0.1.16
+    versionCode: 17
+    commit: bfabbd29a151d2e5a8ca254b08dfcfae7654c93f
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+    scandelete:
+      - node_modules
+
+  - versionName: 0.2.0
+    versionCode: 18
+    commit: 9890149a773895bc000bdd95312c817a81609213
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+    scandelete:
+      - node_modules
+
+  - versionName: 0.2.1
+    versionCode: 19
+    commit: 36c8e47eda33c27e41a3e640404328c3b646f6f6
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+    scandelete:
+      - node_modules
+
+  - versionName: 0.2.2
+    versionCode: 20
+    commit: c54a48799e8492733ec7e4ddb1f209437f03089f
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+    scandelete:
+      - node_modules
+
+  - versionName: 0.2.4
+    versionCode: 22
+    commit: d65c0d5a1fc9fbdb7007889fb67f68732dc5f358
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+    scandelete:
+      - node_modules
+
+  - versionName: 0.3.4
+    versionCode: 2703
+    commit: 193646c2bda8058488b46b9a93c157044f7f22bf
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.3.4
+    versionCode: 2704
+    commit: 193646c2bda8058488b46b9a93c157044f7f22bf
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.3.5
+    versionCode: 2803
+    commit: 52b24b0961e370cfb02b8fa16cc9854b9e136671
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.3.5
+    versionCode: 2804
+    commit: 52b24b0961e370cfb02b8fa16cc9854b9e136671
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.3.8
+    versionCode: 3103
+    commit: dc2eea4f020bb9754673a43d229d631c5535d8fc
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.3.8
+    versionCode: 3104
+    commit: dc2eea4f020bb9754673a43d229d631c5535d8fc
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.3.9
+    versionCode: 3203
+    commit: 36ba5b40bde14fb6bd2adfc4d61511addd03b128
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.3.9
+    versionCode: 3204
+    commit: 36ba5b40bde14fb6bd2adfc4d61511addd03b128
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.0
+    versionCode: 3304
+    commit: da6986a1a106bd7383a69f4bf74b0971824e5783
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.1
+    versionCode: 3403
+    commit: 33286dd0d2ce63d6b972aec0c9856b65cdd02de2
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.1
+    versionCode: 3404
+    commit: 33286dd0d2ce63d6b972aec0c9856b65cdd02de2
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.2
+    versionCode: 3503
+    commit: f4d0d4002f617c294b1023d49990fc18819024d5
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.2
+    versionCode: 3504
+    commit: f4d0d4002f617c294b1023d49990fc18819024d5
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.3
+    versionCode: 3603
+    commit: ca3ef503f9628b2340f189345472379f42144c06
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.3
+    versionCode: 3604
+    commit: ca3ef503f9628b2340f189345472379f42144c06
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.4
+    versionCode: 3703
+    commit: 81a73b64e262eb37d60379808491a70373f553f7
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.4
+    versionCode: 3704
+    commit: 81a73b64e262eb37d60379808491a70373f553f7
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.5
+    versionCode: 3803
+    commit: a8a425918eba70141f216825ef14037b652bfa20
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.5
+    versionCode: 3804
+    commit: a8a425918eba70141f216825ef14037b652bfa20
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.6
+    versionCode: 3903
+    commit: e7a1b423eb1b97a932613477af063fcdde3853f0
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.6
+    versionCode: 3904
+    commit: e7a1b423eb1b97a932613477af063fcdde3853f0
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.7
+    versionCode: 4003
+    commit: 3f206a4408563c49a30abec63df7b96244454045
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.7
+    versionCode: 4004
+    commit: 3f206a4408563c49a30abec63df7b96244454045
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.8
+    versionCode: 4103
+    commit: 82fdd6f260d7564113a146842f37038ff5dac0e1
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.8
+    versionCode: 4104
+    commit: 82fdd6f260d7564113a146842f37038ff5dac0e1
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - curl -Lo node.tar.gz https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz
+      - echo "9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2 node.tar.gz"
+        | sha256sum -c -
+      - tar xzf node.tar.gz --strip-components=1 -C /usr/local/
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.9
+    versionCode: 4203
+    commit: 92b414708a6146307590c6f05cab674f6b6a3141
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.9
+    versionCode: 4204
+    commit: 92b414708a6146307590c6f05cab674f6b6a3141
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - android/build.gradle
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-edge-to-edge/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.10
+    versionCode: 4303
+    commit: 7c00b4860e0dd732310a512f597c3e3c153518f8
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.10
+    versionCode: 4304
+    commit: 7c00b4860e0dd732310a512f597c3e3c153518f8
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.11
+    versionCode: 4403
+    commit: a9816204e44aae5e8b64e357635970f5f7d12d68
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.11
+    versionCode: 4404
+    commit: a9816204e44aae5e8b64e357635970f5f7d12d68
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.14
+    versionCode: 4703
+    commit: 311c30a23065c9a57508ec10e3a56ecd12a27221
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.14
+    versionCode: 4704
+    commit: 311c30a23065c9a57508ec10e3a56ecd12a27221
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.15
+    versionCode: 4803
+    commit: b420a92b95b2d62985ca5442e0756ea4aaaf1637
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.4.15
+    versionCode: 4804
+    commit: b420a92b95b2d62985ca5442e0756ea4aaaf1637
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.0
+    versionCode: 4903
+    commit: a77fd70b969d1ef39b15fabdb4767b382681691c
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.0
+    versionCode: 4904
+    commit: a77fd70b969d1ef39b15fabdb4767b382681691c
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.1
+    versionCode: 5003
+    commit: 6fb2ce41d98a00ea302d5ca14eb81f0b252b710a
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.1
+    versionCode: 5004
+    commit: 6fb2ce41d98a00ea302d5ca14eb81f0b252b710a
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.2
+    versionCode: 5103
+    commit: 9edeb0497964ec5de89acdf5db6e8a5e3f57fdb2
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.2
+    versionCode: 5104
+    commit: 9edeb0497964ec5de89acdf5db6e8a5e3f57fdb2
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.3
+    versionCode: 5203
+    commit: e4a8da00d19bc95f3590781b4eff29eaa2d2a6e9
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.3
+    versionCode: 5204
+    commit: e4a8da00d19bc95f3590781b4eff29eaa2d2a6e9
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.4
+    versionCode: 5303
+    commit: f8ffb4e578096d058200eddf54cc093edc14fa7e
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.4
+    versionCode: 5304
+    commit: f8ffb4e578096d058200eddf54cc093edc14fa7e
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.5
+    versionCode: 5403
+    commit: 054a48f3896da7d642f6cdba7c972c28256e8cd3
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.5
+    versionCode: 5404
+    commit: 054a48f3896da7d642f6cdba7c972c28256e8cd3
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.6
+    versionCode: 5503
+    commit: 65a401a5020c044825d95a77b161a985127856fe
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.6
+    versionCode: 5504
+    commit: 65a401a5020c044825d95a77b161a985127856fe
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.7
+    versionCode: 5603
+    commit: 5b93ee5592686523cfbd1366acad02266496bcef
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.7
+    versionCode: 5604
+    commit: 5b93ee5592686523cfbd1366acad02266496bcef
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - sed -i -e 's/-Xmx2048m/-Xmx4g/' android/gradle.properties
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.14
+    versionCode: 6303
+    commit: 10941a1a0a15e926dd5ef9dd3ae94021bb16b41c
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - echo -e '\norg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError'
+        >> android/gradle.properties
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/@react-native-masked-view/masked-view/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.14
+    versionCode: 6304
+    commit: 10941a1a0a15e926dd5ef9dd3ae94021bb16b41c
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - echo -e '\norg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError'
+        >> android/gradle.properties
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/@react-native-masked-view/masked-view/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.15
+    versionCode: 6403
+    commit: b7af4071988bf468d651d15a84c43b1e9a3bc473
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - echo -e '\norg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError'
+        >> android/gradle.properties
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/@react-native-masked-view/masked-view/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.5.15
+    versionCode: 6404
+    commit: b7af4071988bf468d651d15a84c43b1e9a3bc473
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - echo -e '\norg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError'
+        >> android/gradle.properties
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/@react-native-masked-view/masked-view/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.6.0
+    versionCode: 6503
+    commit: 21676ff039394fa4e05a3af4eded08c34cc3401c
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - echo -e '\norg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError'
+        >> android/gradle.properties
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/@react-native-masked-view/masked-view/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.6.0
+    versionCode: 6504
+    commit: 21676ff039394fa4e05a3af4eded08c34cc3401c
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - echo -e '\norg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError'
+        >> android/gradle.properties
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/@react-native-masked-view/masked-view/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.6.1
+    versionCode: 6603
+    commit: bbad628ba679e77b94528178de4104481caeade7
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - echo -e '\norg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError'
+        >> android/gradle.properties
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/@react-native-masked-view/masked-view/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.6.1
+    versionCode: 6604
+    commit: bbad628ba679e77b94528178de4104481caeade7
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - echo -e '\norg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError'
+        >> android/gradle.properties
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/@react-native-masked-view/masked-view/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.6.3
+    versionCode: 6803
+    commit: 207da9af1d562b1e6be0f237551a730874b958ca
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - foss
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - echo -e '\norg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError'
+        >> android/gradle.properties
+      - sed -i -e "s/ext.abiCodes = .*/ext.abiCodes = ['armeabi-v7a':3]/" android/app/build.gradle
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/@react-native-masked-view/masked-view/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.6.3
+    versionCode: 6804
+    commit: 207da9af1d562b1e6be0f237551a730874b958ca
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - foss
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - echo -e '\norg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError'
+        >> android/gradle.properties
+      - sed -i -e "s/ext.abiCodes = .*/ext.abiCodes = ['arm64-v8a':4]/" android/app/build.gradle
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/@react-native-masked-view/masked-view/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.6.4
+    versionCode: 6903
+    commit: 536d27bfadb78af513d64243b1cb1cc531d4de5e
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - foss
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - echo -e '\norg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError'
+        >> android/gradle.properties
+      - sed -i -e "s/ext.abiCodes = .*/ext.abiCodes = ['armeabi-v7a':3]/" android/app/build.gradle
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/@react-native-masked-view/masked-view/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+  - versionName: 0.6.4
+    versionCode: 6904
+    commit: 536d27bfadb78af513d64243b1cb1cc531d4de5e
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+      - npm -g install yarn
+    gradle:
+      - foss
+    prebuild:
+      - cd ../..
+      - sed -i -e '1a "expo":{"autolinking":{"android":{"buildFromSource":[".*"]}}},'
+        package.json
+      - yarn
+      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+      - yarn bundle:es
+      - yarn expo prebuild -p android --clean
+      - echo -e '\norg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError'
+        >> android/gradle.properties
+      - sed -i -e "s/ext.abiCodes = .*/ext.abiCodes = ['arm64-v8a':4]/" android/app/build.gradle
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/react-native-get-random-values/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/@react-native-masked-view/masked-view/android/build.gradle
+    scandelete:
+      - desktop
+      - node_modules
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+VercodeOperation:
+  - 100 * %c + 3
+  - 100 * %c + 4
+CurrentVersion: 0.6.4
+CurrentVersionCode: 6904

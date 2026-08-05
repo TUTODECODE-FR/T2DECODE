@@ -1,0 +1,419 @@
+AntiFeatures:
+  TetheredNet:
+    en-US: Messaging and user profiles are stored on Waku servers rather than being
+      fully peer-to-peer, requiring a connection to a specific service instance.
+  Tracking:
+    en-US: Collects and processes IP addresses, wallet addresses, and transaction
+      details via the API Proxy Server. Data is shared with third-party services like
+      Infura, Grove, and Cryptocompare.
+  NonFreeNet:
+    en-US: Relies on centralized services like Infura for blockchain interactions,
+      making it dependent on non-libre infrastructure.
+Categories:
+  - Connectivity
+  - Messaging
+  - Security
+  - Wallet
+License: MPL-2.0
+AuthorWebSite: https://statusnetwork.com/
+WebSite: https://status.im/
+SourceCode: https://github.com/status-im/status-mobile
+IssueTracker: https://github.com/status-im/status-mobile/issues
+Changelog: https://github.com/status-im/status-mobile/releases
+
+AutoName: Status
+
+RepoType: git
+Repo: https://github.com/status-im/status-mobile.git
+
+Builds:
+  - versionName: 1.11.1
+    versionCode: 2021021509
+    commit: 07b5f31c688d08cd4a1198a13fc1c34adf6afc2f
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288
+      - mkdir -m 0755 /nix
+      - chown vagrant /nix
+    init: ./nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build:
+      - echo "GOOGLE_FREE=1" >> .env.release
+      - make release-android BUILD_TYPE=release BUILD_NUMBER=$$VERCODE$$ ANDROID_APK_SIGNED=false
+        ANDROID_ABI_INCLUDE="armeabi-v7a;arm64-v8a;x86;x86_64"
+
+  - versionName: 1.12.0
+    versionCode: 2021030814
+    commit: 1771c3cf59f48274c41e92b4b3ce2ad70f757e57
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288
+      - mkdir -m 0755 /nix
+      - chown vagrant /nix
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build: make release-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 1.12.1
+    versionCode: 2021031517
+    commit: cd7b7ec9b721b86ebe8c4ad73d93912f07b1d89e
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288
+      - mkdir -m 0755 /nix
+      - chown vagrant /nix
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build: make release-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 1.13.0
+    versionCode: 2021042608
+    commit: 896b583da1a5c9ed7ab32de3bdb0cc299d8e1418
+    timeout: 7200
+    sudo:
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+      - chown -R vagrant /tmp
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build: make release-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 1.15.0
+    versionCode: 2021071411
+    commit: 5e46db6cd29cfc8519dc2bb8fbb6bccf9bf1f7a2
+    timeout: 7200
+    sudo:
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build: make release-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 1.16.0
+    versionCode: 2021082711
+    commit: ef34af3f01d2b6b3d1ec3c47d3b8322a8609e0a5
+    timeout: 7200
+    sudo:
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    prebuild:
+      - sed -i -e '/com.android.vending.BILLING/d' android/app/src/main/AndroidManifest.xml
+      - echo >> .env.release
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build: make release-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 1.17.0
+    versionCode: 2021102112
+    commit: c34b91be4a9cac1e3aca79b6029473dc6e805a4f
+    timeout: 7200
+    sudo:
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build: make release-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 1.18.0
+    versionCode: 2022011816
+    commit: 2316956f52b65195b37d1adefa3ea37662d4643b
+    timeout: 7200
+    sudo:
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build: make release-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 1.18.2
+    versionCode: 2022021419
+    commit: fb9cba5618f889762bb8102e988d460ed788252e
+    timeout: 7200
+    sudo:
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build: make release-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 1.19.0
+    versionCode: 2022032811
+    commit: d6a6c41dd3ff06b057d2226644583ef57e7347da
+    timeout: 10800
+    sudo:
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    prebuild:
+      - sed -i '/react-native-notifications/d' scripts/google-free.sh package.json
+      - sed -i '/react-native-notifications/,+4d' yarn.lock
+      - sed -i '6i <uses-permission tools:node="remove" android:name="com.android.vending.CHECK_LICENSE"/>'
+        android/app/src/release/AndroidManifest.xml
+    scanignore:
+      - android/build.gradle
+      - android/app/build.gradle
+    scandelete:
+      - ios
+    build: make release-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 1.20.0
+    versionCode: 2022092010
+    commit: 9338bf71ee6ccf4f2116c35726df152c38c0a467
+    timeout: 10800
+    sudo:
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    prebuild: sed -i -e '/extra/d' nix/nix.conf
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build:
+      - ulimit -n 4096
+      - make build-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 1.20.2
+    versionCode: 2022093016
+    commit: f5bb45bf15629e903652e0fee6afa4182f8b43a1
+    timeout: 10800
+    sudo:
+      - apt-get update
+      - apt-get install -y make
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    prebuild: sed -i -e '/extra/d' nix/nix.conf
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build:
+      - ulimit -n 4096
+      - make build-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 1.20.3
+    versionCode: 2023022315
+    commit: 9c52658951497d50af86f7a23a7bce0f16960278
+    timeout: 10800
+    sudo:
+      - apt-get update
+      - apt-get install -y make xz-utils
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    prebuild: sed -i -e '/extra/d' nix/nix.conf
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build:
+      - ulimit -n 4096
+      - make build-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 1.20.6
+    versionCode: 2024071713
+    commit: 95d6a8b71653b8b09b0f45f7feddf1f9159eb267
+    timeout: 18000
+    sudo:
+      - apt-get update
+      - apt-get install -y make xz-utils
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    prebuild: sed -i -e '/extra/d' nix/nix.conf
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build:
+      - ulimit -n 8192
+      - make build-fdroid BUILD_NUMBER=$$VERCODE$$
+
+  - versionName: 2.30.0
+    versionCode: 2024082617
+    commit: 31c63e370b3c146251b011225434b8bcdad59e3f
+    timeout: 18000
+    sudo:
+      - apt-get update
+      - apt-get install -y make xz-utils
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    prebuild: sed -i -e '/extra/d' nix/nix.conf
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build:
+      - ulimit -n 8192
+      - export STATUS_BUILD_TARGET=fdroid
+      - export STATUS_BUILD_APK_TYPE=universal-hermes-enabled
+      - make build-fdroid ORG_GRADLE_PROJECT_versionCode=$$VERCODE$$
+
+  - versionName: 2.31.1
+    versionCode: 2024111505
+    commit: 09845eb4c9e61c3f805ecad1d03381336b2c8b36
+    timeout: 18000
+    sudo:
+      - apt-get update
+      - apt-get install -y make xz-utils
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    prebuild: sed -i -e '/extra/d' nix/nix.conf
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build:
+      - ulimit -n 8192
+      - export STATUS_BUILD_TARGET=fdroid
+      - export STATUS_BUILD_APK_TYPE=universal-hermes-enabled
+      - make build-fdroid ORG_GRADLE_PROJECT_versionCode=$$VERCODE$$
+
+  - versionName: 2.32.0
+    versionCode: 2024121818
+    commit: 398c30e9ed32a02b8c881efdd9d7ee07fbca6a64
+    timeout: 18000
+    sudo:
+      - apt-get update
+      - apt-get install -y make xz-utils
+      - cd build/im.status.ethereum
+      - make fdroid-build-env
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    prebuild: sed -i -e '/extra/d' nix/nix.conf
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build:
+      - ulimit -n 8192
+      - export STATUS_BUILD_TARGET=fdroid
+      - export STATUS_BUILD_APK_TYPE=universal-hermes-enabled
+      - make build-fdroid ORG_GRADLE_PROJECT_versionCode=$$VERCODE$$
+
+  - versionName: 2.33.6
+    versionCode: 2025060413
+    commit: 0c42d63b11316e29c66dca9109b56c5933652382
+    timeout: 18000
+    sudo:
+      - apt-get update
+      - apt-get install -y make xz-utils
+      - sysctl fs.inotify.max_user_watches=524288
+      - mkdir -m 0755 /nix
+      - chown vagrant /nix
+      - chown -R vagrant /tmp
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    prebuild: sed -i -e '/extra/d' nix/nix.conf
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build:
+      - ulimit -n 8192
+      - export STATUS_BUILD_TARGET=fdroid
+      - export STATUS_BUILD_APK_TYPE=universal-hermes-enabled
+      - make build-fdroid ORG_GRADLE_PROJECT_versionCode=$$VERCODE$$
+
+  - versionName: 2.34.0
+    versionCode: 2025061917
+    commit: 3a3a4466cd00b80e46b9776cad41a99485ea12c9
+    timeout: 18000
+    sudo:
+      - apt-get update
+      - apt-get install -y make xz-utils
+      - sysctl fs.inotify.max_user_watches=524288
+      - mkdir -m 0755 /nix
+      - chown vagrant /nix
+      - chown -R vagrant /tmp
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    prebuild: sed -i -e '/extra/d' nix/nix.conf
+    scanignore:
+      - android/build.gradle
+    scandelete:
+      - ios
+    build:
+      - ulimit -n 8192
+      - export STATUS_BUILD_TARGET=fdroid
+      - export STATUS_BUILD_APK_TYPE=universal-hermes-enabled
+      - make build-fdroid ORG_GRADLE_PROJECT_versionCode=$$VERCODE$$
+
+  - versionName: 2.34.4
+    versionCode: 2025102415
+    commit: 2de761c349089c4470fa5371a2166200caaddc16
+    timeout: 18000
+    sudo:
+      - apt-get update
+      - apt-get install -y make xz-utils
+      - sysctl fs.inotify.max_user_watches=524288
+      - mkdir -m 0755 /nix
+      - chown vagrant /nix
+      - chown -R vagrant /tmp
+    init: nix/scripts/setup.sh
+    output: result/app-release-unsigned.apk
+    prebuild: sed -i -e '/extra/d' nix/nix.conf
+    scanignore:
+      - android/build.gradle
+      - android/app/googleServices.gradle
+    scandelete:
+      - ios
+    build:
+      - ulimit -n 8192
+      - export STATUS_BUILD_TARGET=fdroid
+      - export STATUS_BUILD_APK_TYPE=universal-hermes-enabled
+      - make build-fdroid ORG_GRADLE_PROJECT_versionCode=$$VERCODE$$
+
+MaintainerNotes: |-
+  Status.im mobile app is built in a deterministic way using Nix package manager.
+  Because of this we disable Gradle builds via F-Droid and run `make release-android`.
+  For information on how to submit updates see this readme.
+  https://github.com/status-im/status-mobile/blob/develop/doc/FDROID.md
+
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 2.34.4
+CurrentVersionCode: 2025102415

@@ -1,0 +1,198 @@
+Categories:
+  - AI Chat
+License: GPL-3.0-only
+AuthorName: Vayun Mathur
+AuthorWebSite: https://vayunmathur.com/
+SourceCode: https://github.com/vayun-mathur/Modern-Apps
+IssueTracker: https://github.com/vayun-mathur/Modern-Apps/issues
+
+AutoName: OpenAssistant
+
+RepoType: git
+Repo: https://github.com/vayun-mathur/Modern-Apps
+Binaries: 
+  https://github.com/vayun-mathur/Modern-Apps/releases/download/%v/openassistant-release.apk
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: 897d465b4c5d9ddb4ac2de141506666a5d66d057
+    subdir: app
+    gradle:
+      - yes
+    binary: 
+      https://github.com/vayun-mathur/OpenAssistant/releases/download/1.0/app-release.apk
+    antifeatures:
+      NonFreeNet:
+        en-US: Depends on xAI LLM APIs.
+
+  - versionName: '1.2'
+    versionCode: 2
+    commit: cd67d5073479ce53bdb71440f9e5313733625f51
+    subdir: app
+    gradle:
+      - yes
+    binary: 
+      https://github.com/vayun-mathur/OpenAssistant/releases/download/1.2/app-release.apk
+    antifeatures:
+      NonFreeNet:
+        en-US: Depends on xAI LLM APIs.
+
+  - versionName: v2.3.0
+    versionCode: 20260401
+    commit: 52bfa18a14786a64f4353916ea8e18ac9a9f2db1
+    subdir: openassistant
+    gradle:
+      - yes
+
+  - versionName: v2.3.1
+    versionCode: 20260411
+    commit: 3ec0da12d2e9975e39a31fc3c3baff659475f27d
+    subdir: openassistant
+    gradle:
+      - yes
+
+  - versionName: v2.3.2
+    versionCode: 20260413
+    commit: 2dbf7e4ef28bef52e8e846093b6a50ccc1612c2e
+    subdir: openassistant
+    gradle:
+      - yes
+
+  - versionName: v2.3.3
+    versionCode: 20260416
+    commit: 5ee17c5ec77919a93b78203ce001e1e7fa886d92
+    subdir: openassistant
+    gradle:
+      - yes
+
+  - versionName: v2.4.0
+    versionCode: 20260419
+    commit: 521998e7f85f9131c09b2afa3bb490f366dfc504
+    subdir: openassistant
+    gradle:
+      - yes
+
+  - versionName: v2.4.1
+    versionCode: 20260422
+    commit: ff3c94abd107d310335b6b91762a7db18fda13ab
+    subdir: openassistant
+    gradle:
+      - yes
+
+  - versionName: v2.4.2
+    versionCode: 20260427
+    commit: 67c3876ca5333fae4ef27f0e17120a1dff4124fa
+    subdir: openassistant
+    gradle:
+      - yes
+
+  - versionName: v2.4.3
+    versionCode: 20260430
+    commit: ac6f4c1a554285b8b0c73ec73efaf32803942245
+    subdir: openassistant
+    gradle:
+      - yes
+
+  - versionName: v2.4.4
+    versionCode: 20260506
+    commit: 634d9c9118f8265765d8fa0ca9268bc14e93f98c
+    subdir: openassistant
+    gradle:
+      - yes
+
+  - versionName: v2.4.5
+    versionCode: 20260513
+    commit: 531803d709466469af8bbe62fccdfc853c125b93
+    subdir: openassistant
+    gradle:
+      - yes
+
+  - versionName: v2.5.0
+    versionCode: 20260530
+    commit: 2d976d954a472d6ac0017b3675e4471b830b3cdf
+    subdir: openassistant
+    gradle:
+      - yes
+
+  - versionName: v2.5.2
+    versionCode: 20260604
+    commit: 89a1aba685f38c0253c83e73db0643da712a8a0a
+    subdir: openassistant
+    gradle:
+      - yes
+
+  - versionName: v2.5.3
+    versionCode: 20260612
+    commit: 9efcb946ba815e406b8963d8b212fbe25e544506
+    subdir: openassistant
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven2/d' ../settings.gradle.kts
+
+  - versionName: v2.5.4
+    versionCode: 20260615
+    commit: 583d8dd31e8bc2f28f3b07676e21f6da57c5527f
+    subdir: openassistant
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven2/d' ../settings.gradle.kts
+
+  - versionName: v2.5.5
+    versionCode: 20260620
+    commit: ae8c05a9f5aced4c8eeff52ba70750045ef55c8a
+    subdir: openassistant
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven2/d' ../settings.gradle.kts
+    scandelete:
+      - games/chess
+
+  - versionName: v2.5.6
+    versionCode: 20260625
+    commit: 5eabbf0dc3e245dff050d69a546eff4a60d43bef
+    subdir: openassistant
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven2/d' ../settings.gradle.kts
+
+  - versionName: v2.6.0
+    versionCode: 20260718
+    commit: ee813eeb259c6645dfa8f47b12137b4a4dd0684f
+    subdir: openassistant
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven2/d' ../settings.gradle.kts
+    scandelete:
+      - gradle-module-explorer/package.json
+
+  - versionName: v2.6.1
+    versionCode: 20260723
+    commit: 105902519de89d133bb93a7a42990986f97f2863
+    subdir: openassistant
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven2/d' ../settings.gradle.kts
+    scandelete:
+      - gradle-module-explorer/package.json
+      - third_party/om-file-format-sys/Cargo.toml
+
+  - versionName: v2.6.2
+    versionCode: 20260725
+    commit: 5fe99829f146ef349a9d28d0164a51cdece90b25
+    subdir: openassistant
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven2/d' ../settings.gradle.kts
+    scandelete:
+      - gradle-module-explorer/package.json
+      - third_party/om-file-format-sys/Cargo.toml
+      - '*/src/main/assets'
+      - library/*/src/main/assets
+
+AllowedAPKSigningKeys: 176fcb2525573e5be8e1cb3a496dd97b137e81ca5b887a1d32cb894b4e5717b4
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: v2.6.2
+CurrentVersionCode: 20260725

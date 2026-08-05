@@ -1,0 +1,78 @@
+AntiFeatures:
+  - NonFreeAssets
+  - NonFreeNet
+Categories:
+  - Download
+  - Internet
+  - Multimedia
+License: Apache-2.0
+AuthorName: Matthias Fricke
+AuthorEmail: mf@sapstern.com
+AuthorWebSite: https://sapstern.com
+SourceCode: https://github.com/sapstern/newshourpodcasts
+IssueTracker: https://github.com/sapstern/newshourpodcasts/issues
+
+AutoName: BBC World Service Podcast Downloader
+
+RepoType: git
+Repo: https://github.com/sapstern/newshourpodcasts.git
+
+Builds:
+  - versionName: v1.3.9
+    versionCode: 139
+    commit: 929f160d50ac575b47c77ad0866c6abead0dcb85
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.4.0
+    versionCode: 140
+    commit: 213114d92421d9ba21a7beee47eee8403f43a342
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.4.1
+    versionCode: 141
+    commit: 241e3e5e1dd406d5f42ee7acf7453c3949ce02d7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.4.2
+    versionCode: 142
+    commit: b22f54c3e723f1b31b6a64af6d9014d214c44317
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.4.3
+    versionCode: 143
+    commit: 8d6cea3cb925ccc156c2fc2d2c4a8a3a887cd949
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.4.4
+    versionCode: 144
+    commit: 58ef1f782a6c869400d0af647321401f96fcaa04
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.4.5
+    versionCode: 145
+    commit: 0764976feac98adee475f206a96efde407811589
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: v1.4.5
+CurrentVersionCode: 145

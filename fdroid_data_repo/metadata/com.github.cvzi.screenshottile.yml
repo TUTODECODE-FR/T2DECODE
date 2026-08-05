@@ -1,0 +1,1431 @@
+Categories:
+  - Multimedia
+  - System
+License: GPL-3.0-only
+AuthorEmail: cuzi-android@openmail.cc
+SourceCode: https://github.com/cvzi/ScreenshotTile
+IssueTracker: https://github.com/cvzi/ScreenshotTile/issues
+Translation: https://crwd.in/screenshottile
+Changelog: https://github.com/cvzi/ScreenshotTile/blob/HEAD/CHANGELOG.md
+Liberapay: cuzi
+Bitcoin: 3KDs3RjvsKzbFQ8XoHkGqZxQtSxn2WYbn1
+
+AutoName: Screenshot Tile
+
+RepoType: git
+Repo: https://github.com/cvzi/ScreenshotTile.git
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 1
+    commit: v1.0.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.1
+    versionCode: 2
+    commit: v1.0.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.2
+    versionCode: 3
+    commit: v1.0.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.0
+    versionCode: 4
+    commit: v1.1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.1
+    versionCode: 6
+    commit: v1.2.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.2
+    versionCode: 7
+    commit: v1.2.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.4
+    versionCode: 9
+    commit: v1.2.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.1
+    versionCode: 11
+    commit: v1.3.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.2
+    versionCode: 12
+    commit: v1.3.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.3
+    versionCode: 13
+    commit: v1.3.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.0
+    versionCode: 14
+    commit: v1.4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.0
+    versionCode: 15
+    commit: v1.5.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.1
+    versionCode: 16
+    commit: v1.5.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.2
+    versionCode: 17
+    commit: v1.5.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.3
+    versionCode: 18
+    commit: v1.5.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.4
+    versionCode: 19
+    commit: v1.5.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 20
+    commit: v1.6.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.1
+    versionCode: 21
+    commit: v1.6.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.2
+    versionCode: 22
+    commit: v1.6.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.5
+    versionCode: 25
+    commit: v1.6.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.0
+    versionCode: 26
+    commit: v1.7.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.1
+    versionCode: 27
+    commit: v1.7.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.1
+    versionCode: 29
+    commit: v1.8.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.2
+    versionCode: 30
+    commit: v1.8.2
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.8.3
+    versionCode: 31
+    commit: v1.8.3
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.8.4
+    versionCode: 32
+    commit: v1.8.4
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.8.6
+    versionCode: 34
+    commit: v1.8.6
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.9.0
+    versionCode: 35
+    commit: v1.9.0
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.10.0
+    versionCode: 36
+    commit: v1.10.0
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.11.0
+    versionCode: 37
+    commit: v1.11.0
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.12.0
+    versionCode: 38
+    commit: v1.12.0
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.12.1
+    versionCode: 39
+    commit: v1.12.1
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.12.2
+    versionCode: 40
+    commit: v1.12.2
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.12.3
+    versionCode: 41
+    commit: v1.12.3
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.13.0
+    versionCode: 42
+    commit: v1.13.0
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.13.1
+    versionCode: 43
+    commit: v1.13.1
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.13.2
+    versionCode: 44
+    commit: v1.13.2
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.13.3
+    versionCode: 45
+    commit: v1.13.3
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.13.4
+    versionCode: 46
+    commit: v1.13.4
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.14.0
+    versionCode: 47
+    commit: 3e56dd956536405e890b5f0a2ac63c98a72cb2bd
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.14.1
+    versionCode: 48
+    commit: e168f45e21895e4910ed72375ebff1686b48a123
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.14.2
+    versionCode: 49
+    commit: 3f57557e1f90a5e45159685f49ed144fd8dc703d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.14.3
+    versionCode: 50
+    commit: 2ec1f7826fb71684f31f099727b280d99726eea3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.14.4
+    versionCode: 51
+    commit: bb4c71fbde3e19adda0fe2e4bfab93be987ee744
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.14.5
+    versionCode: 52
+    commit: 4f51270b5f062d20e10937a19d51830ac752ff55
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.14.6
+    versionCode: 53
+    commit: 8c8583cdeaa3f27c8d72e644e1c6a88800a29148
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.14.7
+    versionCode: 54
+    commit: aa2dc55bcf49f3d85e8ff0b1f39a569781c99ef3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.14.8
+    versionCode: 55
+    commit: 209fec37becfd61254abbe4374d9170ee3d2bd6f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.14.9
+    versionCode: 56
+    commit: 1c12279d783406b3648f0d5937dcd69c2bf773c9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.14.10
+    versionCode: 57
+    commit: 3d45640ba17684d8a3f13880d84eac75f5e0b481
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.15.0
+    versionCode: 59
+    commit: bf162963ed21273a757be7050c70dc2bc596a5b8
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.16.0
+    versionCode: 60
+    commit: ac7579f55f4ee9eee2f041a8e77082b06bb09b8d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.16.1
+    versionCode: 61
+    commit: 7381bb87c1e3ee7a55ab877a38046378a8606660
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.16.2
+    versionCode: 62
+    commit: f36cc2444d88a67aa629c460dc9e5bb04a4dd532
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.16.4
+    versionCode: 64
+    commit: b281721e6cc4e95db62dfbbd00f943c791fe9f1d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.16.5
+    versionCode: 65
+    commit: e3320023216cbf79f27e786634663bcdb64e4849
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.17.0
+    versionCode: 66
+    commit: 756ba6e88897d18fd1b82afaf70385384ed8a2a9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+
+  - versionName: 1.17.1
+    versionCode: 67
+    commit: f9364e60f6ca1b308ed044e579fa041d139b3884
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 1.17.2
+    versionCode: 68
+    commit: 50cb838cf7455afe42d13a60d3154a61bf2db964
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 1.18.0
+    versionCode: 69
+    commit: 9c0f6255455e7960dd396b1e78d21dced1521517
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: echo "android.useAndroidX=true" > ../gradle.properties
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 1.18.2
+    versionCode: 71
+    commit: 95025b856fe073b9b29d98d1b1dd36d317b65f81
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 1.18.3
+    versionCode: 72
+    commit: 799d12ef5fee1ff6e1d81a48dcc539f34da3b5bc
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 1.18.5
+    versionCode: 74
+    commit: 648e3cf38055c53432de6a9e0a59398a9f1d3e7f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.0-beta1
+    versionCode: 76
+    commit: 4d994bcad045bf72424741fa323e47c3c35d66fd
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.0-beta3
+    versionCode: 78
+    commit: 8b63cdcae8d57916f401aadec3eeef56c065d350
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.0-beta4
+    versionCode: 79
+    commit: 79cd0ec0e0fc390b1ad2ebb444484cddef8b2e7c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.0-beta5
+    versionCode: 80
+    commit: 9b2c602a13ea4c0ff404e20d8f22b1292b25ae79
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.0-beta6
+    versionCode: 81
+    commit: 47c828207116ff1e60307ea4c89f38865e09cfc0
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.0-beta7
+    versionCode: 82
+    commit: 90f4d95f76630c0b6508df1b966ceb172c31e377
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.0
+    versionCode: 83
+    commit: 63ff345238254928762f0082b5ea23135c594259
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.1
+    versionCode: 84
+    commit: 41e4cd0360cfd1261b98db1d3f990cf736e7e8f6
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.2
+    versionCode: 85
+    commit: bbeb12c69cecf63ab64adce1d2cd2218b4c0ce38
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.3
+    versionCode: 86
+    commit: aa1eaf169a1fd0232d096ebd7b9fcffb88a8b4d1
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.4
+    versionCode: 87
+    commit: d591aa90738db6318382918010f3c4a95c69b2ff
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.5
+    versionCode: 88
+    commit: acdea6e46e5f857cc9748134a5ab727ef46d98df
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.0.8
+    versionCode: 91
+    commit: 17d5e4d0d10d75c4103a08a3acac390478a68cfe
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.1.0
+    versionCode: 92
+    commit: 9079ad5651da0bb6572f320f13bb13f6a001e8af
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.2.2
+    versionCode: 95
+    commit: 9605dc792b584a135c56a9e5adea2aeac6631052
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.2.3
+    versionCode: 96
+    commit: 0444bbe8eb17ed9df2efe58b76de79e79e662e8f
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.3.0
+    versionCode: 97
+    commit: dd9e8eb33d39177ac9f802952f1556cf2615e1c6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.3.1
+    versionCode: 98
+    commit: 6800232cd7cf7b95fa081bc29c6c55eebab349ca
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.3.2
+    versionCode: 99
+    commit: 548f9347b33c19c9397edf1b74f14f885ebba5d7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.3.3
+    versionCode: 100
+    commit: 58ddf9878b45dae858a808768f1659d6c49c7433
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.3.4
+    versionCode: 101
+    commit: c4036290bf8b77eaac2ad9e350cdff3d40fb337f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.3.5
+    versionCode: 102
+    commit: 3c77093a24fc79746002bd7895db29af8cdf32cd
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.3.7
+    versionCode: 104
+    commit: 670fa92bafe9aa87e1803bb9d6563b281e38521a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.4.0
+    versionCode: 105
+    commit: 0132141dbc963daba4fd6ea9efa21456d7ee1430
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.5.2
+    versionCode: 108
+    commit: c06d342e7511fdad1c693cd57055b35d6f5a8bb7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.6.0
+    versionCode: 109
+    commit: 3d50e22b3c8d9c3d2bfce7a5c9c8afcee6e74aa3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.6.1
+    versionCode: 110
+    commit: b8616723a6e0407775a808a6c93d90a82f23d9ea
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.6.2
+    versionCode: 111
+    commit: a60653e0ac109b56724fcb5d3cf83a9826231f3c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.7.0
+    versionCode: 112
+    commit: cb00b2875b34830900670f5da93f183e8d4b42b2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.8.0
+    versionCode: 113
+    commit: 2b2966e885ded07aeead9950214997a6294dab7e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.8.1
+    versionCode: 114
+    commit: f132ed55fd0ca4a0febd09cd49c705d3db05d786
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.8.2
+    versionCode: 115
+    commit: 829e2673d57b653c3cdf17fa3b586334201b64d3
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.8.3
+    versionCode: 116
+    commit: edf30cd859bae1f6424bac556c641cd664ba8f6f
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.8.4
+    versionCode: 117
+    commit: 447bf037dc24fc443b130f7981a055cb9c14446f
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.9.0
+    versionCode: 118
+    commit: 5ce469d6c01a7310a927e6c40cdc4cace49baa4c
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.9.1
+    versionCode: 119
+    commit: 217cc76cd74740564a1db31bdbc1292e1dac7d90
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.9.2
+    versionCode: 120
+    commit: 0fd285ac4e9925c660d352a7a718a4854619a2d6
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.10.0
+    versionCode: 121
+    commit: d1004751c25d519b62ec4a0e0a8da274d8793f91
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.11.0
+    versionCode: 122
+    commit: 49a2dcd8be57012fdcfafc3bb8a901ce7c3ad063
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.11.1
+    versionCode: 123
+    commit: 52ba3b804e1ba7f71cafa02b9104c885c1f9021c
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.11.2
+    versionCode: 124
+    commit: a38655623d9d02fc44d6111757863f350c4c3d28
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.11.3
+    versionCode: 125
+    commit: 7b1e6cf2ac6be4418d09ccfb6265438ed509a539
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.11.4
+    versionCode: 126
+    commit: 9b1dac15ec7896487d7742bdc93b5e7e78b1755e
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    antifeatures:
+      Ads:
+        en-US: Has a banner with donation links to some unrelated NGOs
+
+  - versionName: 2.12.1
+    versionCode: 128
+    commit: 702c12334e0cb932fb3d2e4ce296082359c8e112
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.12.2
+    versionCode: 129
+    commit: ebd554d66cf08030a2d3f785800a3526c08e7cf4
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.12.3
+    versionCode: 130
+    commit: 2a6bac1b496fcceb531d5f4b3ad364bf8b65c4d3
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+  - versionName: 2.12.4
+    versionCode: 131
+    commit: cb61ec0fed5558eb5f9634bf9821b65c6b60320e
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+  - versionName: 2.12.5
+    versionCode: 132
+    commit: 2af4484cfec7a96be152a6d011832b1bfa4629c2
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+  - versionName: 2.13.0
+    versionCode: 133
+    commit: 6a29d95546caa4cf7a510c1017a61b5b9db45c6c
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+  - versionName: 2.14.0
+    versionCode: 134
+    commit: 5696ac712adbebf36147e164ee2dc87e5d69e66e
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+  - versionName: 2.15.0
+    versionCode: 135
+    commit: a4e67d1c41905e858d7152230f2b9b71fcf666ef
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.15.1
+    versionCode: 136
+    commit: 6360eb0920805ce8ff368e17cf8572f3fd36eb5a
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.15.2
+    versionCode: 137
+    commit: c435690ee70e1d7768e4280636d322562d393a5d
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.16.0
+    versionCode: 138
+    commit: 1121e81741717f91303a62445fe596c5a4e66d01
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.17.0
+    versionCode: 139
+    commit: 0f1ca59b9cecba87a9850684dd5e7cc7da73a639
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.17.1
+    versionCode: 140
+    commit: 9e48f0f80d5d9bfc6cd3936e83c417bb8274cf0a
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.18.0
+    versionCode: 141
+    commit: 78c8a58ab1ab51faa85991f5c2f263b2dd3fdb3d
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.18.1
+    versionCode: 142
+    commit: 03dba007d33bd38bc069e6a8daa5d0ad49ca04b3
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.19.0
+    versionCode: 143
+    commit: d3f037af7aef07eff714320974cb8d14dbf14a93
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.20.0
+    versionCode: 144
+    commit: 7ac66204598ecfde8cd9966ced790ed97acaa8f7
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.20.1
+    versionCode: 145
+    commit: 5096fc440df1838126372ade396ec97dc82633fd
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.21.0
+    versionCode: 146
+    commit: 33cc73e31ea4411fded148e8d32ab21e1da9e75a
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.21.1
+    versionCode: 147
+    commit: d225ce07bf90e98013bff7360cc84eb2a89318fe
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.21.2
+    versionCode: 148
+    commit: 69909dbe8eae37a6a36e878ce0404d62861ec171
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+  - versionName: 2.21.3
+    versionCode: 149
+    commit: d44611f125df9bc95bf878d7b2f723d2803964f9
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - .github
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.21.3
+CurrentVersionCode: 149

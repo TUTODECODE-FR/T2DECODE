@@ -1,0 +1,36 @@
+AntiFeatures:
+  NonFreeAssets:
+    en-US: App contains music licensed under CC-BY-NC-SA 4.0.
+Categories:
+  - Shooter Game
+License: MIT
+AuthorName: İlker Işık, Ömer Işık
+AuthorWebSite: https://necrashter.github.io
+WebSite: https://necrashter.itch.io/frogue
+SourceCode: https://github.com/necrashter/frogue
+IssueTracker: https://github.com/necrashter/frogue/issues
+
+AutoName: Frogue
+
+RepoType: git
+Repo: https://github.com/necrashter/frogue
+
+Builds:
+  - versionName: 1.0.1a
+    versionCode: 3
+    commit: v1.0.1a
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: 1.0.2
+    versionCode: 4
+    commit: be758feab77bf35a0c1cd9dd873a4705a7f1f80a
+    subdir: android
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.2
+CurrentVersionCode: 4

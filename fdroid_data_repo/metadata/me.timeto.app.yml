@@ -1,0 +1,419 @@
+Categories:
+  - Calendar & Agenda
+  - Habit Tracker
+  - Time Tracker
+  - Timer
+License: GPL-3.0-or-later
+AuthorName: timeto.me
+AuthorEmail: ivan@timeto.me
+AuthorWebSite: https://timeto.me
+WebSite: https://timeto.me
+SourceCode: https://github.com/Medvedev91/timeto.me
+IssueTracker: https://github.com/Medvedev91/timeto.me/issues
+Donate: https://buymeacoffee.com/medvedev91
+
+AutoName: timeto.me
+
+RepoType: git
+Repo: https://github.com/Medvedev91/timeto.me.git
+Binaries: 
+  https://github.com/Medvedev91/timeto.me/releases/download/v%v.%c/fdroid-release.apk
+
+Builds:
+  - versionName: 2023.12.18
+    versionCode: 458
+    commit: 3f6814a67b0ba5452277f1e7830b20eaa623c9ac
+    subdir: android_app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    binary: 
+      https://github.com/Medvedev91/timeto.me/releases/download/%v.%c/android_app-release.apk
+    rm:
+      - ios_app
+
+  - versionName: 2024.01.19
+    versionCode: 462
+    commit: 17e3f5c5d0bc52856e4dc1df229787c2ec454a3e
+    subdir: android_app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2024.02.13
+    versionCode: 480
+    commit: 98116c764fc8dffefeaea57351e38a22233fa81f
+    subdir: android_app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2024.02.17
+    versionCode: 482
+    commit: fa82e13cda70942d3b818b493bddd6db7f1077a9
+    subdir: android_app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2024.02.24
+    versionCode: 483
+    commit: ce0b11277a4a9d16350cb9df17e25e576d220977
+    subdir: android_app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2024.04.08
+    versionCode: 489
+    commit: 5873de01425e826d5b1b92ecba99c32daa81d5b8
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2024.04.18
+    versionCode: 500
+    commit: 0514625c246ae24ebde79a51dcb93de49e05c160
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2024.05.01
+    versionCode: 522
+    commit: 25fea1db94c3d6bd1252a4fa9a0d6947cc9df2f6
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2024.05.15
+    versionCode: 529
+    commit: 2fa56ac293c5b10a878c7fe0389b3ad42e12b336
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2024.05.27
+    versionCode: 535
+    commit: 4ebd94cfe5c1b71a59ca89f6c338162d99ddaeb0
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2024.07.08
+    versionCode: 560
+    commit: 3c3ee1fda4ed00294d358d00b75ca37f6e47bab9
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2024.08.04
+    versionCode: 565
+    commit: 4cbbe980cff2b36596ea69f4e7bb503e6277f310
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2024.11.17
+    versionCode: 570
+    commit: a8fed04341930b35f87e2ead0dda0bfd82f467dd
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2025.06.08
+    versionCode: 576
+    commit: 049aff73ecb28a41fc219d2522b14884ecb60b3c
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2025.06.26
+    versionCode: 580
+    commit: 444bda77eb489bd4cdeb33f5a7978fb563624d4c
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2025.08.09
+    versionCode: 586
+    commit: d946b89bcba5b8bbffb7829b9004762db0b3c2d5
+    subdir: android_app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2025.08.30
+    versionCode: 588
+    commit: 51ee0383f33c39b5eb6c145ce9259a999ebbd22d
+    subdir: android_app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2025.09.13
+    versionCode: 590
+    commit: b5e9a1076f8c7cb88bca246d429dfb88970d5ccc
+    subdir: android_app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2025.10.11
+    versionCode: 593
+    commit: ae7390b4d90391453cb590b25c82c7874d408b72
+    subdir: android_app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2025.10.22
+    versionCode: 594
+    commit: b88cdf3acf5a1b30bec6169435d1c995cab69c42
+    subdir: android_app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2025.11.24
+    versionCode: 595
+    commit: b79b5aaf38ff70c2043f416a0007d91a9e03f5c2
+    subdir: android_app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2026.01.01
+    versionCode: 596
+    commit: 14e2d1defac3d628e337a0c90b8bc20e9fc11de0
+    subdir: android_app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2026.01.09
+    versionCode: 597
+    commit: 994f8085f40c6179d92cad7626bb4b1e108de675
+    subdir: android_app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2026.01.14
+    versionCode: 598
+    commit: 6be025773764a6b32db95c86a3a3acf5512b3808
+    subdir: android_app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2026.01.21
+    versionCode: 599
+    commit: 33ebaf06077170f81922dee61fd9ebe870de6006
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2026.01.27
+    versionCode: 600
+    commit: 4f81e70523f4f89d5eceb9b45233545f2628abe8
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2026.01.30
+    versionCode: 601
+    commit: aa9e910d8939a80b060cf8ad4cbfcb03692d7ec2
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2026.02.02
+    versionCode: 602
+    commit: 63ffe17443ddf580fc34b2f4474df6f01e684712
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2026.02.09
+    versionCode: 603
+    commit: d054329980401f522146343a1b644f9993aa7e37
+    subdir: android_app
+    gradle:
+      - fdroid
+    rm:
+      - ios_app
+
+  - versionName: 2026.02.15
+    versionCode: 607
+    commit: 68a3083f8a7b50792977c6b35aee6ca13e568edb
+    subdir: android
+    gradle:
+      - fdroid
+    rm:
+      - apple
+
+  - versionName: 2026.02.21
+    versionCode: 608
+    commit: 65d4dabef049960b82d933036224ed3408d95d8d
+    subdir: android
+    gradle:
+      - fdroid
+    rm:
+      - apple
+
+  - versionName: 2026.02.27
+    versionCode: 609
+    commit: 9f76421648cf0296c351e16433026b2e5ea37afb
+    subdir: android
+    gradle:
+      - fdroid
+    rm:
+      - apple
+
+  - versionName: 2026.03.08
+    versionCode: 610
+    commit: 79c0f368956e99f66fe05eb0634141b582ed9075
+    subdir: android
+    gradle:
+      - fdroid
+    rm:
+      - apple
+
+  - versionName: 2026.03.25
+    versionCode: 612
+    commit: 5d9aef88b1121ceb8a35dafa684351228de63c1e
+    subdir: android
+    gradle:
+      - fdroid
+    rm:
+      - apple
+
+  - versionName: 2026.07.01
+    versionCode: 615
+    commit: d8bc7197ed550f63e5602e105a80631303128356
+    subdir: android
+    gradle:
+      - fdroid
+    rm:
+      - apple
+
+  - versionName: 2026.07.23
+    versionCode: 618
+    commit: e6690f932125f8a6e636757263d485fe33c4fc13
+    subdir: android
+    gradle:
+      - fdroid
+    rm:
+      - apple
+
+AllowedAPKSigningKeys: 6934159449967ff5446a766d0d8b6ee9c0f68de70e1bb85c6140599e4e477793
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2026.07.23
+CurrentVersionCode: 618

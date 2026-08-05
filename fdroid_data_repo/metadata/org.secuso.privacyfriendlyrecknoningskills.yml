@@ -1,0 +1,54 @@
+Categories:
+  - Educational Game
+  - Science & Education
+License: GPL-3.0-or-later
+AuthorName: SECUSO - Security Usability Society
+AuthorEmail: pfa@secuso.org
+AuthorWebSite: https://secuso.aifb.kit.edu/english/105.php
+WebSite: https://secuso.aifb.kit.edu/english/Reckoning_Skills.php
+SourceCode: https://github.com/SecUSo/privacy-friendly-reckoning-skills
+IssueTracker: https://github.com/SecUSo/privacy-friendly-reckoning-skills/issues
+Changelog: 
+  https://github.com/SecUSo/privacy-friendly-reckoning-skills/blob/HEAD/CHANGELOG.md
+
+AutoName: Reckoning Skills
+
+RepoType: git
+Repo: https://github.com/SecUSo/privacy-friendly-reckoning-skills.git
+
+Builds:
+  - versionName: 1.0.2
+    versionCode: 3
+    commit: v1.0.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.1'
+    versionCode: 4
+    commit: 55a168317cc42534e24e0ea0e1022e8207b2ee31
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 1.1.1
+    versionCode: 5
+    commit: b6160ddddb42e5aa8fea1f2e12cfb5aa67e43092
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 1.1.2
+    versionCode: 6
+    commit: ebe5cbd0ebf0770e62b504efbc6049352c845950
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.1.2
+CurrentVersionCode: 6

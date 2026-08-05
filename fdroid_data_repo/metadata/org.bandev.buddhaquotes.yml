@@ -1,0 +1,107 @@
+Categories:
+  - Religion
+License: GPL-3.0-or-later
+AuthorName: BanDev
+AuthorEmail: hello@bandev.uk
+AuthorWebSite: https://bandev.uk
+SourceCode: https://github.com/BanDev/Buddha-Quotes
+IssueTracker: https://github.com/BanDev/Buddha-Quotes/issues
+Translation: https://hosted.weblate.org/projects/buddha-quotes/
+
+AutoName: Buddha Quotes
+
+RepoType: git
+Repo: https://github.com/BanDev/Buddha-Quotes.git
+
+Builds:
+  - versionName: v1.3.0
+    versionCode: 1004
+    commit: v1.3.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.3.2
+    versionCode: 1006
+    commit: v1.3.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.4.0
+    versionCode: 1007
+    commit: v1.4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.5.0
+    versionCode: 1008
+    commit: v1.5.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.5.1
+    versionCode: 1009
+    commit: v1.5.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.6.0
+    versionCode: 1010
+    commit: v1.6.0
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/6.8-rc-1/6.7/' ../gradle/wrapper/gradle-wrapper.properties
+
+  - versionName: v2.0.0
+    versionCode: 1011
+    commit: v2.0.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v2.1.0
+    versionCode: 1012
+    commit: v2.1.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v2.1.1
+    versionCode: 1013
+    commit: v2.1.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v2.2.0
+    versionCode: 1014
+    commit: 41f61108e9862f60a814d6d7b4c74575f06ea373
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: v2.2.0
+CurrentVersionCode: 1014

@@ -1,0 +1,115 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on the mastercompro.it website, which is not libre.
+Categories:
+  - Internet
+  - Science & Education
+License: GPL-3.0-or-later
+AuthorName: Stypox
+AuthorEmail: stypox@pm.me
+SourceCode: https://github.com/Stypox/mastercom-workbook
+IssueTracker: https://github.com/Stypox/mastercom-workbook/issues
+Changelog: https://github.com/Stypox/mastercom-workbook/releases
+
+AutoName: Quadermas
+
+RepoType: git
+Repo: https://github.com/Stypox/mastercom-workbook
+
+Builds:
+  - versionName: '3.2'
+    versionCode: 302
+    commit: v3.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '4.0'
+    versionCode: 400
+    commit: v4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '4.1'
+    versionCode: 401
+    commit: v4.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '5.0'
+    versionCode: 500
+    commit: v5.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '5.2'
+    versionCode: 502
+    commit: v5.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '5.3'
+    versionCode: 503
+    commit: v5.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '6.0'
+    versionCode: 600
+    commit: v6.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '7.0'
+    versionCode: 700
+    commit: df587ff931527cbb801855fa9616ec67935fc339
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '7.1'
+    versionCode: 701
+    commit: 6cb5da780a9c60266fba3dc05dee4360fd265823
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '7.2'
+    versionCode: 702
+    commit: 8250f2b95040f6f724d878c46f2e394b7471c39e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '7.3'
+    versionCode: 703
+    commit: 864dd5576920690a42e5adc5af97c0982c3ad084
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '7.4'
+    versionCode: 704
+    commit: a7e5bb51951c5625322d692cc425c4b67d9abe6b
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags .*[0-9]$
+CurrentVersion: '7.4'
+CurrentVersionCode: 704

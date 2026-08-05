@@ -1,0 +1,134 @@
+Categories:
+  - System
+License: GPL-3.0-only
+AuthorName: Ali Rıza KESKİN
+SourceCode: https://gitlab.com/sulincix/disable-delete-gapps
+IssueTracker: https://gitlab.com/sulincix/disable-delete-gapps/issues
+
+AutoName: /d/gapps
+Description: |-
+  This application is used to delete or disable gapps. It uses a regex to
+  find GApps package
+
+  - pm disable xxx (xxx is a package name that is found by the application)
+
+  or
+
+  - rm -rf xxx (xxx is a path name that is found by the application)
+
+  It requires root to work.
+
+  Don't delete GApps on touchwiz (or similar) stock rom or your device might
+  not boot afterwards. You should try to disable GApps instead!
+
+  To re-enable GApps, go to the *Settings › Apps* menu, and chose "restore apps
+  preferences". If you want to reinstall GApps, you should use the OpenGApps zip
+  or GApps installer (third party apps).
+
+RequiresRoot: true
+
+RepoType: git
+Repo: https://gitlab.com/sulincix/disable-delete-gapps.git
+
+Builds:
+  - versionName: '2.0'
+    versionCode: 2
+    commit: '2.0'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '4.0'
+    versionCode: 4
+    commit: '4.0'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '6.0'
+    versionCode: 6
+    commit: '6.0'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '7.0'
+    versionCode: 7
+    commit: '7.0'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '8.0'
+    versionCode: 8
+    commit: '8.0'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '9.0'
+    versionCode: 9
+    commit: '9.0'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '10.0'
+    versionCode: 10
+    commit: '10.0'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '11.0'
+    versionCode: 11
+    commit: '11.0'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '14.0'
+    versionCode: 14
+    commit: '14.0'
+    output: bin/app.apk
+    rm:
+      - bin
+    prebuild:
+      - sed -i -e 's|~/Android/Sdk|$$SDK$$|' -e 's/ sign//' Makefile
+      - android update sdk --no-ui --filter android-28
+    build:
+      - JAVA_HOME=$(file /etc/alternatives/javac | cut -d " " -f 5|cut -d "/" -f 1-5)
+        make
+      - mv bin/app.ap_ bin/app.apk
+
+  - versionName: '15.0'
+    versionCode: 15
+    commit: '15.0'
+    output: bin/app.apk
+    rm:
+      - bin
+    prebuild:
+      - sed -i -e 's|~/Android/Sdk|$$SDK$$|' -e 's/ sign//' Makefile
+      - android update sdk --no-ui --filter android-28
+    build:
+      - JAVA_HOME=$(file /etc/alternatives/javac | cut -d " " -f 5|cut -d "/" -f 1-5)
+        make
+      - mv bin/app.ap_ bin/app.apk
+
+  - versionName: '16.0'
+    versionCode: 16
+    commit: '16.0'
+    output: bin/app.apk
+    prebuild:
+      - sed -i -e 's|~/Android/Sdk|$$SDK$$|' -e 's/ sign//' Makefile
+      - android update sdk --no-ui --filter android-28
+    build:
+      - JAVA_HOME=$(file /etc/alternatives/javac | cut -d " " -f 5|cut -d "/" -f 1-5)
+        make
+      - mv bin/app.ap_ bin/app.apk
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '16.0'
+CurrentVersionCode: 16

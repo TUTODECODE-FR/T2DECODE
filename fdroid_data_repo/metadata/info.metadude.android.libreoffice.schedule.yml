@@ -1,0 +1,140 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Tethered to the schedule site.
+Categories:
+  - Schedule
+License: Apache-2.0
+AuthorName: Tobias Preuss
+AuthorEmail: tobias.preuss+libreoffice@googlemail.com
+SourceCode: https://github.com/johnjohndoe/CampFahrplan
+IssueTracker: https://github.com/EventFahrplan/EventFahrplan/issues
+Translation: https://crowdin.com/project/eventfahrplan
+Liberapay: EventFahrplan
+
+AutoName: LibreOffice 2024 Schedule
+Description: |
+  Program app for the LibreOffice Conference 2024
+
+  https://conference.libreoffice.org
+
+  <b>About the LibreOffice Conference</b>
+  The LibreOffice Conference is the annual gathering of the
+  worldwide LibreOffice Community and interested developers,
+  marketers, adopters, end-users, and supporters.
+
+  Our program reflects the broad engagement and diversity
+  of the community: it includes talks and workshops from
+  various areas of the project.
+
+  <b>Features</b>
+  * View program by day and rooms (side by side)
+  * Custom grid layout for smartphones (try landscape mode 🙃) and tablets
+  * Read detailed descriptions (speaker names, start time, room name, links, ...) of events
+  * Add events to favorites list
+  * Export favorites list
+  * Setup alarms for individual events
+  * Add events to your personal calendar
+  * Share a website link to an event with others
+  * Keep track of program changes
+  * Automatic program updates (configurable in settings)
+
+  <b>🔤 Supported languages</b>
+  (Event descriptions excluded)
+  * Danish
+  * Dutch
+  * English
+  * Finnish
+  * French
+  * German
+  * Italian
+  * Japanese
+  * Lithuanian
+  * Polish
+  * Portuguese (Brazil)
+  * Portuguese (Portugal)
+  * Russian
+  * Spanish
+  * Swedish
+  * Turkish
+
+  🤝 You can help to translate the app at:
+  https://crowdin.com/project/eventfahrplan
+
+  💡 Questions regarding the content can only be answered by the
+  LibreOffice Conference content team. This app simply offers a
+  way to consume and personalize the conference schedule.
+
+  💣 Bug reports are very welcome. It would be awesome if you
+  can describe how to reproduce the particular error in the
+  issue tracker at https://github.com/EventFahrplan/EventFahrplan/issues.
+
+  🏆 The app is based on the EventFahrplan app
+  which was initially built for the camp and annual congress of
+  the Chaos Computer Club. The source code of the app is publicly
+  available on GitHub at:
+  https://github.com/johnjohndoe/CampFahrplan/tree/libreoffice-2024.
+
+  🎨 LibreOffice Logo Design by Italo Vignoli.
+
+RepoType: git
+Repo: https://github.com/johnjohndoe/CampFahrplan.git
+
+Builds:
+  - versionName: 1.52.0-LibreOffice-Edition
+    versionCode: 84
+    commit: v.1.52.0-LibreOffice-Edition
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - libreoffice2021
+    prebuild: cp local.properties gradle.properties
+
+  - versionName: 1.55.0-LibreOffice-Edition
+    versionCode: 89
+    commit: v.1.55.0-LibreOffice-Edition
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - libreoffice2022
+    prebuild: cp local.properties gradle.properties
+
+  - versionName: 1.66.0-LibreOffice-Edition
+    versionCode: 104
+    commit: v.1.66.0-LibreOffice-Edition
+    subdir: app
+    gradle:
+      - libreoffice2024
+    prebuild: cp local.properties gradle.properties
+
+  - versionName: 1.66.1-LibreOffice-Edition
+    versionCode: 105
+    commit: v.1.66.1-LibreOffice-Edition
+    subdir: app
+    gradle:
+      - libreoffice2024
+    prebuild: cp local.properties gradle.properties
+
+  - versionName: 1.66.2-LibreOffice-Edition
+    versionCode: 106
+    commit: v.1.66.2-LibreOffice-Edition
+    subdir: app
+    gradle:
+      - libreoffice2024
+    prebuild: cp local.properties gradle.properties
+
+MaintainerNotes: |
+  The branch for the LibreOffice Conference 2024 is maintained
+  in a separate fork of the main repository on purpose in order
+  to keep the latter well organized and less complex.
+
+ArchivePolicy: 1
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.66.2-LibreOffice-Edition
+CurrentVersionCode: 106

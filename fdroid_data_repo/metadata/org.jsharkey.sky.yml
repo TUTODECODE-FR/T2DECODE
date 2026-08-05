@@ -1,0 +1,23 @@
+Categories:
+  - Weather
+License: Apache-2.0
+SourceCode: 
+  https://archive.softwareheritage.org/browse/origin/http://android-sky.googlecode.com/svn//directory/
+
+AutoName: Forecast widgets
+Description: A weather forecast widget - USA only.
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: '2'
+    subdir: Sky
+    prebuild: rm -rf Sky/
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.0'
+CurrentVersionCode: 1
+
+NoSourceSince: '1.0'

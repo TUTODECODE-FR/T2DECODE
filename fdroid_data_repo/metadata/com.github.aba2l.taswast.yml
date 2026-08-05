@@ -1,0 +1,27 @@
+Categories:
+  - Calendar & Agenda
+License: GPL-3.0-only
+SourceCode: https://gitlab.com/AbA2L/Taswast
+IssueTracker: https://gitlab.com/AbA2L/Taswast/issues
+Changelog: https://gitlab.com/AbA2L/Taswast/-/releases
+
+AutoName: Taswast
+Description: |-
+  Taswast is an Amazigh calendar. Counts days/months/years with the amazigh system
+  and repertorying all the traditional events of the year.
+
+RepoType: git
+Repo: https://gitlab.com/AbA2L/Taswast.git
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: v0.9-beta.2
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.0'
+CurrentVersionCode: 1

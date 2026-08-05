@@ -1,0 +1,226 @@
+Categories:
+  - Role-Playing Game
+License: GPL-3.0-only
+WebSite: https://freeminer.org
+SourceCode: https://github.com/freeminer/freeminer
+IssueTracker: https://github.com/freeminer/freeminer/issues
+Changelog: https://github.com/freeminer/freeminer/blob/HEAD/CHANGELOG.md#changelog
+
+Name: freeminer
+
+RepoType: git
+Repo: https://github.com/freeminer/freeminer.git
+
+Builds:
+  - versionName: 0.4.12.6.13
+    versionCode: 13
+    commit: 202a17e58eecb6325a55bee5404e1d4a59021047
+    subdir: build/android
+    submodules: true
+    output: bin/freeminer-release-unsigned.apk
+    scanignore:
+      - build/windows
+    build:
+      - printf "%s\n%s\n%s" "ANDROID_NDK = $$NDK$$" "NDK_MODULE_PATH = $$NDK$$/toolchains"
+        "SDKFOLDER = $$SDK$$" > path.cfg
+      - for n in 1 2 3; do make release
+      - break; done
+
+  - versionName: 0.4.12.6.15
+    versionCode: 15
+    commit: 65dd040a3ef160e8967e96b2c6abf7c772859d30
+    subdir: build/android
+    submodules: true
+    output: bin/freeminer-release-unsigned.apk
+    scanignore:
+      - build/windows
+    build:
+      - printf "%s\n%s\n%s" "ANDROID_NDK = $$NDK$$" "NDK_MODULE_PATH = $$NDK$$/toolchains"
+        "SDKFOLDER = $$SDK$$" > path.cfg
+      - for n in 1 2 3; do make release
+      - break; done
+
+  - versionName: 0.4.13.7.56
+    versionCode: 56
+    commit: 076502514442e5af09d6935cf42d47db515c3c4c
+    subdir: build/android
+    submodules: true
+    output: bin/freeminer-release-unsigned.apk
+    scanignore:
+      - build/windows
+    build:
+      - printf "%s\n%s\n%s" "ANDROID_NDK = $$NDK$$" "NDK_MODULE_PATH = $$NDK$$/toolchains"
+        "SDKFOLDER = $$SDK$$" > path.cfg
+      - for n in 1 2 3; do make -j $(nproc || sysctl -n hw.ncpu || echo 2)
+      - break; done
+
+  - versionName: 0.4.13.7.56
+    versionCode: 57
+    commit: 076502514442e5af09d6935cf42d47db515c3c4c
+    subdir: build/android
+    submodules: true
+    output: bin/freeminer-release-unsigned.apk
+    scanignore:
+      - build/windows
+    build:
+      - printf "%s\n%s\n%s" "ANDROID_NDK = $$NDK$$" "NDK_MODULE_PATH = $$NDK$$/toolchains"
+        "SDKFOLDER = $$SDK$$" > path.cfg
+      - for n in 1 2 3; do make -j $(nproc || sysctl -n hw.ncpu || echo 2) TARGET_x86=1
+      - break; done
+
+  - versionName: 0.4.13.7.62
+    versionCode: 62
+    commit: eac6b0cbdc08019f3e52d9b21c070fb2dd038f7e
+    subdir: build/android
+    submodules: true
+    output: bin/freeminer-release-unsigned.apk
+    scanignore:
+      - build/windows
+    build:
+      - printf "%s\n%s\n%s" "ANDROID_NDK = $$NDK$$" "NDK_MODULE_PATH = $$NDK$$/toolchains"
+        "SDKFOLDER = $$SDK$$" > path.cfg
+      - for n in 1 2 3; do make -j $(nproc || sysctl -n hw.ncpu || echo 2)
+      - break; done
+
+  - versionName: 0.4.13.7.62
+    versionCode: 63
+    commit: eac6b0cbdc08019f3e52d9b21c070fb2dd038f7e
+    subdir: build/android
+    submodules: true
+    output: bin/freeminer-release-unsigned.apk
+    scanignore:
+      - build/windows
+    build:
+      - printf "%s\n%s\n%s" "ANDROID_NDK = $$NDK$$" "NDK_MODULE_PATH = $$NDK$$/toolchains"
+        "SDKFOLDER = $$SDK$$" > path.cfg
+      - for n in 1 2 3; do make -j $(nproc || sysctl -n hw.ncpu || echo 2) TARGET_x86=1
+      - break; done
+
+  - versionName: 0.4.13.7.90
+    versionCode: 90
+    commit: e3164194db3f7aa1479ace4bc69aea60d19a4c82
+    subdir: build/android
+    submodules: true
+    output: bin/freeminer-release-unsigned.apk
+    build:
+      - printf "%s\n%s\n%s" "ANDROID_NDK = $$NDK$$" "NDK_MODULE_PATH = $$NDK$$/toolchains"
+        "SDKFOLDER = $$SDK$$" > path.cfg
+      - for n in 1 2 3; do make -j $(nproc || sysctl -n hw.ncpu || echo 2)
+      - break; done
+
+  - versionName: 0.4.13.7.90
+    versionCode: 91
+    commit: e3164194db3f7aa1479ace4bc69aea60d19a4c82
+    subdir: build/android
+    submodules: true
+    output: bin/freeminer-release-unsigned.apk
+    build:
+      - printf "%s\n%s\n%s" "ANDROID_NDK = $$NDK$$" "NDK_MODULE_PATH = $$NDK$$/toolchains"
+        "SDKFOLDER = $$SDK$$" > path.cfg
+      - for n in 1 2 3; do make -j $(nproc || sysctl -n hw.ncpu || echo 2) TARGET_arm64=1
+      - break; done
+
+  - versionName: 0.4.13.7.90
+    versionCode: 92
+    commit: e3164194db3f7aa1479ace4bc69aea60d19a4c82
+    subdir: build/android
+    submodules: true
+    output: bin/freeminer-release-unsigned.apk
+    build:
+      - printf "%s\n%s\n%s" "ANDROID_NDK = $$NDK$$" "NDK_MODULE_PATH = $$NDK$$/toolchains"
+        "SDKFOLDER = $$SDK$$" > path.cfg
+      - for n in 1 2 3; do make -j $(nproc || sysctl -n hw.ncpu || echo 2) TARGET_x86=1
+      - break; done
+
+  - versionName: 0.4.13.7.90
+    versionCode: 93
+    commit: e3164194db3f7aa1479ace4bc69aea60d19a4c82
+    subdir: build/android
+    submodules: true
+    output: bin/freeminer-release-unsigned.apk
+    build:
+      - printf "%s\n%s\n%s" "ANDROID_NDK = $$NDK$$" "NDK_MODULE_PATH = $$NDK$$/toolchains"
+        "SDKFOLDER = $$SDK$$" > path.cfg
+      - for n in 1 2 3; do make -j $(nproc || sysctl -n hw.ncpu || echo 2) TARGET_x86_64=1
+      - break; done
+
+  - versionName: 0.4.14.8.120
+    versionCode: 121
+    commit: a6624b0fc4efd0e242bd937bc431dd3871e55557
+    subdir: build/android_fm
+    submodules: true
+    output: bin/freeminer-release-unsigned.apk
+    build:
+      - printf "%s\n%s\n%s" "ANDROID_NDK = $$NDK$$" "NDK_MODULE_PATH = $$NDK$$/toolchains"
+        "SDKFOLDER = $$SDK$$" > path.cfg
+      - for n in 1 2 3; do make -j $(nproc || sysctl -n hw.ncpu || echo 2) TARGET_arm64=1
+      - break; done
+
+  - versionName: 5.10.0
+    versionCode: 5100000
+    commit: 1932c0582ed1253578d92426a572ff8705b86080
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y cmake gcc-multilib gettext make wget xz-utils
+    gradle:
+      - yes
+    srclibs:
+      - minetest_android_deps@5.10.0
+    prebuild: sed -i -e 's/enable true/enable false/' -e '/preBuild.dependsOn getDeps/d'
+      -e 's/versionCode .*/versionCode $$VERCODE$$/' build.gradle ../native/build.gradle
+    scandelete:
+      - src/external/msgpack-c/fuzz
+    build:
+      - export ndkversion=$(grep "ndk_version = " ../build.gradle | cut -d "'" -f
+        2)
+      - sdkmanager "ndk;$ndkversion"
+      - export ANDROID_NDK=$$SDK$$/ndk/$ndkversion
+      - pushd $$minetest_android_deps$$
+      - ./build.sh --all armeabi-v7a
+      - ./build.sh --all arm64-v8a
+      - ./build.sh --all x86
+      - ./build.sh --all x86_64
+      - popd
+      - mv $$minetest_android_deps$$/deps ../native
+
+  - versionName: 5.13.0
+    versionCode: 5130000
+    disable: https://github.com/freeminer/freeminer/issues/304
+    commit: c164db4e7845c7fa89f2e68437eae29748b0e51f
+    subdir: android/app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc-multilib gettext make wget xz-utils
+      - apt-get install -y cmake -t bookworm-backports
+    gradle:
+      - yes
+    srclibs:
+      - minetest_android_deps@5.14.0
+    prebuild:
+      - sed -i -e 's/enable true/enable false/' -e '/preBuild.dependsOn getDeps/d'
+        -e 's/versionCode .*/versionCode $$VERCODE$$/' build.gradle ../native/build.gradle
+      - sed -i -e '/cmake_minimum_required/aadd_link_options("LINKER:--build-id=none")'
+        ../../CMakeLists.txt
+      - sed -i -e 's/8.12.3/8.11.1/' ../build.gradle
+    scandelete:
+      - src/external/msgpack-c/fuzz
+    build:
+      - export ndkversion=$(grep "ndk_version = " ../build.gradle | cut -d "'" -f
+        2)
+      - sdkmanager "ndk;$ndkversion"
+      - export ANDROID_NDK=$$SDK$$/ndk/$ndkversion
+      - pushd $$minetest_android_deps$$
+      - ./build.sh --all armeabi-v7a
+      - ./build.sh --all arm64-v8a
+      - ./build.sh --all x86
+      - ./build.sh --all x86_64
+      - popd
+      - mv $$minetest_android_deps$$/deps ../native
+
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 5.13.0
+CurrentVersionCode: 5130000

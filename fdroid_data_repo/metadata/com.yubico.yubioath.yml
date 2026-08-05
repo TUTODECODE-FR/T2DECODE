@@ -1,0 +1,1698 @@
+Categories:
+  - Password & 2FA
+  - Security
+License: Apache-2.0
+AuthorName: Yubico
+AuthorWebSite: https://developers.yubico.com
+WebSite: https://developers.yubico.com/yubioath-flutter
+SourceCode: https://github.com/Yubico/yubioath-flutter
+IssueTracker: https://github.com/Yubico/yubioath-flutter/issues
+Changelog: https://github.com/Yubico/yubioath-flutter/blob/HEAD/NEWS
+
+AutoName: Yubico Authenticator
+Description: |-
+  Store your unique credential on a hardware-backed security key and take it wherever
+  you go from mobile to desktop. No more storing sensitive secrets on your mobile
+  phone, leaving your account vulnerable to takeovers. With the Yubico Authenticator
+  you can raise the bar for security.
+
+RepoType: git
+Repo: https://github.com/Yubico/yubioath-flutter.git
+
+Builds:
+  - versionName: 0.0.4
+    versionCode: 10
+    commit: yubioath-0.0.4
+    maven: yes
+
+  - versionName: 0.1.3
+    versionCode: 14
+    commit: yubioath-0.1.3
+    maven: yes
+
+  - versionName: 0.1.4
+    versionCode: 15
+    commit: yubioath-0.1.4
+    maven: yes
+
+  - versionName: 0.1.6
+    versionCode: 17
+    commit: yubioath-0.1.6
+    maven: yes
+
+  - versionName: 0.1.7
+    versionCode: 18
+    commit: yubioath-0.1.7
+    maven: yes
+
+  - versionName: 0.1.8
+    versionCode: 19
+    commit: yubioath-0.1.8
+    maven: yes
+
+  - versionName: 0.1.9
+    versionCode: 20
+    commit: yubioath-0.1.9
+    maven: yes
+
+  - versionName: 0.1.10
+    versionCode: 21
+    commit: yubioath-0.1.10
+    maven: yes
+
+  - versionName: 0.1.11
+    versionCode: 22
+    commit: yubioath-0.1.11
+    maven: yes
+
+  - versionName: 1.0.0
+    versionCode: 23
+    commit: yubioath-1.0.0
+    maven: yes
+
+  - versionName: 1.0.1
+    versionCode: 24
+    commit: yubioath-1.0.1
+    maven: yes
+
+  - versionName: 1.0.2
+    versionCode: 25
+    commit: yubioath-1.0.2
+    maven: yes
+
+  - versionName: 1.0.3
+    versionCode: 26
+    commit: yubioath-1.0.3
+    maven: yes
+
+  - versionName: 1.0.5
+    versionCode: 28
+    commit: yubioath-1.0.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.0
+    versionCode: 29
+    commit: yubioath-1.1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.1
+    versionCode: 34
+    commit: yubioath-1.2.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.1
+    versionCode: 20001
+    commit: 2.0.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.0
+    versionCode: 20199
+    commit: 2.2.0
+    subdir: app
+    gradle:
+      - strict
+    prebuild: sed -i -e '/com.google.android.gms/d' build.gradle
+
+  - versionName: 6.0.1
+    versionCode: 600041
+    commit: 19d72f08539035a142d2118413f7819d87b1b19c
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@3.3.7
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 6.0.1
+    versionCode: 600042
+    commit: 19d72f08539035a142d2118413f7819d87b1b19c
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@3.3.7
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 6.0.1
+    versionCode: 600044
+    commit: 19d72f08539035a142d2118413f7819d87b1b19c
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@3.3.7
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 6.0.2
+    versionCode: 600061
+    commit: 4eea53a02472df1bf72dd8a7c770fac0ee9792b8
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@3.3.7
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 6.0.2
+    versionCode: 600062
+    commit: 4eea53a02472df1bf72dd8a7c770fac0ee9792b8
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@3.3.7
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 6.0.2
+    versionCode: 600064
+    commit: 4eea53a02472df1bf72dd8a7c770fac0ee9792b8
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@3.3.7
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 6.1.0
+    versionCode: 601001
+    commit: 5c0cb7e627c666e11a0067d9b86c6c2d6ba6d3af
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@3.3.7
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 6.1.0
+    versionCode: 601002
+    commit: 5c0cb7e627c666e11a0067d9b86c6c2d6ba6d3af
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@3.3.7
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 6.1.0
+    versionCode: 601004
+    commit: 5c0cb7e627c666e11a0067d9b86c6c2d6ba6d3af
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@3.3.7
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 6.1.1
+    versionCode: 601011
+    commit: cc4eace015c75b77bc32a1da1a2dce293adea759
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@3.3.7
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 6.1.1
+    versionCode: 601012
+    commit: cc4eace015c75b77bc32a1da1a2dce293adea759
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@3.3.7
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 6.1.1
+    versionCode: 601014
+    commit: cc4eace015c75b77bc32a1da1a2dce293adea759
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@3.3.7
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 6.2.0
+    versionCode: 602001
+    commit: 58a5ab6c7ce9909e0c9af39e89bdc04e34aa2f01
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@3.7.11
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 6.2.0
+    versionCode: 602002
+    commit: 58a5ab6c7ce9909e0c9af39e89bdc04e34aa2f01
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@3.7.11
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 6.2.0
+    versionCode: 602004
+    commit: 58a5ab6c7ce9909e0c9af39e89bdc04e34aa2f01
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@3.7.11
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild: sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 6.3.0
+    versionCode: 603001
+    commit: 9467d9a4a03df483c938f7de96fb661a81568d39
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@3.13.2
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 6.3.0
+    versionCode: 603002
+    commit: 9467d9a4a03df483c938f7de96fb661a81568d39
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@3.13.2
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 6.3.0
+    versionCode: 603004
+    commit: 9467d9a4a03df483c938f7de96fb661a81568d39
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@3.13.2
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 6.3.1
+    versionCode: 603021
+    commit: 899bb65768da812ffa4e1e8c0f5a6d8e57346a8c
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@3.16.4
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 6.3.1
+    versionCode: 603022
+    commit: 899bb65768da812ffa4e1e8c0f5a6d8e57346a8c
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@3.16.4
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 6.3.1
+    versionCode: 603024
+    commit: 899bb65768da812ffa4e1e8c0f5a6d8e57346a8c
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@3.16.4
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 6.4.0
+    versionCode: 604011
+    commit: c44d65eb6efc9e82b74eb44f228c3937bdc1e071
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@3.16.4
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 6.4.0
+    versionCode: 604012
+    commit: c44d65eb6efc9e82b74eb44f228c3937bdc1e071
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@3.16.4
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 6.4.0
+    versionCode: 604014
+    commit: c44d65eb6efc9e82b74eb44f228c3937bdc1e071
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@3.16.4
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e '/gms/d' android/{app/build.gradle,build.gradle}
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.0.0
+    versionCode: 700001
+    commit: 3c59e7cedaede3b670c0df139ff3896fd73d6429
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.0.0
+    versionCode: 700002
+    commit: 3c59e7cedaede3b670c0df139ff3896fd73d6429
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.0.0
+    versionCode: 700004
+    commit: 3c59e7cedaede3b670c0df139ff3896fd73d6429
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.0.1
+    versionCode: 700011
+    commit: 492d045e48cee3862e8d7c6c46d3d9d56c6b3d7b
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.0.1
+    versionCode: 700012
+    commit: 492d045e48cee3862e8d7c6c46d3d9d56c6b3d7b
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.0.1
+    versionCode: 700014
+    commit: 492d045e48cee3862e8d7c6c46d3d9d56c6b3d7b
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.1.0
+    versionCode: 701001
+    commit: 1a9db69418af38d2d953d5d4b2f0e7e41cf49ed7
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.1.0
+    versionCode: 701002
+    commit: 1a9db69418af38d2d953d5d4b2f0e7e41cf49ed7
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.1.0
+    versionCode: 701004
+    commit: 1a9db69418af38d2d953d5d4b2f0e7e41cf49ed7
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.1.1
+    versionCode: 701021
+    commit: 058a6167c276384985d633be00c65320f5b3d9b4
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.1.1
+    versionCode: 701022
+    commit: 058a6167c276384985d633be00c65320f5b3d9b4
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.1.1
+    versionCode: 701024
+    commit: 058a6167c276384985d633be00c65320f5b3d9b4
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.2.0
+    versionCode: 702001
+    commit: 6ff905aeccd9954d636c90535a577a7714e4ead6
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.2.0
+    versionCode: 702002
+    commit: 6ff905aeccd9954d636c90535a577a7714e4ead6
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.2.0
+    versionCode: 702004
+    commit: 6ff905aeccd9954d636c90535a577a7714e4ead6
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.2.2
+    versionCode: 702021
+    commit: 812c78014a1fe1d4650a0a0bd0069bf01ed27def
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.2.2
+    versionCode: 702022
+    commit: 812c78014a1fe1d4650a0a0bd0069bf01ed27def
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.2.2
+    versionCode: 702024
+    commit: 812c78014a1fe1d4650a0a0bd0069bf01ed27def
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.2.3
+    versionCode: 702041
+    commit: 3032ae835d0cec92cce29eeb51ba1119465883c9
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.2.3
+    versionCode: 702042
+    commit: 3032ae835d0cec92cce29eeb51ba1119465883c9
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.2.3
+    versionCode: 702044
+    commit: 3032ae835d0cec92cce29eeb51ba1119465883c9
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.3.0
+    versionCode: 703011
+    commit: fce9189920e944246d117147dd42480260e0d460
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e 's/8.12.3/8.11.1/' android/flutter_plugins/qrscanner_zxing/android/build.gradle
+        android/settings.gradle
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,shared_preferences,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.3.0
+    versionCode: 703012
+    commit: fce9189920e944246d117147dd42480260e0d460
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e 's/8.12.3/8.11.1/' android/flutter_plugins/qrscanner_zxing/android/build.gradle
+        android/settings.gradle
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,shared_preferences,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.3.0
+    versionCode: 703014
+    commit: fce9189920e944246d117147dd42480260e0d460
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e 's/8.12.3/8.11.1/' android/flutter_plugins/qrscanner_zxing/android/build.gradle
+        android/settings.gradle
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,shared_preferences,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.3.1
+    versionCode: 703021
+    commit: 71873fd66ae374994f7f4f0c71427365b38a611b
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e 's/8.12.3/8.11.1/' android/flutter_plugins/qrscanner_zxing/android/build.gradle
+        android/settings.gradle
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,shared_preferences,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.3.1
+    versionCode: 703022
+    commit: 71873fd66ae374994f7f4f0c71427365b38a611b
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e 's/8.12.3/8.11.1/' android/flutter_plugins/qrscanner_zxing/android/build.gradle
+        android/settings.gradle
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,shared_preferences,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.3.1
+    versionCode: 703024
+    commit: 71873fd66ae374994f7f4f0c71427365b38a611b
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - sed -i -e 's/8.12.3/8.11.1/' android/flutter_plugins/qrscanner_zxing/android/build.gradle
+        android/settings.gradle
+      - source .github/workflows/env
+      - pushd $$flutter$$
+      - git checkout -f $FLUTTER
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,shared_preferences,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.3.2
+    versionCode: 703041
+    commit: 62575d0b5529fd0234ecd378b646b50e43f3ce83
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - git -C $$flutter$$ checkout -f $FLUTTER
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.3.2
+    versionCode: 703042
+    commit: 62575d0b5529fd0234ecd378b646b50e43f3ce83
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - git -C $$flutter$$ checkout -f $FLUTTER
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.3.2
+    versionCode: 703044
+    commit: 62575d0b5529fd0234ecd378b646b50e43f3ce83
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - git -C $$flutter$$ checkout -f $FLUTTER
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.3.3
+    versionCode: 703051
+    commit: 9d1e9a6f66c743ad57622097f9b73e4dcf48e981
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - git -C $$flutter$$ checkout -f $FLUTTER
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.3.3
+    versionCode: 703052
+    commit: 9d1e9a6f66c743ad57622097f9b73e4dcf48e981
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - git -C $$flutter$$ checkout -f $FLUTTER
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.3.3
+    versionCode: 703054
+    commit: 9d1e9a6f66c743ad57622097f9b73e4dcf48e981
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - git -C $$flutter$$ checkout -f $FLUTTER
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.4.0
+    versionCode: 703071
+    commit: 17c6a5e7a3889bb6e1c3c9cb9851806e7a48ace4
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - git -C $$flutter$$ checkout -f $FLUTTER
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.4.0
+    versionCode: 703072
+    commit: 17c6a5e7a3889bb6e1c3c9cb9851806e7a48ace4
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - git -C $$flutter$$ checkout -f $FLUTTER
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.4.0
+    versionCode: 703074
+    commit: 17c6a5e7a3889bb6e1c3c9cb9851806e7a48ace4
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - git -C $$flutter$$ checkout -f $FLUTTER
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 7.4.1
+    versionCode: 703081
+    commit: a349411fa7de3c2ae66e6116be36778522d73f19
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - git -C $$flutter$$ checkout -f $FLUTTER
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 7.4.1
+    versionCode: 703082
+    commit: a349411fa7de3c2ae66e6116be36778522d73f19
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - git -C $$flutter$$ checkout -f $FLUTTER
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 7.4.1
+    versionCode: 703084
+    commit: a349411fa7de3c2ae66e6116be36778522d73f19
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - linux
+      - macos
+      - test
+      - windows
+    prebuild:
+      - source .github/workflows/env
+      - git -C $$flutter$$ checkout -f $FLUTTER
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - pushd android/app
+      - gradle collectLicenses
+      - popd
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^[\d.]+$
+VercodeOperation:
+  - '%c * 10 + 1'
+  - '%c * 10 + 2'
+  - '%c * 10 + 4'
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 7.4.1
+CurrentVersionCode: 703084

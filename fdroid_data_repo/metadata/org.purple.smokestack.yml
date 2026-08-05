@@ -1,0 +1,90 @@
+Categories:
+  - Internet
+  - Messaging
+License: MIT
+WebSite: https://textbrowser.github.io/smoke/
+SourceCode: https://github.com/textbrowser/smokestack
+IssueTracker: https://github.com/textbrowser/smokestack/issues
+
+AutoName: SmokeStack
+
+RepoType: git
+Repo: https://github.com/textbrowser/smokestack
+
+Builds:
+  - versionName: 2022.03.15
+    versionCode: 20220315
+    commit: b980d03ffdf4f9313c0560d90d6726380d5bc68e
+    subdir: SmokeStack/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/apk/smokestack.apk
+
+  - versionName: 2022.04.10
+    versionCode: 20220410
+    commit: 9b4c512da0b32c4280c00eb2ad1ee1b5e27351a2
+    subdir: SmokeStack/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/apk/smokestack.apk
+
+  - versionName: 2022.04.15
+    versionCode: 20220415
+    commit: 52d1b90ce4bc46fb2dc5dfb9e65751bf129a93eb
+    subdir: SmokeStack/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/apk/smokestack.apk
+
+  - versionName: 2022.04.20
+    versionCode: 20220420
+    commit: 1fddb1728a845f5ce7f222d4557ea6e4fa35d965
+    subdir: SmokeStack/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/apk/smokestack.apk
+
+  - versionName: 2023.12.25
+    versionCode: 20231225
+    commit: a8c4c632ebd1dc0bf2c5a0aa185ecc24930ad96f
+    subdir: SmokeStack/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sed -i -e '/android {/a lintOptions {checkReleaseBuilds false}' build.gradle
+
+  - versionName: 2024.01.01
+    versionCode: 20240101
+    commit: 41352ae4188928a1adf733cbf5fce64671294f8a
+    subdir: SmokeStack/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sed -i -e '/android {/a lintOptions {checkReleaseBuilds false}' build.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2024.01.01
+CurrentVersionCode: 20240101

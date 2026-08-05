@@ -1,0 +1,29 @@
+Categories:
+  - Internet
+License: GPL-3.0-only
+AuthorName: Thomas
+AuthorWebSite: https://fedilab.app/
+SourceCode: https://framagit.org/tom79/fedilab-tube
+IssueTracker: https://framagit.org/tom79/fedilab-tube/issues
+Translation: https://crowdin.com/project/tubelab
+Changelog: https://framagit.org/tom79/fedilab-tube/tags
+Liberapay: tom79
+
+AutoName: TubeLab
+
+RepoType: git
+Repo: https://framagit.org/tom79/fedilab-tube.git
+
+Builds:
+  - versionName: 1.15.0
+    versionCode: 45
+    commit: adf54ec2a9af8d272585be121b79c18371c73caa
+    subdir: app
+    gradle:
+      - fdroid_acad
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.15.0
+CurrentVersionCode: 45

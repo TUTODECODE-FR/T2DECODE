@@ -1,0 +1,25 @@
+Categories:
+  - Calculator
+  - Science & Education
+License: GPL-3.0-or-later
+WebSite: https://gitlab.com/dgoodmaniii/dozencalc
+SourceCode: https://gitlab.com/dgoodmaniii/dozencalc/tree/HEAD
+IssueTracker: https://gitlab.com/dgoodmaniii/dozencalc/issues
+
+AutoName: DozenCalc
+
+RepoType: git
+Repo: https://gitlab.com/dgoodmaniii/dozencalc.git
+
+Builds:
+  - versionName: '0.9'
+    versionCode: 1
+    commit: v0.9
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '0.9'
+CurrentVersionCode: 1

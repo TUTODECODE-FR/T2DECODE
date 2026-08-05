@@ -1,0 +1,33 @@
+Categories:
+  - Security
+  - System
+License: Apache-2.0
+AuthorName: modelorona
+SourceCode: https://github.com/modelorona/TapLock
+IssueTracker: https://github.com/modelorona/TapLock/issues
+Changelog: https://github.com/modelorona/TapLock/releases
+
+AutoName: TapLock
+
+RepoType: git
+Repo: https://github.com/modelorona/TapLock.git
+
+Builds:
+  - versionName: '1.14'
+    versionCode: 18
+    commit: ac508b956f7785b33af5ec3b0085d72873d4dc18
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.15'
+    versionCode: 19
+    commit: a4b837a984926b274a72371fbba1f1f7fe0bd3b8
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.15'
+CurrentVersionCode: 19

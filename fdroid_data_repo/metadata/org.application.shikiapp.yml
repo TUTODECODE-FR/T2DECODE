@@ -1,0 +1,356 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Rely on Shikimori.
+Categories:
+  - Multimedia
+License: GPL-3.0-only
+AuthorName: pewaru-333
+SourceCode: https://github.com/pewaru-333/ShikiApp
+IssueTracker: https://github.com/pewaru-333/ShikiApp/issues
+Changelog: https://github.com/pewaru-333/ShikiApp/releases
+
+AutoName: ShikiApp
+
+RepoType: git
+Repo: https://github.com/pewaru-333/ShikiApp
+Binaries: https://github.com/pewaru-333/ShikiApp/releases/download/%v/ShikiApp.apk
+
+Builds:
+  - versionName: alpha-0.4.2
+    versionCode: 27
+    commit: ab7a1e7ef600d787713119c5feff779875a11114
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.4.3
+    versionCode: 28
+    commit: ab46a447a19f81f43c31f86fe30e6aa560da72aa
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.4.4
+    versionCode: 29
+    commit: 22e384949a610776341088b801b4dab0d6afa6c1
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.4.5
+    versionCode: 30
+    commit: 322b332ee57e0cd427dc3d55e034d46b88ac79b7
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.4.6
+    versionCode: 31
+    commit: eefbd275126c6c477231e9e0ecdd9dbf0fe840ee
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.4.7
+    versionCode: 32
+    commit: f1bba44bca236c5dc59a41001d8bf91f28389f0d
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.4.8
+    versionCode: 33
+    commit: f109f9f3f4abc0f227effa44f663a0b4c81883a5
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.5.0
+    versionCode: 34
+    commit: 03d16fc408c75bc2247e000dc21b19d060a6d939
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.5.1
+    versionCode: 35
+    commit: ccb4348e8eb4963218c7e4c54255d31759d9ab43
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.6.0
+    versionCode: 36
+    commit: 5adaaa74a5a7c35399731aa63b711f0ba15580da
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    output: build/outputs/apk/ShikiApp/release/*.apk
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.6.1
+    versionCode: 37
+    commit: f06d0af933b429e4a4ebf1b7eff9844f8c5531c1
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    output: build/outputs/apk/ShikiApp/release/*.apk
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.6.2
+    versionCode: 38
+    commit: 1b85ece9bbf6bc81228e2d98d7776d32832a322c
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    output: build/outputs/apk/ShikiApp/release/*.apk
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.6.3
+    versionCode: 39
+    commit: 273c67496f40bc664d85804b3a68a9ef6e46bc10
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    output: build/outputs/apk/ShikiApp/release/*.apk
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.6.4
+    versionCode: 40
+    commit: c74809b16f3b63c063d34b9ece951c774a9d690b
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    output: build/outputs/apk/ShikiApp/release/*.apk
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.6.5
+    versionCode: 41
+    commit: e8f72f87db6fa12e5a1c02321d8f416e18544596
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    output: build/outputs/apk/ShikiApp/release/*.apk
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.6.6
+    versionCode: 42
+    commit: 0dbf14640a0e999d944a3e1c67a73017156152a5
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    output: build/outputs/apk/ShikiApp/release/*.apk
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.6.7
+    versionCode: 43
+    commit: f5343dbcd5b9018751a62349131a7c4be4008cb2
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.6.8
+    versionCode: 44
+    commit: 30504b8f1f0859d13b9274143f17925dfc8c9a20
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.6.9
+    versionCode: 45
+    commit: 68d3b1750164e52284deeb720f03cb9da59d6745
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.6.10
+    versionCode: 46
+    commit: 148c57c1378b507aeba5e9a00ad0e5067792d6c2
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.6.11
+    versionCode: 47
+    commit: 5cda0abc741b8c88fe599870178d365bee76dff0
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.7.0
+    versionCode: 48
+    commit: 36ceb2067b6ac0b916530ccb012feb408cab314e
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.7.1
+    versionCode: 49
+    commit: 3b944a74ba947ec79fc15bc33af15e8037233e51
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.7.2
+    versionCode: 50
+    commit: 44c4d79689a900d0c89fbeffe46393ec9285e770
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: alpha-0.7.3
+    versionCode: 51
+    commit: cc3c018bd488f626f858317145a2219c3f6b5cd1
+    subdir: androidApp
+    gradle:
+      - ShikiApp
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+AllowedAPKSigningKeys: b1a781cb8dbf7eb0dae9ff41972cb936e2ccf18b462defefbd0a21d3ac5f113d
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: alpha-0.7.3
+CurrentVersionCode: 51

@@ -1,0 +1,80 @@
+AntiFeatures:
+  - NonFreeNet
+  - Tracking
+Categories:
+  - Internet
+  - Messaging
+  - Social Network
+License: GPL-3.0-or-later
+AuthorName: TwoEightNine
+AuthorEmail: twoeightnine@list.ru
+SourceCode: https://github.com/TwoEightNine/XVII
+IssueTracker: https://github.com/TwoEightNine/XVII/issues
+Changelog: https://github.com/TwoEightNine/XVII/releases
+
+AutoName: xvii
+
+RepoType: git
+Repo: https://github.com/TwoEightNine/XVII
+
+Builds:
+  - versionName: 6.1.5
+    versionCode: 190
+    commit: v6.1.5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 6.1.6
+    versionCode: 191
+    commit: 1d9127fde76243094a80ec3a6cb7ccb57d6e5209
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 6.1.7
+    versionCode: 192
+    commit: 32280ac1088b20aaf1fc0ea59100e9469ac67b54
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 6.1.8
+    versionCode: 193
+    commit: f8492f0c7752b56274e54b6ba80ebed8470278c5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 6.1.9
+    versionCode: 194
+    commit: 0d3c54c80be70d0793e0ef6f0b11b482de4c9f29
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: dependencies.gradle|versionCode\s*:\s*(\d+),|.|versionName\s*:\s*\"([\d.]+)\",
+CurrentVersion: 6.1.9
+CurrentVersionCode: 194

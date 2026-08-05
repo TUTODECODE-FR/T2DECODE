@@ -1,0 +1,95 @@
+Categories:
+  - Writing
+License: GPL-3.0-or-later
+SourceCode: https://github.com/fredx100/InfiniList
+IssueTracker: https://github.com/fredx100/InfiniList/issues
+Changelog: https://github.com/fredx100/InfiniList/blob/HEAD/CHANGELOG.md
+
+AutoName: InfiniList
+
+RepoType: git
+Repo: https://github.com/fredx100/InfiniList.git
+
+Builds:
+  - versionName: 1.0.2
+    versionCode: 3
+    commit: 1.0.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.3
+    versionCode: 4
+    commit: 1.0.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.4
+    versionCode: 5
+    commit: 1.0.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.5
+    versionCode: 6
+    commit: 1.0.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.6
+    versionCode: 7
+    commit: 1a84b8fccba395c7760214fb930bd7b27c809fa7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.0
+    versionCode: 8
+    commit: b37caac6c324813e1a637e943c094338325da572
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.1
+    versionCode: 9
+    commit: 1e6bded0ad2029b8332f5e7667aca1e4716890ca
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.0
+    versionCode: 10
+    commit: 352aaea194e009059fb3a86a7c1406a038db5af3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.1
+    versionCode: 11
+    commit: 865f48852bf2ffb80ab56ff8a951c22eb3bd5ab0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.0
+    versionCode: 12
+    commit: 23c8e652875f36c0185a21e40855366d8b5c54e2
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.3.0
+CurrentVersionCode: 12

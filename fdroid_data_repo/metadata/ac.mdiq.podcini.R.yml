@@ -1,0 +1,577 @@
+Categories:
+  - Multimedia
+License: GPL-3.0-only
+AuthorName: Xilin Jia
+AuthorWebSite: https://xilinjia.github.io/
+SourceCode: https://github.com/XilinJia/Podcini
+IssueTracker: https://github.com/XilinJia/Podcini/issues
+
+Description: |-
+  <b>NOTE:</b> App is no longer developed. Author focuses on https://f-droid.org/packages/ac.mdiq.podcini.X/ instead.
+
+  Podcini, an open source podcast instrument, attuned to Puccini, adorned with pasticcini and aromatized with porcini, invites your harmonious heartbeats.
+
+  Do I hear your heartbeats?  Great!
+
+  Common functionalities of a podcast player are well supported:
+  * Search, discover and subscribe to podcasts, by key words, simple RSS URLs, or OPML files.
+  * Download, stream or queue episodes, and enjoy them the way you like with adjustable playback speeds.
+  * Save effort, battery power and mobile data usage with powerful automation controls for downloading episodes.
+  * If the feed contains no media (plain RSS feed), Text-to-Speech engine is used to play the text.
+  * Listening progress can be instantly synced through a NextCloud server or across devices in the same wifi network without a server.
+
+  So what's special with this podcast app among the many?
+
+  Well, aside from doing the above well, the following make it stand out:
+
+  1. It's open sourced, free to use and free of ads, free as in beer and free as in speech!
+  2. It takes advantage of modern frameworks to be efficient and conserve energy.
+  3. In addition to subscriptions, it allows you to create your own synthetic podcasts to compile your interested episodes from various podcasts to better focus on your interests.
+  4. While the list of episodes (filtered and sorted by you) in each podcast serves a natural playlist for you, it also empowers you with multiple queues each associable with any podcasts to group similar contents for better listening.
+  5. On any podcast/episode, you can assign 5 levels of rating allowing you to make better decisions on where to put your attention.
+  6. You have 12 levels of play states (like to play soon, add in queue, or play again) to better plan and record your listening experiences.
+  7. You can also keep your personal notes with your opinions/comments on each podcast/episode.
+  8. It has sophisticated sorting and filtering options for you to better select contents.
+  9. Sure, you can play any episodes in your car's speakers
+  10. And, it's not all about audio, video is well handled.
+  11. You can cast the audio/video to Chromecast speakers/screens.
+
+  OK, some other podcast players can also do some of the above?
+
+  12. How about getting Youtube and YT Music contents in the experiences of podcasts?
+  13. You can search for a Youtube channel and subscribe to it just like a normal podcast.
+  14. You can share a channel/podcast/playlist from Youtube or YT Music to Podcini for subscription.
+  15. You can also share a single media from Youtube or YT Music to Podcini to be added to a synthetic podcast.
+  16. You can enjoy the extra benefits of Youtube media by specifying audio/video quality separately.
+
+RepoType: git
+Repo: https://github.com/XilinJia/Podcini.git
+Binaries: 
+  https://github.com/XilinJia/Podcini/releases/download/%v/Podcini.R_release_free_%v.apk
+
+Builds:
+  - versionName: 6.0.12
+    versionCode: 3020212
+    commit: b4b850baba652bc9a5b35f3f26dd9252f82b994e
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.0.13
+    versionCode: 3020213
+    commit: 91423f9267ec4c2e7d4e051ad7581faf50a97dbd
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.1.1
+    versionCode: 3020215
+    commit: d47bdab9710ade72744b8d37527550a270d5e516
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.1.2
+    versionCode: 3020216
+    commit: 3c2618a29a8756d06518111420229bedb1b0bc18
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.1.4
+    versionCode: 3020218
+    commit: 08dfdf8bb169bdb32874f8cc4eac87e9ecbe2e7b
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.1.6
+    versionCode: 3020220
+    commit: b9b7a9e5ee6ed8ca432c28d33ff34db901e1baff
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.2.2
+    versionCode: 3020223
+    commit: 5a40c6ac232b71f8fbb223b7aef65e5bc04467ba
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.3.3
+    versionCode: 3020227
+    commit: e5188bc9980b31c37cc52b5e25d8bb02a0f878a7
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.3.4
+    versionCode: 3020228
+    commit: 5fe3f049d208f18c3a680b632f6b292194dda46c
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.3.6
+    versionCode: 3020230
+    commit: 4ccf66d5a17acced3615a94bd9432a6dca05aeaf
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.3.7
+    versionCode: 3020231
+    commit: 7a49a11f5468731b353d49d8932638c0bee729db
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.4.0
+    versionCode: 3020232
+    commit: 3fac43b183fa3f18cca4a1c22b3ac08f9d707b6f
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.5.5
+    versionCode: 3020239
+    commit: c2977301f632328f46b5b72b39719709fb9e0f1d
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.6.0
+    versionCode: 3020245
+    commit: 1141938b73ade675cc6c23c43b4048297762ecde
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.6.4
+    versionCode: 3020249
+    commit: e5631dba34b83374ddf12840a7c7cd1c310994a3
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.6.6
+    versionCode: 3020251
+    commit: 7d78f2b337b1a46e551af4d0178bb71635aee543
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.7.2
+    versionCode: 3020255
+    commit: bea7ce74a71ed03c756820b8996fbe1c3b8cfcc3
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.7.3
+    versionCode: 3020256
+    commit: b58521746210f30264911b3bbd3c2239ae276cc3
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.8.0
+    versionCode: 3020257
+    commit: 16841905dd4f8ee1acfd7bb607c437fb8b7e3b18
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.8.2
+    versionCode: 3020259
+    commit: 89143c60d345d22bad581072d73825ffad9a2abe
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.8.3
+    versionCode: 3020260
+    commit: 03cb641080806df1c34d6073f48a12885e563b99
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.8.4
+    versionCode: 3020261
+    commit: 06b5d2d13be34a50ed95826037c8a6e84fc6dba3
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.8.5
+    versionCode: 3020262
+    commit: caa892f4a7936f812cf967c4a3e4c959b565e0f7
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.8.6
+    versionCode: 3020263
+    commit: 558b6fdf0c21fc8fa7190afa98b209a6672bbf7d
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.8.7
+    versionCode: 3020264
+    commit: 13a4f8c5b230e759f8985a249424898dd5eeab64
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.9.1
+    versionCode: 3020266
+    commit: ceb6979d4abe7fcdd301089ee37d3cf3ce905c5b
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.9.3
+    versionCode: 3020268
+    commit: 971a45c1d6455d0034fb5296e3c61a53363c8702
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.11.0
+    versionCode: 3020270
+    commit: 54e9708e1be419bdb12c4789114298609bc641bd
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.11.4
+    versionCode: 3020274
+    commit: ac412c390639f23fc7a46a1e3e6ab0defd88ea5d
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.11.7
+    versionCode: 3020277
+    commit: a9f59905bd80e4b6e2a1897d247e37fca06c882b
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.12.3
+    versionCode: 3020281
+    commit: 7b6d976c9a410b1d300dd71c74de0739fb0440f1
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.12.7
+    versionCode: 3020285
+    commit: d87bc718d34133b79332880a3b9c60476255bacb
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.13.1
+    versionCode: 3020288
+    commit: fc902569cd00ef0a7f049b5039e8623a6d4c9265
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.13.2
+    versionCode: 3020289
+    commit: 364fc3f0bdc512d7e2b1ea1ad62ee4f39f9d5d02
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.13.5
+    versionCode: 3020292
+    commit: a0d6557de2e7f1d6e3085fb238f31b7706059d91
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.13.7
+    versionCode: 3020294
+    commit: 50dc8e1330f83108b7c05a78f51b32ce6f7e1c8a
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.13.8
+    versionCode: 3020295
+    commit: 08822bd8ac8d7ca68c0edef126795833a0566b53
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.13.10
+    versionCode: 3020297
+    commit: 8eb74458bd73b59c039cde21aa2846a40bf42db4
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.14.1
+    versionCode: 3020300
+    commit: a213284e40752088cd9950aa05848a2e7bb40273
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.14.3
+    versionCode: 3020302
+    commit: d22f29d4bec8ae8cd86535c0e2faa8b7c309c2be
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.14.4
+    versionCode: 3020303
+    commit: ddc0b09a384e1f34dad537e89ea25c5ad9ed9e6f
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.14.6
+    versionCode: 3020305
+    commit: 309d7c98b99bce80f47d013229c7be5c98088769
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.14.7
+    versionCode: 3020306
+    commit: 6266412a485b68a6f5aa46a1a6503c13f4a8fda1
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.15.0
+    versionCode: 3020308
+    commit: 884abb5eec741303d89201c240551402747f2a95
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.15.3
+    versionCode: 3020312
+    commit: d782c09c4d13fe16709235c51facbcc8cb46f5b5
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.15.4
+    versionCode: 3020313
+    commit: cce73998c12e590631adf9d061828a50e78e65ca
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.15.8
+    versionCode: 3020318
+    commit: 8c0c56865b89d7babea2ba1921a5ab11756907b1
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.15.11
+    versionCode: 3020321
+    commit: bf068bedc2a4d825dca4f1290dc78740bf5cfff0
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r26d
+
+  - versionName: 6.16.4
+    versionCode: 3020326
+    commit: 4377b7133ebbd011b538dcb9c7aeb4b08bfe6693
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r27
+
+  - versionName: 7.1.1
+    versionCode: 3020332
+    commit: 20fce0e9b3970f0f50ec856bf53864b5adf034ec
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r27
+
+  - versionName: 7.2.0
+    versionCode: 3020333
+    commit: 37de76290bf90a63b1954c9d84406fde6f00384b
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r27
+
+  - versionName: 7.2.3
+    versionCode: 3020336
+    commit: f525ea23f17e144e337cab077d944ab20c24944c
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r27
+
+  - versionName: 7.3.5
+    versionCode: 3020342
+    commit: 243e01cfcae7653d9718d68388ab89e070bf71c0
+    subdir: app
+    gradle:
+      - free
+    output: build/outputs/apk/free/release/*_.apk
+    prebuild: sed -i -e '/wearable/d' build.gradle
+    ndk: r27
+
+AllowedAPKSigningKeys: cd1328fb5c2ccf50cb99e3ff076eb5fe88298fe28366989dcf9d9899d5eb6940
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 7.3.5
+CurrentVersionCode: 3020342

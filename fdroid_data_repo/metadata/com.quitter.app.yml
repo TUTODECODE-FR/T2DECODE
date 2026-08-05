@@ -1,0 +1,3620 @@
+Categories:
+  - Habit Tracker
+  - Sports & Health
+License: MIT
+AuthorName: Brandon Dick
+AuthorEmail: brandon@presley.nz
+SourceCode: https://github.com/brandonp2412/Quitter
+IssueTracker: https://github.com/brandonp2412/Quitter/issues
+
+AutoName: Quitter
+
+RepoType: git
+Repo: https://github.com/brandonp2412/Quitter.git
+
+Builds:
+  - versionName: 1.0.74
+    versionCode: 761
+    commit: d9783e8e734c2ff52f15fe7cdbb0ebaec856e078
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.74
+    versionCode: 762
+    commit: d9783e8e734c2ff52f15fe7cdbb0ebaec856e078
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.74
+    versionCode: 763
+    commit: d9783e8e734c2ff52f15fe7cdbb0ebaec856e078
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.77
+    versionCode: 791
+    commit: 4a56d104f0029c8f035bb1a515b096e20065fec1
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.77
+    versionCode: 792
+    commit: 4a56d104f0029c8f035bb1a515b096e20065fec1
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.77
+    versionCode: 793
+    commit: 4a56d104f0029c8f035bb1a515b096e20065fec1
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.78
+    versionCode: 801
+    commit: 5769c3d1cceb3e9fbfb60a5fd42cdd68f31dd0c5
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.78
+    versionCode: 802
+    commit: 5769c3d1cceb3e9fbfb60a5fd42cdd68f31dd0c5
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.78
+    versionCode: 803
+    commit: 5769c3d1cceb3e9fbfb60a5fd42cdd68f31dd0c5
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.81
+    versionCode: 831
+    commit: 5f37855d3205e9458be7af7c7444e0e05a73e81c
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.81
+    versionCode: 832
+    commit: 5f37855d3205e9458be7af7c7444e0e05a73e81c
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.81
+    versionCode: 833
+    commit: 5f37855d3205e9458be7af7c7444e0e05a73e81c
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.82
+    versionCode: 841
+    commit: cc56bf98a4b6d6ab70b8a58001475e90362d041d
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.82
+    versionCode: 842
+    commit: cc56bf98a4b6d6ab70b8a58001475e90362d041d
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.82
+    versionCode: 843
+    commit: cc56bf98a4b6d6ab70b8a58001475e90362d041d
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.85
+    versionCode: 871
+    commit: 8cd165fd1df1fedb82a2ddd9bd65c1e082d3f223
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.85
+    versionCode: 872
+    commit: 8cd165fd1df1fedb82a2ddd9bd65c1e082d3f223
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.85
+    versionCode: 873
+    commit: 8cd165fd1df1fedb82a2ddd9bd65c1e082d3f223
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.88
+    versionCode: 901
+    commit: e39a4739bca63e47a9d9ae0a1018949d1d838def
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.88
+    versionCode: 902
+    commit: e39a4739bca63e47a9d9ae0a1018949d1d838def
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.88
+    versionCode: 903
+    commit: e39a4739bca63e47a9d9ae0a1018949d1d838def
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.92
+    versionCode: 941
+    commit: 11149975fe5c352267ddc13edc39fdd947447af9
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.92
+    versionCode: 942
+    commit: 11149975fe5c352267ddc13edc39fdd947447af9
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.92
+    versionCode: 943
+    commit: 11149975fe5c352267ddc13edc39fdd947447af9
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.94
+    versionCode: 961
+    commit: 631756f6651055be40fac29066e2871c0abb25ca
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.94
+    versionCode: 962
+    commit: 631756f6651055be40fac29066e2871c0abb25ca
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.94
+    versionCode: 963
+    commit: 631756f6651055be40fac29066e2871c0abb25ca
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.96
+    versionCode: 981
+    commit: 3709ea07f77a95a8256830ca7fc1b2f60380d60b
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.96
+    versionCode: 982
+    commit: 3709ea07f77a95a8256830ca7fc1b2f60380d60b
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.96
+    versionCode: 983
+    commit: 3709ea07f77a95a8256830ca7fc1b2f60380d60b
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.97
+    versionCode: 991
+    commit: dabe9c1e48852b1e7d113297f478ad8c57bd2104
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.97
+    versionCode: 992
+    commit: dabe9c1e48852b1e7d113297f478ad8c57bd2104
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.97
+    versionCode: 993
+    commit: dabe9c1e48852b1e7d113297f478ad8c57bd2104
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.98
+    versionCode: 1001
+    commit: 0b50079c835d6024befc9bdde0800b2c3059f634
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.98
+    versionCode: 1002
+    commit: 0b50079c835d6024befc9bdde0800b2c3059f634
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.98
+    versionCode: 1003
+    commit: 0b50079c835d6024befc9bdde0800b2c3059f634
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.99
+    versionCode: 1011
+    commit: 6497f6c8275a432f7e9403d2d96079bb462ec547
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.99
+    versionCode: 1012
+    commit: 6497f6c8275a432f7e9403d2d96079bb462ec547
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.99
+    versionCode: 1013
+    commit: 6497f6c8275a432f7e9403d2d96079bb462ec547
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.100
+    versionCode: 1021
+    commit: e99ea0be1eb12b315d762bb198f1e916d6e09dfb
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.100
+    versionCode: 1022
+    commit: e99ea0be1eb12b315d762bb198f1e916d6e09dfb
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.100
+    versionCode: 1023
+    commit: e99ea0be1eb12b315d762bb198f1e916d6e09dfb
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.101
+    versionCode: 1031
+    commit: 34a55e0ee56bba4ea45ed13802b0ed9440e03e80
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.101
+    versionCode: 1032
+    commit: 34a55e0ee56bba4ea45ed13802b0ed9440e03e80
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.101
+    versionCode: 1033
+    commit: 34a55e0ee56bba4ea45ed13802b0ed9440e03e80
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.102
+    versionCode: 1041
+    commit: 2027ace39008e40eb8a528b428212374f7583d04
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.102
+    versionCode: 1042
+    commit: 2027ace39008e40eb8a528b428212374f7583d04
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.0.102
+    versionCode: 1043
+    commit: 2027ace39008e40eb8a528b428212374f7583d04
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.2
+    versionCode: 1071
+    commit: 30030be6aec8b8d4475980a1f4a5670bacca1964
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.2
+    versionCode: 1072
+    commit: 30030be6aec8b8d4475980a1f4a5670bacca1964
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.2
+    versionCode: 1073
+    commit: 30030be6aec8b8d4475980a1f4a5670bacca1964
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.3
+    versionCode: 1081
+    commit: 10dee1ae903dd941cbde4a67d21a4a361ca90b1e
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.3
+    versionCode: 1082
+    commit: 10dee1ae903dd941cbde4a67d21a4a361ca90b1e
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.3
+    versionCode: 1083
+    commit: 10dee1ae903dd941cbde4a67d21a4a361ca90b1e
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.5
+    versionCode: 1101
+    commit: be2e218e51259f8ce2f32bb3e70298f1a12ca8e8
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.5
+    versionCode: 1102
+    commit: be2e218e51259f8ce2f32bb3e70298f1a12ca8e8
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.5
+    versionCode: 1103
+    commit: be2e218e51259f8ce2f32bb3e70298f1a12ca8e8
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.10
+    versionCode: 1151
+    commit: 12768f50d48c86fd379e07b168cc6cb2bd744b4b
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.10
+    versionCode: 1152
+    commit: 12768f50d48c86fd379e07b168cc6cb2bd744b4b
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.10
+    versionCode: 1153
+    commit: 12768f50d48c86fd379e07b168cc6cb2bd744b4b
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.14
+    versionCode: 1191
+    commit: 36376be28b2c2c8bf9eab91d27d4a07f405eb0f0
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.14
+    versionCode: 1192
+    commit: 36376be28b2c2c8bf9eab91d27d4a07f405eb0f0
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.14
+    versionCode: 1193
+    commit: 36376be28b2c2c8bf9eab91d27d4a07f405eb0f0
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.22
+    versionCode: 12011
+    commit: 74018cd3d17e5bfca38f61f0e5293d702f6410a9
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.22
+    versionCode: 12012
+    commit: 74018cd3d17e5bfca38f61f0e5293d702f6410a9
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.22
+    versionCode: 12013
+    commit: 74018cd3d17e5bfca38f61f0e5293d702f6410a9
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.23
+    versionCode: 12021
+    commit: df88369ae220abe28f590d2dd56b7bc91d9fdb9c
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.23
+    versionCode: 12022
+    commit: df88369ae220abe28f590d2dd56b7bc91d9fdb9c
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.23
+    versionCode: 12023
+    commit: df88369ae220abe28f590d2dd56b7bc91d9fdb9c
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.25
+    versionCode: 12041
+    commit: 89d792c5dc0116f9bc2d7eb18f0f5f7730fb45c6
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.25
+    versionCode: 12042
+    commit: 89d792c5dc0116f9bc2d7eb18f0f5f7730fb45c6
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.25
+    versionCode: 12043
+    commit: 89d792c5dc0116f9bc2d7eb18f0f5f7730fb45c6
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.26
+    versionCode: 12051
+    commit: 05cf13f940668487ec1523ffa5f39bd62d2aa895
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.26
+    versionCode: 12052
+    commit: 05cf13f940668487ec1523ffa5f39bd62d2aa895
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.26
+    versionCode: 12053
+    commit: 05cf13f940668487ec1523ffa5f39bd62d2aa895
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r27
+
+  - versionName: 1.1.36
+    versionCode: 12151
+    commit: 863de81b76539adf86cdf2918c344aa3f1a11f4d
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    init: sed -i -e '/signingConfig = if/,/}$/d' android/app/build.gradle.kts
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get --enforce-lockfile
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r28c
+
+  - versionName: 1.1.36
+    versionCode: 12152
+    commit: 863de81b76539adf86cdf2918c344aa3f1a11f4d
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    init: sed -i -e '/signingConfig = if/,/}$/d' android/app/build.gradle.kts
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get --enforce-lockfile
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r28c
+
+  - versionName: 1.1.36
+    versionCode: 12153
+    commit: 863de81b76539adf86cdf2918c344aa3f1a11f4d
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    init: sed -i -e '/signingConfig = if/,/}$/d' android/app/build.gradle.kts
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get --enforce-lockfile
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r28c
+
+  - versionName: 1.1.37
+    versionCode: 12161
+    commit: 33195afc8ac9744421ee59093fedd05c7b233f2d
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown -R vagrant /home/runner
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    init: sed -i -e '/signingConfig = if/,/}$/d' android/app/build.gradle.kts
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-x86_64-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get --enforce-lockfile
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r28c
+
+  - versionName: 1.1.37
+    versionCode: 12162
+    commit: 33195afc8ac9744421ee59093fedd05c7b233f2d
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    init: sed -i -e '/signingConfig = if/,/}$/d' android/app/build.gradle.kts
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get --enforce-lockfile
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r28c
+
+  - versionName: 1.1.37
+    versionCode: 12163
+    commit: 33195afc8ac9744421ee59093fedd05c7b233f2d
+    submodules: true
+    sudo:
+      - mkdir -p /home/runner/work/Quitter
+      - chown vagrant -R /home/runner
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    init: sed -i -e '/signingConfig = if/,/}$/d' android/app/build.gradle.kts
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/brandonp2412/Quitter/releases/download/%v/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - linux
+      - web
+      - windows
+      - macos
+    prebuild:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - flutter/bin/flutter config --no-analytics
+      - flutter/bin/flutter pub get --enforce-lockfile
+      - mv $PUB_CACHE .pub-cache
+      - popd
+      - mv $repo com.quitter.app
+    scanignore:
+      - flutter/bin/cache
+      - .pub-cache
+    scandelete:
+      - flutter
+    build:
+      - export repo=/home/runner/work/Quitter/Quitter
+      - cd ..
+      - mv com.quitter.app $repo
+      - pushd $repo
+      - export PUB_CACHE=/home/runner/.pub-cache
+      - mv .pub-cache $PUB_CACHE
+      - flutter/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo com.quitter.app
+    ndk: r28c
+
+AllowedAPKSigningKeys: 011ee1a6e4e5ecd675f67fbf3d78ad82614a7a7a3f24ed71cc9c417154a0f0fd
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+VercodeOperation:
+  - '%c * 10 + 1'
+  - '%c * 10 + 2'
+  - '%c * 10 + 3'
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.1.37
+CurrentVersionCode: 12163

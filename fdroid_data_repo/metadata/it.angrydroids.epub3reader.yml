@@ -1,0 +1,39 @@
+Categories:
+  - Reading
+License: MIT
+SourceCode: https://github.com/pettarin/epub3reader
+IssueTracker: https://github.com/pettarin/epub3reader/issues
+
+AutoName: EPUB3 Reader
+Description: |-
+  <b>NOTE:</b> This app is no longer maintained, its repo was archived.
+
+  The goal of this project consists in exploring new ways of interacting with
+  rich, structured eBooks in EPUB format.
+
+  The rationale behind this choice is simple:
+
+  * EPUB is an open format for eBooks and it is the de facto standard for non-Amazon eBooks
+  * The current reading systems (eReaders, desktop programs, apps) are not suitable for reading structured, complex eBooks, as they are almost always designed with linear-reading books in mind.
+
+  For more information see the <a href="https://github.com/pettarin/epub3reader">website</a>.
+
+RepoType: git
+Repo: https://github.com/pettarin/epub3reader.git
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: a2fb0ff0ad1016c6307108823a742d7df655c828
+    subdir: workspaceeclipse/EPUB3Reader
+
+  - versionName: 1.0.1
+    versionCode: 2
+    commit: 6925d5e1086f2
+    subdir: workspaceeclipse/EPUB3Reader
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.1'
+CurrentVersionCode: 1

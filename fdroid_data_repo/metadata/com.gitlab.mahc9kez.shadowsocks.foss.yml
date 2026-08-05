@@ -1,0 +1,84 @@
+Categories:
+  - Connectivity
+  - Internet
+License: GPL-3.0-or-later
+SourceCode: https://gitlab.com/mahc9kez/shadowsocks-android-foss
+IssueTracker: https://gitlab.com/mahc9kez/shadowsocks-android-foss/issues
+Changelog: https://gitlab.com/mahc9kez/shadowsocks-android-foss/blob/HEAD/CHANGELOG.md
+
+AutoName: Shadowsocks FOSS
+
+RepoType: git
+Repo: https://gitlab.com/mahc9kez/shadowsocks-android-foss.git
+
+Builds:
+  - versionName: 4.8.7a
+    versionCode: 40807010
+    commit: v4.8.7a
+    subdir: mobile
+    submodules: true
+    gradle:
+      - afat
+    scandelete:
+      - core/src/main/jni/badvpn/lwip/test/fuzz/inputs
+      - core/src/main/jni/mbedtls/tests/data_files
+      - core/src/main/jni/pcre/dist/testdata
+    ndk: r20
+    gradleprops:
+      - android.enableJetifier=true
+      - android.enableR8.fullMode=true
+      - android.useAndroidX=true
+      - kapt.incremental.apt=true
+
+  - versionName: 5.0.1
+    versionCode: 50001000
+    commit: v5.0.1
+    subdir: mobile
+    submodules: true
+    gradle:
+      - afat
+    prebuild: sed -i 's/com.github.shadowsocks/com.gitlab.mahc9kez.shadowsocks.foss/'
+      ../core/src/main/jni/badvpn/tun2socks/tun2socks.c
+    scandelete:
+      - core/src/main/jni/badvpn/lwip/test/fuzz/inputs
+      - core/src/main/jni/mbedtls/tests/data_files
+      - core/src/main/jni/pcre/dist/testdata
+    ndk: r20b
+
+  - versionName: 5.0.5
+    versionCode: 50005000
+    commit: v5.0.5
+    subdir: mobile
+    submodules: true
+    gradle:
+      - afat
+    prebuild: sed -i 's/com.github.shadowsocks/com.gitlab.mahc9kez.shadowsocks.foss/'
+      ../core/src/main/jni/badvpn/tun2socks/tun2socks.c
+    scandelete:
+      - core/src/main/jni/badvpn/lwip/test/fuzz/inputs
+      - core/src/main/jni/mbedtls/tests/data_files
+      - core/src/main/jni/pcre/dist/testdata
+    ndk: r20b
+
+  - versionName: 5.0.6
+    versionCode: 50006000
+    commit: v5.0.6
+    subdir: mobile
+    submodules: true
+    gradle:
+      - afat
+    prebuild: sed -i 's/com.github.shadowsocks/com.gitlab.mahc9kez.shadowsocks.foss/'
+      ../core/src/main/jni/badvpn/tun2socks/tun2socks.c
+    scandelete:
+      - core/src/main/jni/badvpn/lwip/test/fuzz/inputs
+      - core/src/main/jni/mbedtls/tests/data_files
+      - core/src/main/jni/pcre/dist/testdata
+    ndk: r20b
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 5.0.6
+CurrentVersionCode: 50006000
+
+NoSourceSince: 5.0.6

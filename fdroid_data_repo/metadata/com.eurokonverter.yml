@@ -1,0 +1,126 @@
+Categories:
+  - Unit Convertor
+License: MIT
+AuthorName: Binary Solutions
+WebSite: https://eurokonverter.com
+SourceCode: https://github.com/vbresan/eurokonverter
+IssueTracker: https://github.com/vbresan/eurokonverter/issues
+Changelog: https://github.com/vbresan/eurokonverter/releases
+
+AutoName: Euro konverter
+
+RepoType: git
+Repo: https://github.com/vbresan/eurokonverter.git
+Binaries: 
+  https://github.com/vbresan/eurokonverter/releases/download/%c/com.eurokonverter-%v-fdroid-release.apk
+
+Builds:
+  - versionName: '1.1'
+    versionCode: 2
+    commit: '2'
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y zipalign
+    output: out.apk
+    srclibs:
+      - reproducible-apk-tools@v0.1.1
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - $$reproducible-apk-tools$$/fix-newlines.py build/outputs/apk/release/*.apk
+        fixed.apk 'META-INF/services/*'
+      - zipalign 4 fixed.apk out.apk
+
+  - versionName: 1.1.1
+    versionCode: 3
+    commit: ab00a43d4fa1419d0d7cae638c53bbacd5e8822e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y zipalign
+    output: out.apk
+    srclibs:
+      - reproducible-apk-tools@v0.1.1
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - $$reproducible-apk-tools$$/fix-newlines.py build/outputs/apk/release/*.apk
+        fixed.apk 'META-INF/services/*'
+      - zipalign 4 fixed.apk out.apk
+
+  - versionName: '2.0'
+    versionCode: 5
+    commit: 9ed66d527b26c49112fce33c09b32b81ac2a6e67
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y zipalign
+    output: out.apk
+    srclibs:
+      - reproducible-apk-tools@v0.1.1
+    prebuild: gradle clean
+    build:
+      - gradle assembleFdroidRelease
+      - $$reproducible-apk-tools$$/fix-newlines.py build/outputs/apk/fdroid/release/*.apk
+        fixed.apk 'META-INF/services/*'
+      - zipalign 4 fixed.apk out.apk
+
+  - versionName: 2.0.1
+    versionCode: 6
+    commit: 17ee89bb4ab5f50c3c8c6466ec41778ec13b01d9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y zipalign
+    output: out.apk
+    srclibs:
+      - reproducible-apk-tools@v0.1.1
+    prebuild: gradle clean
+    build:
+      - gradle assembleFdroidRelease
+      - $$reproducible-apk-tools$$/fix-newlines.py build/outputs/apk/fdroid/release/*.apk
+        fixed.apk 'META-INF/services/*'
+      - zipalign 4 fixed.apk out.apk
+
+  - versionName: 2.0.2
+    versionCode: 7
+    commit: d57b3ba1132d07aaa2faa58a1874f1aecefccba7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y zipalign
+    output: out.apk
+    srclibs:
+      - reproducible-apk-tools@v0.1.1
+    prebuild: gradle clean
+    build:
+      - gradle assembleFdroidRelease
+      - $$reproducible-apk-tools$$/fix-newlines.py build/outputs/apk/fdroid/release/*.apk
+        fixed.apk 'META-INF/services/*'
+      - zipalign 4 fixed.apk out.apk
+
+  - versionName: 2.0.3
+    versionCode: 8
+    commit: bb643a56013f08ec374b61d2bfef28d1f3c46783
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y zipalign
+    output: out.apk
+    srclibs:
+      - reproducible-apk-tools@v0.1.1
+    prebuild: gradle clean
+    build:
+      - gradle assembleFdroidRelease
+      - $$reproducible-apk-tools$$/fix-newlines.py build/outputs/apk/fdroid/release/*.apk
+        fixed.apk 'META-INF/services/*'
+      - zipalign 4 fixed.apk out.apk
+
+AllowedAPKSigningKeys: 5dd357de3e2e5c878138e852beea31745dec0ba5b75a20c25cad1c8e3e63ddef
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 2.0.3
+CurrentVersionCode: 8

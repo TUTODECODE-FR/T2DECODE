@@ -6,6 +6,7 @@ import 'package:tutodecode/core/security/phantom_trust_validator.dart';
 
 class PhantomCacheService {
   final PhantomTrustValidator _trustValidator;
+  String? customCachePath;
 
   PhantomCacheService(this._trustValidator);
 
@@ -19,6 +20,9 @@ class PhantomCacheService {
       return p.join(Platform.environment['HOME'] ?? '', '.cache', 't2c-phantom');
     }
   }
+
+  /// Retourne le chemin actif (personnalisé si défini, sinon par défaut)
+  String get activeCachePath => customCachePath ?? defaultCachePath;
 
   /// Dérive la clé de déchiffrement depuis une passphrase (PBKDF2 / SHA-256)
   Future<SecretKey> _deriveKey(String passphrase) async {
@@ -35,7 +39,7 @@ class PhantomCacheService {
 
   /// Lit et déchiffre un fichier depuis le cache T2C-Phantom.
   Future<List<int>?> readDecryptedFile(String relativePath, String passphrase) async {
-    final cacheDir = Directory(defaultCachePath);
+    final cacheDir = Directory(activeCachePath);
     if (!await cacheDir.exists()) return null;
 
     final file = File(p.join(cacheDir.path, relativePath));

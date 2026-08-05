@@ -1,0 +1,34 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Server-side part is not libre.
+  Tracking: {}
+Categories:
+  - Internet
+License: GPL-3.0-only
+WebSite: https://kenyon.dev/
+SourceCode: https://github.com/WKenya/bookmarkOS
+IssueTracker: https://github.com/WKenya/bookmarkOS/issues
+
+AutoName: BookmarkOS
+Description: |-
+  <b>Note:</b> This app is discontinued.
+
+  This application will allow you to share urls directly from your Android
+  browsers right into BookmarkOS.
+
+RepoType: git
+Repo: https://github.com/WKenya/bookmarkOS.git
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: v1.0.0
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.0.0
+CurrentVersionCode: 1

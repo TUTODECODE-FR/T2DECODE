@@ -1,0 +1,352 @@
+Categories:
+  - AI Chat
+  - Finance Manager
+License: AGPL-3.0-only
+AuthorName: Sarim
+SourceCode: https://github.com/sarim2000/pennywiseai-tracker
+IssueTracker: https://github.com/sarim2000/pennywiseai-tracker/issues
+Changelog: https://github.com/sarim2000/pennywiseai-tracker/releases
+
+AutoName: PennyWise AI - Expense Tracker
+
+RepoType: git
+Repo: https://github.com/sarim2000/pennywiseai-tracker.git
+
+Builds:
+  - versionName: 2.15.2
+    versionCode: 37
+    commit: 0f30d712db15d8b288f2248910c3e323abdfe8f4
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 2.15.12
+    versionCode: 47
+    commit: 34ed8dbdea1331f10104bbde3322b2286b9b0588
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 2.15.14
+    versionCode: 49
+    commit: 518219cbd1ca43ed6d5d9197aada33a03f574a19
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 2.15.15
+    versionCode: 50
+    commit: 57ebeeb10c32fea7a185b6fc60b3dba3c9053f7d
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 2.15.18
+    versionCode: 53
+    commit: 0bf8184e77f7f5f0aba003eb92164aaa05b71ba7
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 2.15.19
+    versionCode: 54
+    commit: 8162908d6f64164a2a35048db5e92f83d66d2b2d
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 2.15.21
+    versionCode: 56
+    commit: 35fc4c315fb17898dd863b0eacaa97aef8672b25
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 2.15.22
+    versionCode: 57
+    commit: c386eab1986f5bfcff0a0d9eb9a2456cce335ff8
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.23
+    versionCode: 58
+    commit: 47465f472e8ff5b483bf11efd21ac97adfda42e4
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.24
+    versionCode: 59
+    commit: d6eb75907222032e602ecb4ad8dea03c249ecc6e
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.25
+    versionCode: 60
+    commit: 11d9dfbd4d0bbf79763184af8b037114050161e3
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.34
+    versionCode: 69
+    commit: af291bfc81845be73a06d43b4bbb4ceda668740f
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+  - versionName: 2.15.35
+    versionCode: 70
+    commit: b49c62fa056fc70b8519ea2d738ed3ba49edd320
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+  - versionName: 2.15.36
+    versionCode: 71
+    commit: 131eb0077a9cf181b9a1d0e87e5f2e80ead31f02
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+  - versionName: 2.15.37
+    versionCode: 72
+    commit: c3b4ddab9302de07b78c1172720fc5834a64f9da
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+  - versionName: 2.15.38
+    versionCode: 73
+    commit: 83d77b654be6cfe3e9f265f7fa1b2f7712bbb3e8
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+  - versionName: 2.15.39
+    versionCode: 74
+    commit: 9e60b4db64f2dea4ffd5ccadfb7ad3ea865afe8d
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.40
+    versionCode: 75
+    commit: a144ef9ec3882041b83af62baa407243d1f40f35
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.41
+    versionCode: 76
+    commit: c210b7cd282d20835994a9e9b4df198822d13e20
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.42
+    versionCode: 77
+    commit: 5469d272d4483106b8cce2c2279b68e594f9ef82
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.43
+    versionCode: 78
+    commit: 498e098fb5abc24a3d71595c25baf57fb892bffd
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.44
+    versionCode: 79
+    commit: 82de3dab267193ee4432158a5ad5d69ac0f9ee90
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.45
+    versionCode: 80
+    commit: 5ad9143bdd6b9e42b2db3b342fb5cdc282bffe9b
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.46
+    versionCode: 81
+    commit: b45740bc81a521cf6684a4ea4fccf5f58f055b2f
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.47
+    versionCode: 82
+    commit: d4b07da71846375d719cff4fbe5bcadb68b6de03
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.48
+    versionCode: 83
+    commit: 5117114ad5ef5ae4bd77ab239470817b9ec8747b
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.49
+    versionCode: 84
+    commit: 1e832e78c4b64016289b978b0dd9701b3bc454a9
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.50
+    versionCode: 85
+    commit: 3dcd8d6ef75b81be87e1d2f5026cabe6eb9d7aae
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+
+  - versionName: 2.15.52
+    versionCode: 87
+    commit: 62caa549dca121c8ce137e28b735d434fa808750
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 2.15.53
+    versionCode: 88
+    commit: ba444111f4c4e394c6b0257611720ab4b62cd101
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 2.15.54
+    versionCode: 89
+    commit: 5e1f34a2705a5c39140bc2603c754d742b88530b
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 2.15.56
+    versionCode: 94
+    commit: 806f97b42c4527f45cde170f6899c976fd8e998d
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 2.15.59
+    versionCode: 96
+    commit: 0dda1bfc8752e5151171baf157e66cf430af19d9
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 2.15.60
+    versionCode: 97
+    commit: d8cfe3ff81ea59e01af15ab3d6a91eef56464c40
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 2.16.0
+    versionCode: 98
+    commit: 97d0c3558276fdd6e3001c742bd27ee68a177c33
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 2.17.0
+    versionCode: 99
+    commit: a922bfd2448544cf0ebdaedd45d42c459771f17e
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 2.17.1
+    versionCode: 100
+    commit: 73e7de57f989589417d156af7ca36bf5b8051da2
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - pennywise-web
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.17.1
+CurrentVersionCode: 100

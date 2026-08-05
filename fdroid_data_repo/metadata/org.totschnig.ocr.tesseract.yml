@@ -1,0 +1,73 @@
+Categories:
+  - Graphics
+  - OCR
+License: Apache-2.0
+AuthorName: Michael Totschnig
+AuthorEmail: michael@totschnig.org
+AuthorWebSite: https://michael.totschnig.org/
+SourceCode: https://github.com/mtotschnig/OCR
+IssueTracker: https://github.com/mtotschnig/OCR/issues
+
+AutoName: OCR
+
+RepoType: git
+Repo: https://github.com/mtotschnig/OCR.git
+
+Builds:
+  - versionName: '2.0'
+    versionCode: 2
+    commit: r2
+    subdir: app
+    gradle:
+      - tesseract
+
+  - versionName: 2.0.1
+    versionCode: 3
+    commit: r3
+    subdir: app
+    gradle:
+      - tesseract
+
+  - versionName: '2.1'
+    versionCode: 4
+    commit: r4
+    subdir: app
+    gradle:
+      - tesseract
+
+  - versionName: '2.2'
+    versionCode: 6
+    commit: r6
+    subdir: app
+    gradle:
+      - tesseract
+
+  - versionName: '2.3'
+    versionCode: 7
+    commit: 9eac4aaa13d4925b8ad63956833734adba67f174
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - tesseract
+
+  - versionName: '2.4'
+    versionCode: 8
+    commit: 5fe5c209373caa0163aef4932a22cde2426c21b7
+    subdir: app
+    gradle:
+      - tesseract
+
+  - versionName: 2.5.0
+    versionCode: 10
+    commit: 0781ccd1dcf69f437c64ac516db8f835ed9fb2cc
+    subdir: app
+    gradle:
+      - tesseract
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.5.0
+CurrentVersionCode: 10

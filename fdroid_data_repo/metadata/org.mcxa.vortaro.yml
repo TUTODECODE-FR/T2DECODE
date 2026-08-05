@@ -1,0 +1,46 @@
+Categories:
+  - Reading
+  - Science & Education
+  - Translation & Dictionary
+License: Apache-2.0
+AuthorName: Zoe
+AuthorWebSite: https://zoenb.github.io/
+SourceCode: https://codeberg.org/boxedtoast/vortaro
+IssueTracker: https://codeberg.org/boxedtoast/vortaro/issues
+Changelog: https://codeberg.org/boxedtoast/vortaro/releases
+
+AutoName: Senreta Vortaro
+Description: |-
+  Senreta Vortaro (Offline Dictionary) is an English-Esperanto dictionary app
+  inspired by the web page <a href="http://www.tujavortaro.net/">Tuja Vortaro</a>. It is
+  designed to be easy to use for beginners.
+
+RepoType: git
+Repo: https://codeberg.org/boxedtoast/vortaro
+
+Builds:
+  - versionName: '0.1'
+    versionCode: 1
+    commit: '0.1'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '0.2'
+    versionCode: 2
+    commit: '0.2'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '0.5'
+    versionCode: 5
+    commit: '0.5'
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '0.5'
+CurrentVersionCode: 5

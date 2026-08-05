@@ -1,0 +1,56 @@
+Categories:
+  - Habit Tracker
+  - Sports & Health
+License: GPL-3.0-only
+AuthorName: Tom Murphy
+SourceCode: https://github.com/tom-murphy-development/FastTimes
+IssueTracker: https://github.com/tom-murphy-development/FastTimes/issues
+Changelog: https://github.com/tom-murphy-development/FastTimes/releases
+Donate: https://buymeacoffee.com/tommurphydp
+Bitcoin: 3F9dHThXP4Y1md4He7nHcKwkS8KQcdsWzW
+
+AutoName: Fast Times
+
+RepoType: git
+Repo: https://github.com/tom-murphy-development/FastTimes.git
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 1
+    commit: 5512af1898614dce7b36d8e6f807a3b328f68945
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: 1.0.1
+    versionCode: 2
+    commit: 68006e1106d7d09159375977e9a0c4da215c9009
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: 1.0.2
+    versionCode: 3
+    commit: 67c6b8cc51c8588abb09b7c1c800d12d9b6db475
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: 1.0.3
+    versionCode: 4
+    commit: fa5708603d214a03476155690bff7ae127a68b61
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: 1.0.4
+    versionCode: 5
+    commit: a02ab4fe78866a8da06d6c7ec4a990444913cb5a
+    subdir: app
+    gradle:
+      - foss
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[\d.]+-foss$
+CurrentVersion: 1.0.4
+CurrentVersionCode: 5

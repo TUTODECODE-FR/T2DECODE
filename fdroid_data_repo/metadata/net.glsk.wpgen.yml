@@ -1,0 +1,57 @@
+Categories:
+  - Wallpaper
+License: GPL-3.0-or-later
+SourceCode: https://gitlab.com/glsk/wpgen
+IssueTracker: https://gitlab.com/glsk/wpgen/issues
+Changelog: https://gitlab.com/glsk/wpgen/tags
+Donate: https://glsk.net/donate/
+
+AutoName: WPGen
+Description: |-
+  Android app which can generate solid color, diagonal gradient or plasma effect
+  static multicolor wallpapers. You can choose from a number of pre-defined colors
+  or add your own.
+
+RepoType: git
+Repo: https://gitlab.com/glsk/wpgen.git
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: v1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.1'
+    versionCode: 11
+    commit: v1.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.2'
+    versionCode: 12
+    commit: v1.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.3
+    versionCode: 133
+    commit: v1.3.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.4
+    versionCode: 134
+    commit: v1.3.4
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.3.4
+CurrentVersionCode: 134

@@ -1,0 +1,313 @@
+Categories:
+  - Internet
+  - Password & 2FA
+  - Security
+License: GPL-3.0-only
+WebSite: https://glitterware.github.io/Passy
+SourceCode: https://github.com/GlitterWare/Passy
+IssueTracker: https://github.com/GlitterWare/Passy/issues
+Translation: https://github.com/GlitterWare/Passy/blob/dev/LOCALIZATION.md
+Changelog: https://github.com/GlitterWare/Passy/releases
+Donate: https://github.com/sponsors/GlitterWare
+
+AutoName: Passy
+
+RepoType: git
+Repo: https://github.com/GlitterWare/Passy.git
+
+Builds:
+  - versionName: 1.1.1
+    versionCode: 8
+    commit: cf71c07910bb56d00c94f64cde28b408fe090726
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.2.0
+    versionCode: 9
+    commit: 0f623d2efa18e96ab3aedfeb806d5206bb95bcc2
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.3.0
+    versionCode: 10
+    commit: d6fb31a3a2b5fd5bdbd2641c8b95ac23bcf9a333
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.3.1
+    versionCode: 11
+    commit: aad229472dc4f284ea845ee4d326a850ea19bd98
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.4.0
+    versionCode: 12
+    commit: add2691fd3b069e938e060158287975c68dec4d3
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.4.1
+    versionCode: 13
+    commit: ce63fb66e18aa015f9920d1682a5268da569585e
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.5.0
+    versionCode: 14
+    commit: b4689bf6e06556423eedc76b7e28b99ade3b61de
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.5.1
+    versionCode: 15
+    commit: f55e4b53dbfa0d9ea76afa13b489afc89afbe3ee
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.5.2
+    versionCode: 16
+    commit: 942a32f4dde2bfaf443b1b31fb444c84caa8d355
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.6.0
+    versionCode: 17
+    commit: 12293aa9900b5b1b1c53a271a6f082239d9d6cd7
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.7.0
+    versionCode: 18
+    commit: 29e8f6652785cdc7ec74433dbf96c8740fead3b6
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.8.0
+    versionCode: 19
+    commit: 7fee2f6210bb358e89a95f1d0dab625875f1c9d8
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.9.1
+    versionCode: 21
+    commit: 2805e2e73a95ce01df6b089dedb7df580ca0b0e8
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.9.3
+    versionCode: 23
+    commit: 3d6355cbb743189bae128392d48fa667c95ba237
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.9.4
+    versionCode: 24
+    commit: 30c79e0a9fdb6cb57412e2b66b3eada03eaed3d0
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.9.5
+    versionCode: 25
+    commit: 0a24fc64afbe95eacfbd03dde872f4b810988e65
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.10.0
+    versionCode: 26
+    commit: ce051454beb2b99c013cda281b1e43daddf2eb5c
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+  - versionName: 1.10.1
+    versionCode: 27
+    commit: f8988a036233cac924ca35321e4c7a55771e03ea
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - linux
+      - windows
+    scandelete:
+      - submodules/flutter
+    build:
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter build apk --dart-define=UPDATES_POPUP_ENABLED=false
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.10.1
+CurrentVersionCode: 27

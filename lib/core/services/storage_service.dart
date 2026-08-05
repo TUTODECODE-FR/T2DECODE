@@ -42,6 +42,9 @@ class StorageService {
   // Multi-tools permissions
   static const _toolPermissionsKey = 'tool_permissions_v1';
   static const _toolFavoritesKey = 'tool_favorites_v1';
+  
+  // T2C-Phantom
+  static const _phantomCachePathKey = 'phantom_cache_path';
 
   static const FlutterSecureStorage _secure = FlutterSecureStorage();
 

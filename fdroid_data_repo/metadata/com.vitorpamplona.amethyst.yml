@@ -1,0 +1,995 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: On first start, the app fetches its privacy policy from Github.
+Categories:
+  - Internet
+License: MIT
+AuthorName: Vitor Pamplona
+AuthorEmail: vitor@vitorpamplona.com
+AuthorWebSite: https://vitorpamplona.com/
+SourceCode: https://github.com/vitorpamplona/amethyst
+IssueTracker: https://github.com/vitorpamplona/amethyst/issues
+Changelog: https://github.com/vitorpamplona/amethyst/releases
+
+AutoName: Amethyst
+
+RepoType: git
+Repo: https://github.com/vitorpamplona/amethyst.git
+Binaries: 
+  https://github.com/vitorpamplona/amethyst/releases/download/v%v/amethyst-fdroid-universal-v%v.apk
+
+Builds:
+  - versionName: 0.58.2
+    versionCode: 209
+    commit: fe9e85c282753ea2e17cbea55ddcc2811196c0f2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.58.3
+    versionCode: 210
+    commit: ad5a4d0b5907741cdb2e222d1c6b592ff6af2a25
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.60.1
+    versionCode: 214
+    commit: a3efd15b954f303b4d217681e0212f0603a97690
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.61.1
+    versionCode: 217
+    commit: d1bbdef5c4a8a63886fbe299f1b9c282a513c0ff
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.61.3
+    versionCode: 219
+    commit: fbe0f584af2c2bab98bbba9f1dfab1fa5a9815bb
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.61.4
+    versionCode: 220
+    commit: 69481a046b6227acb5bf2c835d2184e9a3d28d59
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.62.2
+    versionCode: 223
+    commit: b4395e7585b9844573e0cae4ac29fbe39ec7fba2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.62.3
+    versionCode: 224
+    commit: 777c652bf5dc6d7f608d0d6a9bd5761690409a7c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.62.5
+    versionCode: 226
+    commit: f2e9fbebea7144e297ffef25ed3f8a185f4f2638
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.62.7
+    versionCode: 228
+    commit: ee5699c2dea585e4f6544ab070bd6dfc895a8d08
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.62.8
+    versionCode: 229
+    commit: 787ca98daffca6646f9212286ae55d8b40b1cee3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.64.0
+    versionCode: 231
+    commit: 1793fe40bf741e977809982af4ae51ce2b665a49
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.64.2
+    versionCode: 233
+    commit: 8f4f8f7953b62a6a3c5f56b50815cebc8aafd2aa
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.65.1
+    versionCode: 237
+    commit: 51b4cf444ace1272669e2a157966e408b8ae4f33
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.66.1
+    versionCode: 239
+    commit: 9e2b2cedd61ed374f38f8a411990f6f30a998afa
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.66.4
+    versionCode: 242
+    commit: 5c78135f1a9e54f16b9509445c985d07cb2cffcc
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.66.6
+    versionCode: 244
+    commit: 93705e5baf7f254e5121afd4da00b6d6129cfdaf
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.67.1
+    versionCode: 247
+    commit: 9df82a78e7e560ea33ab27b8306630bbbd9be406
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.68.2
+    versionCode: 250
+    commit: 2e7a955ada1f936a049b5e8e778387f77e54e827
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.68.4
+    versionCode: 252
+    commit: 4e4e7981331595599b61d62eae2fe273763c2613
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.69.1
+    versionCode: 254
+    commit: ad59b691fd064e3b0b218abf3f4a1f4e1a740f55
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.69.3
+    versionCode: 256
+    commit: 64bf17b1a05b1f2cc2f9e7f958c81c943df670d9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.70.1
+    versionCode: 258
+    commit: e2f5a1a0e4a56ca16cc358d380c09c8bc7cecb92
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.70.5
+    versionCode: 262
+    commit: 43b011d3da3ace3092f5d41304d7d04b0c7364a5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.70.8
+    versionCode: 265
+    commit: 297bcf2762d4ca960285ff27afaccc6969e48b63
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.71.0
+    versionCode: 266
+    commit: 3e7bbc03c16a023d795febf22fbd566a9d11fdac
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.72.0
+    versionCode: 267
+    commit: 5f85d8a97b82b1d6662a1c1641dad72baa59809c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.72.2
+    versionCode: 269
+    commit: d36f6f4a7e83c12ea75d191569f45700b715f233
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.73.3
+    versionCode: 272
+    commit: c7a3a74d5a4adf2cea315a345dadaf9abc63f416
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.74.5
+    versionCode: 278
+    commit: d73dec8f0b5dbec153a2b0a8fa1e36d21c91b688
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.75.8
+    versionCode: 287
+    commit: c69969947ba550f3a7fd20e569041d48f1ffae95
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.75.12
+    versionCode: 291
+    commit: bfae5871c8e093b14b2e55959a9009f6837e2261
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.75.13
+    versionCode: 292
+    commit: 364e3c5f5fd123d6055079c7cbce88463da62bf6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.75.14
+    versionCode: 293
+    commit: 40e2dba49027b77e6dc1a21eb6beca82ccbff3f0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.76.0
+    versionCode: 294
+    commit: e05ab104b96c1f4361c5966879a420935356d036
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.77.0
+    versionCode: 297
+    commit: 227de743176fa37291f823ab816f4d691b72957c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.78.1
+    versionCode: 307
+    commit: ee466aa1e4de968ace89f95dd17c0e0ed65a2400
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.79.0
+    versionCode: 309
+    commit: d738e5cbaff5a0399a6d4c462f545e002cd52509
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.79.3
+    versionCode: 312
+    commit: 55a4b1937f499165bf0b12e484537d47779d87c7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.79.6
+    versionCode: 315
+    commit: 904a50be1ff9f0b9f38903781276c8a7114a9145
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.79.7
+    versionCode: 316
+    commit: 2892fa6fcabdb3c4637fc7cf2e24da9c94028e4f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.79.12
+    versionCode: 321
+    commit: eb6e81f81e418ed92b5e19ebf9c915f632c6a99b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.79.13
+    versionCode: 322
+    commit: d3d2845f1033a6c20d15c96d9d647c935945814c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.80.1
+    versionCode: 324
+    commit: b213137e7ad60d0cdfab856ae87d3b9acc33c19c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.80.2
+    versionCode: 325
+    commit: 0e51731f69085239d3cad799cd224a4cf0803f30
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.80.4
+    versionCode: 327
+    commit: 9ec6e6d955325e665ef395167016c55c31b8d08b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.80.6
+    versionCode: 329
+    commit: 1771b6e66748247be99bb76b784de4d7ba856880
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.80.7
+    versionCode: 330
+    commit: 1d62d8ed73695cf391cfeaa0e316f606718b3262
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.81.0
+    versionCode: 331
+    commit: 98d29ac6dc661043c8afa2b5b5a12e0fee196865
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.81.3
+    versionCode: 334
+    commit: 21a797be9de4ca0688c54e1c65c0a55e382c3ea4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.81.5
+    versionCode: 336
+    commit: 9bc5549d7690c5385f6b962c75403628831b8d01
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.82.1
+    versionCode: 338
+    commit: b2e35cdb3ecdb7a5b7b1ef750b68fda2bfd414cd
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.82.3
+    versionCode: 340
+    commit: 5225c6ad07c4f47a321bef488c22c03e63a98c4b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.83.1
+    versionCode: 342
+    commit: e7902c4565d19d14b6aa8e164d44e3012bc5b088
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.83.3
+    versionCode: 344
+    commit: 8f13a7687054b677b53a15f2749663b34402ff26
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.83.4
+    versionCode: 345
+    commit: c215beeb8ee82ea91448308cd58282392ab2f6e6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.83.5
+    versionCode: 346
+    commit: 4c48463091e8d655dbc3a56a05c88095766f7f78
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.83.7
+    versionCode: 348
+    commit: ac8f0e860004ea3403a1492a577e9baa8675e70f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.83.9
+    versionCode: 350
+    commit: 316c32f076b0351ad7d3b1e03bd35d1947260609
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.83.12
+    versionCode: 353
+    commit: 95e19cf681cbcf1f52399a5d5ea972971bb6537d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.83.13
+    versionCode: 354
+    commit: 60e87d943a5596dc940ee5433e4cd523c3c02495
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.84.1
+    versionCode: 356
+    commit: 02da606461c46f788de3e9b779f9b5885d790ab0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.84.2
+    versionCode: 357
+    commit: 133d7d5ce0d63014115a815fb30774f6dfad2ec3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.84.3
+    versionCode: 358
+    commit: 9424147a08a338fa339650984f647ea7704a8570
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.85.3
+    versionCode: 362
+    commit: f73c9b5773a886e0afcd893254084a6bc4cbbc97
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.86.2
+    versionCode: 365
+    commit: 0854bd34ffb92b84290533919b5fc00a0f9fdad6
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.86.3
+    versionCode: 366
+    commit: d8e9b4773b8a35d00703a2a96e92605c9198b49c
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.86.5
+    versionCode: 368
+    commit: 8c9800664f1f541df1336fc39c489fc9ab8ca097
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.87.2
+    versionCode: 371
+    commit: 0c48366d563cc3d4c588f58762f07e5f1586c045
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.87.5
+    versionCode: 374
+    commit: ae418f9d45c7c59fc8cbbb32eb6376052e909c37
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.87.6
+    versionCode: 375
+    commit: eea8b99622c1090a8090898ad2bdb6e67beee0df
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.87.7
+    versionCode: 376
+    commit: 609faf245a45742c31beb485f954affe8954d493
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.88.0
+    versionCode: 377
+    commit: d28f20519b982fb42cb50836f580410ba9a52bf1
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.88.2
+    versionCode: 379
+    commit: 0e1e379c7dc65a99d0fabaf5fe228bca7ed310a8
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.88.4
+    versionCode: 381
+    commit: c37adfc6a2d72a0721b30e99a88ea813a80de63e
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.88.8
+    versionCode: 385
+    commit: 5c21e219fe586def5e743b9b28891e6e7542df53
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.89.1
+    versionCode: 387
+    commit: ce839ed6d9a3d086b105c85d7c3c08f146cd81ef
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.89.2
+    versionCode: 388
+    commit: 75c7d40f4e4294dac93e6c911288d5a1934f9f2e
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.89.4
+    versionCode: 390
+    commit: c128e43fe56145bd278cbc56070d153b52b79f57
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.89.5
+    versionCode: 391
+    commit: a5c6f86b35c9e2937f18a29e16152a5021838cb6
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.89.6
+    versionCode: 392
+    commit: 62ae43e863af6417da1eba17a250cecb2dcb4be7
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.89.7
+    versionCode: 393
+    commit: dbaadb459555b75094a2888499bcecccd144f4f4
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.89.8
+    versionCode: 394
+    commit: 3c034ca8af67f5e7f550bfae232ddea93cf5ef3e
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.89.9
+    versionCode: 395
+    commit: e8872321323397d35c5acfe9877b672981b019da
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.89.10
+    versionCode: 396
+    commit: 4c6842faf4bbedf082666b8571ec7b90e9ba4a93
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.90.4
+    versionCode: 401
+    commit: b1f1466e6b998db2cb680186469e414c2c83e162
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.90.6
+    versionCode: 403
+    commit: d5a98db67ceb4d87d261f74ec9a6d94a0baf95ca
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+  - versionName: 0.91.0
+    versionCode: 404
+    commit: 065cf83b68afb509d7fa84c987c34123f4dbb20b
+    subdir: amethyst
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/enable true/d' build.gradle
+
+AllowedAPKSigningKeys: c2d0aa86bcb6b62090561a41bbe336e98b78c2d0210a498dc885f28e1348cf17
+
+MaintainerNotes: see https://gitlab.com/fdroid/fdroiddata/-/issues/2973#note_1428295385
+  on NonFreeNet
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 0.91.0
+CurrentVersionCode: 404

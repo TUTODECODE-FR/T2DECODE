@@ -1,0 +1,96 @@
+Categories:
+  - System
+License: Apache-2.0
+SourceCode: https://github.com/hufrea/keysh
+IssueTracker: https://github.com/hufrea/keysh/issues
+
+AutoName: Keysh
+
+RepoType: git
+Repo: https://github.com/hufrea/keysh
+Binaries: https://github.com/hufrea/keysh/releases/download/v%v/keysh-%v.apk
+
+Builds:
+  - versionName: 0.1.0
+    versionCode: 1
+    commit: 1f255a4861a03f2eb5f2ce1680e39c466ef4aa9e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.1
+    versionCode: 2
+    commit: b0933549b63b1426aa97d8e2d1a8a4fc45a26ef6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.2
+    versionCode: 3
+    commit: 750d252689414ca16972f6c14bdb8e1217d72f41
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.3
+    versionCode: 4
+    commit: 8b2166e61f212915fb6921e09383864c11c2682a
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.4
+    versionCode: 5
+    commit: d42bfadef44bf9a61c68be423dde77ebc6f1f980
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.5
+    versionCode: 6
+    commit: a5f4fc70dd6017a9d22588be167ddb440f9d41c2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.6
+    versionCode: 7
+    commit: e25e10972fe32ae279aa0ad6f604c87c80cb820a
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.7
+    versionCode: 8
+    commit: fade5c32b093408c979daccdd9b27e7391cb4792
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.8
+    versionCode: 9
+    commit: 22fd00f1b32509c7e7b9b0f9d2a615c124e945e6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.9
+    versionCode: 10
+    commit: ce1ff60a749897878540ef3a5565220b5e97fa8c
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.10
+    versionCode: 11
+    commit: 4eba3f0355466665ae00168a5879a135dcc29757
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: 7245be9f61de696adc6583916275a9e7b0920ec586f883b09815703670837853
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.1.10
+CurrentVersionCode: 11

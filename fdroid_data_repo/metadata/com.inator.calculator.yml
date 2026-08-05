@@ -1,0 +1,43 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: The Exchange-rate API uses is not libre.
+Categories:
+  - Calculator
+  - System
+  - Unit Convertor
+License: GPL-3.0-only
+AuthorName: Prathamesh More
+AuthorWebSite: https://prathameshmm02.github.io
+SourceCode: https://github.com/prathameshmm02/calculator-inator
+IssueTracker: https://github.com/prathameshmm02/calculator-inator/issues
+Changelog: https://github.com/prathameshmm02/calculator-inator/releases
+
+AutoName: Calculator-inator
+
+RepoType: git
+Repo: https://github.com/prathameshmm02/calculator-inator
+
+Builds:
+  - versionName: 1.2.0
+    versionCode: 6
+    commit: v1.2.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.3.0
+    versionCode: 7
+    commit: 8df445a42d9e2bd8113427488ee9d3238badd861
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.3.0
+CurrentVersionCode: 7

@@ -1,0 +1,626 @@
+Categories:
+  - Browser
+  - Internet
+License: GPL-3.0-or-later
+AuthorName: Soren Stoutner
+AuthorEmail: soren@stoutner.com
+WebSite: https://www.stoutner.com/privacy-browser-android/
+SourceCode: https://gitweb.stoutner.com/?p=PrivacyBrowserAndroid.git;a=summary
+IssueTracker: https://redmine.stoutner.com/projects/privacy-browser/issues
+Changelog: https://www.stoutner.com/privacy-browser-android/changelog/
+Donate: https://www.stoutner.com/donations/
+Liberapay: sorenstoutner
+Bitcoin: 1Jiooc5L238VnhiWtkdYEkwm7kRNWQspSC
+
+AutoName: Privacy Browser
+
+RepoType: git
+Repo: https://git.stoutner.com/PrivacyBrowserAndroid.git
+
+Builds:
+  - versionName: 1.3-standard
+    versionCode: 4
+    commit: v1.3-standard
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/play-services/d' build.gradle
+
+  - versionName: 1.4-standard
+    versionCode: 5
+    commit: v1.4-standard
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/play-services/d' build.gradle
+
+  - versionName: '1.5'
+    versionCode: 6
+    commit: v1.5
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/play-services/d' build.gradle
+
+  - versionName: '1.6'
+    versionCode: 7
+    commit: v1.6
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/play-services/d' build.gradle
+
+  - versionName: '1.7'
+    versionCode: 8
+    commit: v1.7
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/play-services/d' build.gradle
+
+  - versionName: '1.8'
+    versionCode: 9
+    commit: v1.8
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/play-services/d' build.gradle
+
+  - versionName: 1.9.1
+    versionCode: 11
+    commit: v1.9.1
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/play-services/d' build.gradle
+
+  - versionName: '1.10'
+    versionCode: 12
+    commit: v1.10
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/play-services/d' build.gradle
+
+  - versionName: '1.11'
+    versionCode: 13
+    commit: v1.11
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/play-services/d' build.gradle
+
+  - versionName: '1.12'
+    versionCode: 14
+    commit: v1.12
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '1.13'
+    versionCode: 15
+    commit: v1.13
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '1.14'
+    versionCode: 16
+    commit: v1.14
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: 1.14.1
+    versionCode: 17
+    commit: v1.14.1
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '1.15'
+    versionCode: 18
+    commit: v1.15
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.0'
+    versionCode: 19
+    commit: v2.0
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: 2.0.1
+    versionCode: 20
+    commit: v2.0.1
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.1'
+    versionCode: 21
+    commit: v2.1
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.2'
+    versionCode: 22
+    commit: v2.2
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.3'
+    versionCode: 23
+    commit: v2.3
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.4'
+    versionCode: 24
+    commit: v2.4
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.5'
+    versionCode: 25
+    commit: v2.5
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.6'
+    versionCode: 26
+    commit: v2.6
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: 2.7.2
+    versionCode: 29
+    commit: v2.7.2
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.8'
+    versionCode: 30
+    commit: v2.8
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: 2.8.1
+    versionCode: 31
+    commit: v2.8.1
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.9'
+    versionCode: 32
+    commit: v2.9
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.10'
+    versionCode: 33
+    commit: v2.10
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.11'
+    versionCode: 34
+    commit: v2.11
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.12'
+    versionCode: 35
+    commit: v2.12
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.13'
+    versionCode: 36
+    commit: v2.13
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.14'
+    versionCode: 37
+    commit: v2.14
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.15'
+    versionCode: 38
+    commit: v2.15
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: 2.15.1
+    versionCode: 39
+    commit: v2.15.1
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.16'
+    versionCode: 40
+    commit: v2.16
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '2.17'
+    versionCode: 41
+    commit: v2.17
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: 2.17.1
+    versionCode: 42
+    commit: v2.17.1
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '3.0'
+    versionCode: 43
+    commit: v3.0
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: 3.0.1
+    versionCode: 44
+    commit: v3.0.1
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '3.1'
+    versionCode: 45
+    commit: v3.1
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '3.2'
+    versionCode: 46
+    commit: v3.2
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '3.3'
+    versionCode: 47
+    commit: v3.3
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '3.4'
+    versionCode: 48
+    commit: v3.4
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: 3.4.1
+    versionCode: 49
+    commit: v3.4.1
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '3.5'
+    versionCode: 50
+    commit: v3.5
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: 3.5.1
+    versionCode: 51
+    commit: v3.5.1
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '3.6'
+    versionCode: 52
+    commit: v3.6
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: 3.6.1
+    versionCode: 53
+    commit: v3.6.1
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/firebase/d' build.gradle
+
+  - versionName: '3.7'
+    versionCode: 54
+    commit: v3.7
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: '3.8'
+    versionCode: 55
+    commit: v3.8
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: 3.8.1
+    versionCode: 56
+    commit: bda37dc9784e900cb64b87af3e221e11320d9d01
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: '3.9'
+    versionCode: 57
+    commit: 392f2726cd21539c5ec89e0d09d2e7d7922bebad
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - standard
+
+  - versionName: '3.10'
+    versionCode: 58
+    commit: b0f0322c62a5cd25e587f1760a33fcf60c279954
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - standard
+
+  - versionName: 3.10.1
+    versionCode: 59
+    commit: b1f88361f33fde911642f568e71936c33bdcc530
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - standard
+
+  - versionName: '3.11'
+    versionCode: 60
+    commit: aa9590ff1a1097733bdda217ce1fe6f1fc93afc3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - standard
+
+  - versionName: '3.12'
+    versionCode: 61
+    commit: 60846bcbf234ed7452af94f080f3da3133ce674c
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: 3.12.1
+    versionCode: 62
+    commit: 6b2cf168a9c3697be63dee603d05a88506c380a1
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: 3.12.2
+    versionCode: 63
+    commit: 927928bf3b2c4fa7760e37d2878a08f35bc170be
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: '3.13'
+    versionCode: 64
+    commit: f0e2eba964dbe0973dd20d54cc798e2cac85bd09
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: 3.13.1
+    versionCode: 65
+    commit: 9c000d5555b2c8e3bbe01dc21f13c6d0074eb482
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: 3.13.2
+    versionCode: 66
+    commit: 9038e54efc892f62384c6cb4e37bbfae9da67bfb
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: 3.13.3
+    versionCode: 67
+    commit: c5359b173d559fc154bf7e4bd8fd65c951c529b3
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: 3.13.4
+    versionCode: 68
+    commit: 7ab6a9027175e6a8f72b3f3683f8c4e05643d8bc
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: '3.14'
+    versionCode: 69
+    commit: 6d4644db8bed024d0f4d4cfb7cc8d1dcef3789fe
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - standard
+
+  - versionName: '3.15'
+    versionCode: 70
+    commit: a424c7a4dd110995277c9f4753fecb21a4a4991a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - standard
+
+  - versionName: 3.15.1
+    versionCode: 71
+    commit: f54dc14f2a76e7d45964abb22f19785744fce2e9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - standard
+
+  - versionName: '3.16'
+    versionCode: 72
+    commit: 13e40f25aef5ddfcb5cd7b398c514cf2aa03e334
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - standard
+
+  - versionName: '3.17'
+    versionCode: 73
+    commit: 7a54e6907e74196a4840a2434dd13e2b68a95db4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - standard
+
+  - versionName: '3.18'
+    versionCode: 74
+    commit: 5be67db45b84cd4d8abedf70d90ae584415348f6
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: 3.18.1
+    versionCode: 75
+    commit: bc4a87300d0ba4c50b040234a1608259a7f3aefd
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: '3.19'
+    versionCode: 76
+    commit: 242ad7a6458d588744fd9a6962b94ba46dd35b96
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: 3.19.1
+    versionCode: 77
+    commit: 023f59dfaeefe5d1d6c12c5af92dbfcaf0fef3cc
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: 3.19.2
+    versionCode: 78
+    commit: f8b46833b2246450a0a79067bbb1de044a6f9021
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: 3.19.3
+    versionCode: 79
+    commit: 492ce8c35dc72821d2cc814fc730d09c3fef46d4
+    subdir: app
+    gradle:
+      - standard
+
+  - versionName: 3.20.1
+    versionCode: 81
+    commit: 0b90f3cc8acfeb432aad1f5060f82fd9ca593a50
+    subdir: app
+    gradle:
+      - standard
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 3.20.1
+CurrentVersionCode: 81

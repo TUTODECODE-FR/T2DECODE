@@ -1,0 +1,2493 @@
+AntiFeatures:
+  TetheredNet:
+    en-US: This app relies on archiveofourown.org
+    fr-FR: Cette application dépend d'archiveofourown.org
+Categories:
+  - Reading
+License: GPL-3.0-or-later
+AuthorName: Tbvns
+AuthorEmail: tbvns601@gmail.com
+AuthorWebSite: https://tbvns.xyz
+SourceCode: https://github.com/tbvns/CO3
+IssueTracker: https://github.com/tbvns/CO3/issues
+Changelog: https://github.com/tbvns/CO3/releases
+
+AutoName: CO3
+
+RepoType: git
+Repo: https://github.com/tbvns/CO3.git
+
+Builds:
+  - versionName: B0.0.5
+    versionCode: 51
+    commit: 9010d6f2cb0b9422878de50a9fbfdc7713538b17
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.5
+    versionCode: 52
+    commit: 9010d6f2cb0b9422878de50a9fbfdc7713538b17
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.5
+    versionCode: 53
+    commit: 9010d6f2cb0b9422878de50a9fbfdc7713538b17
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.5
+    versionCode: 54
+    commit: 9010d6f2cb0b9422878de50a9fbfdc7713538b17
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.6
+    versionCode: 61
+    commit: 20c66e3e4de7358ab741615111ad010f8e233825
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.6
+    versionCode: 62
+    commit: 20c66e3e4de7358ab741615111ad010f8e233825
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.6
+    versionCode: 63
+    commit: 20c66e3e4de7358ab741615111ad010f8e233825
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.6
+    versionCode: 64
+    commit: 20c66e3e4de7358ab741615111ad010f8e233825
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.7
+    versionCode: 71
+    commit: 8b3adc95183fe7f83e0c234dc5e1088153b48132
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.7
+    versionCode: 72
+    commit: 8b3adc95183fe7f83e0c234dc5e1088153b48132
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.7
+    versionCode: 73
+    commit: 8b3adc95183fe7f83e0c234dc5e1088153b48132
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.7
+    versionCode: 74
+    commit: 8b3adc95183fe7f83e0c234dc5e1088153b48132
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.8
+    versionCode: 81
+    commit: b3c21cc428e7a6f05f460d86b4bb36b1ff6a52db
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.8
+    versionCode: 82
+    commit: b3c21cc428e7a6f05f460d86b4bb36b1ff6a52db
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.8
+    versionCode: 83
+    commit: b3c21cc428e7a6f05f460d86b4bb36b1ff6a52db
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.8
+    versionCode: 84
+    commit: b3c21cc428e7a6f05f460d86b4bb36b1ff6a52db
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.9
+    versionCode: 91
+    commit: 3b920b16c56213f25a23c8d846e0e62020cf7609
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.9
+    versionCode: 92
+    commit: 3b920b16c56213f25a23c8d846e0e62020cf7609
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.9
+    versionCode: 93
+    commit: 3b920b16c56213f25a23c8d846e0e62020cf7609
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.9
+    versionCode: 94
+    commit: 3b920b16c56213f25a23c8d846e0e62020cf7609
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.10
+    versionCode: 101
+    commit: 4805a152a8cd411e1d3c27e5f9d5813922c021fe
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.10
+    versionCode: 102
+    commit: 4805a152a8cd411e1d3c27e5f9d5813922c021fe
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.10
+    versionCode: 103
+    commit: 4805a152a8cd411e1d3c27e5f9d5813922c021fe
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.10
+    versionCode: 104
+    commit: 4805a152a8cd411e1d3c27e5f9d5813922c021fe
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.11
+    versionCode: 111
+    commit: 91c1d9fcbc3a6ad8010b10bc7f0911ff8f864795
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.11
+    versionCode: 112
+    commit: 91c1d9fcbc3a6ad8010b10bc7f0911ff8f864795
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.11
+    versionCode: 113
+    commit: 91c1d9fcbc3a6ad8010b10bc7f0911ff8f864795
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.11
+    versionCode: 114
+    commit: 91c1d9fcbc3a6ad8010b10bc7f0911ff8f864795
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.12
+    versionCode: 121
+    commit: 10108c4d5240f07630d17f6c5de8e0be3b3d7bfe
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.12
+    versionCode: 122
+    commit: 10108c4d5240f07630d17f6c5de8e0be3b3d7bfe
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.12
+    versionCode: 123
+    commit: 10108c4d5240f07630d17f6c5de8e0be3b3d7bfe
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.12
+    versionCode: 124
+    commit: 10108c4d5240f07630d17f6c5de8e0be3b3d7bfe
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.13
+    versionCode: 131
+    commit: 84d0860c4ca9cce5a99e3fd751f931b209c7c4cf
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.13
+    versionCode: 132
+    commit: 84d0860c4ca9cce5a99e3fd751f931b209c7c4cf
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.13
+    versionCode: 133
+    commit: 84d0860c4ca9cce5a99e3fd751f931b209c7c4cf
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.13
+    versionCode: 134
+    commit: 84d0860c4ca9cce5a99e3fd751f931b209c7c4cf
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.14
+    versionCode: 141
+    commit: c00dac8566b197186dd8dc94689c956b7e15a08f
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.14
+    versionCode: 142
+    commit: c00dac8566b197186dd8dc94689c956b7e15a08f
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.14
+    versionCode: 143
+    commit: c00dac8566b197186dd8dc94689c956b7e15a08f
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.14
+    versionCode: 144
+    commit: c00dac8566b197186dd8dc94689c956b7e15a08f
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/react-native/sdks/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-reanimated/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-calendars/node_modules/react-native-safe-area-context/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.15
+    versionCode: 151
+    commit: 66a13087bdd31d1180bc401c7d8dba6ea8c26c3e
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.15
+    versionCode: 152
+    commit: 66a13087bdd31d1180bc401c7d8dba6ea8c26c3e
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.15
+    versionCode: 153
+    commit: 66a13087bdd31d1180bc401c7d8dba6ea8c26c3e
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.15
+    versionCode: 154
+    commit: 66a13087bdd31d1180bc401c7d8dba6ea8c26c3e
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.16
+    versionCode: 161
+    commit: c4313bcc94bf47e564bd6b7c1bb03952cd21b00b
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.16
+    versionCode: 162
+    commit: c4313bcc94bf47e564bd6b7c1bb03952cd21b00b
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.16
+    versionCode: 163
+    commit: c4313bcc94bf47e564bd6b7c1bb03952cd21b00b
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.16
+    versionCode: 164
+    commit: c4313bcc94bf47e564bd6b7c1bb03952cd21b00b
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.17
+    versionCode: 171
+    commit: 2d61dfa18dd8b6320e06168c644fd4dc348b8143
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.17
+    versionCode: 172
+    commit: 2d61dfa18dd8b6320e06168c644fd4dc348b8143
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.17
+    versionCode: 173
+    commit: 2d61dfa18dd8b6320e06168c644fd4dc348b8143
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.17
+    versionCode: 174
+    commit: 2d61dfa18dd8b6320e06168c644fd4dc348b8143
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+  - versionName: B0.0.18
+    versionCode: 181
+    commit: 2dfd3755266e4b6fd60080303c218a469e45ec23
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=armeabi-v7a
+
+  - versionName: B0.0.18
+    versionCode: 182
+    commit: 2dfd3755266e4b6fd60080303c218a469e45ec23
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=arm64-v8a
+
+  - versionName: B0.0.18
+    versionCode: 183
+    commit: 2dfd3755266e4b6fd60080303c218a469e45ec23
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86
+
+  - versionName: B0.0.18
+    versionCode: 184
+    commit: 2dfd3755266e4b6fd60080303c218a469e45ec23
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    init:
+      - cd ../..
+      - npm install
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild:
+      - cd ../..
+      - sed -i '/jvmToolchain\|JavaVersion/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+        node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/jvmTarget = "17"/jvmTarget = "21"/g' node_modules/react-native-notify-kit/android/build.gradle
+      - sed -i 's/fromTarget("17")/fromTarget("21")/' node_modules/react-native-worklets/android/build.gradle.kts
+        node_modules/react-native-reanimated/android/build.gradle.kts
+      - echo "reactNativeRootDir=node_modules/react-native" >> android/gradle.properties
+      - echo "reactNativePath=node_modules/react-native" >> android/gradle.properties
+      - echo "mavenRepo.url=https://repo.maven.apache.org/maven2" >> android/gradle.properties
+      - npx react-native bundle --platform android --dev false --entry-file index.js
+        --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest
+        android/app/src/main/res/
+    scanignore:
+      - node_modules/hermes-compiler/hermesc/linux64-bin/hermesc
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-cookies/cookies/android/build.gradle
+      - node_modules/@react-native-picker/picker/android/build.gradle
+      - node_modules/react-native-linear-gradient/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-svg/android/build.gradle
+      - node_modules/react-native-system-navigation-bar/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+    scandelete:
+      - node_modules
+    gradleprops:
+      - BUILD_ABI=x86_64
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+VercodeOperation:
+  - 10 * %c + 1
+  - 10 * %c + 2
+  - 10 * %c + 3
+  - 10 * %c + 4
+CurrentVersion: B0.0.18
+CurrentVersionCode: 184

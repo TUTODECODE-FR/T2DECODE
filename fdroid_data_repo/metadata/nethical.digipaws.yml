@@ -1,0 +1,73 @@
+Categories:
+  - System
+License: GPL-3.0-or-later
+AuthorName: Nethical
+AuthorEmail: aguptaq88@gmail.com
+AuthorWebSite: https://nethical6.github.io
+WebSite: https://nethical6.github.io/digipaws
+SourceCode: https://github.com/nethical6/digipaws
+IssueTracker: https://github.com/nethical6/digipaws/issues
+
+AutoName: DigiPaws
+
+RepoType: git
+Repo: https://github.com/nethical6/digipaws.git
+Binaries: 
+  https://github.com/nethical6/digipaws/releases/download/%v/app-lite-universal-release-unsigned-signed.apk
+
+Builds:
+  - versionName: 0.7.1-alpha-lite
+    versionCode: 8
+    commit: 1a149f696c943c636286c65c64459e9252bcdce0
+    subdir: app
+    gradle:
+      - lite
+    output: build/outputs/apk/lite/release/app-lite-universal-release-unsigned.apk
+
+  - versionName: 1.3-alpha-lite
+    versionCode: 14
+    commit: 13118ceb4790badc4b79bbe4b5d8fb7595f4cee1
+    subdir: app
+    gradle:
+      - lite
+    output: build/outputs/apk/lite/release/app-lite-universal-release-unsigned.apk
+
+  - versionName: 1.7-alpha-lite
+    versionCode: 16
+    commit: 2931fa348db306417b5236cdeeb604deada2bb25
+    subdir: app
+    gradle:
+      - lite
+    output: build/outputs/apk/lite/release/app-lite-universal-release-unsigned.apk
+
+  - versionName: 1.9-alpha-lite
+    versionCode: 19
+    commit: 42e47f8e3ae0945a26574b586bbd84fc2bb55543
+    subdir: app
+    gradle:
+      - lite
+    output: build/outputs/apk/lite/release/app-lite-universal-release-unsigned.apk
+
+  - versionName: 2.1-alpha-lite
+    versionCode: 21
+    commit: 34ab01a3e817864651a42a690d35c0529071af5f
+    subdir: app
+    gradle:
+      - lite
+    output: build/outputs/apk/lite/release/app-lite-universal-release-unsigned.apk
+
+  - versionName: 2.3-alpha-lite
+    versionCode: 23
+    commit: 833bce2133839554afbb9ca5d8f4bda68415a816
+    subdir: app
+    gradle:
+      - lite
+    output: build/outputs/apk/lite/release/app-lite-universal-release-unsigned.apk
+
+AllowedAPKSigningKeys: 9407327d0d7f2fa5f28bae6de25b9ece6f87e132af35293d00cec185586365b0
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 2.3-alpha-lite
+CurrentVersionCode: 23

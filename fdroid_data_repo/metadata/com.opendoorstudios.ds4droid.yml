@@ -1,0 +1,284 @@
+Categories:
+  - Emulator
+License: GPL-3.0-or-later
+WebSite: http://nds4droid.com
+SourceCode: https://github.com/jquesnelle/nds4droid
+IssueTracker: https://github.com/jquesnelle/nds4droid/issues
+
+AutoName: nds4droid
+Description: |-
+  nds4droid is a Nintendo DS emulator, based on DeSmuME. It is currently in its
+  infancy but does support most of the features one would expect in an emulator.
+  Runs on x86 natively.
+
+  Unlike official version this build does not support RAR archives.
+
+RepoType: git
+Repo: https://github.com/jquesnelle/nds4droid
+
+Builds:
+  - versionName: '13'
+    versionCode: 13
+    commit: release13
+    patch:
+      - fix_stuff.patch
+    rm:
+      - jni/desmume/src/android/7z/CPP/7zip/Archive/obj/local/armeabi-v7a/libc.so
+    extlibs:
+      - acra/acra-4.2.3.jar
+    target: android-15
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '21'
+    versionCode: 21
+    commit: release21
+    patch:
+      - fix_stuff_2.patch
+    extlibs:
+      - acra/acra-4.2.3.jar
+    prebuild: rm -rf jni/desmume/src/android/7z/CPP/7zip/Archive/obj/local/*
+    target: android-16
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '23'
+    versionCode: 23
+    commit: release23
+    patch:
+      - fix_stuff_2.patch
+    extlibs:
+      - acra/acra-4.2.3.jar
+    prebuild: rm -rf jni/desmume/src/android/7z/CPP/7zip/Archive/obj/local/*
+    target: android-16
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '25'
+    versionCode: 25
+    commit: release25
+    patch:
+      - fix_stuff_2.patch
+    extlibs:
+      - acra/acra-4.2.3.jar
+    prebuild: rm -rf jni/desmume/src/android/7z/CPP/7zip/Archive/obj/local/*
+    target: android-16
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '26'
+    versionCode: 26
+    commit: release26
+    patch:
+      - fix_stuff_2.patch
+    extlibs:
+      - acra/acra-4.2.3.jar
+    prebuild: rm -rf jni/desmume/src/android/7z/CPP/7zip/Archive/obj/local/*
+    target: android-16
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '27'
+    versionCode: 27
+    commit: release27
+    patch:
+      - fix_stuff_2.patch
+    extlibs:
+      - acra/acra-4.2.3.jar
+    prebuild: rm -rf jni/desmume/src/android/7z/CPP/7zip/Archive/obj/local/*
+    target: android-17
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '28'
+    versionCode: 28
+    commit: release28
+    patch:
+      - fix_stuff_2.patch
+    extlibs:
+      - acra/acra-4.2.3.jar
+    prebuild: rm -rf jni/desmume/src/android/7z/CPP/7zip/Archive/obj/local/*
+    target: android-17
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '29'
+    versionCode: 29
+    commit: release29
+    patch:
+      - fix_stuff_2.patch
+    extlibs:
+      - acra/acra-4.2.3.jar
+    prebuild: rm -rf jni/desmume/src/android/7z/CPP/7zip/Archive/obj/local/*
+    target: android-17
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '30'
+    versionCode: 30
+    commit: release30
+    patch:
+      - fix_stuff_2.patch
+    extlibs:
+      - acra/acra-4.2.3.jar
+    prebuild: rm -rf jni/desmume/src/android/7z/CPP/7zip/Archive/obj/local/*
+    target: android-17
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '40'
+    versionCode: 40
+    commit: release40
+    patch:
+      - fix_stuff_2.patch
+    extlibs:
+      - acra/acra-4.2.3.jar
+    prebuild: rm -rf jni/desmume/src/android/7z/CPP/7zip/Archive/obj/local/*
+    target: android-17
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '42'
+    versionCode: 423
+    commit: release42
+    patch:
+      - fix_stuff_2.patch
+    forcevercode: true
+    extlibs:
+      - acra/acra-4.2.3.jar
+    prebuild: echo 'APP_ABI=armeabi-v7a' >> jni/Application.mk
+    scanignore:
+      - jni/android-ndk-profiler
+    scandelete:
+      - jni/desmume
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '44'
+    versionCode: 441
+    commit: release44
+    patch:
+      - fix_stuff_2.patch
+    forcevercode: true
+    prebuild: echo 'APP_ABI=x86' >> jni/Application.mk
+    scanignore:
+      - jni/android-ndk-profiler
+    scandelete:
+      - jni/desmume
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '44'
+    versionCode: 443
+    commit: release44
+    patch:
+      - fix_stuff_2.patch
+    forcevercode: true
+    prebuild: echo 'APP_ABI=armeabi-v7a' >> jni/Application.mk
+    scanignore:
+      - jni/android-ndk-profiler
+    scandelete:
+      - jni/desmume
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '45'
+    versionCode: 451
+    commit: release45
+    patch:
+      - fix_stuff_2.patch
+    forcevercode: true
+    prebuild:
+      - echo 'APP_ABI=x86' >> jni/Application.mk
+      - sed -i 's/IS_OUYA =.*/IS_OUYA = false;/' src/com/opendoorstudios/ds4droid/MainActivity.java
+    scanignore:
+      - jni/android-ndk-profiler
+    scandelete:
+      - jni/desmume
+      - libs
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '45'
+    versionCode: 453
+    commit: release45
+    patch:
+      - fix_stuff_2.patch
+    forcevercode: true
+    prebuild:
+      - echo 'APP_ABI=armeabi-v7a' >> jni/Application.mk
+      - sed -i 's/IS_OUYA =.*/IS_OUYA = false;/' src/com/opendoorstudios/ds4droid/MainActivity.java
+    scanignore:
+      - jni/android-ndk-profiler
+    scandelete:
+      - jni/desmume
+      - libs
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '46'
+    versionCode: 461
+    commit: release46
+    patch:
+      - remove-rar-46.patch
+    forcevercode: true
+    rm:
+      - libs/ouya-sdk.jar
+    prebuild:
+      - echo 'APP_ABI=x86' >> jni/Application.mk
+      - sed -i 's/IS_OUYA =.*/IS_OUYA = false;/' src/com/opendoorstudios/ds4droid/MainActivity.java
+    scanignore:
+      - jni/android-ndk-profiler
+    scandelete:
+      - jni/desmume
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '46'
+    versionCode: 463
+    commit: release46
+    patch:
+      - remove-rar-46.patch
+    forcevercode: true
+    rm:
+      - libs/ouya-sdk.jar
+    prebuild:
+      - echo 'APP_ABI=armeabi-v7a' >> jni/Application.mk
+      - sed -i 's/IS_OUYA =.*/IS_OUYA = false;/' src/com/opendoorstudios/ds4droid/MainActivity.java
+    scanignore:
+      - jni/android-ndk-profiler
+    scandelete:
+      - jni/desmume
+    buildjni:
+      - yes
+    ndk: r12b
+
+MaintainerNotes: |-
+  +0: - (upstream)
+  +1: x86
+  +2: arm
+  +3: armv7 (CV)
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+VercodeOperation:
+  - '%c*10 + 3'
+CurrentVersion: '46'
+CurrentVersionCode: 463

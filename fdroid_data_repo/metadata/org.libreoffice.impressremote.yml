@@ -1,0 +1,133 @@
+Categories:
+  - Remote Controller
+License: MPL-2.0
+WebSite: https://wiki.documentfoundation.org/Impress_Remote
+SourceCode: https://gerrit.libreoffice.org/gitweb?p=impress_remote.git;a=summary
+IssueTracker: 
+  https://bugs.documentfoundation.org/buglist.cgi?component=Android%20app&product=Impress%20Remote
+Donate: https://donate.libreoffice.org
+Bitcoin: 129jj3HiLfj3zCfqoro3sMTdovizXEdo8A
+
+AutoName: Impress Remote
+Description: |-
+  Interact with your slideshow presentation from your Android device.
+
+  Features:
+
+  * Slide previews
+  * Speaker notes
+  * Play/Pause presentation
+  * Set timers
+
+  To set up the app with your computer, follow this guide:
+  <a href="https://wiki.documentfoundation.org/Development/Impress/RemoteHowTo">RemoteHowTo</a>
+
+  This build does not include the proprietary google play services library, and
+  thus lacks wearable support.
+
+RepoType: git
+Repo: https://git.libreoffice.org/impress_remote.git
+
+Builds:
+  - versionName: 2.0.0
+    versionCode: 9
+    commit: sdremote-2.0.0
+    subdir: android/sdremote
+    srclibs:
+      - Support-v7@android-sdk-4.4.2_r1
+    extlibs:
+      - android/android-support-v4.jar
+    prebuild: mv libs/android-support-v4.jar $$Support-v7$$/libs/
+
+  - versionName: 2.1.1
+    versionCode: 11
+    commit: sdremote-2.1.1
+    subdir: android/sdremote
+    gradle:
+      - yes
+
+  - versionName: 2.1.3
+    versionCode: 13
+    commit: sdremote-2.1.3
+    subdir: android/sdremote/mobile
+    gradle:
+      - yes
+    rm:
+      - ios
+
+  - versionName: 2.2.3
+    versionCode: 17
+    commit: sdremote-2.2.3
+    subdir: android/sdremote/mobile
+    init:
+      - sed -r -i '/full(Compile|Wear)/d' build.gradle
+      - sed -r -i '/wearable/d' ../wear/build.gradle
+    gradle:
+      - minimal
+    rm:
+      - ios
+
+  - versionName: 2.4.0
+    versionCode: 21
+    commit: 1ee1d0da76c61fedec47243ef3ae7604d87ad218
+    subdir: android/sdremote/mobile
+    init:
+      - sed -r -i '/full(Compile|Wear)/d' build.gradle
+      - sed -r -i '/wearable/d' ../wear/build.gradle
+    gradle:
+      - minimal
+    rm:
+      - ios
+
+  - versionName: 2.5.2
+    versionCode: 26
+    commit: sdremote-2.5.2
+    subdir: android/sdremote/mobile
+    gradle:
+      - minimal
+    rm:
+      - android/sdremote/wear
+      - firefoxos
+      - ios
+      - pebble
+    prebuild: sed -r -i '/full(Implementation|Wear)/d' build.gradle
+
+  - versionName: 2.6.0
+    versionCode: 28
+    commit: b2a14020f7390f37e3e939e01250929a8001fa58
+    subdir: android/sdremote/mobile
+    gradle:
+      - minimal
+    rm:
+      - android/sdremote/wear
+      - firefoxos
+      - ios
+      - pebble
+    prebuild: sed -r -i '/full(Implementation|Wear)/d' build.gradle
+
+  - versionName: 2.6.1
+    versionCode: 30
+    commit: 133c19d373688caef11ddaac1c4ec75d69121a62
+    subdir: android/sdremote/mobile
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - minimal
+    rm:
+      - android/sdremote/wear
+      - firefoxos
+      - ios
+      - pebble
+    prebuild: sed -r -i '/full(Implementation|Wear)/d' build.gradle
+
+MaintainerNotes: UpdateCheckData below is needed for update check to find versions
+  from 2.6.0 on.
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: 
+  android/sdremote/mobile/build.gradle|\sversionCode\s+(\d+)|android/sdremote/build.gradle|\sversionName\s+\'(.+)\'
+CurrentVersion: 2.6.1
+CurrentVersionCode: 30

@@ -1,0 +1,28 @@
+Categories:
+  - Sports & Health
+  - Timer
+  - Workout
+License: GPL-3.0-or-later
+WebSite: https://gitlab.com/LarsFreeSoftware/HIIT-timer
+SourceCode: https://gitlab.com/LarsFreeSoftware/HIIT-timer/tree/HEAD
+IssueTracker: https://gitlab.com/LarsFreeSoftware/HIIT-timer/issues
+
+AutoName: HIIT Timer
+Description: Simple timer for high intensity trainings.
+
+RepoType: git
+Repo: https://gitlab.com/LarsFreeSoftware/HIIT-timer.git
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: v1.0
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.0'
+CurrentVersionCode: 1

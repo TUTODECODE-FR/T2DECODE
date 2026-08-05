@@ -1,0 +1,142 @@
+Categories:
+  - Local Media Player
+  - Multimedia
+License: GPL-3.0-only
+AuthorName: Fossify
+AuthorEmail: hello@fossify.org
+WebSite: https://www.fossify.org
+SourceCode: https://github.com/FossifyOrg/Music-Player
+IssueTracker: https://github.com/FossifyOrg/Music-Player/issues
+Translation: https://hosted.weblate.org/projects/fossify/music-player/
+Changelog: https://github.com/FossifyOrg/Music-Player/releases
+Donate: https://www.fossify.org/donate
+Liberapay: naveensingh
+Bitcoin: bc1q5flmuh5f3canqza07cfekjn64p2aqvd2w7pnn3
+
+RepoType: git
+Repo: https://github.com/FossifyOrg/Music-Player.git
+Binaries: 
+  https://github.com/FossifyOrg/Music-Player/releases/download/%v/musicplayer-%c-foss-release.apk
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 1
+    commit: ed6a76c15e9b26cd2cb2c41e015ec20b9f6a6dcf
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/musicplayer-*-foss-release-unsigned.apk
+
+  - versionName: 1.1.0
+    versionCode: 2
+    commit: 16bd625ea94841050f07b8222d1adaa347fddd75
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/musicplayer-*-foss-release-unsigned.apk
+
+  - versionName: 1.2.0
+    versionCode: 3
+    commit: 52c8256d3d56dd31a01fe0569d15d004e970b41a
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/musicplayer-*-foss-release-unsigned.apk
+
+  - versionName: 1.2.1
+    versionCode: 4
+    commit: 70b5bf33389a30a2f52201371d3c1cf0bad7f540
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/musicplayer-*-foss-release-unsigned.apk
+
+  - versionName: 1.2.2
+    versionCode: 5
+    commit: dd4da6e4e07219b1c7918a95d6d716368d83d508
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/musicplayer-*-foss-release-unsigned.apk
+
+  - versionName: 1.2.3
+    versionCode: 6
+    commit: 921f2e7c816cd64a6be0bff9cdc7d32175ea3ee4
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/musicplayer-*-foss-release-unsigned.apk
+
+  - versionName: 1.3.0
+    versionCode: 7
+    commit: 93a676c565716c9e80e839460c9a56141bf54a20
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/musicplayer-*-foss-release-unsigned.apk
+
+  - versionName: 1.4.0
+    versionCode: 8
+    commit: 10160bcbc20c7c05e06a5466f90ab0e7e06801f2
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/musicplayer-*-foss-release-unsigned.apk
+
+  - versionName: 1.5.0
+    versionCode: 9
+    commit: d04e4a83fb7bbef0b070981eb7de1c22f7efcfdc
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/musicplayer-*-foss-release-unsigned.apk
+
+  - versionName: 1.5.1
+    versionCode: 10
+    commit: 0b742b32d714a89cd1b0b126be71132dbd1ad1e4
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/musicplayer-*-foss-release-unsigned.apk
+
+  - versionName: 1.6.0
+    versionCode: 11
+    commit: e6ec812fcb60c504c8cd417ab8a53929c440dd43
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/musicplayer-*-foss-release-unsigned.apk
+
+  - versionName: 1.7.0
+    versionCode: 12
+    commit: 00fcc48ffecf86bc68dd1760b14bdf9ef820a74c
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/musicplayer-*-foss-release-unsigned.apk
+
+  - versionName: 1.8.0
+    versionCode: 13
+    commit: 50bc57f2a0301d1cd9881305faf3abd9d834749f
+    subdir: app
+    gradle:
+      - foss
+
+  - versionName: 1.8.1
+    versionCode: 14
+    commit: b81deb8c6b953152b6964ccebb55ae3fed445415
+    subdir: app
+    gradle:
+      - foss
+
+AllowedAPKSigningKeys: affdb124d3f4720c2f98dbca9eacba0514fba4306e20a2786c861c3c0d6ff292
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: gradle.properties|VERSION_CODE=(\d+)|.|VERSION_NAME=(.*)
+CurrentVersion: 1.8.1
+CurrentVersionCode: 14

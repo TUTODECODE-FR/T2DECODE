@@ -1,0 +1,99 @@
+Categories:
+  - Writing
+License: GPL-3.0-only
+AuthorName: Menny Even Danan
+SourceCode: https://github.com/AnySoftKeyboard/AnySoftKeyboard/
+IssueTracker: https://github.com/AnySoftKeyboard/AnySoftKeyboard/issues
+Donate: 
+  https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=KDYBGNUNMMN94&lc=US&item_name=AnySoftKeyboard
+
+AutoName: AnySoftKeyboard - Hungarian Language Pack
+Description: |-
+  <b>This app has been deprecated in favor of https://f-droid.org/packages/com.anysoftkeyboard.languagepack.hungarian_oss/</b>
+
+  Layouts and dictionaries for for the Hungarian language. See the Google Play
+  description for usage tips.
+
+  Dictionary is via <a href="http://magyarispell.sourceforge.net">http://magyarispell.sourceforge.net</a>.
+
+  Install https://f-droid.org/packages/com.menny.android.anysoftkeyboard first, then select the desired
+  layout from AnySoftKeyboard's Settings->Keyboards menu.
+
+RepoType: git
+Repo: https://github.com/AnySoftKeyboard/AnySoftKeyboard.git
+
+Builds:
+  - versionName: '20120208'
+    versionCode: 12
+    commit: v20120208
+    patch:
+      - add-icon.patch
+      - dictionaries.patch
+    srclibs:
+      - AnySoftKeyboard-API@b21d8907
+      - AnySoftKeyboardTools@73e9a09496
+    prebuild:
+      - echo "android.library.reference.1=$$AnySoftKeyboard-API$$" >> project.properties
+      - mkdir -p res/raw/ dict/
+      - mv dic/hu_HU-1.6.1.xml dict/words.xml
+      - rm -rf assets/ dic/
+    build: java -jar $$AnySoftKeyboardTools$$/makedict/makedict.jar
+
+  - versionName: '20130712'
+    versionCode: 15
+    commit: 05b2303fb
+    patch:
+      - dictionaries.patch
+    srclibs:
+      - AnySoftKeyboard-API@b21d8907
+      - AnySoftKeyboardTools@73e9a09496
+    prebuild:
+      - sed -i 's@\(.1=\).*@\1$$AnySoftKeyboard-API$$@' project.properties
+      - mkdir -p res/raw/ dict/
+      - mv dic/hu_HU-1.6.1.xml dict/words.xml
+      - rm -rf assets/ dic/
+    build: java -jar $$AnySoftKeyboardTools$$/makedict/makedict.jar
+
+  - versionName: '20131020'
+    versionCode: 16
+    commit: v20131020
+    patch:
+      - dictionaries.patch
+    srclibs:
+      - AnySoftKeyboard-API@b21d8907
+      - AnySoftKeyboardTools@73e9a09496
+    prebuild:
+      - sed -i 's@\(.1=\).*@\1$$AnySoftKeyboard-API$$@' project.properties
+      - mkdir -p res/raw/ dict/
+      - mv dic/hu_HU-1.6.1.xml dict/words.xml
+      - rm -rf assets/ dic/
+    build: java -jar $$AnySoftKeyboardTools$$/makedict/makedict.jar
+
+  - versionName: 4.0.1396
+    versionCode: 2908
+    commit: 1.10-r4
+    subdir: addons/languages/hungarian
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: ../../../outputs/apks/release/addons-languages-*-$$VERCODE$$.apk
+    prebuild:
+      - echo "//gradleVersion = '6.8.3'" | tee build.gradle
+      - sed -i -e "s calculateApplicationId(project) 'com.anysoftkeyboard.languagepack.hungarian'
+        " ../../../gradle/apk_module.gradle
+      - sed -i -e '/Data\.versionCode/ c versionCode $$VERCODE$$' -e '/Data\.versionName/
+        c versionName "$$VERSION$$"' ../../../gradle/versioning_apk.gradle
+    scanignore:
+      - addons/languages/*/pack/dictionary/*.gz
+    ndk: r14b
+
+MaintainerNotes: Package ID is now com.anysoftkeyboard.languagepack.hungarian_oss
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 4.0.1396
+CurrentVersionCode: 2908

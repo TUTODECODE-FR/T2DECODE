@@ -1,0 +1,163 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on Youtube for music
+Categories:
+  - Multimedia
+License: GPL-3.0-only
+AuthorName: vfsfitvnm
+SourceCode: https://github.com/vfsfitvnm/ViMusic
+IssueTracker: https://github.com/vfsfitvnm/ViMusic/issues
+Changelog: https://github.com/vfsfitvnm/ViMusic/releases
+
+RepoType: git
+Repo: https://github.com/vfsfitvnm/ViMusic.git
+
+Builds:
+  - versionName: 0.2.0
+    versionCode: 9
+    commit: fe95805f98968fa1897cad54bbfdb500e10a60ff
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/7.5-rc-2/7.4/' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e 's/7.4.0-alpha08/7.2.0/' ../build.gradle.kts
+
+  - versionName: 0.2.1
+    versionCode: 10
+    commit: 4a7d8ef53777182808fa4da3ab634438be275185
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/7.5-rc-2/7.4/' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e 's/7.4.0-alpha08/7.2.0/' ../build.gradle.kts
+
+  - versionName: 0.3.0
+    versionCode: 11
+    commit: 751120e5d8abe31fc496fe2d6fd4a0c6f308db59
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/7.5-rc-2/7.4/' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e 's/7.4.0-alpha08/7.2.0/' ../build.gradle.kts
+
+  - versionName: 0.4.0
+    versionCode: 12
+    commit: 5076e0c6f2928402c256d6cbfc6ee2f5d88572a6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/7.5-rc-2/7.4/' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e 's/7.4.0-alpha08/7.2.0/' ../build.gradle.kts
+
+  - versionName: 0.4.1
+    versionCode: 13
+    commit: bf7c90e71f0fb4f8e7542b8c88f69bd902c8bd65
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/7.5-rc-2/7.4/' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e 's/7.4.0-alpha08/7.2.0/' ../build.gradle.kts
+
+  - versionName: 0.4.2
+    versionCode: 14
+    commit: af8f91d1a76709ea4013760c7a0b44dc0cea35f9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/7.5-rc-2/7.4/' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e 's/7.4.0-alpha08/7.2.0/' ../build.gradle.kts
+
+  - versionName: 0.4.3
+    versionCode: 15
+    commit: ae220cc5eeef8fdf2cd13a5b81b626e307d6c976
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/7.5-rc-2/7.4/' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e 's/7.4.0-alpha08/7.2.0/' ../build.gradle.kts
+
+  - versionName: 0.5.0
+    versionCode: 16
+    commit: e9a6156b12718113cb474b27e8616229420be1e9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/7.5-rc-2/7.4/' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e 's/7.4.0-alpha08/7.2.0/' ../build.gradle.kts
+
+  - versionName: 0.5.1
+    versionCode: 17
+    commit: 91ec216679014a33b3ceccf972c811152dedeaee
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/7.5-rc-2/7.4/' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e 's/7.4.0-alpha08/7.2.0/' ../build.gradle.kts
+
+  - versionName: 0.5.2
+    versionCode: 18
+    commit: 5d37b831a3b91bcf040aea887edbfd4996d7c413
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.3
+    versionCode: 19
+    commit: 5878b0ebddb0990662baaa0e0c60f38746ad36f9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.4
+    versionCode: 20
+    commit: 3e94e63471e1fc1e3f19ffc4401f3508f5612dd7
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 0.5.4
+CurrentVersionCode: 20

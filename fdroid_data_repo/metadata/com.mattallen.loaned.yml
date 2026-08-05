@@ -1,0 +1,31 @@
+Categories:
+  - Inventory
+License: Apache-2.0
+SourceCode: 
+  https://archive.softwareheritage.org/browse/origin/https://github.com/matt-allen/loaned-android/directory/
+IssueTracker: https://github.com/matt-allen/loaned-android/issues
+
+AutoName: Loaned
+Description: |-
+  A friendly and simple way of remembering where all your things are. When you
+  loan your things out to people, you're helping them, but its not always easy
+  remembering who has what (and for how long).
+
+RepoType: git
+Repo: https://github.com/matt-allen/loaned-android
+
+Builds:
+  - versionName: 1.0.2
+    versionCode: 3
+    commit: 190b8027198fd5e70a8d38724d01634b50aa99d9
+    subdir: app
+    gradle:
+      - prod
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: debug
+CurrentVersionCode: 3
+
+NoSourceSince: debug

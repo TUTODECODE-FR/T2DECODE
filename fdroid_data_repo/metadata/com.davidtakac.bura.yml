@@ -1,0 +1,106 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Rely on Open-Meteo.com.
+Categories:
+  - Internet
+  - Weather
+License: GPL-3.0-or-later
+AuthorName: David Takač
+AuthorEmail: david.takac@mailbox.org
+AuthorWebSite: https://davidtakac.github.io/
+SourceCode: https://github.com/davidtakac/bura/
+IssueTracker: https://github.com/davidtakac/bura/issues/
+Changelog: https://github.com/davidtakac/bura/releases
+
+AutoName: Bura
+
+RepoType: git
+Repo: https://github.com/davidtakac/bura/
+Binaries: https://github.com/davidtakac/bura/releases/download/%v/bura-%v.apk
+
+Builds:
+  - versionName: 1.4.0
+    versionCode: 11
+    commit: 393949732127bc507e226f156773fb8188395572
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.1
+    versionCode: 13
+    commit: 6897f4502efa1c8841f31be0fa5b7f39e9c2321b
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 14
+    commit: fe07070c52c70b1725a515880a92b88991f34106
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 1.6.1
+    versionCode: 15
+    commit: 972e19e3b1afe2e61539c8addd834546776f403b
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 1.7.0
+    versionCode: 16
+    commit: 0267cb81104465f0f6fcce6de6844ec86ae1e6c7
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 1.8.0
+    versionCode: 17
+    commit: ecc6e6d05a593453f7c17a9daaa3df66d59aae05
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 1.8.1
+    versionCode: 18
+    commit: 51cb450d70e2cbfe568c3c295397b9fcd9ed1e92
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+AllowedAPKSigningKeys: 76c20914d1910058f183abbbf48036031a49f8a87d77bb9ac9bc715f468fe468
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.8.1
+CurrentVersionCode: 18

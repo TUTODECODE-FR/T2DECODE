@@ -1,0 +1,280 @@
+Categories:
+  - Calendar & Agenda
+License: GPL-3.0-only
+AuthorName: Matthias Heinisch & Dominik Schürmann
+SourceCode: https://github.com/SufficientlySecure/birthday-calendar
+IssueTracker: https://github.com/SufficientlySecure/birthday-calendar/issues
+Translation: https://github.com/SufficientlySecure/birthday-calendar#translations
+Changelog: https://github.com/SufficientlySecure/birthday-calendar/raw/HEAD/CHANGELOG
+Donate: https://www.paypal.com/donate/?hosted_button_id=74N2SGUSHWPWL
+Liberapay: mattitude
+
+AutoName: Birthday Adapter
+
+RepoType: git
+Repo: https://github.com/SufficientlySecure/birthday-calendar.git
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: 18e86ebf36849b764b6c9855ebf364d6ae8d1a88
+    subdir: org_birthdayadapter
+
+  - versionName: '1.1'
+    versionCode: 2
+    commit: 4cb6656
+    subdir: org_birthdayadapter
+
+  - versionName: '1.2'
+    versionCode: 3
+    commit: 837b80d
+    subdir: org_birthdayadapter
+
+  - versionName: '1.3'
+    versionCode: 4
+    commit: f53c8c9
+    subdir: org_birthdayadapter
+
+  - versionName: '1.12'
+    versionCode: 13
+    commit: v1.12
+    subdir: Birthday-Adapter
+
+  - versionName: '1.13'
+    versionCode: 14
+    commit: v1.13
+    subdir: Birthday-Adapter
+
+  - versionName: '1.17'
+    versionCode: 18
+    commit: v1.17
+    subdir: Birthday-Adapter
+    gradle:
+      - full
+
+  - versionName: '2.0'
+    versionCode: 19
+    commit: v2.0
+    subdir: Birthday-Adapter
+    gradle:
+      - full
+
+  - versionName: 3.0.0
+    versionCode: 30
+    commit: afd0327273ee0d6fbd1ac01f4d24a267005a0a38
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: '3.1'
+    versionCode: 31
+    commit: dd31927a6af366c1fb620e68c4c6f46930475616
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: '3.2'
+    versionCode: 32
+    commit: 160f7c2c810e6373df460864342cc930bce83826
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: '3.3'
+    versionCode: 33
+    commit: a268b6a8e26e798a769b8adb7e9ac6c4db9847d7
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: '3.4'
+    versionCode: 34
+    commit: a43d47d37cb9373809f7dc08981327cbe3c1891d
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: '3.5'
+    versionCode: 35
+    commit: fde93b56e407ece9385da99346ef6ef80121487f
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: '3.6'
+    versionCode: 36
+    commit: f68796866ec183e5b7d57900317d72505b0ade09
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: '3.7'
+    versionCode: 37
+    commit: 2f9955314f9ca0d11a224861810abf23c6cf54cc
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: '3.9'
+    versionCode: 39
+    commit: 9d569b54b835e21049f2b8ea0303737a2b73d79f
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: 3.9.1
+    versionCode: 40
+    commit: 00c5852c8f668efc2dac31795496b8cfaa984861
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: '3.10'
+    versionCode: 43
+    commit: 721f68ee05279d5e671a2deb2f02853f43b8a366
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: 3.10.1
+    versionCode: 44
+    commit: ef18f135b0f83cbc3740cbdaabb2ff7d561bef4e
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: 3.10.5
+    versionCode: 31005
+    commit: 8051c65cbfaec27877bb40e9f9421492c24be502
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: '3.11'
+    versionCode: 31100
+    commit: 3c7f42036f61c4723b231146e2e4ad112f316376
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: 3.11.3
+    versionCode: 31103
+    commit: b06bc99c3dee397afa3ac535920b219cb03aa66a
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: 3.11.4
+    versionCode: 31104
+    commit: 7af338ece382c365cf13aa99d1a342fa00fa2a36
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: 3.11.12
+    versionCode: 31112
+    commit: 8ace6f9028f291e56ec5215aec75c0416e162223
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: 3.11.13
+    versionCode: 31113
+    commit: b587e4759d4d306160068c8474626587ae599d79
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    prebuild: echo 'org.gradle.jvmargs=-Xmx4096m' >> ../gradle.properties
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: '3.12'
+    versionCode: 31200
+    commit: fef8c56cc9f10c69272be72d1a73556621271aa5
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    prebuild: echo 'org.gradle.jvmargs=-Xmx4096m' >> ../gradle.properties
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: 3.12.1
+    versionCode: 31201
+    commit: 419b63483d6034023683df69467959cb68cfdd4d
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    prebuild: echo 'org.gradle.jvmargs=-Xmx4096m' >> ../gradle.properties
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: 3.12.2
+    versionCode: 31202
+    commit: fe7796c70aeee0f8c0435f88575f14e4ec711504
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    prebuild: echo 'org.gradle.jvmargs=-Xmx4096m' >> ../gradle.properties
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: '3.13'
+    versionCode: 31300
+    commit: b3662e3b4090d63fd17c3f1b5c9bb56b0d4a3f85
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    prebuild: echo 'org.gradle.jvmargs=-Xmx4096m' >> ../gradle.properties
+    gradleprops:
+      - android.useAndroidX=true
+
+  - versionName: 3.13.1
+    versionCode: 31301
+    commit: 04a4ab1d85465bc985b445b64ef082fab432231f
+    subdir: Birthday-Calendar
+    gradle:
+      - full
+    prebuild: echo 'org.gradle.jvmargs=-Xmx4096m' >> ../gradle.properties
+    gradleprops:
+      - android.useAndroidX=true
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 3.13.1
+CurrentVersionCode: 31301

@@ -1,0 +1,471 @@
+Categories:
+  - Text Editor
+  - Writing
+License: GPL-3.0-only
+AuthorEmail: kushvahar173@gmail.com
+SourceCode: https://github.com/Xed-Editor/Xed-Editor
+IssueTracker: https://github.com/Xed-Editor/Xed-Editor/issues
+Changelog: https://github.com/Xed-Editor/Xed-Editor/releases
+
+AutoName: Xed-Editor
+
+RepoType: git
+Repo: https://github.com/Xed-Editor/Xed-Editor.git
+Binaries: 
+  https://github.com/Xed-Editor/Xed-Editor/releases/download/v%v/xed-editor-v%v.apk
+
+Builds:
+  - versionName: 1.0.9
+    versionCode: 9
+    commit: 4f0717722197d00eae8f2714b80cb43dce1d2a6f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 1.1.0
+    versionCode: 10
+    commit: 0ff0bf03f87460160df42d86da20b30205b6c254
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 1.1.1
+    versionCode: 11
+    commit: b77146f8b12a7cc9978c734143a45d6371ec654d
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 1.1.4
+    versionCode: 14
+    commit: 7c9190c6ac129abba0679b04a823da6d00e45019
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 1.1.5
+    versionCode: 15
+    commit: 31444d719d9633be6c6f799028c06700d4911ccc
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 1.1.7
+    versionCode: 17
+    commit: 6e839691140f0bcfafad253701b291acd130c95f
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 1.1.8
+    versionCode: 18
+    commit: dac4f2541bc73d44e7c1680b232ffb6f6ce574e0
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 1.1.9
+    versionCode: 19
+    commit: 65965ffd435d8563223bfc9cc2f7ab8e1283931d
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 2.0.0
+    versionCode: 20
+    commit: d119bd596829f01f3ccd241df1e7819b8d00f47e
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 2.0.1
+    versionCode: 21
+    commit: 31151e47273a9f2011fde6a0488e63324b7802ce
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 2.1.0
+    versionCode: 22
+    commit: 92e52d71d371cfca346b9a759579663922f03a87
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 2.2.0
+    versionCode: 23
+    commit: bcaa77b42c704131594b97d3310ad0cf170e484d
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 2.2.1
+    versionCode: 24
+    commit: e775b226d42c4de2adf8fdd6e676966cb26c9962
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 2.3.0
+    versionCode: 25
+    commit: 7d8c6882beec40ea628f506043a27316c793ec35
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 2.6.0
+    versionCode: 30
+    commit: 31e1191ab18ac5308d1df221830dd0affe35d5d9
+    subdir: app
+    gradle:
+      - yes
+    scanignore:
+      - app/src/main/assets/files.zip
+
+  - versionName: 2.7.3
+    versionCode: 33
+    commit: fa7e9f8d66e6999caeb6eabd40afe1862c516be3
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 2.8.0
+    versionCode: 35
+    commit: 444054b3e8f3e12bfc87241e33c4fe70ae03289e
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 2.9.0
+    versionCode: 36
+    commit: f2b77877cb9e25bd8619d786b6f147ea92905d0a
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 2.9.1
+    versionCode: 37
+    commit: c99dcd611070227c183d4ba9504f56b2ad17cd05
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 2.9.3
+    versionCode: 38
+    commit: 1e0550ddbee0f24c58f88fd502328db5f113074d
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 2.9.5
+    versionCode: 40
+    commit: eb9fa526a9e18e9b5fa3f5baf65c3cbd60276bc1
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 2.9.6
+    versionCode: 41
+    commit: 778b39ac2db909ad3cea18dc89cc80fa6247fd6c
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 2.9.9
+    versionCode: 45
+    commit: 54c4c948d8eaa13ce5010dffc4919afec1f03491
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.0.0
+    versionCode: 46
+    commit: 3d872c519fbde9552c2b8203bdc274f12f98a1ad
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.0.1
+    versionCode: 47
+    commit: 36f38c9a373ec8471d068578bc9f34812d781f0a
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.0.2
+    versionCode: 48
+    commit: 4da2bbd2edacc5e056bfd5b684a41f5ead9c36af
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.0.3
+    versionCode: 49
+    commit: fa3398b1fa9589f198ab0beacba6c44351bf3f3f
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.0.4
+    versionCode: 50
+    commit: 9c5b66f6b396f96beccae0e23dfde82d32a9e7b3
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.0.5
+    versionCode: 51
+    commit: edcbf3e0f9f7145ebcc71f15a9348047d1935da1
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.0.6
+    versionCode: 52
+    commit: de2586a98d28e3bab950128145423315bfff3a3f
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.1.0
+    versionCode: 53
+    commit: 82d138b7f7ddfa03750d4f89db384710fcc9e342
+    subdir: app
+    gradle:
+      - fdroid
+    output: build/outputs/apk/Fdroid/release/*.apk
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.1.1
+    versionCode: 54
+    commit: 52bf50074c919813c48f79084ef31c2cb6a106fe
+    subdir: app
+    gradle:
+      - fdroid
+    output: build/outputs/apk/Fdroid/release/*.apk
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.1.2
+    versionCode: 55
+    commit: a706e21d042af34b8e22c82b0082416f9860afb2
+    subdir: app
+    gradle:
+      - fdroid
+    output: build/outputs/apk/Fdroid/release/*.apk
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.1.4
+    versionCode: 57
+    commit: 9a2e73046680c93b53941e909f490fb648a75a91
+    subdir: app
+    gradle:
+      - fdroid
+    output: build/outputs/apk/Fdroid/release/*.apk
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.1.5
+    versionCode: 58
+    commit: 3dd2234379e251f82dd8b32dc78b44a43c37681a
+    subdir: app
+    gradle:
+      - fdroid
+    output: build/outputs/apk/Fdroid/release/*.apk
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.1.7
+    versionCode: 62
+    commit: 074632ac9f6b2f5db085e67e226b4c49bc756de1
+    subdir: app
+    gradle:
+      - fdroid
+    output: build/outputs/apk/Fdroid/release/*.apk
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.1.8
+    versionCode: 63
+    commit: c1857c30eace85e48b37b0c1cde76bc4a91cecc4
+    subdir: app
+    gradle:
+      - fdroid
+    output: build/outputs/apk/Fdroid/release/*.apk
+    prebuild: sed -i -e '/jetbrains/d' ../settings.gradle.kts
+
+  - versionName: 3.1.9
+    versionCode: 64
+    commit: e96d3c549817561b99314b20fb215ce0aa70726c
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+    output: build/outputs/apk/Fdroid/release/*.apk
+    rm:
+      - soraX/app
+    prebuild: sed -i -e '/jetbrains/d' -e '/eclipse/d' -e '/aliyun/d' {..,../soraX}/settings.gradle.kts
+
+  - versionName: 3.2.4
+    versionCode: 71
+    commit: eca769f74c79866366d1d569f33b099485b8de6b
+    subdir: app
+    submodules: true
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - soraX/app
+    prebuild: sed -i -e '/jetbrains/d' -e '/eclipse/d' -e '/aliyun/d' -e '/foojay/d'
+      {..,../soraX}/settings.gradle.kts
+
+  - versionName: 3.2.5
+    versionCode: 74
+    commit: 94ba7bd9ba4462e81321ecde5103e338f4d1c54e
+    subdir: app
+    submodules: true
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - soraX/app
+    prebuild: sed -i -e '/jetbrains/d' -e '/eclipse/d' -e '/aliyun/d' -e '/foojay/d'
+      {..,../soraX,../plugin-sdk}/settings.gradle.kts
+
+  - versionName: 3.2.6
+    versionCode: 80
+    commit: 1225961c03f4303b34c50fca9dbf38bbfc07c4ca
+    subdir: app
+    submodules: true
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - soraX/app
+    prebuild: sed -i -e '/jetbrains/d' -e '/eclipse/d' -e '/aliyun/d' -e '/foojay/d'
+      {..,../soraX,../plugin-sdk}/settings.gradle.kts
+
+  - versionName: 3.2.7
+    versionCode: 83
+    commit: b3f0f4031063b5e99dbb22c818a0db388d45416d
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - soraX/app
+    prebuild: sed -i -e '/jetbrains/d' -e '/eclipse/d' -e '/aliyun/d' -e '/foojay/d'
+      {..,../soraX,../plugin-sdk}/settings.gradle.kts
+
+  - versionName: 3.2.9
+    versionCode: 87
+    commit: 73835433e06a8e97352986c27882622ba6628867
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - soraX/app
+    prebuild: sed -i -e '/jetbrains/d' -e '/eclipse/d' -e '/aliyun/d' -e '/foojay/d'
+      {..,../soraX,../plugin-sdk}/settings.gradle.kts
+
+  - versionName: 3.3.3
+    versionCode: 97
+    commit: 2193ff5afe5800428644df6db3efa8b37901261b
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - soraX/app
+    prebuild:
+      - sed -i -e '/jetbrains/d' -e '/eclipse/d' -e '/aliyun/d' -e '/foojay/d' {..,../soraX,../plugin-sdk}/settings.gradle.kts
+      - sdkmanager 'cmake;4.1.2' 'ndk;r28c'
+
+  - versionName: 3.3.4
+    versionCode: 98
+    commit: d0f33b344b8cd79ed73518a9476159bcfbbc5ca5
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - soraX/app
+    prebuild: sed -i -e '/jetbrains/d' -e '/eclipse/d' -e '/aliyun/d' -e '/foojay/d'
+      {..,../soraX,../plugin-sdk}/settings.gradle.kts
+
+AllowedAPKSigningKeys: 8ad6b593b0772c96f9d05e923b610f16aed2792c664f0cd91f0dfd627098346f
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[\d.]+$
+CurrentVersion: 3.3.4
+CurrentVersionCode: 98

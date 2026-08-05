@@ -1,0 +1,1013 @@
+Categories:
+  - Internet
+  - Messaging
+License: Apache-2.0
+AuthorName: Zulip
+AuthorEmail: support@zulip.com
+WebSite: https://zulip.com
+SourceCode: https://github.com/zulip/zulip-flutter
+IssueTracker: https://github.com/zulip/zulip-flutter/issues
+Changelog: https://github.com/zulip/zulip-flutter/releases
+
+AutoName: Zulip
+Description: |-
+  Zulip (https://zulip.com/) helps teams of all sizes be more productive together, from a few friends hacking on a new idea, to globally distributed organizations with hundreds of people tackling the world's hardest problems.
+
+  Unlike other chat apps, Zulip lets you read and respond to every message in context, no matter when it was sent. Maintain your focus and then catch up on your own time, reading the topics you care about, and skimming or skipping the rest.
+
+  Like everything Zulip, this official Zulip mobile app is 100% open-source software: https://github.com/zulip/zulip-mobile . Thank you to the hundreds of contributors who have made Zulip what it is!
+
+  Zulip is available as a managed cloud service or a self-hosted solution.
+
+  Please send questions, comments, and bug reports to support@zulip.com, or tweet @zulip.
+
+RepoType: git
+Repo: https://github.com/zulip/zulip-flutter.git
+
+Builds:
+  - versionName: '27.230'
+    versionCode: 230
+    commit: 2217c858e207f9f092651dd853051843c3f04422
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian bullseye main" > /etc/apt/sources.list.d/bullseye.list
+      - apt-get update
+      - apt-get install -y npm
+      - apt-get install -y -t bullseye openjdk-11-jdk-headless
+      - update-java-alternatives --set java-1.11.0-openjdk-amd64
+      - npm -g install yarn
+    gradle:
+      - yes
+    srclibs:
+      - react-native-reanimated@2.2.4
+    rm:
+      - android/app/src/main/java/com/zulipmobile/notifications/FcmListenerService.kt
+      - ios
+    prebuild:
+      - sed -i -e 's/enable true/enable false/' -e '/firebase/d' -e "/android {/a
+        packagingOptions {pickFirst 'lib/*/*.so'}" build.gradle
+      - sed -i -e '/<service/,/service>/d' -e '/com.zulipmobile/a <uses-permission
+        android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"
+        tools:node="remove" \/>' -e '/com.zulipmobile/a <uses-permission android:name="com.android.vending.CHECK_LICENSE"
+        tools:node="remove" \/>' src/main/AndroidManifest.xml
+      - sed -i -e '/firebase/d' -e '/FirebaseInstanceId/,/addOnFailureListener/d'
+        -e '/googlePlayServicesAvailability/,/^    }/s/^        .*//' -e '/gms/d'
+        src/main/java/com/zulipmobile/notifications/NotificationsModule.kt
+      - cd ../..
+      - yarn install
+      - sed -i -e '/checkCompatibility/,/^    });/d' src/boot/CompatibilityChecker.js
+      - pushd $$react-native-reanimated$$
+      - sed -i -e "s!+' //.*!0.68.5'!" build.gradle
+    scanignore:
+      - android/build.gradle
+      - node_modules/jsc-android
+      - node_modules/react-native/android
+      - node_modules/react-native/ReactAndroid/build.gradle
+      - node_modules/react-native-document-picker/android/build.gradle
+      - node_modules/react-native-image-picker/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/expo/android/build.gradle
+      - node_modules/expo-constants/android/build.gradle
+      - node_modules/expo-error-recovery/android/build.gradle
+      - node_modules/expo-file-system/android/build.gradle
+      - node_modules/expo-font/android/build.gradle
+      - node_modules/expo-keep-awake/android/build.gradle
+      - node_modules/expo-mail-composer/android/build.gradle
+      - node_modules/expo-modules-core/android/build.gradle
+      - node_modules/expo-screen-orientation/android/build.gradle
+      - node_modules/expo-sqlite/android/build.gradle
+      - node_modules/expo-web-browser/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
+      - node_modules/@react-native-community/masked-view/android/build.gradle
+      - node_modules/@react-native-community/netinfo/android/build.gradle
+      - node_modules/@react-native-community/push-notification-ios/android/build.gradle
+    scandelete:
+      - node_modules
+    build:
+      - pushd $$react-native-reanimated$$
+      - yarn add react-native@0.68.5
+      - gradle :assembleRelease
+      - popd
+      - mv $$react-native-reanimated$$/build/outputs/aar/android-release.aar 
+        ../../node_modules/react-native-reanimated/android/react-native-reanimated-67-jsc.aar
+    ndk: 23.2.8568313
+
+  - versionName: '27.231'
+    versionCode: 231
+    commit: 88a2e0778a05c68d7c2acfb02fac6082b1b0d1cb
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian bullseye main" > /etc/apt/sources.list.d/bullseye.list
+      - apt-get update
+      - apt-get install -y npm
+      - apt-get install -y -t bullseye openjdk-11-jdk-headless
+      - update-java-alternatives --set java-1.11.0-openjdk-amd64
+      - npm -g install yarn
+    gradle:
+      - yes
+    srclibs:
+      - react-native-reanimated@2.2.4
+    rm:
+      - android/app/src/main/java/com/zulipmobile/notifications/FcmListenerService.kt
+      - ios
+    prebuild:
+      - sed -i -e 's/enable true/enable false/' -e '/firebase/d' -e "/android {/a
+        packagingOptions {pickFirst 'lib/*/*.so'}" build.gradle
+      - sed -i -e '/<service/,/service>/d' -e '/com.zulipmobile/a <uses-permission
+        android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"
+        tools:node="remove" \/>' -e '/com.zulipmobile/a <uses-permission android:name="com.android.vending.CHECK_LICENSE"
+        tools:node="remove" \/>' src/main/AndroidManifest.xml
+      - sed -i -e '/firebase/d' -e '/FirebaseInstanceId/,/addOnFailureListener/d'
+        -e '/googlePlayServicesAvailability/,/^    }/s/^        .*//' -e '/gms/d'
+        src/main/java/com/zulipmobile/notifications/NotificationsModule.kt
+      - cd ../..
+      - yarn install
+      - sed -i -e '/checkCompatibility/,/^    });/d' src/boot/CompatibilityChecker.js
+      - pushd $$react-native-reanimated$$
+      - sed -i -e "s!+' //.*!0.68.5'!" build.gradle
+    scanignore:
+      - android/build.gradle
+      - node_modules/jsc-android
+      - node_modules/hermes-engine/android
+      - node_modules/hermes-engine/linux64-bin/hermesc
+      - node_modules/react-native/ReactAndroid/build.gradle
+      - node_modules/react-native-document-picker/android/build.gradle
+      - node_modules/react-native-image-picker/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/expo/android/build.gradle
+      - node_modules/expo-constants/android/build.gradle
+      - node_modules/expo-error-recovery/android/build.gradle
+      - node_modules/expo-file-system/android/build.gradle
+      - node_modules/expo-font/android/build.gradle
+      - node_modules/expo-keep-awake/android/build.gradle
+      - node_modules/expo-mail-composer/android/build.gradle
+      - node_modules/expo-modules-core/android/build.gradle
+      - node_modules/expo-screen-orientation/android/build.gradle
+      - node_modules/expo-sqlite/android/build.gradle
+      - node_modules/expo-web-browser/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
+      - node_modules/@react-native-community/masked-view/android/build.gradle
+      - node_modules/@react-native-community/netinfo/android/build.gradle
+      - node_modules/@react-native-community/push-notification-ios/android/build.gradle
+    scandelete:
+      - node_modules
+    build:
+      - pushd $$react-native-reanimated$$
+      - yarn add react-native@0.68.5
+      - gradle :assembleRelease
+      - popd
+      - mv $$react-native-reanimated$$/build/outputs/aar/android-release.aar 
+        ../../node_modules/react-native-reanimated/android/react-native-reanimated-67-jsc.aar
+    ndk: r24
+
+  - versionName: '27.232'
+    versionCode: 232
+    commit: a115df1f71c9dc31e9b41060a8d57b51c017d786
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian bullseye main" > /etc/apt/sources.list.d/bullseye.list
+      - apt-get update
+      - apt-get install -y npm
+      - apt-get install -y -t bullseye openjdk-11-jdk-headless
+      - update-java-alternatives --set java-1.11.0-openjdk-amd64
+      - npm -g install yarn
+    gradle:
+      - yes
+    srclibs:
+      - react-native-reanimated@2.2.4
+    rm:
+      - android/app/src/main/java/com/zulipmobile/notifications/FcmListenerService.kt
+      - ios
+    prebuild:
+      - sed -i -e 's/enable true/enable false/' -e '/firebase/d' -e "/android {/a
+        packagingOptions {pickFirst 'lib/*/*.so'}" build.gradle
+      - sed -i -e '/<service/,/service>/d' -e '/com.zulipmobile/a <uses-permission
+        android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"
+        tools:node="remove" \/>' -e '/com.zulipmobile/a <uses-permission android:name="com.android.vending.CHECK_LICENSE"
+        tools:node="remove" \/>' src/main/AndroidManifest.xml
+      - sed -i -e '/firebase/d' -e '/FirebaseInstanceId/,/addOnFailureListener/d'
+        -e '/googlePlayServicesAvailability/,/^    }/s/^        .*//' -e '/gms/d'
+        src/main/java/com/zulipmobile/notifications/NotificationsModule.kt
+      - cd ../..
+      - yarn install
+      - sed -i -e '/checkCompatibility/,/^    });/d' src/boot/CompatibilityChecker.js
+      - pushd $$react-native-reanimated$$
+      - sed -i -e "s!+' //.*!0.68.5'!" build.gradle
+    scanignore:
+      - android/build.gradle
+      - node_modules/jsc-android
+      - node_modules/hermes-engine/android
+      - node_modules/hermes-engine/linux64-bin/hermesc
+      - node_modules/react-native/ReactAndroid/build.gradle
+      - node_modules/react-native-document-picker/android/build.gradle
+      - node_modules/react-native-image-picker/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/expo/android/build.gradle
+      - node_modules/expo-constants/android/build.gradle
+      - node_modules/expo-error-recovery/android/build.gradle
+      - node_modules/expo-file-system/android/build.gradle
+      - node_modules/expo-font/android/build.gradle
+      - node_modules/expo-keep-awake/android/build.gradle
+      - node_modules/expo-mail-composer/android/build.gradle
+      - node_modules/expo-modules-core/android/build.gradle
+      - node_modules/expo-screen-orientation/android/build.gradle
+      - node_modules/expo-sqlite/android/build.gradle
+      - node_modules/expo-web-browser/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
+      - node_modules/@react-native-community/masked-view/android/build.gradle
+      - node_modules/@react-native-community/netinfo/android/build.gradle
+      - node_modules/@react-native-community/push-notification-ios/android/build.gradle
+    scandelete:
+      - node_modules
+    build:
+      - pushd $$react-native-reanimated$$
+      - yarn add react-native@0.68.5
+      - gradle :assembleRelease
+      - popd
+      - mv $$react-native-reanimated$$/build/outputs/aar/android-release.aar 
+        ../../node_modules/react-native-reanimated/android/react-native-reanimated-67-jsc.aar
+    ndk: r24
+
+  - versionName: '27.233'
+    versionCode: 233
+    commit: c432758bf90bae7a956b43fcf38a6d87be2af711
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian bullseye main" > /etc/apt/sources.list.d/bullseye.list
+      - apt-get update
+      - apt-get install -y npm
+      - apt-get install -y -t bullseye openjdk-11-jdk-headless
+      - update-java-alternatives --set java-1.11.0-openjdk-amd64
+      - npm -g install yarn
+    gradle:
+      - yes
+    srclibs:
+      - react-native-reanimated@2.2.4
+    rm:
+      - android/app/src/main/java/com/zulipmobile/notifications/FcmListenerService.kt
+      - ios
+    prebuild:
+      - sed -i -e 's/enable true/enable false/' -e '/firebase/d' -e "/android {/a
+        packagingOptions {pickFirst 'lib/*/*.so'}" build.gradle
+      - sed -i -e '/<service/,/service>/d' -e '/com.zulipmobile/a <uses-permission
+        android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"
+        tools:node="remove" \/>' -e '/com.zulipmobile/a <uses-permission android:name="com.android.vending.CHECK_LICENSE"
+        tools:node="remove" \/>' src/main/AndroidManifest.xml
+      - sed -i -e '/firebase/d' -e '/FirebaseInstanceId/,/addOnFailureListener/d'
+        -e '/googlePlayServicesAvailability/,/^    }/s/^        .*//' -e '/gms/d'
+        src/main/java/com/zulipmobile/notifications/NotificationsModule.kt
+      - cd ../..
+      - yarn install
+      - sed -i -e '/checkCompatibility/,/^    });/d' src/boot/CompatibilityChecker.js
+      - pushd $$react-native-reanimated$$
+      - sed -i -e "s!+' //.*!0.68.5'!" build.gradle
+    scanignore:
+      - android/build.gradle
+      - node_modules/jsc-android
+      - node_modules/hermes-engine/android
+      - node_modules/hermes-engine/linux64-bin/hermesc
+      - node_modules/react-native/ReactAndroid/build.gradle
+      - node_modules/react-native-document-picker/android/build.gradle
+      - node_modules/react-native-image-picker/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/expo/android/build.gradle
+      - node_modules/expo-constants/android/build.gradle
+      - node_modules/expo-error-recovery/android/build.gradle
+      - node_modules/expo-file-system/android/build.gradle
+      - node_modules/expo-font/android/build.gradle
+      - node_modules/expo-keep-awake/android/build.gradle
+      - node_modules/expo-mail-composer/android/build.gradle
+      - node_modules/expo-modules-core/android/build.gradle
+      - node_modules/expo-screen-orientation/android/build.gradle
+      - node_modules/expo-sqlite/android/build.gradle
+      - node_modules/expo-web-browser/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
+      - node_modules/@react-native-community/masked-view/android/build.gradle
+      - node_modules/@react-native-community/netinfo/android/build.gradle
+      - node_modules/@react-native-community/push-notification-ios/android/build.gradle
+    scandelete:
+      - node_modules
+    build:
+      - pushd $$react-native-reanimated$$
+      - yarn add react-native@0.68.5
+      - gradle :assembleRelease
+      - popd
+      - mv $$react-native-reanimated$$/build/outputs/aar/android-release.aar 
+        ../../node_modules/react-native-reanimated/android/react-native-reanimated-67-jsc.aar
+    ndk: r24
+
+  - versionName: '27.234'
+    versionCode: 234
+    commit: e51605cf67cfc5844e6b7b0ac8d311b7731b54c1
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian bullseye main" > /etc/apt/sources.list.d/bullseye.list
+      - apt-get update
+      - apt-get install -y npm
+      - apt-get install -y -t bullseye openjdk-11-jdk-headless
+      - update-java-alternatives --set java-1.11.0-openjdk-amd64
+      - npm -g install yarn
+    gradle:
+      - yes
+    srclibs:
+      - react-native-reanimated@2.2.4
+    rm:
+      - android/app/src/main/java/com/zulipmobile/notifications/FcmListenerService.kt
+      - ios
+    prebuild:
+      - sed -i -e 's/enable true/enable false/' -e '/firebase/d' -e "/android {/a
+        packagingOptions {pickFirst 'lib/*/*.so'}" build.gradle
+      - sed -i -e '/<service/,/service>/d' -e '/com.zulipmobile/a <uses-permission
+        android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"
+        tools:node="remove" \/>' -e '/com.zulipmobile/a <uses-permission android:name="com.android.vending.CHECK_LICENSE"
+        tools:node="remove" \/>' src/main/AndroidManifest.xml
+      - sed -i -e '/firebase/d' -e '/FirebaseInstanceId/,/addOnFailureListener/d'
+        -e '/googlePlayServicesAvailability/,/^    }/s/^        .*//' -e '/gms/d'
+        src/main/java/com/zulipmobile/notifications/NotificationsModule.kt
+      - cd ../..
+      - yarn install
+      - sed -i -e '/checkCompatibility/,/^    });/d' src/boot/CompatibilityChecker.js
+      - pushd $$react-native-reanimated$$
+      - sed -i -e "s!+' //.*!0.68.5'!" build.gradle
+    scanignore:
+      - android/build.gradle
+      - node_modules/jsc-android
+      - node_modules/hermes-engine/android
+      - node_modules/hermes-engine/linux64-bin/hermesc
+      - node_modules/react-native/ReactAndroid/build.gradle
+      - node_modules/react-native-document-picker/android/build.gradle
+      - node_modules/react-native-image-picker/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/expo/android/build.gradle
+      - node_modules/expo-constants/android/build.gradle
+      - node_modules/expo-error-recovery/android/build.gradle
+      - node_modules/expo-file-system/android/build.gradle
+      - node_modules/expo-font/android/build.gradle
+      - node_modules/expo-keep-awake/android/build.gradle
+      - node_modules/expo-mail-composer/android/build.gradle
+      - node_modules/expo-modules-core/android/build.gradle
+      - node_modules/expo-screen-orientation/android/build.gradle
+      - node_modules/expo-sqlite/android/build.gradle
+      - node_modules/expo-web-browser/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
+      - node_modules/@react-native-community/masked-view/android/build.gradle
+      - node_modules/@react-native-community/netinfo/android/build.gradle
+      - node_modules/@react-native-community/push-notification-ios/android/build.gradle
+    scandelete:
+      - node_modules
+    build:
+      - pushd $$react-native-reanimated$$
+      - yarn add react-native@0.68.5
+      - gradle :assembleRelease
+      - popd
+      - mv $$react-native-reanimated$$/build/outputs/aar/android-release.aar 
+        ../../node_modules/react-native-reanimated/android/react-native-reanimated-67-jsc.aar
+    ndk: r24
+
+  - versionName: '27.235'
+    versionCode: 235
+    commit: eb8505c4a0ccfb7bdd817ca9022c11ce57ab69d8
+    subdir: android/app
+    sudo:
+      - sysctl fs.inotify.max_user_watches=524288 || true
+      - echo "deb https://deb.debian.org/debian bullseye main" > /etc/apt/sources.list.d/bullseye.list
+      - apt-get update
+      - apt-get install -y npm
+      - apt-get install -y -t bullseye openjdk-11-jdk-headless
+      - update-java-alternatives --set java-1.11.0-openjdk-amd64
+      - npm -g install yarn
+    gradle:
+      - yes
+    srclibs:
+      - react-native-reanimated@2.2.4
+    rm:
+      - android/app/src/main/java/com/zulipmobile/notifications/FcmListenerService.kt
+      - ios
+    prebuild:
+      - sed -i -e 's/enable true/enable false/' -e '/firebase/d' -e "/android {/a
+        packagingOptions {pickFirst 'lib/*/*.so'}" build.gradle
+      - sed -i -e '/<service/,/service>/d' -e '/com.zulipmobile/a <uses-permission
+        android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"
+        tools:node="remove" \/>' -e '/com.zulipmobile/a <uses-permission android:name="com.android.vending.CHECK_LICENSE"
+        tools:node="remove" \/>' src/main/AndroidManifest.xml
+      - sed -i -e '/firebase/d' -e '/FirebaseInstanceId/,/addOnFailureListener/d'
+        -e '/googlePlayServicesAvailability/,/^    }/s/^        .*//' -e '/gms/d'
+        src/main/java/com/zulipmobile/notifications/NotificationsModule.kt
+      - cd ../..
+      - yarn install
+      - sed -i -e '/checkCompatibility/,/^    });/d' src/boot/CompatibilityChecker.js
+      - pushd $$react-native-reanimated$$
+      - sed -i -e "s!+' //.*!0.68.5'!" build.gradle
+    scanignore:
+      - android/build.gradle
+      - node_modules/jsc-android
+      - node_modules/hermes-engine/android
+      - node_modules/hermes-engine/linux64-bin/hermesc
+      - node_modules/react-native/ReactAndroid/build.gradle
+      - node_modules/react-native-document-picker/android/build.gradle
+      - node_modules/react-native-image-picker/android/build.gradle
+      - node_modules/react-native-safe-area-context/android/build.gradle
+      - node_modules/react-native-screens/android/build.gradle
+      - node_modules/react-native-vector-icons/android/build.gradle
+      - node_modules/react-native-webview/android/build.gradle
+      - node_modules/expo/android/build.gradle
+      - node_modules/expo-constants/android/build.gradle
+      - node_modules/expo-error-recovery/android/build.gradle
+      - node_modules/expo-file-system/android/build.gradle
+      - node_modules/expo-font/android/build.gradle
+      - node_modules/expo-keep-awake/android/build.gradle
+      - node_modules/expo-mail-composer/android/build.gradle
+      - node_modules/expo-modules-core/android/build.gradle
+      - node_modules/expo-screen-orientation/android/build.gradle
+      - node_modules/expo-sqlite/android/build.gradle
+      - node_modules/expo-web-browser/android/build.gradle
+      - node_modules/@react-native-async-storage/async-storage/android/build.gradle
+      - node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
+      - node_modules/@react-native-community/masked-view/android/build.gradle
+      - node_modules/@react-native-community/netinfo/android/build.gradle
+      - node_modules/@react-native-community/push-notification-ios/android/build.gradle
+    scandelete:
+      - node_modules
+    build:
+      - pushd $$react-native-reanimated$$
+      - yarn add react-native@0.68.5
+      - gradle :assembleRelease
+      - popd
+      - mv $$react-native-reanimated$$/build/outputs/aar/android-release.aar 
+        ../../node_modules/react-native-reanimated/android/react-native-reanimated-67-jsc.aar
+    ndk: r24
+
+  - versionName: 30.0.258
+    versionCode: 258
+    commit: d3ef88ddf3b3f4c6143805e9aee60466bb928659
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.259
+    versionCode: 259
+    commit: 870a2e5341f2af4b72b90ac9a438faaeceed226d
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.260
+    versionCode: 260
+    commit: f1bd0a1c8f1be782e714504eced6b9af0cdeaad1
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.261
+    versionCode: 261
+    commit: 8e9456e49f96c0c2f2a6f720d9106cce67ac6dbb
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.262
+    versionCode: 262
+    commit: e8c3b959868671b3634177e0a2feb001fb0a02be
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.263
+    versionCode: 263
+    commit: 101071a1e5f78fa71c9c2aecf93f41b357109630
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.264
+    versionCode: 264
+    commit: e86e2352b89802536c6d9ec67e4c28ea27efdd74
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - sed -i -e '/agpVersion/s/8.12.0/8.11.1/' android/gradle.properties
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.265
+    versionCode: 265
+    commit: c3896cb92e7a29bd204bf1cbe3392aaa9198a4a9
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - sed -i -e '/agpVersion/s/8.12.0/8.11.1/' android/gradle.properties
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{share_plus,device_info_plus,package_info_plus,wakelock_plus,{image_picker,path_provider,video_player,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.266
+    versionCode: 266
+    commit: 80f5a856ecd32c6cba051e64bad8300545976389
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - sed -i -e '/agpVersion/s/8.12.0/8.11.1/' android/gradle.properties
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{share_plus,device_info_plus,package_info_plus,wakelock_plus,{image_picker,path_provider,video_player,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.267
+    versionCode: 267
+    commit: 82928ef7246db0e7473ed396e56282fe865f555b
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - sed -i -e '/agpVersion/s/8.12.0/8.11.1/' android/gradle.properties
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{share_plus,device_info_plus,package_info_plus,wakelock_plus,{image_picker,path_provider,video_player,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.268
+    versionCode: 268
+    commit: c3c9c6b8f20a4412a68f4e69ad12133a6c1c9ab0
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.269
+    versionCode: 269
+    commit: b26901f8918e9fc5c09b2cb5420badfc8b6d5fda
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.270
+    versionCode: 270
+    commit: bbc7ce1288e8b3f802a443f298438394bdd33372
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.271
+    versionCode: 271
+    commit: 516818bc3ac1570f7e336b7c638f3068dc26973d
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.272
+    versionCode: 272
+    commit: f52d913529ebe41067537c5a7fc949ffb5ea5f5d
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '1,110 {/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//}'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 30.0.273
+    versionCode: 273
+    commit: 01907d833e3d6bec1bdff70485c769f0478dba94
+    sudo:
+      - apt-get update
+      - apt-get install -y automake libtool make
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - windows
+      - lib/firebase_options.dart
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter:.*# ([0-9a-f]{40})/\1/p" pubspec.yaml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - sed -i -e '/firebase/d' pubspec.yaml
+      - sed -i -e '/firebase/,/version/d' pubspec.lock
+      - sed -i -e '1,110 {/TargetPlatform.android/,/TargetPlatform.linux/s/^        .*//}'
+        -e '/ _.*{$/,/^  }/d' -e '/firebase/d' lib/notifications/receive.dart
+      - sed -i -z -e "s/@pragma('vm:entry-point')\n\n//" lib/notifications/receive.dart
+      - sed -i -e '/firebase/d' lib/model/binding.dart
+      - sed -i -z -e 's/@override\s*}//g' lib/model/binding.dart
+      - sed -i -e '/signingConfig /,+1d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scanignore:
+      - .pub-cache/hosted/pub.dev/sodium-4.0.2+1/3rdparty/libsodium-1.0.21-stable.tar.gz
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+    ndk: r28c
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 30.0.273
+CurrentVersionCode: 273

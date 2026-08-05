@@ -1,0 +1,179 @@
+Categories:
+  - Sports & Health
+  - Writing
+License: Apache-2.0
+AuthorName: Roman Tsukanov
+AuthorEmail: f-droid@roman.zone
+AuthorWebSite: https://roman.zone/
+SourceCode: https://github.com/gentlecat/counter/
+IssueTracker: https://github.com/gentlecat/counter/issues
+Translation: https://crowdin.com/project/simple-counter
+Changelog: https://github.com/gentlecat/counter/blob/HEAD/CHANGELOG.md
+
+AutoName: Counter
+
+RepoType: git
+Repo: https://github.com/gentlecat/counter.git
+
+Builds:
+  - versionName: '13'
+    versionCode: 13
+    commit: v13
+    gradle:
+      - yes
+
+  - versionName: '15'
+    versionCode: 15
+    commit: f6b3445105906c9bea1a70c452b780dc8ee3276c
+    gradle:
+      - yes
+
+  - versionName: '16'
+    versionCode: 16
+    commit: v16
+    gradle:
+      - yes
+
+  - versionName: '17'
+    versionCode: 17
+    commit: v17
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/classpath/s/2.2.2/2.1.3/' build.gradle
+      - echo -e "android { lintOptions { disable 'MissingTranslation' } }" >> build.gradle
+
+  - versionName: '18'
+    versionCode: 18
+    commit: v18
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|google()|maven { url "https://maven.google.com" }|' build.gradle
+
+  - versionName: '20'
+    versionCode: 20
+    commit: v20
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/mavenCentral()/jcenter()/' build.gradle
+
+  - versionName: '22'
+    versionCode: 22
+    commit: v22
+    subdir: app/
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/mavenCentral()/jcenter()/' build.gradle
+
+  - versionName: '23'
+    versionCode: 23
+    commit: 7ffff27ef4c5337839133b8dec92fc9e7aee15e6
+    subdir: app/
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/mavenCentral()/jcenter()/' build.gradle
+
+  - versionName: '24'
+    versionCode: 24
+    commit: bc404789e4cb03e750b5c9e5a1d95a92557ef77a
+    subdir: app/
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/mavenCentral()/jcenter()/' build.gradle
+
+  - versionName: '25'
+    versionCode: 25
+    commit: 21f4e801d98078e2b210a9bc7715063088093c0e
+    subdir: app/
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/mavenCentral()/jcenter()/' build.gradle
+
+  - versionName: '26'
+    versionCode: 26
+    commit: ce6ef2f06479e91b00dbd0fa0705eceaa80d1d09
+    subdir: app/
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/mavenCentral()/jcenter()/' build.gradle
+
+  - versionName: '27'
+    versionCode: 27
+    commit: 1fdf93630c37e870c9d836648b3a0d0da079b70e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/mavenCentral()/jcenter()/' build.gradle
+
+  - versionName: '28'
+    versionCode: 28
+    commit: 4230ffc03d67e23a3eecb4ae20610942311d6657
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/mavenCentral()/jcenter()/' build.gradle
+
+  - versionName: '29'
+    versionCode: 29
+    commit: 04f35eaeb3c618f9d9a906bc0d3092af7f31cec1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/mavenCentral()/jcenter()/' build.gradle
+
+  - versionName: '31'
+    versionCode: 31
+    commit: b9b9dbef4320e2e62c0be43ea943cb4c100ec8a9
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/mavenCentral()/jcenter()/' build.gradle
+
+  - versionName: '32'
+    versionCode: 32
+    commit: d2ffacdb8525adffd4ac51d827f080142edb7d05
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/mavenCentral()/jcenter()/' build.gradle
+
+  - versionName: '34'
+    versionCode: 34
+    commit: e85df0d87bd80e99c250dffa6c1b51c55c05dae2
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/mavenCentral()/jcenter()/' build.gradle
+
+  - versionName: '35'
+    versionCode: 35
+    commit: 66f2ddd0d02351c901cf5b6f4230fad2ebebc83b
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: build.gradle|appVersion = (\d+)||v(\d+)
+CurrentVersion: '35'
+CurrentVersionCode: 35

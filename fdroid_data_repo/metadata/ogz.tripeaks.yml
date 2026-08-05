@@ -1,0 +1,175 @@
+Categories:
+  - Card Game
+License: GPL-3.0-only
+SourceCode: https://github.com/mimoguz/tripeaks-gdx
+IssueTracker: https://github.com/mimoguz/tripeaks-gdx/issues
+Translation: https://hosted.weblate.org/projects/tripeaks-gdx/Bundle/
+Changelog: https://github.com/mimoguz/tripeaks-gdx/releases
+
+AutoName: TriPeaks
+
+RepoType: git
+Repo: https://github.com/mimoguz/tripeaks-gdx
+
+Builds:
+  - versionName: '0.1'
+    versionCode: 1
+    commit: '0.1'
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: '0.20'
+    versionCode: 3
+    commit: '0.20'
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: '0.30'
+    versionCode: 4
+    commit: '0.30'
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: '0.40'
+    versionCode: 5
+    commit: '0.40'
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: '0.41'
+    versionCode: 6
+    commit: '0.41'
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: '0.42'
+    versionCode: 7
+    commit: '0.42'
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: '0.43'
+    versionCode: 8
+    commit: '0.43'
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: '0.44'
+    versionCode: 9
+    commit: '0.44'
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: '0.45'
+    versionCode: 10
+    commit: '0.45'
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: 0.46.2
+    versionCode: 14
+    commit: 334810b0b0604b47f14721a2ea2c17720e07b8cd
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: 0.5a1
+    versionCode: 15
+    commit: 7193a23cf307e65a35521302def9cf4686be2f20
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: '0.51'
+    versionCode: 17
+    commit: b9bb3711cdee7e8eeccaaa45981571fb02c6d0e1
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: '0.52'
+    versionCode: 19
+    commit: e7a77409a1ef385b738daab544640b152ee45055
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: '1.0'
+    versionCode: 20
+    commit: ef7b1c9925deb474a33dd3ce551f93b9730dab68
+    subdir: android
+    gradle:
+      - yes
+
+  - versionName: 1.0.1
+    versionCode: 21
+    commit: 07485c184f4e94439c07eddf5eae53d77734d213
+    subdir: android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.0
+    versionCode: 27
+    commit: 2d3efdf1d04f620d5b4715f9dc810d3af66f69dd
+    subdir: android
+    gradle:
+      - yes
+    prebuild: sed -i -e "/s01.oss.sonatype.org'/d" ../build.gradle
+
+  - versionName: 1.1.1
+    versionCode: 28
+    commit: d4626c458fcb104c0e98e46cbccb8be424acc117
+    subdir: android
+    gradle:
+      - yes
+    prebuild: sed -i -e "/s01.oss.sonatype.org'/d" ../build.gradle
+
+  - versionName: 1.1.3
+    versionCode: 30
+    commit: 504a550f2a02da4e2ac6ecd873aeae99a2ede7a3
+    subdir: android
+    gradle:
+      - yes
+    prebuild: sed -i -e "/s01.oss.sonatype.org'/d" ../build.gradle
+
+  - versionName: 1.2.0
+    versionCode: 33
+    commit: 23ca2c97109f5432cfc0ccf4045509cd50940896
+    subdir: android
+    gradle:
+      - yes
+    prebuild: sed -i -e "/s01.oss.sonatype.org'/d" ../build.gradle
+
+  - versionName: 1.2.1
+    versionCode: 34
+    commit: 349466128b893a4453dfffd0dd42c2a5cb416d57
+    subdir: android
+    gradle:
+      - yes
+    prebuild: sed -i -e "/s01.oss.sonatype.org'/d" ../build.gradle
+
+  - versionName: 1.2.3
+    versionCode: 36
+    commit: e62b3c412e98e07fd3cd7ce7aadf9475b95fffe1
+    subdir: android
+    gradle:
+      - yes
+    prebuild: sed -i -e "/s01.oss.sonatype.org'/d" ../build.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^[0-9.]+$
+CurrentVersion: 1.2.3
+CurrentVersionCode: 36

@@ -17,11 +17,9 @@ class PhantomDiagnosticScreen extends StatefulWidget {
 
 class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
   final TextEditingController _passphraseController = TextEditingController();
-  final PhantomCacheService _phantomService = PhantomCacheService(PhantomTrustValidator());
   
   bool _isLoading = false;
   String _statusLog = "T2C-Phantom Diagnostic Console\nAppuyez sur 'Connecter' pour analyser le cache local.\n";
-  bool _cacheExists = false;
 
   @override
   void initState() {
@@ -32,21 +30,6 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
         showBackButton: false,
         actions: [],
       );
-    });
-    _checkCacheDirectory();
-  }
-
-  Future<void> _checkCacheDirectory() async {
-    final dir = Directory(_phantomService.defaultCachePath);
-    final exists = await dir.exists();
-    if (!mounted) return;
-    setState(() {
-      _cacheExists = exists;
-      if (exists) {
-        _log("Vérification: Répertoire cache trouvé à ${_phantomService.defaultCachePath}");
-      } else {
-        _log("Vérification: Aucun répertoire cache trouvé à ${_phantomService.defaultCachePath}. T2C-Phantom est-il installé et exécuté ?");
-      }
     });
   }
 
@@ -95,8 +78,54 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
     super.dispose();
   }
 
+  Future<void> _editPath(BuildContext context, PhantomProvider phantom) async {
+    final TextEditingController pathCtrl = TextEditingController(text: phantom.activePath);
+    final newPath = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: TdcColors.surface,
+        title: const Text('Modifier le chemin du cache', style: TextStyle(color: TdcColors.accent, fontFamily: 'Courier')),
+        content: TextField(
+          controller: pathCtrl,
+          style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'Courier'),
+          decoration: InputDecoration(
+            labelText: 'Chemin absolu',
+            labelStyle: const TextStyle(color: TdcColors.textSecondary),
+            hintText: phantom.defaultPath,
+            hintStyle: const TextStyle(color: TdcColors.textMuted),
+            enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: TdcColors.border)),
+            focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: TdcColors.accent)),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('ANNULER', style: TextStyle(color: TdcColors.textMuted)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, ''),
+            child: const Text('PAR DÉFAUT', style: TextStyle(color: TdcColors.textMuted)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, pathCtrl.text),
+            style: ElevatedButton.styleFrom(backgroundColor: TdcColors.accent, foregroundColor: TdcColors.bg),
+            child: const Text('SAUVEGARDER'),
+          ),
+        ],
+      ),
+    );
+
+    if (newPath != null) {
+      await phantom.updateCustomPath(newPath.isEmpty ? null : newPath);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final phantom = context.watch<PhantomProvider>();
+    final cacheExists = phantom.isRunning;
+    final path = phantom.activePath;
+
     return Container(
       color: TdcColors.bg,
       padding: const EdgeInsets.all(24.0),
@@ -106,15 +135,23 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
           Row(
             children: [
               Icon(
-                _cacheExists ? Icons.check_circle : Icons.error,
-                color: _cacheExists ? Colors.green : Colors.red,
+                cacheExists ? Icons.check_circle : Icons.error,
+                color: cacheExists ? Colors.green : Colors.red,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  "Chemin du cache : ${_phantomService.defaultCachePath}",
+                  cacheExists 
+                    ? "T2C-Phantom est en cours d'exécution (Cache: $path)"
+                    : "Phantom non détecté (Cache introuvable à $path)",
                   style: const TextStyle(color: TdcColors.textSecondary, fontFamily: 'Courier'),
                 ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.edit, size: 16),
+                color: TdcColors.accent,
+                onPressed: () => _editPath(context, phantom),
+                tooltip: 'Modifier le chemin',
               ),
             ],
           ),

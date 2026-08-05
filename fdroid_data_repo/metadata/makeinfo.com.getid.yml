@@ -1,0 +1,35 @@
+Categories:
+  - System
+License: MIT
+AuthorName: Basil Alias
+AuthorWebSite: https://www.ribitt.io/
+SourceCode: https://github.com/basil2style/getid
+IssueTracker: https://github.com/basil2style/getid/issues
+
+AutoName: Get ID
+Description: |-
+  Get and show device details like:
+
+  * Device ID
+  * SIM serial number
+  * IMEI
+  * IMSI
+  * Google Service key
+  * WiFi mac address
+
+RepoType: git
+Repo: https://github.com/basil2style/getid
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: 40486583ad5f021a2874b57c195066e1151ea909
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.0'
+CurrentVersionCode: 1

@@ -1,0 +1,108 @@
+Categories:
+  - Development
+  - Translation & Dictionary
+License: GPL-3.0-or-later
+AuthorName: sunilpaulmathew
+AuthorEmail: sunil.kde@gmail.com
+AuthorWebSite: https://smartpack.github.io/
+WebSite: https://smartpack.github.io/translator/
+SourceCode: https://github.com/sunilpaulmathew/Translator
+IssueTracker: https://github.com/sunilpaulmathew/Translator/issues
+Changelog: https://github.com/sunilpaulmathew/Translator/releases/latest
+Donate: https://www.paypal.com/paypalme/menacherry
+
+AutoName: The Translator
+
+RepoType: git
+Repo: https://github.com/sunilpaulmathew/Translator
+
+Builds:
+  - versionName: v0.7
+    versionCode: 7
+    commit: v0.7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v0.8
+    versionCode: 8
+    commit: v0.8
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v0.9
+    versionCode: 9
+    commit: v0.9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v0.10
+    versionCode: 10
+    commit: v0.10
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v0.11
+    versionCode: 11
+    commit: v0.11
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v0.12
+    versionCode: 12
+    commit: v0.12
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v0.13
+    versionCode: 13
+    commit: v0.13
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v0.15
+    versionCode: 15
+    commit: v0.15
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v0.16
+    versionCode: 16
+    commit: da50a7ca744fcb26a567bfecb0469f9f13e8e0b5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v0.17
+    versionCode: 17
+    commit: ab2d4b555ee21a133d6316306aa4e9395a760909
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v0.18
+    versionCode: 18
+    commit: 929cbd80b68a5e8be70b0995fb98da4f0046f538
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: v0.18
+CurrentVersionCode: 18

@@ -1,0 +1,130 @@
+Categories:
+  - Internet
+License: GPL-3.0-only
+AuthorName: Narek
+SourceCode: https://gitlab.com/narektor/gugal
+IssueTracker: https://gitlab.com/narektor/gugal/issues
+Donate: https://ko-fi.com/thegreatporg
+
+AutoName: Gugal
+
+RepoType: git
+Repo: https://gitlab.com/narektor/gugal.git
+
+Builds:
+  - versionName: '0.4'
+    versionCode: 4
+    commit: 0a4a5052b144b967518bd4668e523a46de321edf
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    antifeatures:
+      - NonFreeNet
+      - Tracking
+
+  - versionName: 0.4.1
+    versionCode: 5
+    commit: 30e38813a4bf809f2a2dd3b010158564b1fec42d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    antifeatures:
+      - NonFreeNet
+      - Tracking
+
+  - versionName: '0.5'
+    versionCode: 9
+    commit: c3d8008864bd5d2deaceedce772e79e608259142
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    antifeatures:
+      - Tracking
+
+  - versionName: '0.6'
+    versionCode: 12
+    commit: 8b0e67c079bd6dafc346463538294bbf9b25d496
+    subdir: app
+    gradle:
+      - yes
+    antifeatures:
+      - Tracking
+
+  - versionName: '0.7'
+    versionCode: 14
+    commit: 74527a723160ef7a9c3002e2641e1bbc3d09e9d1
+    subdir: app
+    gradle:
+      - full
+    antifeatures:
+      - Tracking
+
+  - versionName: 0.7.1
+    versionCode: 16
+    commit: cd06bdeeb4acb616f305e1569b7d4ce12e23e35e
+    subdir: app
+    gradle:
+      - full
+    antifeatures:
+      - Tracking
+
+  - versionName: '0.8'
+    versionCode: 21
+    commit: 746f0d1acda08fe2f35dfa2ef2be75b55597aa69
+    subdir: app
+    gradle:
+      - full
+    antifeatures:
+      - Tracking
+
+  - versionName: 0.8.1
+    versionCode: 22
+    commit: 63d4141e182561d7111bdfe3dab04eac0c01251c
+    subdir: app
+    gradle:
+      - full
+
+  - versionName: 0.8.2
+    versionCode: 23
+    commit: 5cfcb102cb30023755db99d03ab321ee02827ce9
+    subdir: app
+    gradle:
+      - full
+
+  - versionName: 0.8.3
+    versionCode: 24
+    commit: 8f0024216142d448646e638a7830739e051ce03b
+    subdir: app
+    gradle:
+      - full
+
+  - versionName: 0.8.4
+    versionCode: 25
+    commit: 39da2c24f5202fae5400b3d620121e492c221a45
+    subdir: app
+    gradle:
+      - full
+
+  - versionName: '0.9'
+    versionCode: 29
+    commit: e1b53d60a8c93813bf951a44ea104fe2219808ca
+    subdir: app
+    gradle:
+      - stable
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '0.9'
+CurrentVersionCode: 29

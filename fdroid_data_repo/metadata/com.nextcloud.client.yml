@@ -1,0 +1,1844 @@
+Categories:
+  - Calendar & Agenda
+  - Cloud Storage & File Sync
+  - Contact
+  - Email
+License: GPL-2.0-only
+AuthorName: Nextcloud GmbH
+WebSite: https://nextcloud.com
+SourceCode: https://github.com/nextcloud/android
+IssueTracker: https://github.com/nextcloud/android/issues
+Translation: https://explore.transifex.com/nextcloud/nextcloud/
+Changelog: https://github.com/nextcloud/android/releases
+Donate: https://nextcloud.com/include/
+
+AutoName: Nextcloud
+Description: |-
+  A safe home for all your data. Access & share your files, calendars, contacts, mail & more from any device, on your terms. This is the official Nextcloud Android app.
+
+  <b>Features:</b>
+
+  * Easy, modern interface
+  * Upload your files to your Nextcloud server
+  * Share your files with others
+  * Keep your favorite files and folders synced
+  * Instant Upload for photos and videos taken by your device
+  * Multi-account support
+
+  Find help for this app at https://help.nextcloud.com
+  Report bugs or enhancement ideas to https://github.com/nextcloud/android/issues ;-)
+
+RepoType: git
+Repo: https://github.com/nextcloud/android.git
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 10000000
+    commit: stable-1.0.0
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - libs/disklrucache*
+      - user_manual
+
+  - versionName: 1.0.1
+    versionCode: 10000100
+    commit: stable-1.0.1
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - libs/disklrucache*
+      - user_manual
+
+  - versionName: 1.1.0
+    versionCode: 10010099
+    commit: stable-1.1.0
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - libs/disklrucache*
+      - user_manual
+
+  - versionName: 1.2.0
+    versionCode: 10020099
+    commit: stable-1.2.0
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - libs/disklrucache*
+      - user_manual
+
+  - versionName: 1.3.0
+    versionCode: 10030099
+    commit: stable-1.3.0
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - libs/disklrucache*
+      - user_manual
+
+  - versionName: 1.3.1
+    versionCode: 10030199
+    commit: stable-1.3.1
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - libs/disklrucache*
+      - user_manual
+
+  - versionName: 1.4.0
+    versionCode: 10040099
+    commit: stable-1.4.0
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - libs/disklrucache*
+      - user_manual
+
+  - versionName: 1.4.1
+    versionCode: 10040199
+    commit: stable-1.4.1
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - libs/disklrucache*
+      - user_manual
+
+  - versionName: 1.4.2
+    versionCode: 10040299
+    commit: stable-1.4.3
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - libs/disklrucache*
+      - user_manual
+
+  - versionName: 2.0.0
+    versionCode: 20000099
+    commit: stable-2.0.0
+    submodules: true
+    gradle:
+      - generic
+    output: 
+      build/outputs/apk/generic/release/com.nextcloud.client-generic-release-unsigned.apk
+    rm:
+      - libs/disklrucache*
+      - user_manual
+
+  - versionName: 2.0.1
+    versionCode: 20000199
+    commit: stable-2.0.1
+    submodules: true
+    gradle:
+      - generic
+    output: 
+      build/outputs/apk/generic/release/com.nextcloud.client-generic-release-unsigned.apk
+    rm:
+      - libs/disklrucache*
+      - user_manual
+
+  - versionName: 3.0.0
+    versionCode: 30000099
+    commit: stable-3.0.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.0.1
+    versionCode: 30000199
+    commit: stable-3.0.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.0.2
+    versionCode: 30000299
+    commit: stable-3.0.2
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.0.3
+    versionCode: 30000399
+    commit: stable-3.0.3
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.1.0
+    versionCode: 30010099
+    commit: stable-3.1.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.2.0
+    versionCode: 30020099
+    commit: stable-3.2.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.2.1
+    versionCode: 30020199
+    commit: stable-3.2.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.2.3
+    versionCode: 30020399
+    commit: stable-3.2.3
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.3.0
+    versionCode: 30030099
+    commit: stable-3.3.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.3.1
+    versionCode: 30030199
+    commit: stable-3.3.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.3.2
+    versionCode: 30030299
+    commit: stable-3.3.2
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.4.0
+    versionCode: 30040090
+    commit: stable-3.4.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.4.1
+    versionCode: 30040190
+    commit: stable-3.4.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.4.2
+    versionCode: 30040290
+    commit: stable-3.4.2
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.5.0
+    versionCode: 30050090
+    commit: stable-3.5.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.5.1
+    versionCode: 30050190
+    commit: stable-3.5.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.6.0
+    versionCode: 30060090
+    commit: stable-3.6.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.6.1
+    versionCode: 30060190
+    commit: stable-3.6.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.6.2
+    versionCode: 30060290
+    commit: stable-3.6.2
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.7.0
+    versionCode: 30070090
+    commit: stable-3.7.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.7.1
+    versionCode: 30070190
+    commit: stable-3.7.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.7.2
+    versionCode: 30070290
+    commit: stable-3.7.2
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.8.0
+    versionCode: 30080090
+    commit: stable-3.8.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.8.1
+    versionCode: 30080190
+    commit: stable-3.8.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.9.0
+    versionCode: 30090090
+    commit: stable-3.9.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.9.2
+    versionCode: 30090290
+    commit: stable-3.9.2
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.10.1
+    versionCode: 30100190
+    commit: stable-3.10.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo "org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError"
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.11.0
+    versionCode: 30110090
+    commit: stable-3.11.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.11.1
+    versionCode: 30110190
+    commit: stable-3.11.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.12.0
+    versionCode: 30120090
+    commit: stable-3.12.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.12.1
+    versionCode: 30120190
+    commit: stable-3.12.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.13.0
+    versionCode: 30130090
+    commit: stable-3.13.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.13.1
+    versionCode: 30130190
+    commit: stable-3.13.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.14.0
+    versionCode: 30140090
+    commit: stable-3.14.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.14.1
+    versionCode: 30140190
+    commit: stable-3.14.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.15.0
+    versionCode: 30150090
+    commit: stable-3.15.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.15.1
+    versionCode: 30150190
+    commit: stable-3.15.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.16.0
+    versionCode: 30160090
+    commit: stable-3.16.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.16.1
+    versionCode: 30160190
+    commit: stable-3.16.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.17.0
+    versionCode: 30170090
+    commit: stable-3.17.0
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.17.1
+    versionCode: 30170190
+    commit: stable-3.17.1
+    submodules: true
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.18.0
+    versionCode: 30180090
+    commit: stable-3.18.0
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.18.1
+    versionCode: 30180190
+    commit: stable-3.18.1
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.19.0
+    versionCode: 30190090
+    commit: stable-3.19.0
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest
+
+  - versionName: 3.19.1
+    versionCode: 30190190
+    commit: stable-3.19.1
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - generic
+    rm:
+      - user_manual
+      - gplay.gradle
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - src/androidTest/assets
+
+  - versionName: 3.20.0
+    versionCode: 30200090
+    commit: stable-3.20.0
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - generic
+    output: app/build/outputs/apk/generic/release/generic-release-*.apk
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.20.1
+    versionCode: 30200190
+    commit: stable-3.20.1
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - generic
+    output: app/build/outputs/apk/generic/release/generic-release-*.apk
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.20.2
+    versionCode: 30200290
+    commit: stable-3.20.2
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - generic
+    output: app/build/outputs/apk/generic/release/generic-release-*.apk
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.20.3
+    versionCode: 30200390
+    commit: stable-3.20.3
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - generic
+    output: app/build/outputs/apk/generic/release/generic-release-*.apk
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.21.0
+    versionCode: 30210090
+    commit: stable-3.21.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.21.1
+    versionCode: 30210190
+    commit: stable-3.21.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.21.2
+    versionCode: 30210290
+    commit: stable-3.21.2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.22.0
+    versionCode: 30220090
+    commit: stable-3.22.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.22.1
+    versionCode: 30220190
+    commit: stable-3.22.1
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.22.2
+    versionCode: 30220290
+    commit: stable-3.22.2
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.22.3
+    versionCode: 30220390
+    commit: stable-3.22.3
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.23.0
+    versionCode: 30230090
+    commit: stable-3.23.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.23.1
+    versionCode: 30230190
+    commit: stable-3.23.1
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.24.0
+    versionCode: 30240090
+    commit: stable-3.24.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.24.1
+    versionCode: 30240190
+    commit: stable-3.24.1
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.25.0
+    versionCode: 30250090
+    commit: stable-3.25.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.26.0
+    versionCode: 30260090
+    commit: stable-3.26.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.27.0
+    versionCode: 30270090
+    commit: stable-3.27.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.28.0
+    versionCode: 30280090
+    commit: stable-3.28.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.28.1
+    versionCode: 30280190
+    commit: stable-3.28.1
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.28.2
+    versionCode: 30280290
+    commit: stable-3.28.2
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.29.0
+    versionCode: 30290090
+    commit: stable-3.29.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.29.1
+    versionCode: 30290190
+    commit: stable-3.29.1
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.29.3
+    versionCode: 30290390
+    commit: stable-3.29.3
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.30.0
+    versionCode: 30300090
+    commit: stable-3.30.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.30.2
+    versionCode: 30300290
+    commit: stable-3.30.2
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.30.3
+    versionCode: 30300390
+    commit: stable-3.30.3
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.30.4
+    versionCode: 30300490
+    commit: stable-3.30.4
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.30.5
+    versionCode: 30300590
+    commit: stable-3.30.5
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.30.6
+    versionCode: 30300690
+    commit: stable-3.30.6
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.30.7
+    versionCode: 30300790
+    commit: stable-3.30.7
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.30.8
+    versionCode: 30300890
+    commit: stable-3.30.8
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.31.0
+    versionCode: 30310090
+    commit: stable-3.31.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.31.1
+    versionCode: 30310190
+    commit: stable-3.31.1
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.31.3
+    versionCode: 30310390
+    commit: stable-3.31.3
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.31.4
+    versionCode: 30310490
+    commit: stable-3.31.4
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.32.0
+    versionCode: 30320090
+    commit: stable-3.32.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.32.1
+    versionCode: 30320190
+    commit: stable-3.32.1
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.32.2
+    versionCode: 30320290
+    commit: stable-3.32.2
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.32.3
+    versionCode: 30320390
+    commit: stable-3.32.3
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.33.0
+    versionCode: 30330090
+    commit: stable-3.33.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+      - sed -i -e '/androidPluginVersion/s/8.12.1/8.11.1/' ../build.gradle
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.34.0 RC2
+    versionCode: 30340052
+    disable: obsolete RC
+    commit: rc-3.34.0-02
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+      - sed -i -e '/androidPluginVersion/s/8.13.0/8.11.1/' ../build.gradle
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.34.0
+    versionCode: 30340090
+    commit: stable-3.34.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+      - sed -i -e '/androidPluginVersion/s/8.13.0/8.11.1/' ../build.gradle
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.34.1 RC1
+    versionCode: 30340151
+    disable: obsolete RC
+    commit: rc-3.34.1-01
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+      - sed -i -e '/androidPluginVersion/s/8.13.0/8.11.1/' ../build.gradle
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.34.1
+    versionCode: 30340190
+    commit: stable-3.34.1
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+      - sed -i -e '/androidPluginVersion/s/8.13.0/8.11.1/' ../build.gradle
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.35.0 RC1
+    versionCode: 30350051
+    disable: obsolete RC
+    commit: rc-3.35.0-01
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.35.0 RC2
+    versionCode: 30350052
+    disable: obsolete RC
+    commit: rc-3.35.0-02
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.35.0 RC3
+    versionCode: 30350053
+    disable: obsolete RC
+    commit: rc-3.35.0-03
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.35.0 RC4
+    versionCode: 30350054
+    disable: obsolete RC
+    commit: rc-3.35.0-04
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.35.0
+    versionCode: 30350090
+    commit: stable-3.35.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.35.1
+    versionCode: 30350190
+    commit: stable-3.35.1
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.35.2
+    versionCode: 30350290
+    commit: stable-3.35.2
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.36.0 RC1
+    versionCode: 30360051
+    disable: obsolete RC
+    commit: rc-3.36.0-01
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 3.36.0 RC2
+    versionCode: 30360052
+    disable: obsolete RC
+    commit: rc-3.36.0-02
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 33.0.0
+    versionCode: 330000090
+    commit: stable-33.0.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 33.0.1 RC1
+    versionCode: 330000151
+    disable: obsolete RC
+    commit: rc-33.0.1-01
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 33.0.1
+    versionCode: 330000190
+    commit: stable-33.0.1
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 33.1.0 RC1
+    versionCode: 330010051
+    disable: obsolete RC
+    commit: rc-33.1.0-01
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 33.1.0 RC2
+    versionCode: 330010052
+    disable: obsolete RC
+    commit: rc-33.1.0-02
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 33.1.0 RC3
+    versionCode: 330010053
+    disable: obsolete RC
+    commit: rc-33.1.0-03
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 33.1.0
+    versionCode: 330010090
+    commit: stable-33.1.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 33.1.2
+    versionCode: 330010290
+    commit: stable-33.1.2
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+      - sed -i -e 's|${rootProject.projectDir}/app/libs/local-maven|https://jitpack.io|'
+        ../settings.gradle.kts
+      - sdkmanager 'cmake;4.1.2'
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 34.0.0
+    versionCode: 340000090
+    commit: stable-34.0.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+      - sed -i -e 's|${rootProject.projectDir}/app/libs/local-maven|https://jitpack.io|'
+        ../settings.gradle.kts
+      - sdkmanager 'cmake;4.1.2'
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 34.0.1 RC1
+    versionCode: 340000151
+    commit: rc-34.0.1-01
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+      - sdkmanager 'cmake;4.1.2'
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 34.0.1
+    versionCode: 340000190
+    commit: stable-34.0.1
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+      - sdkmanager 'cmake;4.1.2'
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 34.1.0 RC1
+    versionCode: 340010051
+    commit: rc-34.1.0-01
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+      - sdkmanager 'cmake;4.1.2'
+    scandelete:
+      - app/src/androidTest/assets
+
+  - versionName: 34.1.0
+    versionCode: 340010090
+    commit: stable-34.1.0
+    subdir: app
+    gradle:
+      - generic
+    rm:
+      - user_manual
+    prebuild:
+      - mkdir -p $HOME/.gradle
+      - echo org.gradle.jvmargs=-Xmx9g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+        > $HOME/.gradle/gradle.properties
+      - sdkmanager 'cmake;4.1.2'
+    scandelete:
+      - app/src/androidTest/assets
+
+MaintainerNotes: 'Latest 3 stable version will be kept, RC versions will be directly
+  outdated by either a new RC or by a stable version: 3.3.0 RC1 -> 3.3.0 RC2 -> 3.3.0
+  (stable)'
+
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 34.1.0
+CurrentVersionCode: 340010090

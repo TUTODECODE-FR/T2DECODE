@@ -1,0 +1,43 @@
+Categories:
+  - Internet
+  - Multimedia
+License: MIT
+AuthorName: sfortis
+SourceCode: https://github.com/sfortis/phylax
+IssueTracker: https://github.com/sfortis/phylax/issues
+Changelog: https://github.com/sfortis/phylax/blob/main/WHATSNEW.md
+
+AutoName: Phylax
+
+RepoType: git
+Repo: https://github.com/sfortis/phylax
+Binaries: https://github.com/sfortis/phylax/releases/download/v%v/phylax-fdroid-v%v.apk
+
+Builds:
+  - versionName: '2.7'
+    versionCode: 15
+    commit: 1f31a3ef6254632ae13a89eb48d73e1a785e2e3c
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: '2.8'
+    versionCode: 16
+    commit: 076a39e9263258e80640db73e93997599db99411
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: '2.9'
+    versionCode: 17
+    commit: 14e8a461564f04af585f743dd09608856c42ec85
+    subdir: app
+    gradle:
+      - fdroid
+
+AllowedAPKSigningKeys: 3bf1a6f74a9228aa0f590e84543a5a8fc9c8c9c30c498ca1f33be35ada9ebba6
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '2.9'
+CurrentVersionCode: 17

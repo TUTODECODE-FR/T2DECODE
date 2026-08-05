@@ -1,0 +1,46 @@
+Categories:
+  - Reading
+License: GPL-3.0-only
+AuthorName: Shubham Chaudhary
+WebSite: http://developfreedom.org
+SourceCode: https://github.com/shubhamchaudhary/wordpowermadeeasy
+IssueTracker: https://github.com/shubhamchaudhary/wordpowermadeeasy/issues
+
+AutoName: Word Power Made Easy
+Description: |-
+  Vocabulary building with hundreds of word meanings chosen carefully from various
+  SAT, GRE and GMAT course materials.
+
+  This app is deprecated, please switch to
+  https://f-droid.org/packages/org.developfreedom.wordpowermadeeasy.
+
+RepoType: git
+Repo: https://github.com/shubhamchaudhary/wordpowermadeeasy.git
+
+Builds:
+  - versionName: 0.1.0
+    versionCode: 1
+    commit: v0.1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.1
+    versionCode: 11
+    commit: v0.1.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.2
+    versionCode: 12
+    commit: v0.1.2
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 0.1.2
+CurrentVersionCode: 12

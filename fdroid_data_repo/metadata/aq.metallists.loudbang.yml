@@ -1,0 +1,136 @@
+Categories:
+  - Connectivity
+License: GPL-3.0-only
+AuthorName: TheMetallists
+AuthorEmail: metallists@outlook.com
+SourceCode: https://github.com/TheMetallists/LoudBang
+IssueTracker: https://github.com/TheMetallists/LoudBang/issues
+Changelog: https://github.com/TheMetallists/LoudBang/releases
+Bitcoin: 3LHpmYMo2Zo3RaZqTvHsT3isFJ5rvj4xWU
+
+AutoName: Loud Bang
+
+RepoType: git
+Repo: https://github.com/TheMetallists/LoudBang
+
+Builds:
+  - versionName: '0.41'
+    versionCode: 41
+    commit: v0.41
+    subdir: app
+    gradle:
+      - yes
+    ndk: r22
+
+  - versionName: '0.42'
+    versionCode: 42
+    commit: 45b0d86f00c56e36b124033a809ae6c58c8f5867
+    subdir: app
+    gradle:
+      - yes
+    ndk: r22
+
+  - versionName: '0.43'
+    versionCode: 43
+    commit: 84ffbb7ea3986ae174476f8443a5d556c61ca96a
+    subdir: app
+    gradle:
+      - yes
+    ndk: r22
+
+  - versionName: '0.44'
+    versionCode: 44
+    commit: d052e5b132a59e63f95967bed6cc45ac76dda97e
+    subdir: app
+    gradle:
+      - yes
+    ndk: r22
+
+  - versionName: '0.45'
+    versionCode: 45
+    commit: 466fea19bd2daf1f088717abbd69f66b704adbc7
+    subdir: app
+    gradle:
+      - yes
+    ndk: r22
+
+  - versionName: '0.46'
+    versionCode: 46
+    commit: a9bbcd69c49be6fdc80ceb3638f68090d5a357a3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    ndk: r22
+
+  - versionName: '0.47'
+    versionCode: 47
+    commit: 5e3da4f622798f73f4513715c856d30e4d41a7be
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    ndk: r22
+
+  - versionName: '0.48'
+    versionCode: 48
+    commit: 8148521c82274e98aed499677f30ac17c8458e52
+    subdir: app
+    gradle:
+      - yes
+    ndk: r22
+
+  - versionName: '0.49'
+    versionCode: 49
+    commit: eadf9adf7f61a686b609198fb230f55dba074a66
+    subdir: app
+    gradle:
+      - yes
+    ndk: r22
+
+  - versionName: '0.50'
+    versionCode: 50
+    commit: 3254510f5a0d4d9dff178dd9d47aa22d1b96fa61
+    subdir: app
+    gradle:
+      - yes
+    ndk: r22
+
+  - versionName: '0.51'
+    versionCode: 51
+    commit: a190deb7d5574bc37961788995e802d337a3718c
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/foojay/d' ../settings.gradle
+      - sed -i -e 's/8.12.3/8.11.1/' ../build.gradle
+    ndk: r22b
+
+  - versionName: '0.52'
+    versionCode: 52
+    commit: da40a6ec2ae849ad89b969fcd7d18dc6ab0173ab
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle
+    ndk: r22b
+
+  - versionName: '0.53'
+    versionCode: 53
+    commit: 5ca79465cf18aebe24ccc2ef000f6bc6dc9d8426
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '0.53'
+CurrentVersionCode: 53

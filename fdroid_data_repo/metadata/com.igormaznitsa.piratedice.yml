@@ -1,0 +1,48 @@
+Categories:
+  - Dice
+License: Apache-2.0
+AuthorName: Igor Maznitsa
+AuthorWebSite: https://www.igormaznitsa.com/
+SourceCode: https://github.com/raydac/AndroidPirateDice
+IssueTracker: https://github.com/raydac/AndroidPirateDice/issues
+Changelog: https://github.com/raydac/AndroidPirateDice/releases
+Donate: 
+  https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AHWJHJFBAWGL2
+
+AutoName: PirateDice
+Description: |-
+  A special virtual dice for the "Pirates" board game created by Vasily Golytsyn
+  in 1934.
+
+RepoType: git
+Repo: https://github.com/raydac/AndroidPirateDice.git
+
+Builds:
+  - versionName: 1.0.2
+    versionCode: 3
+    commit: 84bfb746c5299f78e354b8a60a5d56b06d35a240
+    subdir: PirateDice
+    gradle:
+      - yes
+    srclibs:
+      - SVGAndroid2-raydac@c73d3658bac43c5cfc703e360b46085d529d916c
+    prebuild: cp -fR $$SVGAndroid2-raydac$$/src/main/java/com src/main/java/
+
+  - versionName: 1.0.3
+    versionCode: 4
+    commit: 19d44c6d498288718b0646d63b48e7a7e3bcf214
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 
+      '/applicationId/s/com.igormaznitsa.android.iampiratedice/com.igormaznitsa.piratedice/'
+      -e '/versionCode/s/1/$$VERCODE$$/' -e '/versionName/s/1.0/$$VERSION$$/' build.gradle
+
+MaintainerNotes: |-
+  * Our SVGAndroid is missing SVG.resizePictureAsBitmap, so maybe we are using the wrong
+    version. Wait for https://github.com/raydac/AndroidPirateDice/issues/3 .
+
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.0.3
+CurrentVersionCode: 4

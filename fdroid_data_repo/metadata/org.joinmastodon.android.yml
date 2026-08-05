@@ -1,0 +1,485 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on joinmastodon.org which is not libre (neither were its ToS found)
+Categories:
+  - Connectivity
+  - Internet
+  - Multimedia
+  - Social Network
+License: GPL-3.0-only
+WebSite: https://joinmastodon.org
+SourceCode: https://github.com/mastodon/mastodon-android
+IssueTracker: https://github.com/mastodon/mastodon-android/issues
+Translation: https://crowdin.com/project/mastodon-for-android
+Donate: https://www.patreon.com/mastodon
+
+AutoName: Mastodon
+
+RepoType: git
+Repo: https://github.com/mastodon/mastodon-android.git
+
+Builds:
+  - versionName: 1.2.2
+    versionCode: 53
+    commit: 0a17ceb9840ea74db80c7f9907bdf36deac3586b
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.3
+    versionCode: 54
+    commit: 33cbd85e193d5cdff9ae4bd7f0a19c4a6f82bad3
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.0.0
+    versionCode: 60
+    commit: 3b399d5815c37d0ac470f82cbd74f4dfa1921c74
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.0.1
+    versionCode: 61
+    commit: be7469bd548845b8ad26df4fefa863cf2626c033
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.0.2
+    versionCode: 62
+    commit: c3da15552eb45725713d221ba5b719deba85ae09
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.0.3
+    versionCode: 63
+    commit: e5bdeba1d731c0e0ce01d330a857a7a0e194d77c
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.0.4
+    versionCode: 64
+    commit: 645af12c3fb1643ac5c8c39aba5af34ddca88ccc
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.1.2
+    versionCode: 68
+    commit: ca60003c39276e4706c7ef525a63e37205050d04
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.1.4
+    versionCode: 70
+    commit: a00afd5d7fc8ff864908ee50afd531200227b2d5
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.1.6
+    versionCode: 72
+    commit: 6c1c5b775953916d3bdbf87a602e1464a3efe53c
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.2.0
+    versionCode: 75
+    commit: 0d334237baca596aba6f25dfa9aa902f49ef7dd4
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.2.1
+    versionCode: 76
+    commit: 1d5b84943d18fe26c79e4477d30134f0a49fe21d
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.2.2
+    versionCode: 78
+    commit: 96265010bfbb52652a08bb885f58e5189adfcce5
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.2.3
+    versionCode: 79
+    commit: 19759023a4b46b3712ede157dc092bc057fdf384
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.2.4
+    versionCode: 80
+    commit: 957bc76dbb78251c8c973edf335dea4ae74e1805
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.3.0
+    versionCode: 84
+    commit: 8dffbff97c2dd5fd9110733bc1b09437ca5151af
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.4.0
+    versionCode: 86
+    commit: 0dc23789f576251b65ad73bc929d94f86fc00316
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.4.1
+    versionCode: 89
+    commit: 7b25628f7ae6d32afd616a1a65a17006392d1c3e
+    subdir: mastodon
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.5.0
+    versionCode: 93
+    commit: 69b7484a4a112d20421ac7d0c343e296d3075443
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.5.2
+    versionCode: 103
+    commit: 6d96ab5b7cdef1ca1edcd91313e87d0ec662ce65
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.5.3
+    versionCode: 104
+    commit: e7094beab9a9bcb66f2e40eae1c781867602c895
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.5.6
+    versionCode: 108
+    commit: 72df72228f9e5bc46096403c30dac2fbd1e6452c
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.6.0
+    versionCode: 111
+    commit: a9ef1f9d47bf42116ef1d11bf42788740fe4f114
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.6.1
+    versionCode: 112
+    commit: d41fcabd76a86cf2342467b8c003bddf0efb5c84
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.7.0
+    versionCode: 119
+    commit: 74986a10f64163a9429feb72899253b7f961d481
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.7.1
+    versionCode: 120
+    commit: 492d851d896905b6992aa6f6e8d2a42a416fb0fc
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.7.2
+    versionCode: 121
+    commit: 71f92cb66cf02b9506294df5dc57d5eed88004e9
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.7.3
+    versionCode: 123
+    commit: 1ad2d08e2722dc812320708ddd43738209c12d5f
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.8.0
+    versionCode: 125
+    commit: 162bc86ebe3218f0339200f18e19ea2b8cabaa58
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.9.0
+    versionCode: 128
+    commit: 357041b99544349da67f3266d6dcee70f0f6f916
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.9.1
+    versionCode: 129
+    commit: ad2f4791c24f14905bd07329931bc3a05dc3904b
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.9.2
+    versionCode: 131
+    commit: 2ec3be39d589a7900c068806bbd0d8f01c67a260
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.9.3
+    versionCode: 132
+    commit: 9ed95cc0d34bcc7703a1948a2244eaf372221d87
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.9.4
+    versionCode: 133
+    commit: 25c3a935745c99fa69038978bd0b4a280ce98071
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.9.5
+    versionCode: 135
+    commit: 900cbb907b96052caa26643822b99361af90c9a8
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.9.6
+    versionCode: 138
+    commit: 2d94d1865d708e47339d6c4ea5bd853cd45a4af4
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.9.7
+    versionCode: 140
+    commit: 02bdf4c46100670aa43893bdf2ae105208135558
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.10.0
+    versionCode: 143
+    commit: 0dacbfa306275ea8d7ad64bbda4d377595eb4414
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.10.1
+    versionCode: 144
+    commit: 0a72d6f6ae732f713e75c42b6ec50c0134ac16f2
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.11.1
+    versionCode: 148
+    commit: 8d19e4928661af2eb29d88712eaee74e1921a8cf
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.11.2
+    versionCode: 149
+    commit: 64ccbe0f366eca87354c42076f1032281435a811
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.11.3
+    versionCode: 150
+    commit: dfaf932b93f2fa48e97677ef7b0d12ab3a6c9934
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.11.4
+    versionCode: 152
+    commit: 59fb635c6fe122e4ea3c7a7bef2de774092d06bb
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.11.5
+    versionCode: 154
+    commit: 51ec4ba27deb4ac2e87b2f4025bddc1801eafef2
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.11.7
+    versionCode: 156
+    commit: 1ab85ff6edc137c1ec7396f3188478509922c192
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.11.8
+    versionCode: 157
+    commit: dbc4f4edbf21055e6925a9245ee7295939b0da59
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.11.9
+    versionCode: 158
+    commit: daaae29d33bcb11e3e27eb25edaa6db2eddf2006
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.11.10
+    versionCode: 163
+    commit: f198697cba27d16d13ce93373a096d05cb5f5595
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.11.11
+    versionCode: 165
+    commit: 538934bdddaf245bb42708ac80bb32ea8f344102
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.12.0
+    versionCode: 176
+    commit: 6a84447671953d4271db4207a27b579d721eeef5
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.12.1
+    versionCode: 178
+    commit: fa3d1b0380fdb1531e04d44a028dde7962fb4a77
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.12.2
+    versionCode: 181
+    commit: 749d0965247a1b14eaa42238e5fde5c4d3cb1c35
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.12.3
+    versionCode: 182
+    commit: abe2fc7e19268b233963afab7468ae9188b4b653
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.13.0
+    versionCode: 186
+    commit: 4c9990d8733b8b7104f03a79d3502dce9f46e10b
+    subdir: mastodon
+    gradle:
+      - yes
+
+  - versionName: 2.13.1
+    versionCode: 187
+    commit: 4fb3b64f55a9f5232cf85a4f0f9f67f8a9e4bf82
+    subdir: mastodon
+    gradle:
+      - yes
+
+MaintainerNotes: GMS from microG classes are added in 
+  https://github.com/mastodon/mastodon-android/commit/5cf222379a6a54f38134a9f586fd68543d189647
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.13.1
+CurrentVersionCode: 187

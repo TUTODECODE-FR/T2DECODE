@@ -1,0 +1,129 @@
+Categories:
+  - Sports & Health
+License: MIT
+AuthorName: MrReSc
+SourceCode: https://github.com/MrReSc/Headi
+IssueTracker: https://github.com/MrReSc/Headi/issues
+Translation: https://crwd.in/headi
+Changelog: https://github.com/MrReSc/Headi/releases
+
+AutoName: Headi
+
+RepoType: git
+Repo: https://github.com/MrReSc/Headi.git
+
+Builds:
+  - versionName: 1.9.0-beta
+    versionCode: 190
+    commit: 1.9.0-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.9.1-beta
+    versionCode: 191
+    commit: 1.9.1-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.0-beta
+    versionCode: 1100
+    commit: 1.10.0-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.1-beta
+    versionCode: 1101
+    commit: 1.10.1-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.2-beta
+    versionCode: 1102
+    commit: 1.10.2-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.3
+    versionCode: 1103
+    commit: 1.10.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.4
+    versionCode: 1104
+    commit: 1.10.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.5
+    versionCode: 1105
+    commit: 1.10.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.6
+    versionCode: 1106
+    commit: 1.10.6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.7
+    versionCode: 1107
+    commit: 1.10.7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.8
+    versionCode: 1108
+    commit: 1.10.8
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.9
+    versionCode: 1109
+    commit: 630b4de792337a3b766f3e6c44f2c8d397c4c092
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.10.10
+    versionCode: 1110
+    commit: a8939efc14905773f725354104942d8e28d696a3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.20.0
+    versionCode: 1200
+    commit: 22e80125acf91c653f1e89f9996c087b914ba84b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.20.0
+CurrentVersionCode: 1200

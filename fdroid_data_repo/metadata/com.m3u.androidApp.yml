@@ -1,0 +1,169 @@
+Categories:
+  - Multimedia
+License: Apache-2.0
+AuthorName: realOxy
+SourceCode: https://github.com/realOxy/M3UAndroid
+IssueTracker: https://github.com/realOxy/M3UAndroid/issues
+Changelog: https://github.com/realOxy/M3UAndroid/releases
+
+AutoName: M3U
+
+RepoType: git
+Repo: https://github.com/realOxy/M3UAndroid.git
+Binaries: https://github.com/realOxy/M3UAndroid/releases/download/v%v/%v_universal.apk
+
+Builds:
+  - versionName: 1.13.6
+    versionCode: 85
+    commit: 610563e0407d587e5cff0c061c9182ee3278cfe3
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    binary: 
+      https://github.com/realOxy/M3UAndroid/releases/download/v%v/androidApp-release.apk
+
+  - versionName: 1.14.0-alpha10
+    versionCode: 95
+    commit: 32ab0c9d082534cfc2c6a3954a30cb6cfcb874f1
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    binary: 
+      https://github.com/realOxy/M3UAndroid/releases/download/v%v/androidApp-release.apk
+
+  - versionName: 1.14.0-alpha12
+    versionCode: 97
+    commit: 269db401d02c4e4372b7b3da147f4034a716fc9a
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    binary: 
+      https://github.com/realOxy/M3UAndroid/releases/download/v%v/androidApp-release.apk
+
+  - versionName: 1.14.0-alpha13
+    versionCode: 98
+    commit: 7aae69bf296f7d3df701d2d531dd860ecfd16ad7
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    binary: 
+      https://github.com/realOxy/M3UAndroid/releases/download/v%v/androidApp-release.apk
+
+  - versionName: 1.14.0-alpha15
+    versionCode: 100
+    commit: f1b4d5c728f282b368d1a2f868644ad884c36ade
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    binary: 
+      https://github.com/realOxy/M3UAndroid/releases/download/v%v/androidApp-release.apk
+
+  - versionName: 1.14.0-beta04
+    versionCode: 122
+    commit: 27cd9de03249677199bffd90ae34e93b36014d1a
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - full
+    binary: 
+      https://github.com/realOxy/M3UAndroid/releases/download/v%v/androidApp-full-universal-release.apk
+    prebuild: sed -i -e 's/isEnable.*/isEnable = false/' build.gradle.kts
+
+  - versionName: 1.14.0-beta07
+    versionCode: 132
+    commit: ee83f95c91d9578668838c37553a8ba82008ec27
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - stableChannel
+      - richCodec
+    prebuild: sed -i -e 's/isEnable.*/isEnable = false/' build.gradle.kts
+
+  - versionName: 1.14.0-beta10
+    versionCode: 136
+    commit: 5ac299b7658e2107cc0e02846f6d31e2947af4de
+    subdir: androidApp
+    gradle:
+      - stableChannel
+      - richCodec
+    prebuild:
+      - sed -i -e 's/isEnable.*/isEnable = false/' build.gradle.kts
+      - sed -i -e '/androidx.dev/d' ../settings.gradle.kts
+
+  - versionName: 1.14.0-beta11
+    versionCode: 137
+    commit: f52381b01b3b03de3be32c63f8a86219b071325e
+    subdir: androidApp
+    gradle:
+      - stableChannel
+      - richCodec
+    prebuild:
+      - sed -i -e 's/isEnable.*/isEnable = false/' build.gradle.kts
+      - sed -i -e '/androidx.dev/d' ../settings.gradle.kts
+
+  - versionName: 1.14.0-rc01
+    versionCode: 141
+    commit: 6efd47a1adc233336b97ff1a27f23d79b15cba1d
+    subdir: androidApp
+    gradle:
+      - stableChannel
+      - richCodec
+    prebuild:
+      - sed -i -e 's/isEnable.*/isEnable = false/' build.gradle.kts
+      - sed -i -e '/androidx.dev/d' ../settings.gradle.kts
+
+  - versionName: 1.14.0-rc02
+    versionCode: 142
+    commit: c8ea7b2014710c83fdeeaef2d594e04df11a3e90
+    subdir: androidApp
+    gradle:
+      - stableChannel
+      - richCodec
+    prebuild:
+      - sed -i -e 's/isEnable.*/isEnable = false/' build.gradle.kts
+      - sed -i -e '/androidx.dev/d' ../settings.gradle.kts
+
+  - versionName: 1.14.0-rc03
+    versionCode: 143
+    commit: 750f796a2214ba3e09b9afa7b2710bb16fad5e66
+    subdir: androidApp
+    gradle:
+      - stableChannel
+      - richCodec
+    prebuild:
+      - sed -i -e 's/isEnable.*/isEnable = false/' build.gradle.kts
+      - sed -i -e '/androidx.dev/d' ../settings.gradle.kts
+
+AllowedAPKSigningKeys: a7ccec654319efae75095bdcc39b983704185618f2a0328b20f8d9dec66f8bc2
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.14.0-rc03
+CurrentVersionCode: 143

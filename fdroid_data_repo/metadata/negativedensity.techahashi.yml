@@ -1,0 +1,43 @@
+Categories:
+  - Writing
+License: MIT
+SourceCode: https://github.com/andswitch/techahashi
+IssueTracker: https://github.com/andswitch/techahashi/issues
+
+AutoName: Techahashi
+Description: |
+  A fork of https://f-droid.org/packages/trikita.slide.
+
+  This version adds two features to be able to add content that might be useful
+  for presentations that require some technical explanation: the ability to add
+  UML diagrams using a remote PlantUML server, and the ability to add math
+  formulas using MathJax.
+
+RepoType: git
+Repo: https://github.com/andswitch/techahashi
+
+Builds:
+  - versionName: '6'
+    versionCode: 6
+    commit: 573ec82ba5eb434c02c275a0447f9d1213dd780e
+    gradle:
+      - yes
+
+  - versionName: 7.0.0
+    versionCode: 70000
+    commit: 7.0.0
+    gradle:
+      - yes
+
+  - versionName: 7.0.1
+    versionCode: 70001
+    commit: 7.0.1
+    gradle:
+      - yes
+
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 7.0.1
+CurrentVersionCode: 70001
+
+NoSourceSince: 7.0.1

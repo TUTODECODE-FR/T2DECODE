@@ -1,0 +1,775 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Rely on DuckDuckGo and Google for website icons.
+Categories:
+  - Internet
+License: MIT
+AuthorName: theoden8
+SourceCode: https://github.com/theoden8/webspace_app
+IssueTracker: https://github.com/theoden8/webspace_app/issues
+
+AutoName: Webspace
+
+RepoType: git
+Repo: https://github.com/theoden8/webspace_app
+
+Builds:
+  - versionName: 0.1.8
+    versionCode: 14001
+    commit: eeb29f8ce95fa35336ee18151f57251ccd8851a1
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm"
+    ndk: 28.2.13676358
+
+  - versionName: 0.1.8
+    versionCode: 14002
+    commit: eeb29f8ce95fa35336ee18151f57251ccd8851a1
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.1.8
+    versionCode: 14003
+    commit: eeb29f8ce95fa35336ee18151f57251ccd8851a1
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-x64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.0
+    versionCode: 15001
+    commit: 9d5afca2a85b5deac1a6aaa2587e37fb466da053
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.0
+    versionCode: 15002
+    commit: 9d5afca2a85b5deac1a6aaa2587e37fb466da053
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.0
+    versionCode: 15003
+    commit: 9d5afca2a85b5deac1a6aaa2587e37fb466da053
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-x64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.1
+    versionCode: 16001
+    commit: 10dc1b8df42c99c70d3b6620c651e0f4cf65e847
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.1
+    versionCode: 16002
+    commit: 10dc1b8df42c99c70d3b6620c651e0f4cf65e847
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.1
+    versionCode: 16003
+    commit: 10dc1b8df42c99c70d3b6620c651e0f4cf65e847
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-x64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.2
+    versionCode: 17001
+    commit: a54f0c4ce2a48c05bcfa39c069cb61acd91d2b5a
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.2
+    versionCode: 17002
+    commit: a54f0c4ce2a48c05bcfa39c069cb61acd91d2b5a
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.2
+    versionCode: 17003
+    commit: a54f0c4ce2a48c05bcfa39c069cb61acd91d2b5a
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-x64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.3
+    versionCode: 18001
+    commit: f81557bd77973899c52cdfabf7b158644a091f25
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.3
+    versionCode: 18002
+    commit: f81557bd77973899c52cdfabf7b158644a091f25
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.3
+    versionCode: 18003
+    commit: f81557bd77973899c52cdfabf7b158644a091f25
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-x64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.4
+    versionCode: 19001
+    commit: 167fb09f190c9b9c5d45fea0ad4812f8dc9d74e4
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add armv7-linux-androideabi
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.4
+    versionCode: 19002
+    commit: 167fb09f190c9b9c5d45fea0ad4812f8dc9d74e4
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add aarch64-linux-android
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.4
+    versionCode: 19003
+    commit: 167fb09f190c9b9c5d45fea0ad4812f8dc9d74e4
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add x86_64-linux-android
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-x64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.5
+    versionCode: 20001
+    commit: 100843db5b86f11c3ed55f19dd84e0ba442a740c
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add armv7-linux-androideabi
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.5
+    versionCode: 20002
+    commit: 100843db5b86f11c3ed55f19dd84e0ba442a740c
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add aarch64-linux-android
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.5
+    versionCode: 20003
+    commit: 100843db5b86f11c3ed55f19dd84e0ba442a740c
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add x86_64-linux-android
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-x64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.6
+    versionCode: 21001
+    commit: ac631e8602568b0b419ee102ded6cb4251908dbf
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add armv7-linux-androideabi
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.6
+    versionCode: 21002
+    commit: ac631e8602568b0b419ee102ded6cb4251908dbf
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add aarch64-linux-android
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.6
+    versionCode: 21003
+    commit: ac631e8602568b0b419ee102ded6cb4251908dbf
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add x86_64-linux-android
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-x64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.7
+    versionCode: 22001
+    commit: 39f50d5cb39dcf1a21d3dd8f8f5b5c11e4f3d93b
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add armv7-linux-androideabi
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.7
+    versionCode: 22002
+    commit: 39f50d5cb39dcf1a21d3dd8f8f5b5c11e4f3d93b
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add aarch64-linux-android
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.7
+    versionCode: 22003
+    commit: 39f50d5cb39dcf1a21d3dd8f8f5b5c11e4f3d93b
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add x86_64-linux-android
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-x64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.8
+    versionCode: 23001
+    commit: 635eb4597b5a852f87fd4c38080c70db107a51a1
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add armv7-linux-androideabi
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.8
+    versionCode: 23002
+    commit: 635eb4597b5a852f87fd4c38080c70db107a51a1
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add aarch64-linux-android
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-arm64"
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.8
+    versionCode: 23003
+    commit: 635eb4597b5a852f87fd4c38080c70db107a51a1
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - rustVersion=$(sed -n -E 's/channel = "(.*)"/\1/p' rust-toolchain.toml)
+      - '[[ $rustVersion ]]'
+      - cargoNdkVersion=$(sed -E -n 's/.*CARGO_NDK_VERSION.*"(.*)".*/\1/p' .github/workflows/build-and-test.yml)
+      - '[[ $cargoNdkVersion ]]'
+      - rustup default "$rustVersion"
+      - rustup target add x86_64-linux-android
+      - cargo install --locked "cargo-ndk@$cargoNdkVersion"
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/build-and-test.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid --split-per-abi --target-platform="android-x64"
+    ndk: 28.2.13676358
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v.*$
+VercodeOperation:
+  - '%c * 1000 + 1'
+  - '%c * 1000 + 2'
+  - '%c * 1000 + 3'
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 0.2.8
+CurrentVersionCode: 23003

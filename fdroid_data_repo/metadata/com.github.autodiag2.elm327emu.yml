@@ -1,0 +1,89 @@
+Categories:
+  - Development
+License: GPL-3.0-only
+AuthorName: autodiag2
+AuthorEmail: autodiag@netcourrier.com
+WebSite: https://autodiag2.github.io/
+SourceCode: https://github.com/autodiag2/ELM327SimAndroid
+IssueTracker: https://github.com/autodiag2/ELM327SimAndroid/issues
+Changelog: https://github.com/autodiag2/ELM327SimAndroid/releases
+Donate: https://github.com/sponsors/autodiag2
+
+AutoName: ELM327 Emulator
+
+RepoType: git
+Repo: https://github.com/autodiag2/ELM327SimAndroid
+Binaries: 
+  https://github.com/autodiag2/ELM327SimAndroid/releases/download/v%v/com.github.autodiag2.elm327emu.apk
+
+Builds:
+  - versionName: '18'
+    versionCode: 18
+    commit: 421752b6760d0b507f0ad758625f688b26b32e5b
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '19'
+    versionCode: 19
+    commit: c6c4e2f39158e08f22f5443d910b3fb26b3495f6
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '21'
+    versionCode: 21
+    commit: 0ebd73943c9307eb71e4e9c0480ad73b00cf840a
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '22'
+    versionCode: 22
+    commit: 68841ab3f41a671fbae105139ea3e8e960ced68f
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '24'
+    versionCode: 24
+    commit: 5ab9e08cc67f600fee03af1ed55ad7c9782e4da3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '25'
+    versionCode: 25
+    commit: adda4561192a97ebdb5f7087f68dee8185fbae30
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '26'
+    versionCode: 26
+    commit: 0fa56c7060424a63ec985a5c5b8936dfe6751537
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '27'
+    versionCode: 27
+    commit: 5732bc75d852abee4172ba813d358deaed14b360
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: fbb9cd50bad7fdf36f3098a1699315d344cd8ce401d3735d624bc9920d1f6e05
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '27'
+CurrentVersionCode: 27

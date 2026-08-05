@@ -1,0 +1,217 @@
+Categories:
+  - System
+License: MIT
+AuthorName: Yogesh Choudhary Paliyal
+AuthorEmail: yogeshpaliyal.foss@gmail.com
+AuthorWebSite: https://yogeshpaliyal.com
+SourceCode: https://github.com/yogeshpaliyal/Deepr
+IssueTracker: https://github.com/yogeshpaliyal/Deepr/issues
+Changelog: https://github.com/yogeshpaliyal/Deepr/releases
+
+AutoName: Deepr
+
+RepoType: git
+Repo: https://github.com/yogeshpaliyal/Deepr.git
+Binaries: 
+  https://github.com/yogeshpaliyal/Deepr/releases/download/v%v/deepr-release-v%v.apk
+
+Builds:
+  - versionName: 1.0.5
+    versionCode: 6
+    commit: 30522aa6e9f0054441d7c27f3078a9a9070a0245
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.6
+    versionCode: 7
+    commit: 0cbd0dcb14542a77a1048b0b04c612913eb17933
+    subdir: app
+    gradle:
+      - yes
+    build: taskset --cpu-list 0-15 gradle assembleRelease
+
+  - versionName: 1.0.7
+    versionCode: 8
+    commit: d33c7d380789ed439edd19cc962deaac48411522
+    subdir: app
+    gradle:
+      - free
+    build: taskset --cpu-list 0-15 gradle assembleRelease
+
+  - versionName: 1.0.10
+    versionCode: 11
+    commit: 58177ae4fc25d104266738bda3d2dbc147db5114
+    subdir: app
+    gradle:
+      - free
+    build: taskset --cpu-list 0-7 gradle assembleRelease
+
+  - versionName: 1.0.11
+    versionCode: 12
+    commit: 41acbaeef6b8a227ad28b7ef9dc99b786f73235d
+    subdir: app
+    gradle:
+      - free
+    build: taskset --cpu-list 0-7 gradle assembleRelease
+
+  - versionName: 1.0.12
+    versionCode: 13
+    commit: 34cc3ced07d8b72c3b5e3777c5647b4adcf55898
+    subdir: app
+    gradle:
+      - free
+    build: taskset --cpu-list 0-7 gradle assembleRelease
+
+  - versionName: 1.0.13
+    versionCode: 14
+    commit: a4ce52c2864d558715136dc6195baa9097e5fba8
+    subdir: app
+    gradle:
+      - free
+    build: taskset --cpu-list 0-7 gradle assembleRelease
+
+  - versionName: 1.0.16
+    versionCode: 17
+    commit: 52163efc5769cd30eafdda1bb4d77e6d1a4f07ba
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/freePlaystoreImplementation/d' build.gradle.kts
+      - sed -i -e '/googleServices/d' -e '/firebaseCrashlytics/d' ../build.gradle.kts
+    build: taskset --cpu-list 0-7 gradle assembleRelease
+
+  - versionName: 1.0.17
+    versionCode: 18
+    commit: 18119897dcc76ff31e8ec313762c0b26ec1773a7
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/freePlaystoreImplementation/d' build.gradle.kts
+      - sed -i -e '/googleServices/d' -e '/firebaseCrashlytics/d' ../build.gradle.kts
+    build: taskset --cpu-list 0-7 gradle assembleRelease
+
+  - versionName: 1.0.18
+    versionCode: 19
+    commit: 11ab07999bf68825178f848b62416c58679b629d
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/freePlaystoreImplementation/d' build.gradle.kts
+      - sed -i -e '/googleServices/d' -e '/firebaseCrashlytics/d' ../build.gradle.kts
+    build: taskset --cpu-list 0-7 gradle assembleFreeRelease
+
+  - versionName: 1.0.19
+    versionCode: 20
+    commit: ed81c82f2f78f78a0bcf6bc655e7986607e120c1
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/freePlaystoreImplementation/d' build.gradle.kts
+      - sed -i -e '/googleServices/d' -e '/firebaseCrashlytics/d' ../build.gradle.kts
+    build: taskset --cpu-list 0-7 gradle assembleFreeRelease
+
+  - versionName: 1.0.20
+    versionCode: 21
+    disable: baseline.prof fail
+    commit: 2f2da7ad8ca5c395a9852341f02ce1b09274e6a3
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/freePlaystoreImplementation/d' build.gradle.kts
+      - sed -i -e '/googleServices/d' -e '/firebaseCrashlytics/d' ../build.gradle.kts
+    build: taskset --cpu-list 0-3 gradle assembleFreeRelease
+
+  - versionName: 1.0.21
+    versionCode: 22
+    commit: d82c4a50dd1e6f6beaded20aebe9d19d7aa3f078
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/freePlaystoreImplementation/d' build.gradle.kts
+      - sed -i -e '/googleServices/d' -e '/firebaseCrashlytics/d' ../build.gradle.kts
+    build: taskset --cpu-list 0-3 gradle assembleFreeRelease
+
+  - versionName: 1.0.22
+    versionCode: 23
+    commit: 68eea6f2a1414b2b81d469c0467752dd900265f7
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/freePlaystoreImplementation/d' build.gradle.kts
+      - sed -i -e '/googleServices/d' -e '/firebaseCrashlytics/d' ../build.gradle.kts
+    build: taskset --cpu-list 0-3 gradle assembleFreeRelease
+
+  - versionName: 1.0.23
+    versionCode: 24
+    disable: fails to build
+    commit: 7c6235aa0da2eba96d1e0512429a43d11a4f7052
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/freePlaystoreImplementation/d' build.gradle.kts
+      - sed -i -e '/googleServices/d' -e '/firebaseCrashlytics/d' ../build.gradle.kts
+    build: taskset --cpu-list 0-3 gradle assembleFreeRelease
+
+  - versionName: 1.0.26
+    versionCode: 27
+    commit: ae5e5d853f9c840c8d06e1be3a0f763b1229946a
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - github
+    prebuild:
+      - sed -i -e '/proImplementation/d' build.gradle.kts
+      - sed -i -e '/freeImplementation/d' build.gradle.kts
+      - sed -i -e '/googleServices/d' -e '/firebaseCrashlytics/d' ../build.gradle.kts
+
+  - versionName: 1.0.27
+    versionCode: 28
+    commit: 217207095cb43484c83c151418ed19710c8c58aa
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - github
+    prebuild:
+      - sed -i -e '/proImplementation/d' build.gradle.kts
+      - sed -i -e '/freeImplementation/d' build.gradle.kts
+      - sed -i -e '/googleServices/d' -e '/firebaseCrashlytics/d' ../build.gradle.kts
+
+  - versionName: 1.0.28
+    versionCode: 29
+    commit: c86bd057646999aaa9f65139e725596413a81dc2
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - github
+    prebuild:
+      - sed -i -e '/proImplementation/d' build.gradle.kts
+      - sed -i -e '/freeImplementation/d' build.gradle.kts
+      - sed -i -e '/googleServices/d' -e '/firebaseCrashlytics/d' ../build.gradle.kts
+
+AllowedAPKSigningKeys: fea819bc3affd62731572044462abe340f6e288e4c2cad3c4f4d8b6cdfd8c04a
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags v.*[0-9]$
+CurrentVersion: 1.0.28
+CurrentVersionCode: 29

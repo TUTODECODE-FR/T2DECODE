@@ -1,0 +1,122 @@
+AntiFeatures:
+  - NonFreeNet
+Categories:
+  - Internet
+  - News
+  - Reading
+License: GPL-2.0-only
+AuthorName: Livio
+AuthorEmail: javalc6@gmail.com
+WebSite: https://thesaurus.altervista.org/newsreader-help
+SourceCode: https://github.com/javalc6/rssreader
+IssueTracker: https://github.com/javalc6/rssreader/issues
+
+AutoName: News Reader
+
+RepoType: git
+Repo: https://github.com/javalc6/rssreader.git
+
+Builds:
+  - versionName: '1.00'
+    versionCode: 100
+    commit: '100'
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.1
+    versionCode: 101
+    commit: fc9b1ac5621c6aa7a8d6b266d4dee07d63e6de09
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.3
+    versionCode: 103
+    commit: 9b57bb821d32e094b58b94e4928f9d0e98c3f859
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 1.0.4
+    versionCode: 104
+    commit: 6ac2c250c0d8ea237c8458f16bc662fe85712758
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.7
+    versionCode: 107
+    commit: b0d480f2e88318a649777c1d6f2cd710f0574c94
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.8
+    versionCode: 108
+    commit: af7ad02be45e59a79eb475e48682d68d5a6e0366
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.9
+    versionCode: 109
+    commit: e25b510824ecf5c33b111133a3485e1d00499d72
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.10
+    versionCode: 110
+    commit: 86908e8d9ce68155181af06abf4b84de6cc8caee
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.11'
+    versionCode: 111
+    commit: 295aa575ad9e43f317cf6de4869e8f62294e41a0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.12'
+    versionCode: 112
+    commit: a22c73b367e21f4375a2574a6f2a4fee3408e675
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.13'
+    versionCode: 113
+    commit: 099a4ba3826c9735d19215c2aa18c7efd4000772
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.14'
+    versionCode: 114
+    commit: f0602f91e333a0f22f04205f663fcbcec4eb8062
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.2'
+    versionCode: 120
+    commit: 5a61a6406a60507b3b798ee2312de47802d52b63
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.2'
+CurrentVersionCode: 120

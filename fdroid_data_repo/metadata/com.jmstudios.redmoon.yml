@@ -1,0 +1,249 @@
+Categories:
+  - System
+License: GPL-3.0-or-later
+AuthorName: LibreShift
+AuthorEmail: red-moon@smichel.me
+SourceCode: https://github.com/LibreShift/red-moon
+IssueTracker: https://github.com/LibreShift/red-moon/issues
+Translation: https://hosted.weblate.org/engage/red-moon/?
+Changelog: 
+  https://github.com/LibreShift/red-moon/blob/HEAD/app/src/main/assets/changelog.md
+
+AutoName: Red Moon
+
+RepoType: git
+Repo: https://github.com/LibreShift/red-moon.git
+
+Builds:
+  - versionName: '2.1'
+    versionCode: 4
+    commit: v2.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.2'
+    versionCode: 5
+    commit: v2.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.1
+    versionCode: 6
+    commit: v2.2.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.3
+    versionCode: 8
+    commit: v2.2.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.3.0
+    versionCode: 9
+    commit: v2.3.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.5.0
+    versionCode: 11
+    commit: v2.5.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.6.1
+    versionCode: 13
+    commit: v2.6.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.6.2
+    versionCode: 14
+    commit: v2.6.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.7.0
+    versionCode: 15
+    commit: v2.7.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.7.1
+    versionCode: 16
+    commit: v2.7.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.7.2
+    versionCode: 17
+    commit: v2.7.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.7.3
+    versionCode: 18
+    commit: v2.7.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.7.4
+    versionCode: 19
+    commit: v2.7.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.8.0
+    versionCode: 20
+    commit: v2.8.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.8.1
+    versionCode: 21
+    commit: v2.8.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.8.2
+    versionCode: 22
+    commit: v2.8.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.9.0
+    versionCode: 23
+    commit: v2.9.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.9.1
+    versionCode: 24
+    commit: v2.9.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.9.2
+    versionCode: 25
+    commit: v2.9.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.10.0
+    versionCode: 26
+    commit: v2.10.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.10.1
+    versionCode: 27
+    commit: v2.10.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.10.2
+    versionCode: 28
+    commit: v2.10.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 3.0.0
+    versionCode: 29
+    commit: v3.0.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v3.1.0
+    versionCode: 30
+    commit: v3.1.0
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: v3.1.1
+    versionCode: 31
+    commit: v3.1.1
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.1.2
+    versionCode: 32
+    commit: v3.1.2
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.2.0
+    versionCode: 33
+    commit: v3.2.0
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.3.0
+    versionCode: 34
+    commit: v3.3.0
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.3.2
+    versionCode: 36
+    commit: v3.3.2
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.0
+    versionCode: 37
+    commit: v3.4.0
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.5.0
+    versionCode: 38
+    commit: v3.5.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.0.0
+    versionCode: 39
+    commit: e6ee241d4efed116c085a8c6e531e9d3b414d3ab
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 4.0.0
+CurrentVersionCode: 39

@@ -1,0 +1,53 @@
+Categories:
+  - Internet
+  - Social Network
+License: GPL-3.0-only
+AuthorName: Yuzu Vita
+AuthorEmail: fdroid@vitayuzu.day
+SourceCode: https://github.com/heddxh/NeoDB-You
+IssueTracker: https://github.com/heddxh/NeoDB-You/issues
+Translation: https://hosted.weblate.org/engage/neodb-you/
+Changelog: https://github.com/heddxh/NeoDB-You/releases
+
+RepoType: git
+Repo: https://github.com/heddxh/NeoDB-You.git
+Binaries: https://github.com/heddxh/NeoDB-You/releases/download/v%v/NeoDB-You-v%v.apk
+
+Builds:
+  - versionName: 1.0.7
+    versionCode: 9
+    commit: 2a10ff166d053f0f30f5b89502fd72ee3540f665
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.0-rc2
+    versionCode: 11
+    commit: cd8700a1133b83bfe7c8f854a35ee318fe97c115
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.1.0-rc3
+    versionCode: 12
+    commit: 259d765bd0c0828e196f7d9bea3a1207361dff99
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.1.0-rc5
+    versionCode: 14
+    commit: 8222555ffc545b7f1c8fe54be58c15cd054f8586
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+AllowedAPKSigningKeys: 86fc9c9cde4c0c57bcf5766e2a103c7cd1ff9db7eee4643a2159c6ecae4d48f6
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.1.0-rc5
+CurrentVersionCode: 14

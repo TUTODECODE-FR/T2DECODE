@@ -1,0 +1,97 @@
+Categories:
+  - Connectivity
+  - File Transfer
+License: AGPL-3.0-only
+AuthorName: Ammar64
+AuthorEmail: ammar_ramadan151515@hotmail.com
+SourceCode: https://github.com/Ammar64/Sharing
+IssueTracker: https://github.com/Ammar64/Sharing/issues
+Translation: https://hosted.weblate.org/projects/sharing
+Changelog: https://github.com/Ammar64/Sharing/releases
+Donate: https://github.com/sponsors/Ammar64
+
+AutoName: sharing
+
+RepoType: git
+Repo: https://github.com/Ammar64/Sharing
+Binaries: https://github.com/Ammar64/Sharing/releases/download/%v/Sharing-%v.apk
+
+Builds:
+  - versionName: '1.5'
+    versionCode: 15
+    commit: 87d531e68ffff1ebd5cfc70626481ad9425d8751
+    subdir: app
+    gradle:
+      - yes
+    binary: https://github.com/Ammar64/Sharing/releases/download/%v/Sharing.apk
+    antifeatures:
+      NonFreeAssets:
+        en-US: App icon is not free.
+        ar: شعار التطبيق غير مجانى
+
+  - versionName: v1.5.2-beta1
+    versionCode: 18
+    commit: 1de88b7cb40795fe7109fe7536a4dbfa5c5db92e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y npm rsync node-typescript
+    gradle:
+      - yes
+    prebuild:
+      - cd ..
+      - npm install --prefix web
+    antifeatures:
+      NonFreeAssets:
+        en-US: App icon is not free.
+        ar: شعار التطبيق غير مجانى
+
+  - versionName: v1.5.2-beta2
+    versionCode: 19
+    commit: fd7815b79b849f2e745f96f16f87e08f1e1f4ebe
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y npm rsync node-typescript
+    gradle:
+      - yes
+    prebuild:
+      - cd ..
+      - npm install --prefix web
+    antifeatures:
+      NonFreeAssets:
+        en-US: App icon is not free.
+        ar: شعار التطبيق غير مجانى
+
+  - versionName: v1.5.3
+    versionCode: 21
+    commit: ad5aefb82edf1a9f9c8e59d62d3765de405578f6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y npm rsync node-typescript
+    gradle:
+      - yes
+    prebuild:
+      - cd ..
+      - npm install --prefix web
+
+  - versionName: v1.5.4-alpha2
+    versionCode: 22
+    commit: 3cd8ef27dbaca62c8545e319884514c5306f3883
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y npm rsync node-typescript
+    gradle:
+      - yes
+    prebuild:
+      - cd ..
+      - npm install --prefix web
+
+AllowedAPKSigningKeys: 6042462dcefe2df10564b8d48b5d575dc4cc154a512013f541fa64bc19e95cd7
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^((?!alpha|beta).)*$
+CurrentVersion: v1.5.3
+CurrentVersionCode: 21

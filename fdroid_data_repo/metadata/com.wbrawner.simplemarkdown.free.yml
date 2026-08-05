@@ -1,0 +1,206 @@
+Categories:
+  - Text Editor
+  - Writing
+License: Apache-2.0
+AuthorName: William Brawner
+AuthorEmail: me@wbrawner.com
+AuthorWebSite: https://wbrawner.com
+SourceCode: https://codeberg.org/wbrawner/SimpleMarkdown
+IssueTracker: https://codeberg.org/wbrawner/SimpleMarkdown/issues
+Liberapay: wbrawner
+
+AutoName: Simple Markdown
+
+RepoType: git
+Repo: https://codeberg.org/wbrawner/SimpleMarkdown.git
+
+Builds:
+  - versionName: 0.8.12-free
+    versionCode: 34
+    commit: 0.8.12
+    subdir: app
+    gradle:
+      - free
+
+  - versionName: 1.0.2-free
+    versionCode: 44
+    commit: 0195e4ee586b5f21bb850af5dfd8329e989a388f
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/gms/d' -e '/firebase/d' -e 's/= URI/= uri/' -e 's/s01.//' ../build.gradle.kts
+      - sed -i -e '/productFlavors.forEach/,+14d' build.gradle.kts
+
+  - versionName: 2024.10.0-free
+    versionCode: 45
+    commit: cbbef5cf6fea13633d3ea9af2e22d12f3d7dabaa
+    subdir: app
+    gradle:
+      - free
+    rm:
+      - non-free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' -e 's/= URI/= uri/' -e 's/s01.//'
+        ../build.gradle.kts
+      - sed -i -e '/productFlavors.forEach/,+14d' build.gradle.kts
+
+  - versionName: 2024.11.0-free
+    versionCode: 46
+    commit: 5bdb717ce4f2d343adbd2c5b28707ff82fe62b17
+    subdir: app
+    gradle:
+      - free
+    rm:
+      - non-free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' -e 's/= URI/= uri/' -e 's/s01.//'
+        ../build.gradle.kts
+      - sed -i -e '/productFlavors.forEach/,+14d' build.gradle.kts
+
+  - versionName: 2025.1.0-free
+    versionCode: 48
+    commit: d576a85ef9a6ed7482b190a36dc759c9a6ac5339
+    subdir: app
+    gradle:
+      - free
+    rm:
+      - non-free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' -e 's/= URI/= uri/' -e 's/s01.//'
+        ../build.gradle.kts
+      - sed -i -e '/productFlavors.forEach/,+14d' build.gradle.kts
+
+  - versionName: 2025.2.0-free
+    versionCode: 49
+    commit: 9ea9b5a3fdcc766d7249d72d93d53de8644d0ec1
+    subdir: app
+    gradle:
+      - free
+    rm:
+      - non-free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' -e 's/= URI/= uri/' -e 's/s01.//'
+        ../build.gradle.kts
+      - sed -i -e '/productFlavors.forEach/,+14d' build.gradle.kts
+
+  - versionName: 2025.3.0-free
+    versionCode: 50
+    commit: a6bd6d42982aeb91771c2048eb470d29eb66c972
+    subdir: app
+    gradle:
+      - free
+    rm:
+      - non-free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' -e 's/= URI/= uri/' -e 's/s01.//'
+        ../build.gradle.kts
+      - sed -i -e '/productFlavors.forEach/,+14d' build.gradle.kts
+
+  - versionName: 2025.4.0-free
+    versionCode: 51
+    commit: 62fe79efab5ad0b2fab1a1439bda538caaa089e7
+    subdir: app
+    gradle:
+      - free
+    rm:
+      - non-free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' -e 's/= URI/= uri/' -e 's/s01.//'
+        ../build.gradle.kts
+      - sed -i -e '/productFlavors.forEach/,+14d' build.gradle.kts
+
+  - versionName: 2025.5.0-free
+    versionCode: 52
+    commit: 95326fe174369348f752f397623f8221ea6fc820
+    subdir: app
+    gradle:
+      - free
+    rm:
+      - non-free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' -e 's/= URI/= uri/' -e 's/s01.//'
+        ../build.gradle.kts
+      - sed -i -e '/productFlavors.forEach/,+14d' build.gradle.kts
+
+  - versionName: 2025.7.0-free
+    versionCode: 53
+    commit: 66d56926e64dca41192efa76fc5928e35c27df7c
+    subdir: app
+    gradle:
+      - free
+    rm:
+      - non-free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' -e 's/= URI/= uri/' -e 's/s01.//'
+        ../build.gradle.kts
+      - sed -i -e '/productFlavors.forEach/,+14d' build.gradle.kts
+
+  - versionName: 2025.09.00-free
+    versionCode: 54
+    commit: 80c4e3d52de00e9c06f637718db30b0f0fe309fe
+    subdir: app
+    gradle:
+      - free
+    rm:
+      - non-free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' -e 's/= URI/= uri/' -e 's/s01.//'
+        ../build.gradle.kts
+      - sed -i -e '/productFlavors.forEach/,+14d' build.gradle.kts
+
+  - versionName: 2026.03.00-free
+    versionCode: 55
+    commit: c8fe4caa5c72dde7065e8cfd45f7309cdf411c42
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' ../build.gradle.kts
+      - sed -i -e '/billing/d' -e '/play/d' ../non-free/build.gradle.kts
+
+  - versionName: 2026.03.02-free
+    versionCode: 57
+    commit: 5f9be79af4d1112aa3ab2b3f8feff95dfac8ef75
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' ../build.gradle.kts
+      - sed -i -e '/billing/d' -e '/play/d' ../non-free/build.gradle.kts
+
+  - versionName: 2026.04.00-free
+    versionCode: 58
+    commit: fefa253b1d7a1894f4e4cde624c830c6d4993ccb
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' ../build.gradle.kts
+      - sed -i -e '/billing/d' -e '/play/d' ../non-free/build.gradle.kts
+
+  - versionName: 2026.06.01-free
+    versionCode: 60
+    commit: a9bf255a741ff66a6cced8042b8be1edd7a77fd5
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' ../build.gradle.kts
+      - sed -i -e '/billing/d' -e '/play/d' ../non-free/build.gradle.kts
+
+  - versionName: 2026.06.02-free
+    versionCode: 61
+    commit: a0dc26d52007288e91ee50685551a018893e4f86
+    subdir: app
+    gradle:
+      - free
+    prebuild:
+      - sed -i -e '/google.services/d' -e '/firebase/d' ../build.gradle.kts
+      - sed -i -e '/billing/d' -e '/play/d' ../non-free/build.gradle.kts
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckName: com.wbrawner.simplemarkdown
+CurrentVersion: 2026.06.02-free
+CurrentVersionCode: 61

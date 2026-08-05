@@ -1,0 +1,228 @@
+Categories:
+  - Graphics
+License: GPL-3.0-only
+AuthorName: thebluepandabear
+AuthorEmail: therealbluepandabear@gmail.com
+SourceCode: https://github.com/therealbluepandabear/PixaPencil_Classic
+IssueTracker: https://github.com/therealbluepandabear/PixaPencil_Classic/issues
+
+AutoName: PixaPencil
+Description: |-
+  <b>NOTE:</b> Newer versions are no longer open-source licensed.
+
+  PixaPencil is the number one open source pixel art editor for Android.
+
+  Why you should try out PixaPencil:
+  * Contains over 33+ useful features
+  * 100% free of Google Play services
+  * 100% free of advertisements
+  * 100% commitment to open source
+
+RepoType: git
+Repo: https://github.com/therealbluepandabear/PixaPencil_Classic
+
+Builds:
+  - versionName: 0.0.1-rc1.1
+    versionCode: 6
+    commit: c464cdac216e6cc7da17273b375a66fa699c74d7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.0.1
+    versionCode: 7
+    commit: 22f33b93f9303619e37a23fe51ebf0cbdf7f2a01
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.0-beta1
+    versionCode: 8
+    commit: f72b7dabd6be2cfd7a242e201b4cbdd7ea9e333f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.0-beta2
+    versionCode: 9
+    commit: 17940f64eb4c53ee3948faeb9e35b5db312fa12b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.0
+    versionCode: 10
+    commit: 5cbf15bc9f52babf08337809708b0bed152e4c27
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.1
+    versionCode: 11
+    commit: 6c32b0836ba63ab5a2ecdc4d3b588b74a89e5a4a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.2
+    versionCode: 12
+    commit: af3d441646b4d4885d2381adb571f0d1fe55b3dd
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.4
+    versionCode: 14
+    commit: 03d299cb9ca59978628c958cf909016ff89ac73d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.5
+    versionCode: 15
+    commit: 172b3cab332ab2f4d2d9c12bf3980ee098db29e8
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.6
+    versionCode: 16
+    commit: de507654722507d20a4a1dc579e81979647f4e3c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.7-beta3
+    versionCode: 19
+    commit: db8e593956b9132d7474ad0694e78c8153982f1b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.7
+    versionCode: 20
+    commit: 316e83a5c1b4cd99001b10f04f9af63a444625a5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.7-patch1
+    versionCode: 21
+    commit: 9640b933faadbb7eea32f7c3a36736fea841d571
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.8-beta1
+    versionCode: 22
+    commit: b64fc637deb1804ebcd9ef59c1b4c549acf7b3d7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.8-beta2
+    versionCode: 23
+    commit: 0f6efe93943769456647c63131698d3e2ef85929
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.8-rc1
+    versionCode: 24
+    commit: 7bf678a0d9d3572326b70e9a52da6c0a49ae5de0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.8-rc2
+    versionCode: 25
+    commit: 259122a87665104c62e2732612a5f37602cdf48e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.8
+    versionCode: 26
+    commit: 755c0c5a8cb0893807c35d36bbb07a56b057c40b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 0.1.8
+CurrentVersionCode: 26
+
+NoSourceSince: 0.1.8

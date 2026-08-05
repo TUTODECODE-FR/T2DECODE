@@ -1,0 +1,52 @@
+AntiFeatures:
+  - NonFreeNet
+Categories:
+  - Reading
+  - Science & Education
+  - Writing
+License: GPL-3.0-only
+WebSite: http://ketanolab.com
+SourceCode: https://github.com/KetanoLab/Nusimi-android/
+IssueTracker: https://github.com/KetanoLab/Nusimi-android/issues
+Changelog: https://github.com/KetanoLab/Nusimi-android/blob/HEAD/CHANGELOG.md
+Bitcoin: 16rVdKggFrREa8CgcPbz9E4JvMVysAgSna
+
+AutoName: NuSimi
+Description: |-
+  <b>NOTE:</b> Can no longer connect to download the dictionaries.
+
+  NuSimi originally SimiDic is the first free/open source electronic dictionary for Android mobile devices. The app was created to maintain the vitality of native languages through mobile phones y promote the learning and literary use of these languages. It includes 30 dictionaries of 11 Native American languages.
+
+  For students, travelers and the general public, NuSimi is the perfect tool which doesn’t need an internet connection to function. Download it on your cell phone and take in anywhere you want to go!
+
+RepoType: git
+Repo: https://github.com/KetanoLab/Nusimi-android.git
+
+Builds:
+  - versionName: 1.0.0.1
+    versionCode: 6
+    commit: 72b8ed2c367c7771e3a7ac6fb749a337dc348618
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.0.2
+    versionCode: 7
+    commit: 27f9b433f21fbbea3da521637d817e41075a08f8
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.0.0.2
+CurrentVersionCode: 7

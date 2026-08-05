@@ -1,0 +1,37 @@
+Categories:
+  - System
+License: GPL-3.0-or-later
+SourceCode: https://github.com/Lanchon/sigspoof-checker
+IssueTracker: https://github.com/Lanchon/sigspoof-checker/issues
+
+AutoName: Signature Spoofing Checker
+Description: |-
+  This app tests the signature spoofing capability of your Android OS as required
+  by the <a href="https://microg.org/">microG Project</a>. It attempts to fake its own
+  signature and reports whether it succeeds. Simply launch the app to see the
+  result of the test. You can find more information about signature spoofing
+  <a href="https://github.com/microg/android_packages_apps_GmsCore/wiki/Signature-Spoofing">here</a>.
+
+RepoType: git
+Repo: https://github.com/Lanchon/sigspoof-checker
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: v1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.1'
+    versionCode: 2
+    commit: v1.1
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.1'
+CurrentVersionCode: 2

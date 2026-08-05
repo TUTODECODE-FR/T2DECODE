@@ -1,0 +1,317 @@
+Categories:
+  - Location Tracker & Sharer
+  - Sports & Health
+License: GPL-3.0-or-later
+AuthorName: Lukas Bai
+AuthorEmail: aat@bailu.ch
+WebSite: https://bailu.ch/aat
+SourceCode: https://github.com/bailuk/AAT
+IssueTracker: https://github.com/bailuk/AAT/issues
+Changelog: https://github.com/bailuk/AAT/releases
+
+RepoType: git
+Repo: https://github.com/bailuk/AAT.git
+
+Builds:
+  - versionName: v0.5-alpha
+    versionCode: 5
+    commit: v0.5-alpha
+    target: android-21
+
+  - versionName: v0.6-alpha
+    versionCode: 6
+    commit: v0.6-alpha
+    target: android-21
+
+  - versionName: v0.7-alpha
+    versionCode: 7
+    commit: v0.7-alpha
+    target: android-21
+
+  - versionName: v0.8-alpha
+    versionCode: 8
+    commit: v0.8-alpha
+    target: android-21
+
+  - versionName: v0.9-alpha
+    versionCode: 9
+    commit: v0.9-alpha
+    target: android-21
+
+  - versionName: v1.0-beta
+    versionCode: 10
+    commit: v1.0-beta
+    target: android-21
+
+  - versionName: v1.1-beta
+    versionCode: 11
+    commit: v1.1-beta
+    target: android-21
+
+  - versionName: v1.2-beta
+    versionCode: 12
+    commit: v1.2-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.3-beta
+    versionCode: 13
+    commit: v1.3.1-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.4-beta
+    versionCode: 14
+    commit: v1.4-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.5-beta
+    versionCode: 15
+    commit: v1.5-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.6-beta
+    versionCode: 16
+    commit: v1.6-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.7-beta
+    versionCode: 17
+    commit: v1.7-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.8-beta
+    versionCode: 18
+    commit: v1.8-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.9-beta
+    versionCode: 19
+    commit: v1.9-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.10-beta
+    versionCode: 20
+    commit: v1.10-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.11-beta
+    versionCode: 21
+    commit: v1.11-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.12-beta
+    versionCode: 22
+    commit: v1.12-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.13
+    versionCode: 23
+    commit: v1.13
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.14
+    versionCode: 24
+    commit: v1.14
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.14.1
+    versionCode: 25
+    commit: v1.14.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.15
+    versionCode: 26
+    commit: v1.15
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.15.1
+    versionCode: 27
+    commit: v1.15.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.16.1
+    versionCode: 29
+    commit: v1.16.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.17
+    versionCode: 30
+    commit: v1.17
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.18
+    versionCode: 31
+    commit: v1.18
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v1.19
+    versionCode: 32
+    commit: v1.19
+    subdir: app
+    gradle:
+      - yes
+    ndk: r21d
+
+  - versionName: v1.20
+    versionCode: 33
+    commit: v1.20
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/21.3.6528147/21.4.7075529/' build.gradle
+    ndk: r21e
+
+  - versionName: v1.21
+    versionCode: 34
+    commit: 2ad8f087e9b7212d10866f1ccab5caa73c126190
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/21.3.6528147/21.4.7075529/' build.gradle
+    ndk: r21e
+
+  - versionName: v1.22
+    versionCode: 35
+    commit: 507d6cbb21053d3d7972eded01230af8925ac8c1
+    subdir: aat-android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    ndk: r21d
+
+  - versionName: v1.23
+    versionCode: 36
+    commit: 21a75429f96b52863a5748cb99c4962c82be6720
+    subdir: aat-android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    ndk: r21d
+
+  - versionName: v1.24
+    versionCode: 37
+    commit: c327c1bc53811f24dd3e83a14accbf679d0e8884
+    subdir: aat-android
+    gradle:
+      - yes
+    ndk: r21d
+
+  - versionName: v1.25
+    versionCode: 38
+    commit: 642e91dcaf6014295088773c3b9b7f8a9ea1a6e4
+    subdir: aat-android
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven-local/d' ../{settings,build}.gradle.kts
+    ndk: r21d
+
+  - versionName: v1.25.2
+    versionCode: 39
+    commit: 37f1e753597597be07b8cd0da255b58a5dbea394
+    subdir: aat-android
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven-local/d' ../{settings,build}.gradle.kts
+    ndk: r21d
+
+  - versionName: v1.26
+    versionCode: 40
+    commit: 122fa650877f276e20eb958f77c2d4b06dc27b3b
+    subdir: aat-android
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven-local/d' ../{settings,build}.gradle.kts
+    ndk: r21d
+
+  - versionName: v1.27
+    versionCode: 41
+    commit: 6931d6254404c62098ac7e8021aad96fda550c92
+    subdir: aat-android
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven-local/d' ../{settings,build}.gradle.kts
+    ndk: r21d
+
+  - versionName: v1.28
+    versionCode: 42
+    commit: 225356b68388f0fdfee59a86b387ba85e85cd38c
+    subdir: aat-android
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven-local/d' ../{settings,build}.gradle.kts
+    ndk: r21d
+
+  - versionName: v1.29
+    versionCode: 43
+    commit: 729a6975069c153b5b03890f1070fcfe7871a33e
+    subdir: aat-android
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven-local/d' ../{settings,build}.gradle.kts
+    ndk: r21d
+
+  - versionName: v1.30
+    versionCode: 44
+    commit: 65812fc601ce5b888a337c40f4d31880e1f628d4
+    subdir: aat-android
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven-local/d' ../{settings,build}.gradle.kts
+    ndk: r21d
+
+  - versionName: v1.30.1
+    versionCode: 45
+    commit: 54476170c4c5510a7ed7eecb6f104b1a98da39a2
+    subdir: aat-android
+    gradle:
+      - yes
+    prebuild: sed -i -e '/maven-local/d' ../{settings,build}.gradle.kts
+    ndk: r21d
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: v1.30.1
+CurrentVersionCode: 45

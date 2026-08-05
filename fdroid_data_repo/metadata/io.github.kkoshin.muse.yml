@@ -1,0 +1,84 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Rely on TTS API from ElevenLabs.
+Categories:
+  - Text to Speech
+License: GPL-3.0-only
+AuthorName: Ko Shin
+AuthorEmail: koshin.1116@gmail.com
+AuthorWebSite: https://github.com/kkoshin
+SourceCode: https://github.com/kkoshin/Muse
+IssueTracker: https://github.com/kkoshin/Muse/issues
+Changelog: https://github.com/kkoshin/Muse/releases
+
+AutoName: μ's
+
+RepoType: git
+Repo: https://github.com/kkoshin/Muse.git
+Binaries: https://github.com/kkoshin/Muse/releases/download/%v/Muse-%v.apk
+
+Builds:
+  - versionName: 0.1.0
+    versionCode: 1
+    commit: 7fc38c0eb7bba2108fa626d228a1af01b332ab9b
+    subdir: composeApp
+    gradle:
+      - yes
+
+  - versionName: 0.1.1
+    versionCode: 2
+    commit: 62987675c8d12c5f393e31e559f38ac7a70742d5
+    subdir: composeApp
+    gradle:
+      - yes
+
+  - versionName: 0.1.2
+    versionCode: 3
+    commit: 66cfcfd2143e683247fd3486a3862f9461415271
+    subdir: composeApp
+    gradle:
+      - yes
+
+  - versionName: 0.1.3
+    versionCode: 4
+    commit: 8b68a581e16e2798c159d5fafffc52b33ab3a854
+    subdir: composeApp
+    gradle:
+      - yes
+
+  - versionName: 0.1.4
+    versionCode: 5
+    commit: cf027935f7d45a9b23508e034e2970d7d725f64b
+    subdir: composeApp
+    gradle:
+      - yes
+
+  - versionName: 0.2.0
+    versionCode: 6
+    commit: 8e9031583146d22989e5f9436379c19a12883584
+    subdir: composeApp
+    gradle:
+      - yes
+    prebuild: sed -i -e 
+      's|mirrors.aliyun.com/macports/distfiles/gradle|services.gradle.org/distributions|'
+      ../gradle/wrapper/gradle-wrapper.properties
+
+  - versionName: 0.2.1
+    versionCode: 7
+    commit: c743b1a2fcb1ab1832a292090e5afbd1cbbade18
+    subdir: composeApp
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/jetbrains/d' ../settings.gradle.kts
+      - sed -i -e 
+        's!mirrors.aliyun.com/macports/distfiles/gradle!services.gradle.org/distributions!'
+        ../gradle/wrapper/gradle-wrapper.properties
+
+AllowedAPKSigningKeys: b780e71c0d06f9ac156ed200b13248c1ce39c3cb5d497a53fdf041c2502576d9
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^[\d.]+$
+UpdateCheckData: composeApp/build.gradle.kts|code = (\d+)||
+CurrentVersion: 0.2.1
+CurrentVersionCode: 7

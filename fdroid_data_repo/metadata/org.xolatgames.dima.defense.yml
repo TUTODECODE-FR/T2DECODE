@@ -1,0 +1,109 @@
+Categories:
+  - Strategy Game
+License: Apache-2.0
+AuthorName: xolatgames
+AuthorEmail: hello@xolat.games
+AuthorWebSite: https://xolat.games
+SourceCode: https://codeberg.org/xolatgames/Dima-Defense
+IssueTracker: https://codeberg.org/xolatgames/Dima-Defense/issues
+Changelog: https://codeberg.org/xolatgames/Dima-Defense/src/branch/main/CHANGELOG.md
+
+AutoName: Dima Defense
+
+RepoType: git
+Repo: https://codeberg.org/xolatgames/Dima-Defense.git
+
+Builds:
+  - versionName: 0.5.1
+    versionCode: 1
+    commit: 9d2fcc304c4ed5e338342dec49367e1056b8fe5c
+    subdir: android
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e "/signingConfig/d" build.gradle
+      - sed -i -e "/s01.oss.sonatype.org/d" ../build.gradle
+      - sed -i -e "/org.gradle.toolchains.foojay-resolver-convention/d" ../settings.gradle
+
+  - versionName: 0.6.0
+    versionCode: 2
+    commit: b323ea2fdc95638517f0ca8c7364bc824d5800d1
+    subdir: android
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e "/signingConfig/d" build.gradle
+      - sed -i -e "/s01.oss.sonatype.org/d" ../build.gradle
+      - sed -i -e "/org.gradle.toolchains.foojay-resolver-convention/d" ../settings.gradle
+
+  - versionName: 0.6.2
+    versionCode: 4
+    commit: 8df26f78dcdcb6a93a4bb4827dd23a3f367f551b
+    subdir: android
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e "/signingConfig/d" build.gradle
+      - sed -i -e "/s01.oss.sonatype.org/d" ../build.gradle
+      - sed -i -e "/org.gradle.toolchains.foojay-resolver-convention/d" ../settings.gradle
+
+  - versionName: 0.7.0
+    versionCode: 5
+    commit: 3f9e7ee2ee64de37619c08754030ec0b504a1706
+    subdir: android
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e "/signingConfig/d" build.gradle
+      - sed -i -e "/s01.oss.sonatype.org/d" ../build.gradle
+      - sed -i -e "/org.gradle.toolchains.foojay-resolver-convention/d" ../settings.gradle
+
+  - versionName: 0.7.4
+    versionCode: 9
+    commit: cbb588b11c53db20a1a6f873a3fbef84428acbdd
+    subdir: android
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e "/signingConfig/d" build.gradle
+      - sed -i -e "/s01.oss.sonatype.org/d" ../build.gradle
+      - sed -i -e "/org.gradle.toolchains.foojay-resolver-convention/d" ../settings.gradle
+
+  - versionName: 0.7.5
+    versionCode: 10
+    commit: 5e5da761ce8ecae40134f06cfb6ad736a38f8f73
+    subdir: android
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e "/signingConfig/d" build.gradle
+      - sed -i -e "/s01.oss.sonatype.org/d" ../build.gradle
+      - sed -i -e "/org.gradle.toolchains.foojay-resolver-convention/d" ../settings.gradle
+
+  - versionName: 0.8.0
+    versionCode: 11
+    commit: c73124a8b83aaf9c056d35c363520804983ef2de
+    subdir: android
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e "/signingConfig/d" build.gradle
+      - sed -i -e "/s01.oss.sonatype.org/d" ../build.gradle
+      - sed -i -e "/org.gradle.toolchains.foojay-resolver-convention/d" ../settings.gradle
+
+  - versionName: 0.9.0
+    versionCode: 13
+    commit: 70a212f0dcc14649e8faa099456e521cdd917079
+    subdir: android
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e "/signingConfig/d" build.gradle
+      - sed -i -e "/s01.oss.sonatype.org/d" ../build.gradle
+      - sed -i -e "/org.gradle.toolchains.foojay-resolver-convention/d" ../settings.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: android/build.gradle|versionCode (\d+)|.|versionName "([\d.]+)"
+CurrentVersion: 0.9.0
+CurrentVersionCode: 13

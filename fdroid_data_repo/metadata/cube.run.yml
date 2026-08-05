@@ -1,0 +1,43 @@
+Categories:
+  - Action Game
+  - Casual Game
+License: GPL-3.0-only
+AuthorName: Eve-146T
+SourceCode: https://github.com/Eve-146T/cube-run
+IssueTracker: https://github.com/Eve-146T/cube-run/issues
+Changelog: https://github.com/Eve-146T/cube-run/releases
+
+AutoName: Cube Run
+
+RepoType: git
+Repo: https://github.com/Eve-146T/cube-run.git
+Binaries: https://github.com/Eve-146T/cube-run/releases/download/v%v/cube-run-v%v.apk
+
+Builds:
+  - versionName: '1.2'
+    versionCode: 3
+    commit: 2501a605ba9977e0ad60a907b2142d0df231c440
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.3'
+    versionCode: 4
+    commit: df42eb238fbda43f5fc2968392918beda7ca017e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.4'
+    versionCode: 5
+    commit: 5b5890ceb49aaedf0a8198a9f2123f005b7aaaa1
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: 2fe09f50180d92e3b3204992ffc9a8c598087b9a7bac0b12d3f23a1e3687fd7f
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.4'
+CurrentVersionCode: 5

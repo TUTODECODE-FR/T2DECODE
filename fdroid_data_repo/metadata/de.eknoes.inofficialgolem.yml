@@ -1,0 +1,97 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on Golem.de website.
+Categories:
+  - News
+  - Reading
+License: GPL-3.0-only
+AuthorName: Soenke Huster
+AuthorEmail: projekte@eknoes.de
+SourceCode: https://github.com/eknoes/golem-android-reader
+IssueTracker: https://github.com/eknoes/golem-android-reader/issues
+
+AutoName: Golem.de
+
+RepoType: git
+Repo: https://github.com/eknoes/golem-android-reader.git
+
+Builds:
+  - versionName: 1.2.1
+    versionCode: 137
+    commit: v1.2.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.2
+    versionCode: 138
+    commit: f8b9406b3e5d1ecb8147bb0eaf48e6c503d64863
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.3
+    versionCode: 139
+    commit: 1d3a038d81d1dc6c968e2bf1c60d08c259780274
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.3
+    versionCode: 141
+    commit: 6df4fd5ca1982a01fe9b8b8ae5c09526ef09a402
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.5
+    versionCode: 143
+    commit: d3dd4c7522cc9d4ccd8424f52d248a627291f90f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 1.2.7
+    versionCode: 145
+    commit: 55f2e6ea40790ceaa7c34b7821b850c4e5485e03
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 1.2.8
+    versionCode: 146
+    commit: 596d5bb0d9eb8d42f9991c8bf39ec325375c1e35
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 1.2.9
+    versionCode: 147
+    commit: 4036141655b469b430ddae9362a98b4ea74953b2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.10
+    versionCode: 148
+    commit: 27abac3455d63e9f6b0c7c2d1c3ffc13d16522a4
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.2.10
+CurrentVersionCode: 148

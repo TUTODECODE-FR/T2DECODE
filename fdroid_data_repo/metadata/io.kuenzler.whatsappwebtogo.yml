@@ -1,0 +1,101 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: WhatsApp is not libre.
+Categories:
+  - Internet
+License: MIT
+SourceCode: https://github.com/92lleo/WhatsappWebToGo
+IssueTracker: https://github.com/92lleo/WhatsappWebToGo/issues
+Changelog: https://github.com/92lleo/WhatsappWebToGo/releases
+
+AutoName: WhatsApp Web To Go
+
+RepoType: git
+Repo: https://github.com/92lleo/WhatsappWebToGo
+
+Builds:
+  - versionName: 1.5.3
+    versionCode: 28
+    commit: v1.5.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 29
+    commit: v1.6.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.1
+    versionCode: 30
+    commit: v1.6.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.2
+    versionCode: 31
+    commit: v1.6.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.3
+    versionCode: 32
+    commit: v1.6.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.4
+    versionCode: 33
+    commit: v1.6.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.0
+    versionCode: 34
+    commit: v1.7.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.1
+    versionCode: 35
+    commit: v1.7.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.2
+    versionCode: 36
+    commit: 33b8826a346e1ac38ddd8e3cdd29bf3f04f6cdf2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.3
+    versionCode: 37
+    commit: f2cdd2cfe70838fd3ddefbfe913505fcbeecb51d
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.5
+    versionCode: 39
+    commit: 1d89691fe29660b4c56d4fd0492213b67d167ab6
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/4.0.2/7.2.2/' ../build.gradle
+      - sed -i -e 's/6.1.1/7.3.3/' ../gradle/wrapper/gradle-wrapper.properties
+      - echo 'android { lintOptions { abortOnError false } }' >> build.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.7.5
+CurrentVersionCode: 39

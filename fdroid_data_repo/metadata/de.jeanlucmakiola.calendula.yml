@@ -1,0 +1,82 @@
+Categories:
+  - Calendar & Agenda
+License: MIT
+AuthorName: Jean-Luc Makiola
+SourceCode: https://gitea.jeanlucmakiola.de/makiolaj/calendula
+IssueTracker: https://gitea.jeanlucmakiola.de/makiolaj/calendula/issues
+Changelog: https://gitea.jeanlucmakiola.de/makiolaj/calendula/src/branch/main/CHANGELOG.md
+Donate: https://ko-fi.com/jeanlucmakiola
+
+AutoName: Calendula
+
+RepoType: git
+Repo: https://gitea.jeanlucmakiola.de/makiolaj/calendula.git
+Binaries: https://apps.dev.jeanlucmakiola.de/dev/fdroid/repo/calendula_v%v.apk
+
+Builds:
+  - versionName: 2.7.5
+    versionCode: 20705
+    commit: d0b68233850ba11225fcc4e6f60d1c4a09fd2cdb
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.10.0
+    versionCode: 21000
+    commit: 07a8faf2df057ac9c87aa256d5b1162c95638c46
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.12.0
+    versionCode: 21200
+    commit: fb2a40114abd118e99923abfdde794ade3c0fdcb
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.13.0
+    versionCode: 21300
+    commit: 2239c38ecc4b9eccf963465b02213cbb9f124e94
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.14.0
+    versionCode: 21400
+    commit: 1e7ee5b98aa24f1ba2d60dcbc43aeb1e8c5f15a3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.14.1
+    versionCode: 21401
+    commit: 95c5fe76e68338b3a5feb6de6ddc8e7db1946a6f
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.15.0
+    versionCode: 21500
+    commit: 5be5ff77d0f41e6d8eeb519bdf896c672ea7b348
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.16.0
+    versionCode: 21600
+    commit: bb349730477133dd235d35c8a16ed84d0a519041
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: 5cdaee8eb31cb0df9157c646ae3ec8b3dc43b5bb72624e088c9ddea0c4eb5ec1
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9.]+$
+CurrentVersion: 2.16.0
+CurrentVersionCode: 21600

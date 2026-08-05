@@ -1,0 +1,736 @@
+Categories:
+  - Connectivity
+  - Remote Access
+License: GPL-2.0-only
+AuthorName: Christian Beier
+AuthorEmail: contact@christianbeier.net
+AuthorWebSite: https://christianbeier.net
+SourceCode: https://github.com/bk138/droidVNC-NG
+IssueTracker: https://github.com/bk138/droidVNC-NG/issues
+Changelog: https://github.com/bk138/droidVNC-NG/releases
+
+AutoName: droidVNC-NG
+
+RepoType: git
+Repo: https://github.com/bk138/droidVNC-NG.git
+
+Builds:
+  - versionName: 1.2.0
+    versionCode: 5
+    commit: v1.2.0
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    ndk: r21e
+
+  - versionName: 1.2.1
+    versionCode: 6
+    commit: 204c4a2db9aa88ad436b07fcd2b818c2f76d7d2f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    ndk: r21e
+
+  - versionName: 1.2.3
+    versionCode: 8
+    commit: 84422e770a21b047eac586c74d496864a197458f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    ndk: r21e
+
+  - versionName: 1.2.4
+    versionCode: 9
+    commit: 1250ef7d182d2cccfbe1b69a183eaf589521250b
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    ndk: r21e
+
+  - versionName: 1.2.5
+    versionCode: 10
+    commit: 8da099706355de509c8e5d9e90fffd4c1e83dcd2
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 $$SDK$$/tools/bin/sdkmanager
+      'cmake;3.10.2.4988404' > /dev/null
+    ndk: r21e
+
+  - versionName: 1.2.6
+    versionCode: 11
+    commit: 90fb21976c7a097a7791173fe0ca2c8c68751dc8
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 $$SDK$$/tools/bin/sdkmanager
+      'cmake;3.10.2.4988404' > /dev/null
+    ndk: r21e
+
+  - versionName: 1.3.0
+    versionCode: 13
+    commit: 83fc5b1b174086d1a73f38795610828679ebbf7c
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 $$SDK$$/tools/bin/sdkmanager
+      'cmake;3.10.2.4988404' > /dev/null
+    ndk: r21e
+
+  - versionName: 1.3.1
+    versionCode: 14
+    commit: eaf756147761dd304802ee5802ab511337218e55
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 $$SDK$$/tools/bin/sdkmanager
+      'cmake;3.10.2.4988404' > /dev/null
+    ndk: r21e
+
+  - versionName: 1.3.2
+    versionCode: 15
+    commit: 680ea11e7c78db6c05afd6093aa1019fb79f7174
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 $$SDK$$/tools/bin/sdkmanager
+      'cmake;3.10.2.4988404' > /dev/null
+    ndk: r21e
+
+  - versionName: 1.3.3
+    versionCode: 16
+    commit: f3852869c3fd0439025c79cd3196cfb468379934
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 $$SDK$$/tools/bin/sdkmanager
+      'cmake;3.10.2.4988404' > /dev/null
+    ndk: r21e
+
+  - versionName: 1.3.4
+    versionCode: 17
+    commit: 8474b0d82a43dd418cb1c548962f373fae02d078
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 $$SDK$$/tools/bin/sdkmanager
+      'cmake;3.10.2.4988404' > /dev/null
+    ndk: r21e
+
+  - versionName: 1.3.5
+    versionCode: 18
+    commit: 15de76a0f92af0a42cf2a167f5c63c4d652ddf2b
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: r21e
+
+  - versionName: 1.4.0
+    versionCode: 19
+    commit: c01ae49bc9a856906cdc7958c27e7effe2801cf0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: r21e
+
+  - versionName: 2.0.0
+    versionCode: 20
+    commit: 7f32fa1d5ae45c0fe4026c3f5a263875bcbd9e09
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: r21e
+
+  - versionName: 2.1.1
+    versionCode: 22
+    commit: 5874725647beb6f0e37473a881b40b7cac299877
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: r21e
+
+  - versionName: 2.1.2
+    versionCode: 23
+    commit: acd6bcc4fd95e09f6a22a3aee2da66a2322eec0a
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: r21e
+
+  - versionName: 2.1.3
+    versionCode: 24
+    commit: d4be3d5ecf0cceeba9fc043da884a7b2e63efc5f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: r21e
+
+  - versionName: 2.1.4
+    versionCode: 25
+    commit: 5d797a85ba3ad707fa48d36af92f836577f700f9
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: r21e
+
+  - versionName: 2.1.5
+    versionCode: 26
+    commit: 22f873ae6b91f5295bf8e09e6e952d4f39bd6ada
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: r21e
+
+  - versionName: 2.1.6
+    versionCode: 27
+    commit: 44cbdca73d0fecfb539ae9070ed365ab7771a81e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: r21e
+
+  - versionName: 2.1.7
+    versionCode: 28
+    commit: 9d22a8a8e7dbd9058c829f2225aac9ee20eecba0
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: 25.1.8937393
+
+  - versionName: 2.2.0
+    versionCode: 29
+    commit: cb4cfd39c0797551f8a411a231afe9b412bef2f3
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: 25.1.8937393
+
+  - versionName: 2.3.0
+    versionCode: 30
+    commit: 2519eb506026ebd81a59ed33e3c499f163891af4
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: 25.1.8937393
+
+  - versionName: 2.3.1
+    versionCode: 31
+    commit: 0645922df59b4aa375328f70201c5d60433a5097
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: 25.1.8937393
+
+  - versionName: 2.4.0
+    versionCode: 32
+    commit: 13f2d6074015a61cbd2883779580867c61997d56
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: 26.1.10909125
+
+  - versionName: 2.4.1
+    versionCode: 33
+    commit: 2c24eb5875dd876895f4558233279386409269ab
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: 26.1.10909125
+
+  - versionName: 2.5.0
+    versionCode: 34
+    commit: 2a773568492099d1eeeb80b453c79d3f75cd6ef2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: 26.1.10909125
+
+  - versionName: 2.6.0
+    versionCode: 35
+    commit: d83e571b125c84a8a723bb4acd6ebce616716594
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    ndk: 26.1.10909125
+
+  - versionName: 2.7.1
+    versionCode: 37
+    commit: e8877a30555575bc07ea0bbe60602437d210ddd4
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: 26.1.10909125
+
+  - versionName: 2.7.2
+    versionCode: 38
+    commit: b6e2796f242394b212f0bc127509756f28b309f4
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: 26.1.10909125
+
+  - versionName: 2.7.3
+    versionCode: 39
+    commit: 8f4cd12413cb4c23602911f4d7fdacfbac0e8f03
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: r27
+
+  - versionName: 2.8.0
+    versionCode: 40
+    commit: 99c3cd3b5d967c24ef4ff2a2ac7ec7b7d898652b
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: r27
+
+  - versionName: 2.9.0
+    versionCode: 41
+    commit: be2272519fcdc4539cd2d2713c70f09632f0ff5b
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: r27
+
+  - versionName: 2.9.1
+    versionCode: 42
+    commit: 69ea77bb6f2bebcf31e305d24e4035277c9d16f2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: r27
+
+  - versionName: 2.9.2
+    versionCode: 43
+    commit: c9628ccaaaded385672cc6fb1d90b985afc515f2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: r27
+
+  - versionName: 2.9.3
+    versionCode: 44
+    commit: 392005f643052f2fd175d54d2d1abfe63a3bd671
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: r27
+
+  - versionName: 2.10.1
+    versionCode: 46
+    commit: 3ac78ff4f28a0bdb947ce6213a6a906361858a52
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: r27
+
+  - versionName: 2.10.2
+    versionCode: 47
+    commit: ab5f56d0d4028d2b583e4fea3069826650525e1f
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: r27
+
+  - versionName: 2.11.0
+    versionCode: 48
+    commit: 5d4d133ddde6c73d2b64a1926305722e0610a0be
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: r27
+
+  - versionName: 2.12.0
+    versionCode: 49
+    commit: de9c2a34a9f29f27bffd88e86f9b84813dbe216a
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: r27
+
+  - versionName: 2.13.0
+    versionCode: 50
+    commit: 653f98b2b95c0aa13fdb2acd41322660dc912fe6
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sdkmanager 'cmake;3.10.2.4988404'
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: r27
+
+  - versionName: 2.14.0
+    versionCode: 51
+    commit: dfa9e3ccc272cbd9a1f4683996990794dce9965b
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild:
+      - sdkmanager 'cmake;3.10.2.4988404'
+      - sed -i -e 's/8.12.0/8.11.1/' ../build.gradle
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+    ndk: r27
+
+  - versionName: 2.15.0
+    versionCode: 52
+    commit: 40f8a7c85e89ac1db5f39f5f06057e3fffbfd020
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild:
+      - sdkmanager 'cmake;3.10.2.4988404'
+      - sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+      - libvncserver/doc/doxygen-awesome-css/package.json
+    ndk: r27
+
+  - versionName: 2.16.0
+    versionCode: 53
+    commit: d4b4367696f255bd78739ef507af1761fa365a30
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+      - libvncserver/doc/doxygen-awesome-css/package.json
+    ndk: r27
+
+  - versionName: 2.16.1
+    versionCode: 54
+    commit: 511b7acbd60b5dc531c4212d1e9e7f8ddf0d9421
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+      - libvncserver/doc/doxygen-awesome-css/package.json
+    ndk: r27
+
+  - versionName: 2.17.0
+    versionCode: 55
+    commit: be88d6a0d1596e03b7fa96429241988c8eda619d
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build
+    gradle:
+      - yes
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+      - libvncserver/doc/doxygen-awesome-css/package.json
+      - libjpeg-turbo/java/doc
+    ndk: r27
+
+  - versionName: 2.18.0
+    versionCode: 56
+    commit: 2c07c2bfd833838d19ada8d9e8249b0c12ffc6a9
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build
+    gradle:
+      - yes
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+      - libvncserver/doc/doxygen-awesome-css/package.json
+      - libjpeg-turbo/java/doc
+    ndk: r27
+
+  - versionName: 2.18.1
+    versionCode: 57
+    commit: 184f0215cc2d5c493769aa7980ed41582f4aa263
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build
+    gradle:
+      - yes
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+      - libvncserver/doc/doxygen-awesome-css/package.json
+      - libjpeg-turbo/java/doc
+    ndk: r27
+
+  - versionName: 2.18.2
+    versionCode: 58
+    commit: 9c318b6be252620ca186ca3d98e90183cb4a374b
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build
+    gradle:
+      - yes
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+      - libvncserver/doc/doxygen-awesome-css/package.json
+      - libjpeg-turbo/java/doc
+    ndk: r27
+
+  - versionName: 2.19.0
+    versionCode: 59
+    commit: e5c7755c7e22021dd49be7141849b648fcc8be69
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build
+    gradle:
+      - yes
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+      - libvncserver/doc/doxygen-awesome-css/package.json
+      - libjpeg-turbo/java/doc
+    ndk: 28.2.13676358
+
+  - versionName: 2.20.0
+    versionCode: 60
+    commit: e3415f6014bedad146603ba62032533c7ce55094
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build
+    gradle:
+      - yes
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+      - libvncserver/doc/doxygen-awesome-css/package.json
+      - libjpeg-turbo/java/doc
+    ndk: 28.2.13676358
+
+  - versionName: 2.20.1
+    versionCode: 61
+    commit: 1b2b3931ddce543d7737bf22c127076b92b1f293
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build
+    gradle:
+      - yes
+    scandelete:
+      - noVNC/package.json
+      - libvncserver/webclients/novnc/package.json
+      - libvncserver/doc/doxygen-awesome-css/package.json
+    ndk: 28.2.13676358
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.20.1
+CurrentVersionCode: 61

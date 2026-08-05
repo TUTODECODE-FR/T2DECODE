@@ -1,0 +1,46 @@
+Categories:
+  - System
+License: GPL-3.0-only
+AuthorName: lucky
+AuthorEmail: x13a@pm.me
+AuthorWebSite: https://x13a.github.io
+SourceCode: https://github.com/x13a/Aodify
+IssueTracker: https://github.com/x13a/Aodify/issues
+
+AutoName: Aodify
+Description: |-
+  <b>NOTE:</b> App repo is archived by dev. It is read-only for all users and it is no longer actively maintained.
+
+  Tiny app to show Always On Display on demand.
+  Tested with Google Pixel.
+
+  You have to grant WRITE_SECURE_SETTINGS permission:
+  $ adb shell pm grant me.lucky.aodify android.permission.WRITE_SECURE_SETTINGS
+
+  Permissions:
+  * NOTIFICATION_LISTENER - turn on AOD on notification
+  * WRITE_SECURE_SETTINGS - control AOD
+
+  It is Free Open Source Software.
+  License: GPL-3
+
+RepoType: git
+Repo: https://github.com/x13a/Aodify.git
+
+Builds:
+  - versionName: 1.0.2
+    versionCode: 3
+    commit: a2853bda7e5e2259771c098c23042da4196c835f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.0.2
+CurrentVersionCode: 3

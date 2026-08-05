@@ -1,0 +1,177 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: The ETH/UZH backends are proprietary
+  TetheredNet:
+    en-US: Relies on ETH/UZH backends.
+Categories:
+  - Internet
+  - Sports & Health
+License: MIT
+AuthorName: Florian Frauenfelder
+AuthorWebSite: https://florian-frauenfelder.ch
+SourceCode: https://github.com/fflopsi/mensa-zh
+IssueTracker: https://github.com/fflopsi/mensa-zh/issues
+Changelog: https://github.com/fflopsi/mensa-zh/releases
+
+AutoName: MensaZH
+
+RepoType: git
+Repo: https://github.com/fflopsi/mensa-zh.git
+
+Builds:
+  - versionName: 1.5.5
+    versionCode: 15
+    commit: v1.5.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.6
+    versionCode: 16
+    commit: c6335c75bd5252df353aee6341bec115b508101b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.5.7
+    versionCode: 17
+    commit: 9d1f0b367e8b546689e9f535ecf785a0dd38f1af
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 18
+    commit: c6a980bb8a7b0b16c9d9601a4bca44d09f22fa26
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.7.0
+    versionCode: 19
+    commit: ac843a800ea99033febdac92b80a19eb7b17b00c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.7.2
+    versionCode: 21
+    commit: 36cc453781ab80862211b9e70ca87b6a21cc36f9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.2
+    versionCode: 24
+    commit: add22b71456b8ff4da61b57b4befd1f1f03e457e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.3
+    versionCode: 25
+    commit: a2292b7ca8269e98ab46a611965e599a88f4a22f
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.4
+    versionCode: 26
+    commit: f0e3483922f02c29b70d42acede4ea36b20c4ddf
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.9.2
+    versionCode: 29
+    commit: b475f0713232e2e1b2964f7f271a1c3f67c525a1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.9.3
+    versionCode: 30
+    commit: fc4a7b9b768a447ef8e45cccfbecbaf33699263c
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.0
+    versionCode: 31
+    commit: 48f2c3a8764305e21487801f4195588f76800fca
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.11.0
+    versionCode: 32
+    commit: 729632462d1e3404bbf5d758c62dc75d7cbbcfa5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.11.1
+    versionCode: 33
+    commit: 524c552796fa90933005f5fa3f5a9819798e52eb
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.11.2
+    versionCode: 34
+    commit: 2473ba745d1459112d813cfebb1b8ee3810d929c
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.4
+    versionCode: 54
+    commit: 939b3ad6af057aaf1a50e5c748acb097ee2807ed
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.0
+    versionCode: 60
+    commit: c235408cdc4be474678ec745cc91e38f9a1e9bf4
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 2.2.0
+    versionCode: 70
+    commit: 90f160b25087587540bd38d958d3f362f0070eb8
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 2.2.1
+    versionCode: 71
+    commit: c4442cfac83ddbe2e5a0c1005ebd49e052c38fc8
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.2.1
+CurrentVersionCode: 71

@@ -1,0 +1,60 @@
+Categories:
+  - Camera
+License: GPL-3.0-only
+AuthorName: Umer Farooq
+SourceCode: https://github.com/UmerCodez/WebsocketCAM
+IssueTracker: https://github.com/UmerCodez/WebsocketCAM/issues
+Changelog: https://github.com/UmerCodez/WebsocketCAM/releases
+
+AutoName: Websocket CAM
+
+RepoType: git
+Repo: https://github.com/UmerCodez/WebsocketCAM.git
+
+Builds:
+  - versionName: 1.0.1
+    versionCode: 2
+    commit: b8df0f88eee56d081b5bc3c3c372c01a2b778a10
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.0
+    versionCode: 3
+    commit: 29b0cf6750ceb806f226da1727f123c22b93c4c6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.0
+    versionCode: 4
+    commit: b56f47c9fb62f1539efd926af62194f1c185da17
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.0
+    versionCode: 5
+    commit: ec2cd790e3f19dd8c3f64134c2bbdf56b95d4d5a
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.1
+    versionCode: 6
+    commit: 0b59e2d4aeeb9223dd48996b55ddd4946b52c100
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.0
+    versionCode: 7
+    commit: 227e9fa06bd36ce81c91f35e1cce1af4c47b982a
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.4.0
+CurrentVersionCode: 7

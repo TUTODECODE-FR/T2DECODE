@@ -1,0 +1,116 @@
+Categories:
+  - Development
+License: Apache-2.0
+AuthorName: k3b
+SourceCode: https://github.com/k3b/intent-intercept
+IssueTracker: https://github.com/k3b/intent-intercept/issues
+Changelog: https://github.com/k3b/intent-intercept/releases
+Donate: https://donate.openstreetmap.org/
+
+AutoName: Intent Intercept
+Description: |-
+  This app attempts to intercept as many intents as possible in order to examine
+  their contents. This helps when trying to develop an app that reacts to a
+  particular intent.
+
+  Some details of the intent can now be edited before resending it.
+
+  This app is forked from <a href="https://github.com/intrications/intent-intercept">https://github.com/intrications/intent-intercept</a>
+  version 2.2.4,224 which is not maintained any more.
+
+RepoType: git
+Repo: https://github.com/k3b/intent-intercept.git
+
+Builds:
+  - versionName: 3.0.0
+    versionCode: 300
+    commit: v3.0.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 3.0.1
+    versionCode: 301
+    commit: v3.0.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 3.0.2
+    versionCode: 302
+    commit: v3.0.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.0.0
+    versionCode: 400
+    commit: v4.0.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.0.1
+    versionCode: 401
+    commit: 8de504997c413c7a0c4c14259afa8a06adb4a116
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.0.2
+    versionCode: 402
+    commit: a01281e4237d5be44a910e0125f2ebc4191c0524
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.0.3
+    versionCode: 403
+    commit: 80539f0e7b72bbd2d999d592c3ef22ef7fbabaa4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.0.4
+    versionCode: 404
+    commit: 74d186c36b2ff1d43ff125b07ab8210553b8ee1b
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.0.5
+    versionCode: 405
+    commit: 23ce4bd4e0e2345c058e2c57415b030b8930ad8d
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.0.6
+    versionCode: 406
+    commit: bff844ffe4948c168cb15b32219ac77410a4e15b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 4.0.7
+    versionCode: 407
+    commit: 9a483ef33da3bbbe0ec3adf25782ef643a7c4ebe
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.1.0
+    versionCode: 408
+    commit: e819c4db2c21c583e008eb0110738fbd0d981766
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 4.1.0
+CurrentVersionCode: 408

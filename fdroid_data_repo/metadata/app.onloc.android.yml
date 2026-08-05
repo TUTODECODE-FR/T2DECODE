@@ -1,0 +1,107 @@
+Categories:
+  - Location Tracker & Sharer
+License: GPL-3.0-or-later
+SourceCode: https://github.com/onloc-app/onloc-android
+IssueTracker: https://github.com/onloc-app/onloc-android/issues
+Changelog: https://github.com/onloc-app/onloc-android/releases
+
+AutoName: Onloc
+
+RepoType: git
+Repo: https://github.com/onloc-app/onloc-android
+Binaries: https://github.com/onloc-app/onloc-android/releases/download/%v/onloc-%v.apk
+
+Builds:
+  - versionName: 1.1.1
+    versionCode: 111
+    commit: dabaaf17a68fe99b795fdb2e7aba67c0d0f6d749
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.2
+    versionCode: 112
+    commit: 837bfc7f65042c3ec1fd510c9298ceb5fa7bbac7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.4
+    versionCode: 114
+    commit: fcf756e1bdef272102851297417470d8b7584d87
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.5
+    versionCode: 115
+    commit: 98997444a61d317f2302b582a38534ae759d2fb2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.0
+    versionCode: 120
+    commit: 4a4a0e3bb72194e4215b2fc9d8cf69fa24bb5d9d
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.1
+    versionCode: 121
+    commit: 3268a8ef974e41978ec5220111950e4782313d48
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.2
+    versionCode: 122
+    commit: 841cc34bf145de80d543a1b09e9155e86ef008e4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.3
+    versionCode: 123
+    commit: 3e0005127ff33c946b5f1e36c9bbb35502b23eaf
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.4
+    versionCode: 124
+    commit: c1feaeb2f7460edf2512c6bdd630b5cab2a0d810
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.5
+    versionCode: 125
+    commit: 1a93d99e4ff41722f11a25446490c6c65a2540b0
+    subdir: app
+    gradle:
+      - yes
+    binary: https://github.com/onloc-app/onloc-android/releases/download/v%v/onloc-v%v.apk
+
+  - versionName: 1.2.6
+    versionCode: 126
+    commit: 04aa26057647aef9442773c1cc01f9c17e2c3a15
+    subdir: app
+    gradle:
+      - yes
+    binary: https://github.com/onloc-app/onloc-android/releases/download/v%v/onloc-v%v.apk
+
+  - versionName: 1.2.7
+    versionCode: 127
+    commit: 99cba61880ac3b63de901ae81871a3d2d7cb65cd
+    subdir: app
+    gradle:
+      - yes
+    binary: https://github.com/onloc-app/onloc-android/releases/download/v%v/onloc-v%v.apk
+
+AllowedAPKSigningKeys: abe6808d71320ab496594f34bc3e53a8bd49459b06e7bc14546e8c3106f5c660
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.2.7
+CurrentVersionCode: 127

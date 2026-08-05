@@ -1,0 +1,341 @@
+Categories:
+  - Launcher
+  - System
+License: MIT
+AuthorName: Josia Pietsch
+AuthorEmail: android-launcher@jrpie.de
+AuthorWebSite: https://jrpie.de
+WebSite: https://launcher.jrpie.de
+SourceCode: https://github.com/jrpie/Launcher
+IssueTracker: https://github.com/jrpie/Launcher/issues
+Translation: https://toolate.othing.xyz/projects/jrpie-launcher
+Changelog: https://github.com/jrpie/Launcher/releases
+Donate: https://s.jrpie.de/launcher-donate
+
+AutoName: μLauncher
+
+RepoType: git
+Repo: https://github.com/jrpie/Launcher
+Binaries: https://github.com/jrpie/Launcher/releases/download/%v/app-release.apk
+
+Builds:
+  - versionName: j-0.0.8
+    versionCode: 20
+    commit: j-0.0.8
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: j-0.0.9
+    versionCode: 21
+    commit: eeb31d6cf1880f10b99b37f52a547f6de48c7ab6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: j-0.0.10
+    versionCode: 24
+    commit: dddc2827b3e2ab7861f078c302ec4ba0265e9287
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: j-0.0.11
+    versionCode: 25
+    commit: 3da241c70bdd622d4a97350cf989e4c6f85207ad
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: j-0.0.12
+    versionCode: 26
+    commit: e2fa2e298770f5f9f3b8347c2b34ecde6663b838
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: j-0.0.14
+    versionCode: 28
+    commit: cd600af09fdb13223dacd61987a7437473ca71f5
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: j-0.0.15
+    versionCode: 29
+    commit: aba23c370b4f9222b5f14598cb198d0f106e9d1d
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: j-0.0.17
+    versionCode: 33
+    commit: 9649b9b523bfdcdd353e667330ac0470806b4c45
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: j-0.0.18
+    versionCode: 34
+    commit: aca7fe57d27261d88bfca91adefd9f4188673d6a
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: j-0.0.19
+    versionCode: 35
+    commit: e39d72ef3c6d99488aa4619abd19422398be73f9
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: j-0.0.20
+    versionCode: 36
+    commit: 74b448cd0f1941d2c0c27237946fedce8f8ef773
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.0.21
+    versionCode: 37
+    commit: b2e7e4cacf540dd3357b5f52866cc771ed995b7e
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+    binary: https://github.com/jrpie/Launcher/releases/download/v%v/app-release.apk
+
+  - versionName: 0.0.22
+    versionCode: 38
+    commit: befa3afc5d3cb15c19d08eaae8f2dc1c7be84436
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.0.23
+    versionCode: 39
+    commit: 8948b342438bfadb60afb5108dafb645d08602b8
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.1.0
+    versionCode: 40
+    commit: e02ca4091faf0a457dd2239505859ae9fa19fa60
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.1.3
+    versionCode: 43
+    commit: 7fc58fe38482a692b297a746358e3a04daf01a87
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.1.4
+    versionCode: 44
+    commit: 2774b74d9d47539dcb08fb29bdce6b1ffd409965
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.2.0
+    versionCode: 45
+    commit: 62d69330b03e0f369835a39009c3539cf5dd771b
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.2.1
+    versionCode: 46
+    commit: 7a874ef89fa0528e9e65a92ae4bc8ab213266a8d
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.2.2
+    versionCode: 47
+    commit: dd3a2e91bd7baaa510ea0b12f1ce7f2db3f5d327
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.2.3
+    versionCode: 48
+    commit: b9792e9942e9a0cea19c7bf22e126e4edecf85ae
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.2.4
+    versionCode: 49
+    commit: 5c9979dcdb1b54e4eab243854490f27f138a9065
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.2.6
+    versionCode: 51
+    commit: 6be8fd8631f5f6ee862b8da1555fc8792d807e7d
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.2.7
+    versionCode: 52
+    commit: 7b65076ad82c41bb6e55f6606cab68f3743472ef
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.2.8
+    versionCode: 53
+    commit: a90820a9caac9879d10852594b795f6e91ca1eb9
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.2.9
+    versionCode: 54
+    commit: b5bfe891a6b1a6d37ba5e997f2291502eab49de0
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - default
+
+  - versionName: 0.2.10
+    versionCode: 55
+    commit: 69cb63eb2807330c5a2d4f4c83c2e603b310c926
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 0.2.11
+    versionCode: 56
+    commit: 8a5c66c04a078411ba3e4f11b8f43723437f807d
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 0.2.12
+    versionCode: 57
+    commit: f09595f7af935952b41eff9395d2ca56209ada36
+    subdir: app
+    gradle:
+      - default
+
+AllowedAPKSigningKeys: 0b5ee04000b2abf0b2c3f82cda9d9a3f615f3643bb917ff4e516270ab5dcaf12
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.2.12
+CurrentVersionCode: 57

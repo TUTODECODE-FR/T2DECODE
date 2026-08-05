@@ -1,0 +1,102 @@
+Categories:
+  - Puzzle Game
+  - Science & Education
+License: GPL-3.0-only
+AuthorName: Markus Wageringel
+WebSite: https://mwageringel.github.io/everest/
+SourceCode: https://github.com/mwageringel/everest
+IssueTracker: https://github.com/mwageringel/everest/issues
+Changelog: https://github.com/mwageringel/everest/blob/HEAD/CHANGELOG.md
+
+AutoName: Everest
+
+RepoType: git
+Repo: https://github.com/mwageringel/everest
+
+Builds:
+  - versionName: 1.1.2
+    versionCode: 11
+    commit: 1.1.2-ba1c622
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.5
+    rm:
+      - web
+      - website
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - make FLUTTER=$$flutter$$/bin/flutter assets-android
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 1.1.3
+    versionCode: 12
+    commit: f26212a129bb32736eb89c731157408c377ad8d2
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.5
+    rm:
+      - web
+      - website
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - make FLUTTER=$$flutter$$/bin/flutter assets-android
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 1.1.4
+    versionCode: 13
+    commit: 7a4a4723b0a4615524851f1ab544ccb3a7e757d7
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.5
+    rm:
+      - web
+      - website
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - make FLUTTER=$$flutter$$/bin/flutter assets-android
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 1.1.5
+    versionCode: 14
+    commit: 5fc7d00dc5233951028be258a3abdbec863adae0
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.5
+    rm:
+      - web
+      - website
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - make FLUTTER=$$flutter$$/bin/flutter assets-android
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 1.1.6
+    versionCode: 15
+    commit: 649200a906e4141e1b448b8c397b9090e725940f
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y make librsvg2-bin imagemagick openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - web
+      - website
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./vendor/flutter/bin/flutter config --no-analytics
+      - ./vendor/flutter/bin/flutter pub get
+    scanignore:
+      - vendor/flutter/bin/cache
+    scandelete:
+      - vendor/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - make FLUTTER=./vendor/flutter/bin/flutter app
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^[0-9.]+$
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.1.6
+CurrentVersionCode: 15

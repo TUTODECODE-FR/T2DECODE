@@ -1,0 +1,102 @@
+Categories:
+  - App Store & Updater
+  - System
+License: GPL-3.0-or-later
+AuthorName: sunilpaulmathew
+AuthorEmail: smartpack.org@gmail.com
+AuthorWebSite: https://smartpack.github.io/
+SourceCode: https://gitlab.com/sunilpaulmathew/izzyondroid
+IssueTracker: https://gitlab.com/sunilpaulmathew/izzyondroid/-/issues
+Donate: https://smartpack.github.io/donation/
+Liberapay: sunilpaulmathew
+
+AutoName: IzzyOnDroid
+
+RepoType: git
+Repo: https://gitlab.com/sunilpaulmathew/izzyondroid.git
+
+Builds:
+  - versionName: v0.5
+    versionCode: 5
+    commit: v0.5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v0.6
+    versionCode: 6
+    commit: cf7294f0285b0caf60ddd6190998dfb4a17031d3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v0.7
+    versionCode: 7
+    commit: 71513afca0ab923f86b7ed79253d3e625e209279
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v0.8
+    versionCode: 8
+    commit: 8d299cca90d7dfc1ff1d67752af5c6a529182105
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v0.9
+    versionCode: 9
+    commit: 7fb9be82aeff5c435a52e1bf7e2e48bc5d39182f
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v0.10
+    versionCode: 10
+    commit: 766067f74a222b50f4d02f13837c4b9b8e3db885
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v0.11
+    versionCode: 11
+    commit: 21e6d4fe10d378eb7d2eb771607b056ae0599ca3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v0.13
+    versionCode: 13
+    commit: 84daffa4479e75163fd0ead6844b3b0299e44c4a
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v0.14
+    versionCode: 14
+    commit: ea298600ca85cff5e233ea2005a90e8b3493fc70
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: v0.14
+CurrentVersionCode: 14

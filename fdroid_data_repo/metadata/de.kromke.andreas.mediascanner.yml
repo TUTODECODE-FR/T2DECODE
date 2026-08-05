@@ -1,0 +1,150 @@
+Categories:
+  - Local Media Player
+  - Multimedia
+License: GPL-3.0-only
+AuthorName: Andreas Kromke
+AuthorEmail: Andreas.Krom.ke+Support@gmail.com
+SourceCode: https://gitlab.com/AndreasK/mediascanner
+IssueTracker: https://gitlab.com/AndreasK/mediascanner/issues
+Changelog: https://gitlab.com/AndreasK/mediascanner/-/releases
+
+AutoName: Classical Music Scanner
+
+RepoType: git
+Repo: https://gitlab.com/AndreasK/mediascanner.git
+
+Builds:
+  - versionName: '1.1'
+    versionCode: 3
+    commit: v1.1
+    subdir: app
+    gradle:
+      - yes
+    ndk: r18b
+
+  - versionName: 1.2.2
+    versionCode: 8
+    commit: v1.2.2
+    subdir: app
+    gradle:
+      - yes
+    ndk: r18b
+
+  - versionName: 1.2.3
+    versionCode: 9
+    commit: v1.2.3
+    subdir: app
+    gradle:
+      - yes
+    ndk: r18b
+
+  - versionName: 1.2.4
+    versionCode: 10
+    commit: v1.2.4
+    subdir: app
+    gradle:
+      - yes
+    ndk: r18b
+
+  - versionName: '1.3'
+    versionCode: 11
+    commit: v1.3
+    subdir: app
+    gradle:
+      - yes
+    ndk: r18b
+
+  - versionName: 1.3.1
+    versionCode: 12
+    commit: v1.3.1
+    subdir: app
+    gradle:
+      - yes
+    ndk: r18b
+
+  - versionName: '1.4'
+    versionCode: 13
+    commit: v1.4
+    subdir: app
+    gradle:
+      - yes
+    ndk: r18b
+
+  - versionName: '1.5'
+    versionCode: 15
+    commit: v1.5
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/21.0.6113669/21.3.6528147/' build.gradle
+    ndk: r21d
+
+  - versionName: '1.6'
+    versionCode: 16
+    commit: v1.6
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/21.0.6113669/21.4.7075529/' build.gradle
+    ndk: r21e
+
+  - versionName: '1.7'
+    versionCode: 18
+    commit: b85aee72d4cd518cb11df0000d68f0e5b5cac982
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/21.0.6113669/21.4.7075529/' build.gradle
+    ndk: r21e
+
+  - versionName: 1.7.1
+    versionCode: 19
+    commit: 80103d970200fa4aa65d2177614b54f3a86d1b7c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    ndk: 26.0.10792818
+
+  - versionName: 1.7.2
+    versionCode: 20
+    commit: ad82eeabdfc86b827c4f4f00be8a18b169cb2798
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    ndk: 26.0.10792818
+
+  - versionName: '1.8'
+    versionCode: 21
+    commit: 7e9b47b85e174d52eb337622fcde1c76fc4c51e3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    ndk: 26.0.10792818
+
+  - versionName: 1.9.1
+    versionCode: 23
+    commit: a9e9a92ce3a3f51df743a0e6323c00a3b8322a19
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/8.12.2/8.11.1/' ../build.gradle
+      - sed -i -e '/compileSdk {/,+2c compileSdk 36' build.gradle
+    ndk: 28.2.13676358
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.9.1
+CurrentVersionCode: 23

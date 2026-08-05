@@ -40,6 +40,7 @@ import 'features/tools/screens/anonymity_tool_screen.dart';
 import 'features/tools/screens/regex_tester_screen.dart';
 import 'features/tools/screens/cyber_converter_screen.dart';
 import 'features/tools/screens/phantom_diagnostic_screen.dart';
+import 'features/tools/providers/phantom_provider.dart';
 import 'features/ghost_ai/screens/ai_chat_screen.dart';
 import 'features/ghost_ai/screens/ai_config_screen.dart';
 import 'features/ghost_ai/screens/ai_tutor_screen.dart';
@@ -142,6 +143,7 @@ class TutoDeCodeApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => GhostLinkService()),
         ChangeNotifierProvider(create: (_) => AiTutorProvider()),
         ChangeNotifierProvider(create: (_) => EducationProvider()),
+        ChangeNotifierProvider(create: (_) => PhantomProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, _) => MaterialApp(
