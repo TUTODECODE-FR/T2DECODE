@@ -1,5 +1,9 @@
 <meta name="fediverse:creator" content="@TUTODECODE@mastodon.social">
 
+> [!WARNING]
+> **⚠️ Note: This repository is a read-only mirror.** Active development, Issues, and Pull Requests are hosted on our [official GitLab](https://gitlab.com/tutodecode-org/T2DECODE). Drop a star here if you support the project!
+
+
 <div align="center">
   <p>
     <a href="README.md">🇫🇷 Français</a> | <strong>🇬🇧 English</strong>
