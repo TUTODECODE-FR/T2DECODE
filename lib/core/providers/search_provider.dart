@@ -125,6 +125,8 @@ ${d.body}''');
     notifyListeners();
   }
 
+  /// Effectue une recherche optimisée avec tolérance aux fautes de frappe.
+  /// Utilise une combinaison de BM25, Trigrammes et de la distance de Levenshtein.
   List<SearchResult> search(String query, {int limit = 20}) {
     final q = query.trim();
     if (q.isEmpty || !_ready) return const [];
@@ -134,7 +136,13 @@ ${d.body}''');
 
     for (final d in _docs) {
       final score = _bm25(d.id, qTokens);
-      final finalScore = score > 0 ? score : _trigramScore(q.toLowerCase(), d.title.toLowerCase());
+      var finalScore = score > 0 ? score : _trigramScore(q.toLowerCase(), d.title.toLowerCase());
+
+      // Si aucun résultat direct, tenter la correspondance floue (tolérance aux fautes de frappe)
+      if (finalScore <= 0 && q.length >= 3) {
+        finalScore = _fuzzyScore(q.toLowerCase(), d.title.toLowerCase(), d.body.toLowerCase());
+      }
+
       if (finalScore <= 0) continue;
       results.add(SearchResult(
         doc: d,
@@ -148,6 +156,53 @@ ${d.body}''');
     return results;
   }
 
+  /// Calcule un score de tolérance aux fautes de frappe basé sur la distance de Levenshtein.
+  /// Permet jusqu'à 2 fautes de frappe pour les requêtes de plus de 4 caractères.
+  double _fuzzyScore(String query, String title, String body) {
+    final titleWords = _tokenize(title);
+    final queryWords = _tokenize(query);
+    double maxScore = 0.0;
+
+    for (final qWord in queryWords) {
+      if (qWord.length < 3) continue;
+      final maxAllowedDistance = qWord.length <= 4 ? 1 : 2;
+
+      for (final tWord in titleWords) {
+        final dist = _levenshteinDistance(qWord, tWord);
+        if (dist <= maxAllowedDistance) {
+          final similarity = 1.0 - (dist / max(qWord.length, tWord.length));
+          if (similarity > maxScore) {
+            maxScore = similarity * 0.75; // Score pondéré pour faute de frappe
+          }
+        }
+      }
+    }
+    return maxScore;
+  }
+
+  /// Algorithme de calcul de la distance de Levenshtein (nombre minimal de modifications pour passer d'un mot à un autre).
+  int _levenshteinDistance(String s, String t) {
+    if (s == t) return 0;
+    if (s.isEmpty) return t.length;
+    if (t.isEmpty) return s.length;
+
+    final v0 = List<int>.generate(t.length + 1, (i) => i);
+    final v1 = List<int>.filled(t.length + 1, 0);
+
+    for (var i = 0; i < s.length; i++) {
+      v1[0] = i + 1;
+      for (var j = 0; j < t.length; j++) {
+        final cost = s[i] == t[j] ? 0 : 1;
+        v1[j + 1] = min(v1[j] + 1, min(v0[j + 1] + 1, v0[j] + cost));
+      }
+      for (var j = 0; j <= t.length; j++) {
+        v0[j] = v1[j];
+      }
+    }
+    return v1[t.length];
+  }
+
+  /// Enregistre une requête dans l'historique de recherche utilisateur.
   Future<void> recordQuery(String query) async {
     final q = query.trim();
     if (q.isEmpty) return;
@@ -156,6 +211,7 @@ ${d.body}''');
     notifyListeners();
   }
 
+  /// Active ou désactive un document des favoris de recherche.
   Future<void> toggleFavorite(String docId) async {
     final next = [..._favorites];
     if (next.contains(docId)) {
@@ -168,12 +224,14 @@ ${d.body}''');
     notifyListeners();
   }
 
+  /// Efface l'historique de recherche sauvegardé.
   Future<void> clearHistory() async {
     await _storage.clearSearchHistory();
     _history = const [];
     notifyListeners();
   }
 
+  /// Convertit une entrée de fiches réseau/commandes en document de recherche.
   SearchDocument _cheatDoc(CheatSheetEntry entry) {
     final id = 'cheat:${entry.category}:${entry.command}';
     final bodyParts = <String>[
@@ -195,6 +253,7 @@ ${d.body}''');
     );
   }
 
+  /// Calcul de pertinence selon le modèle probabiliste BM25.
   double _bm25(String docId, List<String> qTokens) {
     final tf = _tfByDoc[docId];
     if (tf == null) return 0;
@@ -218,6 +277,7 @@ ${d.body}''');
     return score;
   }
 
+  /// Score d'intersection par n-grammes de 3 lettres.
   double _trigramScore(String q, String text) {
     if (q.length < 3) return text.contains(q) ? 0.1 : 0.0;
     final qSet = _trigrams(q);
@@ -228,6 +288,7 @@ ${d.body}''');
     return union == 0 ? 0.0 : inter / union;
   }
 
+  /// Extrait l'ensemble des trigrammes d'une chaîne de caractères.
   Set<String> _trigrams(String s) {
     final out = <String>{};
     final cleaned = s.replaceAll(RegExp(r'\s+'), ' ').trim();
@@ -237,6 +298,7 @@ ${d.body}''');
     return out;
   }
 
+  /// Découpe le texte en jetons de mots nettoyés.
   List<String> _tokenize(String s) {
     return s
         .toLowerCase()
