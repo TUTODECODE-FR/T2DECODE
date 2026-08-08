@@ -1,13 +1,9 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/features/courses/providers/courses_provider.dart';
-import 'package:tutodecode/core/services/phantom_cache_service.dart';
-import 'package:tutodecode/core/security/phantom_trust_validator.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/features/tools/providers/phantom_provider.dart';
-import 'package:path/path.dart' as p;
 
 class PhantomDiagnosticScreen extends StatefulWidget {
   const PhantomDiagnosticScreen({super.key});
