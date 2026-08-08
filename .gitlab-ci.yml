@@ -63,10 +63,15 @@ test_and_analyze:
     - flutter test --dart-define=SKIP_GOLDENS=true
     - |
       # Secrets Scan
-      grep -rE "(AKIA|GH[A-Z0-9]{38}|SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}|sk_live_[0-9a-zA-Z]{24})" . \
-      --exclude-dir=".git" --exclude-dir=".dart_tool" --exclude-dir="build" \
-      --exclude-dir=".github/workflows" --exclude=".gitlab-ci.yml" \
-      --binary-files=without-match && exit 1 || exit 0
+      if grep -rE "(AKIA|GH[A-Z0-9]{38}|SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}|sk_live_[0-9a-zA-Z]{24})" . \
+        --exclude-dir=".git" --exclude-dir=".dart_tool" --exclude-dir="build" \
+        --exclude-dir=".github/workflows" --exclude=".gitlab-ci.yml" \
+        --binary-files=without-match; then
+        echo "❌ Error: Hardcoded secrets found!"
+        exit 1
+      else
+        echo "✅ Secrets scan passed."
+      fi
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
       when: manual
