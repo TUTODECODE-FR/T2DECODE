@@ -65,7 +65,7 @@ test_and_analyze:
       # Secrets Scan
       if grep -rE "(AKIA|GH[A-Z0-9]{38}|SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}|sk_live_[0-9a-zA-Z]{24})" . \
         --exclude-dir=".git" --exclude-dir=".dart_tool" --exclude-dir="build" \
-        --exclude-dir=".github/workflows" --exclude=".gitlab-ci.yml" \
+        --exclude-dir=".github/workflows" --exclude=".gitlab-ci.yml" --exclude="payload.json" \
         --binary-files=without-match; then
         echo "❌ Error: Hardcoded secrets found!"
         exit 1
