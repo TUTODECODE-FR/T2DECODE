@@ -8,7 +8,7 @@ import 'package:tutodecode/features/courses/data/cheat_sheet_repository.dart';
 import 'package:tutodecode/features/courses/providers/courses_provider.dart';
 import 'package:tutodecode/features/courses/screens/cheat_sheet_screen.dart';
 
-class SearchDocKind {
+class SearchDocKind { 
   static const String course = 'course';
   static const String chapter = 'chapter';
   static const String cheat = 'cheat';
@@ -34,8 +34,7 @@ class SearchResult {
   final SearchDocument doc;
   final double score;
   final bool favorite;
-  const SearchResult(
-      {required this.doc, required this.score, required this.favorite});
+  const SearchResult({required this.doc, required this.score, required this.favorite});
 }
 
 class SearchProvider extends ChangeNotifier {
@@ -137,14 +136,11 @@ ${d.body}''');
 
     for (final d in _docs) {
       final score = _bm25(d.id, qTokens);
-      var finalScore = score > 0
-          ? score
-          : _trigramScore(q.toLowerCase(), d.title.toLowerCase());
+      var finalScore = score > 0 ? score : _trigramScore(q.toLowerCase(), d.title.toLowerCase());
 
       // Si aucun résultat direct, tenter la correspondance floue (tolérance aux fautes de frappe)
       if (finalScore <= 0 && q.length >= 3) {
-        finalScore = _fuzzyScore(
-            q.toLowerCase(), d.title.toLowerCase(), d.body.toLowerCase());
+        finalScore = _fuzzyScore(q.toLowerCase(), d.title.toLowerCase(), d.body.toLowerCase());
       }
 
       if (finalScore <= 0) continue;
@@ -264,9 +260,7 @@ ${d.body}''');
     final docLength = _docLen[docId] ?? 0;
     if (docLength == 0) return 0;
     final n = _docs.length;
-    final avgdl = _docLen.values.isEmpty
-        ? 1.0
-        : _docLen.values.reduce((a, b) => a + b) / _docLen.length;
+    final avgdl = _docLen.values.isEmpty ? 1.0 : _docLen.values.reduce((a, b) => a + b) / _docLen.length;
 
     const k1 = 1.2;
     const b = 0.75;

@@ -114,7 +114,7 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   // Vérification d'intégrité des assets au démarrage (100% local, aucun réseau).
   await IdentityVerificationService.verifyIdentity();
-
+  
   final dynamicLocales = await _getDynamicLocales();
 
   runApp(
@@ -161,9 +161,7 @@ class TutoDeCodeApp extends StatelessWidget {
           builder: (context, child) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (context.mounted) {
-                context
-                    .read<CoursesProvider>()
-                    .updateLocale(context.locale.languageCode);
+                context.read<CoursesProvider>().updateLocale(context.locale.languageCode);
               }
             });
             return Navigator(
@@ -177,107 +175,61 @@ class TutoDeCodeApp extends StatelessWidget {
               settings: settings,
               pageBuilder: (context, animation, secondaryAnimation) {
                 switch (settings.name) {
-                  case '/':
-                    return const HomeScreen();
-                  case '/chapter':
-                    return const ChapterScreen();
-                  case '/ai':
-                    return const AIChatScreen();
-                  case '/ai-tutor':
-                    return const AiTutorScreen();
-                  case '/ai-config':
-                    return const AIConfigScreen();
-                  case '/netkit':
-                    return const NetKitScreen();
-                  case '/roadmap':
-                    return const RoadmapScreen();
-                  case '/education':
-                    return const EducationScreen();
-                  case '/lab':
-                    return const ProfessionalLabScreen();
-                  case '/cheat-sheets':
-                    return const CheatSheetScreen();
+                  case '/':                     return const HomeScreen();
+                  case '/chapter':              return const ChapterScreen();
+                  case '/ai':                   return const AIChatScreen();
+                  case '/ai-tutor':             return const AiTutorScreen();
+                  case '/ai-config':            return const AIConfigScreen();
+                  case '/netkit':               return const NetKitScreen();
+                  case '/roadmap':              return const RoadmapScreen();
+                  case '/education':            return const EducationScreen();
+                  case '/lab':                  return const ProfessionalLabScreen();
+                  case '/cheat-sheets':         return const CheatSheetScreen();
                   case '/cheat-sheets/details':
                     final entry = settings.arguments as CheatSheetEntry;
                     return CheatSheetDetailScreen(entry: entry);
-                  case '/tools':
-                    return const ToolboxScreen();
-                  case '/tools/safe-tools':
-                    return const SafeToolsScreen();
-                  case '/tools/ip-calc':
-                    return const IPCalcScreen();
-                  case '/tools/scripts':
-                    return const ScriptGeneratorScreen();
-                  case '/tools/hardware':
-                    return const HardwareScreen();
-                  case '/tools/survival':
-                    return const SurvivalScreen();
-                  case '/tools/glossary':
-                    return const GlossaryScreen();
-                  case '/tools/password-gen':
-                    return const PasswordToolScreen();
-                  case '/tools/data-converter':
-                    return const DataConverterScreen();
-                  case '/tools/base64':
-                    return const Base64ToolScreen();
-                  case '/tools/hash':
-                    return const HashToolScreen();
-                  case '/tools/chmod':
-                    return const ChmodToolScreen();
-                  case '/tools/json':
-                    return const JsonToolScreen();
-                  case '/tools/ascii':
-                    return const AsciiToolScreen();
-                  case '/tools/raid':
-                    return const RaidToolScreen();
-                  case '/tools/http-status':
-                    return const HttpStatusToolScreen();
-                  case '/tools/ports':
-                    return const PortRefToolScreen();
-                  case '/tools/bandwidth':
-                    return const BandwidthToolScreen();
-                  case '/tools/cron':
-                    return const CronToolScreen();
-                  case '/tools/syslog':
-                    return const SyslogToolScreen();
-                  case '/tools/archive':
-                    return const ArchiveToolScreen();
-                  case '/tools/ssh':
-                    return const SshToolScreen();
-                  case '/tools/dns':
-                    return const DnsRefToolScreen();
-                  case '/tools/anonymity':
-                    return const AnonymityToolScreen();
-                  case '/tools/regex':
-                    return const RegexTesterScreen();
-                  case '/tools/cyber-converter':
-                    return const CyberConverterScreen();
-                  case '/dashboard':
-                    return const DashboardScreen();
+                  case '/tools':                return const ToolboxScreen();
+                  case '/tools/safe-tools':     return const SafeToolsScreen();
+                  case '/tools/ip-calc':        return const IPCalcScreen();
+                  case '/tools/scripts':        return const ScriptGeneratorScreen();
+                  case '/tools/hardware':       return const HardwareScreen();
+                  case '/tools/survival':       return const SurvivalScreen();
+                  case '/tools/glossary':       return const GlossaryScreen();
+                  case '/tools/password-gen':   return const PasswordToolScreen();
+                  case '/tools/data-converter': return const DataConverterScreen();
+                  case '/tools/base64':         return const Base64ToolScreen();
+                  case '/tools/hash':           return const HashToolScreen();
+                  case '/tools/chmod':          return const ChmodToolScreen();
+                  case '/tools/json':           return const JsonToolScreen();
+                  case '/tools/ascii':          return const AsciiToolScreen();
+                  case '/tools/raid':           return const RaidToolScreen();
+                  case '/tools/http-status':    return const HttpStatusToolScreen();
+                  case '/tools/ports':          return const PortRefToolScreen();
+                  case '/tools/bandwidth':      return const BandwidthToolScreen();
+                  case '/tools/cron':           return const CronToolScreen();
+                  case '/tools/syslog':         return const SyslogToolScreen();
+                  case '/tools/archive':        return const ArchiveToolScreen();
+                  case '/tools/ssh':            return const SshToolScreen();
+                  case '/tools/dns':            return const DnsRefToolScreen();
+                  case '/tools/anonymity':      return const AnonymityToolScreen();
+                  case '/tools/regex':          return const RegexTesterScreen();
+                  case '/tools/cyber-converter':return const CyberConverterScreen();
+                  case '/dashboard':            return const DashboardScreen();
 
-                  case '/admin':
-                    return const AdminScreen();
-                  case '/legal':
-                    return const LegalScreen();
-                  case '/legal/build-verification':
-                    return const BuildVerificationScreen();
-                  case '/mentions-legales':
-                    return const MentionsLegalesScreen();
-                  case '/settings':
-                    return const SettingsScreen();
-                  case '/phantom':
-                    return const PhantomDiagnosticScreen();
-                  case '/ghost-link':
-                    return const GhostLinkScreen();
+                  case '/admin':                return const AdminScreen();
+                  case '/legal':                return const LegalScreen();
+                  case '/legal/build-verification': return const BuildVerificationScreen();
+                  case '/mentions-legales':     return const MentionsLegalesScreen();
+                  case '/settings':             return const SettingsScreen();
+                  case '/phantom':              return const PhantomDiagnosticScreen();
+                  case '/ghost-link':           return const GhostLinkScreen();
                   case '/ghost-link/chat':
                     final peer = settings.arguments as GhostPeer;
                     return GhostChatScreen(peer: peer);
-                  default:
-                    return const HomeScreen();
+                  default:                      return const HomeScreen();
                 }
               },
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
                 return FadeThroughTransition(
                   animation: animation,
                   secondaryAnimation: secondaryAnimation,

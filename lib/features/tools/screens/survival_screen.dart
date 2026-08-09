@@ -8,8 +8,7 @@ import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 
 class SurvivalScreen extends StatefulWidget {
   const SurvivalScreen({super.key});
-  @override
-  State<SurvivalScreen> createState() => _SurvivalScreenState();
+  @override State<SurvivalScreen> createState() => _SurvivalScreenState();
 }
 
 class _SurvivalScreenState extends State<SurvivalScreen> {
@@ -21,13 +20,11 @@ class _SurvivalScreenState extends State<SurvivalScreen> {
       'scenarios': [
         {
           'title': 'Boucle de démarrage (Boot Loop)',
-          'content':
-              '''1. Éteindre/Allumer 3 fois brusquement pour forcer la Récupération.
+          'content': '''1. Éteindre/Allumer 3 fois brusquement pour forcer la Récupération.
 2. Dépannage > Options avancées > Paramètres > Redémarrer.
 3. Appuyer sur 4 ou F4 pour le Mode Sans Échec.''',
           'severity': 'critical',
-          'prevention':
-              'Vérifier les mises à jour de pilotes récentes ou les nouveaux matériels.',
+          'prevention': 'Vérifier les mises à jour de pilotes récentes ou les nouveaux matériels.',
         },
         {
           'title': 'OS Corrompu / Écran Bleu (BSOD)',
@@ -35,8 +32,7 @@ class _SurvivalScreenState extends State<SurvivalScreen> {
 2. Lancer "sfc /scannow" pour les fichiers système.
 3. Lancer "DISM /Online /Cleanup-Image /RestoreHealth" si SFC échoue.''',
           'severity': 'critical',
-          'prevention':
-              'Maintenir 20% d\'espace disque libre et éviter les logiciels de "nettoyage" tiers.',
+          'prevention': 'Maintenir 20% d\'espace disque libre et éviter les logiciels de "nettoyage" tiers.',
         },
       ],
     },
@@ -47,8 +43,7 @@ class _SurvivalScreenState extends State<SurvivalScreen> {
       'scenarios': [
         {
           'title': 'Infection Ransomware active',
-          'content':
-              '''URGENT : Débranchez le câble réseau et coupez le Wi-Fi IMMÉDIATEMENT.
+          'content': '''URGENT : Débranchez le câble réseau et coupez le Wi-Fi IMMÉDIATEMENT.
 Ne redémarrez pas (certains ransomwares s'activent au reboot).
 Isolez le poste et utilisez un autre PC pour identifier l'extension des fichiers.''',
           'severity': 'critical',
@@ -60,8 +55,7 @@ Isolez le poste et utilisez un autre PC pour identifier l'extension des fichiers
 2. Vérifier les extensions de navigateur suspectes.
 3. Réinitialiser le fichier "hosts" de Windows.''',
           'severity': 'risk',
-          'prevention':
-              'Activer la protection contre les ransomwares de Windows Defender.',
+          'prevention': 'Activer la protection contre les ransomwares de Windows Defender.',
         },
       ],
     },
@@ -76,8 +70,7 @@ Isolez le poste et utilisez un autre PC pour identifier l'extension des fichiers
 Copiez les données vitalES immédiatement sans redémarrer.
 Cessez toute activité intensive sur le disque.''',
           'severity': 'critical',
-          'prevention':
-              'Surveiller les rapports S.M.A.R.T avec CrystalDiskInfo.',
+          'prevention': 'Surveiller les rapports S.M.A.R.T avec CrystalDiskInfo.',
         },
         {
           'title': 'Surchauffe / Coupure brutale',
@@ -85,8 +78,7 @@ Cessez toute activité intensive sur le disque.''',
 2. Vérifier si un processus sature le CPU via le Gestionnaire des tâches.
 3. Remplacer la pâte thermique si le PC a + de 3 ans.''',
           'severity': 'risk',
-          'prevention':
-              'Éviter d\'utiliser un PC portable sur des surfaces molles (lit, couette).',
+          'prevention': 'Éviter d\'utiliser un PC portable sur des surfaces molles (lit, couette).',
         },
       ],
     },
@@ -97,9 +89,9 @@ Cessez toute activité intensive sur le disque.''',
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
-            title: 'SOS Dépannage',
-            showBackButton: true,
-          );
+        title: 'SOS Dépannage',
+        showBackButton: true,
+      );
     });
   }
 
@@ -108,17 +100,8 @@ Cessez toute activité intensive sur le disque.''',
     return TdcPageWrapper(
       child: ListView(
         children: [
-          const Text('PROTOCOLES D\'URGENCE',
-              style: TextStyle(
-                  color: TdcColors.accent,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5)),
-          const Text('SOS Secours Technique',
-              style: TextStyle(
-                  color: TdcColors.textPrimary,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold)),
+          const Text('PROTOCOLES D\'URGENCE', style: TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+          const Text('SOS Secours Technique', style: TextStyle(color: TdcColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold)),
           const SizedBox(height: 24),
           ..._guides.map((g) => _buildCategorySection(g)),
         ],
@@ -136,20 +119,13 @@ Cessez toute activité intensive sur le disque.''',
             children: [
               Icon(g['icon'], color: g['color'], size: 20),
               const SizedBox(width: 12),
-              Text(g['category'],
-                  style: TextStyle(
-                      color: g['color'],
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13)),
+              Text(g['category'], style: TextStyle(color: g['color'], fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(width: 12),
-              Expanded(
-                  child: Divider(color: g['color'].withValues(alpha: 0.2))),
+              Expanded(child: Divider(color: g['color'].withValues(alpha: 0.2))),
             ],
           ),
         ),
-        ...g['scenarios']
-            .map<Widget>((s) => _buildScenarioCard(s, g['color']))
-            .toList(),
+        ...g['scenarios'].map<Widget>((s) => _buildScenarioCard(s, g['color'])).toList(),
       ],
     );
   }
@@ -161,17 +137,8 @@ Cessez toute activité intensive sur le disque.''',
       decoration: BoxDecoration(
         color: TdcColors.surface,
         borderRadius: TdcRadius.md,
-        border: Border.all(
-            color: isCrit
-                ? TdcColors.danger.withValues(alpha: 0.3)
-                : TdcColors.border),
-        boxShadow: isCrit
-            ? [
-                BoxShadow(
-                    color: TdcColors.danger.withValues(alpha: 0.05),
-                    blurRadius: 10)
-              ]
-            : null,
+        border: Border.all(color: isCrit ? TdcColors.danger.withValues(alpha: 0.3) : TdcColors.border),
+        boxShadow: isCrit ? [BoxShadow(color: TdcColors.danger.withValues(alpha: 0.05), blurRadius: 10)] : null,
       ),
       child: ClipRRect(
         borderRadius: TdcRadius.md,
@@ -180,24 +147,12 @@ Cessez toute activité intensive sur le disque.''',
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              color: isCrit
-                  ? TdcColors.danger.withValues(alpha: 0.1)
-                  : TdcColors.surfaceAlt,
+              color: isCrit ? TdcColors.danger.withValues(alpha: 0.1) : TdcColors.surfaceAlt,
               child: Row(
                 children: [
-                  Icon(
-                      isCrit ? Icons.warning_amber_rounded : Icons.info_outline,
-                      color: isCrit ? TdcColors.danger : catColor,
-                      size: 18),
+                  Icon(isCrit ? Icons.warning_amber_rounded : Icons.info_outline, color: isCrit ? TdcColors.danger : catColor, size: 18),
                   const SizedBox(width: 12),
-                  Expanded(
-                      child: Text(s['title'],
-                          style: TextStyle(
-                              color: isCrit
-                                  ? TdcColors.danger
-                                  : TdcColors.textPrimary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15))),
+                  Expanded(child: Text(s['title'], style: TextStyle(color: isCrit ? TdcColors.danger : TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 15))),
                   _severityBadge(s['severity']),
                 ],
               ),
@@ -207,35 +162,19 @@ Cessez toute activité intensive sur le disque.''',
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('ACTIONS À MENER :',
-                      style: TextStyle(
-                          color: TdcColors.textMuted,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold)),
+                  const Text('ACTIONS À MENER :', style: TextStyle(color: TdcColors.textMuted, fontSize: 10, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  Text(s['content'],
-                      style: const TextStyle(
-                          color: TdcColors.textPrimary,
-                          fontSize: 13,
-                          height: 1.6)),
+                  Text(s['content'], style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13, height: 1.6)),
                   const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                        color: TdcColors.bg.withValues(alpha: 0.5),
-                        borderRadius: TdcRadius.sm),
+                    decoration: BoxDecoration(color: TdcColors.bg.withValues(alpha: 0.5), borderRadius: TdcRadius.sm),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.shield_outlined,
-                            color: TdcColors.success, size: 14),
+                        const Icon(Icons.shield_outlined, color: TdcColors.success, size: 14),
                         const SizedBox(width: 10),
-                        Expanded(
-                            child: Text('Prévention : ${s['prevention']}',
-                                style: const TextStyle(
-                                    color: TdcColors.textSecondary,
-                                    fontSize: 11,
-                                    fontStyle: FontStyle.italic))),
+                        Expanded(child: Text('Prévention : ${s['prevention']}', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 11, fontStyle: FontStyle.italic))),
                       ],
                     ),
                   ),
@@ -253,13 +192,8 @@ Cessez toute activité intensive sur le disque.''',
     final label = level == 'critical' ? 'CRITIQUE' : 'RISQUE';
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: color.withValues(alpha: 0.3))),
-      child: Text(label,
-          style: TextStyle(
-              color: color, fontSize: 9, fontWeight: FontWeight.bold)),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: color.withValues(alpha: 0.3))),
+      child: Text(label, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.bold)),
     );
   }
 }

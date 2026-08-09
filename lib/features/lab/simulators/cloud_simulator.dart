@@ -19,15 +19,15 @@ class CloudSimulator extends StatefulWidget {
 class _CloudSimulatorState extends State<CloudSimulator>
     with TickerProviderStateMixin {
   late TabController _tabController;
-
+  
   // États des simulations
   bool _isDeploying = false;
-
+  
   // Données cloud
   List<CloudInstance> _instances = [];
   List<CloudService> _services = [];
   List<DeploymentJob> _deployments = [];
-
+  
   // Métriques cloud
   double _totalCost = 0.0;
   int _activeInstances = 0;
@@ -79,7 +79,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
         launchTime: DateTime.now().subtract(const Duration(hours: 24)),
       ),
     ];
-
+    
     _services = [
       CloudService(
         name: 'Load Balancer',
@@ -98,7 +98,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
         monthlyCost: 15.0,
       ),
     ];
-
+    
     _deployments = [
       DeploymentJob(
         id: 'deploy-123456',
@@ -110,7 +110,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
         duration: const Duration(minutes: 5),
       ),
     ];
-
+    
     _calculateMetrics();
   }
 
@@ -149,13 +149,11 @@ class _CloudSimulatorState extends State<CloudSimulator>
                   ),
                   const Spacer(),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: TdcColors.cloud.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: TdcColors.cloud.withValues(alpha: 0.3)),
+                      border: Border.all(color: TdcColors.cloud.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -229,9 +227,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                         title: 'Latence',
                         value: '${_avgResponseTime.toStringAsFixed(0)}ms',
                         icon: Icons.timer,
-                        color: _avgResponseTime < 100
-                            ? TdcColors.success
-                            : TdcColors.warning,
+                        color: _avgResponseTime < 100 ? TdcColors.success : TdcColors.warning,
                       ),
                     ),
                   ],
@@ -240,7 +236,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
             ],
           ),
         ),
-
+        
         // Tabs
         Container(
           color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
@@ -258,7 +254,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
             ],
           ),
         ),
-
+        
         // Content
         Expanded(
           child: TabBarView(
@@ -289,6 +285,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
     );
   }
 
+
   Widget _buildInstancesTab() {
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -305,14 +302,10 @@ class _CloudSimulatorState extends State<CloudSimulator>
                     child: DropdownButton<String>(
                       value: 't3.medium',
                       items: const [
-                        DropdownMenuItem(
-                            value: 't3.micro', child: Text('t3.micro')),
-                        DropdownMenuItem(
-                            value: 't3.small', child: Text('t3.small')),
-                        DropdownMenuItem(
-                            value: 't3.medium', child: Text('t3.medium')),
-                        DropdownMenuItem(
-                            value: 't3.large', child: Text('t3.large')),
+                        DropdownMenuItem(value: 't3.micro', child: Text('t3.micro')),
+                        DropdownMenuItem(value: 't3.small', child: Text('t3.small')),
+                        DropdownMenuItem(value: 't3.medium', child: Text('t3.medium')),
+                        DropdownMenuItem(value: 't3.large', child: Text('t3.large')),
                       ],
                       onChanged: (value) {},
                     ),
@@ -322,14 +315,10 @@ class _CloudSimulatorState extends State<CloudSimulator>
                     child: DropdownButton<String>(
                       value: 'eu-west-3',
                       items: const [
-                        DropdownMenuItem(
-                            value: 'eu-west-1', child: Text('eu-west-1')),
-                        DropdownMenuItem(
-                            value: 'eu-west-2', child: Text('eu-west-2')),
-                        DropdownMenuItem(
-                            value: 'eu-west-3', child: Text('eu-west-3')),
-                        DropdownMenuItem(
-                            value: 'us-east-1', child: Text('us-east-1')),
+                        DropdownMenuItem(value: 'eu-west-1', child: Text('eu-west-1')),
+                        DropdownMenuItem(value: 'eu-west-2', child: Text('eu-west-2')),
+                        DropdownMenuItem(value: 'eu-west-3', child: Text('eu-west-3')),
+                        DropdownMenuItem(value: 'us-east-1', child: Text('us-east-1')),
                       ],
                       onChanged: (value) {},
                     ),
@@ -337,7 +326,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                   const SizedBox(width: 12),
                   ElevatedButton.icon(
                     onPressed: _isDeploying ? null : _launchInstance,
-                    icon: _isDeploying
+                    icon: _isDeploying 
                         ? const SizedBox(
                             width: 16,
                             height: 16,
@@ -353,9 +342,9 @@ class _CloudSimulatorState extends State<CloudSimulator>
               ),
             ),
           ),
-
+          
           const SizedBox(height: 16),
-
+          
           // Liste des instances
           Expanded(
             child: Card(
@@ -412,9 +401,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
       decoration: BoxDecoration(
         color: _getInstanceStatusColor(instance.status).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-            color: _getInstanceStatusColor(instance.status)
-                .withValues(alpha: 0.3)),
+        border: Border.all(color: _getInstanceStatusColor(instance.status).withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -485,13 +472,11 @@ class _CloudSimulatorState extends State<CloudSimulator>
               ),
               const SizedBox(width: 8),
               Expanded(
-                child:
-                    _buildInstanceMetric('Stockage', '${instance.storage} GB'),
+                child: _buildInstanceMetric('Stockage', '${instance.storage} GB'),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: _buildInstanceMetric(
-                    'Coût/h', '\$${instance.hourlyCost.toStringAsFixed(4)}'),
+                child: _buildInstanceMetric('Coût/h', '\$${instance.hourlyCost.toStringAsFixed(4)}'),
               ),
             ],
           ),
@@ -499,8 +484,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
           Row(
             children: [
               if (instance.publicIp.isNotEmpty) ...[
-                const Icon(Icons.public,
-                    color: TdcColors.textTertiary, size: 16),
+                const Icon(Icons.public, color: TdcColors.textTertiary, size: 16),
                 const SizedBox(width: 4),
                 Text(
                   'Pub: ${instance.publicIp}',
@@ -614,9 +598,9 @@ class _CloudSimulatorState extends State<CloudSimulator>
               ),
             ),
           ),
-
+          
           const SizedBox(height: 16),
-
+          
           // Liste des services
           Expanded(
             child: Card(
@@ -716,8 +700,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: service.status == 'Active' ||
-                          service.status == 'Available'
+                  color: service.status == 'Active' || service.status == 'Available'
                       ? TdcColors.system
                       : TdcColors.security,
                   borderRadius: BorderRadius.circular(8),
@@ -736,8 +719,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
           const SizedBox(height: 8),
           Row(
             children: [
-              const Icon(Icons.location_on,
-                  color: TdcColors.textTertiary, size: 16),
+              const Icon(Icons.location_on, color: TdcColors.textTertiary, size: 16),
               const SizedBox(width: 4),
               Text(
                 service.region,
@@ -798,12 +780,9 @@ class _CloudSimulatorState extends State<CloudSimulator>
                     child: DropdownButton<String>(
                       value: 'production',
                       items: const [
-                        DropdownMenuItem(
-                            value: 'development', child: Text('Development')),
-                        DropdownMenuItem(
-                            value: 'staging', child: Text('Staging')),
-                        DropdownMenuItem(
-                            value: 'production', child: Text('Production')),
+                        DropdownMenuItem(value: 'development', child: Text('Development')),
+                        DropdownMenuItem(value: 'staging', child: Text('Staging')),
+                        DropdownMenuItem(value: 'production', child: Text('Production')),
                       ],
                       onChanged: (value) {},
                     ),
@@ -811,7 +790,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                   const SizedBox(width: 12),
                   ElevatedButton.icon(
                     onPressed: _isDeploying ? null : _startDeployment,
-                    icon: _isDeploying
+                    icon: _isDeploying 
                         ? const SizedBox(
                             width: 16,
                             height: 16,
@@ -827,9 +806,9 @@ class _CloudSimulatorState extends State<CloudSimulator>
               ),
             ),
           ),
-
+          
           const SizedBox(height: 16),
-
+          
           // Historique des déploiements
           Expanded(
             child: Card(
@@ -876,12 +855,9 @@ class _CloudSimulatorState extends State<CloudSimulator>
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color:
-            _getDeploymentStatusColor(deployment.status).withValues(alpha: 0.1),
+        color: _getDeploymentStatusColor(deployment.status).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-            color: _getDeploymentStatusColor(deployment.status)
-                .withValues(alpha: 0.3)),
+        border: Border.all(color: _getDeploymentStatusColor(deployment.status).withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -953,8 +929,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
                 ),
               ),
               const Spacer(),
-              const Icon(Icons.access_time,
-                  color: TdcColors.textTertiary, size: 16),
+              const Icon(Icons.access_time, color: TdcColors.textTertiary, size: 16),
               const SizedBox(width: 4),
               Text(
                 'Début: ${_formatDateTime(deployment.startTime)}',
@@ -973,17 +948,16 @@ class _CloudSimulatorState extends State<CloudSimulator>
   // Méthodes de simulation
   Future<void> _launchInstance() async {
     setState(() => _isDeploying = true);
-
+    
     await Future.delayed(const Duration(seconds: 3));
-
+    
     final newInstance = CloudInstance(
       id: 'i-${DateTime.now().millisecondsSinceEpoch}',
       name: 'instance-${_instances.length + 1}',
       type: 't3.medium',
       status: 'Running',
       region: 'eu-west-3',
-      publicIp:
-          '52.47.${Random.secure().nextInt(255)}.${Random.secure().nextInt(255)}',
+      publicIp: '52.47.${Random.secure().nextInt(255)}.${Random.secure().nextInt(255)}',
       privateIp: '10.0.1.${100 + _instances.length}',
       cpu: 2,
       memory: 4.0,
@@ -991,7 +965,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
       hourlyCost: 0.0416,
       launchTime: DateTime.now(),
     );
-
+    
     setState(() {
       _isDeploying = false;
       _instances.add(newInstance);
@@ -1033,7 +1007,7 @@ class _CloudSimulatorState extends State<CloudSimulator>
 
   Future<void> _startDeployment() async {
     setState(() => _isDeploying = true);
-
+    
     final deployment = DeploymentJob(
       id: 'deploy-${DateTime.now().millisecondsSinceEpoch}',
       application: 'web-app',
@@ -1043,13 +1017,13 @@ class _CloudSimulatorState extends State<CloudSimulator>
       endTime: DateTime.now(),
       duration: const Duration(minutes: 0),
     );
-
+    
     setState(() {
       _deployments.insert(0, deployment);
     });
-
+    
     await Future.delayed(const Duration(seconds: 5));
-
+    
     setState(() {
       deployment.status = 'Completed';
       deployment.endTime = DateTime.now();
@@ -1061,74 +1035,50 @@ class _CloudSimulatorState extends State<CloudSimulator>
   // Méthodes utilitaires
   Color _getInstanceStatusColor(String status) {
     switch (status) {
-      case 'Running':
-        return TdcColors.system;
-      case 'Stopped':
-        return TdcColors.crypto;
-      case 'Terminated':
-        return TdcColors.security;
-      case 'Pending':
-        return TdcColors.network;
-      default:
-        return TdcColors.border;
+      case 'Running': return TdcColors.system;
+      case 'Stopped': return TdcColors.crypto;
+      case 'Terminated': return TdcColors.security;
+      case 'Pending': return TdcColors.network;
+      default: return TdcColors.border;
     }
   }
 
   IconData _getInstanceIcon(String status) {
     switch (status) {
-      case 'Running':
-        return Icons.play_arrow;
-      case 'Stopped':
-        return Icons.pause;
-      case 'Terminated':
-        return Icons.stop;
-      case 'Pending':
-        return Icons.hourglass_empty;
-      default:
-        return Icons.help;
+      case 'Running': return Icons.play_arrow;
+      case 'Stopped': return Icons.pause;
+      case 'Terminated': return Icons.stop;
+      case 'Pending': return Icons.hourglass_empty;
+      default: return Icons.help;
     }
   }
 
   IconData _getServiceIcon(String type) {
     switch (type) {
-      case 'Application Load Balancer':
-        return Icons.balance;
-      case 'MySQL':
-        return Icons.storage;
-      case 'S3':
-        return Icons.cloud;
-      default:
-        return Icons.cloud_queue;
+      case 'Application Load Balancer': return Icons.balance;
+      case 'MySQL': return Icons.storage;
+      case 'S3': return Icons.cloud;
+      default: return Icons.cloud_queue;
     }
   }
 
   Color _getDeploymentStatusColor(String status) {
     switch (status) {
-      case 'Completed':
-        return TdcColors.system;
-      case 'Failed':
-        return TdcColors.security;
-      case 'In Progress':
-        return TdcColors.network;
-      case 'Pending':
-        return TdcColors.crypto;
-      default:
-        return TdcColors.border;
+      case 'Completed': return TdcColors.system;
+      case 'Failed': return TdcColors.security;
+      case 'In Progress': return TdcColors.network;
+      case 'Pending': return TdcColors.crypto;
+      default: return TdcColors.border;
     }
   }
 
   IconData _getDeploymentIcon(String status) {
     switch (status) {
-      case 'Completed':
-        return Icons.check_circle;
-      case 'Failed':
-        return Icons.error;
-      case 'In Progress':
-        return Icons.sync;
-      case 'Pending':
-        return Icons.schedule;
-      default:
-        return Icons.help;
+      case 'Completed': return Icons.check_circle;
+      case 'Failed': return Icons.error;
+      case 'In Progress': return Icons.sync;
+      case 'Pending': return Icons.schedule;
+      default: return Icons.help;
     }
   }
 

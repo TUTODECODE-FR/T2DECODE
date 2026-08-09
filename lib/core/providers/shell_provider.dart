@@ -27,7 +27,7 @@ class ShellProvider extends ChangeNotifier {
     if (showBackButton != null) _showBackButton = showBackButton;
     _onBack = onBack; // Can be null
     if (activeRoute != null) _activeRoute = activeRoute;
-
+    
     notifyListeners();
   }
 

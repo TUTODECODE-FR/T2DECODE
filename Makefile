@@ -7,7 +7,9 @@ PUBSTAMP = .dart_tool/package_config.json
 DART_DEFINES =
 ifeq ($(TUTODECODE_OFFICIAL_BUILD),true)
 	DART_DEFINES = --dart-define=OFFICIAL_BUILD=true
+	OBFUSCATE_FLAGS = --obfuscate --split-debug-info=build/debug-info
 endif
+
 
 .PHONY: help setup get build-android build-android-fdroid build-ios build-macos build-windows build-linux build-all clean clean-macos test
 
@@ -43,7 +45,8 @@ test: $(PUBSTAMP)
 	$(FLUTTER) test --no-pub
 
 build-android: $(PUBSTAMP)
-	$(FLUTTER) build apk --release $(DART_DEFINES) --no-pub
+	$(FLUTTER) build apk --release $(DART_DEFINES) $(OBFUSCATE_FLAGS) --no-pub
+
 
 build-android-fdroid: $(PUBSTAMP)
 	FDROID_BUILD=true $(FLUTTER) build apk --release $(DART_DEFINES) --no-tree-shake-icons --no-pub

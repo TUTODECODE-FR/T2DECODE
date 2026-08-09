@@ -111,6 +111,7 @@ class CoursesProvider with ChangeNotifier {
     return 0;
   }
 
+
   Future<bool> rollbackModule(String fileName) async {
     try {
       final ok = await _moduleService.rollbackLatest(fileName);
@@ -149,6 +150,7 @@ class CoursesProvider with ChangeNotifier {
     }
   }
 
+
   Future<void> loadFromPhantomCache(String passphrase) async {
     try {
       _errorMessage = null;
@@ -156,19 +158,15 @@ class CoursesProvider with ChangeNotifier {
       notifyListeners();
 
       // Pour l'exemple, on cherche un fichier "courses_index.json" dans le cache T2C-Phantom
-      final jsonStr = await _phantomService.readDecryptedString(
-          'courses_index.json', passphrase);
+      final jsonStr = await _phantomService.readDecryptedString('courses_index.json', passphrase);
       if (jsonStr != null) {
         final decoded = json.decode(jsonStr) as List;
-        final phantomCourses = decoded
-            .map((e) => Course.fromMap(e as Map<String, dynamic>))
-            .toList();
-
+        final phantomCourses = decoded.map((e) => Course.fromMap(e as Map<String, dynamic>)).toList();
+        
         // Fusion des cours existants avec les cours Phantom
         _courses = [..._courses, ...phantomCourses];
       } else {
-        throw Exception(
-            "Impossible de lire le cache Phantom ou mot de passe incorrect.");
+        throw Exception("Impossible de lire le cache Phantom ou mot de passe incorrect.");
       }
     } catch (e) {
       _errorMessage = "Erreur Phantom: $e";
@@ -183,10 +181,10 @@ class CoursesProvider with ChangeNotifier {
       _errorMessage = null;
       _loaded = false;
       _completed = await _storage.loadCompleted();
-
+      
       final assetCourses = await Course.loadAll(_currentLocale);
       final externalCourses = await _moduleService.loadExternalModules();
-
+      
       _courses = [...assetCourses, ...externalCourses];
     } catch (err) {
       _errorMessage = err.toString();

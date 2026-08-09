@@ -32,11 +32,7 @@ class _AdminScreenState extends State<AdminScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Network Controller Plan',
-              style: TextStyle(
-                  color: TdcColors.accent,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 10,
-                  letterSpacing: 1.2)),
+              style: TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 1.2)),
           SizedBox(height: 8),
           Text('Panneau d\'administration',
               style: TextStyle(
@@ -49,8 +45,7 @@ class _AdminScreenState extends State<AdminScreen> {
               leading: Icon(Icons.emergency_share, color: TdcColors.danger),
               title: Text('Broadcast control (simulation)',
                   style: TextStyle(color: TdcColors.textPrimary)),
-              subtitle: Text(
-                  'Diffuser un message d\'urgence sur tous les nœuds',
+              subtitle: Text('Diffuser un message d\'urgence sur tous les nœuds', 
                   style: TextStyle(color: TdcColors.textMuted, fontSize: 12)),
             ),
           ),

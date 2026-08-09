@@ -23,8 +23,7 @@ class _SshToolScreenState extends State<SshToolScreen> {
         ConfigParameter('Host', 'Alias de la connexion (ex: srv-prod)'),
         ConfigParameter('HostName', 'Adresse IP ou nom de domaine réel'),
         ConfigParameter('User', 'Nom d\'utilisateur SSH'),
-        ConfigParameter(
-            'IdentityFile', 'Chemin vers la clé privée (ex: ~/.ssh/id_rsa)'),
+        ConfigParameter('IdentityFile', 'Chemin vers la clé privée (ex: ~/.ssh/id_rsa)'),
         ConfigParameter('Port', 'Port SSH si différent de 22'),
       ],
       '''Host prod
@@ -37,10 +36,8 @@ class _SshToolScreenState extends State<SshToolScreen> {
       'Configuration recommandée pour /etc/ssh/sshd_config sur le serveur.',
       [
         ConfigParameter('PermitRootLogin no', 'Interdire la connexion en root'),
-        ConfigParameter('PasswordAuthentication no',
-            'Désactiver les mots de passe (clés uniquement)'),
-        ConfigParameter('PubkeyAuthentication yes',
-            'Autoriser l\'authentification par clé'),
+        ConfigParameter('PasswordAuthentication no', 'Désactiver les mots de passe (clés uniquement)'),
+        ConfigParameter('PubkeyAuthentication yes', 'Autoriser l\'authentification par clé'),
         ConfigParameter('Port 2222', 'Changer le port par défaut (obscurité)'),
       ],
       '''# /etc/ssh/sshd_config
@@ -55,9 +52,9 @@ MaxAuthTries 3''',
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
-            title: 'Assistant Config SSH',
-            showBackButton: true,
-          );
+        title: 'Assistant Config SSH',
+        showBackButton: true,
+      );
     });
   }
 
@@ -68,10 +65,7 @@ MaxAuthTries 3''',
         children: [
           const Text(
             'Référence SSH & Sécurité',
-            style: TextStyle(
-                color: TdcColors.textPrimary,
-                fontSize: 24,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(color: TdcColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           const Text(
@@ -101,67 +95,37 @@ MaxAuthTries 3''',
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: TdcColors.accent.withValues(alpha: 0.1),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(12)),
-              border: Border(
-                  bottom: BorderSide(
-                      color: TdcColors.accent.withValues(alpha: 0.2))),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              border: Border(bottom: BorderSide(color: TdcColors.accent.withValues(alpha: 0.2))),
             ),
-            child: Text(t.title,
-                style: const TextStyle(
-                    color: TdcColors.accent,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16)),
+            child: Text(t.title, style: const TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 16)),
           ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(t.desc,
-                    style: const TextStyle(
-                        color: TdcColors.textSecondary, fontSize: 13)),
+                Text(t.desc, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 13)),
                 const SizedBox(height: 16),
                 ...t.params.map((p) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(children: [
-                        Text('• ${p.key} :',
-                            style: const TextStyle(
-                                color: TdcColors.textPrimary,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12)),
-                        const SizedBox(width: 8),
-                        Expanded(
-                            child: Text(p.desc,
-                                style: const TextStyle(
-                                    color: TdcColors.textMuted, fontSize: 12))),
-                      ]),
-                    )),
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(children: [
+                    Text('• ${p.key} :', style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 12)),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(p.desc, style: const TextStyle(color: TdcColors.textMuted, fontSize: 12))),
+                  ]),
+                )),
                 const SizedBox(height: 16),
-                const Text('Exemple de syntaxe :',
-                    style: TextStyle(
-                        color: TdcColors.textMuted,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold)),
+                const Text('Exemple de syntaxe :', style: TextStyle(color: TdcColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.all(12),
                   width: double.infinity,
-                  decoration: const BoxDecoration(
-                      color: Color(0xFF0D1117), borderRadius: TdcRadius.sm),
+                  decoration: const BoxDecoration(color: Color(0xFF0D1117), borderRadius: TdcRadius.sm),
                   child: Row(
                     children: [
-                      Expanded(
-                          child: Text(t.example,
-                              style: const TextStyle(
-                                  color: TdcColors.success,
-                                  fontFamily: 'monospace',
-                                  fontSize: 12))),
-                      IconButton(
-                          icon: const Icon(Icons.copy,
-                              size: 16, color: TdcColors.textTertiary),
-                          onPressed: () => Clipboard.setData(
-                              ClipboardData(text: t.example))),
+                      Expanded(child: Text(t.example, style: const TextStyle(color: TdcColors.success, fontFamily: 'monospace', fontSize: 12))),
+                      IconButton(icon: const Icon(Icons.copy, size: 16, color: TdcColors.textTertiary), onPressed: () => Clipboard.setData(ClipboardData(text: t.example))),
                     ],
                   ),
                 ),
@@ -187,22 +151,14 @@ MaxAuthTries 3''',
           const Row(children: [
             Icon(Icons.vpn_key, color: TdcColors.system, size: 20),
             SizedBox(width: 8),
-            Text('Générer une clé sécurisée (Ed25519)',
-                style: TextStyle(
-                    color: TdcColors.system, fontWeight: FontWeight.bold)),
+            Text('Générer une clé sécurisée (Ed25519)', style: TextStyle(color: TdcColors.system, fontWeight: FontWeight.bold)),
           ]),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: const BoxDecoration(
-                color: Color(0xFF0D1117), borderRadius: TdcRadius.sm),
+            decoration: const BoxDecoration(color: Color(0xFF0D1117), borderRadius: TdcRadius.sm),
             child: const Row(children: [
-              Expanded(
-                  child: Text('ssh-keygen -t ed25519 -C "votre_email@tdc.io"',
-                      style: TextStyle(
-                          color: TdcColors.success,
-                          fontFamily: 'monospace',
-                          fontSize: 12))),
+              Expanded(child: Text('ssh-keygen -t ed25519 -C "votre_email@tdc.io"', style: TextStyle(color: TdcColors.success, fontFamily: 'monospace', fontSize: 12))),
             ]),
           ),
         ],

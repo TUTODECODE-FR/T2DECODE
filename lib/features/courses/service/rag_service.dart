@@ -41,10 +41,9 @@ class RagService {
         String context = '''### PARCOURS : ${course.title}
 ${course.description}
 ''';
-        context +=
-            '''Chapitres inclus : ${course.chapters.map((c) => c.title).join(', ')}.
+        context += '''Chapitres inclus : ${course.chapters.map((c) => c.title).join(', ')}.
 ''';
-
+        
         // Search in chapters
         for (var ch in course.chapters) {
           if (q.contains(ch.title.toLowerCase())) {

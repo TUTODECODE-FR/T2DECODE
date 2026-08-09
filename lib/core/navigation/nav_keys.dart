@@ -8,27 +8,24 @@ import 'package:provider/provider.dart';
 
 class AppNavigator {
   static final GlobalKey<NavigatorState> key = GlobalKey<NavigatorState>();
-
+  
   static NavigatorState? get state => key.currentState;
   static BuildContext? get context => key.currentContext;
 
   static final observer = AppRouteObserver();
-
+  
   /// Safe push: schedule the navigation after the current frame to avoid
   /// "!_debugLocked" assertion when navigation is triggered during build
   /// or an ongoing transition. Returns the pushed route's future when
   /// available, or null if navigator is not ready.
-  static Future<T?>? pushNamed<T extends Object?>(String routeName,
-      {Object? arguments}) {
+  static Future<T?>? pushNamed<T extends Object?>(String routeName, {Object? arguments}) {
     final nav = state;
     if (nav == null) return null;
     final completer = Completer<T?>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       try {
         final f = nav.pushNamed<T>(routeName, arguments: arguments);
-        f
-            .then((v) => completer.complete(v))
-            .catchError((e, s) => completer.completeError(e, s));
+        f.then((v) => completer.complete(v)).catchError((e, s) => completer.completeError(e, s));
       } catch (e, s) {
         completer.completeError(e, s);
       }
@@ -36,21 +33,14 @@ class AppNavigator {
     return completer.future;
   }
 
-  static Future<T?>?
-      pushReplacementNamed<T extends Object?, TO extends Object?>(
-          String routeName,
-          {TO? result,
-          Object? arguments}) {
+  static Future<T?>? pushReplacementNamed<T extends Object?, TO extends Object?>(String routeName, {TO? result, Object? arguments}) {
     final nav = state;
     if (nav == null) return null;
     final completer = Completer<T?>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       try {
-        final f = nav.pushReplacementNamed<T, TO>(routeName,
-            result: result, arguments: arguments);
-        f
-            .then((v) => completer.complete(v))
-            .catchError((e, s) => completer.completeError(e, s));
+        final f = nav.pushReplacementNamed<T, TO>(routeName, result: result, arguments: arguments);
+        f.then((v) => completer.complete(v)).catchError((e, s) => completer.completeError(e, s));
       } catch (e, s) {
         completer.completeError(e, s);
       }
@@ -87,8 +77,7 @@ class AppRouteObserver extends NavigatorObserver {
         // Use post frame callback to avoid issues with build/layout phase
         WidgetsBinding.instance.addPostFrameCallback((_) {
           try {
-            Provider.of<ShellProvider>(context, listen: false)
-                .setActiveRoute(name);
+            Provider.of<ShellProvider>(context, listen: false).setActiveRoute(name);
           } catch (e) {
             debugPrint('ShellProvider update failed: $e');
           }

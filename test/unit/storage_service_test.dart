@@ -23,13 +23,15 @@ void main() {
 
     test('saveAiSettings coverage', () async {
       final storage = StorageService();
-
-      await storage.saveAiSettings(
-          {'ollamaUrl': 'http://localhost:11434', 'selectedModel': 'llama3'});
-
+      
+      await storage.saveAiSettings({
+        'ollamaUrl': 'http://localhost:11434',
+        'selectedModel': 'llama3'
+      });
+      
       expect(await storage.getOllamaHost(), 'http://localhost:11434');
       expect(await storage.getOllamaModel(), 'llama3');
-
+      
       final loaded = await storage.loadAiSettings();
       expect(loaded['ollamaUrl'], 'http://localhost:11434');
 
@@ -39,14 +41,13 @@ void main() {
 
     test('UserProfile save/load', () async {
       final storage = StorageService();
-
+      
       // Load empty profile
       final emptyProfile = await storage.loadUserProfile();
       expect(emptyProfile.username, 'Utilisateur');
 
       // Save custom profile
-      final customProfile =
-          UserProfile(username: 'TestUser', lastActivityDate: DateTime.now());
+      final customProfile = UserProfile(username: 'TestUser', lastActivityDate: DateTime.now());
       await storage.saveUserProfile(customProfile);
 
       // Load custom profile

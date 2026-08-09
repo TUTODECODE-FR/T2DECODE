@@ -15,8 +15,7 @@ class SourceAuthenticationScreen extends StatefulWidget {
   const SourceAuthenticationScreen({super.key});
 
   @override
-  State<SourceAuthenticationScreen> createState() =>
-      _SourceAuthenticationScreenState();
+  State<SourceAuthenticationScreen> createState() => _SourceAuthenticationScreenState();
 }
 
 class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
@@ -29,7 +28,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
   @override
   void initState() {
     super.initState();
-
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
         title: 'Authentification du Code Source',
@@ -37,7 +36,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
         actions: [],
       );
     });
-
+    
     _performSourceAuthentication();
   }
 
@@ -45,7 +44,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
     try {
       final result = await SourceAuthService.verifySource();
       final signature = await SourceAuthentication.generateCodeSignature();
-
+      
       setState(() {
         _authResult = result;
         _codeSignature = signature;
@@ -69,17 +68,17 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  _authResult?.isAuthentic == true
+                  _authResult?.isAuthentic == true 
                       ? Colors.green.withValues(alpha: 0.1)
                       : Colors.red.withValues(alpha: 0.1),
-                  _authResult?.isAuthentic == true
+                  _authResult?.isAuthentic == true 
                       ? Colors.green.withValues(alpha: 0.05)
                       : Colors.red.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _authResult?.isAuthentic == true
+                color: _authResult?.isAuthentic == true 
                     ? Colors.green.withValues(alpha: 0.3)
                     : Colors.red.withValues(alpha: 0.3),
               ),
@@ -87,23 +86,17 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
             child: Column(
               children: [
                 Icon(
-                  _authResult?.isAuthentic == true
-                      ? Icons.code
-                      : Icons.code_off,
-                  color: _authResult?.isAuthentic == true
-                      ? Colors.green
-                      : Colors.red,
+                  _authResult?.isAuthentic == true ? Icons.code : Icons.code_off,
+                  color: _authResult?.isAuthentic == true ? Colors.green : Colors.red,
                   size: 48,
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  _authResult?.isAuthentic == true
+                  _authResult?.isAuthentic == true 
                       ? 'Code Source Authentifié'
                       : 'Code Source Non Authentifié',
                   style: TextStyle(
-                    color: _authResult?.isAuthentic == true
-                        ? Colors.green
-                        : Colors.red,
+                    color: _authResult?.isAuthentic == true ? Colors.green : Colors.red,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -111,7 +104,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _authResult?.isAuthentic == true
+                  _authResult?.isAuthentic == true 
                       ? 'Ce code source est officiellement développé par l\'Association TUTODECODE'
                       : 'Ce code source n\'est pas reconnu comme officiel',
                   style: const TextStyle(
@@ -123,37 +116,37 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
               ],
             ),
           ),
-
+          
           const SizedBox(height: 32),
-
+          
           if (_authResult != null) ...[
             // Informations du développeur
             _buildDeveloperInfo(),
-
+            
             const SizedBox(height: 24),
-
+            
             // Résultats de l'authentification
             _buildAuthenticationChecks(_authResult!),
-
-            if (_authResult!.modifiedFiles.isNotEmpty ||
+            
+            if (_authResult!.modifiedFiles.isNotEmpty || 
                 _authResult!.suspiciousFiles.isNotEmpty ||
                 _authResult!.plagiarizedFiles.isNotEmpty) ...[
               const SizedBox(height: 24),
               _buildIssuesSection(_authResult!),
             ],
-
+            
             const SizedBox(height: 24),
-
+            
             // Signature du code source
             _buildCodeSignatureSection(),
-
+            
             const SizedBox(height: 24),
-
+            
             // Watermark information
             _buildWatermarkSection(),
-
+            
             const SizedBox(height: 24),
-
+            
             // Actions
             _buildActionsSection(),
           ],
@@ -185,24 +178,15 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
               ],
             ),
             const SizedBox(height: 20),
-            _buildInfoRow(
-                'Nom', SourceAuthentication.OFFICIAL_DEVELOPER['name']),
-            _buildInfoRow(
-                'Type', SourceAuthentication.OFFICIAL_DEVELOPER['type']),
-            _buildInfoRow(
-                'SIREN', SourceAuthentication.OFFICIAL_DEVELOPER['siren']),
-            _buildInfoRow(
-                'Pays', SourceAuthentication.OFFICIAL_DEVELOPER['country']),
-            _buildInfoRow(
-                'Site Web', SourceAuthentication.OFFICIAL_DEVELOPER['website']),
-            _buildInfoRow(
-                'Contact', SourceAuthentication.OFFICIAL_DEVELOPER['contact']),
-            _buildInfoRow(
-                'GitHub', SourceAuthentication.OFFICIAL_DEVELOPER['github']),
-            _buildInfoRow(
-                'Licence', SourceAuthentication.OFFICIAL_DEVELOPER['license']),
-            _buildInfoRow('ID Développeur',
-                SourceAuthentication.OFFICIAL_DEVELOPER['developer_id']),
+            _buildInfoRow('Nom', SourceAuthentication.OFFICIAL_DEVELOPER['name']),
+            _buildInfoRow('Type', SourceAuthentication.OFFICIAL_DEVELOPER['type']),
+            _buildInfoRow('SIREN', SourceAuthentication.OFFICIAL_DEVELOPER['siren']),
+            _buildInfoRow('Pays', SourceAuthentication.OFFICIAL_DEVELOPER['country']),
+            _buildInfoRow('Site Web', SourceAuthentication.OFFICIAL_DEVELOPER['website']),
+            _buildInfoRow('Contact', SourceAuthentication.OFFICIAL_DEVELOPER['contact']),
+            _buildInfoRow('GitHub', SourceAuthentication.OFFICIAL_DEVELOPER['github']),
+            _buildInfoRow('Licence', SourceAuthentication.OFFICIAL_DEVELOPER['license']),
+            _buildInfoRow('ID Développeur', SourceAuthentication.OFFICIAL_DEVELOPER['developer_id']),
           ],
         ),
       ),
@@ -263,8 +247,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
                 ),
                 const Spacer(),
                 TextButton(
-                  onPressed: () => setState(
-                      () => _showTechnicalDetails = !_showTechnicalDetails),
+                  onPressed: () => setState(() => _showTechnicalDetails = !_showTechnicalDetails),
                   child: Text(_showTechnicalDetails ? 'Masquer' : 'Détails'),
                 ),
               ],
@@ -273,6 +256,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
             ...result.checks.entries.map((entry) {
               return _buildCheckRow(entry.key, entry.value);
             }),
+            
             if (_showTechnicalDetails) ...[
               const SizedBox(height: 20),
               const Divider(color: TdcColors.border),
@@ -296,7 +280,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
 
   Widget _buildCheckRow(String checkName, bool passed) {
     final checkInfo = _getCheckInfo(checkName);
-
+    
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -354,14 +338,12 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
       case 'fingerprints':
         return {
           'name': 'Empreintes des Fichiers',
-          'description':
-              'Vérifie que les empreintes digitales correspondent au code officiel',
+          'description': 'Vérifie que les empreintes digitales correspondent au code officiel',
         };
       case 'signatures':
         return {
           'name': 'Signatures TUTODECODE',
-          'description':
-              'Contrôle la présence des signatures uniques TUTODECODE',
+          'description': 'Contrôle la présence des signatures uniques TUTODECODE',
         };
       case 'developer':
         return {
@@ -404,25 +386,17 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
   Widget _buildTechnicalDetails(SourceAuthResult result) {
     return Column(
       children: [
-        _buildDetailRow(
-            'Total Fichiers Vérifiés', '${result.fileResults.length}'),
-        _buildDetailRow('Fichiers Authentiques',
-            '${result.fileResults.values.where((v) => v).length}'),
+        _buildDetailRow('Total Fichiers Vérifiés', '${result.fileResults.length}'),
+        _buildDetailRow('Fichiers Authentiques', '${result.fileResults.values.where((v) => v).length}'),
         if (result.modifiedFiles.isNotEmpty)
-          _buildDetailRow('Fichiers Modifiés', '${result.modifiedFiles.length}',
-              isWarning: true),
+          _buildDetailRow('Fichiers Modifiés', '${result.modifiedFiles.length}', isWarning: true),
         if (result.suspiciousFiles.isNotEmpty)
-          _buildDetailRow(
-              'Fichiers Suspects', '${result.suspiciousFiles.length}',
-              isWarning: true),
+          _buildDetailRow('Fichiers Suspects', '${result.suspiciousFiles.length}', isWarning: true),
         if (result.plagiarizedFiles.isNotEmpty)
-          _buildDetailRow(
-              'Fichiers Plagiés', '${result.plagiarizedFiles.length}',
-              isWarning: true),
-        _buildDetailRow(
-            'Date de Vérification', _formatDate(result.verificationDate)),
-        _buildDetailRow('Niveau de Risque', result.riskLevel.name.toUpperCase(),
-            isWarning: result.riskLevel != SourceRiskLevel.low),
+          _buildDetailRow('Fichiers Plagiés', '${result.plagiarizedFiles.length}', isWarning: true),
+        _buildDetailRow('Date de Vérification', _formatDate(result.verificationDate)),
+        _buildDetailRow('Niveau de Risque', result.riskLevel.name.toUpperCase(), 
+                       isWarning: result.riskLevel != SourceRiskLevel.low),
       ],
     );
   }
@@ -483,21 +457,22 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
               ],
             ),
             const SizedBox(height: 16),
+            
             if (result.modifiedFiles.isNotEmpty) ...[
-              _buildIssueSection(
-                  'Fichiers Modifiés', result.modifiedFiles, Icons.edit),
+              _buildIssueSection('Fichiers Modifiés', result.modifiedFiles, Icons.edit),
               const SizedBox(height: 16),
             ],
+            
             if (result.suspiciousFiles.isNotEmpty) ...[
-              _buildIssueSection(
-                  'Fichiers Suspects', result.suspiciousFiles, Icons.security),
+              _buildIssueSection('Fichiers Suspects', result.suspiciousFiles, Icons.security),
               const SizedBox(height: 16),
             ],
+            
             if (result.plagiarizedFiles.isNotEmpty) ...[
-              _buildIssueSection('Fichiers Plagiés', result.plagiarizedFiles,
-                  Icons.content_copy),
+              _buildIssueSection('Fichiers Plagiés', result.plagiarizedFiles, Icons.content_copy),
               const SizedBox(height: 16),
             ],
+            
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
@@ -547,23 +522,23 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
         ),
         const SizedBox(height: 8),
         ...files.map((file) => Padding(
-              padding: const EdgeInsets.only(left: 28, bottom: 4),
-              child: Text(
-                file,
-                style: const TextStyle(
-                  color: TdcColors.textPrimary,
-                  fontSize: 12,
-                  fontFamily: 'monospace',
-                ),
-              ),
-            )),
+          padding: const EdgeInsets.only(left: 28, bottom: 4),
+          child: Text(
+            file,
+            style: const TextStyle(
+              color: TdcColors.textPrimary,
+              fontSize: 12,
+              fontFamily: 'monospace',
+            ),
+          ),
+        )),
       ],
     );
   }
 
   Widget _buildCodeSignatureSection() {
     if (_codeSignature == null) return const SizedBox.shrink();
-
+    
     return Card(
       color: TdcColors.surface,
       child: Padding(
@@ -586,22 +561,17 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
               ],
             ),
             const SizedBox(height: 20),
-
+            
             // Informations de la signature
             _buildSignatureRow('ID de Signature', _codeSignature!.signatureId),
-            _buildSignatureRow('Validité',
-                _codeSignature!.isOfficial ? 'Officielle' : 'Non officielle'),
-            _buildSignatureRow('Date de Vérification',
-                _formatDate(_codeSignature!.verificationDate)),
-            _buildSignatureRow(
-                'Fichiers Vérifiés', '${_codeSignature!.fileCount}'),
-            _buildSignatureRow(
-                'Fichiers Authentiques', '${_codeSignature!.authenticFiles}'),
-            _buildSignatureRow(
-                'Hash de Signature', _codeSignature!.signatureHash),
-
+            _buildSignatureRow('Validité', _codeSignature!.isOfficial ? 'Officielle' : 'Non officielle'),
+            _buildSignatureRow('Date de Vérification', _formatDate(_codeSignature!.verificationDate)),
+            _buildSignatureRow('Fichiers Vérifiés', '${_codeSignature!.fileCount}'),
+            _buildSignatureRow('Fichiers Authentiques', '${_codeSignature!.authenticFiles}'),
+            _buildSignatureRow('Hash de Signature', _codeSignature!.signatureHash),
+            
             const SizedBox(height: 20),
-
+            
             // QR Code
             Container(
               width: double.infinity,
@@ -678,7 +648,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
 
   Widget _buildWatermarkSection() {
     if (_codeSignature == null) return const SizedBox.shrink();
-
+    
     return Card(
       color: TdcColors.surface,
       child: Padding(
@@ -700,13 +670,13 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
                 ),
                 const Spacer(),
                 TextButton(
-                  onPressed: () =>
-                      setState(() => _showWatermarkInfo = !_showWatermarkInfo),
+                  onPressed: () => setState(() => _showWatermarkInfo = !_showWatermarkInfo),
                   child: Text(_showWatermarkInfo ? 'Masquer' : 'Afficher'),
                 ),
               ],
             ),
             const SizedBox(height: 16),
+            
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -776,12 +746,12 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: _authResult?.isAuthentic == true
+            color: _authResult?.isAuthentic == true 
                 ? Colors.green.withValues(alpha: 0.1)
                 : Colors.red.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: _authResult?.isAuthentic == true
+              color: _authResult?.isAuthentic == true 
                   ? Colors.green.withValues(alpha: 0.3)
                   : Colors.red.withValues(alpha: 0.3),
             ),
@@ -789,24 +759,18 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
           child: Row(
             children: [
               Icon(
-                _authResult?.isAuthentic == true
-                    ? Icons.check_circle
-                    : Icons.warning,
-                color: _authResult?.isAuthentic == true
-                    ? Colors.green
-                    : Colors.red,
+                _authResult?.isAuthentic == true ? Icons.check_circle : Icons.warning,
+                color: _authResult?.isAuthentic == true ? Colors.green : Colors.red,
                 size: 20,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  _authResult?.isAuthentic == true
+                  _authResult?.isAuthentic == true 
                       ? '✅ Code source officiel - Utilisation sécurisée garantie'
                       : '❌ Code source non officiel - Risque de sécurité élevé',
                   style: TextStyle(
-                    color: _authResult?.isAuthentic == true
-                        ? Colors.green
-                        : Colors.red,
+                    color: _authResult?.isAuthentic == true ? Colors.green : Colors.red,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -815,9 +779,9 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
             ],
           ),
         ),
-
+        
         const SizedBox(height: 20),
-
+        
         // Boutons d'action
         Row(
           children: [
@@ -855,7 +819,7 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
             ),
           ],
         ),
-
+        
         if (_authResult?.isAuthentic != true) ...[
           const SizedBox(height: 16),
           SizedBox(
@@ -898,15 +862,14 @@ class _SourceAuthenticationScreenState extends State<SourceAuthenticationScreen>
 
   void _downloadOfficialSource() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-          content: Text('Redirection vers le dépôt GitHub officiel')),
+      const SnackBar(content: Text('Redirection vers le dépôt GitHub officiel')),
     );
   }
 
   String _generateTextReport() {
     final result = _authResult!;
     final signature = _codeSignature!;
-
+    
     return '''
 RAPPORT D'AUTHENTIFICATION DU CODE SOURCE
 ==========================================

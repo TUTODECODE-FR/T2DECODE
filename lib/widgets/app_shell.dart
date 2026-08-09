@@ -156,9 +156,7 @@ class _AppShellState extends State<AppShell> {
                         color: TdcColors.textMuted.withValues(alpha: 0.5)),
                   ),
                   MouseRegion(
-                    cursor: item.key == activeRoute
-                        ? SystemMouseCursors.basic
-                        : SystemMouseCursors.click,
+                    cursor: item.key == activeRoute ? SystemMouseCursors.basic : SystemMouseCursors.click,
                     child: GestureDetector(
                       onTap: () {
                         if (item.key != activeRoute) {
@@ -228,7 +226,8 @@ class _AppShellState extends State<AppShell> {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       decoration: const BoxDecoration(
         color: TdcColors.bg,
-        border: Border(bottom: BorderSide(color: TdcColors.border, width: 1)),
+        border:
+            Border(bottom: BorderSide(color: TdcColors.border, width: 1)),
       ),
       child: Row(
         children: [
@@ -531,14 +530,13 @@ class _AppShellState extends State<AppShell> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(TdcSpacing.md,
-                              TdcSpacing.lg, TdcSpacing.md, TdcSpacing.md),
+                          padding: const EdgeInsets.fromLTRB(
+                              TdcSpacing.md, TdcSpacing.lg, TdcSpacing.md, TdcSpacing.md),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(children: [
-                                Image.asset('assets/logo.png',
-                                    width: 32, height: 32),
+                                Image.asset('assets/logo.png', width: 32, height: 32),
                                 const SizedBox(width: TdcSpacing.sm),
                                 const Text('T2DECODE',
                                     style: TextStyle(
@@ -550,21 +548,16 @@ class _AppShellState extends State<AppShell> {
                               ]),
                               const SizedBox(height: 8),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color:
-                                      TdcColors.accent.withValues(alpha: 0.1),
+                                  color: TdcColors.accent.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(
-                                      color: TdcColors.accent
-                                          .withValues(alpha: 0.3)),
+                                  border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
                                 ),
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.verified_user_outlined,
-                                        size: 12, color: TdcColors.accent),
+                                    Icon(Icons.verified_user_outlined, size: 12, color: TdcColors.accent),
                                     SizedBox(width: 6),
                                     Text(
                                       'SOUVERAIN & AIR-GAPPED',
@@ -582,14 +575,12 @@ class _AppShellState extends State<AppShell> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: TdcSpacing.md),
+                          padding: const EdgeInsets.symmetric(horizontal: TdcSpacing.md),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text('PROGRESSION',
                                       style: TextStyle(
@@ -597,8 +588,7 @@ class _AppShellState extends State<AppShell> {
                                           fontSize: 10,
                                           letterSpacing: 1.4,
                                           fontWeight: FontWeight.w700)),
-                                  Text(
-                                      '${(prov.overallProgress * 100).toInt()}%',
+                                  Text('${(prov.overallProgress * 100).toInt()}%',
                                       style: const TextStyle(
                                           color: TdcColors.accent,
                                           fontSize: 11,
@@ -612,16 +602,15 @@ class _AppShellState extends State<AppShell> {
                                   value: prov.overallProgress,
                                   minHeight: 4,
                                   backgroundColor: TdcColors.surfaceAlt,
-                                  valueColor: const AlwaysStoppedAnimation(
-                                      TdcColors.accent),
+                                  valueColor:
+                                      const AlwaysStoppedAnimation(TdcColors.accent),
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                   '${prov.completedCount} sur ${prov.totalChaptersCount} chapitres',
                                   style: const TextStyle(
-                                      color: TdcColors.textMuted,
-                                      fontSize: 10)),
+                                      color: TdcColors.textMuted, fontSize: 10)),
                             ],
                           ),
                         ),
@@ -657,24 +646,19 @@ class _AppShellState extends State<AppShell> {
                                   builder: (context, ai, _) => Icon(
                                     Icons.memory,
                                     size: 16,
-                                    color: ai.isConnected
-                                        ? TdcColors.info
-                                        : TdcColors.textMuted,
+                                    color: ai.isConnected ? TdcColors.info : TdcColors.textMuted,
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Consumer<AiTutorProvider>(
                                     builder: (context, ai, _) => Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           !ai.hasCheckedOllama
                                               ? 'Vérification…'
-                                              : (ai.isConnected
-                                                  ? 'IA locale prête'
-                                                  : 'IA locale optionnelle'),
+                                              : (ai.isConnected ? 'IA locale prête' : 'IA locale optionnelle'),
                                           style: const TextStyle(
                                               color: TdcColors.textPrimary,
                                               fontSize: 12,
@@ -685,8 +669,7 @@ class _AppShellState extends State<AppShell> {
                                               ? '${ai.availableModels.length} modèle(s)'
                                               : 'Cliquer pour configurer Ollama',
                                           style: const TextStyle(
-                                              color: TdcColors.textMuted,
-                                              fontSize: 10),
+                                              color: TdcColors.textMuted, fontSize: 10),
                                         ),
                                       ],
                                     ),

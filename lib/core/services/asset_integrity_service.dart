@@ -17,8 +17,7 @@ class AssetIntegrityService {
       final expected = e.value.toString();
       final bytes = (await rootBundle.load(path)).buffer.asUint8List();
       final hash = await Sha256().hash(bytes);
-      final actual =
-          hash.bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+      final actual = hash.bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
       if (actual != expected) mismatched.add(path);
     }
     return mismatched;

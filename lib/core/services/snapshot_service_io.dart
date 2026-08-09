@@ -20,12 +20,10 @@ class SnapshotService {
     try {
       final dir = await getApplicationDocumentsDirectory();
       final snapshotsDir = Directory('${dir.path}/$_snapshotsFolder');
-      if (!await snapshotsDir.exists())
-        await snapshotsDir.create(recursive: true);
+      if (!await snapshotsDir.exists()) await snapshotsDir.create(recursive: true);
 
       final today = DateTime.now().toUtc();
-      final stamp =
-          '${today.year.toString().padLeft(4, '0')}${today.month.toString().padLeft(2, '0')}${today.day.toString().padLeft(2, '0')}';
+      final stamp = '${today.year.toString().padLeft(4, '0')}${today.month.toString().padLeft(2, '0')}${today.day.toString().padLeft(2, '0')}';
       final path = '${snapshotsDir.path}/snapshot_$stamp.tdc';
       final file = File(path);
       if (await file.exists()) {
@@ -52,8 +50,7 @@ class SnapshotService {
     return b64;
   }
 
-  Future<void> _rotateSnapshots(Directory snapshotsDir,
-      {required int keepDays}) async {
+  Future<void> _rotateSnapshots(Directory snapshotsDir, {required int keepDays}) async {
     final entries = snapshotsDir
         .listSync()
         .whereType<File>()

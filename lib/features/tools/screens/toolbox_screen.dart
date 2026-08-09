@@ -81,8 +81,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
           t.title.toLowerCase().contains(q) ||
           t.description.toLowerCase().contains(q) ||
           t.category.toLowerCase().contains(q);
-      final matchCat =
-          _selectedCategory == 'Tous' || t.category == _selectedCategory;
+      final matchCat = _selectedCategory == 'Tous' || t.category == _selectedCategory;
       return matchQuery && matchCat;
     }).toList();
   }
@@ -90,12 +89,10 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
   List<LabCatalogEntry> get _filteredLabs {
     final q = _searchQuery.toLowerCase();
     return (_selectedCategory == 'Tous' || _selectedCategory == 'Simulateurs')
-        ? labCatalog
-            .where((l) =>
-                q.isEmpty ||
-                l.label.toLowerCase().contains(q) ||
-                l.subtitle.toLowerCase().contains(q))
-            .toList()
+        ? labCatalog.where((l) =>
+            q.isEmpty ||
+            l.label.toLowerCase().contains(q) ||
+            l.subtitle.toLowerCase().contains(q)).toList()
         : [];
   }
 
@@ -105,6 +102,8 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
     final filteredLabs = _filteredLabs;
     final favoriteTools =
         filteredTools.where((t) => _favoriteRoutes.contains(t.route)).toList();
+
+
 
     return TdcPageWrapper(
       child: ListView(
@@ -126,10 +125,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
                     const SizedBox(height: 6),
                     const Text(
                       'Tous vos utilitaires IT, 100% hors-ligne. Aucune donnée ne quitte votre machine.',
-                      style: TextStyle(
-                          color: TdcColors.textSecondary,
-                          fontSize: 14,
-                          height: 1.4),
+                      style: TextStyle(color: TdcColors.textSecondary, fontSize: 14, height: 1.4),
                     ),
                   ],
                 ),
@@ -208,8 +204,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
                       child: _FilterChip(
                         label: cat,
                         isSelected: _selectedCategory == cat,
-                        count:
-                            toolCatalog.where((t) => t.category == cat).length,
+                        count: toolCatalog.where((t) => t.category == cat).length,
                         onTap: () => setState(() => _selectedCategory = cat),
                       ),
                     )),
@@ -217,8 +212,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
                   label: 'Simulateurs',
                   isSelected: _selectedCategory == 'Simulateurs',
                   count: labCatalog.length,
-                  onTap: () =>
-                      setState(() => _selectedCategory = 'Simulateurs'),
+                  onTap: () => setState(() => _selectedCategory = 'Simulateurs'),
                 ),
               ],
             ),
@@ -226,10 +220,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
           const SizedBox(height: 24),
 
           // ── Favoris ───────────────────────────────────────────
-          if (_favoritesLoaded &&
-              favoriteTools.isNotEmpty &&
-              _searchQuery.isEmpty &&
-              _selectedCategory == 'Tous') ...[
+          if (_favoritesLoaded && favoriteTools.isNotEmpty && _searchQuery.isEmpty && _selectedCategory == 'Tous') ...[
             _SectionHeader(
               icon: Icons.star_rounded,
               title: 'Favoris',
@@ -259,8 +250,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
             if (_selectedCategory == 'Tous' && _searchQuery.isEmpty) ...[
               // Group by category
               ...toolCategories.expand((cat) {
-                final catTools =
-                    filteredTools.where((t) => t.category == cat).toList();
+                final catTools = filteredTools.where((t) => t.category == cat).toList();
                 if (catTools.isEmpty) return <Widget>[];
                 return [
                   _SectionHeader(
@@ -282,8 +272,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
                     itemCount: catTools.length,
                     itemBuilder: (context, i) => _buildToolCard(
                         context, i, catTools[i],
-                        isFavorite:
-                            _favoriteRoutes.contains(catTools[i].route)),
+                        isFavorite: _favoriteRoutes.contains(catTools[i].route)),
                   ),
                   const SizedBox(height: 28),
                 ];
@@ -311,8 +300,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
                 itemCount: filteredTools.length,
                 itemBuilder: (context, i) => _buildToolCard(
                     context, i, filteredTools[i],
-                    isFavorite:
-                        _favoriteRoutes.contains(filteredTools[i].route)),
+                    isFavorite: _favoriteRoutes.contains(filteredTools[i].route)),
               ),
               const SizedBox(height: 28),
             ],
@@ -348,8 +336,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
             TdcEmptyState(
               icon: Icons.search_off,
               title: 'Aucun résultat',
-              subtitle:
-                  'Aucun outil ou simulateur ne correspond à "$_searchQuery".',
+              subtitle: 'Aucun outil ou simulateur ne correspond à "$_searchQuery".',
             ),
             const SizedBox(height: 32),
           ],
@@ -385,8 +372,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
     return TdcFadeSlide(
       delay: Duration(milliseconds: 50 * index),
       child: _HoverCard(
-        onTap: () =>
-            Navigator.pushNamed(context, '/lab', arguments: {'sim': lab.id}),
+        onTap: () => Navigator.pushNamed(context, '/lab', arguments: {'sim': lab.id}),
         child: Row(
           children: [
             Container(
@@ -417,8 +403,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: lab.color.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4),
@@ -434,9 +419,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
                   const SizedBox(height: 4),
                   Text(lab.subtitle,
                       style: const TextStyle(
-                          color: TdcColors.textSecondary,
-                          fontSize: 12,
-                          height: 1.3),
+                          color: TdcColors.textSecondary, fontSize: 12, height: 1.3),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis),
                 ],
@@ -489,9 +472,7 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
                   Text(
                     tool.description,
                     style: const TextStyle(
-                        color: TdcColors.textSecondary,
-                        fontSize: 11,
-                        height: 1.3),
+                        color: TdcColors.textSecondary, fontSize: 11, height: 1.3),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -499,13 +480,13 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
               ),
             ),
             IconButton(
-              tooltip:
-                  isFavorite ? 'Retirer des favoris' : 'Épingler en favori',
+              tooltip: isFavorite ? 'Retirer des favoris' : 'Épingler en favori',
               onPressed: () => _toggleFavorite(tool.route),
               icon: Icon(
                 isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
-                color:
-                    isFavorite ? const Color(0xFFF59E0B) : TdcColors.textMuted,
+                color: isFavorite
+                    ? const Color(0xFFF59E0B)
+                    : TdcColors.textMuted,
                 size: 20,
               ),
             ),
@@ -517,35 +498,23 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
 
   IconData _categoryIcon(String cat) {
     switch (cat) {
-      case catReseau:
-        return Icons.hub;
-      case catSecurite:
-        return Icons.shield;
-      case catSysteme:
-        return Icons.memory;
-      case catDev:
-        return Icons.code;
-      case catReference:
-        return Icons.menu_book;
-      default:
-        return Icons.folder;
+      case catReseau:    return Icons.hub;
+      case catSecurite:  return Icons.shield;
+      case catSysteme:   return Icons.memory;
+      case catDev:       return Icons.code;
+      case catReference: return Icons.menu_book;
+      default:           return Icons.folder;
     }
   }
 
   Color _categoryColor(String cat) {
     switch (cat) {
-      case catReseau:
-        return TdcColors.network;
-      case catSecurite:
-        return TdcColors.security;
-      case catSysteme:
-        return TdcColors.system;
-      case catDev:
-        return TdcColors.info;
-      case catReference:
-        return TdcColors.crypto;
-      default:
-        return TdcColors.accent;
+      case catReseau:    return TdcColors.network;
+      case catSecurite:  return TdcColors.security;
+      case catSysteme:   return TdcColors.system;
+      case catDev:       return TdcColors.info;
+      case catReference: return TdcColors.crypto;
+      default:           return TdcColors.accent;
     }
   }
 }
@@ -587,8 +556,8 @@ class _SectionHeader extends StatelessWidget {
                     fontSize: 18,
                     fontWeight: FontWeight.bold)),
             Text(subtitle,
-                style:
-                    const TextStyle(color: TdcColors.textMuted, fontSize: 12)),
+                style: const TextStyle(
+                    color: TdcColors.textMuted, fontSize: 12)),
           ],
         ),
       ],
@@ -633,8 +602,9 @@ class _FilterChip extends StatelessWidget {
           children: [
             Text(label,
                 style: TextStyle(
-                    color:
-                        isSelected ? TdcColors.accent : TdcColors.textSecondary,
+                    color: isSelected
+                        ? TdcColors.accent
+                        : TdcColors.textSecondary,
                     fontSize: 13,
                     fontWeight:
                         isSelected ? FontWeight.bold : FontWeight.normal)),
@@ -649,8 +619,9 @@ class _FilterChip extends StatelessWidget {
               ),
               child: Text('$count',
                   style: TextStyle(
-                      color:
-                          isSelected ? TdcColors.accent : TdcColors.textMuted,
+                      color: isSelected
+                          ? TdcColors.accent
+                          : TdcColors.textMuted,
                       fontSize: 11,
                       fontWeight: FontWeight.bold)),
             ),

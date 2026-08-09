@@ -34,8 +34,7 @@ class BackupService {
 
     final salt = _randomBytes(_saltBytes);
     final nonce = _randomBytes(_nonceBytes);
-    final secretKey = await _deriveKey(
-        password: password, salt: salt, iterations: _pbkdf2Iterations);
+    final secretKey = await _deriveKey(password: password, salt: salt, iterations: _pbkdf2Iterations);
 
     final algorithm = AesGcm.with256bits();
     final box = await algorithm.encrypt(
@@ -82,28 +81,20 @@ class BackupService {
 
     final header = decoded['header'];
     if (header is! Map) throw Exception('Fichier de sauvegarde invalide');
-    if (header['magic'] != _fileMagic)
-      throw Exception('Fichier de sauvegarde invalide');
-    if (header['v'] != formatVersion)
-      throw Exception('Version de sauvegarde non supportée');
+    if (header['magic'] != _fileMagic) throw Exception('Fichier de sauvegarde invalide');
+    if (header['v'] != formatVersion) throw Exception('Version de sauvegarde non supportée');
 
-    final salt =
-        _decodeBase64Field(header, 'salt_b64', expectedLength: _saltBytes);
-    final nonce =
-        _decodeBase64Field(header, 'nonce_b64', expectedLength: _nonceBytes);
-    final iter =
-        int.tryParse(header['iter']?.toString() ?? '') ?? _pbkdf2Iterations;
+    final salt = _decodeBase64Field(header, 'salt_b64', expectedLength: _saltBytes);
+    final nonce = _decodeBase64Field(header, 'nonce_b64', expectedLength: _nonceBytes);
+    final iter = int.tryParse(header['iter']?.toString() ?? '') ?? _pbkdf2Iterations;
     if (iter < _minPbkdf2Iterations || iter > _maxPbkdf2Iterations) {
       throw Exception('Paramètres de chiffrement invalides');
     }
 
-    final cipherText = _decodeBase64Field(decoded, 'ciphertext_b64',
-        maxLength: _maxBackupBytes);
+    final cipherText = _decodeBase64Field(decoded, 'ciphertext_b64', maxLength: _maxBackupBytes);
     if (cipherText.isEmpty) throw Exception('Contenu de sauvegarde invalide');
-    final macBytes =
-        _decodeBase64Field(decoded, 'mac_b64', expectedLength: _macBytes);
-    final secretKey =
-        await _deriveKey(password: password, salt: salt, iterations: iter);
+    final macBytes = _decodeBase64Field(decoded, 'mac_b64', expectedLength: _macBytes);
+    final secretKey = await _deriveKey(password: password, salt: salt, iterations: iter);
 
     final algorithm = AesGcm.with256bits();
     late final List<int> clear;
@@ -230,14 +221,11 @@ class BackupService {
     final search = payload['search'];
     if (search is Map) {
       final fav = search['favorites'];
-      if (fav is List)
-        await _storage
-            .setSearchFavorites(fav.map((e) => e.toString()).toList());
+      if (fav is List) await _storage.setSearchFavorites(fav.map((e) => e.toString()).toList());
       final hist = search['history'];
       if (hist is List) {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setStringList(
-            'search_history', hist.map((e) => e.toString()).toList());
+        await prefs.setStringList('search_history', hist.map((e) => e.toString()).toList());
       }
     }
 
@@ -245,8 +233,7 @@ class BackupService {
     if (tools is Map) {
       final perms = tools['permissions'];
       if (perms is Map) {
-        await _storage.setToolPermissions(
-            perms.map((k, v) => MapEntry(k.toString(), v == true)));
+        await _storage.setToolPermissions(perms.map((k, v) => MapEntry(k.toString(), v == true)));
       }
     }
   }

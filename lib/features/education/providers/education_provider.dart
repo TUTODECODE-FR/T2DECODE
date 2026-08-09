@@ -34,8 +34,7 @@ class EducationProvider extends ChangeNotifier {
   List<String> get localIps => _localIps;
   int get port => _port;
   List<StudentSubmission> get submissions => _serverService.submissions;
-  List<Map<String, dynamic>> get publishedCourses =>
-      _serverService.publishedCourses;
+  List<Map<String, dynamic>> get publishedCourses => _serverService.publishedCourses;
 
   bool get isGenerating => _isGenerating;
   String get generationStatus => _generationStatus;
@@ -83,8 +82,7 @@ class EducationProvider extends ChangeNotifier {
       final promptMessages = [
         {
           'role': 'system',
-          'content':
-              '''Tu es un Professeur expert en informatique et cybersécurité. 
+          'content': '''Tu es un Professeur expert en informatique et cybersécurité. 
 Rédige un cours complet au format JSON STRICT pour une classe de niveau $level.
 Format JSON attendu :
 {
@@ -113,8 +111,7 @@ Ne renvoie RIEN d'autre que du JSON valide.''',
       ];
 
       String fullRes = '';
-      await for (final chunk
-          in OllamaService.stream(_selectedModel, promptMessages)) {
+      await for (final chunk in OllamaService.stream(_selectedModel, promptMessages)) {
         if (!chunk.isThinking) {
           fullRes += chunk.text;
         }
@@ -164,8 +161,7 @@ Ne renvoie RIEN d'autre que du JSON valide.''',
     for (final s in submissions) {
       final pct = (s.score / s.total * 100).toStringAsFixed(1);
       final dateStr = s.timestamp.toIso8601String();
-      buffer.writestring(
-          '"${s.id}","${s.studentName}","${s.studentIp}","${s.courseTitle}",${s.score},${s.total},"$pct%","$dateStr"\n');
+      buffer.writestring('"${s.id}","${s.studentName}","${s.studentIp}","${s.courseTitle}",${s.score},${s.total},"$pct%","$dateStr"\n');
     }
     return buffer.toString();
   }

@@ -27,11 +27,9 @@ class AppProvider with ChangeNotifier {
   bool get loaded => _loaded;
   String? get errorMessage => _errorMessage;
 
-  int get totalChaptersCount =>
-      _courses.fold(0, (s, c) => s + c.chapters.length);
+  int get totalChaptersCount => _courses.fold(0, (s, c) => s + c.chapters.length);
   int get completedCount => _completed.length;
-  double get overallProgress =>
-      totalChaptersCount == 0 ? 0.0 : completedCount / totalChaptersCount;
+  double get overallProgress => totalChaptersCount == 0 ? 0.0 : completedCount / totalChaptersCount;
 
   int courseChaptersCount(String courseId) {
     for (final c in _courses) {
@@ -53,12 +51,10 @@ class AppProvider with ChangeNotifier {
     }
     return _courses.isNotEmpty ? _courses.first : null;
   }
-
   CourseChapter? get currentChapter {
     final course = currentCourse;
     if (course == null || _currentChapterId == null) return null;
-    return course.chapters.firstWhere((ch) => ch.id == _currentChapterId,
-        orElse: () => course.chapters.first);
+    return course.chapters.firstWhere((ch) => ch.id == _currentChapterId, orElse: () => course.chapters.first);
   }
 
   void selectChapter(String courseId, String chapterId) {

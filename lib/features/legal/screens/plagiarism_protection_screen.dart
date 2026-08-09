@@ -14,8 +14,7 @@ class PlagiarismProtectionScreen extends StatefulWidget {
   const PlagiarismProtectionScreen({super.key});
 
   @override
-  State<PlagiarismProtectionScreen> createState() =>
-      _PlagiarismProtectionScreenState();
+  State<PlagiarismProtectionScreen> createState() => _PlagiarismProtectionScreenState();
 }
 
 class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
@@ -26,7 +25,7 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
   @override
   void initState() {
     super.initState();
-
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
         title: 'Protection Anti-Plagiat',
@@ -34,16 +33,15 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
         actions: [],
       );
     });
-
+    
     _performAnalysis();
   }
 
   Future<void> _performAnalysis() async {
     try {
       final analysis = await PlagiarismProtectionService.analyzeProject();
-      final certificate =
-          await PlagiarismProtection.generateOriginalityCertificate();
-
+      final certificate = await PlagiarismProtection.generateOriginalityCertificate();
+      
       setState(() {
         _analysis = analysis;
         _certificate = certificate;
@@ -65,17 +63,17 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  _analysis?.isAuthentic == true
+                  _analysis?.isAuthentic == true 
                       ? Colors.green.withValues(alpha: 0.1)
                       : Colors.red.withValues(alpha: 0.1),
-                  _analysis?.isAuthentic == true
+                  _analysis?.isAuthentic == true 
                       ? Colors.green.withValues(alpha: 0.05)
                       : Colors.red.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _analysis?.isAuthentic == true
+                color: _analysis?.isAuthentic == true 
                     ? Colors.green.withValues(alpha: 0.3)
                     : Colors.red.withValues(alpha: 0.3),
               ),
@@ -83,30 +81,24 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
             child: Column(
               children: [
                 Icon(
-                  _analysis?.isAuthentic == true
-                      ? Icons.plagiarism
-                      : Icons.plagiarism_outlined,
-                  color: _analysis?.isAuthentic == true
-                      ? Colors.green
-                      : Colors.red,
+                  _analysis?.isAuthentic == true ? Icons.plagiarism : Icons.plagiarism_outlined,
+                  color: _analysis?.isAuthentic == true ? Colors.green : Colors.red,
                   size: 48,
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  _analysis?.isAuthentic == true
+                  _analysis?.isAuthentic == true 
                       ? 'Code Original Authentifié'
                       : 'Plagiat Détecté',
                   style: TextStyle(
-                    color: _analysis?.isAuthentic == true
-                        ? Colors.green
-                        : Colors.red,
+                    color: _analysis?.isAuthentic == true ? Colors.green : Colors.red,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _analysis?.isAuthentic == true
+                  _analysis?.isAuthentic == true 
                       ? 'Ce code est 100% original et développé par TUTODECODE'
                       : 'Ce code présente des traces de plagiat',
                   style: const TextStyle(color: TdcColors.textSecondary),
@@ -114,30 +106,30 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
               ],
             ),
           ),
-
+          
           const SizedBox(height: 32),
-
+          
           if (_analysis != null) ...[
             // Score d'originalité
             _buildOriginalityScore(_analysis!),
-
+            
             const SizedBox(height: 24),
-
+            
             // Analyse des fichiers
             _buildFileAnalysis(_analysis!),
-
+            
             if (_analysis!.allIssues.isNotEmpty) ...[
               const SizedBox(height: 24),
               _buildIssuesSection(_analysis!),
             ],
-
+            
             const SizedBox(height: 24),
-
+            
             // Certificat d'originalité
             _buildCertificateSection(),
-
+            
             const SizedBox(height: 24),
-
+            
             // Actions
             _buildActionsSection(),
           ],
@@ -163,18 +155,16 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
               ),
             ),
             const SizedBox(height: 20),
-
+            
             // Score principal
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: _getScoreColor(analysis.overallOriginalityScore)
-                    .withValues(alpha: 0.1),
+                color: _getScoreColor(analysis.overallOriginalityScore).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: _getScoreColor(analysis.overallOriginalityScore)
-                      .withValues(alpha: 0.3),
+                  color: _getScoreColor(analysis.overallOriginalityScore).withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -199,18 +189,14 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
                 ],
               ),
             ),
-
+            
             const SizedBox(height: 20),
-
+            
             // Métriques détaillées
-            _buildMetricRow(
-                'Fichiers Analysés', '${analysis.fileAnalyses.length}'),
-            _buildMetricRow('Score de Plagiat',
-                '${(analysis.overallPlagiarismScore * 100).toStringAsFixed(1)}%'),
-            _buildMetricRow(
-                'Niveau de Risque', analysis.riskLevel.name.toUpperCase()),
-            _buildMetricRow(
-                'Date d\'Analyse', _formatDate(analysis.analysisDate)),
+            _buildMetricRow('Fichiers Analysés', '${analysis.fileAnalyses.length}'),
+            _buildMetricRow('Score de Plagiat', '${(analysis.overallPlagiarismScore * 100).toStringAsFixed(1)}%'),
+            _buildMetricRow('Niveau de Risque', analysis.riskLevel.name.toUpperCase()),
+            _buildMetricRow('Date d\'Analyse', _formatDate(analysis.analysisDate)),
           ],
         ),
       ),
@@ -259,6 +245,7 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
               ),
             ),
             const SizedBox(height: 20),
+            
             ...analysis.fileAnalyses.map((fileAnalysis) {
               return _buildFileCard(fileAnalysis);
             }),
@@ -273,12 +260,12 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: analysis.isOriginal
+        color: analysis.isOriginal 
             ? Colors.green.withValues(alpha: 0.1)
             : Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: analysis.isOriginal
+          color: analysis.isOriginal 
               ? Colors.green.withValues(alpha: 0.3)
               : Colors.red.withValues(alpha: 0.3),
         ),
@@ -315,15 +302,15 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
           if (analysis.issues.isNotEmpty) ...[
             const SizedBox(height: 8),
             ...analysis.issues.take(3).map((issue) => Padding(
-                  padding: const EdgeInsets.only(left: 28, top: 2),
-                  child: Text(
-                    issue,
-                    style: const TextStyle(
-                      color: TdcColors.textSecondary,
-                      fontSize: 12,
-                    ),
-                  ),
-                )),
+              padding: const EdgeInsets.only(left: 28, top: 2),
+              child: Text(
+                issue,
+                style: const TextStyle(
+                  color: TdcColors.textSecondary,
+                  fontSize: 12,
+                ),
+              ),
+            )),
           ],
         ],
       ),
@@ -357,23 +344,24 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
               ],
             ),
             const SizedBox(height: 16),
+            
             ...analysis.allIssues.take(10).map((issue) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.error_outline,
-                          color: Colors.red, size: 16),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          issue,
-                          style: const TextStyle(color: TdcColors.textPrimary),
-                        ),
-                      ),
-                    ],
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red, size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      issue,
+                      style: const TextStyle(color: TdcColors.textPrimary),
+                    ),
                   ),
-                )),
+                ],
+              ),
+            )),
+            
             if (analysis.allIssues.length > 10) ...[
               const SizedBox(height: 8),
               Text(
@@ -389,7 +377,7 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
 
   Widget _buildCertificateSection() {
     if (_certificate == null) return const SizedBox.shrink();
-
+    
     return Card(
       color: TdcColors.surface,
       child: Padding(
@@ -406,17 +394,14 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
               ),
             ),
             const SizedBox(height: 20),
-
+            
             _buildCertRow('ID du Certificat', _certificate!.certificateId),
-            _buildCertRow('Validité',
-                _certificate!.isOriginal ? 'Original' : 'Non original'),
-            _buildCertRow('Score d\'Originalité',
-                '${_certificate!.originalityScore.toStringAsFixed(1)}%'),
-            _buildCertRow(
-                'Date d\'Analyse', _formatDate(_certificate!.analysisDate)),
-
+            _buildCertRow('Validité', _certificate!.isOriginal ? 'Original' : 'Non original'),
+            _buildCertRow('Score d\'Originalité', '${_certificate!.originalityScore.toStringAsFixed(1)}%'),
+            _buildCertRow('Date d\'Analyse', _formatDate(_certificate!.analysisDate)),
+            
             const SizedBox(height: 20),
-
+            
             // QR Code
             Container(
               width: double.infinity,
@@ -485,12 +470,12 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: _analysis?.isAuthentic == true
+            color: _analysis?.isAuthentic == true 
                 ? Colors.green.withValues(alpha: 0.1)
                 : Colors.red.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: _analysis?.isAuthentic == true
+              color: _analysis?.isAuthentic == true 
                   ? Colors.green.withValues(alpha: 0.3)
                   : Colors.red.withValues(alpha: 0.3),
             ),
@@ -498,23 +483,18 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
           child: Row(
             children: [
               Icon(
-                _analysis?.isAuthentic == true
-                    ? Icons.check_circle
-                    : Icons.warning,
-                color:
-                    _analysis?.isAuthentic == true ? Colors.green : Colors.red,
+                _analysis?.isAuthentic == true ? Icons.check_circle : Icons.warning,
+                color: _analysis?.isAuthentic == true ? Colors.green : Colors.red,
                 size: 20,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  _analysis?.isAuthentic == true
+                  _analysis?.isAuthentic == true 
                       ? '✅ Code original protégé - Utilisation sécurisée'
                       : '❌ Plagiat détecté - Risque légal et de sécurité',
                   style: TextStyle(
-                    color: _analysis?.isAuthentic == true
-                        ? Colors.green
-                        : Colors.red,
+                    color: _analysis?.isAuthentic == true ? Colors.green : Colors.red,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -522,7 +502,9 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
             ],
           ),
         ),
+        
         const SizedBox(height: 20),
+        
         Row(
           children: [
             Expanded(
@@ -530,8 +512,7 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
                 onPressed: _copyReport,
                 icon: const Icon(Icons.copy),
                 label: const Text('Copier le Rapport'),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade700),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue.shade700),
               ),
             ),
             const SizedBox(width: 12),
@@ -540,8 +521,7 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
                 onPressed: _exportCertificate,
                 icon: const Icon(Icons.download),
                 label: const Text('Exporter'),
-                style:
-                    ElevatedButton.styleFrom(backgroundColor: TdcColors.accent),
+                style: ElevatedButton.styleFrom(backgroundColor: TdcColors.accent),
               ),
             ),
             const SizedBox(width: 12),
@@ -550,8 +530,7 @@ class _PlagiarismProtectionScreenState extends State<PlagiarismProtectionScreen>
                 onPressed: _shareAnalysis,
                 icon: const Icon(Icons.share),
                 label: const Text('Partager'),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple.shade700),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.purple.shade700),
               ),
             ),
           ],

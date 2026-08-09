@@ -28,9 +28,9 @@ class _ChmodToolScreenState extends State<ChmodToolScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
-            title: 'Calculateur Chmod',
-            showBackButton: true,
-          );
+        title: 'Calculateur Chmod',
+        showBackButton: true,
+      );
     });
   }
 
@@ -70,8 +70,7 @@ class _ChmodToolScreenState extends State<ChmodToolScreen> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: [Colors.blue.shade900, Colors.blue.shade700]),
+        gradient: LinearGradient(colors: [Colors.blue.shade900, Colors.blue.shade700]),
         borderRadius: TdcRadius.md,
       ),
       child: Column(
@@ -89,29 +88,21 @@ class _ChmodToolScreenState extends State<ChmodToolScreen> {
             onPressed: _copyAndSave,
             icon: const Icon(Icons.copy, size: 14),
             label: Text('Copier chmod ${_getNumeric()}'),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white24,
-                foregroundColor: Colors.white,
-                textStyle: const TextStyle(fontSize: 12)),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.white24, foregroundColor: Colors.white, textStyle: const TextStyle(fontSize: 12)),
           ),
           if (_history.isNotEmpty) ...[
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,
-              children: _history
-                  .map((h) => GestureDetector(
-                        onTap: () => Clipboard.setData(ClipboardData(
-                            text: 'chmod ${h.split(' ').first} fichier')),
-                        child: Chip(
-                          label: Text(h,
-                              style: const TextStyle(
-                                  fontSize: 11, color: Colors.white70)),
-                          backgroundColor: Colors.white12,
-                          side: BorderSide.none,
-                          padding: EdgeInsets.zero,
-                        ),
-                      ))
-                  .toList(),
+              children: _history.map((h) => GestureDetector(
+                onTap: () => Clipboard.setData(ClipboardData(text: 'chmod ${h.split(' ').first} fichier')),
+                child: Chip(
+                  label: Text(h, style: const TextStyle(fontSize: 11, color: Colors.white70)),
+                  backgroundColor: Colors.white12,
+                  side: BorderSide.none,
+                  padding: EdgeInsets.zero,
+                ),
+              )).toList(),
             ),
           ],
         ],
@@ -130,33 +121,20 @@ class _ChmodToolScreenState extends State<ChmodToolScreen> {
       });
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text('Copié : $cmd'), duration: const Duration(seconds: 2)),
+      SnackBar(content: Text('Copié : $cmd'), duration: const Duration(seconds: 2)),
     );
   }
 
   Widget _buildResultItem(String label, String val) => Column(children: [
-        Text(label,
-            style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 10,
-                fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        Text(val,
-            style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'monospace')),
-      ]);
+    Text(label, style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold)),
+    const SizedBox(height: 8),
+    Text(val, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
+  ]);
 
   Widget _buildSelectorCard() {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-          color: TdcColors.surface,
-          borderRadius: TdcRadius.md,
-          border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
       child: Column(
         children: [
           _buildHeader(),
@@ -172,29 +150,20 @@ class _ChmodToolScreenState extends State<ChmodToolScreen> {
   }
 
   Widget _buildHeader() => Row(
-        children: [
-          const Expanded(flex: 2, child: SizedBox()),
-          _buildHeaderCell('Lecture (4)'),
-          _buildHeaderCell('Écriture (2)'),
-          _buildHeaderCell('Exécution (1)'),
-        ],
-      );
+    children: [
+      const Expanded(flex: 2, child: SizedBox()),
+      _buildHeaderCell('Lecture (4)'),
+      _buildHeaderCell('Écriture (2)'),
+      _buildHeaderCell('Exécution (1)'),
+    ],
+  );
 
-  Widget _buildHeaderCell(String text) => Expanded(
-      child: Center(
-          child: Text(text,
-              textAlign: TextAlign.center,
-              style:
-                  const TextStyle(color: TdcColors.textMuted, fontSize: 10))));
+  Widget _buildHeaderCell(String text) => Expanded(child: Center(child: Text(text, textAlign: TextAlign.center, style: const TextStyle(color: TdcColors.textMuted, fontSize: 10))));
 
   Widget _buildRow(int index, String label) {
     return Row(
       children: [
-        Expanded(
-            flex: 2,
-            child: Text(label,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 13))),
+        Expanded(flex: 2, child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
         _buildToggle(index, 0),
         _buildToggle(index, 1),
         _buildToggle(index, 2),
@@ -209,18 +178,13 @@ class _ChmodToolScreenState extends State<ChmodToolScreen> {
         child: InkWell(
           onTap: () => setState(() => _perms[row][col] = !active),
           child: Container(
-            width: 40,
-            height: 40,
+            width: 40, height: 40,
             decoration: BoxDecoration(
-              color: active
-                  ? Colors.blue.withValues(alpha: 0.1)
-                  : TdcColors.surfaceAlt,
+              color: active ? Colors.blue.withValues(alpha: 0.1) : TdcColors.surfaceAlt,
               borderRadius: TdcRadius.sm,
-              border:
-                  Border.all(color: active ? Colors.blue : TdcColors.border),
+              border: Border.all(color: active ? Colors.blue : TdcColors.border),
             ),
-            child:
-                Icon(active ? Icons.check : null, color: Colors.blue, size: 20),
+            child: Icon(active ? Icons.check : null, color: Colors.blue, size: 20),
           ),
         ),
       ),
@@ -233,7 +197,7 @@ class _ChmodToolScreenState extends State<ChmodToolScreen> {
     final is666 = numeric == '666';
     final otherWrite = _perms[2][1];
     final otherRead = _perms[2][0];
-
+    
     Color color = Colors.green;
     String title = 'SÉCURISÉ';
     String desc = 'Les permissions sont restrictives et appropriées.';
@@ -241,8 +205,7 @@ class _ChmodToolScreenState extends State<ChmodToolScreen> {
     if (is777 || is666) {
       color = Colors.red;
       title = 'DANGEREUX';
-      desc =
-          'Tout le monde peut lire et MODIFIER ce fichier. Risque majeur de compromission.';
+      desc = 'Tout le monde peut lire et MODIFIER ce fichier. Risque majeur de compromission.';
     } else if (otherWrite) {
       color = Colors.orange;
       title = 'RISQUÉ';
@@ -250,8 +213,7 @@ class _ChmodToolScreenState extends State<ChmodToolScreen> {
     } else if (otherRead && numeric != '755' && numeric != '644') {
       color = Colors.blue;
       title = 'INFO';
-      desc =
-          'Le fichier est lisible par tous (standard pour le contenu public).';
+      desc = 'Le fichier est lisible par tous (standard pour le contenu public).';
     }
 
     return Container(
@@ -263,23 +225,14 @@ class _ChmodToolScreenState extends State<ChmodToolScreen> {
       ),
       child: Row(
         children: [
-          Icon(
-              color == Colors.red
-                  ? Icons.gpp_maybe
-                  : (color == Colors.green ? Icons.verified_user : Icons.info),
-              color: color),
+          Icon(color == Colors.red ? Icons.gpp_maybe : (color == Colors.green ? Icons.verified_user : Icons.info), color: color),
           const SizedBox(width: 16),
-          Expanded(
-              child: Column(
+          Expanded(child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  style: TextStyle(
-                      color: color, fontWeight: FontWeight.bold, fontSize: 12)),
+              Text(title, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 12)),
               const SizedBox(height: 2),
-              Text(desc,
-                  style: const TextStyle(
-                      fontSize: 11, color: TdcColors.textSecondary)),
+              Text(desc, style: const TextStyle(fontSize: 11, color: TdcColors.textSecondary)),
             ],
           )),
         ],

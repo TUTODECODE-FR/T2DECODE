@@ -80,8 +80,7 @@ const diagnosticCommands = [
         'label': 'Utilisation CPU/RAM',
         'linux': 'top',
         'macos': 'top',
-        'windows':
-            'wmic cpu get loadpercentage & wmic OS get FreePhysicalMemory,TotalVisibleMemorySize /Value'
+        'windows': 'wmic cpu get loadpercentage & wmic OS get FreePhysicalMemory,TotalVisibleMemorySize /Value'
       }
     ]
   },

@@ -15,50 +15,14 @@ class SyslogToolScreen extends StatefulWidget {
 
 class _SyslogToolScreenState extends State<SyslogToolScreen> {
   final List<SyslogLevel> _levels = [
-    SyslogLevel(
-        0,
-        'Emergency',
-        'system is unusable',
-        'Panne totale du noyau, corruption disque critique.',
-        Colors.red.shade900),
-    SyslogLevel(
-        1,
-        'Alert',
-        'action must be taken immediately',
-        'Base de données corrompue, perte de connectivité lien principal.',
-        Colors.red.shade700),
-    SyslogLevel(
-        2,
-        'Critical',
-        'critical conditions',
-        'Erreur matérielle (RAID dégradé), processus critique arrêté.',
-        Colors.red.shade500),
-    SyslogLevel(
-        3,
-        'Error',
-        'error conditions',
-        'Échec d\'écriture fichier, erreur application non critique.',
-        Colors.orange.shade800),
-    SyslogLevel(4, 'Warning', 'warning conditions',
-        'Disque à 90%, utilisation CPU inhabituelle.', Colors.orange.shade500),
-    SyslogLevel(
-        5,
-        'Notice',
-        'normal but significant condition',
-        'Redémarrage service, changement de configuration.',
-        Colors.blue.shade600),
-    SyslogLevel(
-        6,
-        'Informational',
-        'informational messages',
-        'Tentative de login réussie, transfert de fichier terminé.',
-        Colors.blue.shade400),
-    SyslogLevel(
-        7,
-        'Debug',
-        'debug-level messages',
-        'Traces détaillées pour développeurs (très verbeux).',
-        Colors.grey.shade600),
+    SyslogLevel(0, 'Emergency', 'system is unusable', 'Panne totale du noyau, corruption disque critique.', Colors.red.shade900),
+    SyslogLevel(1, 'Alert', 'action must be taken immediately', 'Base de données corrompue, perte de connectivité lien principal.', Colors.red.shade700),
+    SyslogLevel(2, 'Critical', 'critical conditions', 'Erreur matérielle (RAID dégradé), processus critique arrêté.', Colors.red.shade500),
+    SyslogLevel(3, 'Error', 'error conditions', 'Échec d\'écriture fichier, erreur application non critique.', Colors.orange.shade800),
+    SyslogLevel(4, 'Warning', 'warning conditions', 'Disque à 90%, utilisation CPU inhabituelle.', Colors.orange.shade500),
+    SyslogLevel(5, 'Notice', 'normal but significant condition', 'Redémarrage service, changement de configuration.', Colors.blue.shade600),
+    SyslogLevel(6, 'Informational', 'informational messages', 'Tentative de login réussie, transfert de fichier terminé.', Colors.blue.shade400),
+    SyslogLevel(7, 'Debug', 'debug-level messages', 'Traces détaillées pour développeurs (très verbeux).', Colors.grey.shade600),
   ];
 
   @override
@@ -66,9 +30,9 @@ class _SyslogToolScreenState extends State<SyslogToolScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
-            title: 'Niveaux Syslog (RFC 5424)',
-            showBackButton: true,
-          );
+        title: 'Niveaux Syslog (RFC 5424)',
+        showBackButton: true,
+      );
     });
   }
 
@@ -80,10 +44,7 @@ class _SyslogToolScreenState extends State<SyslogToolScreen> {
         children: [
           const Text(
             'Référence de Sévérité Syslog',
-            style: TextStyle(
-                color: TdcColors.textPrimary,
-                fontSize: 24,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(color: TdcColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           const Text(
@@ -129,8 +90,7 @@ class _SyslogToolScreenState extends State<SyslogToolScreen> {
             child: Center(
               child: Text(
                 level.code.toString(),
-                style:
-                    TextStyle(color: level.color, fontWeight: FontWeight.bold),
+                style: TextStyle(color: level.color, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -143,26 +103,19 @@ class _SyslogToolScreenState extends State<SyslogToolScreen> {
                   children: [
                     Text(
                       level.name,
-                      style: TextStyle(
-                          color: level.color,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
+                      style: TextStyle(color: level.color, fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     const SizedBox(width: 8),
                     Text(
                       '(${level.description})',
-                      style: const TextStyle(
-                          color: TdcColors.textMuted,
-                          fontSize: 11,
-                          fontStyle: FontStyle.italic),
+                      style: const TextStyle(color: TdcColors.textMuted, fontSize: 11, fontStyle: FontStyle.italic),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Text(
                   level.example,
-                  style: const TextStyle(
-                      color: TdcColors.textSecondary, fontSize: 13),
+                  style: const TextStyle(color: TdcColors.textSecondary, fontSize: 13),
                 ),
               ],
             ),

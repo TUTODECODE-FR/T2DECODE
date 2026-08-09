@@ -67,8 +67,7 @@ class SourceAuthentication {
       fileResults[modified] = false;
     }
 
-    final isAuthentic =
-        fileResults.values.every((v) => v) && modifiedFiles.isEmpty;
+    final isAuthentic = fileResults.values.every((v) => v) && modifiedFiles.isEmpty;
 
     return SourceAuthResult(
       isAuthentic: isAuthentic,
@@ -115,8 +114,7 @@ class SourceAuthentication {
     return sha256.convert(utf8.encode(data)).toString();
   }
 
-  static String _generateSourceQRCode(
-      SourceAuthResult verification, String hash) {
+  static String _generateSourceQRCode(SourceAuthResult verification, String hash) {
     return jsonEncode({
       'type': 'SOURCE_AUTHENTICATION',
       'project': 'TUTODECODE',
@@ -251,8 +249,7 @@ class SourceAuthService {
   static SourceAuthResult? _lastVerification;
   static DateTime? _lastVerificationTime;
 
-  static Future<SourceAuthResult> verifySource(
-      {bool forceRefresh = false}) async {
+  static Future<SourceAuthResult> verifySource({bool forceRefresh = false}) async {
     final now = DateTime.now();
     if (!forceRefresh &&
         _lastVerification != null &&
@@ -284,8 +281,7 @@ class SourceAuthService {
         'isAuthentic': verification.isAuthentic,
         'riskLevel': verification.riskLevel.name,
         'totalAssets': verification.fileResults.length,
-        'authenticAssets':
-            verification.fileResults.values.where((v) => v).length,
+        'authenticAssets': verification.fileResults.values.where((v) => v).length,
         'modifiedAssets': verification.modifiedFiles.length,
         'recommendation': verification.isAuthentic
             ? 'Assets authentiques — Aucune modification détectée'

@@ -124,9 +124,7 @@ class _ConnectorBar extends StatelessWidget {
           ),
         ),
       ),
-    )
-        .animate()
-        .shimmer(duration: 1400.ms, color: color.withValues(alpha: 0.25));
+    ).animate().shimmer(duration: 1400.ms, color: color.withValues(alpha: 0.25));
   }
 }
 

@@ -133,8 +133,7 @@ class AntiTamperingSystem {
         signatureValid: allChecksPass,
         checksumValid: modifiedFiles.isEmpty && missingFiles.isEmpty,
         checkDate: DateTime.now(),
-        riskLevel:
-            _calculateRiskLevel(modifiedFiles.length, suspiciousFiles.length),
+        riskLevel: _calculateRiskLevel(modifiedFiles.length, suspiciousFiles.length),
       );
     } catch (e) {
       return IntegrityCheckResult(
@@ -180,10 +179,7 @@ class AntiTamperingSystem {
         'checksum': result.checksumValid,
       },
       'files': {
-        'valid': result.fileResults.entries
-            .where((e) => e.value)
-            .map((e) => e.key)
-            .toList(),
+        'valid': result.fileResults.entries.where((e) => e.value).map((e) => e.key).toList(),
         'modified': result.modifiedFiles,
         'missing': result.missingFiles,
         'suspicious': result.suspiciousFiles,
@@ -273,8 +269,7 @@ class AntiTamperingSystem {
           '${result.suspiciousFiles.length} fichier(s) suspect(s) détecté(s) dans le répertoire de l\'application.');
     }
     if (result.isIntegrityValid) {
-      recommendations
-          .add('Intégrité des assets vérifiée — aucune modification détectée.');
+      recommendations.add('Intégrité des assets vérifiée — aucune modification détectée.');
     }
     return recommendations;
   }
@@ -336,8 +331,7 @@ class AntiTamperingService {
   static IntegrityCheckResult? _lastCheck;
   static DateTime? _lastCheckTime;
 
-  static Future<IntegrityCheckResult> checkIntegrity(
-      {bool forceRefresh = false}) async {
+  static Future<IntegrityCheckResult> checkIntegrity({bool forceRefresh = false}) async {
     final now = DateTime.now();
     if (!forceRefresh &&
         _lastCheck != null &&

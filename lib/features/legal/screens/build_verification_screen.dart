@@ -16,8 +16,7 @@ class BuildVerificationScreen extends StatefulWidget {
   const BuildVerificationScreen({super.key});
 
   @override
-  State<BuildVerificationScreen> createState() =>
-      _BuildVerificationScreenState();
+  State<BuildVerificationScreen> createState() => _BuildVerificationScreenState();
 }
 
 class _BuildVerificationScreenState extends State<BuildVerificationScreen>
@@ -30,7 +29,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
   @override
   void initState() {
     super.initState();
-
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
         title: 'Vérification de Build',
@@ -38,7 +37,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
         actions: [],
       );
     });
-
+    
     _performBuildVerification();
   }
 
@@ -46,7 +45,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
     try {
       final result = await BuildVerificationService.verifyBuild();
       final certificate = await BuildVerification.generateBuildCertificate();
-
+      
       setState(() {
         _verificationResult = result;
         _certificate = certificate;
@@ -57,41 +56,34 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
   Future<void> _verifyOnlineVersion() async {
     if (_verificationResult == null) return;
     setState(() => _isCheckingOnline = true);
-
+    
     try {
       final github = GithubService();
       final onlineVersion = await github.fetchOfficialAppVersion();
-
+      
       if (!mounted) return;
       setState(() => _isCheckingOnline = false);
 
       if (onlineVersion == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text(
-                  'Impossible de vérifier en ligne. Vérifiez votre Wi-Fi ou désactivez le mode hors-ligne.',
-                  style: TextStyle(color: Colors.white)),
-              backgroundColor: TdcColors.warning),
+            content: Text('Impossible de vérifier en ligne. Vérifiez votre Wi-Fi ou désactivez le mode hors-ligne.', style: TextStyle(color: Colors.white)), 
+            backgroundColor: TdcColors.warning
+          ),
         );
         return;
       }
 
-      final localVersion =
-          BuildVerification.APP_VERSION.split('+')[0]; // Comparer ex: 1.0.3
+      final localVersion = BuildVerification.APP_VERSION.split('+')[0]; // Comparer ex: 1.0.3
       final fetchedVersion = onlineVersion.split('+')[0];
-
+      
       if (fetchedVersion == localVersion) {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
             title: const Text('✅ App Officielle à jour'),
-            content: Text(
-                'L\'application correspond parfaitement à la version officielle sur GitHub ($localVersion).'),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'))
-            ],
+            content: Text('L\'application correspond parfaitement à la version officielle sur GitHub ($localVersion).'),
+            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
           ),
         );
       } else if (fetchedVersion.compareTo(localVersion) > 0) {
@@ -99,13 +91,8 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
           context: context,
           builder: (_) => AlertDialog(
             title: const Text('🔄 Mise à jour disponible'),
-            content: Text(
-                'Une nouvelle version officielle ($fetchedVersion) est disponible sur GitHub. Vous avez la version $localVersion.'),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'))
-            ],
+            content: Text('Une nouvelle version officielle ($fetchedVersion) est disponible sur GitHub. Vous avez la version $localVersion.'),
+            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
           ),
         );
       } else {
@@ -113,21 +100,15 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
           context: context,
           builder: (_) => AlertDialog(
             title: const Text('⚠️ Version Non-Officielle / Fork Modifié'),
-            content: Text(
-                'Votre version ($localVersion) ne correspond pas au registre officiel en ligne ($fetchedVersion). Prudence !'),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'))
-            ],
+            content: Text('Votre version ($localVersion) ne correspond pas au registre officiel en ligne ($fetchedVersion). Prudence !'),
+            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
           ),
         );
       }
     } catch (e) {
       if (!mounted) return;
       setState(() => _isCheckingOnline = false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Erreur: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur: $e')));
     }
   }
 
@@ -147,17 +128,17 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  _verificationResult?.isOfficial == true
+                  _verificationResult?.isOfficial == true 
                       ? Colors.green.withValues(alpha: 0.1)
                       : Colors.orange.withValues(alpha: 0.1),
-                  _verificationResult?.isOfficial == true
+                  _verificationResult?.isOfficial == true 
                       ? Colors.green.withValues(alpha: 0.05)
                       : Colors.orange.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _verificationResult?.isOfficial == true
+                color: _verificationResult?.isOfficial == true 
                     ? Colors.green.withValues(alpha: 0.3)
                     : Colors.orange.withValues(alpha: 0.3),
               ),
@@ -165,23 +146,17 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
             child: Column(
               children: [
                 Icon(
-                  _verificationResult?.isOfficial == true
-                      ? Icons.verified
-                      : Icons.build_circle,
-                  color: _verificationResult?.isOfficial == true
-                      ? Colors.green
-                      : Colors.orange,
+                  _verificationResult?.isOfficial == true ? Icons.verified : Icons.build_circle,
+                  color: _verificationResult?.isOfficial == true ? Colors.green : Colors.orange,
                   size: 48,
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  _verificationResult?.isOfficial == true
+                  _verificationResult?.isOfficial == true 
                       ? 'Build Officiel Vérifié'
                       : 'Build Non Officiel Détecté',
                   style: TextStyle(
-                    color: _verificationResult?.isOfficial == true
-                        ? Colors.green
-                        : Colors.orange,
+                    color: _verificationResult?.isOfficial == true ? Colors.green : Colors.orange,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -189,7 +164,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _verificationResult?.isOfficial == true
+                  _verificationResult?.isOfficial == true 
                       ? 'Ce build est authentiquement signé par l\'Association TUTODECODE'
                       : 'Ce build n\'est pas reconnu comme officiel',
                   style: const TextStyle(
@@ -214,30 +189,30 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
               ],
             ),
           ),
-
+          
           const SizedBox(height: 32),
-
+          
           if (_verificationResult != null) ...[
             // Informations du build
             _buildBuildInfo(_verificationResult!.buildInfo),
-
+            
             const SizedBox(height: 24),
-
+            
             // Résultats des vérifications
             _buildVerificationChecks(_verificationResult!),
-
+            
             if (_verificationResult!.reasons != null) ...[
               const SizedBox(height: 24),
               _buildReasonsSection(_verificationResult!.reasons!),
             ],
-
+            
             const SizedBox(height: 24),
-
+            
             // Certificat de build
             _buildCertificateSection(),
-
+            
             const SizedBox(height: 24),
-
+            
             // Actions
             _buildActionsSection(),
           ],
@@ -339,8 +314,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
                 ),
                 const Spacer(),
                 TextButton(
-                  onPressed: () => setState(
-                      () => _showTechnicalDetails = !_showTechnicalDetails),
+                  onPressed: () => setState(() => _showTechnicalDetails = !_showTechnicalDetails),
                   child: Text(_showTechnicalDetails ? 'Masquer' : 'Détails'),
                 ),
               ],
@@ -357,7 +331,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
 
   Widget _buildCheckRow(String checkName, bool passed) {
     final checkInfo = _getCheckInfo(checkName);
-
+    
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -415,8 +389,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
       case 'signature':
         return {
           'name': 'Signature du Build',
-          'description':
-              'Vérifie que la signature correspond au build officiel',
+          'description': 'Vérifie que la signature correspond au build officiel',
         };
       case 'checksum':
         return {
@@ -474,25 +447,24 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
             ),
             const SizedBox(height: 16),
             ...reasons.map((reason) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.error_outline,
-                          color: Colors.orange, size: 16),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          reason,
-                          style: const TextStyle(
-                            color: TdcColors.textPrimary,
-                            fontSize: 14,
-                          ),
-                        ),
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.orange, size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      reason,
+                      style: const TextStyle(
+                        color: TdcColors.textPrimary,
+                        fontSize: 14,
                       ),
-                    ],
+                    ),
                   ),
-                )),
+                ],
+              ),
+            )),
           ],
         ),
       ),
@@ -501,7 +473,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
 
   Widget _buildCertificateSection() {
     if (_certificate == null) return const SizedBox.shrink();
-
+    
     return Card(
       color: TdcColors.surface,
       child: Padding(
@@ -524,17 +496,15 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
               ],
             ),
             const SizedBox(height: 20),
-
+            
             // Informations du certificat
             _buildCertRow('ID du Certificat', _certificate!.certificateId),
-            _buildCertRow('Validité',
-                _certificate!.isOfficial ? 'Officiel' : 'Non officiel'),
-            _buildCertRow('Date de Vérification',
-                _formatDate(_certificate!.verificationDate)),
+            _buildCertRow('Validité', _certificate!.isOfficial ? 'Officiel' : 'Non officiel'),
+            _buildCertRow('Date de Vérification', _formatDate(_certificate!.verificationDate)),
             _buildCertRow('Hash', _certificate!.certificateHash),
-
+            
             const SizedBox(height: 20),
-
+            
             // QR Code
             Container(
               width: double.infinity,
@@ -617,12 +587,12 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: _verificationResult?.isOfficial == true
+            color: _verificationResult?.isOfficial == true 
                 ? Colors.green.withValues(alpha: 0.1)
                 : Colors.orange.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: _verificationResult?.isOfficial == true
+              color: _verificationResult?.isOfficial == true 
                   ? Colors.green.withValues(alpha: 0.3)
                   : Colors.orange.withValues(alpha: 0.3),
             ),
@@ -630,24 +600,18 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
           child: Row(
             children: [
               Icon(
-                _verificationResult?.isOfficial == true
-                    ? Icons.check_circle
-                    : Icons.info,
-                color: _verificationResult?.isOfficial == true
-                    ? Colors.green
-                    : Colors.orange,
+                _verificationResult?.isOfficial == true ? Icons.check_circle : Icons.info,
+                color: _verificationResult?.isOfficial == true ? Colors.green : Colors.orange,
                 size: 20,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  _verificationResult?.isOfficial == true
+                  _verificationResult?.isOfficial == true 
                       ? '✅ Build officiel - Utilisation sécurisée recommandée'
                       : '⚠️ Build non officiel - Téléchargez la version officielle depuis tutodecode.org',
                   style: TextStyle(
-                    color: _verificationResult?.isOfficial == true
-                        ? Colors.green
-                        : Colors.orange,
+                    color: _verificationResult?.isOfficial == true ? Colors.green : Colors.orange,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -656,9 +620,9 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
             ],
           ),
         ),
-
+        
         const SizedBox(height: 20),
-
+        
         // Boutons d'action
         Row(
           children: [
@@ -696,7 +660,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
             ),
           ],
         ),
-
+        
         if (_verificationResult?.isOfficial != true) ...[
           const SizedBox(height: 16),
           SizedBox(
@@ -747,7 +711,7 @@ class _BuildVerificationScreenState extends State<BuildVerificationScreen>
   String _generateTextReport() {
     final result = _verificationResult!;
     final certificate = _certificate!;
-
+    
     return '''
 RAPPORT DE VÉRIFICATION DE BUILD
 ==================================

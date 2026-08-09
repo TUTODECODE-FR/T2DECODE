@@ -13,15 +13,11 @@ class StudentExamScreen extends StatefulWidget {
   State<StudentExamScreen> createState() => _StudentExamScreenState();
 }
 
-class _StudentExamScreenState extends State<StudentExamScreen>
-    with WidgetsBindingObserver {
+class _StudentExamScreenState extends State<StudentExamScreen> with WidgetsBindingObserver {
   final StudentExamService _examService = StudentExamService();
-  final TextEditingController _teacherIpController =
-      TextEditingController(text: '192.168.1.50');
-  final TextEditingController _studentNameController =
-      TextEditingController(text: 'Élève_BTS_SIO');
-  final TextEditingController _scoreController =
-      TextEditingController(text: '18');
+  final TextEditingController _teacherIpController = TextEditingController(text: '192.168.1.50');
+  final TextEditingController _studentNameController = TextEditingController(text: 'Élève_BTS_SIO');
+  final TextEditingController _scoreController = TextEditingController(text: '18');
 
   String _statusMessage = '';
   bool _isSubmitting = false;
@@ -44,8 +40,7 @@ class _StudentExamScreenState extends State<StudentExamScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
       _examService.registerFocusLost(
         _studentNameController.text,
         _teacherIpController.text,
@@ -66,18 +61,9 @@ class _StudentExamScreenState extends State<StudentExamScreen>
               const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('MODULE ÉTUDIANT',
-                      style: TextStyle(
-                          color: TdcColors.accent,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10,
-                          letterSpacing: 1.2)),
+                  Text('MODULE ÉTUDIANT', style: TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 1.2)),
                   SizedBox(height: 4),
-                  Text('T2DECODE Étudiant',
-                      style: TextStyle(
-                          color: TdcColors.textPrimary,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold)),
+                  Text('T2DECODE Étudiant', style: TextStyle(color: TdcColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold)),
                 ],
               ),
               ElevatedButton.icon(
@@ -89,16 +75,10 @@ class _StudentExamScreenState extends State<StudentExamScreen>
                   }
                   setState(() {});
                 },
-                icon: Icon(_examService.isKioskActive
-                    ? Icons.fullscreen_exit
-                    : Icons.fullscreen),
-                label: Text(_examService.isKioskActive
-                    ? 'Quitter Mode Kiosk'
-                    : 'Activer Mode Kiosk Examen'),
+                icon: Icon(_examService.isKioskActive ? Icons.fullscreen_exit : Icons.fullscreen),
+                label: Text(_examService.isKioskActive ? 'Quitter Mode Kiosk' : 'Activer Mode Kiosk Examen'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _examService.isKioskActive
-                      ? TdcColors.danger
-                      : TdcColors.accent,
+                  backgroundColor: _examService.isKioskActive ? TdcColors.danger : TdcColors.accent,
                 ),
               ),
             ],
@@ -115,16 +95,12 @@ class _StudentExamScreenState extends State<StudentExamScreen>
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.warning_amber,
-                      color: TdcColors.danger, size: 24),
+                  const Icon(Icons.warning_amber, color: TdcColors.danger, size: 24),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       '⚠️ AVERTISSEMENT TRICHE : Perte de focus détectée (${_focusLostServiceCount()} fois - Alt+Tab/Changement d\'application). Cette alerte sera notifiée à votre Professeur.',
-                      style: const TextStyle(
-                          color: TdcColors.danger,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13),
+                      style: const TextStyle(color: TdcColors.danger, fontWeight: FontWeight.bold, fontSize: 13),
                     ),
                   ),
                 ],
@@ -134,18 +110,13 @@ class _StudentExamScreenState extends State<StudentExamScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Soumettre l\'évaluation au Professeur',
-                    style: TextStyle(
-                        color: TdcColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16)),
+                const Text('Soumettre l\'évaluation au Professeur', style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16)),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _teacherIpController,
                   style: const TextStyle(color: TdcColors.textPrimary),
                   decoration: const InputDecoration(
-                    labelText:
-                        'Adresse IP du serveur Professeur (ex: 192.168.1.50)',
+                    labelText: 'Adresse IP du serveur Professeur (ex: 192.168.1.50)',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -177,18 +148,14 @@ class _StudentExamScreenState extends State<StudentExamScreen>
                         : () async {
                             setState(() {
                               _isSubmitting = true;
-                              _statusMessage =
-                                  'Chiffrement et envoi de la copie en cours...';
+                              _statusMessage = 'Chiffrement et envoi de la copie en cours...';
                             });
 
-                            final res = await StudentExamService
-                                .submitEncryptedExamScore(
+                            final res = await StudentExamService.submitEncryptedExamScore(
                               teacherIp: _teacherIpController.text.trim(),
                               studentName: _studentNameController.text.trim(),
                               courseTitle: 'Évaluation Cybersécurité BTS SIO',
-                              score:
-                                  int.tryParse(_scoreController.text.trim()) ??
-                                      18,
+                              score: int.tryParse(_scoreController.text.trim()) ?? 18,
                               total: 20,
                               focusLostCount: _examService.focusLostCount,
                             );
@@ -196,19 +163,15 @@ class _StudentExamScreenState extends State<StudentExamScreen>
                             setState(() {
                               _isSubmitting = false;
                               if (res['success'] == true) {
-                                _statusMessage =
-                                    '✅ Copie transmise avec succès au Professeur !';
+                                _statusMessage = '✅ Copie transmise avec succès au Professeur !';
                               } else {
                                 _statusMessage = '❌ ${res['error']}';
                               }
                             });
                           },
                     icon: const Icon(Icons.lock_clock),
-                    label: Text(_isSubmitting
-                        ? 'Envoi chiffré en cours...'
-                        : 'Envoyer la copie chiffrée au Professeur'),
-                    style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14)),
+                    label: Text(_isSubmitting ? 'Envoi chiffré en cours...' : 'Envoyer la copie chiffrée au Professeur'),
+                    style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
                   ),
                 ),
                 if (_statusMessage.isNotEmpty) ...[
@@ -216,9 +179,7 @@ class _StudentExamScreenState extends State<StudentExamScreen>
                   Text(
                     _statusMessage,
                     style: TextStyle(
-                      color: _statusMessage.startsWith('✅')
-                          ? TdcColors.success
-                          : TdcColors.danger,
+                      color: _statusMessage.startsWith('✅') ? TdcColors.success : TdcColors.danger,
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
                     ),

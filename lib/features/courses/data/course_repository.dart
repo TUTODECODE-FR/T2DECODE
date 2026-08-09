@@ -88,9 +88,7 @@ class Course {
           : null;
 
       final quizData = c['quiz'] as List<dynamic>?;
-      final quiz = quizData
-          ?.map((q) => QuizQuestion.fromMap(q as Map<String, dynamic>))
-          .toList();
+      final quiz = quizData?.map((q) => QuizQuestion.fromMap(q as Map<String, dynamic>)).toList();
 
       final tempChapter = CourseChapter(
         id: c['id'],
@@ -101,8 +99,7 @@ class Course {
         quiz: quiz,
       );
 
-      final expanded =
-          CourseExpansion.expandChapterContent(course, tempChapter, i);
+      final expanded = CourseExpansion.expandChapterContent(course, tempChapter, i);
 
       course.chapters.add(CourseChapter(
         id: c['id'],
@@ -121,17 +118,12 @@ class Course {
     try {
       final data = await rootBundle.loadString(filename);
       final list = json.decode(data) as List<dynamic>;
-      return list
-          .map((m) => Course.fromMap(m as Map<String, dynamic>))
-          .toList();
+      return list.map((m) => Course.fromMap(m as Map<String, dynamic>)).toList();
     } catch (e) {
       // Fallback
-      final fallback =
-          await rootBundle.loadString('assets/courses/courses_en.json');
+      final fallback = await rootBundle.loadString('assets/courses/courses_en.json');
       final list = json.decode(fallback) as List<dynamic>;
-      return list
-          .map((m) => Course.fromMap(m as Map<String, dynamic>))
-          .toList();
+      return list.map((m) => Course.fromMap(m as Map<String, dynamic>)).toList();
     }
   }
 }

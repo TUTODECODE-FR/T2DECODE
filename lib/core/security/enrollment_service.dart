@@ -104,10 +104,8 @@ class EnrollmentService {
     final pubKey = await keyPair.extractPublicKey();
     final privBytes = await keyPair.extractPrivateKeyBytes();
 
-    pubHex =
-        pubKey.bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
-    final privHex =
-        privBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+    pubHex = pubKey.bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+    final privHex = privBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
     peerId = 'peer_ed25519_$pubHex';
 
     await _storage.write(key: _keyPeerId, value: peerId);
@@ -123,19 +121,17 @@ class EnrollmentService {
 
     try {
       final uri = Uri.parse('${token.lxcUrl}/api/v1/enroll');
-      final response = await http
-          .post(
-            uri,
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'tenant_id': token.tenantId,
-              'peer_id': identity.peerId,
-              'public_key': identity.publicKeyHex,
-              'profile_type': token.profileType,
-              'timestamp': DateTime.now().toIso8601String(),
-            }),
-          )
-          .timeout(const Duration(seconds: 8));
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'tenant_id': token.tenantId,
+          'peer_id': identity.peerId,
+          'public_key': identity.publicKeyHex,
+          'profile_type': token.profileType,
+          'timestamp': DateTime.now().toIso8601String(),
+        }),
+      ).timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         await _storage.write(key: _keyEnrollment, value: token.toBase64());

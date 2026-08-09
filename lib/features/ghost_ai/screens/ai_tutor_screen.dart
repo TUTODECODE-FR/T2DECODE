@@ -30,14 +30,14 @@ class _AiTutorScreenState extends State<AiTutorScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
         title: 'Assistant IA',
         showBackButton: true,
         actions: [],
       );
-
+      
       // Fix focus macOS : plusieurs tentatives
       _requestInputFocus();
     });
@@ -47,8 +47,8 @@ class _AiTutorScreenState extends State<AiTutorScreen>
     if (!mounted) return;
     // Tenter de donner le focus au champ actif (sujet ou message)
     final provider = context.read<AiTutorProvider>();
-    final focusNode = provider.isTutoring ? _inputFocusNode : null;
-
+    final focusNode = provider.isTutoring ? _inputFocusNode : null; 
+    
     if (focusNode != null) {
       focusNode.requestFocus();
       Future.delayed(const Duration(milliseconds: 400), () {
@@ -90,7 +90,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
             ),
           );
         },
-      ),
+    ),
     );
   }
 
@@ -116,16 +116,14 @@ class _AiTutorScreenState extends State<AiTutorScreen>
           Expanded(
             child: Text(
               'Tuteur IA actif · ${provider.selectedModel}',
-              style:
-                  const TextStyle(color: TdcColors.textSecondary, fontSize: 12),
+              style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12),
             ),
           ),
           if (provider.isLoading)
             const SizedBox(
               width: 12,
               height: 12,
-              child: CircularProgressIndicator(
-                  strokeWidth: 1.5, color: TdcColors.accent),
+              child: CircularProgressIndicator(strokeWidth: 1.5, color: TdcColors.accent),
             ),
         ],
       ),
@@ -196,20 +194,14 @@ class _AiTutorScreenState extends State<AiTutorScreen>
           const SizedBox(height: 28),
           const Text(
             'Mode de tutorat',
-            style: TextStyle(
-                color: TdcColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(color: TdcColors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 14),
           _buildModeSelector(provider),
           const SizedBox(height: 28),
           const Text(
             'Sujet',
-            style: TextStyle(
-                color: TdcColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(color: TdcColors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           MouseRegion(
@@ -222,7 +214,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                 prefixIcon: Icon(Icons.topic, size: 20),
               ),
               onChanged: (_) => setState(() {}),
-              onTap: () => FocusScope.of(context).requestFocus(),
+              onTap: () => FocusScope.of(context).requestFocus(), 
             ),
           ),
           const SizedBox(height: 14),
@@ -251,8 +243,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
               style: ElevatedButton.styleFrom(
                 backgroundColor: TdcColors.accent,
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
@@ -278,8 +269,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                   color: TdcColors.accentDim,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.smart_toy_outlined,
-                    color: TdcColors.accent, size: 28),
+                child: const Icon(Icons.smart_toy_outlined, color: TdcColors.accent, size: 28),
               ),
               const SizedBox(width: 16),
               const Expanded(
@@ -317,8 +307,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
             child: const Text(
               'Le tuteur IA fonctionne avec Ollama, un moteur de langage qui tourne entièrement sur votre réseau local. '
               'Voici les différentes façons de l\'activer — choisissez celle qui correspond à votre situation.',
-              style: TextStyle(
-                  color: TdcColors.textSecondary, fontSize: 13, height: 1.5),
+              style: TextStyle(color: TdcColors.textSecondary, fontSize: 13, height: 1.5),
             ),
           ),
 
@@ -330,7 +319,8 @@ class _AiTutorScreenState extends State<AiTutorScreen>
             color: TdcColors.accent,
             title: 'Mode Autonome',
             subtitle: 'Ollama tourne sur cet appareil',
-            description: 'Idéal pour les PC/Mac avec 8 Go de RAM minimum. '
+            description:
+                'Idéal pour les PC/Mac avec 8 Go de RAM minimum. '
                 'Installez Ollama (ollama.com), lancez-le, puis appuyez sur "Détecter".',
             badge: 'Recommandé',
             badgeColor: TdcColors.accent,
@@ -338,15 +328,13 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                 ? const SizedBox(
                     width: 18,
                     height: 18,
-                    child: CircularProgressIndicator(
-                        strokeWidth: 2, color: TdcColors.accent),
+                    child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.accent),
                   )
                 : TextButton.icon(
                     onPressed: () => provider.checkOllamaConnection(),
                     icon: const Icon(Icons.search, size: 16),
                     label: const Text('Détecter'),
-                    style:
-                        TextButton.styleFrom(foregroundColor: TdcColors.accent),
+                    style: TextButton.styleFrom(foregroundColor: TdcColors.accent),
                   ),
           ),
 
@@ -357,8 +345,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
             icon: Icons.hub_outlined,
             color: TdcColors.electric,
             title: 'Pont Souverain',
-            subtitle:
-                'Se connecter à Ollama sur un autre appareil du réseau local',
+            subtitle: 'Se connecter à Ollama sur un autre appareil du réseau local',
             description:
                 'Votre PC de bureau ou un Raspberry Pi fait tourner Ollama ? '
                 'Entrez son adresse IP locale (ex: 192.168.1.42). '
@@ -370,19 +357,14 @@ class _AiTutorScreenState extends State<AiTutorScreen>
               children: [
                 TextField(
                   controller: _bridgeIpController,
-                  style: const TextStyle(
-                      color: TdcColors.textPrimary, fontSize: 13),
+                  style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
                   decoration: InputDecoration(
                     hintText: '192.168.1.42',
-                    prefixText:
-                        'http://', // coverage:ignore-line - Local Ollama instance
-                    prefixStyle: const TextStyle(
-                        color: TdcColors.textMuted, fontSize: 13),
+                    prefixText: 'http://', // coverage:ignore-line - Local Ollama instance
+                    prefixStyle: const TextStyle(color: TdcColors.textMuted, fontSize: 13),
                     suffixText: ':11434',
-                    suffixStyle: const TextStyle(
-                        color: TdcColors.textMuted, fontSize: 13),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 10),
+                    suffixStyle: const TextStyle(color: TdcColors.textMuted, fontSize: 13),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     filled: true,
                     fillColor: TdcColors.surface,
                     border: OutlineInputBorder(
@@ -400,14 +382,12 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                   onPressed: () {
                     final ip = _bridgeIpController.text.trim();
                     if (ip.isNotEmpty) {
-                      provider.updateOllamaUrl(
-                          'http://$ip:11434'); // coverage:ignore-line - Local Ollama instance
+                      provider.updateOllamaUrl('http://$ip:11434'); // coverage:ignore-line - Local Ollama instance
                     }
                   },
                   icon: const Icon(Icons.link, size: 16),
                   label: const Text('Se connecter'),
-                  style:
-                      TextButton.styleFrom(foregroundColor: TdcColors.electric),
+                  style: TextButton.styleFrom(foregroundColor: TdcColors.electric),
                 ),
               ],
             ),
@@ -427,8 +407,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                 'Le tuteur interactif est un bonus — pas une obligation.',
             badge: 'Toujours disponible',
             badgeColor: TdcColors.textSecondary,
-            action:
-                null, // Pas d'action — le reste de l'app est accessible via la nav
+            action: null, // Pas d'action — le reste de l'app est accessible via la nav
           ),
 
           const SizedBox(height: 8),
@@ -483,8 +462,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: const TextStyle(
-                          color: TdcColors.textSecondary, fontSize: 12),
+                      style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12),
                     ),
                   ],
                 ),
@@ -497,10 +475,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                 ),
                 child: Text(
                   badge,
-                  style: TextStyle(
-                      color: badgeColor,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold),
+                  style: TextStyle(color: badgeColor, fontSize: 10, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -508,8 +483,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
           const SizedBox(height: 12),
           Text(
             description,
-            style: const TextStyle(
-                color: TdcColors.textSecondary, fontSize: 13, height: 1.5),
+            style: const TextStyle(color: TdcColors.textSecondary, fontSize: 13, height: 1.5),
           ),
           if (action != null) ...[
             const SizedBox(height: 14),
@@ -534,14 +508,10 @@ class _AiTutorScreenState extends State<AiTutorScreen>
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? mode.color.withValues(alpha: 0.1)
-                      : TdcColors.surface,
+                  color: isSelected ? mode.color.withValues(alpha: 0.1) : TdcColors.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected
-                        ? mode.color.withValues(alpha: 0.3)
-                        : TdcColors.border,
+                    color: isSelected ? mode.color.withValues(alpha: 0.3) : TdcColors.border,
                   ),
                 ),
                 child: Row(
@@ -559,9 +529,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                           Text(
                             mode.displayName,
                             style: TextStyle(
-                              color: isSelected
-                                  ? mode.color
-                                  : TdcColors.textPrimary,
+                              color: isSelected ? mode.color : TdcColors.textPrimary,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -625,14 +593,12 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                       SizedBox(height: 16),
                       Text(
                         'Aucune session précédente',
-                        style:
-                            TextStyle(color: TdcColors.textMuted, fontSize: 16),
+                        style: TextStyle(color: TdcColors.textMuted, fontSize: 16),
                       ),
                       SizedBox(height: 8),
                       Text(
                         'Démarrez votre première session de tutorat',
-                        style:
-                            TextStyle(color: TdcColors.textMuted, fontSize: 12),
+                        style: TextStyle(color: TdcColors.textMuted, fontSize: 12),
                       ),
                     ],
                   ),
@@ -641,8 +607,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: provider.sessions.length,
                   itemBuilder: (context, index) {
-                    return _buildSessionCard(
-                        provider.sessions[index], provider);
+                    return _buildSessionCard(provider.sessions[index], provider);
                   },
                 ),
         ),
@@ -665,8 +630,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
               Row(
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: session.mode.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
@@ -682,8 +646,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                   ),
                   const Spacer(),
                   PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert,
-                        color: TdcColors.textMuted, size: 16),
+                    icon: const Icon(Icons.more_vert, color: TdcColors.textMuted, size: 16),
                     onSelected: (value) {
                       if (value == 'delete') {
                         provider.deleteSession(session.id);
@@ -724,8 +687,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.message,
-                      color: TdcColors.textMuted, size: 14),
+                  const Icon(Icons.message, color: TdcColors.textMuted, size: 14),
                   const SizedBox(width: 4),
                   Text(
                     '${session.messages.length} messages',
@@ -735,8 +697,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Icon(Icons.schedule,
-                      color: TdcColors.textMuted, size: 14),
+                  const Icon(Icons.schedule, color: TdcColors.textMuted, size: 14),
                   const SizedBox(width: 4),
                   Text(
                     _formatDate(session.updatedAt ?? session.createdAt),
@@ -769,7 +730,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
             ),
           ),
           const SizedBox(height: 24),
-
+          
           // URL Ollama
           const Text(
             'URL Ollama',
@@ -796,14 +757,13 @@ class _AiTutorScreenState extends State<AiTutorScreen>
             onFieldSubmitted: (value) async {
               await provider.updateOllamaUrl(value);
               if (context.mounted) {
-                await Provider.of<SettingsProvider>(context, listen: false)
-                    .reload();
+                await Provider.of<SettingsProvider>(context, listen: false).reload();
               }
             },
           ),
-
+          
           const SizedBox(height: 24),
-
+          
           // Modèle sélectionné
           const Text(
             'Modèle IA',
@@ -841,9 +801,9 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                     },
                   ),
           ),
-
+          
           const SizedBox(height: 32),
-
+          
           // Statistiques
           const Text(
             'Statistiques d\'Utilisation',
@@ -862,7 +822,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
 
   Widget _buildStatistics(AiTutorProvider provider) {
     final stats = provider.getStatistics();
-
+    
     return Card(
       color: TdcColors.surface,
       child: Padding(
@@ -872,12 +832,10 @@ class _AiTutorScreenState extends State<AiTutorScreen>
             _buildStatRow('Sessions totales', '${stats['totalSessions']}'),
             _buildStatRow('Messages échangés', '${stats['totalMessages']}'),
             _buildStatRow('Sujets couverts', '${stats['topicsCovered']}'),
-            _buildStatRow(
-                'Messages/session', stats['averageMessagesPerSession']),
+            _buildStatRow('Messages/session', stats['averageMessagesPerSession']),
             _buildStatRow('Mode préféré', stats['mostUsedMode']),
             if (stats['lastActivity'] != null)
-              _buildStatRow(
-                  'Dernière activité', _formatDate(stats['lastActivity'])),
+              _buildStatRow('Dernière activité', _formatDate(stats['lastActivity'])),
           ],
         ),
       ),
@@ -997,7 +955,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
 
   Widget _buildMessageBubble(TutorMessage message, AiTutorProvider provider) {
     final isUser = message.isFromUser;
-
+    
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -1013,20 +971,15 @@ class _AiTutorScreenState extends State<AiTutorScreen>
           ],
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: isUser ? TdcColors.accent : TdcColors.surfaceAlt,
                     borderRadius: BorderRadius.circular(16).copyWith(
-                      bottomLeft: isUser
-                          ? const Radius.circular(16)
-                          : const Radius.circular(4),
-                      bottomRight: isUser
-                          ? const Radius.circular(4)
-                          : const Radius.circular(16),
+                      bottomLeft: isUser ? const Radius.circular(16) : const Radius.circular(4),
+                      bottomRight: isUser ? const Radius.circular(4) : const Radius.circular(16),
                     ),
                   ),
                   child: Text(
@@ -1090,19 +1043,15 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                 const SizedBox(
                   width: 10,
                   height: 10,
-                  child: CircularProgressIndicator(
-                      strokeWidth: 1.5, color: TdcColors.accent),
+                  child: CircularProgressIndicator(strokeWidth: 1.5, color: TdcColors.accent),
                 ),
                 const SizedBox(width: 8),
                 const Expanded(
-                  child: Text('Ghost génère...',
-                      style:
-                          TextStyle(color: TdcColors.textMuted, fontSize: 12)),
+                  child: Text('Ghost génère...', style: TextStyle(color: TdcColors.textMuted, fontSize: 12)),
                 ),
                 TextButton(
                   onPressed: provider.stopStreaming,
-                  child: const Text('Arrêter',
-                      style: TextStyle(color: TdcColors.accent, fontSize: 12)),
+                  child: const Text('Arrêter', style: TextStyle(color: TdcColors.accent, fontSize: 12)),
                 ),
               ],
             ),
@@ -1121,10 +1070,8 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                   child: TextField(
                     controller: _messageController,
                     focusNode: _inputFocusNode,
-                    enabled:
-                        true, // Fix Apple Review : doit toujours être interactif
-                    readOnly:
-                        provider.isStreaming, // Mais protégé pendant le stream
+                    enabled: true, // Fix Apple Review : doit toujours être interactif
+                    readOnly: provider.isStreaming, // Mais protégé pendant le stream
                     autofocus: true,
                     style: const TextStyle(color: TdcColors.textPrimary),
                     textInputAction: TextInputAction.send,
@@ -1136,11 +1083,9 @@ class _AiTutorScreenState extends State<AiTutorScreen>
                         borderRadius: BorderRadius.circular(24),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     ),
-                    onChanged: (value) =>
-                        setState(() => _isComposing = value.isNotEmpty),
+                    onChanged: (value) => setState(() => _isComposing = value.isNotEmpty),
                     onSubmitted: (_) => _sendMessage(provider),
                     onTap: _requestInputFocus,
                   ),
@@ -1148,10 +1093,9 @@ class _AiTutorScreenState extends State<AiTutorScreen>
               ),
               const SizedBox(width: 8),
               FloatingActionButton(
-                onPressed:
-                    _isComposing && !provider.isLoading && !provider.isStreaming
-                        ? () => _sendMessage(provider)
-                        : null,
+                onPressed: _isComposing && !provider.isLoading && !provider.isStreaming
+                    ? () => _sendMessage(provider)
+                    : null,
                 backgroundColor: _isComposing && !provider.isStreaming
                     ? TdcColors.accent
                     : TdcColors.surfaceAlt,
@@ -1178,12 +1122,12 @@ class _AiTutorScreenState extends State<AiTutorScreen>
     if (message.isNotEmpty) {
       provider.sendMessage(message);
       _messageController.clear();
-
+      
       // Fix Focus for macOS
       _requestInputFocus();
 
       setState(() => _isComposing = false);
-
+      
       // Scroll vers le bas
       Future.delayed(const Duration(milliseconds: 100), () {
         if (_scrollController.hasClients) {
@@ -1221,8 +1165,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
             child: Column(
               children: [
                 ListTile(
-                  leading:
-                      const Icon(Icons.history, color: TdcColors.textSecondary),
+                  leading: const Icon(Icons.history, color: TdcColors.textSecondary),
                   title: const Text('Retour aux sessions'),
                   onTap: () {
                     Navigator.pop(context);
@@ -1275,7 +1218,7 @@ class _AiTutorScreenState extends State<AiTutorScreen>
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-
+    
     if (difference.inDays == 0) {
       return 'Aujourd\'hui à ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
     } else if (difference.inDays == 1) {

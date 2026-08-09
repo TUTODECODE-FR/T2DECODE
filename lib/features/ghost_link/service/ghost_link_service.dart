@@ -144,11 +144,11 @@ class GhostLinkService extends ChangeNotifier {
   final Map<String, List<GhostMessage>> _conversations = {};
   List<GhostMessage> getConversation(String peerIp) =>
       _conversations[peerIp] ?? [];
-
+      
   // Progression des transferts de fichiers (clé = msgId)
   final Map<String, double> _fileProgress = {};
   double getFileProgress(String msgId) => _fileProgress[msgId] ?? 0.0;
-
+  
   // Buffers de réception pour les fichiers (clé = msgId)
   final Map<String, List<int>> _fileBuffers = {};
   final Map<String, int> _fileExpectedSizes = {};
@@ -760,7 +760,7 @@ class GhostLinkService extends ChangeNotifier {
     final msgId = data['id'] as String;
     final size = data['size'] as int;
     final fileName = data['name'] as String;
-
+    
     _fileExpectedSizes[msgId] = size;
     _fileBuffers[msgId] = [];
     _fileNames[msgId] = fileName;
@@ -771,8 +771,7 @@ class GhostLinkService extends ChangeNotifier {
           fromId: data['fromId'],
           fromName: data['fromName'],
           peerIp: senderIp,
-          text:
-              'Fichier entrant : $fileName (${(size / 1024).toStringAsFixed(1)} KB)',
+          text: 'Fichier entrant : $fileName (${(size / 1024).toStringAsFixed(1)} KB)',
           timestamp: DateTime.now(),
           isOwn: false,
           fileName: fileName,
@@ -784,19 +783,19 @@ class GhostLinkService extends ChangeNotifier {
     final msgId = data['id'] as String;
     final chunkB64 = data['data'] as String;
     final isDone = data['done'] as bool? ?? false;
-
+    
     if (!_fileBuffers.containsKey(msgId)) return;
 
     final bytes = base64Decode(chunkB64);
     _fileBuffers[msgId]!.addAll(bytes);
-
+    
     final expected = _fileExpectedSizes[msgId] ?? 1;
     _fileProgress[msgId] = _fileBuffers[msgId]!.length / expected;
     notifyListeners();
 
     if (isDone || _fileBuffers[msgId]!.length >= expected) {
       if (kDebugMode) debugPrint('[GhostLink] File transfer complete: $msgId');
-
+      
       // Trouver le message et lui attacher les bytes
       final conv = _conversations[senderIp];
       if (conv != null) {
@@ -816,7 +815,7 @@ class GhostLinkService extends ChangeNotifier {
           );
         }
       }
-
+      
       // Cleanup
       _fileBuffers.remove(msgId);
       _fileExpectedSizes.remove(msgId);
@@ -923,7 +922,7 @@ class GhostLinkService extends ChangeNotifier {
 
     final file = result.files.first;
     if (file.bytes == null) return;
-
+    
     final socket = _activeSockets[peer.ip];
     if (socket == null) return;
 
@@ -947,7 +946,7 @@ class GhostLinkService extends ChangeNotifier {
           fileName: file.name,
           fileData: fileBytes,
         ));
-
+        
     _fileProgress[msgId] = 0.0;
     notifyListeners();
 
@@ -964,24 +963,23 @@ class GhostLinkService extends ChangeNotifier {
     // 2. Send in chunks (64 KB)
     const chunkSize = 64 * 1024;
     int offset = 0;
-
+    
     while (offset < fileSize) {
-      final end =
-          (offset + chunkSize < fileSize) ? offset + chunkSize : fileSize;
+      final end = (offset + chunkSize < fileSize) ? offset + chunkSize : fileSize;
       final chunk = fileBytes.sublist(offset, end);
       final isDone = end >= fileSize;
-
+      
       await _sendPacket(socket, {
         'type': 'file_chunk',
         'id': msgId,
         'data': base64Encode(chunk),
         'done': isDone,
       });
-
+      
       offset = end;
       _fileProgress[msgId] = offset / fileSize;
       notifyListeners();
-
+      
       // Pause to avoid flooding the socket/UI
       await Future.delayed(const Duration(milliseconds: 50));
     }

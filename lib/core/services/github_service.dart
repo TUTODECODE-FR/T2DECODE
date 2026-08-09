@@ -10,19 +10,17 @@ import './storage_service.dart';
 class GithubService {
   final String repoOwner = 'TUTODECODE-FR';
   final String repoName = 'T2DECODE';
-  final String modulesPath =
-      'modules'; // Folder in the repo containing .json files
+  final String modulesPath = 'modules'; // Folder in the repo containing .json files
   final ModuleService _moduleService = ModuleService();
 
   static const Duration _timeout = Duration(seconds: 15);
   static const int _maxModuleBytes = 5 * 1024 * 1024; // 5 MB
   static const int _maxModulesListed = 200;
-
+  
   // PINNING: Utiliser un tag stable plutôt que 'main' pour le contenu distant
-  static const String _repoRef = 'v1.0.3';
+  static const String _repoRef = 'v1.0.3'; 
 
-  static const String officialRepoUrl =
-      'https://github.com/TUTODECODE-FR/T2DECODE';
+  static const String officialRepoUrl = 'https://github.com/TUTODECODE-FR/T2DECODE';
 
   /// Fetches the list of files in the modules directory and downloads new/updated ones.
   Future<int> syncModules() async {
@@ -90,8 +88,7 @@ class GithubService {
 
   Future<ModuleDiff> diffModule(String fileName) async {
     await _ensureNetworkAllowed();
-    final remote =
-        (await _listRemoteModules()).firstWhere((m) => m.fileName == fileName);
+    final remote = (await _listRemoteModules()).firstWhere((m) => m.fileName == fileName);
     final remoteContent = await _downloadText(remote.downloadUri);
     final localSha = (await _moduleService.getSavedMeta(fileName))?.sha;
     String? localContent;
@@ -109,23 +106,23 @@ class GithubService {
 
   Future<List<_RemoteModule>> _listRemoteModules() async {
     await _ensureNetworkAllowed();
-    final url = Uri.parse(
-        'https://api.github.com/repos/$repoOwner/$repoName/contents/$modulesPath?ref=$_repoRef');
+    final url = Uri.parse('https://api.github.com/repos/$repoOwner/$repoName/contents/$modulesPath?ref=$_repoRef');
     if (url.scheme != 'https') {
       throw Exception('GitHub API must use HTTPS');
     }
 
-    final response = await http.get(
-      url,
-      headers: const {
-        'Accept': 'application/vnd.github+json',
-        'User-Agent': 'T2DECODE',
-      },
-    ).timeout(_timeout);
+    final response = await http
+        .get(
+          url,
+          headers: const {
+            'Accept': 'application/vnd.github+json',
+            'User-Agent': 'T2DECODE',
+          },
+        )
+        .timeout(_timeout);
 
     if (response.statusCode != 200) {
-      throw Exception(
-          'Failed to load repo contents: HTTP ${response.statusCode}');
+      throw Exception('Failed to load repo contents: HTTP ${response.statusCode}');
     }
 
     // Sécurité: Vérification stricte du TYPE MIME de l'API GitHub
@@ -149,17 +146,14 @@ class GithubService {
       final sha = item['sha']?.toString() ?? '';
       if (sha.isEmpty) continue;
 
-      final size = (item['size'] is num)
-          ? (item['size'] as num).toInt()
-          : int.tryParse(item['size']?.toString() ?? '');
+      final size = (item['size'] is num) ? (item['size'] as num).toInt() : int.tryParse(item['size']?.toString() ?? '');
 
       final downloadUrl = item['download_url']?.toString() ?? '';
       final downloadUri = Uri.tryParse(downloadUrl);
       if (downloadUri == null) continue;
       if (!_isAllowedGitHubDownload(downloadUri)) continue;
 
-      out.add(_RemoteModule(
-          fileName: name, sha: sha, size: size, downloadUri: downloadUri));
+      out.add(_RemoteModule(fileName: name, sha: sha, size: size, downloadUri: downloadUri));
     }
     return out;
   }
@@ -173,7 +167,7 @@ class GithubService {
 
   Future<String> _downloadText(Uri uri) async {
     await _ensureNetworkAllowed();
-    final client = http.Client();
+      final client = http.Client();
     try {
       final req = http.Request('GET', uri);
       req.headers['User-Agent'] = 'T2DECODE';
@@ -181,20 +175,17 @@ class GithubService {
 
       if (streamed.statusCode != 200) {
         final errBody = await streamed.stream.bytesToString();
-        throw Exception(
-            'Download failed (HTTP ${streamed.statusCode}): $errBody');
+        throw Exception('Download failed (HTTP ${streamed.statusCode}): $errBody');
       }
 
       // Sécurité: Vérification MIME & Charset du contenu brut
       final ct = streamed.headers['content-type']?.toLowerCase() ?? '';
-      if (!ct.contains('application/json') && !ct.contains('text/plain')) {
-        // GitHub raw peut être text/plain
+      if (!ct.contains('application/json') && !ct.contains('text/plain')) { // GitHub raw peut être text/plain
         throw Exception('Contenu non autorisé : $ct');
       }
       if (!ct.contains('utf-8')) {
         // Optionnel: on peut accepter si absent, ou forcer UTF-8
-        debugPrint(
-            'Warning: UTF-8 not explicit in Content-Type, forcing decode.');
+        debugPrint('Warning: UTF-8 not explicit in Content-Type, forcing decode.');
       }
 
       final expected = streamed.contentLength;
@@ -209,8 +200,7 @@ class GithubService {
     }
   }
 
-  Future<Uint8List> _readBytesWithLimit(
-      http.StreamedResponse response, int limit) async {
+  Future<Uint8List> _readBytesWithLimit(http.StreamedResponse response, int limit) async {
     final builder = BytesBuilder(copy: false);
     var total = 0;
     await for (final chunk in response.stream) {
@@ -255,15 +245,14 @@ class GithubService {
     try {
       await _ensureNetworkAllowed();
       // "https://raw.githubusercontent.com/TUTODECODE-FR/T2DECODE/main/pubspec.yaml"
-      final b64Url =
-          'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1RVVE9ERUNPREUtRlIvVDJERUNPREUvbWFpbi9wdWJzcGVjLnlhbWw=';
+      final b64Url = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1RVVE9ERUNPREUtRlIvVDJERUNPREUvbWFpbi9wdWJzcGVjLnlhbWw=';
       final uri = Uri.parse(utf8.decode(base64Decode(b64Url)));
-
+      
       final response = await http.get(
         uri,
         headers: {'Cache-Control': 'no-cache'}, // Forcer la mise à jour
       ).timeout(_timeout);
-
+      
       if (response.statusCode == 200) {
         final lines = response.body.split('\n');
         for (final line in lines) {
@@ -342,8 +331,7 @@ class ModuleDiff {
     Map<String, dynamic>? local;
     Map<String, dynamic>? remote;
     try {
-      if (localJson != null)
-        local = json.decode(localJson) as Map<String, dynamic>;
+      if (localJson != null) local = json.decode(localJson) as Map<String, dynamic>;
     } catch (_) {}
     try {
       remote = json.decode(remoteJson) as Map<String, dynamic>;

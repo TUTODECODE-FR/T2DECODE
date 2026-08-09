@@ -40,17 +40,14 @@ class StudentSubmission {
         'cheatReason': cheatReason,
       };
 
-  factory StudentSubmission.fromJson(Map<String, dynamic> json) =>
-      StudentSubmission(
+  factory StudentSubmission.fromJson(Map<String, dynamic> json) => StudentSubmission(
         id: json['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
         studentName: json['studentName'] ?? 'Élève anonyme',
         studentIp: json['studentIp'] ?? '127.0.0.1',
         courseTitle: json['courseTitle'] ?? 'QCM',
         score: (json['score'] as num?)?.toInt() ?? 0,
         total: (json['total'] as num?)?.toInt() ?? 10,
-        timestamp: json['timestamp'] != null
-            ? DateTime.parse(json['timestamp'])
-            : DateTime.now(),
+        timestamp: json['timestamp'] != null ? DateTime.parse(json['timestamp']) : DateTime.now(),
         cheatAlert: json['cheatAlert'] as bool? ?? false,
         cheatReason: json['cheatReason']?.toString() ?? '',
       );
@@ -59,14 +56,12 @@ class StudentSubmission {
 class EducationServerService {
   HttpServer? _server;
   final List<StudentSubmission> _submissions = [];
-  final StreamController<StudentSubmission> _submissionController =
-      StreamController.broadcast();
+  final StreamController<StudentSubmission> _submissionController = StreamController.broadcast();
   final List<Map<String, dynamic>> _publishedCourses = [];
 
   Stream<StudentSubmission> get onSubmission => _submissionController.stream;
   List<StudentSubmission> get submissions => List.unmodifiable(_submissions);
-  List<Map<String, dynamic>> get publishedCourses =>
-      List.unmodifiable(_publishedCourses);
+  List<Map<String, dynamic>> get publishedCourses => List.unmodifiable(_publishedCourses);
   bool get isRunning => _server != null;
 
   /// Obtient les adresses IP locales de la machine
@@ -122,10 +117,8 @@ class EducationServerService {
   void _handleRequest(HttpRequest request) async {
     // CORS headers pour autoriser le réseau LAN
     request.response.headers.add('Access-Control-Allow-Origin', '*');
-    request.response.headers
-        .add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    request.response.headers
-        .add('Access-Control-Allow-Headers', 'Content-Type');
+    request.response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    request.response.headers.add('Access-Control-Allow-Headers', 'Content-Type');
 
     if (request.method == 'OPTIONS') {
       request.response.statusCode = HttpStatus.ok;
@@ -155,22 +148,16 @@ class EducationServerService {
         _submissions.insert(0, sub);
         _submissionController.add(sub);
 
-        _jsonResponse(request, {
-          'success': true,
-          'message': 'Note enregistrée avec succès par le Professeur.'
-        });
+        _jsonResponse(request, {'success': true, 'message': 'Note enregistrée avec succès par le Professeur.'});
       } catch (e) {
-        _jsonResponse(request, {'success': false, 'error': e.toString()},
-            status: HttpStatus.badRequest);
+        _jsonResponse(request, {'success': false, 'error': e.toString()}, status: HttpStatus.badRequest);
       }
     } else {
-      _jsonResponse(request, {'error': 'Endpoint introuvable'},
-          status: HttpStatus.notFound);
+      _jsonResponse(request, {'error': 'Endpoint introuvable'}, status: HttpStatus.notFound);
     }
   }
 
-  void _jsonResponse(HttpRequest request, dynamic data,
-      {int status = HttpStatus.ok}) {
+  void _jsonResponse(HttpRequest request, dynamic data, {int status = HttpStatus.ok}) {
     request.response.statusCode = status;
     request.response.headers.contentType = ContentType.json;
     request.response.write(jsonEncode(data));
@@ -189,11 +176,7 @@ class EducationServerService {
     final client = HttpClient();
     client.connectionTimeout = const Duration(seconds: 5);
     try {
-      final cleanIp = teacherIp
-          .replaceAll('http://', '')
-          .replaceAll('https://', '')
-          .split(':')[0]
-          .trim();
+      final cleanIp = teacherIp.replaceAll('http://', '').replaceAll('https://', '').split(':')[0].trim();
       final uri = Uri.parse('http://$cleanIp:$port/api/submit-score');
       final request = await client.postUrl(uri);
       request.headers.contentType = ContentType.json;
@@ -209,10 +192,7 @@ class EducationServerService {
       final resBody = await response.transform(utf8.decoder).join();
       return jsonDecode(resBody) as Map<String, dynamic>;
     } catch (e) {
-      return {
-        'success': false,
-        'error': 'Impossible de joindre le serveur du Professeur ($e)'
-      };
+      return {'success': false, 'error': 'Impossible de joindre le serveur du Professeur ($e)'};
     } finally {
       client.close();
     }

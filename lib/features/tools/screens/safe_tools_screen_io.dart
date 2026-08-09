@@ -44,8 +44,7 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
     });
   }
 
-  bool _allowed(String id, {bool defaultValue = true}) =>
-      _perms[id] ?? defaultValue;
+  bool _allowed(String id, {bool defaultValue = true}) => _perms[id] ?? defaultValue;
 
   Future<void> _setAllowed(String id, bool value) async {
     final next = {..._perms, id: value};
@@ -58,8 +57,7 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
     final settings = context.watch<SettingsProvider>();
     return TdcPageWrapper(
       child: _loading
-          ? const Center(
-              child: CircularProgressIndicator(color: TdcColors.accent))
+          ? const Center(child: CircularProgressIndicator(color: TdcColors.accent))
           : ListView(
               children: [
                 Row(
@@ -67,32 +65,22 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
                     const Expanded(
                       child: Text(
                         'Multi-Tools Sécurisés',
-                        style: TextStyle(
-                            color: TdcColors.textPrimary,
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold),
+                        style: TextStyle(color: TdcColors.textPrimary, fontSize: 26, fontWeight: FontWeight.bold),
                       ),
                     ),
                     if (settings.zeroNetworkMode)
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
                           color: TdcColors.danger.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(999),
-                          border: Border.all(
-                              color: TdcColors.danger.withValues(alpha: 0.4)),
+                          border: Border.all(color: TdcColors.danger.withValues(alpha: 0.4)),
                         ),
                         child: const Row(
                           children: [
-                            Icon(Icons.wifi_off,
-                                size: 14, color: TdcColors.danger),
+                            Icon(Icons.wifi_off, size: 14, color: TdcColors.danger),
                             SizedBox(width: 6),
-                            Text('Réseau désactivé',
-                                style: TextStyle(
-                                    color: TdcColors.danger,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold)),
+                            Text('Réseau désactivé', style: TextStyle(color: TdcColors.danger, fontSize: 12, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -101,27 +89,21 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
                 const SizedBox(height: 8),
                 const Text(
                   'Outils whitelistés, sans exécution de commandes arbitraires. Tout fonctionne hors-ligne.',
-                  style:
-                      TextStyle(color: TdcColors.textSecondary, fontSize: 14),
+                  style: TextStyle(color: TdcColors.textSecondary, fontSize: 14),
                 ),
                 const SizedBox(height: 20),
                 _section(
                   title: 'Permissions (Sandbox)',
                   children: [
-                    _permSwitch('net_info', 'Réseau (lecture seule)',
-                        'Affiche l’état radio et l’IP locale', Icons.lan),
-                    _permSwitch('device_info', 'Système (lecture seule)',
-                        'Affiche les informations de l’appareil', Icons.memory),
-                    _permSwitch('storage_scan', 'Stockage (lecture seule)',
-                        'Mesure l’espace utilisé par l’app', Icons.storage),
+                    _permSwitch('net_info', 'Réseau (lecture seule)', 'Affiche l’état radio et l’IP locale', Icons.lan),
+                    _permSwitch('device_info', 'Système (lecture seule)', 'Affiche les informations de l’appareil', Icons.memory),
+                    _permSwitch('storage_scan', 'Stockage (lecture seule)', 'Mesure l’espace utilisé par l’app', Icons.storage),
                     const SizedBox(height: 8),
                     OutlinedButton.icon(
                       onPressed: () async {
                         await _logs.clear();
                         if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Logs outils effacés.')));
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Logs outils effacés.')));
                       },
                       icon: const Icon(Icons.delete_outline, size: 18),
                       label: const Text('Effacer les logs'),
@@ -171,9 +153,7 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style: const TextStyle(
-                  color: TdcColors.textPrimary, fontWeight: FontWeight.bold)),
+          Text(title, style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           ...children,
         ],
@@ -189,13 +169,10 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
         children: [
           Icon(icon, size: 18, color: TdcColors.accent),
           const SizedBox(width: 10),
-          Expanded(
-              child: Text(title,
-                  style: const TextStyle(color: TdcColors.textPrimary))),
+          Expanded(child: Text(title, style: const TextStyle(color: TdcColors.textPrimary))),
         ],
       ),
-      subtitle:
-          Text(subtitle, style: const TextStyle(color: TdcColors.textMuted)),
+      subtitle: Text(subtitle, style: const TextStyle(color: TdcColors.textMuted)),
       activeThumbColor: TdcColors.accent,
     );
   }
@@ -210,8 +187,7 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
     return ListTile(
       leading: Icon(icon, color: TdcColors.accent),
       title: Text(title, style: const TextStyle(color: TdcColors.textPrimary)),
-      subtitle:
-          Text(subtitle, style: const TextStyle(color: TdcColors.textMuted)),
+      subtitle: Text(subtitle, style: const TextStyle(color: TdcColors.textMuted)),
       trailing: ElevatedButton(
         onPressed: onRun,
         child: const Text('Lancer'),
@@ -242,26 +218,18 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: TdcColors.surface,
-        title: const Text('Diagnostic Réseau',
-            style: TextStyle(color: TdcColors.textPrimary)),
+        title: const Text('Diagnostic Réseau', style: TextStyle(color: TdcColors.textPrimary)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Connectivité: ${conn.map((e) => e.name).join(', ')}',
-                style: const TextStyle(color: TdcColors.textSecondary)),
-            if (wifiName != null)
-              Text('Wi‑Fi: $wifiName',
-                  style: const TextStyle(color: TdcColors.textSecondary)),
-            if (wifiIp != null)
-              Text('IP: $wifiIp',
-                  style: const TextStyle(color: TdcColors.textSecondary)),
+            Text('Connectivité: ${conn.map((e) => e.name).join(', ')}', style: const TextStyle(color: TdcColors.textSecondary)),
+            if (wifiName != null) Text('Wi‑Fi: $wifiName', style: const TextStyle(color: TdcColors.textSecondary)),
+            if (wifiIp != null) Text('IP: $wifiIp', style: const TextStyle(color: TdcColors.textSecondary)),
           ],
         ),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Fermer')),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Fermer')),
         ],
       ),
     );
@@ -280,22 +248,16 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
         });
       } else if (Platform.isAndroid) {
         final a = await di.androidInfo;
-        out.addAll(
-            {'model': a.model, 'brand': a.brand, 'sdkInt': a.version.sdkInt});
+        out.addAll({'model': a.model, 'brand': a.brand, 'sdkInt': a.version.sdkInt});
       } else if (Platform.isIOS) {
         final i = await di.iosInfo;
-        out.addAll({
-          'model': i.utsname.machine,
-          'system': i.systemName,
-          'version': i.systemVersion
-        });
+        out.addAll({'model': i.utsname.machine, 'system': i.systemName, 'version': i.systemVersion});
       } else if (Platform.isMacOS) {
         final m = await di.macOsInfo;
         out.addAll({'model': m.model, 'os': m.osRelease, 'arch': m.arch});
       } else if (Platform.isWindows) {
         final w = await di.windowsInfo;
-        out.addAll(
-            {'computerName': w.computerName, 'buildNumber': w.buildNumber});
+        out.addAll({'computerName': w.computerName, 'buildNumber': w.buildNumber});
       } else if (Platform.isLinux) {
         final l = await di.linuxInfo;
         out.addAll({'name': l.name, 'version': l.version, 'id': l.id});
@@ -308,14 +270,10 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: TdcColors.surface,
-        title: const Text('Infos Système',
-            style: TextStyle(color: TdcColors.textPrimary)),
-        content: Text(out.entries.map((e) => '${e.key}: ${e.value}').join('\n'),
-            style: const TextStyle(color: TdcColors.textSecondary)),
+        title: const Text('Infos Système', style: TextStyle(color: TdcColors.textPrimary)),
+        content: Text(out.entries.map((e) => '${e.key}: ${e.value}').join('\n'), style: const TextStyle(color: TdcColors.textSecondary)),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Fermer')),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Fermer')),
         ],
       ),
     );
@@ -340,24 +298,18 @@ class _SafeToolsScreenState extends State<SafeToolsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: TdcColors.surface,
-        title: const Text('Stockage App',
-            style: TextStyle(color: TdcColors.textPrimary)),
+        title: const Text('Stockage App', style: TextStyle(color: TdcColors.textPrimary)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Modules: ${_prettyBytes(sizes['modules'] ?? 0)}',
-                style: const TextStyle(color: TdcColors.textSecondary)),
-            Text('Backups: ${_prettyBytes(sizes['backups'] ?? 0)}',
-                style: const TextStyle(color: TdcColors.textSecondary)),
-            Text('Snapshots: ${_prettyBytes(sizes['snapshots'] ?? 0)}',
-                style: const TextStyle(color: TdcColors.textSecondary)),
+            Text('Modules: ${_prettyBytes(sizes['modules'] ?? 0)}', style: const TextStyle(color: TdcColors.textSecondary)),
+            Text('Backups: ${_prettyBytes(sizes['backups'] ?? 0)}', style: const TextStyle(color: TdcColors.textSecondary)),
+            Text('Snapshots: ${_prettyBytes(sizes['snapshots'] ?? 0)}', style: const TextStyle(color: TdcColors.textSecondary)),
           ],
         ),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Fermer')),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Fermer')),
         ],
       ),
     );

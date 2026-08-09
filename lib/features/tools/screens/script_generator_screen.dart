@@ -20,7 +20,7 @@ class ScriptGeneratorScreen extends StatefulWidget {
 class _ScriptGeneratorScreenState extends State<ScriptGeneratorScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
-
+  
   // Generator State
   ScriptCategory _selectedCategory = ScriptCategory.automation;
   ScriptLanguage _selectedLanguage = ScriptLanguage.bash;
@@ -108,12 +108,8 @@ find /backup -name "system_backup.tar.gz" -mtime +7 -delete
 
 echo "Backup terminé: $(date)"''',
         parameters: [
-          ScriptParameter(
-              name: 'BACKUP_DIR', type: 'directory', defaultValue: '/backup'),
-          ScriptParameter(
-              name: 'EXCLUDE_DIRS',
-              type: 'text',
-              defaultValue: '/tmp,/var/tmp'),
+          ScriptParameter(name: 'BACKUP_DIR', type: 'directory', defaultValue: '/backup'),
+          ScriptParameter(name: 'EXCLUDE_DIRS', type: 'text', defaultValue: '/tmp,/var/tmp'),
         ],
       ),
 
@@ -159,12 +155,9 @@ while true; do
     sleep 30
 done''',
         parameters: [
-          ScriptParameter(
-              name: 'ALERT_CPU', type: 'number', defaultValue: '80'),
-          ScriptParameter(
-              name: 'ALERT_MEM', type: 'number', defaultValue: '90'),
-          ScriptParameter(
-              name: 'ALERT_DISK', type: 'number', defaultValue: '85'),
+          ScriptParameter(name: 'ALERT_CPU', type: 'number', defaultValue: '80'),
+          ScriptParameter(name: 'ALERT_MEM', type: 'number', defaultValue: '90'),
+          ScriptParameter(name: 'ALERT_DISK', type: 'number', defaultValue: '85'),
         ],
       ),
 
@@ -304,10 +297,8 @@ if __name__ == "__main__":
     scanner = NetworkScanner(network, common_ports)
     scanner.scan_network()''',
         parameters: [
-          ScriptParameter(
-              name: 'NETWORK', type: 'text', defaultValue: '192.168.1.0/24'),
-          ScriptParameter(
-              name: 'PORTS', type: 'text', defaultValue: '22,80,443'),
+          ScriptParameter(name: 'NETWORK', type: 'text', defaultValue: '192.168.1.0/24'),
+          ScriptParameter(name: 'PORTS', type: 'text', defaultValue: '22,80,443'),
         ],
       ),
 
@@ -357,14 +348,9 @@ find /mysql_backup -name "*.sql.gz" -mtime +$RETENTION_DAYS -delete
 echo "Backup MySQL terminé: $(date)"
 echo "Espace utilisé: $(du -sh "$BACKUP_DIR" | cut -f1)"''',
         parameters: [
-          ScriptParameter(
-              name: 'DB_USER', type: 'text', defaultValue: 'backup_user'),
-          ScriptParameter(
-              name: 'DB_PASS',
-              type: 'password',
-              defaultValue: 'secure_password'),
-          ScriptParameter(
-              name: 'RETENTION_DAYS', type: 'number', defaultValue: '7'),
+          ScriptParameter(name: 'DB_USER', type: 'text', defaultValue: 'backup_user'),
+          ScriptParameter(name: 'DB_PASS', type: 'password', defaultValue: 'secure_password'),
+          ScriptParameter(name: 'RETENTION_DAYS', type: 'number', defaultValue: '7'),
         ],
       ),
 
@@ -458,10 +444,7 @@ if __name__ == "__main__":
     checker = WebHealthChecker()
     checker.run_checks()''',
         parameters: [
-          ScriptParameter(
-              name: 'SERVICES',
-              type: 'json',
-              defaultValue: '[{"name":"Site","url":"https://example.com"}]'),
+          ScriptParameter(name: 'SERVICES', type: 'json', defaultValue: '[{"name":"Site","url":"https://example.com"}]'),
         ],
       ),
     ]);
@@ -509,8 +492,7 @@ if __name__ == "__main__":
                 decoration: BoxDecoration(
                   color: Colors.purple.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border:
-                      Border.all(color: Colors.purple.withValues(alpha: 0.3)),
+                  border: Border.all(color: Colors.purple.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   '${_generatedScripts.length} scripts générés',
@@ -574,7 +556,7 @@ if __name__ == "__main__":
             style: TextStyle(color: TdcColors.textSecondary, fontSize: 14),
           ),
           const SizedBox(height: 32),
-
+          
           // Configuration
           Row(
             children: [
@@ -587,9 +569,9 @@ if __name__ == "__main__":
               ),
             ],
           ),
-
+          
           const SizedBox(height: 24),
-
+          
           // Description
           const Text(
             'Description du Script',
@@ -605,8 +587,7 @@ if __name__ == "__main__":
             maxLines: 6,
             style: const TextStyle(color: TdcColors.textPrimary),
             decoration: InputDecoration(
-              hintText:
-                  'Ex: Je veux un script qui surveille l\'utilisation CPU et envoie une alerte si > 80%...',
+              hintText: 'Ex: Je veux un script qui surveille l\'utilisation CPU et envoie une alerte si > 80%...',
               filled: true,
               fillColor: TdcColors.surface,
               border: OutlineInputBorder(
@@ -615,33 +596,23 @@ if __name__ == "__main__":
               ),
             ),
           ),
-
+          
           const SizedBox(height: 24),
-
+          
           // Bouton de génération
           Row(
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed:
-                      _isGenerating || _descriptionController.text.isEmpty
-                          ? null
-                          : _generateScript,
+                  onPressed: _isGenerating || _descriptionController.text.isEmpty ? null : _generateScript,
                   icon: _isGenerating
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white))
+                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                       : const Icon(Icons.auto_awesome),
-                  label: Text(_isGenerating
-                      ? 'Ghost AI génère…'
-                      : 'Générer avec Ghost AI'),
+                  label: Text(_isGenerating ? 'Ghost AI génère…' : 'Générer avec Ghost AI'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple.shade700,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
               ),
@@ -654,19 +625,17 @@ if __name__ == "__main__":
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red.shade700,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 16),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: const Icon(Icons.stop, color: Colors.white),
                 ),
               ],
             ],
           ),
-
+          
           const SizedBox(height: 32),
-
+          
           // Résultat
           if (_customScriptController.text.isNotEmpty) ...[
             const Text(
@@ -697,8 +666,7 @@ if __name__ == "__main__":
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.code,
-                            color: Colors.purple.shade700, size: 20),
+                        Icon(Icons.code, color: Colors.purple.shade700, size: 20),
                         const SizedBox(width: 8),
                         Text(
                           _selectedLanguage.name.toUpperCase(),
@@ -711,13 +679,11 @@ if __name__ == "__main__":
                         const Spacer(),
                         IconButton(
                           onPressed: _copyGeneratedScript,
-                          icon: const Icon(Icons.copy,
-                              color: TdcColors.textSecondary),
+                          icon: const Icon(Icons.copy, color: TdcColors.textSecondary),
                         ),
                         IconButton(
                           onPressed: _saveGeneratedScript,
-                          icon: const Icon(Icons.save,
-                              color: TdcColors.textSecondary),
+                          icon: const Icon(Icons.save, color: TdcColors.textSecondary),
                         ),
                       ],
                     ),
@@ -862,8 +828,7 @@ if __name__ == "__main__":
               Row(
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: template.language.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
@@ -879,8 +844,7 @@ if __name__ == "__main__":
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: template.category.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
@@ -895,8 +859,7 @@ if __name__ == "__main__":
                     ),
                   ),
                   const Spacer(),
-                  const Icon(Icons.arrow_forward_ios,
-                      color: TdcColors.textMuted, size: 16),
+                  const Icon(Icons.arrow_forward_ios, color: TdcColors.textMuted, size: 16),
                 ],
               ),
               const SizedBox(height: 12),
@@ -920,8 +883,7 @@ if __name__ == "__main__":
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.tune,
-                        color: TdcColors.textMuted, size: 16),
+                    const Icon(Icons.tune, color: TdcColors.textMuted, size: 16),
                     const SizedBox(width: 4),
                     Text(
                       '${template.parameters.length} paramètres configurables',
@@ -973,19 +935,16 @@ if __name__ == "__main__":
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.schedule,
-                          color: TdcColors.textMuted, size: 48),
+                      Icon(Icons.schedule, color: TdcColors.textMuted, size: 48),
                       SizedBox(height: 16),
                       Text(
                         'Aucune tâche automatisée',
-                        style:
-                            TextStyle(color: TdcColors.textMuted, fontSize: 16),
+                        style: TextStyle(color: TdcColors.textMuted, fontSize: 16),
                       ),
                       SizedBox(height: 8),
                       Text(
                         'Créez votre première tâche automatisée',
-                        style:
-                            TextStyle(color: TdcColors.textMuted, fontSize: 12),
+                        style: TextStyle(color: TdcColors.textMuted, fontSize: 12),
                       ),
                     ],
                   ),
@@ -1046,8 +1005,7 @@ if __name__ == "__main__":
             const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(Icons.schedule,
-                    color: TdcColors.textMuted, size: 16),
+                const Icon(Icons.schedule, color: TdcColors.textMuted, size: 16),
                 const SizedBox(width: 4),
                 Text(
                   'Exécution: ${task.schedule}',
@@ -1106,19 +1064,16 @@ if __name__ == "__main__":
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.code_off,
-                          color: TdcColors.textMuted, size: 48),
+                      Icon(Icons.code_off, color: TdcColors.textMuted, size: 48),
                       SizedBox(height: 16),
                       Text(
                         'Aucun script généré',
-                        style:
-                            TextStyle(color: TdcColors.textMuted, fontSize: 16),
+                        style: TextStyle(color: TdcColors.textMuted, fontSize: 16),
                       ),
                       SizedBox(height: 8),
                       Text(
                         'Générez votre premier script',
-                        style:
-                            TextStyle(color: TdcColors.textMuted, fontSize: 12),
+                        style: TextStyle(color: TdcColors.textMuted, fontSize: 12),
                       ),
                     ],
                   ),
@@ -1150,8 +1105,7 @@ if __name__ == "__main__":
               Row(
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: script.language.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
@@ -1167,8 +1121,7 @@ if __name__ == "__main__":
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: script.category.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
@@ -1184,8 +1137,7 @@ if __name__ == "__main__":
                   ),
                   const Spacer(),
                   PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert,
-                        color: TdcColors.textMuted, size: 16),
+                    icon: const Icon(Icons.more_vert, color: TdcColors.textMuted, size: 16),
                     onSelected: (value) {
                       switch (value) {
                         case 'edit':
@@ -1200,33 +1152,27 @@ if __name__ == "__main__":
                       }
                     },
                     itemBuilder: (context) => [
-                      const PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              Icon(Icons.edit, size: 16),
-                              SizedBox(width: 8),
-                              Text('Modifier'),
-                            ],
-                          )),
-                      const PopupMenuItem(
-                          value: 'copy',
-                          child: Row(
-                            children: [
-                              Icon(Icons.copy, size: 16),
-                              SizedBox(width: 8),
-                              Text('Copier'),
-                            ],
-                          )),
-                      const PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              Icon(Icons.delete, color: Colors.red, size: 16),
-                              SizedBox(width: 8),
-                              Text('Supprimer'),
-                            ],
-                          )),
+                      const PopupMenuItem(value: 'edit', child: Row(
+                        children: [
+                          Icon(Icons.edit, size: 16),
+                          SizedBox(width: 8),
+                          Text('Modifier'),
+                        ],
+                      )),
+                      const PopupMenuItem(value: 'copy', child: Row(
+                        children: [
+                          Icon(Icons.copy, size: 16),
+                          SizedBox(width: 8),
+                          Text('Copier'),
+                        ],
+                      )),
+                      const PopupMenuItem(value: 'delete', child: Row(
+                        children: [
+                          Icon(Icons.delete, color: Colors.red, size: 16),
+                          SizedBox(width: 8),
+                          Text('Supprimer'),
+                        ],
+                      )),
                     ],
                   ),
                 ],
@@ -1272,27 +1218,22 @@ if __name__ == "__main__":
 
     if (!status.running || status.models.isEmpty) {
       // Fallback vers template si Ollama n'est pas disponible
-      _customScriptController.text =
-          _generateScriptFallback(description, _selectedLanguage);
+      _customScriptController.text = _generateScriptFallback(description, _selectedLanguage);
       setState(() => _isGenerating = false);
       return;
     }
 
     final model = status.models.first;
     final langName = _selectedLanguage.name;
-    final prompt =
-        'Génère uniquement le code $langName complet et fonctionnel pour : $description\n'
+    final prompt = 'Génère uniquement le code $langName complet et fonctionnel pour : $description\n'
         'Règles : code propre avec commentaires en français, pas d\'explication en dehors du code, '
         'inclure les imports nécessaires, gestion d\'erreurs basique.';
 
     final buffer = StringBuffer();
     _streamSub = OllamaService.stream(
       model,
-      [
-        {'role': 'user', 'content': prompt}
-      ],
-      system:
-          'Tu es un expert en scripting. Tu génères uniquement du code $langName propre et fonctionnel. '
+      [{'role': 'user', 'content': prompt}],
+      system: 'Tu es un expert en scripting. Tu génères uniquement du code $langName propre et fonctionnel. '
           'Ne réponds qu\'avec du code, sans explication avant ou après.',
     ).listen(
       (chunk) {
@@ -1307,8 +1248,7 @@ if __name__ == "__main__":
       onError: (_) {
         // Fallback si erreur durant le streaming
         if (mounted) {
-          _customScriptController.text =
-              _generateScriptFallback(description, _selectedLanguage);
+          _customScriptController.text = _generateScriptFallback(description, _selectedLanguage);
           setState(() => _isGenerating = false);
         }
       },
@@ -1387,13 +1327,13 @@ exit 0''';
       createdAt: DateTime.now(),
       category: _selectedCategory,
     );
-
+    
     setState(() {
       _generatedScripts.insert(0, script);
       _customScriptController.clear();
       _descriptionController.clear();
     });
-
+    
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Script sauvegardé')),
     );
@@ -1614,7 +1554,7 @@ exit 0''';
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-
+    
     if (difference.inMinutes < 60) {
       return 'Il y a ${difference.inMinutes} min';
     } else if (difference.inHours < 24) {
@@ -1725,23 +1665,19 @@ class _AddTaskDialogState extends State<_AddTaskDialog> {
                 ),
                 const Spacer(),
                 ElevatedButton(
-                  onPressed: _nameController.text.isNotEmpty
-                      ? () {
-                          final task = AutomationTask(
-                            id: DateTime.now()
-                                .millisecondsSinceEpoch
-                                .toString(),
-                            name: _nameController.text,
-                            description: _descriptionController.text,
-                            schedule: _scheduleController.text,
-                            script: _scriptController.text,
-                            isEnabled: true,
-                            lastRun: DateTime.now(),
-                          );
-                          widget.onAdd(task);
-                          Navigator.pop(context);
-                        }
-                      : null,
+                  onPressed: _nameController.text.isNotEmpty ? () {
+                    final task = AutomationTask(
+                      id: DateTime.now().millisecondsSinceEpoch.toString(),
+                      name: _nameController.text,
+                      description: _descriptionController.text,
+                      schedule: _scheduleController.text,
+                      script: _scriptController.text,
+                      isEnabled: true,
+                      lastRun: DateTime.now(),
+                    );
+                    widget.onAdd(task);
+                    Navigator.pop(context);
+                  } : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple.shade700,
                   ),

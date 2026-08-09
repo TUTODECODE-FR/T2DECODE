@@ -7,6 +7,7 @@ import 'app_theme.dart';
 
 /// Composants d'interface "Ultra-Premium" pour décourager les clones basiques.
 class TdcPremium {
+  
   /// Une carte avec effet de verre (Glassmorphism) et bordure lumineuse.
   static Widget glassCard({
     required BuildContext context,
@@ -41,10 +42,7 @@ class TdcPremium {
       borderWidth: 1.5,
       padding: padding ?? const EdgeInsets.all(16),
       child: child,
-    )
-        .animate()
-        .fadeIn(duration: 400.ms)
-        .scale(begin: const Offset(0.98, 0.98), curve: Curves.easeOutCubic);
+    ).animate().fadeIn(duration: 400.ms).scale(begin: const Offset(0.98, 0.98), curve: Curves.easeOutCubic);
   }
 
   /// Fond de page avec particules ou dégradés animés.
@@ -65,13 +63,8 @@ class TdcPremium {
               shape: BoxShape.circle,
               color: TdcColors.accent.withValues(alpha: 0.05),
             ),
-          )
-              .animate(onPlay: (controller) => controller.repeat(reverse: true))
-              .move(
-                  begin: const Offset(-20, -20),
-                  end: const Offset(20, 20),
-                  duration: 5.seconds,
-                  curve: Curves.easeInOut),
+          ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+            .move(begin: const Offset(-20, -20), end: const Offset(20, 20), duration: 5.seconds, curve: Curves.easeInOut),
         ),
         // Orbe lumineux animé 2
         Positioned(
@@ -84,13 +77,8 @@ class TdcPremium {
               shape: BoxShape.circle,
               color: TdcColors.info.withValues(alpha: 0.03),
             ),
-          )
-              .animate(onPlay: (controller) => controller.repeat(reverse: true))
-              .move(
-                  begin: const Offset(30, 30),
-                  end: const Offset(-30, -30),
-                  duration: 7.seconds,
-                  curve: Curves.easeInOut),
+          ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+            .move(begin: const Offset(30, 30), end: const Offset(-30, -30), duration: 7.seconds, curve: Curves.easeInOut),
         ),
         Positioned.fill(child: child),
       ],
@@ -103,9 +91,7 @@ class TdcPremium {
       children: [
         Icon(icon, size: 20, color: TdcColors.accent)
             .animate(onPlay: (controller) => controller.repeat(reverse: true))
-            .shimmer(
-                duration: 2.seconds,
-                color: Colors.white.withValues(alpha: 0.3)),
+            .shimmer(duration: 2.seconds, color: Colors.white.withValues(alpha: 0.3)),
         const SizedBox(width: 12),
         Text(
           text.toUpperCase(),

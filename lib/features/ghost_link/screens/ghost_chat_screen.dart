@@ -14,8 +14,7 @@ class GhostChatScreen extends StatefulWidget {
   final GhostPeer peer;
   const GhostChatScreen({super.key, required this.peer});
 
-  @override
-  State<GhostChatScreen> createState() => _GhostChatScreenState();
+  @override State<GhostChatScreen> createState() => _GhostChatScreenState();
 }
 
 class _GhostChatScreenState extends State<GhostChatScreen> {
@@ -50,8 +49,7 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
   void _onNewMessage() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scroll.hasClients) {
-        _scroll.animateTo(_scroll.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+        _scroll.animateTo(_scroll.position.maxScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
       }
     });
   }
@@ -59,28 +57,20 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
   Future<void> _send() async {
     final text = _ctrl.text.trim();
     if (text.isEmpty || _sending) return;
-    setState(() {
-      _sending = true;
-    });
+    setState(() { _sending = true; });
     _ctrl.clear();
     final gl = context.read<GhostLinkService>();
     final ok = await gl.sendMessage(widget.peer, text, expiry: _ephemeralDelay);
     if (!ok && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content:
-                Text('Envoi échoué. Vérifiez que l\'appareil est accessible.'),
-            backgroundColor: TdcColors.danger),
+        const SnackBar(content: Text('Envoi échoué. Vérifiez que l\'appareil est accessible.'), backgroundColor: TdcColors.danger),
       );
     }
-    if (mounted)
-      setState(() {
-        _sending = false;
-      });
+    if (mounted) setState(() { _sending = false; });
   }
 
   Duration? _ephemeralDelay;
-
+  
   void _toggleEphemeral() {
     setState(() {
       if (_ephemeralDelay == null) {
@@ -93,9 +83,7 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(_ephemeralDelay == null
-            ? 'Messages normaux'
-            : 'Auto-destruction après ${_ephemeralDelay!.inSeconds}s'),
+        content: Text(_ephemeralDelay == null ? 'Messages normaux' : 'Auto-destruction après ${_ephemeralDelay!.inSeconds}s'),
         duration: const Duration(seconds: 1),
       ),
     );
@@ -124,51 +112,26 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
                 CircleAvatar(
                   radius: 18,
                   backgroundColor: _color.withValues(alpha: 0.15),
-                  child: Text(widget.peer.name[0].toUpperCase(),
-                      style: const TextStyle(
-                          color: _color, fontWeight: FontWeight.bold)),
+                  child: Text(widget.peer.name[0].toUpperCase(), style: const TextStyle(color: _color, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(width: 12),
-                Expanded(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      Text(widget.peer.name,
-                          style: const TextStyle(
-                              color: TdcColors.textPrimary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14)),
-                      Text(widget.peer.ip,
-                          style: const TextStyle(
-                              color: TdcColors.textMuted,
-                              fontFamily: 'monospace',
-                              fontSize: 11)),
-                    ])),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(widget.peer.name, style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 14)),
+                  Text(widget.peer.ip, style: const TextStyle(color: TdcColors.textMuted, fontFamily: 'monospace', fontSize: 11)),
+                ])),
                 Row(children: [
                   if (widget.peer.protocolVersion >= 2) ...[
-                    Icon(Icons.lock,
-                        color: TdcColors.success.withValues(alpha: 0.7),
-                        size: 12),
+                    Icon(Icons.lock, color: TdcColors.success.withValues(alpha: 0.7), size: 12),
                     const SizedBox(width: 4),
-                    Text('Sécurisé (AES)',
-                        style: TextStyle(
-                            color: TdcColors.success.withValues(alpha: 0.7),
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold)),
+                    Text('Sécurisé (AES)', style: TextStyle(color: TdcColors.success.withValues(alpha: 0.7), fontSize: 11, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 12),
                   ],
                   const SizedBox(width: 6),
-                  Text(widget.peer.isOnline ? 'En ligne' : 'Hors ligne',
-                      style: TextStyle(
-                          color: widget.peer.isOnline
-                              ? TdcColors.success
-                              : TdcColors.danger,
-                          fontSize: 11)),
+                  Text(widget.peer.isOnline ? 'En ligne' : 'Hors ligne', style: TextStyle(color: widget.peer.isOnline ? TdcColors.success : TdcColors.danger, fontSize: 11)),
                 ]),
                 const SizedBox(width: 12),
                 IconButton(
-                  icon: const Icon(Icons.analytics_outlined,
-                      size: 20, color: TdcColors.textMuted),
+                  icon: const Icon(Icons.analytics_outlined, size: 20, color: TdcColors.textMuted),
                   tooltip: 'Diagnostic distant',
                   onPressed: () => gl.requestRemoteInfo(widget.peer),
                 ),
@@ -180,25 +143,18 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
               child: messages.isEmpty
                   ? Center(
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        Icon(Icons.forum_outlined,
-                            size: 48,
-                            color: TdcColors.textMuted.withValues(alpha: 0.5)),
+                        Icon(Icons.forum_outlined, size: 48, color: TdcColors.textMuted.withValues(alpha: 0.5)),
                         const SizedBox(height: 12),
-                        const Text('Aucun message encore.',
-                            style: TextStyle(
-                                color: TdcColors.textMuted, fontSize: 14)),
+                        const Text('Aucun message encore.', style: TextStyle(color: TdcColors.textMuted, fontSize: 14)),
                         const SizedBox(height: 4),
-                        Text('Dites bonjour à ${widget.peer.name} !',
-                            style: const TextStyle(
-                                color: TdcColors.textSecondary, fontSize: 13)),
+                        Text('Dites bonjour à ${widget.peer.name} !', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 13)),
                       ]),
                     )
                   : ListView.builder(
                       controller: _scroll,
                       padding: const EdgeInsets.all(16),
                       itemCount: messages.length,
-                      itemBuilder: (context, i) => _MessageBubble(
-                          message: messages[i], accentColor: _color),
+                      itemBuilder: (context, i) => _MessageBubble(message: messages[i], accentColor: _color),
                     ),
             ),
 
@@ -230,27 +186,21 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
                         hintStyle: const TextStyle(color: TdcColors.textMuted),
                         filled: true,
                         fillColor: TdcColors.bg,
-                        border: const OutlineInputBorder(
-                            borderRadius: TdcRadius.md,
-                            borderSide: BorderSide.none),
-                        enabledBorder: const OutlineInputBorder(
-                            borderRadius: TdcRadius.md,
-                            borderSide: BorderSide(color: TdcColors.border)),
+                        border: const OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide.none),
+                        enabledBorder: const OutlineInputBorder(borderRadius: TdcRadius.md, borderSide: BorderSide(color: TdcColors.border)),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 10),
                 IconButton(
-                  icon:
-                      const Icon(Icons.attach_file, color: TdcColors.textMuted),
-                  onPressed: () => _sendFile(),
+                   icon: const Icon(Icons.attach_file, color: TdcColors.textMuted),
+                   onPressed: () => _sendFile(),
                 ),
                 const SizedBox(width: 4),
                 IconButton(
-                  icon: const Icon(Icons.timer_outlined,
-                      color: TdcColors.textMuted),
-                  onPressed: () => _toggleEphemeral(),
+                   icon: const Icon(Icons.timer_outlined, color: TdcColors.textMuted),
+                   onPressed: () => _toggleEphemeral(),
                 ),
                 const SizedBox(width: 10),
                 AnimatedContainer(
@@ -258,15 +208,9 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
                   child: IconButton(
                     onPressed: _sending ? null : _send,
                     icon: _sending
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white))
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                         : const Icon(Icons.send_rounded, color: Colors.white),
-                    style: IconButton.styleFrom(
-                        backgroundColor: _color,
-                        padding: const EdgeInsets.all(12)),
+                    style: IconButton.styleFrom(backgroundColor: _color, padding: const EdgeInsets.all(12)),
                   ),
                 ),
               ]),
@@ -293,29 +237,21 @@ class _MessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
-        mainAxisAlignment:
-            isOwn ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isOwn ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isOwn) ...[
             CircleAvatar(
               radius: 14,
               backgroundColor: accentColor.withValues(alpha: 0.15),
-              child: Text(
-                  message.fromName.isNotEmpty
-                      ? message.fromName[0].toUpperCase()
-                      : '?',
-                  style: TextStyle(
-                      color: accentColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold)),
+              child: Text(message.fromName.isNotEmpty ? message.fromName[0].toUpperCase() : '?',
+                  style: TextStyle(color: accentColor, fontSize: 12, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(width: 8),
           ],
           Flexible(
             child: Container(
-              constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.65),
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.65),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: isOwn ? accentColor : TdcColors.surface,
@@ -326,75 +262,40 @@ class _MessageBubble extends StatelessWidget {
                   bottomRight: Radius.circular(isOwn ? 4 : 16),
                 ),
                 border: isOwn ? null : Border.all(color: TdcColors.border),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2))
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4, offset: const Offset(0, 2))],
               ),
               child: Column(
-                crossAxisAlignment:
-                    isOwn ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                crossAxisAlignment: isOwn ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                 children: [
                   if (!isOwn)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4),
-                      child: Text(message.fromName,
-                          style: TextStyle(
-                              color: accentColor,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold)),
+                      child: Text(message.fromName, style: TextStyle(color: accentColor, fontSize: 11, fontWeight: FontWeight.bold)),
                     ),
                   if (isFile) ...[
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.insert_drive_file,
-                            color: isOwn ? Colors.white : accentColor,
-                            size: 24),
+                        Icon(Icons.insert_drive_file, color: isOwn ? Colors.white : accentColor, size: 24),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(message.fileName!,
-                                  style: TextStyle(
-                                      color: isOwn
-                                          ? Colors.white
-                                          : TdcColors.textPrimary,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14),
-                                  overflow: TextOverflow.ellipsis),
+                              Text(message.fileName!, style: TextStyle(color: isOwn ? Colors.white : TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 14), overflow: TextOverflow.ellipsis),
                               if (!isFileComplete && progress > 0)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4),
                                   child: LinearProgressIndicator(
                                     value: progress,
-                                    backgroundColor: isOwn
-                                        ? Colors.white.withValues(alpha: 0.3)
-                                        : TdcColors.border,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        isOwn ? Colors.white : accentColor),
+                                    backgroundColor: isOwn ? Colors.white.withValues(alpha: 0.3) : TdcColors.border,
+                                    valueColor: AlwaysStoppedAnimation<Color>(isOwn ? Colors.white : accentColor),
                                   ),
                                 ),
                               if (!isFileComplete)
-                                Text('${(progress * 100).toInt()}%',
-                                    style: TextStyle(
-                                        color: isOwn
-                                            ? Colors.white
-                                                .withValues(alpha: 0.7)
-                                            : TdcColors.textMuted,
-                                        fontSize: 10)),
+                                Text('${(progress * 100).toInt()}%', style: TextStyle(color: isOwn ? Colors.white.withValues(alpha: 0.7) : TdcColors.textMuted, fontSize: 10)),
                               if (isFileComplete)
-                                Text('Fichier transféré',
-                                    style: TextStyle(
-                                        color: isOwn
-                                            ? Colors.white
-                                                .withValues(alpha: 0.7)
-                                            : TdcColors.success,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold)),
+                                Text('Fichier transféré', style: TextStyle(color: isOwn ? Colors.white.withValues(alpha: 0.7) : TdcColors.success, fontSize: 10, fontWeight: FontWeight.bold)),
                             ],
                           ),
                         ),
@@ -403,38 +304,20 @@ class _MessageBubble extends StatelessWidget {
                     const SizedBox(height: 8),
                   ],
                   if (!isFile || message.text.isNotEmpty)
-                    Text(message.text,
-                        style: TextStyle(
-                            color: isOwn ? Colors.white : TdcColors.textPrimary,
-                            fontSize: 14,
-                            height: 1.4)),
+                    Text(message.text, style: TextStyle(color: isOwn ? Colors.white : TdcColors.textPrimary, fontSize: 14, height: 1.4)),
                   const SizedBox(height: 4),
                   Text(
                     _formatTime(message.timestamp),
-                    style: TextStyle(
-                        color: isOwn
-                            ? Colors.white.withValues(alpha: 0.6)
-                            : TdcColors.textMuted,
-                        fontSize: 10),
+                    style: TextStyle(color: isOwn ? Colors.white.withValues(alpha: 0.6) : TdcColors.textMuted, fontSize: 10),
                   ),
                   if (message.expiry != null) ...[
                     const SizedBox(height: 2),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.timer_outlined,
-                            size: 10,
-                            color: isOwn
-                                ? Colors.white.withValues(alpha: 0.8)
-                                : TdcColors.accent),
+                        Icon(Icons.timer_outlined, size: 10, color: isOwn ? Colors.white.withValues(alpha: 0.8) : TdcColors.accent),
                         const SizedBox(width: 4),
-                        Text('Auto-destruction',
-                            style: TextStyle(
-                                color: isOwn
-                                    ? Colors.white.withValues(alpha: 0.8)
-                                    : TdcColors.accent,
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold)),
+                        Text('Auto-destruction', style: TextStyle(color: isOwn ? Colors.white.withValues(alpha: 0.8) : TdcColors.accent, fontSize: 9, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],

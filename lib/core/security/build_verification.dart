@@ -320,8 +320,7 @@ class BuildVerificationService {
   static BuildVerificationResult? _lastVerification;
   static DateTime? _lastVerificationTime;
 
-  static Future<BuildVerificationResult> verifyBuild(
-      {bool forceRefresh = false}) async {
+  static Future<BuildVerificationResult> verifyBuild({bool forceRefresh = false}) async {
     final now = DateTime.now();
     if (!forceRefresh &&
         _lastVerification != null &&
