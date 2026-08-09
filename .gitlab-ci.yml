@@ -129,6 +129,31 @@ osv-scanner:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: on_success
 
+shellcheck:
+  stage: validate
+  image: koalaman/shellcheck-alpine:latest
+  script:
+    - shellcheck scripts/*.sh
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - scripts/**/*.sh
+      when: on_success
+
+yamllint:
+  stage: validate
+  image: cytopia/yamllint:latest
+  script:
+    - yamllint .gitlab-ci.yml pubspec.yaml .mega-linter.yml
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - "**/*.yml"
+        - "**/*.yaml"
+      when: on_success
+
 # === STAGE: BUILD-TEST (Unsigned) ===
 build_android_unsigned:
   stage: build-test
@@ -222,7 +247,6 @@ build_windows_unsigned:
       when: on_success
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
-  allow_failure: true
 
 build_macos_unsigned:
   stage: build-test
@@ -254,7 +278,6 @@ build_macos_unsigned:
       when: on_success
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
-  allow_failure: true
 
 # === STAGE: AUTO-TAG ===
 auto_tag:
