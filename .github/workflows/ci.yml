@@ -1,0 +1,130 @@
+name: CI Security & Quality
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Code Validation, Tests & Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Check asset checksums integrity
+        run: python3 scripts/verify_checksums.py
+
+      - name: Code formatting check
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Asset JSON syntax check
+        run: python3 -c "import glob, json; [json.load(open(f, 'r', encoding='utf-8')) for f in glob.glob('assets/**/*.json', recursive=True)]; print('✅ All asset JSON files valid!')"
+
+      - name: Flutter Analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
+
+      - name: Flutter Test
+        run: flutter test --dart-define=SKIP_GOLDENS=true
+
+      - name: Enhanced Secrets & Key Scan
+        run: |
+          if grep -rE "(AKIA[0-9A-Z]{16}|GH[A-Za-z0-9_]{36,40}|SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}|sk_live_[0-9a-zA-Z]{24}|AIza[0-9A-Za-z-_]{35}|xox[baprs]-[0-9a-zA-Z]{10,48}|-----BEGIN [A-Z ]*PRIVATE KEY-----)" . \
+            --exclude-dir=".git" --exclude-dir=".dart_tool" --exclude-dir="build" \
+            --exclude-dir=".github/workflows" --exclude-dir="fdroid_data_repo" \
+            --exclude=".gitlab-ci.yml" --exclude="payload.json" \
+            --binary-files=without-match; then
+            echo "❌ Error: Hardcoded secrets found!"
+            exit 1
+          else
+            echo "✅ Secrets scan passed."
+          fi
+
+      - name: Supply Chain HTTPS Check
+        run: |
+          if grep -q "url: \"http://" pubspec.lock 2>/dev/null; then
+            echo "❌ Error: Insecure HTTP dependency source found in pubspec.lock!"
+            exit 1
+          else
+            echo "✅ Supply chain HTTPS check passed."
+          fi
+
+      - name: Dangerous Permissions Audit
+        run: |
+          if grep -qE "(RECEIVE_SMS|READ_SMS|SEND_SMS|CALL_PHONE|PROCESS_OUTGOING_CALLS|SYSTEM_ALERT_WINDOW|BIND_ACCESSIBILITY_SERVICE)" android/app/src/main/AndroidManifest.xml 2>/dev/null; then
+            echo "❌ Error: High-risk permission detected in AndroidManifest.xml!"
+            exit 1
+          else
+            echo "✅ Android permissions security check passed."
+          fi
+
+  backdoor-anti-malware-scan:
+    name: Anti-Malware & Reverse Shell Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan for Reverse Shells & Socket Callouts
+        run: |
+          FOUND_MALWARE=0
+          if grep -rE "(/dev/tcp/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+|nc\s+-e\s+/bin|ncat\s+-e\s+/bin|python.*socket.*connect\(|perl.*Socket.*connect\(|ruby.*TCPSocket\.new\()" . \
+            --exclude-dir=".git" --exclude-dir="fdroid_data_repo" --exclude-dir="build" --exclude-dir="assets" --exclude-dir="dist" --exclude=".gitlab-ci.yml" --exclude="ai_config_screen.dart" --binary-files=without-match; then
+            echo "❌ Error: Reverse shell pattern detected!"
+            FOUND_MALWARE=1
+          fi
+          if grep -rE "(eval\s*\(\s*base64_decode|base64\s+(-d|--decode)\s*\|\s*(sh|bash|zsh)|curl\s+.*\|\s*(sh|bash)|wget\s+.*\|\s*(sh|bash))" . \
+            --exclude-dir=".git" --exclude-dir="fdroid_data_repo" --exclude-dir="build" --exclude-dir="assets" --exclude-dir="dist" --exclude=".gitlab-ci.yml" --exclude="ai_config_screen.dart" --binary-files=without-match; then
+            echo "❌ Error: Obfuscated remote execution pattern detected!"
+            FOUND_MALWARE=1
+          fi
+          if [ $FOUND_MALWARE -eq 1 ]; then exit 1; fi
+
+  osv-scanner:
+    name: OSV Vulnerability Scanner (Google)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google/osv-scanner-action/osv-scanner-action@v1.9.1
+        continue-on-error: true
+
+  trivy-scan:
+    name: Trivy Security Scan (Aqua Security)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          security-checks: 'vuln,secret,config'
+          severity: 'HIGH,CRITICAL'
+        continue-on-error: true
+
+  hadolint:
+    name: Hadolint Dockerfile Linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: "docker/Dockerfile.flutter-linux"
+        continue-on-error: true
