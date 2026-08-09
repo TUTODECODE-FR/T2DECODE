@@ -1,7 +1,8 @@
 <meta name="fediverse:creator" content="@TUTODECODE@mastodon.social">
 
-> [!WARNING]
-> **⚠️ Note : Ce dépôt est un miroir en lecture seule.** Le développement actif, les Issues et les Pull Requests se passent sur notre [GitLab officiel](https://gitlab.com/tutodecode-org/T2DECODE). Lâchez une étoile ici si vous soutenez le projet !
+> [!NOTE]
+> 💙 **Bienvenue sur le miroir GitHub de T2DECODE !**  
+> Ce dépôt est le miroir officiel de distribution et de téléchargement. Pour contribuer au code source, proposer des fonctionnalités ou échanger avec la communauté, découvrez notre [GitLab principal](https://gitlab.com/tutodecode-org/T2DECODE). N'hésitez pas à laisser une étoile ⭐ pour soutenir l'association !
 
 
 <div align="center">
