@@ -70,7 +70,8 @@ final _algoScenarios = [
         protocol: 'Analyse asymptotique',
         icon: Icons.show_chart,
         color: TdcColors.algorithms,
-        description: 'Mesurer l\'efficacité d\'un algorithme indépendamment du matériel.',
+        description:
+            'Mesurer l\'efficacité d\'un algorithme indépendamment du matériel.',
         detail:
             'La notation Big-O décrit la croissance du temps d\'exécution (ou de l\'espace mémoire) '
             'en fonction de la taille de l\'entrée n, en ignorant les constantes et les termes dominés. '
@@ -81,9 +82,11 @@ final _algoScenarios = [
         visual: () => const SimComplexityBar(
           entries: [
             SimComplexityEntry('O(1)', 'constant', 0.05, TdcColors.success),
-            SimComplexityEntry('O(log n)', 'binary search', 0.15, TdcColors.successDim),
+            SimComplexityEntry(
+                'O(log n)', 'binary search', 0.15, TdcColors.successDim),
             SimComplexityEntry('O(n)', 'linear', 0.35, TdcColors.info),
-            SimComplexityEntry('O(n log n)', 'merge sort', 0.55, TdcColors.warningDim),
+            SimComplexityEntry(
+                'O(n log n)', 'merge sort', 0.55, TdcColors.warningDim),
             SimComplexityEntry('O(n²)', 'bubble sort', 0.85, TdcColors.warning),
             SimComplexityEntry('O(2ⁿ)', 'exponential', 1.0, TdcColors.danger),
           ],
@@ -94,7 +97,8 @@ final _algoScenarios = [
         protocol: 'Tri par comparaison',
         icon: Icons.bubble_chart,
         color: TdcColors.algorithms,
-        description: 'Algorithme de tri naïf : comparer et permuter les voisins successivement.',
+        description:
+            'Algorithme de tri naïf : comparer et permuter les voisins successivement.',
         detail:
             'Bubble Sort parcourt le tableau n fois et échange les éléments adjacents '
             'hors ordre. Après chaque passe, l\'élément le plus grand "remonte" à sa position finale, '
@@ -122,7 +126,8 @@ final _algoScenarios = [
         protocol: 'Diviser pour régner',
         icon: Icons.call_split,
         color: TdcColors.algorithms,
-        description: 'Diviser le tableau en deux moitiés, trier récursivement, puis fusionner.',
+        description:
+            'Diviser le tableau en deux moitiés, trier récursivement, puis fusionner.',
         detail:
             'Merge Sort divise le tableau en deux sous-tableaux de taille n/2, se rappelle '
             'récursivement sur chaque moitié (profondeur log n), puis fusionne les deux moitiés '
@@ -152,7 +157,8 @@ final _algoScenarios = [
         protocol: 'Pivot & partition',
         icon: Icons.flash_on,
         color: TdcColors.info,
-        description: 'Choisir un pivot, partitionner, puis trier récursivement les deux partitions.',
+        description:
+            'Choisir un pivot, partitionner, puis trier récursivement les deux partitions.',
         detail:
             'Quick Sort choisit un pivot, réorganise le tableau en deux partitions '
             '(éléments ≤ pivot à gauche, ≥ pivot à droite) en O(n), puis se rappelle sur chacune. '
@@ -165,7 +171,8 @@ final _algoScenarios = [
         protocol: 'Binary Search',
         icon: Icons.search,
         color: TdcColors.info,
-        description: 'Chercher dans un tableau trié en divisant l\'intervalle par deux à chaque étape.',
+        description:
+            'Chercher dans un tableau trié en divisant l\'intervalle par deux à chaque étape.',
         detail:
             'La recherche binaire compare la valeur cible à l\'élément médian du tableau trié. '
             'Si la cible est inférieure, on cherche dans la moitié gauche ; sinon dans la droite. '
@@ -179,7 +186,8 @@ final _algoScenarios = [
         protocol: 'Hachage & chaînage',
         icon: Icons.grid_3x3,
         color: TdcColors.info,
-        description: 'Accéder, insérer et supprimer en temps constant en moyenne grâce à une fonction de hachage.',
+        description:
+            'Accéder, insérer et supprimer en temps constant en moyenne grâce à une fonction de hachage.',
         detail:
             'Une table de hachage calcule h(key) = hash(key) % capacity pour trouver l\'index du bucket. '
             'Les collisions sont résolues par chaînage (liste chaînée par bucket) ou adressage ouvert '
@@ -204,7 +212,8 @@ final _algoScenarios = [
         protocol: 'Structures de données',
         icon: Icons.table_chart,
         color: TdcColors.success,
-        description: 'Deux façons canoniques de représenter un graphe G = (V, E) en mémoire.',
+        description:
+            'Deux façons canoniques de représenter un graphe G = (V, E) en mémoire.',
         detail:
             'La matrice d\'adjacence stocke un booléen (ou un poids) pour chaque paire (u, v) '
             'en O(V²) espace — idéale pour les graphes denses et les requêtes "est-ce que (u,v) existe ?" '
@@ -218,7 +227,8 @@ final _algoScenarios = [
         protocol: 'Breadth-First Search',
         icon: Icons.waves,
         color: TdcColors.success,
-        description: 'Explorer un graphe niveau par niveau à partir d\'une source.',
+        description:
+            'Explorer un graphe niveau par niveau à partir d\'une source.',
         detail:
             'BFS utilise une file (FIFO) : on enfile le sommet source, puis on défile un sommet, '
             'on visite tous ses voisins non encore visités, on les enfile, et on recommence. '
@@ -241,7 +251,8 @@ final _algoScenarios = [
         protocol: 'Depth-First Search',
         icon: Icons.vertical_align_bottom,
         color: TdcColors.success,
-        description: 'Explorer en profondeur d\'abord, en reculant quand on atteint un cul-de-sac.',
+        description:
+            'Explorer en profondeur d\'abord, en reculant quand on atteint un cul-de-sac.',
         detail:
             'DFS utilise une pile implicite (récursion) ou explicite. Il s\'enfonce aussi loin '
             'que possible avant de backtracker. Complexité O(V+E). '
@@ -255,7 +266,8 @@ final _algoScenarios = [
         protocol: 'Plus court chemin',
         icon: Icons.alt_route,
         color: TdcColors.success,
-        description: 'Trouver le plus court chemin depuis une source dans un graphe à poids positifs.',
+        description:
+            'Trouver le plus court chemin depuis une source dans un graphe à poids positifs.',
         detail:
             'Dijkstra maintient un tas min (priority queue) de paires (distance, sommet). '
             'On extrait le sommet de distance minimale, on relaxe ses voisins '
@@ -278,7 +290,8 @@ final _algoScenarios = [
         protocol: 'Relaxation itérative',
         icon: Icons.repeat,
         color: TdcColors.success,
-        description: 'Plus court chemin tolérant les poids négatifs, et détectant les cycles négatifs.',
+        description:
+            'Plus court chemin tolérant les poids négatifs, et détectant les cycles négatifs.',
         detail:
             'Bellman-Ford effectue V-1 passages sur toutes les arêtes, en relaxant à chaque fois. '
             'Après V-1 itérations, si une relaxation est encore possible, il existe un cycle de poids '
@@ -291,7 +304,8 @@ final _algoScenarios = [
         protocol: 'Recherche heuristique',
         icon: Icons.star,
         color: TdcColors.success,
-        description: 'Dijkstra guidé par une heuristique pour accélérer la recherche de chemin.',
+        description:
+            'Dijkstra guidé par une heuristique pour accélérer la recherche de chemin.',
         detail:
             'A* évalue chaque sommet par f(n) = g(n) + h(n), où g(n) est le coût réel depuis '
             'la source et h(n) est une heuristique admissible (jamais surestimer le coût restant). '
@@ -315,7 +329,8 @@ final _algoScenarios = [
         protocol: 'Principe fondamental',
         icon: Icons.layers,
         color: TdcColors.warning,
-        description: 'Décomposer un problème en sous-problèmes qui se répètent.',
+        description:
+            'Décomposer un problème en sous-problèmes qui se répètent.',
         detail:
             'La programmation dynamique (DP) s\'applique quand un problème satisfait deux propriétés : '
             'la sous-structure optimale (la solution optimale du problème global contient '
@@ -329,7 +344,8 @@ final _algoScenarios = [
         protocol: 'Cache récursif',
         icon: Icons.cached,
         color: TdcColors.warning,
-        description: 'Approche récursive avec mise en cache des résultats déjà calculés.',
+        description:
+            'Approche récursive avec mise en cache des résultats déjà calculés.',
         detail:
             'La mémoïsation conserve la structure récursive naturelle du problème en ajoutant '
             'un dictionnaire de cache : avant de calculer un sous-problème, on vérifie si le '
@@ -343,7 +359,8 @@ final _algoScenarios = [
         protocol: 'Table itérative',
         icon: Icons.table_rows,
         color: TdcColors.warning,
-        description: 'Remplir itérativement un tableau en partant des cas de base.',
+        description:
+            'Remplir itérativement un tableau en partant des cas de base.',
         detail:
             'La tabulation construit la table DP de bas en haut, en garantissant que '
             'quand on calcule dp[i], tous les sous-problèmes dont il dépend sont déjà remplis. '
@@ -387,7 +404,8 @@ final _algoScenarios = [
         protocol: '0/1 Knapsack',
         icon: Icons.shopping_bag,
         color: TdcColors.warning,
-        description: 'Maximiser la valeur dans un sac de capacité W avec n objets (chacun pris 0 ou 1 fois).',
+        description:
+            'Maximiser la valeur dans un sac de capacité W avec n objets (chacun pris 0 ou 1 fois).',
         detail:
             'État : dp[i][w] = valeur max avec les i premiers objets et une capacité restante w. '
             'Transition : dp[i][w] = max(dp[i-1][w], dp[i-1][w-wi] + vi) si wi ≤ w. '
@@ -402,7 +420,8 @@ final _algoScenarios = [
         protocol: 'LCS · Alignement',
         icon: Icons.compare_arrows,
         color: TdcColors.warning,
-        description: 'Trouver la plus longue sous-séquence commune à deux chaînes.',
+        description:
+            'Trouver la plus longue sous-séquence commune à deux chaînes.',
         detail:
             'LCS(X, Y) avec |X|=m, |Y|=n. État : dp[i][j] = longueur de LCS(X[1..i], Y[1..j]). '
             'Transition : si X[i]=Y[j] alors dp[i][j] = dp[i-1][j-1] + 1, '
@@ -427,7 +446,8 @@ final _algoScenarios = [
         protocol: 'Chiffrement parfait',
         icon: Icons.enhanced_encryption,
         color: TdcColors.crypto,
-        description: 'L\'opération XOR bit-à-bit est la brique élémentaire de la cryptographie symétrique.',
+        description:
+            'L\'opération XOR bit-à-bit est la brique élémentaire de la cryptographie symétrique.',
         detail:
             'XOR (⊕) : 0⊕0=0, 0⊕1=1, 1⊕1=0. Propriété : C = M ⊕ K → M = C ⊕ K (auto-inverse). '
             'Le one-time pad (Vernam, 1917) : clé aléatoire aussi longue que le message, utilisée une seule fois. '
@@ -441,7 +461,8 @@ final _algoScenarios = [
         protocol: 'AES-256-GCM',
         icon: Icons.vpn_key,
         color: TdcColors.crypto,
-        description: 'Standard mondial de chiffrement symétrique — même clé pour chiffrer et déchiffrer.',
+        description:
+            'Standard mondial de chiffrement symétrique — même clé pour chiffrer et déchiffrer.',
         detail:
             'AES (Advanced Encryption Standard) opère sur des blocs de 128 bits avec des clés '
             'de 128, 192 ou 256 bits. Il effectue 10/12/14 rondes de 4 opérations : '
@@ -456,7 +477,8 @@ final _algoScenarios = [
         protocol: 'Cryptographie asymétrique',
         icon: Icons.key,
         color: TdcColors.crypto,
-        description: 'Chiffrer avec la clé publique, déchiffrer avec la clé privée — basé sur la factorisation.',
+        description:
+            'Chiffrer avec la clé publique, déchiffrer avec la clé privée — basé sur la factorisation.',
         detail:
             'RSA repose sur la difficulté de factoriser n = p·q (deux grands premiers). '
             'Génération : choisir p, q premiers, n = p·q, φ(n) = (p-1)(q-1), '
@@ -482,7 +504,8 @@ final _algoScenarios = [
         protocol: 'ECC · Signatures',
         icon: Icons.timeline,
         color: TdcColors.crypto,
-        description: 'Cryptographie sur courbes elliptiques — sécurité maximale pour des clés courtes.',
+        description:
+            'Cryptographie sur courbes elliptiques — sécurité maximale pour des clés courtes.',
         detail:
             'Une courbe elliptique est définie par y² = x³ + ax + b (mod p). '
             'L\'opération de base est l\'addition de points P + Q = R sur la courbe. '
@@ -498,7 +521,8 @@ final _algoScenarios = [
         protocol: 'Fonctions de hachage',
         icon: Icons.fingerprint,
         color: TdcColors.crypto,
-        description: 'Fonction de hachage cryptographique one-way — empreinte unique et déterministe.',
+        description:
+            'Fonction de hachage cryptographique one-way — empreinte unique et déterministe.',
         detail:
             'SHA-256 produit un hash de 256 bits depuis un message de taille quelconque. '
             'Propriétés : déterminisme, résistance à la préimage (impossible de retrouver M depuis H(M)), '
@@ -514,7 +538,8 @@ final _algoScenarios = [
         protocol: 'Échange de clés',
         icon: Icons.sync_alt,
         color: TdcColors.crypto,
-        description: 'Établir un secret partagé sur un canal public sans jamais l\'envoyer.',
+        description:
+            'Établir un secret partagé sur un canal public sans jamais l\'envoyer.',
         detail:
             'DH classique (1976) : Alice et Bob partagent p (grand premier) et g (générateur). '
             'Alice choisit a secret, envoie A = gᵃ mod p. Bob choisit b secret, envoie B = gᵇ mod p. '
@@ -550,7 +575,8 @@ final _algoScenarios = [
         protocol: 'Consistency/Availability/Partition',
         icon: Icons.device_hub,
         color: TdcColors.info,
-        description: 'Un système distribué ne peut garantir simultanément que deux des trois propriétés CAP.',
+        description:
+            'Un système distribué ne peut garantir simultanément que deux des trois propriétés CAP.',
         detail:
             'Le théorème CAP (Brewer, 2000, prouvé par Gilbert & Lynch, 2002) stipule : '
             'Consistency (tous les nœuds voient la même donnée), '
@@ -566,7 +592,8 @@ final _algoScenarios = [
         protocol: 'Algorithmes de consensus',
         icon: Icons.how_to_vote,
         color: TdcColors.info,
-        description: 'Faire s\'accorder un groupe de nœuds sur une valeur malgré les pannes.',
+        description:
+            'Faire s\'accorder un groupe de nœuds sur une valeur malgré les pannes.',
         detail:
             'Paxos (Lamport, 1989) fonctionne en deux phases : Prepare/Promise puis Accept/Accepted. '
             'Un proposer envoie Prepare(n) ; les acceptors promettent de ne plus accepter '
@@ -582,7 +609,8 @@ final _algoScenarios = [
         protocol: 'Distribution de charge',
         icon: Icons.donut_large,
         color: TdcColors.info,
-        description: 'Distribuer les données sur des nœuds avec un minimum de remapping lors des changements.',
+        description:
+            'Distribuer les données sur des nœuds avec un minimum de remapping lors des changements.',
         detail:
             'Le consistent hashing place nœuds et clés sur un anneau (ring) de 0 à 2³²-1. '
             'Chaque clé est assignée au premier nœud dans le sens horaire (successor). '
@@ -597,7 +625,8 @@ final _algoScenarios = [
         protocol: 'Probabilistic membership',
         icon: Icons.filter_alt,
         color: TdcColors.info,
-        description: 'Tester l\'appartenance d\'un élément à un ensemble avec zéro faux négatif et peu de faux positifs.',
+        description:
+            'Tester l\'appartenance d\'un élément à un ensemble avec zéro faux négatif et peu de faux positifs.',
         detail:
             'Un Bloom filter est un tableau de m bits initialisé à 0, et k fonctions de hachage. '
             'Insertion : mettre à 1 les k positions h₁(x), h₂(x), ..., hₖ(x). '
@@ -614,7 +643,8 @@ final _algoScenarios = [
         protocol: 'Traitement distribué',
         icon: Icons.transform,
         color: TdcColors.info,
-        description: 'Paralléliser le traitement de grandes quantités de données sur un cluster.',
+        description:
+            'Paralléliser le traitement de grandes quantités de données sur un cluster.',
         detail:
             'MapReduce (Google, 2004) décompose le traitement en deux phases : '
             'Map : chaque worker lit une partition de données et émet des paires (key, value). '
@@ -631,7 +661,8 @@ final _algoScenarios = [
         protocol: 'Épidémique · Propagation',
         icon: Icons.cell_tower,
         color: TdcColors.info,
-        description: 'Propager des informations dans un cluster sans coordinateur central.',
+        description:
+            'Propager des informations dans un cluster sans coordinateur central.',
         detail:
             'Un gossip protocol fonctionne comme une épidémie : à chaque round, chaque nœud '
             'choisit aléatoirement k voisins et leur envoie ses informations (état, messages). '
@@ -687,9 +718,9 @@ final _algoScenarios = [
         protocol: 'Regex & langages réguliers',
         icon: Icons.text_fields,
         color: TdcColors.danger,
-        description: 'Notation compacte pour décrire des patterns dans des chaînes de caractères.',
-        detail:
-            'Une expression régulière est construite récursivement : '
+        description:
+            'Notation compacte pour décrire des patterns dans des chaînes de caractères.',
+        detail: 'Une expression régulière est construite récursivement : '
             'ε (mot vide), a (symbole), R|S (union), RS (concaténation), R* (étoile de Kleene). '
             'Théorème de Kleene : les langages décrits par les regex = langages réguliers = DFA/NFA. '
             'En pratique, les moteurs de regex modernes (PCRE) ajoutent des extensions '
@@ -703,7 +734,8 @@ final _algoScenarios = [
         protocol: 'Langages hors-contexte',
         icon: Icons.account_tree,
         color: TdcColors.danger,
-        description: 'Décrire la syntaxe d\'un langage de programmation avec des règles de production.',
+        description:
+            'Décrire la syntaxe d\'un langage de programmation avec des règles de production.',
         detail:
             'Une grammaire hors-contexte (CFG) est un quadruplet (V, Σ, R, S) : '
             'V = non-terminaux, Σ = terminaux, R = règles de production A → α, S = axiome. '
@@ -718,9 +750,9 @@ final _algoScenarios = [
         protocol: 'Lexer · Scanner',
         icon: Icons.format_list_bulleted,
         color: TdcColors.danger,
-        description: 'Transformer un flux de caractères en séquence de tokens (unités lexicales).',
-        detail:
-            'Le lexer (ou scanner) est la première phase du compilateur. '
+        description:
+            'Transformer un flux de caractères en séquence de tokens (unités lexicales).',
+        detail: 'Le lexer (ou scanner) est la première phase du compilateur. '
             'Il lit le code source caractère par caractère et regroupe les caractères '
             'en tokens : mots-clés (if, while), identifiants, littéraux (42, "hello"), '
             'opérateurs (+, ==), délimiteurs ({, ;). '
@@ -734,7 +766,8 @@ final _algoScenarios = [
         protocol: 'Analyse syntaxique',
         icon: Icons.account_balance_wallet,
         color: TdcColors.danger,
-        description: 'Construire l\'arbre syntaxique (parse tree) à partir du flux de tokens.',
+        description:
+            'Construire l\'arbre syntaxique (parse tree) à partir du flux de tokens.',
         detail:
             'Le parser vérifie que la séquence de tokens respecte la grammaire et construit '
             'un arbre de dérivation (concrete syntax tree). '
@@ -751,7 +784,8 @@ final _algoScenarios = [
         protocol: 'AST · IR · CodeGen',
         icon: Icons.construction,
         color: TdcColors.danger,
-        description: 'Transformer l\'arbre syntaxique en représentation intermédiaire puis en code machine.',
+        description:
+            'Transformer l\'arbre syntaxique en représentation intermédiaire puis en code machine.',
         detail:
             'L\'AST (Abstract Syntax Tree) simplifie le parse tree en supprimant les détails '
             'syntaxiques non sémantiques (parenthèses, points-virgules) — '
@@ -811,7 +845,8 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
   bool _dpRunning = false;
 
   // ── Crypto simulator ──────────────────────────────────────
-  final TextEditingController _cryptoCtrl = TextEditingController(text: 'hello');
+  final TextEditingController _cryptoCtrl =
+      TextEditingController(text: 'hello');
   String _cryptoResult = '';
   String _cryptoMode = 'XOR';
 
@@ -837,7 +872,8 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
       _currentStep = -1;
       _running = false;
       _sorting = false;
-      _sortI = -1; _sortJ = -1;
+      _sortI = -1;
+      _sortJ = -1;
       _sortArr = [64, 34, 25, 12, 22, 11, 90, 45];
       _visited = [];
       _queue = [];
@@ -856,33 +892,52 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
 
   Future<void> _startSort() async {
     if (_sorting) return;
-    setState(() { _sorting = true; _sortArr = [64, 34, 25, 12, 22, 11, 90, 45]; });
+    setState(() {
+      _sorting = true;
+      _sortArr = [64, 34, 25, 12, 22, 11, 90, 45];
+    });
     final arr = List<int>.from(_sortArr);
     for (int i = 0; i < arr.length - 1; i++) {
       for (int j = 0; j < arr.length - i - 1; j++) {
         if (!mounted) return;
-        setState(() { _sortI = i; _sortJ = j; });
+        setState(() {
+          _sortI = i;
+          _sortJ = j;
+        });
         await Future.delayed(const Duration(milliseconds: 350));
         if (arr[j] > arr[j + 1]) {
-          final tmp = arr[j]; arr[j] = arr[j + 1]; arr[j + 1] = tmp;
+          final tmp = arr[j];
+          arr[j] = arr[j + 1];
+          arr[j + 1] = tmp;
           setState(() => _sortArr = List.from(arr));
           await Future.delayed(const Duration(milliseconds: 200));
         }
       }
     }
-    if (mounted) setState(() { _sorting = false; _sortI = -1; _sortJ = -1; });
+    if (mounted)
+      setState(() {
+        _sorting = false;
+        _sortI = -1;
+        _sortJ = -1;
+      });
   }
 
   void _resetSort() => setState(() {
-    _sortArr = [64, 34, 25, 12, 22, 11, 90, 45];
-    _sorting = false; _sortI = -1; _sortJ = -1;
-  });
+        _sortArr = [64, 34, 25, 12, 22, 11, 90, 45];
+        _sorting = false;
+        _sortI = -1;
+        _sortJ = -1;
+      });
 
   // ── BFS/DFS ───────────────────────────────────────────────
 
   Future<void> _startGraph() async {
     if (_graphRunning) return;
-    setState(() { _graphRunning = true; _visited = []; _queue = []; });
+    setState(() {
+      _graphRunning = true;
+      _visited = [];
+      _queue = [];
+    });
     if (_graphMode == 'BFS') {
       final q = ['A'];
       final visited = <String>{};
@@ -891,7 +946,10 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
         final node = q.removeAt(0);
         if (visited.contains(node)) continue;
         visited.add(node);
-        setState(() { _visited = List.from(visited); _queue = List.from(q); });
+        setState(() {
+          _visited = List.from(visited);
+          _queue = List.from(q);
+        });
         await Future.delayed(const Duration(milliseconds: 700));
         for (final neighbor in (_graph[node] ?? [])) {
           if (!visited.contains(neighbor)) q.add(neighbor);
@@ -906,7 +964,10 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
         final node = stack.removeLast();
         if (visited.contains(node)) continue;
         visited.add(node);
-        setState(() { _visited = List.from(visited); _queue = List.from(stack); });
+        setState(() {
+          _visited = List.from(visited);
+          _queue = List.from(stack);
+        });
         await Future.delayed(const Duration(milliseconds: 700));
         for (final neighbor in (_graph[node] ?? []).reversed) {
           if (!visited.contains(neighbor)) stack.add(neighbor);
@@ -916,27 +977,46 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
     if (mounted) setState(() => _graphRunning = false);
   }
 
-  void _resetGraph() => setState(() { _visited = []; _queue = []; _graphRunning = false; });
+  void _resetGraph() => setState(() {
+        _visited = [];
+        _queue = [];
+        _graphRunning = false;
+      });
 
   // ── DP Fibonacci ──────────────────────────────────────────
 
   Future<void> _startDp() async {
     if (_dpRunning) return;
-    setState(() { _dpRunning = true; _dpTable = List.filled(10, null); _dpStep = 0; });
+    setState(() {
+      _dpRunning = true;
+      _dpTable = List.filled(10, null);
+      _dpStep = 0;
+    });
     final table = List<int?>.filled(10, null);
-    table[0] = 0; table[1] = 1;
-    setState(() { _dpTable = List.from(table); _dpStep = 1; });
+    table[0] = 0;
+    table[1] = 1;
+    setState(() {
+      _dpTable = List.from(table);
+      _dpStep = 1;
+    });
     await Future.delayed(const Duration(milliseconds: 500));
     for (int i = 2; i < 10; i++) {
       await Future.delayed(const Duration(milliseconds: 600));
       if (!mounted) return;
       table[i] = table[i - 1]! + table[i - 2]!;
-      setState(() { _dpTable = List.from(table); _dpStep = i; });
+      setState(() {
+        _dpTable = List.from(table);
+        _dpStep = i;
+      });
     }
     if (mounted) setState(() => _dpRunning = false);
   }
 
-  void _resetDp() => setState(() { _dpTable = List.filled(10, null); _dpStep = -1; _dpRunning = false; });
+  void _resetDp() => setState(() {
+        _dpTable = List.filled(10, null);
+        _dpStep = -1;
+        _dpRunning = false;
+      });
 
   // ── Crypto ────────────────────────────────────────────────
 
@@ -945,20 +1025,25 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
     String result;
     if (_cryptoMode == 'XOR') {
       final key = 0x42;
-      final bytes = input.codeUnits.map((b) => (b ^ key).toRadixString(16).padLeft(2, '0')).join(' ');
+      final bytes = input.codeUnits
+          .map((b) => (b ^ key).toRadixString(16).padLeft(2, '0'))
+          .join(' ');
       result = 'XOR(0x42): $bytes';
     } else if (_cryptoMode == 'ROT13') {
       result = 'ROT13: ${input.splitMapJoin('', onNonMatch: (c) {
         if (c.isEmpty) return '';
         final code = c.codeUnitAt(0);
-        if (code >= 65 && code <= 90) return String.fromCharCode(((code - 65 + 13) % 26) + 65);
-        if (code >= 97 && code <= 122) return String.fromCharCode(((code - 97 + 13) % 26) + 97);
+        if (code >= 65 && code <= 90)
+          return String.fromCharCode(((code - 65 + 13) % 26) + 65);
+        if (code >= 97 && code <= 122)
+          return String.fromCharCode(((code - 97 + 13) % 26) + 97);
         return c;
       })}';
     } else {
       // Base64-like
       final bytes = input.codeUnits;
-      final b64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+      final b64chars =
+          'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
       final sb = StringBuffer();
       for (int i = 0; i < bytes.length; i += 3) {
         final b0 = bytes[i];
@@ -966,7 +1051,9 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
         final b2 = i + 2 < bytes.length ? bytes[i + 2] : 0;
         sb.write(b64chars[(b0 >> 2) & 63]);
         sb.write(b64chars[((b0 << 4) | (b1 >> 4)) & 63]);
-        sb.write(i + 1 < bytes.length ? b64chars[((b1 << 2) | (b2 >> 6)) & 63] : '=');
+        sb.write(i + 1 < bytes.length
+            ? b64chars[((b1 << 2) | (b2 >> 6)) & 63]
+            : '=');
         sb.write(i + 2 < bytes.length ? b64chars[b2 & 63] : '=');
       }
       result = 'Base64: $sb';
@@ -978,7 +1065,11 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
 
   Future<void> _startRaft() async {
     if (_raftElecting) return;
-    setState(() { _raftElecting = true; _raftLeader = -1; _raftVotes = [0, 0, 0, 0, 0]; });
+    setState(() {
+      _raftElecting = true;
+      _raftLeader = -1;
+      _raftVotes = [0, 0, 0, 0, 0];
+    });
     final candidate = 0;
     for (int node = 1; node < 5; node++) {
       await Future.delayed(const Duration(milliseconds: 500));
@@ -990,10 +1081,18 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
       });
     }
     await Future.delayed(const Duration(milliseconds: 400));
-    if (mounted) setState(() { _raftLeader = candidate; _raftElecting = false; });
+    if (mounted)
+      setState(() {
+        _raftLeader = candidate;
+        _raftElecting = false;
+      });
   }
 
-  void _resetRaft() => setState(() { _raftLeader = -1; _raftVotes = [0, 0, 0, 0, 0]; _raftElecting = false; });
+  void _resetRaft() => setState(() {
+        _raftLeader = -1;
+        _raftVotes = [0, 0, 0, 0, 0];
+        _raftElecting = false;
+      });
 
   Future<void> _startSimulation() async {
     if (_running) return;
@@ -1098,7 +1197,8 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
             onPressed: _openAIPanel,
             backgroundColor: _scenario.color.withValues(alpha: 0.9),
             icon: const Icon(Icons.auto_awesome, size: 18),
-            label: const Text('IA', style: TextStyle(fontWeight: FontWeight.bold)),
+            label:
+                const Text('IA', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ),
       ],
@@ -1107,17 +1207,25 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
 
   Widget _buildInteractivePanel() {
     switch (_scenarioIndex) {
-      case 0: return _buildSortPanel();
-      case 1: return _buildGraphPanel();
-      case 2: return _buildDpPanel();
-      case 3: return _buildCryptoPanel();
-      case 4: return _buildRaftPanel();
-      case 5: return _buildCompilerPanel();
-      default: return const SizedBox.shrink();
+      case 0:
+        return _buildSortPanel();
+      case 1:
+        return _buildGraphPanel();
+      case 2:
+        return _buildDpPanel();
+      case 3:
+        return _buildCryptoPanel();
+      case 4:
+        return _buildRaftPanel();
+      case 5:
+        return _buildCompilerPanel();
+      default:
+        return const SizedBox.shrink();
     }
   }
 
-  Widget _algoShell({required Color color, required String title, required Widget child}) {
+  Widget _algoShell(
+      {required Color color, required String title, required Widget child}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
@@ -1139,7 +1247,12 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                 children: [
                   Icon(Icons.play_circle_filled, color: color, size: 13),
                   const SizedBox(width: 8),
-                  Text(title, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                  Text(title,
+                      style: TextStyle(
+                          color: color,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2)),
                 ],
               ),
             ),
@@ -1156,11 +1269,21 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: onTap != null ? color.withValues(alpha: 0.14) : TdcColors.textPrimary.withValues(alpha: 0.03),
+          color: onTap != null
+              ? color.withValues(alpha: 0.14)
+              : TdcColors.textPrimary.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.45) : TdcColors.border),
+          border: Border.all(
+              color: onTap != null
+                  ? color.withValues(alpha: 0.45)
+                  : TdcColors.border),
         ),
-        child: Text(label, style: TextStyle(color: onTap != null ? color : TdcColors.textMuted, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+        child: Text(label,
+            style: TextStyle(
+                color: onTap != null ? color : TdcColors.textMuted,
+                fontSize: 11,
+                fontFamily: 'monospace',
+                fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -1177,12 +1300,17 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              _aBtn(_sorting ? 'Tri en cours…' : 'Lancer tri', TdcColors.info, _sorting ? null : _startSort),
+              _aBtn(_sorting ? 'Tri en cours…' : 'Lancer tri', TdcColors.info,
+                  _sorting ? null : _startSort),
               const SizedBox(width: 8),
               _aBtn('Reset', TdcColors.textMuted, _sorting ? null : _resetSort),
               if (_sorting) ...[
                 const SizedBox(width: 8),
-                const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.info)),
+                const SizedBox(
+                    width: 12,
+                    height: 12,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: TdcColors.info)),
               ],
             ]),
             const SizedBox(height: 12),
@@ -1193,7 +1321,8 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                 children: List.generate(_sortArr.length, (i) {
                   final h = (_sortArr[i] / maxVal * 70).clamp(8.0, 70.0);
                   final isComparing = i == _sortJ || i == _sortJ + 1;
-                  final color = isComparing ? TdcColors.warning : TdcColors.info;
+                  final color =
+                      isComparing ? TdcColors.warning : TdcColors.info;
                   return Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 1),
@@ -1202,7 +1331,11 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                         children: [
                           FittedBox(
                             fit: BoxFit.scaleDown,
-                            child: Text('${_sortArr[i]}', style: TextStyle(color: color, fontSize: 9, fontFamily: 'monospace')),
+                            child: Text('${_sortArr[i]}',
+                                style: TextStyle(
+                                    color: color,
+                                    fontSize: 9,
+                                    fontFamily: 'monospace')),
                           ),
                           AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
@@ -1223,8 +1356,12 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
             if (_sortI >= 0)
               Padding(
                 padding: const EdgeInsets.only(top: 6),
-                child: Text('Passe ${ _sortI + 1 } — comparaison index $_sortJ vs ${_sortJ + 1}',
-                    style: const TextStyle(color: TdcColors.textTertiary, fontSize: 10, fontFamily: 'monospace')),
+                child: Text(
+                    'Passe ${_sortI + 1} — comparaison index $_sortJ vs ${_sortJ + 1}',
+                    style: const TextStyle(
+                        color: TdcColors.textTertiary,
+                        fontSize: 10,
+                        fontFamily: 'monospace')),
               ),
           ],
         ),
@@ -1243,18 +1380,42 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              _aBtn('BFS', TdcColors.info, _graphRunning ? null : () { setState(() => _graphMode = 'BFS'); _resetGraph(); }),
+              _aBtn(
+                  'BFS',
+                  TdcColors.info,
+                  _graphRunning
+                      ? null
+                      : () {
+                          setState(() => _graphMode = 'BFS');
+                          _resetGraph();
+                        }),
               const SizedBox(width: 6),
-              _aBtn('DFS', TdcColors.coral, _graphRunning ? null : () { setState(() => _graphMode = 'DFS'); _resetGraph(); }),
+              _aBtn(
+                  'DFS',
+                  TdcColors.coral,
+                  _graphRunning
+                      ? null
+                      : () {
+                          setState(() => _graphMode = 'DFS');
+                          _resetGraph();
+                        }),
               const SizedBox(width: 10),
-              _aBtn('Go', TdcColors.success, _graphRunning ? null : _startGraph),
+              _aBtn(
+                  'Go', TdcColors.success, _graphRunning ? null : _startGraph),
               const SizedBox(width: 6),
               _aBtn('Reset', TdcColors.textMuted, _resetGraph),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: TdcColors.coral.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
-                child: Text(_graphMode, style: const TextStyle(color: TdcColors.coral, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                decoration: BoxDecoration(
+                    color: TdcColors.coral.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(6)),
+                child: Text(_graphMode,
+                    style: const TextStyle(
+                        color: TdcColors.coral,
+                        fontSize: 11,
+                        fontFamily: 'monospace',
+                        fontWeight: FontWeight.bold)),
               ),
             ]),
             const SizedBox(height: 10),
@@ -1264,15 +1425,26 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
               children: _graph.keys.map((node) {
                 final isVisited = _visited.contains(node);
                 final isInQueue = _queue.contains(node);
-                final color = isVisited ? TdcColors.success : isInQueue ? TdcColors.warning : TdcColors.textTertiary;
+                final color = isVisited
+                    ? TdcColors.success
+                    : isInQueue
+                        ? TdcColors.warning
+                        : TdcColors.textTertiary;
                 return Container(
-                  width: 40, height: 40,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: color.withValues(alpha: 0.15),
                     border: Border.all(color: color, width: isVisited ? 2 : 1),
                   ),
-                  child: Center(child: Text(node, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 14, fontFamily: 'monospace'))),
+                  child: Center(
+                      child: Text(node,
+                          style: TextStyle(
+                              color: color,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              fontFamily: 'monospace'))),
                 );
               }).toList(),
             ),
@@ -1280,12 +1452,18 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
             if (_visited.isNotEmpty)
               Text(
                 'Ordre visite : ${_visited.join(' → ')}',
-                style: const TextStyle(color: TdcColors.success, fontSize: 11, fontFamily: 'monospace'),
+                style: const TextStyle(
+                    color: TdcColors.success,
+                    fontSize: 11,
+                    fontFamily: 'monospace'),
               ),
             if (_queue.isNotEmpty)
               Text(
                 '${_graphMode == 'BFS' ? 'File' : 'Pile'} : [${_queue.join(', ')}]',
-                style: const TextStyle(color: TdcColors.warning, fontSize: 10, fontFamily: 'monospace'),
+                style: const TextStyle(
+                    color: TdcColors.warning,
+                    fontSize: 10,
+                    fontFamily: 'monospace'),
               ),
           ],
         ),
@@ -1304,37 +1482,63 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              _aBtn('Calculer', TdcColors.success, _dpRunning ? null : _startDp),
+              _aBtn(
+                  'Calculer', TdcColors.success, _dpRunning ? null : _startDp),
               const SizedBox(width: 8),
               _aBtn('Reset', TdcColors.textMuted, _resetDp),
               if (_dpRunning) ...[
                 const SizedBox(width: 8),
-                const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.success)),
+                const SizedBox(
+                    width: 12,
+                    height: 12,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: TdcColors.success)),
               ],
             ]),
             const SizedBox(height: 10),
             Text('fib(n) = fib(n-1) + fib(n-2),  fib(0)=0, fib(1)=1',
-                style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 10, fontFamily: 'monospace')),
+                style: TextStyle(
+                    color: TdcColors.textPrimary.withValues(alpha: 0.4),
+                    fontSize: 10,
+                    fontFamily: 'monospace')),
             const SizedBox(height: 8),
             Row(
               children: List.generate(10, (i) {
                 final val = _dpTable[i];
                 final isActive = i == _dpStep;
-                final color = val != null ? TdcColors.success : TdcColors.textMuted;
+                final color =
+                    val != null ? TdcColors.success : TdcColors.textMuted;
                 return Expanded(
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     margin: const EdgeInsets.symmetric(horizontal: 2),
                     padding: const EdgeInsets.symmetric(vertical: 6),
                     decoration: BoxDecoration(
-                      color: isActive ? TdcColors.success.withValues(alpha: 0.2) : val != null ? TdcColors.success.withValues(alpha: 0.08) : TdcColors.textPrimary.withValues(alpha: 0.03),
+                      color: isActive
+                          ? TdcColors.success.withValues(alpha: 0.2)
+                          : val != null
+                              ? TdcColors.success.withValues(alpha: 0.08)
+                              : TdcColors.textPrimary.withValues(alpha: 0.03),
                       borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: isActive ? TdcColors.success : color.withValues(alpha: 0.3)),
+                      border: Border.all(
+                          color: isActive
+                              ? TdcColors.success
+                              : color.withValues(alpha: 0.3)),
                     ),
                     child: Column(
                       children: [
-                        Text('n=$i', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.3), fontSize: 8, fontFamily: 'monospace')),
-                        Text(val != null ? '$val' : '?', style: TextStyle(color: color, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                        Text('n=$i',
+                            style: TextStyle(
+                                color: TdcColors.textPrimary
+                                    .withValues(alpha: 0.3),
+                                fontSize: 8,
+                                fontFamily: 'monospace')),
+                        Text(val != null ? '$val' : '?',
+                            style: TextStyle(
+                                color: color,
+                                fontSize: 11,
+                                fontFamily: 'monospace',
+                                fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -1344,8 +1548,12 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
             if (_dpStep == 9)
               const Padding(
                 padding: EdgeInsets.only(top: 8),
-                child: Text('Toutes les valeurs en cache — O(n) temps, O(n) espace',
-                    style: TextStyle(color: TdcColors.success, fontSize: 10, fontFamily: 'monospace')),
+                child: Text(
+                    'Toutes les valeurs en cache — O(n) temps, O(n) espace',
+                    style: TextStyle(
+                        color: TdcColors.success,
+                        fontSize: 10,
+                        fontFamily: 'monospace')),
               ),
           ],
         ),
@@ -1364,11 +1572,29 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              _aBtn('XOR', TdcColors.warning, () => setState(() { _cryptoMode = 'XOR'; _cryptoResult = ''; })),
+              _aBtn(
+                  'XOR',
+                  TdcColors.warning,
+                  () => setState(() {
+                        _cryptoMode = 'XOR';
+                        _cryptoResult = '';
+                      })),
               const SizedBox(width: 6),
-              _aBtn('ROT13', TdcColors.coral, () => setState(() { _cryptoMode = 'ROT13'; _cryptoResult = ''; })),
+              _aBtn(
+                  'ROT13',
+                  TdcColors.coral,
+                  () => setState(() {
+                        _cryptoMode = 'ROT13';
+                        _cryptoResult = '';
+                      })),
               const SizedBox(width: 6),
-              _aBtn('Base64', TdcColors.info, () => setState(() { _cryptoMode = 'Base64'; _cryptoResult = ''; })),
+              _aBtn(
+                  'Base64',
+                  TdcColors.info,
+                  () => setState(() {
+                        _cryptoMode = 'Base64';
+                        _cryptoResult = '';
+                      })),
             ]),
             const SizedBox(height: 8),
             Row(
@@ -1376,16 +1602,30 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                 Expanded(
                   child: TextField(
                     controller: _cryptoCtrl,
-                    style: const TextStyle(color: TdcColors.textPrimary, fontSize: 12, fontFamily: 'monospace'),
+                    style: const TextStyle(
+                        color: TdcColors.textPrimary,
+                        fontSize: 12,
+                        fontFamily: 'monospace'),
                     decoration: InputDecoration(
                       hintText: 'Texte à encoder…',
-                      hintStyle: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.25), fontSize: 12),
+                      hintStyle: TextStyle(
+                          color: TdcColors.textPrimary.withValues(alpha: 0.25),
+                          fontSize: 12),
                       isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 8),
                       filled: true,
                       fillColor: TdcColors.textPrimary.withValues(alpha: 0.04),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.15))),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.15))),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                              color: TdcColors.textPrimary
+                                  .withValues(alpha: 0.15))),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                              color: TdcColors.textPrimary
+                                  .withValues(alpha: 0.15))),
                     ),
                     onSubmitted: (_) => _runCrypto(),
                   ),
@@ -1401,9 +1641,14 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                 decoration: BoxDecoration(
                   color: TdcColors.danger.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: TdcColors.danger.withValues(alpha: 0.3)),
+                  border: Border.all(
+                      color: TdcColors.danger.withValues(alpha: 0.3)),
                 ),
-                child: SelectableText(_cryptoResult, style: const TextStyle(color: TdcColors.danger, fontSize: 11, fontFamily: 'monospace')),
+                child: SelectableText(_cryptoResult,
+                    style: const TextStyle(
+                        color: TdcColors.danger,
+                        fontSize: 11,
+                        fontFamily: 'monospace')),
               ).animate().fadeIn(),
           ],
         ),
@@ -1422,14 +1667,21 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              _aBtn('Élection', TdcColors.info, _raftElecting ? null : _startRaft),
+              _aBtn('Élection', TdcColors.info,
+                  _raftElecting ? null : _startRaft),
               const SizedBox(width: 8),
               _aBtn('Reset', TdcColors.textMuted, _resetRaft),
               if (_raftLeader >= 0) ...[
                 const SizedBox(width: 8),
-                const Icon(Icons.how_to_vote, color: TdcColors.success, size: 14),
+                const Icon(Icons.how_to_vote,
+                    color: TdcColors.success, size: 14),
                 const SizedBox(width: 4),
-                const Text('Node 0 est LEADER', style: TextStyle(color: TdcColors.success, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                const Text('Node 0 est LEADER',
+                    style: TextStyle(
+                        color: TdcColors.success,
+                        fontSize: 11,
+                        fontFamily: 'monospace',
+                        fontWeight: FontWeight.bold)),
               ],
             ]),
             const SizedBox(height: 10),
@@ -1439,31 +1691,55 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                 final isLeader = _raftLeader == i;
                 final isCandidate = i == 0 && _raftElecting;
                 final votes = _raftVotes[i];
-                final color = isLeader ? TdcColors.success : isCandidate ? TdcColors.warning : TdcColors.textTertiary;
+                final color = isLeader
+                    ? TdcColors.success
+                    : isCandidate
+                        ? TdcColors.warning
+                        : TdcColors.textTertiary;
                 return Column(
                   children: [
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 400),
-                      width: 44, height: 44,
+                      width: 44,
+                      height: 44,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: color.withValues(alpha: 0.15),
-                        border: Border.all(color: color, width: isLeader ? 2.5 : 1.5),
+                        border: Border.all(
+                            color: color, width: isLeader ? 2.5 : 1.5),
                       ),
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(isLeader ? Icons.star : Icons.computer, color: color, size: 14),
-                            if (votes > 0) Text('$votes', style: TextStyle(color: color, fontSize: 8, fontWeight: FontWeight.bold)),
+                            Icon(isLeader ? Icons.star : Icons.computer,
+                                color: color, size: 14),
+                            if (votes > 0)
+                              Text('$votes',
+                                  style: TextStyle(
+                                      color: color,
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text('N$i', style: TextStyle(color: color, fontSize: 9, fontFamily: 'monospace')),
-                    Text(isLeader ? 'LEADER' : isCandidate ? 'CAND.' : 'FOLLOWER',
-                        style: TextStyle(color: color, fontSize: 7, fontFamily: 'monospace')),
+                    Text('N$i',
+                        style: TextStyle(
+                            color: color,
+                            fontSize: 9,
+                            fontFamily: 'monospace')),
+                    Text(
+                        isLeader
+                            ? 'LEADER'
+                            : isCandidate
+                                ? 'CAND.'
+                                : 'FOLLOWER',
+                        style: TextStyle(
+                            color: color,
+                            fontSize: 7,
+                            fontFamily: 'monospace')),
                   ],
                 );
               }),
@@ -1477,11 +1753,16 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
   // 5 – Compiler pipeline ───────────────────────────────────
   Widget _buildCompilerPanel() {
     final stages = <_AP4>[
-      const _AP4('Lexer', 'int x = 5 + 3;', 'TOKENS: INT ID EQ NUM PLUS NUM SEMI', TdcColors.electric),
-      const _AP4('Parser', 'Tokens → AST', 'Assign(x, BinOp(+, 5, 3))', TdcColors.coral),
-      const _AP4('Semantic', 'Analyse types', 'x: int, expr: int ✓', TdcColors.info),
-      const _AP4('Optimizer', 'Constant folding', 'Assign(x, 8)  ← 5+3 = 8', TdcColors.success),
-      const _AP4('Codegen', 'IR → Assembly', 'mov eax, 8 / mov [x], eax', TdcColors.warning),
+      const _AP4('Lexer', 'int x = 5 + 3;',
+          'TOKENS: INT ID EQ NUM PLUS NUM SEMI', TdcColors.electric),
+      const _AP4('Parser', 'Tokens → AST', 'Assign(x, BinOp(+, 5, 3))',
+          TdcColors.coral),
+      const _AP4(
+          'Semantic', 'Analyse types', 'x: int, expr: int ✓', TdcColors.info),
+      const _AP4('Optimizer', 'Constant folding', 'Assign(x, 8)  ← 5+3 = 8',
+          TdcColors.success),
+      const _AP4('Codegen', 'IR → Assembly', 'mov eax, 8 / mov [x], eax',
+          TdcColors.warning),
     ];
     return _algoShell(
       color: TdcColors.electric,
@@ -1501,21 +1782,41 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
               ),
               child: Row(
                 children: [
-                  SizedBox(width: 64, child: Text(s.a, style: TextStyle(color: s.d, fontSize: 10, fontWeight: FontWeight.bold, fontFamily: 'monospace'))),
-                  const Icon(Icons.arrow_forward, size: 10, color: TdcColors.textMuted),
+                  SizedBox(
+                      width: 64,
+                      child: Text(s.a,
+                          style: TextStyle(
+                              color: s.d,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'monospace'))),
+                  const Icon(Icons.arrow_forward,
+                      size: 10, color: TdcColors.textMuted),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(s.b, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontFamily: 'monospace')),
-                        Text(s.c, style: const TextStyle(color: TdcColors.textTertiary, fontSize: 9, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis),
+                        Text(s.b,
+                            style: const TextStyle(
+                                color: TdcColors.textSecondary,
+                                fontSize: 10,
+                                fontFamily: 'monospace')),
+                        Text(s.c,
+                            style: const TextStyle(
+                                color: TdcColors.textTertiary,
+                                fontSize: 9,
+                                fontFamily: 'monospace'),
+                            overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),
                 ],
               ),
-            ).animate().fadeIn(delay: Duration(milliseconds: si * 100)).slideX(begin: 0.05, end: 0);
+            )
+                .animate()
+                .fadeIn(delay: Duration(milliseconds: si * 100))
+                .slideX(begin: 0.05, end: 0);
           }),
         ),
       ),
@@ -1539,7 +1840,9 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: selected ? s.color.withValues(alpha: 0.18) : TdcColors.surface,
+                color: selected
+                    ? s.color.withValues(alpha: 0.18)
+                    : TdcColors.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: selected ? s.color : TdcColors.border,
@@ -1549,7 +1852,9 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(s.icon, color: selected ? s.color : TdcColors.textMuted, size: 16),
+                  Icon(s.icon,
+                      color: selected ? s.color : TdcColors.textMuted,
+                      size: 16),
                   const SizedBox(width: 8),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -1618,7 +1923,8 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                   ),
                   Text(
                     s.subtitle,
-                    style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12),
+                    style: const TextStyle(
+                        color: TdcColors.textSecondary, fontSize: 12),
                   ),
                 ],
               ),
@@ -1691,7 +1997,8 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 7, vertical: 2),
                                 decoration: BoxDecoration(
                                   color: step.color.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(6),
@@ -1829,15 +2136,18 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
                   ? const SizedBox(
                       width: 14,
                       height: 14,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.textPrimary),
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: TdcColors.textPrimary),
                     )
                   : const Icon(Icons.play_arrow),
-              label: Text(_running ? 'Simulation en cours…' : 'Lancer la simulation'),
+              label: Text(
+                  _running ? 'Simulation en cours…' : 'Lancer la simulation'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: _scenario.color,
                 foregroundColor: TdcColors.textPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
             ),
           ),
@@ -1850,8 +2160,10 @@ class _AlgorithmsSimulatorState extends State<AlgorithmsSimulator> {
               style: OutlinedButton.styleFrom(
                 foregroundColor: TdcColors.textSecondary,
                 side: const BorderSide(color: TdcColors.border),
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
             ),
           ],
@@ -1880,8 +2192,10 @@ class _AP4 {
 
 class _AlgoRetainButton extends StatefulWidget {
   final String title, detail, category;
-  const _AlgoRetainButton({required this.title, required this.detail, required this.category});
-  @override State<_AlgoRetainButton> createState() => _AlgoRetainButtonState();
+  const _AlgoRetainButton(
+      {required this.title, required this.detail, required this.category});
+  @override
+  State<_AlgoRetainButton> createState() => _AlgoRetainButtonState();
 }
 
 class _AlgoRetainButtonState extends State<_AlgoRetainButton> {
@@ -1897,7 +2211,10 @@ class _AlgoRetainButtonState extends State<_AlgoRetainButton> {
       category: widget.category,
     );
     if (!mounted) return;
-    setState(() { _saved = true; _loading = false; });
+    setState(() {
+      _saved = true;
+      _loading = false;
+    });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('« ${widget.title} » ajouté à la Cheat Sheet ★'),
@@ -1916,17 +2233,26 @@ class _AlgoRetainButtonState extends State<_AlgoRetainButton> {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: _saved ? TdcColors.warning.withValues(alpha: 0.18) : TdcColors.textPrimary.withValues(alpha: 0.05),
+          color: _saved
+              ? TdcColors.warning.withValues(alpha: 0.18)
+              : TdcColors.textPrimary.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: _saved ? TdcColors.warning : TdcColors.textMuted),
+          border: Border.all(
+              color: _saved ? TdcColors.warning : TdcColors.textMuted),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (_loading)
-              const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: TdcColors.warning))
+              const SizedBox(
+                  width: 12,
+                  height: 12,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 1.5, color: TdcColors.warning))
             else
-              Icon(_saved ? Icons.bookmark : Icons.bookmark_border, color: _saved ? TdcColors.warning : TdcColors.textTertiary, size: 13),
+              Icon(_saved ? Icons.bookmark : Icons.bookmark_border,
+                  color: _saved ? TdcColors.warning : TdcColors.textTertiary,
+                  size: 13),
             const SizedBox(width: 5),
             Text(
               _saved ? 'Retenu ✓' : 'Retenir',

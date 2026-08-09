@@ -23,21 +23,21 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
   final TextEditingController _ipController = TextEditingController();
   final TextEditingController _portController = TextEditingController();
   final TextEditingController _domainController = TextEditingController();
-  
+
   // États des simulations
   bool _isScanning = false;
   bool _isPinging = false;
   bool _isTracing = false;
   bool _isSniffing = false;
-  
+
   // Données de simulation
   List<NetworkDevice> _discoveredDevices = [];
   final List<PingResult> _pingResults = [];
   final List<TraceHop> _traceHops = [];
   final List<CapturedPacket> _capturedPackets = [];
-  
+
   // Métriques réseau
-  
+
   late AnimationController _scanController;
   late AnimationController _packetController;
 
@@ -45,9 +45,11 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
   void initState() {
     super.initState();
     _tabController = TabController(length: 6, vsync: this);
-    _scanController = AnimationController(vsync: this, duration: const Duration(seconds: 2));
-    _packetController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
-    
+    _scanController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    _packetController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
+
     _initializeNetworkData();
   }
 
@@ -118,7 +120,10 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               labelColor: TdcColors.network,
               unselectedLabelColor: TdcColors.textMuted,
               isScrollable: true,
-              labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1.1),
+              labelStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                  letterSpacing: 1.1),
               indicatorSize: TabBarIndicatorSize.label,
               tabs: const [
                 Tab(text: 'SCAN RÉSEAU'),
@@ -130,9 +135,9 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               ],
             ),
           ),
-          
+
           const Divider(height: 1, color: TdcColors.border),
-          
+
           // Content
           Expanded(
             child: TabBarView(
@@ -175,28 +180,28 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
         _buildGuideSection(
           'Scan Réseau',
           'Le scan réseau permet de découvrir les hôtes actifs et les services ouverts sur un segment. '
-          'Il utilise des techniques comme le SYN Scan (half-open) pour rester discret ou le TCP Connect pour confirmer l\'ouverture d\'un port.',
+              'Il utilise des techniques comme le SYN Scan (half-open) pour rester discret ou le TCP Connect pour confirmer l\'ouverture d\'un port.',
           Icons.search,
         ),
         const SizedBox(height: 24),
         _buildGuideSection(
           'ICMP & Ping',
           'Le protocole ICMP (Internet Control Message Protocol) est utilisé par la commande ping pour vérifier la connectivité. '
-          'Il mesure le temps aller-retour (RTT) et rapporte d\'éventuelles pertes de paquets.',
+              'Il mesure le temps aller-retour (RTT) et rapporte d\'éventuelles pertes de paquets.',
           Icons.send,
         ),
         const SizedBox(height: 24),
         _buildGuideSection(
           'Traceroute',
           'Traceroute identifie chaque saut (hop) entre vous et une destination en incrémentant le TTL (Time To Live) de chaque paquet. '
-          'Chaque routeur sur le chemin renvoie un message ICMP Time Exceeded, révélant son identité.',
+              'Chaque routeur sur le chemin renvoie un message ICMP Time Exceeded, révélant son identité.',
           Icons.route,
         ),
         const SizedBox(height: 24),
         _buildGuideSection(
           'Packet Sniffing',
           'Le "sniffing" consiste à capturer les paquets bruts circulant sur une interface. '
-          'Cela permet d\'analyser les flux, de déboguer des applications ou d\'identifier des trafics suspects.',
+              'Cela permet d\'analyser les flux, de déboguer des applications ou d\'identifier des trafics suspects.',
           Icons.compare_arrows,
         ),
       ],
@@ -265,7 +270,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                     Expanded(
                       child: TextField(
                         controller: _ipController,
-                        style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
+                        style: const TextStyle(
+                            color: TdcColors.textPrimary, fontSize: 13),
                         decoration: const InputDecoration(
                           labelText: 'Plage IP (ex: 192.168.1.0/24)',
                           prefixIcon: Icon(Icons.lan, size: 18),
@@ -275,17 +281,19 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                     const SizedBox(width: 12),
                     ElevatedButton.icon(
                       onPressed: _isScanning ? null : _performNetworkScan,
-                      icon: _isScanning 
+                      icon: _isScanning
                           ? const SizedBox(
                               width: 16,
                               height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.black),
                             )
                           : const Icon(Icons.search, size: 18),
                       label: Text(_isScanning ? 'Scan...' : 'Scanner'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TdcColors.network,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 15),
                       ),
                     ),
                   ],
@@ -293,9 +301,9 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Résultats du scan
           Expanded(
             child: Container(
@@ -308,11 +316,13 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: const BoxDecoration(
-                      border: Border(bottom: BorderSide(color: TdcColors.border)),
+                      border:
+                          Border(bottom: BorderSide(color: TdcColors.border)),
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.devices, color: TdcColors.network, size: 20),
+                        const Icon(Icons.devices,
+                            color: TdcColors.network, size: 20),
                         const SizedBox(width: 8),
                         const Text(
                           'Appareils Découverts',
@@ -395,7 +405,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  border: Border.all(color: TdcColors.network.withValues(alpha: 0.3)),
+                  border: Border.all(
+                      color: TdcColors.network.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   '${device.responseTime}ms',
@@ -420,23 +431,25 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               ),
               const Spacer(),
               ...device.openPorts.map((port) => Padding(
-                padding: const EdgeInsets.only(left: 6),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: TdcColors.network.withValues(alpha: 0.1),
-                    border: Border.all(color: TdcColors.network.withValues(alpha: 0.2)),
-                  ),
-                  child: Text(
-                    '$port',
-                    style: const TextStyle(
-                      color: TdcColors.network,
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
+                    padding: const EdgeInsets.only(left: 6),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: TdcColors.network.withValues(alpha: 0.1),
+                        border: Border.all(
+                            color: TdcColors.network.withValues(alpha: 0.2)),
+                      ),
+                      child: Text(
+                        '$port',
+                        style: const TextStyle(
+                          color: TdcColors.network,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              )),
+                  )),
             ],
           ),
         ],
@@ -461,7 +474,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                 Expanded(
                   child: TextField(
                     controller: _ipController,
-                    style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
+                    style: const TextStyle(
+                        color: TdcColors.textPrimary, fontSize: 13),
                     decoration: const InputDecoration(
                       labelText: 'Adresse IP ou domaine',
                       prefixIcon: Icon(Icons.lan, size: 18),
@@ -471,11 +485,12 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                 const SizedBox(width: 12),
                 ElevatedButton.icon(
                   onPressed: _isPinging ? null : _performPing,
-                  icon: _isPinging 
+                  icon: _isPinging
                       ? const SizedBox(
                           width: 16,
                           height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.black),
                         )
                       : const Icon(Icons.send, size: 18),
                   label: Text(_isPinging ? 'Ping...' : 'Ping'),
@@ -486,9 +501,9 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Résultats Ping
           Expanded(
             child: Container(
@@ -501,7 +516,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: const BoxDecoration(
-                      border: Border(bottom: BorderSide(color: TdcColors.border)),
+                      border:
+                          Border(bottom: BorderSide(color: TdcColors.border)),
                     ),
                     child: const Text(
                       'RÉPONSES ICMP',
@@ -580,7 +596,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                 Expanded(
                   child: TextField(
                     controller: _domainController,
-                    style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
+                    style: const TextStyle(
+                        color: TdcColors.textPrimary, fontSize: 13),
                     decoration: const InputDecoration(
                       labelText: 'Domaine ou IP',
                       prefixIcon: Icon(Icons.language, size: 18),
@@ -590,11 +607,12 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                 const SizedBox(width: 12),
                 ElevatedButton.icon(
                   onPressed: _isTracing ? null : _performTraceroute,
-                  icon: _isTracing 
+                  icon: _isTracing
                       ? const SizedBox(
                           width: 16,
                           height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.black),
                         )
                       : const Icon(Icons.route, size: 18),
                   label: Text(_isTracing ? 'Trace...' : 'Traceroute'),
@@ -605,9 +623,9 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Résultats Traceroute
           Expanded(
             child: Container(
@@ -620,7 +638,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: const BoxDecoration(
-                      border: Border(bottom: BorderSide(color: TdcColors.border)),
+                      border:
+                          Border(bottom: BorderSide(color: TdcColors.border)),
                     ),
                     child: const Text(
                       'PARCOURS RÉSEAU',
@@ -702,16 +721,16 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
             ),
           ),
           ...hop.times.map((time) => Padding(
-            padding: const EdgeInsets.only(left: 8),
-            child: Text(
-              '${time}ms',
-              style: TextStyle(
-                color: time < 50 ? TdcColors.success : TdcColors.warning,
-                fontSize: 10,
-                fontFamily: 'monospace',
-              ),
-            ),
-          )),
+                padding: const EdgeInsets.only(left: 8),
+                child: Text(
+                  '${time}ms',
+                  style: TextStyle(
+                    color: time < 50 ? TdcColors.success : TdcColors.warning,
+                    fontSize: 10,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+              )),
         ],
       ),
     );
@@ -739,11 +758,15 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                           value: 'eth0',
                           isExpanded: true,
                           dropdownColor: TdcColors.surfaceAlt,
-                          style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
+                          style: const TextStyle(
+                              color: TdcColors.textPrimary, fontSize: 13),
                           items: const [
-                            DropdownMenuItem(value: 'eth0', child: Text('Interface eth0')),
-                            DropdownMenuItem(value: 'wlan0', child: Text('Interface wlan0')),
-                            DropdownMenuItem(value: 'lo', child: Text('Interface lo')),
+                            DropdownMenuItem(
+                                value: 'eth0', child: Text('Interface eth0')),
+                            DropdownMenuItem(
+                                value: 'wlan0', child: Text('Interface wlan0')),
+                            DropdownMenuItem(
+                                value: 'lo', child: Text('Interface lo')),
                           ],
                           onChanged: (value) {},
                         ),
@@ -752,11 +775,14 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                     const SizedBox(width: 12),
                     ElevatedButton.icon(
                       onPressed: _isSniffing ? _stopSniffing : _startSniffing,
-                      icon: Icon(_isSniffing ? Icons.stop : Icons.play_arrow, size: 18),
+                      icon: Icon(_isSniffing ? Icons.stop : Icons.play_arrow,
+                          size: 18),
                       label: Text(_isSniffing ? 'Arrêter' : 'Démarrer'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _isSniffing ? TdcColors.danger : TdcColors.network,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                        backgroundColor:
+                            _isSniffing ? TdcColors.danger : TdcColors.network,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 15),
                       ),
                     ),
                   ],
@@ -764,9 +790,9 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Paquets capturés
           Expanded(
             child: Container(
@@ -779,11 +805,13 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: const BoxDecoration(
-                      border: Border(bottom: BorderSide(color: TdcColors.border)),
+                      border:
+                          Border(bottom: BorderSide(color: TdcColors.border)),
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.history, color: TdcColors.network, size: 20),
+                        const Icon(Icons.history,
+                            color: TdcColors.network, size: 20),
                         const SizedBox(width: 8),
                         const Text(
                           'FLUX DE PAQUETS',
@@ -803,7 +831,10 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                               fontSize: 9,
                               fontWeight: FontWeight.bold,
                             ),
-                          ).animate(onPlay: (c) => c.repeat()).fadeIn().fadeOut(),
+                          )
+                              .animate(onPlay: (c) => c.repeat())
+                              .fadeIn()
+                              .fadeOut(),
                       ],
                     ),
                   ),
@@ -861,7 +892,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               ),
               Text(
                 '${packet.size}b',
-                style: const TextStyle(color: TdcColors.textMuted, fontSize: 10),
+                style:
+                    const TextStyle(color: TdcColors.textMuted, fontSize: 10),
               ),
             ],
           ),
@@ -885,9 +917,9 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       _isScanning = true;
       _discoveredDevices.clear();
     });
-    
+
     await Future.delayed(const Duration(seconds: 2));
-    
+
     final scanResults = [
       NetworkDevice(
         ip: '192.168.1.1',
@@ -925,7 +957,7 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
         _discoveredDevices.add(device);
       });
     }
-    
+
     setState(() => _isScanning = false);
   }
 
@@ -935,13 +967,14 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       _isPinging = true;
       _pingResults.clear();
     });
-    
-    final target = _ipController.text.isEmpty ? '127.0.0.1' : _ipController.text;
+
+    final target =
+        _ipController.text.isEmpty ? '127.0.0.1' : _ipController.text;
 
     for (int i = 0; i < 4; i++) {
       await Future.delayed(const Duration(milliseconds: 600));
       if (!mounted) return;
-      
+
       final result = PingResult(
         sequence: i + 1,
         target: target,
@@ -950,12 +983,12 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
         ttl: 64,
         success: true,
       );
-      
+
       setState(() {
         _pingResults.add(result);
       });
     }
-    
+
     setState(() => _isPinging = false);
   }
 
@@ -965,14 +998,21 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       _isTracing = true;
       _traceHops.clear();
     });
-    
+
     final hops = [
-      TraceHop(hop: 1, hostname: 'gateway', ip: '192.168.1.1', times: [1, 1, 2]),
-      TraceHop(hop: 2, hostname: 'isp-gw', ip: '10.20.30.1', times: [12, 14, 11]),
-      TraceHop(hop: 3, hostname: 'backbone-core', ip: '80.50.60.2', times: [22, 25, 21]),
-      TraceHop(hop: 4, hostname: 'target-node', ip: '1.2.3.4', times: [35, 38, 34]),
+      TraceHop(
+          hop: 1, hostname: 'gateway', ip: '192.168.1.1', times: [1, 1, 2]),
+      TraceHop(
+          hop: 2, hostname: 'isp-gw', ip: '10.20.30.1', times: [12, 14, 11]),
+      TraceHop(
+          hop: 3,
+          hostname: 'backbone-core',
+          ip: '80.50.60.2',
+          times: [22, 25, 21]),
+      TraceHop(
+          hop: 4, hostname: 'target-node', ip: '1.2.3.4', times: [35, 38, 34]),
     ];
-    
+
     for (var hop in hops) {
       await Future.delayed(const Duration(milliseconds: 1000));
       if (!mounted) return;
@@ -980,21 +1020,21 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
         _traceHops.add(hop);
       });
     }
-    
+
     setState(() => _isTracing = false);
   }
 
   Future<void> _startSniffing() async {
     if (_isSniffing) return;
     setState(() => _isSniffing = true);
-    
+
     while (_isSniffing) {
       await Future.delayed(const Duration(milliseconds: 400));
       if (!mounted) break;
-      
+
       final protocols = ['tcp', 'udp', 'icmp'];
       final proto = protocols[DateTime.now().millisecond % 3];
-      
+
       final packet = CapturedPacket(
         timestamp: DateTime.now().toIso8601String(),
         sourceIp: '192.168.1.${10 + (DateTime.now().second % 20)}',
@@ -1003,9 +1043,11 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
         destPort: proto == 'udp' ? 53 : 443,
         protocol: proto,
         size: 40 + (DateTime.now().millisecond % 1000),
-        info: proto == 'icmp' ? 'Echo Request' : (proto == 'udp' ? 'DNS Query' : 'TLS Handshake'),
+        info: proto == 'icmp'
+            ? 'Echo Request'
+            : (proto == 'udp' ? 'DNS Query' : 'TLS Handshake'),
       );
-      
+
       setState(() {
         _capturedPackets.insert(0, packet);
         if (_capturedPackets.length > 50) _capturedPackets.removeLast();
@@ -1018,19 +1060,27 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
 
   IconData _getDeviceIcon(String type) {
     switch (type) {
-      case 'Router': return Icons.router;
-      case 'Server': return Icons.dns;
-      case 'Desktop': return Icons.computer;
-      default: return Icons.device_hub;
+      case 'Router':
+        return Icons.router;
+      case 'Server':
+        return Icons.dns;
+      case 'Desktop':
+        return Icons.computer;
+      default:
+        return Icons.device_hub;
     }
   }
 
   Color _getProtocolColor(String protocol) {
     switch (protocol) {
-      case 'tcp': return TdcColors.network;
-      case 'udp': return TdcColors.system;
-      case 'icmp': return TdcColors.crypto;
-      default: return TdcColors.textMuted;
+      case 'tcp':
+        return TdcColors.network;
+      case 'udp':
+        return TdcColors.system;
+      case 'icmp':
+        return TdcColors.crypto;
+      default:
+        return TdcColors.textMuted;
     }
   }
 }

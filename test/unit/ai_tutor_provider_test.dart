@@ -14,13 +14,13 @@ void main() {
 
     test('initialization and session management', () async {
       final provider = AiTutorProvider();
-      
+
       // Wait for initialization
       await Future.delayed(const Duration(milliseconds: 100));
-      
+
       expect(provider.isConnected, isFalse);
       expect(provider.sessions, isEmpty);
-      
+
       // Select dummy session
       final dummySession = TutorSession(
         id: '1',
@@ -30,14 +30,14 @@ void main() {
         messages: [],
         createdAt: DateTime.now(),
       );
-      
+
       await provider.selectSession(dummySession);
       expect(provider.currentSession?.id, '1');
-      
+
       // Delete session
       await provider.deleteSession('1');
       expect(provider.sessions.any((s) => s.id == '1'), isFalse);
-      
+
       provider.dispose();
     });
   });

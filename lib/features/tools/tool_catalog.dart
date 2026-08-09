@@ -24,17 +24,18 @@ class ToolCatalogEntry {
 }
 
 // ── Catégories ────────────────────────────────────────────────
-const String catReseau    = 'Réseau & IP';
-const String catSecurite  = 'Sécurité & Crypto';
-const String catSysteme   = 'Système & OS';
-const String catDev       = 'Dev & Code';
+const String catReseau = 'Réseau & IP';
+const String catSecurite = 'Sécurité & Crypto';
+const String catSysteme = 'Système & OS';
+const String catDev = 'Dev & Code';
 const String catReference = 'Référence';
 
 const List<ToolCatalogEntry> toolCatalog = [
   // ── Réseau & IP ──────────────────────────────────────────────
   ToolCatalogEntry(
     title: 'Calculateur IP / CIDR',
-    description: 'Calculez vos sous-réseaux, masques et plages d\'adresses IPv4 rapidement.',
+    description:
+        'Calculez vos sous-réseaux, masques et plages d\'adresses IPv4 rapidement.',
     icon: Icons.settings_ethernet,
     color: TdcColors.accent,
     route: '/tools/ip-calc',
@@ -43,7 +44,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Annuaire des Ports',
-    description: 'Référence rapide des ports TCP/UDP les plus courants par service.',
+    description:
+        'Référence rapide des ports TCP/UDP les plus courants par service.',
     icon: Icons.lan,
     color: Color(0xFF8B5CF6),
     route: '/tools/ports',
@@ -52,7 +54,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Référence DNS',
-    description: 'Types d\'enregistrements DNS (A, MX, TXT, CNAME, PTR…) et leur utilité concrète.',
+    description:
+        'Types d\'enregistrements DNS (A, MX, TXT, CNAME, PTR…) et leur utilité concrète.',
     icon: Icons.dns,
     color: Color(0xFF8B5CF6),
     route: '/tools/dns',
@@ -61,7 +64,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Débit & Téléchargement',
-    description: 'Calculez le temps de transfert selon la vitesse réseau et la taille de fichier.',
+    description:
+        'Calculez le temps de transfert selon la vitesse réseau et la taille de fichier.',
     icon: Icons.speed,
     color: Color(0xFFF59E0B),
     route: '/tools/bandwidth',
@@ -70,7 +74,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Codes HTTP',
-    description: 'Référentiel complet des codes d\'état HTTP avec conseils de dépannage.',
+    description:
+        'Référentiel complet des codes d\'état HTTP avec conseils de dépannage.',
     icon: Icons.http,
     color: Color(0xFFF43F5E),
     route: '/tools/http-status',
@@ -79,7 +84,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Calculateur RAID',
-    description: 'Capacité utile et tolérance aux pannes pour RAID 0, 1, 5, 6, 10.',
+    description:
+        'Capacité utile et tolérance aux pannes pour RAID 0, 1, 5, 6, 10.',
     icon: Icons.storage,
     color: Color(0xFF10B981),
     route: '/tools/raid',
@@ -90,7 +96,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   // ── Sécurité & Crypto ────────────────────────────────────────
   ToolCatalogEntry(
     title: 'Générateur de Mot de Passe',
-    description: 'Créez des mots de passe forts avec entropie calculée. 100% local, rien n\'est transmis.',
+    description:
+        'Créez des mots de passe forts avec entropie calculée. 100% local, rien n\'est transmis.',
     icon: Icons.password,
     color: Color(0xFF6366F1),
     route: '/tools/password-gen',
@@ -99,7 +106,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Générateur de Hash',
-    description: 'Calculez MD5, SHA-1 et SHA-256 d\'un texte. Comprendre les empreintes cryptographiques.',
+    description:
+        'Calculez MD5, SHA-1 et SHA-256 d\'un texte. Comprendre les empreintes cryptographiques.',
     icon: Icons.fingerprint,
     color: Color(0xFFEF4444),
     route: '/tools/hash',
@@ -108,7 +116,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Identité Réseau & Confidentialité',
-    description: 'Informations réseau locales : hostname, MAC, utilisateur, IPv6/mDNS/TTL.',
+    description:
+        'Informations réseau locales : hostname, MAC, utilisateur, IPv6/mDNS/TTL.',
     icon: Icons.manage_accounts,
     color: Color(0xFF8B5CF6),
     route: '/tools/anonymity',
@@ -117,7 +126,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Assistant SSH',
-    description: 'Guide complet ~/.ssh/config, clés Ed25519, bastion, bonnes pratiques de sécurité.',
+    description:
+        'Guide complet ~/.ssh/config, clés Ed25519, bastion, bonnes pratiques de sécurité.',
     icon: Icons.terminal,
     color: Color(0xFF3B82F6),
     route: '/tools/ssh',
@@ -128,7 +138,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   // ── Système & OS ─────────────────────────────────────────────
   ToolCatalogEntry(
     title: 'Multi-Tools Sécurisés',
-    description: 'Diagnostic réseau/système/stockage en sandbox — sans exécuter de commandes arbitraires.',
+    description:
+        'Diagnostic réseau/système/stockage en sandbox — sans exécuter de commandes arbitraires.',
     icon: Icons.security,
     color: Color(0xFF22C55E),
     route: '/tools/safe-tools',
@@ -137,7 +148,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Calculateur Chmod',
-    description: 'Calculez et visualisez les permissions Unix (755 ↔ rwxr-xr-x) avec explication.',
+    description:
+        'Calculez et visualisez les permissions Unix (755 ↔ rwxr-xr-x) avec explication.',
     icon: Icons.rule,
     color: Color(0xFF3B82F6),
     route: '/tools/chmod',
@@ -146,7 +158,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Expression Cron',
-    description: 'Décryptez et testez vos expressions de planification système (crontab).',
+    description:
+        'Décryptez et testez vos expressions de planification système (crontab).',
     icon: Icons.schedule,
     color: Color(0xFF14B8A6),
     route: '/tools/cron',
@@ -155,7 +168,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Niveaux Syslog',
-    description: 'Référence des 8 sévérités RFC 5424 pour le filtrage et la compréhension des logs.',
+    description:
+        'Référence des 8 sévérités RFC 5424 pour le filtrage et la compréhension des logs.',
     icon: Icons.list_alt,
     color: Color(0xFFEF4444),
     route: '/tools/syslog',
@@ -164,7 +178,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Aide-mémoire Archivage',
-    description: 'Commandes tar, rsync et zip avec exemples commentés pour la sauvegarde et le transfert.',
+    description:
+        'Commandes tar, rsync et zip avec exemples commentés pour la sauvegarde et le transfert.',
     icon: Icons.inventory_2,
     color: Color(0xFFF59E0B),
     route: '/tools/archive',
@@ -173,7 +188,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Guides de Survie',
-    description: 'Fiches d\'urgence pour résoudre les pannes critiques (Windows, Mac, Linux).',
+    description:
+        'Fiches d\'urgence pour résoudre les pannes critiques (Windows, Mac, Linux).',
     icon: Icons.medication,
     color: Color(0xFFEF4444),
     route: '/tools/survival',
@@ -182,7 +198,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Référence Matérielle',
-    description: 'Codes de bips BIOS, ports communs, connectique et références hardware.',
+    description:
+        'Codes de bips BIOS, ports communs, connectique et références hardware.',
     icon: Icons.memory,
     color: Color(0xFFF59E0B),
     route: '/tools/hardware',
@@ -193,7 +210,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   // ── Dev & Code ───────────────────────────────────────────────
   ToolCatalogEntry(
     title: 'Formateur JSON',
-    description: 'Validez, formatez et minifiez votre code JSON. Détection d\'erreurs de syntaxe.',
+    description:
+        'Validez, formatez et minifiez votre code JSON. Détection d\'erreurs de syntaxe.',
     icon: Icons.settings_overscan,
     color: Color(0xFFFACC15),
     route: '/tools/json',
@@ -202,7 +220,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Testeur Regex',
-    description: 'Testez vos expressions régulières avec coloration syntaxique et explication des groupes.',
+    description:
+        'Testez vos expressions régulières avec coloration syntaxique et explication des groupes.',
     icon: Icons.find_replace,
     color: Color(0xFFF43F5E),
     route: '/tools/regex',
@@ -211,7 +230,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Encodeur Base64',
-    description: 'Encodez et décodez vos textes/données en Base64. Comprendre l\'encodage binaire-texte.',
+    description:
+        'Encodez et décodez vos textes/données en Base64. Comprendre l\'encodage binaire-texte.',
     icon: Icons.code,
     color: Color(0xFF14B8A6),
     route: '/tools/base64',
@@ -220,7 +240,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'ASCII / Hex / Binaire',
-    description: 'Convertisseur entre texte, hexadécimal, binaire et décimal. Base de la représentation machine.',
+    description:
+        'Convertisseur entre texte, hexadécimal, binaire et décimal. Base de la représentation machine.',
     icon: Icons.swap_horiz,
     color: Color(0xFF6366F1),
     route: '/tools/ascii',
@@ -229,7 +250,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Cyber Convertisseur',
-    description: 'Conversion rapide entre ASCII, Hex, Base64, Binaire et URL-encoding.',
+    description:
+        'Conversion rapide entre ASCII, Hex, Base64, Binaire et URL-encoding.',
     icon: Icons.transform,
     color: Color(0xFF3B82F6),
     route: '/tools/cyber-converter',
@@ -238,7 +260,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Scripts Utiles',
-    description: 'Bibliothèque de scripts Batch, PowerShell et Bash commentés pour l\'automatisation.',
+    description:
+        'Bibliothèque de scripts Batch, PowerShell et Bash commentés pour l\'automatisation.',
     icon: Icons.terminal,
     color: Color(0xFF10B981),
     route: '/tools/scripts',
@@ -249,7 +272,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   // ── Référence ────────────────────────────────────────────────
   ToolCatalogEntry(
     title: 'Glossaire Tech',
-    description: 'Définitions claires du jargon informatique pour tous les niveaux.',
+    description:
+        'Définitions claires du jargon informatique pour tous les niveaux.',
     icon: Icons.menu_book,
     color: Color(0xFF8B5CF6),
     route: '/tools/glossary',
@@ -258,7 +282,8 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
   ToolCatalogEntry(
     title: 'Convertisseur de Données',
-    description: 'Convertissez vos unités de stockage (Octets, Ko, Mo, Go, To) sans erreur.',
+    description:
+        'Convertissez vos unités de stockage (Octets, Ko, Mo, Go, To) sans erreur.',
     icon: Icons.analytics,
     color: Color(0xFFEC4899),
     route: '/tools/data-converter',

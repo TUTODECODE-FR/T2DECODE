@@ -151,8 +151,10 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
       width: double.infinity,
       padding: EdgeInsets.all(isMobile ? 16 : 20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: [_color.withValues(alpha: 0.15), _color.withValues(alpha: 0.05)]),
+        gradient: LinearGradient(colors: [
+          _color.withValues(alpha: 0.15),
+          _color.withValues(alpha: 0.05)
+        ]),
         borderRadius: TdcRadius.lg,
         border: Border.all(color: _color.withValues(alpha: 0.3)),
       ),
@@ -185,8 +187,8 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
   Widget _buildHeaderIcon(GhostLinkService gl) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration:
-          BoxDecoration(color: _color.withValues(alpha: 0.2), shape: BoxShape.circle),
+      decoration: BoxDecoration(
+          color: _color.withValues(alpha: 0.2), shape: BoxShape.circle),
       child: Icon(
           gl.isRunning ? Icons.wifi_tethering : Icons.wifi_tethering_off,
           color: _color,
@@ -312,8 +314,8 @@ class _GhostLinkScreenState extends State<GhostLinkScreen> {
                 duration: const Duration(seconds: 2),
                 builder: (_, v, child) =>
                     Opacity(opacity: 0.4 + 0.6 * v, child: child),
-                child:
-                    Icon(Icons.radar, size: 64, color: _color.withValues(alpha: 0.7)),
+                child: Icon(Icons.radar,
+                    size: 64, color: _color.withValues(alpha: 0.7)),
               ),
               const SizedBox(height: 20),
               const Text('Recherche de pairs...',
@@ -409,7 +411,8 @@ class _PeerCard extends StatelessWidget {
                     if (peer.protocolVersion >= 2) ...[
                       const SizedBox(width: 6),
                       Icon(Icons.lock,
-                          color: TdcColors.success.withValues(alpha: 0.7), size: 12),
+                          color: TdcColors.success.withValues(alpha: 0.7),
+                          size: 12),
                     ],
                   ],
                 ),
@@ -460,7 +463,8 @@ class _PeerCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              const Icon(Icons.chevron_right, color: TdcColors.textMuted, size: 18),
+              const Icon(Icons.chevron_right,
+                  color: TdcColors.textMuted, size: 18),
             ],
           ),
         ],
@@ -478,8 +482,8 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color:
-            (running ? TdcColors.success : TdcColors.danger).withValues(alpha: 0.1),
+        color: (running ? TdcColors.success : TdcColors.danger)
+            .withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
             color: (running ? TdcColors.success : TdcColors.danger)

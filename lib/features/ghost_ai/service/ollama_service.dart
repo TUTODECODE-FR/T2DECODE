@@ -8,11 +8,36 @@ import 'package:tutodecode/core/services/storage_service.dart';
 import 'package:tutodecode/features/courses/data/course_repository.dart';
 
 const List<Map<String, String>> kRecommendedModels = [
-  {'id': 'phi3',      'label': 'Phi-3 Mini',    'desc': 'Microsoft — ultra rapide, 2.3 GB',  'size': '2.3 GB'},
-  {'id': 'llama3.2',  'label': 'Llama 3.2 3B',  'desc': 'Meta — léger et efficace, 2.0 GB', 'size': '2.0 GB'},
-  {'id': 'qwen3:4b',  'label': 'Qwen3 4B',       'desc': 'Alibaba — raisonnement, 2.6 GB',   'size': '2.6 GB'},
-  {'id': 'mistral',   'label': 'Mistral 7B',     'desc': 'Polyvalent, bonne qualité, 4.1 GB','size': '4.1 GB'},
-  {'id': 'codellama', 'label': 'CodeLlama 7B',   'desc': 'Spécialisé code, 3.8 GB',          'size': '3.8 GB'},
+  {
+    'id': 'phi3',
+    'label': 'Phi-3 Mini',
+    'desc': 'Microsoft — ultra rapide, 2.3 GB',
+    'size': '2.3 GB'
+  },
+  {
+    'id': 'llama3.2',
+    'label': 'Llama 3.2 3B',
+    'desc': 'Meta — léger et efficace, 2.0 GB',
+    'size': '2.0 GB'
+  },
+  {
+    'id': 'qwen3:4b',
+    'label': 'Qwen3 4B',
+    'desc': 'Alibaba — raisonnement, 2.6 GB',
+    'size': '2.6 GB'
+  },
+  {
+    'id': 'mistral',
+    'label': 'Mistral 7B',
+    'desc': 'Polyvalent, bonne qualité, 4.1 GB',
+    'size': '4.1 GB'
+  },
+  {
+    'id': 'codellama',
+    'label': 'CodeLlama 7B',
+    'desc': 'Spécialisé code, 3.8 GB',
+    'size': '3.8 GB'
+  },
 ];
 
 // ─── Statut Ollama ─────────────────────────────────────────────────────────
@@ -21,19 +46,24 @@ class OllamaStatus {
   final String? version;
   final List<String> models;
   final String? error;
-  const OllamaStatus({required this.running, this.version, this.models = const [], this.error});
+  const OllamaStatus(
+      {required this.running,
+      this.version,
+      this.models = const [],
+      this.error});
 }
 
 // ─── Chunk de streaming ─────────────────────────────────────────────────────
 class OllamaChunk {
-  final String text;       // texte à afficher
-  final bool isThinking;   // est-ce que c'est du raisonnement interne ?
+  final String text; // texte à afficher
+  final bool isThinking; // est-ce que c'est du raisonnement interne ?
   const OllamaChunk({required this.text, this.isThinking = false});
 }
 
 // ─── Service ────────────────────────────────────────────────────────────────
 class OllamaService {
-  static Future<String> get _base async => await StorageService().getOllamaHost();
+  static Future<String> get _base async =>
+      await StorageService().getOllamaHost();
 
   static Future<void> _ensureAllowed() async {
     final storage = StorageService();
@@ -52,42 +82,45 @@ class OllamaService {
       await _ensureAllowed();
       final baseUrl = await _base;
       // Timeout plus long pour les réseaux distants/VPN
-      final res = await http.get(Uri.parse('$baseUrl/api/version'))
+      final res = await http
+          .get(Uri.parse('$baseUrl/api/version'))
           .timeout(versionTimeout);
-      
+
       if (res.statusCode != 200) {
         return OllamaStatus(
-          running: false, 
-          error: 'Erreur Serveur (HTTP ${res.statusCode})'
-        );
+            running: false, error: 'Erreur Serveur (HTTP ${res.statusCode})');
       }
 
       String? version;
-      try { 
-        version = (jsonDecode(res.body) as Map)['version']?.toString(); 
+      try {
+        version = (jsonDecode(res.body) as Map)['version']?.toString();
       } catch (_) {}
 
       List<String> models = [];
       if (includeModels) {
-        final mRes = await http.get(Uri.parse('$baseUrl/api/tags'))
-            .timeout(tagsTimeout);
+        final mRes =
+            await http.get(Uri.parse('$baseUrl/api/tags')).timeout(tagsTimeout);
         if (mRes.statusCode == 200) {
-          final list = ((jsonDecode(mRes.body) as Map)['models'] as List?) ?? [];
-          models = list.map((m) => m['name']?.toString() ?? '').where((s) => s.isNotEmpty).toSet().toList();
+          final list =
+              ((jsonDecode(mRes.body) as Map)['models'] as List?) ?? [];
+          models = list
+              .map((m) => m['name']?.toString() ?? '')
+              .where((s) => s.isNotEmpty)
+              .toSet()
+              .toList();
         }
       }
 
       return OllamaStatus(running: true, version: version, models: models);
     } on SocketException {
       return const OllamaStatus(
-        running: false, 
-        error: 'Connexion refusée (Vérifiez l\'IP/Port ou le VPN)'
-      );
+          running: false,
+          error: 'Connexion refusée (Vérifiez l\'IP/Port ou le VPN)');
     } on TimeoutException {
       return const OllamaStatus(
-        running: false, 
-        error: 'Délai d\'attente dépassé (Réseau trop lent ou Serveur injoignable)'
-      );
+          running: false,
+          error:
+              'Délai d\'attente dépassé (Réseau trop lent ou Serveur injoignable)');
     } catch (e) {
       return OllamaStatus(running: false, error: 'Erreur : ${e.toString()}');
     }
@@ -114,7 +147,8 @@ $context
 L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de manière précise et personnalisée.""";
     }
 
-    if (fullSystem.isNotEmpty) msgs.add({'role': 'system', 'content': fullSystem});
+    if (fullSystem.isNotEmpty)
+      msgs.add({'role': 'system', 'content': fullSystem});
     msgs.addAll(messages);
 
     final body = jsonEncode({
@@ -122,8 +156,8 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
       'messages': msgs,
       'stream': true,
       'options': {
-        'num_predict': 600,    // Reponses courtes
-        'temperature': 0.5,    // Moins creatif, plus direct
+        'num_predict': 600, // Reponses courtes
+        'temperature': 0.5, // Moins creatif, plus direct
         'top_k': 20,
         'top_p': 0.8,
       },
@@ -138,9 +172,10 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
     try {
       // Timeout étendu à 60s pour permettre le chargement du modèle en RAM la première fois
       final response = await client.send(req).timeout(
-        const Duration(seconds: 60),
-        onTimeout: () => throw TimeoutException('Ollama ne répond pas (timeout 60s). Le modèle est peut-être trop lourd ou en cours de chargement.'),
-      );
+            const Duration(seconds: 60),
+            onTimeout: () => throw TimeoutException(
+                'Ollama ne répond pas (timeout 60s). Le modèle est peut-être trop lourd ou en cours de chargement.'),
+          );
       if (response.statusCode != 200) {
         // Lire le corps d'erreur
         final errBody = await response.stream.bytesToString();
@@ -148,66 +183,78 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
       }
 
       // État du parsing thinking
-      bool inThink   = false;
+      bool inThink = false;
 
-      await for (final line in response.stream.transform(utf8.decoder).transform(const LineSplitter())) {
+      await for (final line in response.stream
+          .transform(utf8.decoder)
+          .transform(const LineSplitter())) {
         // Protection contre les flux malveillants sans saut de ligne (DoS)
         if (line.length > 50000) {
-          throw Exception('Buffer overflow: Réponse du serveur trop longue sans saut de ligne.');
+          throw Exception(
+              'Buffer overflow: Réponse du serveur trop longue sans saut de ligne.');
         }
 
         final trimmed = line.trim();
         if (trimmed.isEmpty) continue;
 
         Map<String, dynamic> data;
-        try { data = jsonDecode(trimmed) as Map<String, dynamic>; }
-        catch (_) { continue; }
+        try {
+          data = jsonDecode(trimmed) as Map<String, dynamic>;
+        } catch (_) {
+          continue;
+        }
 
-        final done    = data['done'] as bool? ?? false;
+        final done = data['done'] as bool? ?? false;
         final content = data['message']?['content']?.toString() ?? '';
 
         if (content.isNotEmpty) {
           // Traitement token par token des balises <think>
-            var buf = content;
+          var buf = content;
 
-            while (buf.isNotEmpty) {
-              if (!inThink) {
-                final tOpen = buf.indexOf('<think>');
-                if (tOpen == -1) {
-                  // Pas de balise — tout est réponse finale
-                  if (buf.isNotEmpty) yield OllamaChunk(text: buf, isThinking: false);
-                  buf = '';
-                } else {
-                  // Texte avant <think>
-                  if (tOpen > 0) yield OllamaChunk(text: buf.substring(0, tOpen), isThinking: false);
-                  inThink = true;
-                  buf = buf.substring(tOpen + 7);
-                }
+          while (buf.isNotEmpty) {
+            if (!inThink) {
+              final tOpen = buf.indexOf('<think>');
+              if (tOpen == -1) {
+                // Pas de balise — tout est réponse finale
+                if (buf.isNotEmpty)
+                  yield OllamaChunk(text: buf, isThinking: false);
+                buf = '';
               } else {
-                // On est dans <think>
-                final tClose = buf.indexOf('</think>');
-                if (tClose == -1) {
-                  // Tout le contenu est du thinking
-                  yield OllamaChunk(text: buf, isThinking: true);
-                  buf = '';
-                } else {
-                  // Thinking jusqu'à </think>
-                  if (tClose > 0) yield OllamaChunk(text: buf.substring(0, tClose), isThinking: true);
-                  inThink = false;
-                  buf = buf.substring(tClose + 8);
-                }
+                // Texte avant <think>
+                if (tOpen > 0)
+                  yield OllamaChunk(
+                      text: buf.substring(0, tOpen), isThinking: false);
+                inThink = true;
+                buf = buf.substring(tOpen + 7);
+              }
+            } else {
+              // On est dans <think>
+              final tClose = buf.indexOf('</think>');
+              if (tClose == -1) {
+                // Tout le contenu est du thinking
+                yield OllamaChunk(text: buf, isThinking: true);
+                buf = '';
+              } else {
+                // Thinking jusqu'à </think>
+                if (tClose > 0)
+                  yield OllamaChunk(
+                      text: buf.substring(0, tClose), isThinking: true);
+                inThink = false;
+                buf = buf.substring(tClose + 8);
               }
             }
           }
-
-          if (done) return;
         }
+
+        if (done) return;
+      }
     } finally {
       client.close();
     }
   }
 
-  static Future<List<QuizQuestion>?> generateQcm(String model, String content) async {
+  static Future<List<QuizQuestion>?> generateQcm(
+      String model, String content) async {
     try {
       await _ensureAllowed();
       final baseUrl = await _base;
@@ -216,12 +263,15 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
         'messages': [
           {
             'role': 'system',
-            'content': 'Génère un QCM de 3 questions basé sur le texte fourni. Format JSON STRICT : [{"question": "...", "choices": ["...", "..."], "correctIndex": 0, "explanation": "..."}]. Ne renvoie RIEN d\'autre que du JSON valide.'
+            'content':
+                'Génère un QCM de 3 questions basé sur le texte fourni. Format JSON STRICT : [{"question": "...", "choices": ["...", "..."], "correctIndex": 0, "explanation": "..."}]. Ne renvoie RIEN d\'autre que du JSON valide.'
           },
           {'role': 'user', 'content': content},
         ],
         'stream': false,
-        'options': {'temperature': 0.1}, // Faible créativité pour respecter le format JSON
+        'options': {
+          'temperature': 0.1
+        }, // Faible créativité pour respecter le format JSON
       });
 
       final req = http.Request('POST', Uri.parse('$baseUrl/api/chat'));
@@ -234,16 +284,18 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
         final str = await res.stream.bytesToString();
         final data = jsonDecode(str);
         final msg = data['message']['content'].toString();
-        
+
         String jsonStr = msg.trim();
         if (jsonStr.contains('```json')) {
           jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
         } else if (jsonStr.contains('```')) {
           jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
         }
-        
+
         final arr = jsonDecode(jsonStr) as List;
-        return arr.map((e) => QuizQuestion.fromMap(e as Map<String, dynamic>)).toList();
+        return arr
+            .map((e) => QuizQuestion.fromMap(e as Map<String, dynamic>))
+            .toList();
       } finally {
         client.close();
       }

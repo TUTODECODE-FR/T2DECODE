@@ -40,14 +40,17 @@ class StudentSubmission {
         'cheatReason': cheatReason,
       };
 
-  factory StudentSubmission.fromJson(Map<String, dynamic> json) => StudentSubmission(
+  factory StudentSubmission.fromJson(Map<String, dynamic> json) =>
+      StudentSubmission(
         id: json['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
         studentName: json['studentName'] ?? 'Élève anonyme',
         studentIp: json['studentIp'] ?? '127.0.0.1',
         courseTitle: json['courseTitle'] ?? 'Évaluation',
         score: (json['score'] as num?)?.toInt() ?? 0,
         total: (json['total'] as num?)?.toInt() ?? 20,
-        timestamp: json['timestamp'] != null ? DateTime.parse(json['timestamp']) : DateTime.now(),
+        timestamp: json['timestamp'] != null
+            ? DateTime.parse(json['timestamp'])
+            : DateTime.now(),
         cheatAlert: json['cheatAlert'] as bool? ?? false,
         cheatReason: json['cheatReason']?.toString() ?? '',
       );
@@ -56,12 +59,14 @@ class StudentSubmission {
 class ProfServerService {
   HttpServer? _server;
   final List<StudentSubmission> _submissions = [];
-  final StreamController<StudentSubmission> _submissionController = StreamController.broadcast();
+  final StreamController<StudentSubmission> _submissionController =
+      StreamController.broadcast();
   final List<Map<String, dynamic>> _publishedCourses = [];
 
   Stream<StudentSubmission> get onSubmission => _submissionController.stream;
   List<StudentSubmission> get submissions => List.unmodifiable(_submissions);
-  List<Map<String, dynamic>> get publishedCourses => List.unmodifiable(_publishedCourses);
+  List<Map<String, dynamic>> get publishedCourses =>
+      List.unmodifiable(_publishedCourses);
   bool get isRunning => _server != null;
 
   static Future<List<String>> getLocalIpAddresses() async {
@@ -113,8 +118,10 @@ class ProfServerService {
 
   void _handleRequest(HttpRequest request) async {
     request.response.headers.add('Access-Control-Allow-Origin', '*');
-    request.response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    request.response.headers.add('Access-Control-Allow-Headers', 'Content-Type');
+    request.response.headers
+        .add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    request.response.headers
+        .add('Access-Control-Allow-Headers', 'Content-Type');
 
     if (request.method == 'OPTIONS') {
       request.response.statusCode = HttpStatus.ok;
@@ -148,17 +155,21 @@ class ProfServerService {
 
         _jsonResponse(request, {
           'success': true,
-          'message': 'Copie déchiffrée et enregistrée avec succès par T2DECODE PROF.',
+          'message':
+              'Copie déchiffrée et enregistrée avec succès par T2DECODE PROF.',
         });
       } catch (e) {
-        _jsonResponse(request, {'success': false, 'error': e.toString()}, status: HttpStatus.badRequest);
+        _jsonResponse(request, {'success': false, 'error': e.toString()},
+            status: HttpStatus.badRequest);
       }
     } else {
-      _jsonResponse(request, {'error': 'Endpoint non reconnu'}, status: HttpStatus.notFound);
+      _jsonResponse(request, {'error': 'Endpoint non reconnu'},
+          status: HttpStatus.notFound);
     }
   }
 
-  void _jsonResponse(HttpRequest request, dynamic data, {int status = HttpStatus.ok}) {
+  void _jsonResponse(HttpRequest request, dynamic data,
+      {int status = HttpStatus.ok}) {
     request.response.statusCode = status;
     request.response.headers.contentType = ContentType.json;
     request.response.write(jsonEncode(data));
@@ -186,7 +197,8 @@ class ProfServerService {
         final content = await file.readAsString();
         final list = jsonDecode(content) as List;
         _submissions.clear();
-        _submissions.addAll(list.map((e) => StudentSubmission.fromJson(e as Map<String, dynamic>)));
+        _submissions.addAll(list
+            .map((e) => StudentSubmission.fromJson(e as Map<String, dynamic>)));
       }
     } catch (_) {}
   }
@@ -195,17 +207,22 @@ class ProfServerService {
   String exportPronoteCsv() {
     final buffer = StringBuffer();
     // En-tête officiel Pronote / LMS
-    buffer.write('Nom;Prénom;Note/20;Total;Pourcentage;Statut Anti-Triche;Date\n');
+    buffer.write(
+        'Nom;Prénom;Note/20;Total;Pourcentage;Statut Anti-Triche;Date\n');
     for (final s in _submissions) {
       final nameParts = s.studentName.trim().split(' ');
       final nom = nameParts.first;
-      final prenom = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : 'Élève';
+      final prenom =
+          nameParts.length > 1 ? nameParts.sublist(1).join(' ') : 'Élève';
       final note20 = (s.score / s.total * 20).toStringAsFixed(2);
       final pct = (s.score / s.total * 100).toStringAsFixed(1);
-      final cheatText = s.cheatAlert ? '⚠️ ALERTE TRICHE (${s.cheatReason})' : '✅ Valide';
-      final dateStr = '${s.timestamp.day.toString().padLeft(2, '0')}/${s.timestamp.month.toString().padLeft(2, '0')}/${s.timestamp.year} ${s.timestamp.hour}:${s.timestamp.minute}';
+      final cheatText =
+          s.cheatAlert ? '⚠️ ALERTE TRICHE (${s.cheatReason})' : '✅ Valide';
+      final dateStr =
+          '${s.timestamp.day.toString().padLeft(2, '0')}/${s.timestamp.month.toString().padLeft(2, '0')}/${s.timestamp.year} ${s.timestamp.hour}:${s.timestamp.minute}';
 
-      buffer.write('$nom;$prenom;$note20;${s.total};$pct%;$cheatText;$dateStr\n');
+      buffer
+          .write('$nom;$prenom;$note20;${s.total};$pct%;$cheatText;$dateStr\n');
     }
     return buffer.toString();
   }

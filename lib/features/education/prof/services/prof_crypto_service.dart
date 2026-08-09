@@ -29,7 +29,8 @@ class ProfCryptoService {
 
   /// Génère un jeton d'élève unique lié à son nom et son adresse MAC/IP
   String generateStudentToken(String studentName, String clientIp) {
-    final raw = '$studentName|$clientIp|$_serverSecretKey|${DateTime.now().millisecondsSinceEpoch}';
+    final raw =
+        '$studentName|$clientIp|$_serverSecretKey|${DateTime.now().millisecondsSinceEpoch}';
     final token = sha256.convert(utf8.encode(raw)).toString().substring(0, 16);
     _issuedStudentTokens['$studentName@$clientIp'] = token;
     return token;
@@ -54,7 +55,8 @@ class ProfCryptoService {
       final decodedStr = utf8.decode(base64.decode(encryptedBase64));
       return jsonDecode(decodedStr) as Map<String, dynamic>;
     } catch (e) {
-      throw Exception('Payload invalide ou corrompu (Tentative de falsification détectée)');
+      throw Exception(
+          'Payload invalide ou corrompu (Tentative de falsification détectée)');
     }
   }
 }

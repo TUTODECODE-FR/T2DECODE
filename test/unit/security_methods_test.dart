@@ -12,7 +12,8 @@ void main() {
 
   // Mocking the method channel for flutter_secure_storage
   const channel = MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
-  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
     return null; // Simulate empty storage
   });
 
@@ -20,7 +21,7 @@ void main() {
     test('AntiTamperingSystem coverage', () async {
       final checksums = await AntiTamperingSystem.computeCurrentChecksums();
       expect(checksums, isNotNull);
-      
+
       final isModified = await AntiTamperingSystem.isApplicationModified();
       expect(isModified, isNotNull);
 
@@ -29,10 +30,10 @@ void main() {
 
       final quick = await AntiTamperingService.quickIntegrityCheck();
       expect(quick, isNotNull);
-      
+
       final check = await AntiTamperingService.checkIntegrity();
       expect(check, isNotNull);
-      
+
       AntiTamperingService.clearCache();
     });
 
@@ -48,15 +49,16 @@ void main() {
 
       final report = await BuildVerificationService.generateBuildReport();
       expect(report, isNotNull);
-      
+
       final check = await BuildVerificationService.verifyBuild();
       expect(check, isNotNull);
-      
+
       BuildVerificationService.clearCache();
     });
 
     test('IdentityVerification coverage', () async {
-      final verification = await IdentityVerification.verifyApplicationIdentity();
+      final verification =
+          await IdentityVerification.verifyApplicationIdentity();
       expect(verification, isNotNull);
 
       final cert = await IdentityVerification.generateAuthenticityCertificate();
@@ -67,21 +69,23 @@ void main() {
 
       final seal = IdentityVerification.createAssociationSeal();
       expect(seal, isNotNull);
-      
+
       final isValidSeal = IdentityVerification.verifyDigitalSeal(seal);
       expect(isValidSeal, isTrue);
 
       final quick = await IdentityVerificationService.verifyIdentity();
       expect(quick, isNotNull);
 
-      final report = await IdentityVerificationService.generateVerificationReport();
+      final report =
+          await IdentityVerificationService.generateVerificationReport();
       expect(report, isNotNull);
-      
+
       IdentityVerificationService.clearCache();
     });
 
     test('SourceAuthentication coverage', () async {
-      final verification = await SourceAuthentication.verifySourceAuthenticity();
+      final verification =
+          await SourceAuthentication.verifySourceAuthenticity();
       expect(verification, isNotNull);
 
       final sig = await SourceAuthentication.generateCodeSignature();
@@ -92,10 +96,10 @@ void main() {
 
       final report = await SourceAuthService.generateSourceReport();
       expect(report, isNotNull);
-      
+
       final check = await SourceAuthService.verifySource();
       expect(check, isNotNull);
-      
+
       SourceAuthService.clearCache();
     });
   });

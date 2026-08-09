@@ -13,7 +13,10 @@ class CheatSheetRepository {
     final entries = <CheatSheetEntry>[];
 
     // 1. Charger les assets JSON officiels
-    for (final asset in ['assets/cheat_sheets.json', 'assets/netkit_cheat_sheets.json']) {
+    for (final asset in [
+      'assets/cheat_sheets.json',
+      'assets/netkit_cheat_sheets.json'
+    ]) {
       try {
         final data = await rootBundle.loadString(asset);
         final decoded = json.decode(data);
@@ -28,11 +31,13 @@ class CheatSheetRepository {
           try {
             entries.add(CheatSheetEntry.fromMap(item));
           } catch (e) {
-            if (kDebugMode) debugPrint('Skipping malformed entry in $asset: $e');
+            if (kDebugMode)
+              debugPrint('Skipping malformed entry in $asset: $e');
           }
         }
       } catch (e) {
-        if (kDebugMode) debugPrint('Error loading cheat sheets from $asset: $e');
+        if (kDebugMode)
+          debugPrint('Error loading cheat sheets from $asset: $e');
       }
     }
 
@@ -77,7 +82,8 @@ class CheatSheetRepository {
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_userEntriesKey);
-      final list = raw != null ? json.decode(raw) as List<dynamic> : <dynamic>[];
+      final list =
+          raw != null ? json.decode(raw) as List<dynamic> : <dynamic>[];
 
       // Évite les doublons (même title + category)
       list.removeWhere((m) =>
@@ -86,7 +92,8 @@ class CheatSheetRepository {
 
       list.add({
         'command': title,
-        'description': detail.length > 300 ? '${detail.substring(0, 297)}…' : detail,
+        'description':
+            detail.length > 300 ? '${detail.substring(0, 297)}…' : detail,
         'category': '★ $category',
         'dangerLevel': 0,
         'colorHex': 'F59E0B',

@@ -16,7 +16,7 @@ class RegexTesterScreen extends StatefulWidget {
 class _RegexTesterScreenState extends State<RegexTesterScreen> {
   final _regexController = TextEditingController();
   final _textController = TextEditingController();
-  
+
   bool _caseSensitive = true;
   bool _multiLine = true;
   String _error = '';
@@ -32,10 +32,11 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
         actions: [],
       );
     });
-    
+
     // Initial values
     _regexController.text = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}';
-    _textController.text = "Contactez-nous à support@tutodecode.org ou admin@t2decode.local pour plus d'infos.";
+    _textController.text =
+        "Contactez-nous à support@tutodecode.org ou admin@t2decode.local pour plus d'infos.";
     _evaluateRegex();
   }
 
@@ -44,7 +45,7 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
       _error = '';
       _matches = [];
       if (_regexController.text.isEmpty) return;
-      
+
       try {
         final regex = RegExp(
           _regexController.text,
@@ -65,8 +66,10 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
         children: [
           const TdcToolHeader(
             title: 'Testeur Regex',
-            description: 'Analysez et testez vos expressions régulières avec coloration syntaxique.',
-            howToUse: 'Saisissez votre expression régulière dans le champ du haut. Le texte à analyser se trouve en dessous. Le système extraira automatiquement toutes les correspondances (matches) en temps réel. Vous pouvez activer ou désactiver la sensibilité à la casse (Case Sensitive) et le mode multiligne.',
+            description:
+                'Analysez et testez vos expressions régulières avec coloration syntaxique.',
+            howToUse:
+                'Saisissez votre expression régulière dans le champ du haut. Le texte à analyser se trouve en dessous. Le système extraira automatiquement toutes les correspondances (matches) en temps réel. Vous pouvez activer ou désactiver la sensibilité à la casse (Case Sensitive) et le mode multiligne.',
           ),
           _buildRegexInput(),
           const SizedBox(height: 24),
@@ -92,33 +95,48 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
       decoration: BoxDecoration(
         color: TdcColors.surface,
         borderRadius: TdcRadius.md,
-        border: Border.all(color: _error.isNotEmpty ? TdcColors.danger : TdcColors.border),
+        border: Border.all(
+            color: _error.isNotEmpty ? TdcColors.danger : TdcColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Text('EXPRESSION RÉGULIÈRE', style: TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold)),
+              const Text('EXPRESSION RÉGULIÈRE',
+                  style: TextStyle(
+                      color: TdcColors.accent,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold)),
               const Spacer(),
               Row(
                 children: [
-                  const Text('Case Sensitive', style: TextStyle(color: TdcColors.textSecondary, fontSize: 12)),
+                  const Text('Case Sensitive',
+                      style: TextStyle(
+                          color: TdcColors.textSecondary, fontSize: 12)),
                   Switch(
                     value: _caseSensitive,
                     activeThumbColor: TdcColors.accent,
-                    onChanged: (v) { setState(() => _caseSensitive = v); _evaluateRegex(); },
+                    onChanged: (v) {
+                      setState(() => _caseSensitive = v);
+                      _evaluateRegex();
+                    },
                   ),
                 ],
               ),
               const SizedBox(width: 16),
               Row(
                 children: [
-                  const Text('Multiline', style: TextStyle(color: TdcColors.textSecondary, fontSize: 12)),
+                  const Text('Multiline',
+                      style: TextStyle(
+                          color: TdcColors.textSecondary, fontSize: 12)),
                   Switch(
                     value: _multiLine,
                     activeThumbColor: TdcColors.accent,
-                    onChanged: (v) { setState(() => _multiLine = v); _evaluateRegex(); },
+                    onChanged: (v) {
+                      setState(() => _multiLine = v);
+                      _evaluateRegex();
+                    },
                   ),
                 ],
               ),
@@ -128,7 +146,11 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
           TextField(
             controller: _regexController,
             onChanged: (_) => _evaluateRegex(),
-            style: const TextStyle(color: TdcColors.textPrimary, fontSize: 16, fontFamily: 'monospace', fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                color: TdcColors.textPrimary,
+                fontSize: 16,
+                fontFamily: 'monospace',
+                fontWeight: FontWeight.bold),
             decoration: const InputDecoration(
               prefixText: '/',
               suffixText: '/',
@@ -136,13 +158,16 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
               suffixStyle: TextStyle(color: TdcColors.textMuted, fontSize: 18),
               filled: true,
               fillColor: TdcColors.bg,
-              border: OutlineInputBorder(borderRadius: TdcRadius.sm, borderSide: BorderSide.none),
+              border: OutlineInputBorder(
+                  borderRadius: TdcRadius.sm, borderSide: BorderSide.none),
             ),
           ),
           if (_error.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Text(_error, style: const TextStyle(color: TdcColors.danger, fontSize: 12)),
+              child: Text(_error,
+                  style:
+                      const TextStyle(color: TdcColors.danger, fontSize: 12)),
             ),
         ],
       ),
@@ -160,7 +185,11 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('TEXTE À ANALYSER', style: TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold)),
+          const Text('TEXTE À ANALYSER',
+              style: TextStyle(
+                  color: TdcColors.accent,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Expanded(
             child: Stack(
@@ -186,7 +215,11 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
                   maxLines: null,
                   expands: true,
                   onChanged: (_) => _evaluateRegex(),
-                  style: const TextStyle(color: Colors.transparent, fontSize: 14, fontFamily: 'monospace', height: 1.5),
+                  style: const TextStyle(
+                      color: Colors.transparent,
+                      fontSize: 14,
+                      fontFamily: 'monospace',
+                      height: 1.5),
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(16),
@@ -204,7 +237,13 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
   TextSpan _buildHighlightedText() {
     final text = _textController.text;
     if (_matches.isEmpty || _error.isNotEmpty) {
-      return TextSpan(text: text, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 14, fontFamily: 'monospace', height: 1.5));
+      return TextSpan(
+          text: text,
+          style: const TextStyle(
+              color: TdcColors.textPrimary,
+              fontSize: 14,
+              fontFamily: 'monospace',
+              height: 1.5));
     }
 
     List<TextSpan> spans = [];
@@ -215,7 +254,11 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
       if (match.start > lastMatchEnd) {
         spans.add(TextSpan(
           text: text.substring(lastMatchEnd, match.start),
-          style: const TextStyle(color: TdcColors.textPrimary, fontSize: 14, fontFamily: 'monospace', height: 1.5),
+          style: const TextStyle(
+              color: TdcColors.textPrimary,
+              fontSize: 14,
+              fontFamily: 'monospace',
+              height: 1.5),
         ));
       }
 
@@ -237,7 +280,11 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
     if (lastMatchEnd < text.length) {
       spans.add(TextSpan(
         text: text.substring(lastMatchEnd),
-        style: const TextStyle(color: TdcColors.textPrimary, fontSize: 14, fontFamily: 'monospace', height: 1.5),
+        style: const TextStyle(
+            color: TdcColors.textPrimary,
+            fontSize: 14,
+            fontFamily: 'monospace',
+            height: 1.5),
       ));
     }
 
@@ -257,7 +304,11 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
         children: [
           Row(
             children: [
-              const Text('RÉSULTATS', style: TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold)),
+              const Text('RÉSULTATS',
+                  style: TextStyle(
+                      color: TdcColors.accent,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold)),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -265,43 +316,62 @@ class _RegexTesterScreenState extends State<RegexTesterScreen> {
                   color: TdcColors.accent.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text('${_matches.length} matches', style: const TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold)),
+                child: Text('${_matches.length} matches',
+                    style: const TextStyle(
+                        color: TdcColors.accent,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold)),
               ),
             ],
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: _matches.isEmpty 
-              ? const Center(child: Text('Aucune correspondance', style: TextStyle(color: TdcColors.textMuted)))
-              : ListView.builder(
-                  itemCount: _matches.length,
-                  itemBuilder: (context, i) {
-                    final m = _matches[i];
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: TdcColors.bg,
-                        border: Border.all(color: TdcColors.border),
-                        borderRadius: TdcRadius.sm,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Match #${i+1}', style: const TextStyle(color: TdcColors.textMuted, fontSize: 10)),
-                          const SizedBox(height: 4),
-                          Text(m.group(0) ?? '', style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13, fontFamily: 'monospace')),
-                          if (m.groupCount > 0) ...[
-                            const SizedBox(height: 8),
-                            const Text('Groupes:', style: TextStyle(color: TdcColors.textSecondary, fontSize: 10)),
-                            for (int j = 1; j <= m.groupCount; j++)
-                              Text(' $j: ${m.group(j)}', style: const TextStyle(color: TdcColors.info, fontSize: 11, fontFamily: 'monospace')),
-                          ]
-                        ],
-                      ),
-                    );
-                  },
-                ),
+            child: _matches.isEmpty
+                ? const Center(
+                    child: Text('Aucune correspondance',
+                        style: TextStyle(color: TdcColors.textMuted)))
+                : ListView.builder(
+                    itemCount: _matches.length,
+                    itemBuilder: (context, i) {
+                      final m = _matches[i];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: TdcColors.bg,
+                          border: Border.all(color: TdcColors.border),
+                          borderRadius: TdcRadius.sm,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Match #${i + 1}',
+                                style: const TextStyle(
+                                    color: TdcColors.textMuted, fontSize: 10)),
+                            const SizedBox(height: 4),
+                            Text(m.group(0) ?? '',
+                                style: const TextStyle(
+                                    color: TdcColors.textPrimary,
+                                    fontSize: 13,
+                                    fontFamily: 'monospace')),
+                            if (m.groupCount > 0) ...[
+                              const SizedBox(height: 8),
+                              const Text('Groupes:',
+                                  style: TextStyle(
+                                      color: TdcColors.textSecondary,
+                                      fontSize: 10)),
+                              for (int j = 1; j <= m.groupCount; j++)
+                                Text(' $j: ${m.group(j)}',
+                                    style: const TextStyle(
+                                        color: TdcColors.info,
+                                        fontSize: 11,
+                                        fontFamily: 'monospace')),
+                            ]
+                          ],
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),

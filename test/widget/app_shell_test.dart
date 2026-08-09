@@ -31,7 +31,7 @@ void main() {
     );
 
     await tester.pump();
-    
+
     expect(find.byType(AppShell), findsOneWidget);
   });
 }

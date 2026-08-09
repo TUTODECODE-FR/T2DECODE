@@ -10,7 +10,6 @@ String numToIp(int num) {
   return IpHelper.numToIp(num);
 }
 
-
 void main() {
   group('IP Calculator - Standard subnets', () {
     test('/24 class C', () {
@@ -93,8 +92,10 @@ void main() {
     });
 
     test('invalid mask throws', () {
-      expect(() => calculateSubnet('192.168.1.1', 33), throwsA(isA<FormatException>()));
-      expect(() => calculateSubnet('192.168.1.1', -1), throwsA(isA<FormatException>()));
+      expect(() => calculateSubnet('192.168.1.1', 33),
+          throwsA(isA<FormatException>()));
+      expect(() => calculateSubnet('192.168.1.1', -1),
+          throwsA(isA<FormatException>()));
     });
 
     test('invalid IP throws', () {

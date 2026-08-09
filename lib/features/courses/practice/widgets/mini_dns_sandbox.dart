@@ -11,7 +11,8 @@ class MiniDnsSandbox extends StatefulWidget {
 }
 
 class _MiniDnsSandboxState extends State<MiniDnsSandbox> {
-  final TextEditingController _domain = TextEditingController(text: 'example.com');
+  final TextEditingController _domain =
+      TextEditingController(text: 'example.com');
   int _step = 0;
 
   @override
@@ -39,23 +40,31 @@ class _MiniDnsSandboxState extends State<MiniDnsSandbox> {
         children: [
           Row(
             children: [
-              const Icon(Icons.dns_outlined, size: 16, color: TdcColors.textMuted),
+              const Icon(Icons.dns_outlined,
+                  size: 16, color: TdcColors.textMuted),
               const SizedBox(width: 8),
               const Expanded(
                 child: Text(
                   'Mini‑sandbox (simulation locale)',
-                  style: TextStyle(color: TdcColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w800),
+                  style: TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: TdcColors.info.withValues(alpha: 0.12),
-                  border: Border.all(color: TdcColors.info.withValues(alpha: 0.25)),
+                  border:
+                      Border.all(color: TdcColors.info.withValues(alpha: 0.25)),
                 ),
                 child: const Text(
                   'DNS',
-                  style: TextStyle(color: TdcColors.info, fontSize: 11, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: TdcColors.info,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -63,12 +72,17 @@ class _MiniDnsSandboxState extends State<MiniDnsSandbox> {
           const SizedBox(height: 10),
           TextField(
             controller: _domain,
-            style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 12),
+            style: const TextStyle(
+                color: TdcColors.textPrimary,
+                fontFamily: 'monospace',
+                fontSize: 12),
             decoration: const InputDecoration(
               labelText: 'Domaine',
               labelStyle: TextStyle(color: TdcColors.textMuted),
-              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: TdcColors.border)),
-              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: TdcColors.accent)),
+              enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: TdcColors.border)),
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: TdcColors.accent)),
             ),
             onChanged: (_) => setState(() => _step = 0),
           ),
@@ -86,7 +100,10 @@ class _MiniDnsSandboxState extends State<MiniDnsSandbox> {
               const SizedBox(width: 10),
               Text(
                 '${_step + 1}/${steps.length}',
-                style: const TextStyle(color: TdcColors.textMuted, fontSize: 11, fontFamily: 'monospace'),
+                style: const TextStyle(
+                    color: TdcColors.textMuted,
+                    fontSize: 11,
+                    fontFamily: 'monospace'),
               ),
             ],
           ),
@@ -100,7 +117,8 @@ class _MiniDnsSandboxState extends State<MiniDnsSandbox> {
             ),
             child: Text(
               steps[_step],
-              style: const TextStyle(color: TdcColors.textPrimary, fontSize: 12, height: 1.35),
+              style: const TextStyle(
+                  color: TdcColors.textPrimary, fontSize: 12, height: 1.35),
             ),
           ),
           const SizedBox(height: 10),
@@ -113,16 +131,20 @@ class _MiniDnsSandboxState extends State<MiniDnsSandbox> {
               ),
               const Spacer(),
               ElevatedButton.icon(
-                onPressed: _step == steps.length - 1 ? null : () => setState(() => _step++),
+                onPressed: _step == steps.length - 1
+                    ? null
+                    : () => setState(() => _step++),
                 icon: const Icon(Icons.chevron_right, size: 18),
                 label: const Text('Suivant'),
-                style: ElevatedButton.styleFrom(backgroundColor: TdcColors.accent),
+                style:
+                    ElevatedButton.styleFrom(backgroundColor: TdcColors.accent),
               ),
             ],
           ),
           const Text(
             'But pédagogique : visualiser la résolution DNS. Aucune requête réseau n’est envoyée ici.',
-            style: TextStyle(color: TdcColors.textMuted, fontSize: 11, height: 1.3),
+            style: TextStyle(
+                color: TdcColors.textMuted, fontSize: 11, height: 1.3),
           ),
         ],
       ),

@@ -9,18 +9,18 @@ import 'package:tutodecode/features/courses/models/gamification_models.dart';
 
 class GamificationProvider with ChangeNotifier {
   final StorageService _storage = StorageService();
-  
+
   UserProfile _profile = UserProfile(
     username: 'Utilisateur',
     lastActivityDate: DateTime.now(),
   );
-  
+
   List<Achievement> _allAchievements = [];
   List<SkillTree> _skillTrees = [];
   List<Challenge> _availableChallenges = [];
   List<LearningPath> _learningPaths = [];
   List<LeaderboardEntry> _leaderboard = [];
-  
+
   bool _loaded = false;
 
   // Getters
@@ -32,13 +32,13 @@ class GamificationProvider with ChangeNotifier {
   List<LeaderboardEntry> get leaderboard => _leaderboard;
   bool get loaded => _loaded;
 
-  List<Achievement> get unlockedAchievements => 
+  List<Achievement> get unlockedAchievements =>
       _allAchievements.where((a) => a.isUnlocked).toList();
-  
-  List<Achievement> get availableAchievements => 
+
+  List<Achievement> get availableAchievements =>
       _allAchievements.where((a) => !a.isUnlocked).toList();
-  
-  List<Achievement> get inProgressAchievements => 
+
+  List<Achievement> get inProgressAchievements =>
       _allAchievements.where((a) => a.isInProgress).toList();
 
   GamificationProvider() {
@@ -52,22 +52,22 @@ class GamificationProvider with ChangeNotifier {
 
       // Charger le profil utilisateur
       _profile = await _storage.loadUserProfile();
-      
+
       // Charger les achievements
       await _loadAchievements();
-      
+
       // Charger les arbres de compétences
       await _loadSkillTrees();
-      
+
       // Charger les défis quotidiens/semaine
       await _loadChallenges();
-      
+
       // Charger les parcours d'apprentissage
       await _loadLearningPaths();
-      
+
       // Charger le classement
       await _loadLeaderboard();
-      
+
       _loaded = true;
       notifyListeners();
     } catch (e) {
@@ -98,7 +98,11 @@ class GamificationProvider with ChangeNotifier {
         color: Colors.green.shade700,
         points: 500,
         category: 'linux',
-        requirements: ['linux-basics:intro', 'linux-basics:navigation', 'linux-basics:files'],
+        requirements: [
+          'linux-basics:intro',
+          'linux-basics:navigation',
+          'linux-basics:files'
+        ],
         totalSteps: 3,
       ),
       const Achievement(
@@ -121,7 +125,11 @@ class GamificationProvider with ChangeNotifier {
         color: Colors.blue,
         points: 300,
         category: 'network',
-        requirements: ['network-basics:tcp_ip', 'network-basics:dns', 'network-basics:ports'],
+        requirements: [
+          'network-basics:tcp_ip',
+          'network-basics:dns',
+          'network-basics:ports'
+        ],
         totalSteps: 3,
       ),
       Achievement(
@@ -154,7 +162,10 @@ class GamificationProvider with ChangeNotifier {
         color: Colors.red.shade700,
         points: 1000,
         category: 'security',
-        requirements: ['security-advanced:pentest', 'security-advanced:forensics'],
+        requirements: [
+          'security-advanced:pentest',
+          'security-advanced:forensics'
+        ],
         totalSteps: 2,
       ),
 
@@ -299,7 +310,11 @@ class GamificationProvider with ChangeNotifier {
         description: 'Maîtrisez 3 chapitres réseau cette semaine',
         pointsReward: 500,
         deadline: now.add(const Duration(days: 7)),
-        requiredChapters: ['network-basics:tcp_ip', 'network-basics:dns', 'network-basics:ports'],
+        requiredChapters: [
+          'network-basics:tcp_ip',
+          'network-basics:dns',
+          'network-basics:ports'
+        ],
         difficulty: 2,
         category: 'network',
       ),
@@ -309,7 +324,11 @@ class GamificationProvider with ChangeNotifier {
         description: 'Complétez le parcours cybersécurité complet',
         pointsReward: 1500,
         deadline: now.add(const Duration(days: 30)),
-        requiredChapters: ['security-basics:owasp', 'security-basics:encryption', 'security-advanced:pentest'],
+        requiredChapters: [
+          'security-basics:owasp',
+          'security-basics:encryption',
+          'security-advanced:pentest'
+        ],
         difficulty: 4,
         category: 'security',
       ),
@@ -380,22 +399,22 @@ class GamificationProvider with ChangeNotifier {
   // Méthodes de progression
   Future<void> completeChapter(String courseId, String chapterId) async {
     final chapterKey = '$courseId:$chapterId';
-    
+
     if (!_profile.completedChapters.contains(chapterKey)) {
       // Mettre à jour le profil
       final newCompletedChapters = [..._profile.completedChapters, chapterKey];
       final newPoints = _profile.totalPoints + 50; // Points par chapitre
       final newExp = _profile.experiencePoints + 50;
-      
+
       // Calculer le nouveau niveau
       int newLevel = _profile.currentLevel;
       String newRank = _profile.rank;
-      
+
       if (newExp >= newLevel * 1000) {
         newLevel++;
         newRank = _calculateRank(newLevel);
       }
-      
+
       _profile = _profile.copyWith(
         completedChapters: newCompletedChapters,
         totalPoints: newPoints,
@@ -404,19 +423,19 @@ class GamificationProvider with ChangeNotifier {
         rank: newRank,
         lastActivityDate: DateTime.now(),
       );
-      
+
       // Mettre à jour les achievements
       await _updateAchievements(chapterKey);
-      
+
       // Mettre à jour les défis
       await _updateChallenges(chapterKey);
-      
+
       // Mettre à jour les parcours
       await _updateLearningPaths(courseId, chapterId);
-      
+
       // Sauvegarder
       await _storage.saveUserProfile(_profile);
-      
+
       notifyListeners();
     }
   }
@@ -432,11 +451,13 @@ class GamificationProvider with ChangeNotifier {
   Future<void> _updateAchievements(String chapterKey) async {
     for (int i = 0; i < _allAchievements.length; i++) {
       final achievement = _allAchievements[i];
-      
-      if (!achievement.isUnlocked && achievement.requirements.contains(chapterKey)) {
-        final newProgress = achievement.progress + (100 / achievement.requirements.length);
+
+      if (!achievement.isUnlocked &&
+          achievement.requirements.contains(chapterKey)) {
+        final newProgress =
+            achievement.progress + (100 / achievement.requirements.length);
         final newCurrentStep = achievement.currentStep + 1;
-        
+
         Achievement updated;
         if (newProgress >= 100) {
           updated = achievement.copyWith(
@@ -450,7 +471,7 @@ class GamificationProvider with ChangeNotifier {
             currentStep: newCurrentStep,
           );
         }
-        
+
         _allAchievements[i] = updated;
       }
     }
@@ -459,10 +480,12 @@ class GamificationProvider with ChangeNotifier {
   Future<void> _updateChallenges(String chapterKey) async {
     for (int i = 0; i < _availableChallenges.length; i++) {
       final challenge = _availableChallenges[i];
-      
-      if (!challenge.isCompleted && challenge.requiredChapters.contains(chapterKey)) {
-        final updatedRequirements = List<String>.from(challenge.requiredChapters)..remove(chapterKey);
-        
+
+      if (!challenge.isCompleted &&
+          challenge.requiredChapters.contains(chapterKey)) {
+        final updatedRequirements =
+            List<String>.from(challenge.requiredChapters)..remove(chapterKey);
+
         if (updatedRequirements.isEmpty) {
           // Défi complété
           _availableChallenges[i] = challenge.copyWith(
@@ -470,11 +493,12 @@ class GamificationProvider with ChangeNotifier {
             completedAt: DateTime.now(),
             requiredChapters: updatedRequirements,
           );
-          
+
           // Ajouter les points du défi
           _profile = _profile.copyWith(
             totalPoints: _profile.totalPoints + challenge.pointsReward,
-            experiencePoints: _profile.experiencePoints + challenge.pointsReward,
+            experiencePoints:
+                _profile.experiencePoints + challenge.pointsReward,
           );
         } else {
           _availableChallenges[i] = challenge.copyWith(
@@ -488,17 +512,17 @@ class GamificationProvider with ChangeNotifier {
   Future<void> _updateLearningPaths(String courseId, String chapterId) async {
     for (int i = 0; i < _learningPaths.length; i++) {
       final path = _learningPaths[i];
-      
+
       if (path.courseIds.contains(courseId) && !path.isCompleted) {
         // Calculer le progrès (simplifié)
         final completedInPath = _profile.completedChapters
             .where((c) => c.startsWith('$courseId:'))
             .length;
-        
+
         final totalInPath = path.courseIds.length * 3; // ~3 chapitres par cours
-        
+
         final newProgress = completedInPath / totalInPath;
-        
+
         LearningPath updated;
         if (newProgress >= 1.0) {
           updated = path.copyWith(
@@ -509,7 +533,7 @@ class GamificationProvider with ChangeNotifier {
         } else {
           updated = path.copyWith(progress: newProgress);
         }
-        
+
         _learningPaths[i] = updated;
       }
     }
@@ -532,7 +556,7 @@ class GamificationProvider with ChangeNotifier {
 
   Map<String, double> getProgressByCategory() {
     final Map<String, double> progress = {};
-    
+
     for (final category in ['linux', 'network', 'security', 'development']) {
       final categoryAchievements = getAchievementsByCategory(category);
       if (categoryAchievements.isNotEmpty) {
@@ -540,7 +564,7 @@ class GamificationProvider with ChangeNotifier {
         progress[category] = unlocked / categoryAchievements.length;
       }
     }
-    
+
     return progress;
   }
 
@@ -549,7 +573,7 @@ class GamificationProvider with ChangeNotifier {
       username: 'Utilisateur',
       lastActivityDate: DateTime.now(),
     );
-    
+
     // Reset achievements
     for (int i = 0; i < _allAchievements.length; i++) {
       _allAchievements[i] = _allAchievements[i].copyWith(
@@ -558,7 +582,7 @@ class GamificationProvider with ChangeNotifier {
         unlockedAt: null,
       );
     }
-    
+
     await _storage.saveUserProfile(_profile);
     notifyListeners();
   }

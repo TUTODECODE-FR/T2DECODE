@@ -9,14 +9,16 @@ class PhantomDiagnosticScreen extends StatefulWidget {
   const PhantomDiagnosticScreen({super.key});
 
   @override
-  State<PhantomDiagnosticScreen> createState() => _PhantomDiagnosticScreenState();
+  State<PhantomDiagnosticScreen> createState() =>
+      _PhantomDiagnosticScreenState();
 }
 
 class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
   final TextEditingController _passphraseController = TextEditingController();
-  
+
   bool _isLoading = false;
-  String _statusLog = "T2C-Phantom Diagnostic Console\nAppuyez sur 'Connecter' pour analyser le cache local.\n";
+  String _statusLog =
+      "T2C-Phantom Diagnostic Console\nAppuyez sur 'Connecter' pour analyser le cache local.\n";
 
   @override
   void initState() {
@@ -29,6 +31,7 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
       );
     });
   }
+
   void _log(String message) {
     if (!mounted) return;
     setState(() {
@@ -39,7 +42,8 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
   Future<void> _connectAndLoad() async {
     final passphrase = _passphraseController.text;
     if (passphrase.isEmpty) {
-      _log("Clé de coffre vide. Tentative de déchiffrement via la clé machine locale...");
+      _log(
+          "Clé de coffre vide. Tentative de déchiffrement via la clé machine locale...");
     }
 
     setState(() {
@@ -50,9 +54,10 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
     try {
       final coursesProvider = context.read<CoursesProvider>();
       await coursesProvider.loadFromPhantomCache(passphrase);
-      
+
       if (coursesProvider.errorMessage == null) {
-        _log("Succès: Cache déchiffré et cours chargés avec succès (Zero-Trust validé).");
+        _log(
+            "Succès: Cache déchiffré et cours chargés avec succès (Zero-Trust validé).");
       } else {
         _log("Échec: ${coursesProvider.errorMessage}");
       }
@@ -66,6 +71,7 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
       }
     }
   }
+
   @override
   void dispose() {
     _passphraseController.dispose();
@@ -73,36 +79,45 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
   }
 
   Future<void> _editPath(BuildContext context, PhantomProvider phantom) async {
-    final TextEditingController pathCtrl = TextEditingController(text: phantom.activePath);
+    final TextEditingController pathCtrl =
+        TextEditingController(text: phantom.activePath);
     final newPath = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: TdcColors.surface,
-        title: const Text('Modifier le chemin du cache', style: TextStyle(color: TdcColors.accent, fontFamily: 'Courier')),
+        title: const Text('Modifier le chemin du cache',
+            style: TextStyle(color: TdcColors.accent, fontFamily: 'Courier')),
         content: TextField(
           controller: pathCtrl,
-          style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'Courier'),
+          style: const TextStyle(
+              color: TdcColors.textPrimary, fontFamily: 'Courier'),
           decoration: InputDecoration(
             labelText: 'Chemin absolu',
             labelStyle: const TextStyle(color: TdcColors.textSecondary),
             hintText: phantom.defaultPath,
             hintStyle: const TextStyle(color: TdcColors.textMuted),
-            enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: TdcColors.border)),
-            focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: TdcColors.accent)),
+            enabledBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: TdcColors.border)),
+            focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: TdcColors.accent)),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('ANNULER', style: TextStyle(color: TdcColors.textMuted)),
+            child: const Text('ANNULER',
+                style: TextStyle(color: TdcColors.textMuted)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, ''),
-            child: const Text('PAR DÉFAUT', style: TextStyle(color: TdcColors.textMuted)),
+            child: const Text('PAR DÉFAUT',
+                style: TextStyle(color: TdcColors.textMuted)),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, pathCtrl.text),
-            style: ElevatedButton.styleFrom(backgroundColor: TdcColors.accent, foregroundColor: TdcColors.bg),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: TdcColors.accent,
+                foregroundColor: TdcColors.bg),
             child: const Text('SAUVEGARDER'),
           ),
         ],
@@ -135,10 +150,11 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  cacheExists 
-                    ? "T2C-Phantom est en cours d'exécution (Cache: $path)"
-                    : "Phantom non détecté (Cache introuvable à $path)",
-                  style: const TextStyle(color: TdcColors.textSecondary, fontFamily: 'Courier'),
+                  cacheExists
+                      ? "T2C-Phantom est en cours d'exécution (Cache: $path)"
+                      : "Phantom non détecté (Cache introuvable à $path)",
+                  style: const TextStyle(
+                      color: TdcColors.textSecondary, fontFamily: 'Courier'),
                 ),
               ),
               IconButton(
@@ -153,7 +169,8 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
           TextField(
             controller: _passphraseController,
             obscureText: true,
-            style: const TextStyle(color: TdcColors.accent, fontFamily: 'Courier'),
+            style:
+                const TextStyle(color: TdcColors.accent, fontFamily: 'Courier'),
             decoration: const InputDecoration(
               labelText: 'Clé de coffre / Passphrase Phantom',
               labelStyle: TextStyle(color: TdcColors.textSecondary),
@@ -175,9 +192,15 @@ class _PhantomDiagnosticScreenState extends State<PhantomDiagnosticScreen> {
               foregroundColor: TdcColors.bg,
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
-            child: _isLoading 
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: TdcColors.bg, strokeWidth: 2))
-              : const Text("DÉCHIFFRER & SYNCHRONISER", style: TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.bold)),
+            child: _isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                        color: TdcColors.bg, strokeWidth: 2))
+                : const Text("DÉCHIFFRER & SYNCHRONISER",
+                    style: TextStyle(
+                        fontFamily: 'Courier', fontWeight: FontWeight.bold)),
           ),
           const SizedBox(height: 24),
           Expanded(

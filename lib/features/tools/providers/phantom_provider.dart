@@ -7,8 +7,9 @@ import 'package:tutodecode/core/security/phantom_trust_validator.dart';
 import 'package:tutodecode/core/services/storage_service.dart';
 
 class PhantomProvider extends ChangeNotifier {
-  final PhantomCacheService _phantomService = PhantomCacheService(PhantomTrustValidator());
-  
+  final PhantomCacheService _phantomService =
+      PhantomCacheService(PhantomTrustValidator());
+
   bool _isRunning = false;
   bool _hasChecked = false;
   Timer? _pollingTimer;
@@ -22,7 +23,8 @@ class PhantomProvider extends ChangeNotifier {
   PhantomProvider() {
     _initCheck();
     // Vérification périodique toutes les 5 secondes
-    _pollingTimer = Timer.periodic(const Duration(seconds: 5), (_) => _checkPhantomStatus());
+    _pollingTimer = Timer.periodic(
+        const Duration(seconds: 5), (_) => _checkPhantomStatus());
   }
 
   Future<void> _initCheck() async {
@@ -49,7 +51,7 @@ class PhantomProvider extends ChangeNotifier {
     try {
       final dir = Directory(_phantomService.activeCachePath);
       final exists = await dir.exists();
-      
+
       if (_isRunning != exists || !_hasChecked) {
         _isRunning = exists;
         _hasChecked = true;

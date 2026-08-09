@@ -22,16 +22,16 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
   final TextEditingController _targetController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  
+
   // États des simulations
   bool _isScanning = false;
   bool _isBruteForcing = false;
   bool _isAnalyzing = false;
-  
+
   // Données de simulation
   List<Vulnerability> _vulnerabilities = [];
   List<LogEntry> _logEntries = [];
-  
+
   // Métriques de sécurité
   final int _threatLevel = 0;
   final int _blockedAttacks = 0;
@@ -74,7 +74,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
         cve: 'CVE-EXEMPLE-0002',
       ),
     ];
-    
+
     _logEntries = [
       LogEntry(
         timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
@@ -98,7 +98,8 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
             children: [
               Row(
                 children: [
-                  const Icon(Icons.security, color: TdcColors.security, size: 24),
+                  const Icon(Icons.security,
+                      color: TdcColors.security, size: 24),
                   const SizedBox(width: 12),
                   const Text(
                     'SÉCURITÉ RÉSEAU & INFRA',
@@ -111,11 +112,13 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                   ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: TdcColors.security.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: TdcColors.security.withValues(alpha: 0.3)),
+                      border: Border.all(
+                          color: TdcColors.security.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -159,7 +162,8 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                         title: 'Score Sécurité',
                         value: '${_securityScore.toStringAsFixed(1)}%',
                         icon: Icons.shield,
-                        color: _getSecurityColor('${_securityScore.toStringAsFixed(1)}%'),
+                        color: _getSecurityColor(
+                            '${_securityScore.toStringAsFixed(1)}%'),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -169,7 +173,9 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                         title: 'Menace',
                         value: '$_threatLevel/10',
                         icon: Icons.warning,
-                        color: _threatLevel > 5 ? TdcColors.security : TdcColors.warning,
+                        color: _threatLevel > 5
+                            ? TdcColors.security
+                            : TdcColors.warning,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -198,7 +204,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
             ],
           ),
         ),
-        
+
         // Tabs
         Container(
           color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
@@ -216,7 +222,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
             ],
           ),
         ),
-        
+
         // Content
         Expanded(
           child: TabBarView(
@@ -247,7 +253,6 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
       ],
     );
   }
-
 
   Color _getSecurityColor(String value) {
     if (value.contains('%')) {
@@ -296,12 +301,14 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                       ),
                       const SizedBox(width: 12),
                       ElevatedButton.icon(
-                        onPressed: _isScanning ? null : _performVulnerabilityScan,
-                        icon: _isScanning 
+                        onPressed:
+                            _isScanning ? null : _performVulnerabilityScan,
+                        icon: _isScanning
                             ? const SizedBox(
                                 width: 16,
                                 height: 16,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
                               )
                             : const Icon(Icons.search),
                         label: Text(_isScanning ? 'Scan...' : 'Scanner'),
@@ -334,9 +341,9 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Résultats du scan
           Expanded(
             child: Card(
@@ -359,11 +366,15 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                         ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: _getVulnerabilityCountColor().withValues(alpha: 0.1),
+                            color: _getVulnerabilityCountColor()
+                                .withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: _getVulnerabilityCountColor().withValues(alpha: 0.3)),
+                            border: Border.all(
+                                color: _getVulnerabilityCountColor()
+                                    .withValues(alpha: 0.3)),
                           ),
                           child: Text(
                             '${_vulnerabilities.length} vulnérabilités',
@@ -402,7 +413,9 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
       decoration: BoxDecoration(
         color: _getSeverityColor(vulnerability.severity).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: _getSeverityColor(vulnerability.severity).withValues(alpha: 0.3)),
+        border: Border.all(
+            color: _getSeverityColor(vulnerability.severity)
+                .withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -436,12 +449,12 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                 ),
               ),
               Text(
-                  'CVSS: ${vulnerability.cvss}',
-                  style: const TextStyle(
-                    color: TdcColors.textSecondary,
-                    fontSize: 11,
-                  ),
+                'CVSS: ${vulnerability.cvss}',
+                style: const TextStyle(
+                  color: TdcColors.textSecondary,
+                  fontSize: 11,
                 ),
+              ),
             ],
           ),
           const SizedBox(height: 8),
@@ -507,14 +520,16 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                       const SizedBox(width: 12),
                       ElevatedButton.icon(
                         onPressed: _isBruteForcing ? null : _startBruteForce,
-                        icon: _isBruteForcing 
+                        icon: _isBruteForcing
                             ? const SizedBox(
                                 width: 16,
                                 height: 16,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
                               )
                             : const Icon(Icons.lock_open),
-                        label: Text(_isBruteForcing ? 'Test...' : 'Brute Force'),
+                        label:
+                            Text(_isBruteForcing ? 'Test...' : 'Brute Force'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: TdcColors.security,
                         ),
@@ -551,9 +566,9 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Résultats du Pentest
           Expanded(
             child: Card(
@@ -589,20 +604,25 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
   }
 
   Widget _buildPentestResult(int index) {
-    final attempts = ['admin:123456', 'root:password', 'user:user', 'test:test'];
+    final attempts = [
+      'admin:123456',
+      'root:password',
+      'user:user',
+      'test:test'
+    ];
     final attempt = attempts[index % attempts.length];
     final success = index == 3; // Simuler un succès
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: success 
+        color: success
             ? TdcColors.system.withValues(alpha: 0.1)
             : TdcColors.border.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: success 
+          color: success
               ? TdcColors.system.withValues(alpha: 0.3)
               : TdcColors.border.withValues(alpha: 0.3),
         ),
@@ -699,11 +719,12 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                     children: [
                       ElevatedButton.icon(
                         onPressed: _isAnalyzing ? null : _startIdsAnalysis,
-                        icon: _isAnalyzing 
+                        icon: _isAnalyzing
                             ? const SizedBox(
                                 width: 16,
                                 height: 16,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
                               )
                             : const Icon(Icons.analytics),
                         label: Text(_isAnalyzing ? 'Analyse...' : 'Analyser'),
@@ -717,9 +738,9 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Logs de sécurité
           Expanded(
             child: Card(
@@ -742,11 +763,14 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
                         ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: TdcColors.security.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: TdcColors.security.withValues(alpha: 0.3)),
+                            border: Border.all(
+                                color:
+                                    TdcColors.security.withValues(alpha: 0.3)),
                           ),
                           child: const Text(
                             'DÉMO',
@@ -785,7 +809,8 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
       decoration: BoxDecoration(
         color: _getLogLevelColor(log.level).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: _getLogLevelColor(log.level).withValues(alpha: 0.3)),
+        border: Border.all(
+            color: _getLogLevelColor(log.level).withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -858,9 +883,9 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
   // Méthodes de simulation
   Future<void> _performVulnerabilityScan() async {
     setState(() => _isScanning = true);
-    
+
     await Future.delayed(const Duration(seconds: 3));
-    
+
     final newVulnerabilities = [
       Vulnerability(
         type: 'Directory Traversal',
@@ -879,7 +904,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
         cve: 'CVE-EXEMPLE-0004',
       ),
     ];
-    
+
     setState(() {
       _isScanning = false;
       _vulnerabilities.addAll(newVulnerabilities);
@@ -889,19 +914,19 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
 
   Future<void> _startBruteForce() async {
     setState(() => _isBruteForcing = true);
-    
+
     await Future.delayed(const Duration(seconds: 5));
-    
+
     setState(() => _isBruteForcing = false);
   }
 
   Future<void> _startIdsAnalysis() async {
     setState(() => _isAnalyzing = true);
-    
+
     // Simuler l'analyse et l'ajout de logs
     for (int i = 0; i < 5; i++) {
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       final log = LogEntry(
         timestamp: DateTime.now(),
         level: ['INFO', 'WARNING', 'CRITICAL'][Random.secure().nextInt(3)],
@@ -909,7 +934,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
         message: 'Activité réseau suspecte détectée',
         ip: '192.168.1.${Random.secure().nextInt(254) + 1}',
       );
-      
+
       setState(() {
         _logEntries.insert(0, log);
         if (_logEntries.length > 50) {
@@ -917,17 +942,22 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
         }
       });
     }
-    
+
     setState(() => _isAnalyzing = false);
   }
 
   Color _getSeverityColor(String severity) {
     switch (severity) {
-      case 'Critical': return TdcColors.security;
-      case 'High': return TdcColors.crypto;
-      case 'Medium': return TdcColors.warning;
-      case 'Low': return TdcColors.network;
-      default: return TdcColors.border;
+      case 'Critical':
+        return TdcColors.security;
+      case 'High':
+        return TdcColors.crypto;
+      case 'Medium':
+        return TdcColors.warning;
+      case 'Low':
+        return TdcColors.network;
+      default:
+        return TdcColors.border;
     }
   }
 
@@ -939,10 +969,14 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
 
   Color _getLogLevelColor(String level) {
     switch (level) {
-      case 'CRITICAL': return TdcColors.security;
-      case 'WARNING': return TdcColors.crypto;
-      case 'INFO': return TdcColors.network;
-      default: return TdcColors.border;
+      case 'CRITICAL':
+        return TdcColors.security;
+      case 'WARNING':
+        return TdcColors.crypto;
+      case 'INFO':
+        return TdcColors.network;
+      default:
+        return TdcColors.border;
     }
   }
 }

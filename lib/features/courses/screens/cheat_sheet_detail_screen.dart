@@ -11,7 +11,8 @@ import 'cheat_sheet_screen.dart';
 class CheatSheetDetailScreen extends StatefulWidget {
   final CheatSheetEntry entry;
   const CheatSheetDetailScreen({super.key, required this.entry});
-  @override State<CheatSheetDetailScreen> createState() => _CheatSheetDetailScreenState();
+  @override
+  State<CheatSheetDetailScreen> createState() => _CheatSheetDetailScreenState();
 }
 
 class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
@@ -20,9 +21,9 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
-        title: 'Détails Commande',
-        showBackButton: true,
-      );
+            title: 'Détails Commande',
+            showBackButton: true,
+          );
     });
   }
 
@@ -45,7 +46,11 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
               if (e.detailedExplanation != null) ...[
                 const TdcSectionTitle('DESCRIPTION'),
                 const SizedBox(height: 12),
-                Text(e.detailedExplanation!, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 15, height: 1.5)),
+                Text(e.detailedExplanation!,
+                    style: const TextStyle(
+                        color: TdcColors.textSecondary,
+                        fontSize: 15,
+                        height: 1.5)),
                 const SizedBox(height: 32),
               ],
               if (e.options != null && e.options!.isNotEmpty) ...[
@@ -77,7 +82,9 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
       children: [
         Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: _getColor(e).withValues(alpha: 0.1), borderRadius: TdcRadius.md),
+          decoration: BoxDecoration(
+              color: _getColor(e).withValues(alpha: 0.1),
+              borderRadius: TdcRadius.md),
           child: Icon(_getIcon(e), color: _getColor(e), size: 24),
         ),
         const SizedBox(width: 20),
@@ -88,12 +95,21 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(e.category, style: const TextStyle(color: TdcColors.textMuted, fontSize: 13, letterSpacing: 1.2, fontWeight: FontWeight.w600)),
+                  Text(e.category,
+                      style: const TextStyle(
+                          color: TdcColors.textMuted,
+                          fontSize: 13,
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.w600)),
                   _buildDangerLevel(e.dangerLevel),
                 ],
               ),
               const SizedBox(height: 8),
-              Text(e.description, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 22, fontWeight: FontWeight.bold)),
+              Text(e.description,
+                  style: const TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -108,7 +124,9 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
         color: const Color(0xFF0F172A),
         borderRadius: TdcRadius.md,
         border: Border.all(color: TdcColors.border.withValues(alpha: 0.5)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 20)],
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 20)
+        ],
       ),
       child: Column(
         children: [
@@ -116,19 +134,28 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.05),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
             ),
             child: Row(
               children: [
-                _dot(Colors.red), const SizedBox(width: 6),
-                _dot(Colors.amber), const SizedBox(width: 6),
+                _dot(Colors.red),
+                const SizedBox(width: 6),
+                _dot(Colors.amber),
+                const SizedBox(width: 6),
                 _dot(Colors.green),
                 const Spacer(),
-                const Text('terminal — bash', style: TextStyle(color: TdcColors.textMuted, fontSize: 11, fontFamily: 'monospace')),
+                const Text('terminal — bash',
+                    style: TextStyle(
+                        color: TdcColors.textMuted,
+                        fontSize: 11,
+                        fontFamily: 'monospace')),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(Icons.copy, size: 16, color: TdcColors.textMuted),
-                  onPressed: () => Clipboard.setData(ClipboardData(text: e.command)),
+                  icon: const Icon(Icons.copy,
+                      size: 16, color: TdcColors.textMuted),
+                  onPressed: () =>
+                      Clipboard.setData(ClipboardData(text: e.command)),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -140,9 +167,19 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('\$ ', style: TextStyle(color: Colors.greenAccent, fontSize: 16, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                const Text('\$ ',
+                    style: TextStyle(
+                        color: Colors.greenAccent,
+                        fontSize: 16,
+                        fontFamily: 'monospace',
+                        fontWeight: FontWeight.bold)),
                 Expanded(
-                  child: Text(e.command, style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'monospace', height: 1.4)),
+                  child: Text(e.command,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontFamily: 'monospace',
+                          height: 1.4)),
                 ),
               ],
             ),
@@ -152,56 +189,93 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
     );
   }
 
-  Widget _dot(Color c) => Container(width: 10, height: 10, decoration: BoxDecoration(color: c.withValues(alpha: 0.5), shape: BoxShape.circle));
+  Widget _dot(Color c) => Container(
+      width: 10,
+      height: 10,
+      decoration: BoxDecoration(
+          color: c.withValues(alpha: 0.5), shape: BoxShape.circle));
 
   Widget _buildList(List<String> items) {
     return Column(
-      children: items.map((opt) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(padding: EdgeInsets.only(top: 6), child: Icon(Icons.circle, size: 6, color: TdcColors.accent)),
-            const SizedBox(width: 12),
-            Expanded(child: Text(opt, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 14))),
-          ],
-        ),
-      )).toList(),
+      children: items
+          .map((opt) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                        padding: EdgeInsets.only(top: 6),
+                        child: Icon(Icons.circle,
+                            size: 6, color: TdcColors.accent)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                        child: Text(opt,
+                            style: const TextStyle(
+                                color: TdcColors.textSecondary, fontSize: 14))),
+                  ],
+                ),
+              ))
+          .toList(),
     );
   }
 
   Widget _buildExamples(List<String> items) {
     return Column(
-      children: items.map((ex) => Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: TdcRadius.sm, border: Border.all(color: TdcColors.border)),
-        child: Text(ex, style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 13)),
-      )).toList(),
+      children: items
+          .map((ex) => Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                    color: TdcColors.surfaceAlt,
+                    borderRadius: TdcRadius.sm,
+                    border: Border.all(color: TdcColors.border)),
+                child: Text(ex,
+                    style: const TextStyle(
+                        color: TdcColors.textPrimary,
+                        fontFamily: 'monospace',
+                        fontSize: 13)),
+              ))
+          .toList(),
     );
   }
 
   Widget _buildTable(CheatSheetEntry e) {
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(color: TdcColors.border)),
       child: Table(
         columnWidths: const {0: FlexColumnWidth(1), 1: FlexColumnWidth(2)},
         children: [
           TableRow(
-            decoration: const BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
-            children: (e.tableHeaders ?? ['Argument', 'Description']).map((h) => Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text(h, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: TdcColors.accent)),
-            )).toList(),
+            decoration: const BoxDecoration(
+                color: TdcColors.surfaceAlt,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
+            children: (e.tableHeaders ?? ['Argument', 'Description'])
+                .map((h) => Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Text(h,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: TdcColors.accent)),
+                    ))
+                .toList(),
           ),
           ...e.tableData!.map((row) => TableRow(
-            children: row.map((cell) => Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text(cell, style: const TextStyle(fontSize: 13, color: TdcColors.textPrimary)),
-            )).toList(),
-          )),
+                children: row
+                    .map((cell) => Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Text(cell,
+                              style: const TextStyle(
+                                  fontSize: 13, color: TdcColors.textPrimary)),
+                        ))
+                    .toList(),
+              )),
         ],
       ),
     );
@@ -215,60 +289,100 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
       } catch (_) {}
     }
     switch (e.category) {
-      case 'WINDOWS': return const Color(0xFF00A4EF);
-      case 'MAC': return const Color(0xFF999999);
-      case 'LINUX': return const Color(0xFFFCC624);
-      case 'DOCKER': return const Color(0xFF2496ED);
-      case 'RÉSEAU': return const Color(0xFF10B981);
-      case 'GIT': return const Color(0xFFF05032);
-      case 'SÉCURITÉ': return const Color(0xFFEF4444);
-      default: return TdcColors.accent;
+      case 'WINDOWS':
+        return const Color(0xFF00A4EF);
+      case 'MAC':
+        return const Color(0xFF999999);
+      case 'LINUX':
+        return const Color(0xFFFCC624);
+      case 'DOCKER':
+        return const Color(0xFF2496ED);
+      case 'RÉSEAU':
+        return const Color(0xFF10B981);
+      case 'GIT':
+        return const Color(0xFFF05032);
+      case 'SÉCURITÉ':
+        return const Color(0xFFEF4444);
+      default:
+        return TdcColors.accent;
     }
   }
 
   IconData _getIcon(CheatSheetEntry e) {
     if (e.iconName != null && e.iconName!.isNotEmpty) {
       switch (e.iconName) {
-        case 'security': return Icons.security;
-        case 'terminal': return Icons.terminal;
-        case 'cloud': return Icons.cloud;
-        case 'dns': return Icons.dns;
-        case 'lock': return Icons.lock;
-        case 'api': return Icons.api;
-        case 'bug_report': return Icons.bug_report;
-        case 'admin_panel_settings': return Icons.admin_panel_settings;
-        case 'storage': return Icons.storage;
-        case 'network': return Icons.network_check;
-        case 'search': return Icons.search;
+        case 'security':
+          return Icons.security;
+        case 'terminal':
+          return Icons.terminal;
+        case 'cloud':
+          return Icons.cloud;
+        case 'dns':
+          return Icons.dns;
+        case 'lock':
+          return Icons.lock;
+        case 'api':
+          return Icons.api;
+        case 'bug_report':
+          return Icons.bug_report;
+        case 'admin_panel_settings':
+          return Icons.admin_panel_settings;
+        case 'storage':
+          return Icons.storage;
+        case 'network':
+          return Icons.network_check;
+        case 'search':
+          return Icons.search;
       }
     }
     switch (e.category) {
-      case 'WINDOWS': return Icons.window;
-      case 'MAC': return Icons.apple;
-      case 'LINUX': return Icons.terminal;
-      case 'DOCKER': return Icons.directions_boat;
-      case 'RÉSEAU': return Icons.lan;
-      case 'GIT': return Icons.merge_type;
-      case 'SÉCURITÉ': return Icons.security;
-      default: return Icons.code;
+      case 'WINDOWS':
+        return Icons.window;
+      case 'MAC':
+        return Icons.apple;
+      case 'LINUX':
+        return Icons.terminal;
+      case 'DOCKER':
+        return Icons.directions_boat;
+      case 'RÉSEAU':
+        return Icons.lan;
+      case 'GIT':
+        return Icons.merge_type;
+      case 'SÉCURITÉ':
+        return Icons.security;
+      default:
+        return Icons.code;
     }
   }
 
   Widget _buildDangerLevel(int level) {
     Color color = Colors.green;
     String label = 'SÉCURISÉ';
-    if (level == 2) { color = Colors.orange; label = 'PRUDENCE'; }
-    else if (level >= 3) { color = Colors.red; label = 'CRITIQUE'; }
+    if (level == 2) {
+      color = Colors.orange;
+      label = 'PRUDENCE';
+    } else if (level >= 3) {
+      color = Colors.red;
+      label = 'CRITIQUE';
+    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: color.withValues(alpha: 0.3))),
+      decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: color.withValues(alpha: 0.3))),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.warning_amber_rounded, size: 12, color: color),
           const SizedBox(width: 6),
-          Text(label, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+          Text(label,
+              style: TextStyle(
+                  color: color,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5)),
         ],
       ),
     );

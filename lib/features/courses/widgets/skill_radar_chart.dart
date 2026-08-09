@@ -50,7 +50,7 @@ class _RadarPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final int sides = data.length;
     final double angle = (2 * pi) / sides;
-    
+
     final Paint gridPaint = Paint()
       ..color = TdcColors.border.withValues(alpha: 0.5)
       ..style = PaintingStyle.stroke
@@ -101,7 +101,7 @@ class _RadarPainter extends CustomPainter {
     final Paint fillPaint = Paint()
       ..color = color.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill;
-    
+
     final Paint strokePaint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
@@ -114,7 +114,7 @@ class _RadarPainter extends CustomPainter {
     final Paint pointPaint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
-      
+
     for (final point in points) {
       canvas.drawCircle(point, 4.0, pointPaint);
     }
@@ -126,7 +126,7 @@ class _RadarPainter extends CustomPainter {
       final double labelR = radius + 20; // offset for text
       final double x = center.dx + labelR * cos(i * angle - pi / 2);
       final double y = center.dy + labelR * sin(i * angle - pi / 2);
-      
+
       textPainter.text = TextSpan(
         text: key,
         style: const TextStyle(
@@ -136,7 +136,7 @@ class _RadarPainter extends CustomPainter {
         ),
       );
       textPainter.layout();
-      
+
       final Offset textOffset = Offset(
         x - textPainter.width / 2,
         y - textPainter.height / 2,

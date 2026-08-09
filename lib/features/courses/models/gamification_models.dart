@@ -99,7 +99,9 @@ class Achievement {
       category: json['category'],
       requirements: List<String>.from(json['requirements']),
       isSecret: json['isSecret'],
-      unlockedAt: json['unlockedAt'] != null ? DateTime.parse(json['unlockedAt']) : null,
+      unlockedAt: json['unlockedAt'] != null
+          ? DateTime.parse(json['unlockedAt'])
+          : null,
       progress: json['progress'],
       currentStep: json['currentStep'],
       totalSteps: json['totalSteps'],
@@ -242,7 +244,8 @@ class UserProfile {
       'currentLevel': currentLevel,
       'experiencePoints': experiencePoints,
       'rank': rank,
-      'unlockedAchievements': unlockedAchievements.map((a) => a.toJson()).toList(),
+      'unlockedAchievements':
+          unlockedAchievements.map((a) => a.toJson()).toList(),
       'completedChapters': completedChapters,
       'skillProgress': skillProgress,
       'streakDays': streakDays,
@@ -389,7 +392,9 @@ class Challenge {
       deadline: DateTime.parse(json['deadline']),
       requiredChapters: List<String>.from(json['requiredChapters']),
       isCompleted: json['isCompleted'],
-      completedAt: json['completedAt'] != null ? DateTime.parse(json['completedAt']) : null,
+      completedAt: json['completedAt'] != null
+          ? DateTime.parse(json['completedAt'])
+          : null,
       difficulty: json['difficulty'],
       category: json['category'],
     );
@@ -481,7 +486,9 @@ class LearningPath {
       prerequisites: List<String>.from(json['prerequisites'] ?? []),
       certificate: json['certificate'],
       isCompleted: json['isCompleted'],
-      completedAt: json['completedAt'] != null ? DateTime.parse(json['completedAt']) : null,
+      completedAt: json['completedAt'] != null
+          ? DateTime.parse(json['completedAt'])
+          : null,
       progress: json['progress'],
     );
   }

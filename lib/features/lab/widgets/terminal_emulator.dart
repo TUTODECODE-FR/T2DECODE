@@ -67,7 +67,8 @@ class TerminalEmulatorState extends State<TerminalEmulator> {
     _playing = false;
   }
 
-  Future<void> typeLines(List<TermLine> lines, {int charDelayMs = 15, int lineDelayMs = 40}) async {
+  Future<void> typeLines(List<TermLine> lines,
+      {int charDelayMs = 15, int lineDelayMs = 40}) async {
     if (_playing) return;
     _playing = true;
     for (final line in lines) {
@@ -76,7 +77,8 @@ class TerminalEmulatorState extends State<TerminalEmulator> {
       setState(() => _lines.add(TermLine('', line.color)));
       for (int i = 0; i <= line.text.length; i++) {
         if (!mounted || !_playing) break;
-        setState(() => _lines[idx] = TermLine(line.text.substring(0, i), line.color));
+        setState(() =>
+            _lines[idx] = TermLine(line.text.substring(0, i), line.color));
         await Future.delayed(Duration(milliseconds: charDelayMs));
       }
       _scrollToBottom();
@@ -104,14 +106,22 @@ class TerminalEmulatorState extends State<TerminalEmulator> {
 
   Color _colorFor(TermColor c) {
     switch (c) {
-      case TermColor.white: return const Color(0xFFE0E0E0);
-      case TermColor.green: return const Color(0xFF4ADE80);
-      case TermColor.yellow: return const Color(0xFFFBBF24);
-      case TermColor.red: return const Color(0xFFF87171);
-      case TermColor.blue: return const Color(0xFF60A5FA);
-      case TermColor.cyan: return const Color(0xFF22D3EE);
-      case TermColor.gray: return const Color(0xFF6B7280);
-      case TermColor.bold: return Colors.white;
+      case TermColor.white:
+        return const Color(0xFFE0E0E0);
+      case TermColor.green:
+        return const Color(0xFF4ADE80);
+      case TermColor.yellow:
+        return const Color(0xFFFBBF24);
+      case TermColor.red:
+        return const Color(0xFFF87171);
+      case TermColor.blue:
+        return const Color(0xFF60A5FA);
+      case TermColor.cyan:
+        return const Color(0xFF22D3EE);
+      case TermColor.gray:
+        return const Color(0xFF6B7280);
+      case TermColor.bold:
+        return Colors.white;
     }
   }
 
@@ -131,8 +141,11 @@ class TerminalEmulatorState extends State<TerminalEmulator> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: const Color(0xFF1A1A1A),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              border: Border(bottom: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
+              border: Border(
+                  bottom:
+                      BorderSide(color: Colors.white.withValues(alpha: 0.06))),
             ),
             child: Row(
               children: [
@@ -172,7 +185,9 @@ class TerminalEmulatorState extends State<TerminalEmulator> {
                       fontSize: 11,
                       fontFamily: 'monospace',
                       height: 1.35,
-                      fontWeight: line.color == TermColor.bold ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: line.color == TermColor.bold
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 );
@@ -185,8 +200,8 @@ class TerminalEmulatorState extends State<TerminalEmulator> {
   }
 
   Widget _dot(Color color) => Container(
-    width: 10,
-    height: 10,
-    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-  );
+        width: 10,
+        height: 10,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      );
 }

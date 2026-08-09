@@ -36,8 +36,12 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
   void initState() {
     super.initState();
     _shell = VirtualShell();
-    _lines.add(_TermLine('T2DECODE Virtual Shell v2.0.0 — Linux Simulation Engine', _TermLineType.system));
-    _lines.add(_TermLine('Type "help" for available commands. Filesystem, pipes and redirection supported.', _TermLineType.system));
+    _lines.add(_TermLine(
+        'T2DECODE Virtual Shell v2.0.0 — Linux Simulation Engine',
+        _TermLineType.system));
+    _lines.add(_TermLine(
+        'Type "help" for available commands. Filesystem, pipes and redirection supported.',
+        _TermLineType.system));
     _lines.add(_TermLine('', _TermLineType.system));
   }
 
@@ -91,7 +95,8 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
       if (_cmdHistory.isNotEmpty && _historyIndex > 0) {
         _historyIndex--;
         _inputController.text = _cmdHistory[_historyIndex];
-        _inputController.selection = TextSelection.fromPosition(TextPosition(offset: _inputController.text.length));
+        _inputController.selection = TextSelection.fromPosition(
+            TextPosition(offset: _inputController.text.length));
       }
     } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
       if (_historyIndex < _cmdHistory.length - 1) {
@@ -129,8 +134,11 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: const Color(0xFF2D2D2D),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              border: Border(bottom: BorderSide(color: Colors.white.withValues(alpha: 0.1))),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
+              border: Border(
+                  bottom:
+                      BorderSide(color: Colors.white.withValues(alpha: 0.1))),
             ),
             child: Row(
               children: [
@@ -142,13 +150,15 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
                 const Spacer(),
                 Text(
                   '${_shell.user}@${_shell.hostname}: ${_shell.cwd}',
-                  style: const TextStyle(color: Colors.white54, fontSize: 12, fontFamily: 'monospace'),
+                  style: const TextStyle(
+                      color: Colors.white54,
+                      fontSize: 12,
+                      fontFamily: 'monospace'),
                 ),
                 const Spacer(),
               ],
             ),
           ),
-
           Expanded(
             child: GestureDetector(
               onTap: () => _focusNode.requestFocus(),
@@ -221,10 +231,10 @@ class _InteractiveTerminalState extends State<InteractiveTerminal> {
   }
 
   Widget _dot(Color color) => Container(
-    width: 12,
-    height: 12,
-    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-  );
+        width: 12,
+        height: 12,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      );
 }
 
 enum _TermLineType { prompt, output, system, error }
@@ -237,10 +247,14 @@ class _TermLine {
 
   Color get color {
     switch (type) {
-      case _TermLineType.prompt: return const Color(0xFF4ADE80);
-      case _TermLineType.output: return const Color(0xFFE0E0E0);
-      case _TermLineType.system: return const Color(0xFF60A5FA);
-      case _TermLineType.error: return const Color(0xFFF87171);
+      case _TermLineType.prompt:
+        return const Color(0xFF4ADE80);
+      case _TermLineType.output:
+        return const Color(0xFFE0E0E0);
+      case _TermLineType.system:
+        return const Color(0xFF60A5FA);
+      case _TermLineType.error:
+        return const Color(0xFFF87171);
     }
   }
 }

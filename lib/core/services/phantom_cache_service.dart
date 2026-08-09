@@ -13,17 +13,24 @@ class PhantomCacheService {
   /// Retourne le chemin par défaut du cache de T2C-Phantom.
   String get defaultCachePath {
     if (Platform.isWindows) {
-      return p.join(Platform.environment['APPDATA'] ?? '', 'T2C-Phantom', 'cache');
+      return p.join(
+          Platform.environment['APPDATA'] ?? '', 'T2C-Phantom', 'cache');
     } else if (Platform.isMacOS) {
-      final path1 = p.join(Platform.environment['HOME'] ?? '', 'Library', 'Caches', 't2c-phantom');
-      final path2 = p.join(Platform.environment['HOME'] ?? '', 'Library', 'Caches', 'T2C-Phantom');
+      final path1 = p.join(Platform.environment['HOME'] ?? '', 'Library',
+          'Caches', 't2c-phantom');
+      final path2 = p.join(Platform.environment['HOME'] ?? '', 'Library',
+          'Caches', 'T2C-Phantom');
       if (Directory(path1).existsSync()) return path1;
       return path2;
     } else {
-      return p.join(Platform.environment['HOME'] ?? '', '.cache', 't2c-phantom');
+      return p.join(
+          Platform.environment['HOME'] ?? '', '.cache', 't2c-phantom');
     }
-  }  /// Retourne le chemin actif (personnalisé si défini, sinon par défaut)
+  }
+
+  /// Retourne le chemin actif (personnalisé si défini, sinon par défaut)
   String get activeCachePath => customCachePath ?? defaultCachePath;
+
   /// Dérive la clé de déchiffrement depuis une passphrase (PBKDF2 / SHA-256)
   Future<SecretKey> _deriveKey(String passphrase) async {
     String effectivePass = passphrase;
@@ -52,8 +59,10 @@ class PhantomCacheService {
       nonce: utf8.encode('t2c-phantom-salt'),
     );
   }
+
   /// Lit et déchiffre un fichier depuis le cache T2C-Phantom.
-  Future<List<int>?> readDecryptedFile(String relativePath, String passphrase) async {
+  Future<List<int>?> readDecryptedFile(
+      String relativePath, String passphrase) async {
     final cacheDir = Directory(activeCachePath);
     if (!await cacheDir.exists()) return null;
 
@@ -61,7 +70,8 @@ class PhantomCacheService {
     if (!await file.exists()) return null;
 
     final encryptedBytes = await file.readAsBytes();
-    if (encryptedBytes.length < 28) return null; // 12 bytes nonce + 16 bytes mac + data
+    if (encryptedBytes.length < 28)
+      return null; // 12 bytes nonce + 16 bytes mac + data
 
     final nonce = encryptedBytes.sublist(0, 12);
     final ciphertext = encryptedBytes.sublist(12, encryptedBytes.length - 16);
@@ -79,7 +89,7 @@ class PhantomCacheService {
         ),
         secretKey: key,
       );
-      
+
       // Validation Zero-Trust
       if (!await _trustValidator.verifyIntegrity(relativePath, decrypted)) {
         throw Exception("Intégrité compromise pour le fichier $relativePath.");
@@ -92,7 +102,8 @@ class PhantomCacheService {
   }
 
   /// Décode un fichier en String UTF-8.
-  Future<String?> readDecryptedString(String relativePath, String passphrase) async {
+  Future<String?> readDecryptedString(
+      String relativePath, String passphrase) async {
     final bytes = await readDecryptedFile(relativePath, passphrase);
     if (bytes == null) return null;
     return utf8.decode(bytes);

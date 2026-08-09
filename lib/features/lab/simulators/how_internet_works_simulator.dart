@@ -122,7 +122,8 @@ final _scenarios = [
         protocol: 'IP Routing',
         icon: Icons.route,
         color: TdcColors.info,
-        description: 'Le paquet saute de routeur en routeur jusqu\'à destination.',
+        description:
+            'Le paquet saute de routeur en routeur jusqu\'à destination.',
         detail:
             'Chaque routeur consulte sa table de routage, décrémente le TTL, recalcule le checksum '
             'et redirige le paquet vers le prochain saut (next hop). Si le TTL atteint 0, le routeur '
@@ -154,7 +155,8 @@ final _scenarios = [
         protocol: 'Résultat',
         icon: Icons.timer,
         color: TdcColors.warning,
-        description: 'Round Trip Time affiché : `64 bytes from 8.8.8.8: icmp_seq=1 ttl=118 time=12.4ms`',
+        description:
+            'Round Trip Time affiché : `64 bytes from 8.8.8.8: icmp_seq=1 ttl=118 time=12.4ms`',
         detail:
             'Ton OS mesure le temps entre l\'envoi et la réception. Le TTL dans la réponse '
             '(ici 118) indique le nombre de sauts restants — donc la cible était à '
@@ -186,8 +188,7 @@ final _scenarios = [
         icon: Icons.dns,
         color: TdcColors.warning,
         description: 'Qui est google.com ? → 142.250.179.46',
-        detail:
-            'Résolution récursive en 4 étapes :\n'
+        detail: 'Résolution récursive en 4 étapes :\n'
             '1. Résolveur local → Serveur DNS récursif de ton FAI (ou 8.8.8.8)\n'
             '2. Récursif → Serveur Racine (.) → "va voir .com"\n'
             '3. Récursif → Serveur TLD .com → "va voir ns1.google.com"\n'
@@ -215,8 +216,7 @@ final _scenarios = [
         icon: Icons.handshake,
         color: TdcColors.coral,
         description: 'Établissement de la connexion fiable.',
-        detail:
-            '1. SYN → ton PC envoie SYN (seq=x) au serveur\n'
+        detail: '1. SYN → ton PC envoie SYN (seq=x) au serveur\n'
             '2. SYN-ACK ← le serveur répond SYN (seq=y) + ACK (x+1)\n'
             '3. ACK → ton PC confirme ACK (y+1)\n'
             'La connexion est établie. TCP garantit l\'ordre et la livraison des données '
@@ -276,9 +276,9 @@ final _scenarios = [
         protocol: 'HTTP 200 OK',
         icon: Icons.web,
         color: TdcColors.info,
-        description: 'Le serveur envoie le HTML, le navigateur construit la page.',
-        detail:
-            'Le serveur renvoie :\n'
+        description:
+            'Le serveur envoie le HTML, le navigateur construit la page.',
+        detail: 'Le serveur renvoie :\n'
             '- Status 200 OK + en-têtes (content-type, cache-control, HSTS…)\n'
             '- Corps HTML (souvent compressé en gzip ou Brotli)\n'
             'Le navigateur parse le HTML → construit le DOM → charge les CSS/JS/images '
@@ -346,8 +346,7 @@ final _scenarios = [
         icon: Icons.key,
         color: TdcColors.success,
         description: 'Par clé publique (recommandé) ou mot de passe.',
-        detail:
-            'Méthode clé publique :\n'
+        detail: 'Méthode clé publique :\n'
             '1. Le client annonce sa clé publique\n'
             '2. Le serveur vérifie qu\'elle est dans ~/.ssh/authorized_keys\n'
             '3. Le serveur envoie un challenge chiffré avec la clé publique\n'
@@ -394,8 +393,7 @@ final _scenarios = [
         icon: Icons.compare_arrows,
         color: TdcColors.coral,
         description: 'Communication entre processus (ports).',
-        detail:
-            'TCP : connexion fiable, ordonnée, avec retransmission. '
+        detail: 'TCP : connexion fiable, ordonnée, avec retransmission. '
             'Idéal pour HTTP, SSH, FTP.\n'
             'UDP : sans connexion, sans garantie, rapide. '
             'Idéal pour DNS, vidéo streaming, jeux en ligne, QUIC.\n'
@@ -418,11 +416,16 @@ final _scenarios = [
             'ARP : résolution IP → MAC sur le LAN.',
         visual: () => const SimLayerStack(
           layers: [
-            SimLayer('L7 Application', 'HTTP, DNS, SMTP, FTP…', TdcColors.electric),
-            SimLayer('L4 Transport', 'TCP, UDP — ports + reliability', TdcColors.success),
-            SimLayer('L3 Network', 'IP, ICMP — routing + addressing', TdcColors.warning),
-            SimLayer('L2 Link', 'Ethernet, WiFi — MAC + frames', TdcColors.coral),
-            SimLayer('L1 Physical', 'Bits → electrical/optical/radio', TdcColors.danger),
+            SimLayer(
+                'L7 Application', 'HTTP, DNS, SMTP, FTP…', TdcColors.electric),
+            SimLayer('L4 Transport', 'TCP, UDP — ports + reliability',
+                TdcColors.success),
+            SimLayer('L3 Network', 'IP, ICMP — routing + addressing',
+                TdcColors.warning),
+            SimLayer(
+                'L2 Link', 'Ethernet, WiFi — MAC + frames', TdcColors.coral),
+            SimLayer('L1 Physical', 'Bits → electrical/optical/radio',
+                TdcColors.danger),
           ],
         ),
       ),
@@ -432,8 +435,7 @@ final _scenarios = [
         icon: Icons.device_hub,
         color: TdcColors.warning,
         description: 'Communication sur le réseau local.',
-        detail:
-            'Ethernet (câble) et WiFi (802.11) opèrent à ce niveau.\n'
+        detail: 'Ethernet (câble) et WiFi (802.11) opèrent à ce niveau.\n'
             'Adresses MAC : 48 bits, uniques par interface (ex: AA:BB:CC:DD:EE:FF).\n'
             'Les trames Ethernet encapsulent les paquets IP et sont transmises '
             'uniquement sur le segment local. Un switch L2 fait le routage par MAC.\n'
@@ -458,8 +460,7 @@ final _scenarios = [
         icon: Icons.wrap_text,
         color: TdcColors.warning,
         description: 'Chaque couche ajoute son en-tête.',
-        detail:
-            'À l\'émission, les données descendent la pile :\n'
+        detail: 'À l\'émission, les données descendent la pile :\n'
             'App → [données HTTP]\n'
             'Transport → [TCP header | données HTTP]\n'
             'Internet → [IP header | TCP header | données HTTP]\n'
@@ -481,8 +482,7 @@ final _scenarios = [
         icon: Icons.storage,
         color: TdcColors.textTertiary,
         description: 'Le plus rapide : la réponse est peut-être déjà connue.',
-        detail:
-            'L\'OS vérifie dans l\'ordre :\n'
+        detail: 'L\'OS vérifie dans l\'ordre :\n'
             '1. /etc/hosts (ou C:WindowsSystem32driversetchosts) — priorité absolue\n'
             '2. Cache DNS de l\'OS (ipconfig /displaydns sur Windows, systemd-resolve --statistics sur Linux)\n'
             '3. Cache du navigateur\n'
@@ -532,8 +532,7 @@ final _scenarios = [
         icon: Icons.language,
         color: TdcColors.coral,
         description: '.com, .fr, .io, .org… chacun a ses serveurs.',
-        detail:
-            '.com et .net → VeriSign\n'
+        detail: '.com et .net → VeriSign\n'
             '.fr → AFNIC\n'
             '.io → Internet Computer Bureau\n'
             'Les serveurs TLD connaissent les serveurs autoritaires de chaque domaine enregistré.\n'
@@ -582,7 +581,8 @@ final _scenarios = [
         protocol: 'Pénurie d\'adresses',
         icon: Icons.warning,
         color: TdcColors.warning,
-        description: 'Il n\'y a que 4,3 milliards d\'adresses IPv4 pour 15 milliards d\'appareils.',
+        description:
+            'Il n\'y a que 4,3 milliards d\'adresses IPv4 pour 15 milliards d\'appareils.',
         detail:
             'IPv4 (32 bits) → 2³² = ~4,3 milliards d\'adresses. Épuisées depuis 2011.\n'
             'Solution : adresses privées (RFC 1918) + NAT.\n'
@@ -597,9 +597,9 @@ final _scenarios = [
         protocol: 'NAT / PAT',
         icon: Icons.swap_horiz,
         color: TdcColors.info,
-        description: 'Ton routeur traduit tes adresses privées en une seule IP publique.',
-        detail:
-            'Quand tu accèdes à google.com depuis 192.168.1.50:54321 :\n'
+        description:
+            'Ton routeur traduit tes adresses privées en une seule IP publique.',
+        detail: 'Quand tu accèdes à google.com depuis 192.168.1.50:54321 :\n'
             '1. Le routeur remplace 192.168.1.50:54321 → IP_publique:58900\n'
             '2. Il note la correspondance dans sa table NAT\n'
             '3. La réponse arrive sur IP_publique:58900\n'
@@ -621,8 +621,7 @@ final _scenarios = [
         icon: Icons.fireplace,
         color: TdcColors.danger,
         description: 'Filtrage des paquets entrants et sortants.',
-        detail:
-            'Un firewall stateful suit l\'état des connexions :\n'
+        detail: 'Un firewall stateful suit l\'état des connexions :\n'
             '- NEW : premier paquet d\'une connexion\n'
             '- ESTABLISHED : connexion établie (les deux sens)\n'
             '- RELATED : connexion liée (ex: FTP data)\n'
@@ -675,8 +674,7 @@ class HowInternetWorksSimulator extends StatefulWidget {
       _HowInternetWorksSimulatorState();
 }
 
-class _HowInternetWorksSimulatorState
-    extends State<HowInternetWorksSimulator> {
+class _HowInternetWorksSimulatorState extends State<HowInternetWorksSimulator> {
   int _scenarioIndex = 0;
   int _currentStep = -1;
   bool _running = false;
@@ -698,7 +696,8 @@ class _HowInternetWorksSimulatorState
   final List<_DnsStep> _dnsSteps = [];
   bool _dnsRunning = false;
   String _dnsQuery = 'google.com';
-  final TextEditingController _dnsCtrl = TextEditingController(text: 'google.com');
+  final TextEditingController _dnsCtrl =
+      TextEditingController(text: 'google.com');
 
   // SSH auth
   int _sshPhase = -1;
@@ -756,7 +755,8 @@ class _HowInternetWorksSimulatorState
       _pingSeq = 0;
     });
     final rng = Random.secure();
-    setState(() => _pingLines.add(const _PingLine('PING 8.8.8.8 56(84) bytes of data.', TdcColors.textPrimary, false)));
+    setState(() => _pingLines.add(const _PingLine(
+        'PING 8.8.8.8 56(84) bytes of data.', TdcColors.textPrimary, false)));
     await Future.delayed(const Duration(milliseconds: 300));
     for (int i = 0; i < 4; i++) {
       if (!mounted) return;
@@ -776,13 +776,20 @@ class _HowInternetWorksSimulatorState
     setState(() => _pinging = false);
   }
 
-  void _resetPing() => setState(() { _pingLines.clear(); _pinging = false; _pingSeq = 0; });
+  void _resetPing() => setState(() {
+        _pingLines.clear();
+        _pinging = false;
+        _pingSeq = 0;
+      });
 
   // ── Simulation TCP Handshake ──────────────────────────────
 
   Future<void> _startTcp() async {
     if (_tcpRunning) return;
-    setState(() { _tcpPhase = -1; _tcpRunning = true; });
+    setState(() {
+      _tcpPhase = -1;
+      _tcpRunning = true;
+    });
     await Future.delayed(const Duration(milliseconds: 600));
     setState(() => _tcpPhase = 0); // SYN
     await Future.delayed(const Duration(milliseconds: 1000));
@@ -790,25 +797,41 @@ class _HowInternetWorksSimulatorState
     await Future.delayed(const Duration(milliseconds: 1000));
     setState(() => _tcpPhase = 2); // ACK
     await Future.delayed(const Duration(milliseconds: 800));
-    setState(() { _tcpPhase = 3; _tcpRunning = false; }); // done
+    setState(() {
+      _tcpPhase = 3;
+      _tcpRunning = false;
+    }); // done
   }
 
-  void _resetTcp() => setState(() { _tcpPhase = -1; _tcpRunning = false; });
+  void _resetTcp() => setState(() {
+        _tcpPhase = -1;
+        _tcpRunning = false;
+      });
 
   // ── Simulation DNS Lookup ─────────────────────────────────
 
   Future<void> _startDns() async {
     if (_dnsRunning) return;
-    final query = _dnsCtrl.text.trim().isEmpty ? 'google.com' : _dnsCtrl.text.trim();
-    setState(() { _dnsRunning = true; _dnsSteps.clear(); _dnsQuery = query; });
+    final query =
+        _dnsCtrl.text.trim().isEmpty ? 'google.com' : _dnsCtrl.text.trim();
+    setState(() {
+      _dnsRunning = true;
+      _dnsSteps.clear();
+      _dnsQuery = query;
+    });
     final rng = Random.secure();
 
     final steps = [
-      const _DnsStep('Cache local', 'Vérification /etc/hosts et cache OS…', TdcColors.textMuted, false),
-      _DnsStep('Résolveur 8.8.8.8', 'Query A $query → résolveur récursif', TdcColors.electric, false),
-      _DnsStep('Root Server', 'Demande délégation .${query.split('.').last}', TdcColors.warning, false),
-      _DnsStep('TLD .${query.split('.').last}', 'NS records → serveur autoritaire', TdcColors.coral, false),
-      _DnsStep('Autoritaire NS', 'Réponse finale : A record', TdcColors.success, true,
+      const _DnsStep('Cache local', 'Vérification /etc/hosts et cache OS…',
+          TdcColors.textMuted, false),
+      _DnsStep('Résolveur 8.8.8.8', 'Query A $query → résolveur récursif',
+          TdcColors.electric, false),
+      _DnsStep('Root Server', 'Demande délégation .${query.split('.').last}',
+          TdcColors.warning, false),
+      _DnsStep('TLD .${query.split('.').last}',
+          'NS records → serveur autoritaire', TdcColors.coral, false),
+      _DnsStep('Autoritaire NS', 'Réponse finale : A record', TdcColors.success,
+          true,
           ip: '${rng.nextInt(220) + 34}.${rng.nextInt(250) + 1}.${rng.nextInt(250) + 1}.${rng.nextInt(200) + 1}'),
     ];
 
@@ -820,13 +843,19 @@ class _HowInternetWorksSimulatorState
     if (mounted) setState(() => _dnsRunning = false);
   }
 
-  void _resetDns() => setState(() { _dnsSteps.clear(); _dnsRunning = false; });
+  void _resetDns() => setState(() {
+        _dnsSteps.clear();
+        _dnsRunning = false;
+      });
 
   // ── Simulation SSH Auth ───────────────────────────────────
 
   Future<void> _startSsh() async {
     if (_sshRunning) return;
-    setState(() { _sshRunning = true; _sshPhase = 0; });
+    setState(() {
+      _sshRunning = true;
+      _sshPhase = 0;
+    });
     for (int p = 1; p <= 5; p++) {
       await Future.delayed(const Duration(milliseconds: 900));
       if (!mounted) return;
@@ -835,7 +864,10 @@ class _HowInternetWorksSimulatorState
     if (mounted) setState(() => _sshRunning = false);
   }
 
-  void _resetSsh() => setState(() { _sshPhase = -1; _sshRunning = false; });
+  void _resetSsh() => setState(() {
+        _sshPhase = -1;
+        _sshRunning = false;
+      });
 
   // ── Simulation Firewall ───────────────────────────────────
 
@@ -849,7 +881,10 @@ class _HowInternetWorksSimulatorState
 
   Future<void> _startSimulation() async {
     if (_running) return;
-    setState(() { _running = true; _currentStep = -1; });
+    setState(() {
+      _running = true;
+      _currentStep = -1;
+    });
     for (int i = 0; i < _scenario.steps.length; i++) {
       if (!mounted) return;
       await Future.delayed(const Duration(milliseconds: 700));
@@ -869,7 +904,10 @@ class _HowInternetWorksSimulatorState
 
   void _reset() {
     _timer?.cancel();
-    setState(() { _currentStep = -1; _running = false; });
+    setState(() {
+      _currentStep = -1;
+      _running = false;
+    });
   }
 
   void _openAIPanel() {
@@ -942,7 +980,8 @@ class _HowInternetWorksSimulatorState
             onPressed: _openAIPanel,
             backgroundColor: _scenario.color.withValues(alpha: 0.9),
             icon: const Icon(Icons.auto_awesome, size: 18),
-            label: const Text('IA', style: TextStyle(fontWeight: FontWeight.bold)),
+            label:
+                const Text('IA', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ),
       ],
@@ -953,17 +992,25 @@ class _HowInternetWorksSimulatorState
 
   Widget _buildInteractivePanel() {
     switch (_scenarioIndex) {
-      case 0: return _buildPingPanel();
-      case 1: return _buildTcpPanel();
-      case 2: return _buildSshPanel();
-      case 3: return _buildLayersPanel();
-      case 4: return _buildDnsPanel();
-      case 5: return _buildFirewallPanel();
-      default: return const SizedBox.shrink();
+      case 0:
+        return _buildPingPanel();
+      case 1:
+        return _buildTcpPanel();
+      case 2:
+        return _buildSshPanel();
+      case 3:
+        return _buildLayersPanel();
+      case 4:
+        return _buildDnsPanel();
+      case 5:
+        return _buildFirewallPanel();
+      default:
+        return const SizedBox.shrink();
     }
   }
 
-  Widget _panelShell({required Color color, required String title, required Widget child}) {
+  Widget _panelShell(
+      {required Color color, required String title, required Widget child}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
@@ -979,15 +1026,25 @@ class _HowInternetWorksSimulatorState
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.12),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(11)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(11)),
               ),
               child: Row(
                 children: [
                   Icon(Icons.terminal, color: color, size: 14),
                   const SizedBox(width: 8),
-                  Text(title, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                  Text(title,
+                      style: TextStyle(
+                          color: color,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1)),
                   const Spacer(),
-                  Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+                  Container(
+                      width: 8,
+                      height: 8,
+                      decoration:
+                          BoxDecoration(color: color, shape: BoxShape.circle)),
                 ],
               ),
             ),
@@ -1010,10 +1067,19 @@ class _HowInternetWorksSimulatorState
           children: [
             Row(
               children: [
-                Text('target: ', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 12, fontFamily: 'monospace')),
-                const Text('8.8.8.8 (Google DNS)', style: TextStyle(color: TdcColors.info, fontSize: 12, fontFamily: 'monospace')),
+                Text('target: ',
+                    style: TextStyle(
+                        color: TdcColors.textPrimary.withValues(alpha: 0.4),
+                        fontSize: 12,
+                        fontFamily: 'monospace')),
+                const Text('8.8.8.8 (Google DNS)',
+                    style: TextStyle(
+                        color: TdcColors.info,
+                        fontSize: 12,
+                        fontFamily: 'monospace')),
                 const Spacer(),
-                _simButton('Ping', TdcColors.info, _pinging ? null : _startPing),
+                _simButton(
+                    'Ping', TdcColors.info, _pinging ? null : _startPing),
                 const SizedBox(width: 8),
                 _simButton('Reset', TdcColors.textMuted, _resetPing),
               ],
@@ -1027,10 +1093,17 @@ class _HowInternetWorksSimulatorState
                   itemCount: _pingLines.length,
                   itemBuilder: (_, i) => _pingLines[i].success
                       ? Text(_pingLines[i].text,
-                          style: TextStyle(color: _pingLines[i].color, fontSize: 11, fontFamily: 'monospace'))
-                          .animate().fadeIn(duration: 300.ms)
+                              style: TextStyle(
+                                  color: _pingLines[i].color,
+                                  fontSize: 11,
+                                  fontFamily: 'monospace'))
+                          .animate()
+                          .fadeIn(duration: 300.ms)
                       : Text(_pingLines[i].text,
-                          style: TextStyle(color: _pingLines[i].color, fontSize: 11, fontFamily: 'monospace')),
+                          style: TextStyle(
+                              color: _pingLines[i].color,
+                              fontSize: 11,
+                              fontFamily: 'monospace')),
                 ),
               ),
             ],
@@ -1039,9 +1112,15 @@ class _HowInternetWorksSimulatorState
                 padding: const EdgeInsets.only(top: 8),
                 child: Row(
                   children: [
-                    const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.info)),
+                    const SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: TdcColors.info)),
                     const SizedBox(width: 8),
-                    Text('Envoi paquet ICMP #${_pingSeq + 1}…', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 11)),
+                    Text('Envoi paquet ICMP #${_pingSeq + 1}…',
+                        style: const TextStyle(
+                            color: TdcColors.textSecondary, fontSize: 11)),
                   ],
                 ),
               ),
@@ -1054,10 +1133,14 @@ class _HowInternetWorksSimulatorState
   // 1 – TCP Handshake ───────────────────────────────────────
   Widget _buildTcpPanel() {
     final phases = [
-      const _TcpPhaseInfo('SYN', 'Client → Server', 'seq=1000', TdcColors.electric),
-      const _TcpPhaseInfo('SYN-ACK', 'Server → Client', 'seq=5000 ack=1001', TdcColors.coral),
-      const _TcpPhaseInfo('ACK', 'Client → Server', 'ack=5001', TdcColors.success),
-      const _TcpPhaseInfo('ESTABLISHED', 'Connexion ouverte', 'Données peuvent transiter', TdcColors.success),
+      const _TcpPhaseInfo(
+          'SYN', 'Client → Server', 'seq=1000', TdcColors.electric),
+      const _TcpPhaseInfo(
+          'SYN-ACK', 'Server → Client', 'seq=5000 ack=1001', TdcColors.coral),
+      const _TcpPhaseInfo(
+          'ACK', 'Client → Server', 'ack=5001', TdcColors.success),
+      const _TcpPhaseInfo('ESTABLISHED', 'Connexion ouverte',
+          'Données peuvent transiter', TdcColors.success),
     ];
     return _panelShell(
       color: TdcColors.electric,
@@ -1068,7 +1151,8 @@ class _HowInternetWorksSimulatorState
           children: [
             Row(
               children: [
-                _simButton('Simuler', TdcColors.electric, _tcpRunning ? null : _startTcp),
+                _simButton('Simuler', TdcColors.electric,
+                    _tcpRunning ? null : _startTcp),
                 const SizedBox(width: 8),
                 _simButton('Reset', TdcColors.textMuted, _resetTcp),
               ],
@@ -1077,7 +1161,8 @@ class _HowInternetWorksSimulatorState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _tcpNode('CLIENT\\n192.168.1.10', Icons.computer, TdcColors.info, _tcpPhase >= 0),
+                _tcpNode('CLIENT\\n192.168.1.10', Icons.computer,
+                    TdcColors.info, _tcpPhase >= 0),
                 Expanded(
                   child: Column(
                     children: List.generate(phases.length, (i) {
@@ -1085,24 +1170,33 @@ class _HowInternetWorksSimulatorState
                       return AnimatedContainer(
                         duration: const Duration(milliseconds: 400),
                         margin: const EdgeInsets.symmetric(vertical: 3),
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: active ? phases[i].color.withValues(alpha: 0.15) : Colors.transparent,
+                          color: active
+                              ? phases[i].color.withValues(alpha: 0.15)
+                              : Colors.transparent,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: active ? phases[i].color.withValues(alpha: 0.6) : TdcColors.border,
+                            color: active
+                                ? phases[i].color.withValues(alpha: 0.6)
+                                : TdcColors.border,
                           ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            if (active) Icon(Icons.arrow_forward, color: phases[i].color, size: 12),
+                            if (active)
+                              Icon(Icons.arrow_forward,
+                                  color: phases[i].color, size: 12),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
                                 '${phases[i].name} — ${phases[i].flags}',
                                 style: TextStyle(
-                                  color: active ? phases[i].color : TdcColors.textMuted,
+                                  color: active
+                                      ? phases[i].color
+                                      : TdcColors.textMuted,
                                   fontSize: 10,
                                   fontFamily: 'monospace',
                                   fontWeight: FontWeight.bold,
@@ -1116,13 +1210,15 @@ class _HowInternetWorksSimulatorState
                     }),
                   ),
                 ),
-                _tcpNode('SERVER\\n8.8.8.8:443', Icons.dns, TdcColors.electric, _tcpPhase >= 1),
+                _tcpNode('SERVER\\n8.8.8.8:443', Icons.dns, TdcColors.electric,
+                    _tcpPhase >= 1),
               ],
             ),
             if (_tcpPhase == 3)
               Container(
                 margin: const EdgeInsets.only(top: 10),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: TdcColors.success.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
@@ -1130,9 +1226,14 @@ class _HowInternetWorksSimulatorState
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.check_circle, color: TdcColors.success, size: 14),
+                    Icon(Icons.check_circle,
+                        color: TdcColors.success, size: 14),
                     SizedBox(width: 6),
-                    Text('Connexion TCP établie — prête pour TLS', style: TextStyle(color: TdcColors.success, fontSize: 11, fontFamily: 'monospace')),
+                    Text('Connexion TCP établie — prête pour TLS',
+                        style: TextStyle(
+                            color: TdcColors.success,
+                            fontSize: 11,
+                            fontFamily: 'monospace')),
                   ],
                 ),
               ).animate().fadeIn(),
@@ -1154,7 +1255,12 @@ class _HowInternetWorksSimulatorState
       child: Column(
         children: [
           Icon(icon, color: active ? color : TdcColors.textMuted, size: 20),
-          Text(label, style: TextStyle(color: active ? TdcColors.textPrimary : TdcColors.textMuted, fontSize: 9, fontFamily: 'monospace'), textAlign: TextAlign.center),
+          Text(label,
+              style: TextStyle(
+                  color: active ? TdcColors.textPrimary : TdcColors.textMuted,
+                  fontSize: 9,
+                  fontFamily: 'monospace'),
+              textAlign: TextAlign.center),
         ],
       ),
     );
@@ -1179,10 +1285,19 @@ class _HowInternetWorksSimulatorState
           children: [
             Row(
               children: [
-                Text('user@192.168.1.10 → ', style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 11, fontFamily: 'monospace')),
-                const Text('root@server.example.com', style: TextStyle(color: TdcColors.success, fontSize: 11, fontFamily: 'monospace')),
+                Text('user@192.168.1.10 → ',
+                    style: TextStyle(
+                        color: TdcColors.textPrimary.withValues(alpha: 0.4),
+                        fontSize: 11,
+                        fontFamily: 'monospace')),
+                const Text('root@server.example.com',
+                    style: TextStyle(
+                        color: TdcColors.success,
+                        fontSize: 11,
+                        fontFamily: 'monospace')),
                 const Spacer(),
-                _simButton('Connect', TdcColors.success, _sshRunning ? null : _startSsh),
+                _simButton('Connect', TdcColors.success,
+                    _sshRunning ? null : _startSsh),
                 const SizedBox(width: 8),
                 _simButton('Reset', TdcColors.textMuted, _resetSsh),
               ],
@@ -1195,22 +1310,50 @@ class _HowInternetWorksSimulatorState
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 350),
                 margin: const EdgeInsets.only(bottom: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: active || current ? color.withValues(alpha: 0.12) : Colors.transparent,
+                  color: active || current
+                      ? color.withValues(alpha: 0.12)
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: active || current ? color.withValues(alpha: 0.5) : TdcColors.border),
+                  border: Border.all(
+                      color: active || current
+                          ? color.withValues(alpha: 0.5)
+                          : TdcColors.border),
                 ),
                 child: Row(
                   children: [
                     if (current)
-                      SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: color))
+                      SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: color))
                     else
-                      Icon(active ? Icons.check_circle : Icons.radio_button_unchecked, color: active ? color : TdcColors.textMuted, size: 14),
+                      Icon(
+                          active
+                              ? Icons.check_circle
+                              : Icons.radio_button_unchecked,
+                          color: active ? color : TdcColors.textMuted,
+                          size: 14),
                     const SizedBox(width: 8),
-                    Text('[${i + 1}] ${phases[i].a}', style: TextStyle(color: active || current ? color : TdcColors.textMuted, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                    Text('[${i + 1}] ${phases[i].a}',
+                        style: TextStyle(
+                            color:
+                                active || current ? color : TdcColors.textMuted,
+                            fontSize: 11,
+                            fontFamily: 'monospace',
+                            fontWeight: FontWeight.bold)),
                     const SizedBox(width: 6),
-                    Expanded(child: Text('— ${phases[i].b}', style: TextStyle(color: active ? TdcColors.textSecondary : TdcColors.textMuted, fontSize: 10), overflow: TextOverflow.ellipsis)),
+                    Expanded(
+                        child: Text('— ${phases[i].b}',
+                            style: TextStyle(
+                                color: active
+                                    ? TdcColors.textSecondary
+                                    : TdcColors.textMuted,
+                                fontSize: 10),
+                            overflow: TextOverflow.ellipsis)),
                   ],
                 ),
               );
@@ -1224,11 +1367,16 @@ class _HowInternetWorksSimulatorState
   // 3 – TCP/IP Layers ───────────────────────────────────────
   Widget _buildLayersPanel() {
     final layers = [
-      const _HiP4('L7 App', 'HTTP/2 GET /', 'data: Hello World', TdcColors.electric),
-      const _HiP4('L4 Transport', 'TCP header', 'sport=54321 dport=443 seq=1000', TdcColors.coral),
-      const _HiP4('L3 Network', 'IP header', 'src=192.168.1.10 dst=142.250.179.46 ttl=64', TdcColors.warning),
-      const _HiP4('L2 Link', 'Ethernet frame', 'src=AA:BB:CC:DD dst=FF:EE:CC:BB type=0x0800', TdcColors.warning),
-      const _HiP4('L1 Physical', 'Signal', '01001000 01100101 01101100 … (bits)', TdcColors.danger),
+      const _HiP4(
+          'L7 App', 'HTTP/2 GET /', 'data: Hello World', TdcColors.electric),
+      const _HiP4('L4 Transport', 'TCP header',
+          'sport=54321 dport=443 seq=1000', TdcColors.coral),
+      const _HiP4('L3 Network', 'IP header',
+          'src=192.168.1.10 dst=142.250.179.46 ttl=64', TdcColors.warning),
+      const _HiP4('L2 Link', 'Ethernet frame',
+          'src=AA:BB:CC:DD dst=FF:EE:CC:BB type=0x0800', TdcColors.warning),
+      const _HiP4('L1 Physical', 'Signal',
+          '01001000 01100101 01101100 … (bits)', TdcColors.danger),
     ];
     return _panelShell(
       color: TdcColors.warning,
@@ -1248,20 +1396,40 @@ class _HowInternetWorksSimulatorState
               ),
               child: Row(
                 children: [
-                  SizedBox(width: 70, child: Text(l.a, style: TextStyle(color: l.d, fontSize: 10, fontWeight: FontWeight.bold, fontFamily: 'monospace'))),
+                  SizedBox(
+                      width: 70,
+                      child: Text(l.a,
+                          style: TextStyle(
+                              color: l.d,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'monospace'))),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l.b, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 10, fontFamily: 'monospace')),
-                        Text(l.c, style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.35), fontSize: 9, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis),
+                        Text(l.b,
+                            style: const TextStyle(
+                                color: TdcColors.textPrimary,
+                                fontSize: 10,
+                                fontFamily: 'monospace')),
+                        Text(l.c,
+                            style: TextStyle(
+                                color: TdcColors.textPrimary
+                                    .withValues(alpha: 0.35),
+                                fontSize: 9,
+                                fontFamily: 'monospace'),
+                            overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),
                 ],
               ),
-            ).animate().fadeIn(delay: Duration(milliseconds: i * 100)).slideX(begin: 0.05, end: 0);
+            )
+                .animate()
+                .fadeIn(delay: Duration(milliseconds: i * 100))
+                .slideX(begin: 0.05, end: 0);
           }),
         ),
       ),
@@ -1283,23 +1451,41 @@ class _HowInternetWorksSimulatorState
                 Expanded(
                   child: TextField(
                     controller: _dnsCtrl,
-                    style: const TextStyle(color: TdcColors.warning, fontSize: 12, fontFamily: 'monospace'),
+                    style: const TextStyle(
+                        color: TdcColors.warning,
+                        fontSize: 12,
+                        fontFamily: 'monospace'),
                     decoration: InputDecoration(
                       hintText: 'Domaine à résoudre…',
-                      hintStyle: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.3), fontSize: 12),
+                      hintStyle: TextStyle(
+                          color: TdcColors.textPrimary.withValues(alpha: 0.3),
+                          fontSize: 12),
                       prefixText: '> nslookup ',
-                      prefixStyle: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 12, fontFamily: 'monospace'),
+                      prefixStyle: TextStyle(
+                          color: TdcColors.textPrimary.withValues(alpha: 0.4),
+                          fontSize: 12,
+                          fontFamily: 'monospace'),
                       isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 8),
                       filled: true,
                       fillColor: TdcColors.textPrimary.withValues(alpha: 0.04),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.15))),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.15))),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                              color: TdcColors.textPrimary
+                                  .withValues(alpha: 0.15))),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                              color: TdcColors.textPrimary
+                                  .withValues(alpha: 0.15))),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                _simButton('Resolve', TdcColors.warning, _dnsRunning ? null : _startDns),
+                _simButton('Resolve', TdcColors.warning,
+                    _dnsRunning ? null : _startDns),
                 const SizedBox(width: 8),
                 _simButton('Clear', TdcColors.textMuted, _resetDns),
               ],
@@ -1307,28 +1493,48 @@ class _HowInternetWorksSimulatorState
             if (_dnsSteps.isNotEmpty) ...[
               const SizedBox(height: 10),
               ..._dnsSteps.map((s) => Container(
-                margin: const EdgeInsets.only(bottom: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: s.color.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: s.color.withValues(alpha: 0.4)),
-                ),
-                child: Row(
-                  children: [
-                    Icon(s.isAnswer ? Icons.check_circle : Icons.arrow_right, color: s.color, size: 14),
-                    const SizedBox(width: 6),
-                    Expanded(child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    margin: const EdgeInsets.only(bottom: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: s.color.withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: s.color.withValues(alpha: 0.4)),
+                    ),
+                    child: Row(
                       children: [
-                        Text(s.label, style: TextStyle(color: s.color, fontSize: 11, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
-                        Text(s.detail, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontFamily: 'monospace')),
-                        if (s.ip != null) Text('→ ${s.ip}', style: const TextStyle(color: TdcColors.success, fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                        Icon(
+                            s.isAnswer ? Icons.check_circle : Icons.arrow_right,
+                            color: s.color,
+                            size: 14),
+                        const SizedBox(width: 6),
+                        Expanded(
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(s.label,
+                                style: TextStyle(
+                                    color: s.color,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'monospace')),
+                            Text(s.detail,
+                                style: const TextStyle(
+                                    color: TdcColors.textSecondary,
+                                    fontSize: 10,
+                                    fontFamily: 'monospace')),
+                            if (s.ip != null)
+                              Text('→ ${s.ip}',
+                                  style: const TextStyle(
+                                      color: TdcColors.success,
+                                      fontSize: 11,
+                                      fontFamily: 'monospace',
+                                      fontWeight: FontWeight.bold)),
+                          ],
+                        )),
                       ],
-                    )),
-                  ],
-                ),
-              ).animate().fadeIn(duration: 400.ms)),
+                    ),
+                  ).animate().fadeIn(duration: 400.ms)),
             ],
           ],
         ),
@@ -1351,7 +1557,8 @@ class _HowInternetWorksSimulatorState
               final color = accept ? TdcColors.success : TdcColors.danger;
               return Container(
                 margin: const EdgeInsets.only(bottom: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.07),
                   borderRadius: BorderRadius.circular(6),
@@ -1359,8 +1566,21 @@ class _HowInternetWorksSimulatorState
                 ),
                 child: Row(
                   children: [
-                    SizedBox(width: 56, child: Text(r.action, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold, fontFamily: 'monospace'))),
-                    Expanded(child: Text('${r.state} — ${r.target}', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontFamily: 'monospace'), overflow: TextOverflow.ellipsis)),
+                    SizedBox(
+                        width: 56,
+                        child: Text(r.action,
+                            style: TextStyle(
+                                color: color,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'monospace'))),
+                    Expanded(
+                        child: Text('${r.state} — ${r.target}',
+                            style: const TextStyle(
+                                color: TdcColors.textSecondary,
+                                fontSize: 10,
+                                fontFamily: 'monospace'),
+                            overflow: TextOverflow.ellipsis)),
                   ],
                 ),
               );
@@ -1371,19 +1591,36 @@ class _HowInternetWorksSimulatorState
                 Expanded(
                   child: TextField(
                     controller: _fwPortCtrl,
-                    style: const TextStyle(color: TdcColors.danger, fontSize: 12, fontFamily: 'monospace'),
+                    style: const TextStyle(
+                        color: TdcColors.danger,
+                        fontSize: 12,
+                        fontFamily: 'monospace'),
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       hintText: 'Port à tester…',
-                      hintStyle: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.3), fontSize: 12),
+                      hintStyle: TextStyle(
+                          color: TdcColors.textPrimary.withValues(alpha: 0.3),
+                          fontSize: 12),
                       prefixText: 'tcp dport=',
-                      prefixStyle: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 12, fontFamily: 'monospace'),
+                      prefixStyle: TextStyle(
+                          color: TdcColors.textPrimary.withValues(alpha: 0.4),
+                          fontSize: 12,
+                          fontFamily: 'monospace'),
                       isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 8),
                       filled: true,
                       fillColor: TdcColors.textPrimary.withValues(alpha: 0.04),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.15))),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.15))),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                              color: TdcColors.textPrimary
+                                  .withValues(alpha: 0.15))),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                              color: TdcColors.textPrimary
+                                  .withValues(alpha: 0.15))),
                     ),
                   ),
                 ),
@@ -1397,23 +1634,30 @@ class _HowInternetWorksSimulatorState
                 child: Container(
                   key: ValueKey(_fwBlocked),
                   margin: const EdgeInsets.only(top: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: (_fwBlocked ? TdcColors.danger : TdcColors.success).withValues(alpha: 0.15),
+                    color: (_fwBlocked ? TdcColors.danger : TdcColors.success)
+                        .withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     children: [
                       Icon(_fwBlocked ? Icons.block : Icons.check_circle,
-                          color: _fwBlocked ? TdcColors.danger : TdcColors.success, size: 16),
+                          color:
+                              _fwBlocked ? TdcColors.danger : TdcColors.success,
+                          size: 16),
                       const SizedBox(width: 8),
                       Text(
                         _fwBlocked
                             ? 'Port ${_fwPortCtrl.text} → DROP (bloqué par règle)'
                             : 'Port ${_fwPortCtrl.text} → ACCEPT (autorisé)',
                         style: TextStyle(
-                          color: _fwBlocked ? TdcColors.danger : TdcColors.success,
-                          fontSize: 11, fontFamily: 'monospace', fontWeight: FontWeight.bold,
+                          color:
+                              _fwBlocked ? TdcColors.danger : TdcColors.success,
+                          fontSize: 11,
+                          fontFamily: 'monospace',
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
@@ -1433,11 +1677,21 @@ class _HowInternetWorksSimulatorState
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: onTap != null ? color.withValues(alpha: 0.15) : TdcColors.textPrimary.withValues(alpha: 0.03),
+          color: onTap != null
+              ? color.withValues(alpha: 0.15)
+              : TdcColors.textPrimary.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: onTap != null ? color.withValues(alpha: 0.5) : TdcColors.border),
+          border: Border.all(
+              color: onTap != null
+                  ? color.withValues(alpha: 0.5)
+                  : TdcColors.border),
         ),
-        child: Text(label, style: TextStyle(color: onTap != null ? color : TdcColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
+        child: Text(label,
+            style: TextStyle(
+                color: onTap != null ? color : TdcColors.textMuted,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'monospace')),
       ),
     );
   }
@@ -1461,7 +1715,9 @@ class _HowInternetWorksSimulatorState
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: selected ? s.color.withValues(alpha: 0.18) : TdcColors.surface,
+                color: selected
+                    ? s.color.withValues(alpha: 0.18)
+                    : TdcColors.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: selected ? s.color : TdcColors.border,
@@ -1471,14 +1727,22 @@ class _HowInternetWorksSimulatorState
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(s.icon, color: selected ? s.color : TdcColors.textMuted, size: 16),
+                  Icon(s.icon,
+                      color: selected ? s.color : TdcColors.textMuted,
+                      size: 16),
                   const SizedBox(width: 8),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(s.name, style: TextStyle(color: selected ? s.color : TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
-                      Text(s.subtitle, style: const TextStyle(color: TdcColors.textMuted, fontSize: 9)),
+                      Text(s.name,
+                          style: TextStyle(
+                              color: selected ? s.color : TdcColors.textPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13)),
+                      Text(s.subtitle,
+                          style: const TextStyle(
+                              color: TdcColors.textMuted, fontSize: 9)),
                     ],
                   ),
                 ],
@@ -1506,7 +1770,9 @@ class _HowInternetWorksSimulatorState
           children: [
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: s.color.withValues(alpha: 0.15), shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                  color: s.color.withValues(alpha: 0.15),
+                  shape: BoxShape.circle),
               child: Icon(s.icon, color: s.color, size: 22),
             ),
             const SizedBox(width: 12),
@@ -1514,15 +1780,24 @@ class _HowInternetWorksSimulatorState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(s.name, style: TextStyle(color: s.color, fontWeight: FontWeight.bold, fontSize: 16)),
-                  Text(s.subtitle, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12)),
+                  Text(s.name,
+                      style: TextStyle(
+                          color: s.color,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
+                  Text(s.subtitle,
+                      style: const TextStyle(
+                          color: TdcColors.textSecondary, fontSize: 12)),
                 ],
               ),
             ),
             if (_currentStep >= 0)
               Text(
                 done ? '✓ Terminé' : '${_currentStep + 1}/${s.steps.length}',
-                style: TextStyle(color: done ? TdcColors.success : s.color, fontWeight: FontWeight.bold, fontSize: 12),
+                style: TextStyle(
+                    color: done ? TdcColors.success : s.color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12),
               ),
           ],
         ),
@@ -1540,10 +1815,16 @@ class _HowInternetWorksSimulatorState
         opacity: state == _StepState.future ? 0.3 : 1.0,
         child: Container(
           decoration: BoxDecoration(
-            color: state == _StepState.active ? step.color.withValues(alpha: 0.12) : TdcColors.surface,
+            color: state == _StepState.active
+                ? step.color.withValues(alpha: 0.12)
+                : TdcColors.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: state == _StepState.active ? step.color : state == _StepState.done ? step.color.withValues(alpha: 0.35) : TdcColors.border,
+              color: state == _StepState.active
+                  ? step.color
+                  : state == _StepState.done
+                      ? step.color.withValues(alpha: 0.35)
+                      : TdcColors.border,
               width: state == _StepState.active ? 1.5 : 1,
             ),
           ),
@@ -1561,16 +1842,37 @@ class _HowInternetWorksSimulatorState
                         children: [
                           Row(
                             children: [
-                              Expanded(child: Text(step.title, style: TextStyle(color: state != _StepState.future ? TdcColors.textPrimary : TdcColors.textMuted, fontWeight: FontWeight.bold, fontSize: 14), overflow: TextOverflow.ellipsis, maxLines: 2)),
+                              Expanded(
+                                  child: Text(step.title,
+                                      style: TextStyle(
+                                          color: state != _StepState.future
+                                              ? TdcColors.textPrimary
+                                              : TdcColors.textMuted,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2)),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                                decoration: BoxDecoration(color: step.color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
-                                child: Text(step.protocol, style: TextStyle(color: step.color, fontSize: 9, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 7, vertical: 2),
+                                decoration: BoxDecoration(
+                                    color: step.color.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(6)),
+                                child: Text(step.protocol,
+                                    style: TextStyle(
+                                        color: step.color,
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'monospace')),
                               ),
                             ],
                           ),
                           const SizedBox(height: 4),
-                          Text(step.description, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12), overflow: TextOverflow.ellipsis, maxLines: 2),
+                          Text(step.description,
+                              style: const TextStyle(
+                                  color: TdcColors.textSecondary, fontSize: 12),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2),
                         ],
                       ),
                     ),
@@ -1578,7 +1880,10 @@ class _HowInternetWorksSimulatorState
                 ),
               ),
               if (state != _StepState.future)
-                _buildStepDetail(step, state).animate().fadeIn(duration: 400.ms).slideY(begin: -0.05, end: 0, duration: 400.ms),
+                _buildStepDetail(step, state)
+                    .animate()
+                    .fadeIn(duration: 400.ms)
+                    .slideY(begin: -0.05, end: 0, duration: 400.ms),
             ],
           ),
         ),
@@ -1588,18 +1893,34 @@ class _HowInternetWorksSimulatorState
 
   Widget _buildStepNumber(int index, _Step step, _StepState state) {
     if (state == _StepState.active && _running) {
-      return SizedBox(width: 32, height: 32, child: CircularProgressIndicator(strokeWidth: 2, color: step.color));
+      return SizedBox(
+          width: 32,
+          height: 32,
+          child: CircularProgressIndicator(strokeWidth: 2, color: step.color));
     }
     return Container(
-      width: 32, height: 32,
+      width: 32,
+      height: 32,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: state == _StepState.done ? step.color.withValues(alpha: 0.2) : state == _StepState.active ? step.color.withValues(alpha: 0.25) : TdcColors.surfaceAlt,
-        border: Border.all(color: state == _StepState.future ? TdcColors.border : step.color),
+        color: state == _StepState.done
+            ? step.color.withValues(alpha: 0.2)
+            : state == _StepState.active
+                ? step.color.withValues(alpha: 0.25)
+                : TdcColors.surfaceAlt,
+        border: Border.all(
+            color: state == _StepState.future ? TdcColors.border : step.color),
       ),
       child: state == _StepState.done
           ? Icon(Icons.check, color: step.color, size: 16)
-          : Center(child: Text('${index + 1}', style: TextStyle(color: state == _StepState.future ? TdcColors.textMuted : step.color, fontWeight: FontWeight.bold, fontSize: 13))),
+          : Center(
+              child: Text('${index + 1}',
+                  style: TextStyle(
+                      color: state == _StepState.future
+                          ? TdcColors.textMuted
+                          : step.color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13))),
     );
   }
 
@@ -1616,8 +1937,13 @@ class _HowInternetWorksSimulatorState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(step.detail, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12, height: 1.5)),
-          if (step.visual != null) ...[const SizedBox(height: 12), step.visual!()],
+          Text(step.detail,
+              style: const TextStyle(
+                  color: TdcColors.textSecondary, fontSize: 12, height: 1.5)),
+          if (step.visual != null) ...[
+            const SizedBox(height: 12),
+            step.visual!()
+          ],
           const SizedBox(height: 10),
           Align(
             alignment: Alignment.centerRight,
@@ -1641,14 +1967,20 @@ class _HowInternetWorksSimulatorState
             child: ElevatedButton.icon(
               onPressed: _running ? null : _startSimulation,
               icon: _running
-                  ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: TdcColors.textPrimary))
+                  ? const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: TdcColors.textPrimary))
                   : const Icon(Icons.play_arrow),
-              label: Text(_running ? 'Simulation en cours…' : 'Dérouler les étapes'),
+              label: Text(
+                  _running ? 'Simulation en cours…' : 'Dérouler les étapes'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: _scenario.color,
                 foregroundColor: TdcColors.textPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
             ),
           ),
@@ -1661,8 +1993,10 @@ class _HowInternetWorksSimulatorState
               style: OutlinedButton.styleFrom(
                 foregroundColor: TdcColors.textSecondary,
                 side: const BorderSide(color: TdcColors.border),
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
             ),
           ],
@@ -1729,8 +2063,10 @@ class _HiP4 {
 
 class _RetainButton extends StatefulWidget {
   final String title, detail, category;
-  const _RetainButton({required this.title, required this.detail, required this.category});
-  @override State<_RetainButton> createState() => _RetainButtonState();
+  const _RetainButton(
+      {required this.title, required this.detail, required this.category});
+  @override
+  State<_RetainButton> createState() => _RetainButtonState();
 }
 
 class _RetainButtonState extends State<_RetainButton> {
@@ -1746,7 +2082,10 @@ class _RetainButtonState extends State<_RetainButton> {
       category: widget.category,
     );
     if (!mounted) return;
-    setState(() { _saved = true; _loading = false; });
+    setState(() {
+      _saved = true;
+      _loading = false;
+    });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('« ${widget.title} » ajouté à la Cheat Sheet ★'),
@@ -1765,17 +2104,26 @@ class _RetainButtonState extends State<_RetainButton> {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: _saved ? TdcColors.warning.withValues(alpha: 0.18) : TdcColors.textPrimary.withValues(alpha: 0.05),
+          color: _saved
+              ? TdcColors.warning.withValues(alpha: 0.18)
+              : TdcColors.textPrimary.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: _saved ? TdcColors.warning : TdcColors.textMuted),
+          border: Border.all(
+              color: _saved ? TdcColors.warning : TdcColors.textMuted),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (_loading)
-              const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: TdcColors.warning))
+              const SizedBox(
+                  width: 12,
+                  height: 12,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 1.5, color: TdcColors.warning))
             else
-              Icon(_saved ? Icons.bookmark : Icons.bookmark_border, color: _saved ? TdcColors.warning : TdcColors.textTertiary, size: 13),
+              Icon(_saved ? Icons.bookmark : Icons.bookmark_border,
+                  color: _saved ? TdcColors.warning : TdcColors.textTertiary,
+                  size: 13),
             const SizedBox(width: 5),
             Text(
               _saved ? 'Retenu ✓' : 'Retenir',

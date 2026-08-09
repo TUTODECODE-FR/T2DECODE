@@ -266,7 +266,8 @@ class SimPacketDiagram extends StatelessWidget {
     const maxPerRow = 4;
     final rows = <List<SimPacketField>>[];
     for (int i = 0; i < fields.length; i += maxPerRow) {
-      rows.add(fields.sublist(i, i + maxPerRow > fields.length ? fields.length : i + maxPerRow));
+      rows.add(fields.sublist(
+          i, i + maxPerRow > fields.length ? fields.length : i + maxPerRow));
     }
 
     return Column(
@@ -360,7 +361,8 @@ class SimKeyValue extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 4),
           decoration: BoxDecoration(
             border: Border(
-              bottom: BorderSide(color: TdcColors.border.withValues(alpha: 0.5)),
+              bottom:
+                  BorderSide(color: TdcColors.border.withValues(alpha: 0.5)),
             ),
           ),
           child: Row(
@@ -466,7 +468,8 @@ class SimTreeDiagram extends StatelessWidget {
     required this.color,
   });
 
-  Widget _buildNodeBox(String label, String? sublabel, Color c, {bool isRoot = false}) {
+  Widget _buildNodeBox(String label, String? sublabel, Color c,
+      {bool isRoot = false}) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isRoot ? 10 : 7,
@@ -537,17 +540,23 @@ class SimTreeDiagram extends StatelessWidget {
                         children: children.map((child) {
                           return Flexible(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 2),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 2),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  _buildNodeBox(child.label, child.sublabel, color),
+                                  _buildNodeBox(
+                                      child.label, child.sublabel, color),
                                   if (child.children.isNotEmpty) ...[
                                     const SizedBox(height: 2),
                                     ...child.children.take(2).map(
                                           (gc) => Padding(
-                                            padding: const EdgeInsets.only(top: 2),
-                                            child: _buildNodeBox(gc.label, gc.sublabel, color.withValues(alpha: 0.7)),
+                                            padding:
+                                                const EdgeInsets.only(top: 2),
+                                            child: _buildNodeBox(
+                                                gc.label,
+                                                gc.sublabel,
+                                                color.withValues(alpha: 0.7)),
                                           ),
                                         ),
                                   ],
@@ -599,7 +608,8 @@ class SimCodeBlock extends StatelessWidget {
           children: [
             if (title != null)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   borderRadius: const BorderRadius.only(

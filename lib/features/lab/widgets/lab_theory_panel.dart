@@ -20,7 +20,8 @@ class LabTheoryPanel extends StatelessWidget {
     required this.accentColor,
   });
 
-  static void show(BuildContext context, {
+  static void show(
+    BuildContext context, {
     required String title,
     required String markdownContent,
     required Color accentColor,
@@ -67,7 +68,7 @@ class LabTheoryPanel extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -94,19 +95,29 @@ class LabTheoryPanel extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const Divider(color: TdcColors.border, height: 1),
-          
+
           // Content
           Expanded(
             child: Markdown(
               data: MarkdownSanitizer.sanitize(markdownContent),
               selectable: true,
               styleSheet: MarkdownStyleSheet(
-                p: const TextStyle(color: TdcColors.textSecondary, fontSize: 15, height: 1.6),
-                h1: TextStyle(color: accentColor, fontSize: 24, fontWeight: FontWeight.bold),
-                h2: const TextStyle(color: TdcColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold),
-                h3: const TextStyle(color: TdcColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+                p: const TextStyle(
+                    color: TdcColors.textSecondary, fontSize: 15, height: 1.6),
+                h1: TextStyle(
+                    color: accentColor,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold),
+                h2: const TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+                h3: const TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
                 code: TextStyle(
                   color: accentColor,
                   backgroundColor: TdcColors.surfaceAlt,
@@ -120,9 +131,12 @@ class LabTheoryPanel extends StatelessWidget {
                 ),
                 blockquoteDecoration: BoxDecoration(
                   color: accentColor.withValues(alpha: 0.1),
-                  border: Border(left: BorderSide(color: accentColor, width: 4)),
+                  border:
+                      Border(left: BorderSide(color: accentColor, width: 4)),
                 ),
-                blockquote: const TextStyle(color: TdcColors.textSecondary, fontStyle: FontStyle.italic),
+                blockquote: const TextStyle(
+                    color: TdcColors.textSecondary,
+                    fontStyle: FontStyle.italic),
                 listBullet: const TextStyle(color: TdcColors.textPrimary),
               ),
             ),

@@ -68,7 +68,8 @@ class IdentityVerification {
   }
 
   /// Génère un certificat d'authenticité basé sur les checksums réels.
-  static Future<AuthenticityCertificate> generateAuthenticityCertificate() async {
+  static Future<AuthenticityCertificate>
+      generateAuthenticityCertificate() async {
     final verification = await verifyApplicationIdentity();
     final version = await _getAppVersion();
 
@@ -88,11 +89,13 @@ class IdentityVerification {
   /// Crée un sceau numérique signé par SHA-256 des constantes officielles.
   static DigitalSeal createAssociationSeal() {
     final timestamp = DateTime.now().toIso8601String();
-    final sealData = '$ASSOCIATION_NAME|$ASSOCIATION_EMAIL|$ASSOCIATION_WEBSITE|$timestamp';
+    final sealData =
+        '$ASSOCIATION_NAME|$ASSOCIATION_EMAIL|$ASSOCIATION_WEBSITE|$timestamp';
     final sealHash = sha256.convert(utf8.encode(sealData)).toString();
 
     final sRand = Random.secure();
-    final sBytes = Uint8List.fromList(List.generate(8, (_) => sRand.nextInt(256)));
+    final sBytes =
+        Uint8List.fromList(List.generate(8, (_) => sRand.nextInt(256)));
     final sHex = sBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
     return DigitalSeal(
       sealId: 'SEAL_$sHex',
@@ -153,7 +156,8 @@ class IdentityVerification {
   /// Génère un ID de certificat cryptographiquement aléatoire (128 bits).
   static String _generateCertificateId() {
     final rand = Random.secure();
-    final bytes = Uint8List.fromList(List.generate(16, (_) => rand.nextInt(256)));
+    final bytes =
+        Uint8List.fromList(List.generate(16, (_) => rand.nextInt(256)));
     final hex = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
     return 'CERT_$hex';
   }
@@ -278,7 +282,8 @@ class IdentityVerificationService {
   static VerificationResult? _cachedResult;
   static DateTime? _lastVerification;
 
-  static Future<VerificationResult> verifyIdentity({bool forceRefresh = false}) async {
+  static Future<VerificationResult> verifyIdentity(
+      {bool forceRefresh = false}) async {
     final now = DateTime.now();
     if (!forceRefresh &&
         _cachedResult != null &&
@@ -293,7 +298,8 @@ class IdentityVerificationService {
 
   static Future<Map<String, dynamic>> generateVerificationReport() async {
     final result = await verifyIdentity();
-    final certificate = await IdentityVerification.generateAuthenticityCertificate();
+    final certificate =
+        await IdentityVerification.generateAuthenticityCertificate();
     final seal = IdentityVerification.createAssociationSeal();
 
     return {

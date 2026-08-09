@@ -18,7 +18,7 @@ class DatacenterSimulator extends StatefulWidget {
 class _DatacenterSimulatorState extends State<DatacenterSimulator>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  
+
   // Datacenter State
   final List<Rack> _racks = [];
   final List<Server> _servers = [];
@@ -45,7 +45,11 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
   }
 
   void _initializeDatacenter() {
-    _racks.clear(); _servers.clear(); _powerUnits.clear(); _coolingUnits.clear(); _activeIncidents.clear();
+    _racks.clear();
+    _servers.clear();
+    _powerUnits.clear();
+    _coolingUnits.clear();
+    _activeIncidents.clear();
     // Initialiser les racks
     for (int i = 0; i < 8; i++) {
       _racks.add(Rack(
@@ -104,14 +108,19 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
   }
 
   void _calculateMetrics() {
-    _totalPowerConsumption = _servers.where((s) => s.status == ServerStatus.running).fold(0.0, (sum, server) => sum + server.powerConsumption);
-    _totalTemperature = _racks.isEmpty ? 22.0 : 
-        _racks.fold(0.0, (sum, rack) => sum + rack.temperature) / _racks.length;
-    
+    _totalPowerConsumption = _servers
+        .where((s) => s.status == ServerStatus.running)
+        .fold(0.0, (sum, server) => sum + server.powerConsumption);
+    _totalTemperature = _racks.isEmpty
+        ? 22.0
+        : _racks.fold(0.0, (sum, rack) => sum + rack.temperature) /
+            _racks.length;
+
     // Impact of Cooling failures
-    final activeCooling = _coolingUnits.where((u) => u.status == CoolingUnitStatus.active).length;
+    final activeCooling =
+        _coolingUnits.where((u) => u.status == CoolingUnitStatus.active).length;
     if (activeCooling < _coolingUnits.length) {
-      _totalTemperature += (3 - activeCooling) * 2.5; 
+      _totalTemperature += (3 - activeCooling) * 2.5;
     }
   }
 
@@ -126,27 +135,43 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
       case IncidentType.powerFailure:
         final unit = _powerUnits[rand.nextInt(_powerUnits.length)];
         if (unit.status == PowerUnitStatus.active) {
-          incident = Incident(id: 'INC-${rand.nextInt(999)}', type: type, description: 'Panne critique PDU: ${unit.id}', targetId: unit.id);
-          _powerUnits[_powerUnits.indexOf(unit)] = unit.copyWith(status: PowerUnitStatus.error);
+          incident = Incident(
+              id: 'INC-${rand.nextInt(999)}',
+              type: type,
+              description: 'Panne critique PDU: ${unit.id}',
+              targetId: unit.id);
+          _powerUnits[_powerUnits.indexOf(unit)] =
+              unit.copyWith(status: PowerUnitStatus.error);
         }
         break;
       case IncidentType.coolingFailure:
         final unit = _coolingUnits[rand.nextInt(_coolingUnits.length)];
         if (unit.status == CoolingUnitStatus.active) {
-          incident = Incident(id: 'INC-${rand.nextInt(999)}', type: type, description: 'Surchauffe compresseur: ${unit.id}', targetId: unit.id);
-          _coolingUnits[_coolingUnits.indexOf(unit)] = unit.copyWith(status: CoolingUnitStatus.error);
+          incident = Incident(
+              id: 'INC-${rand.nextInt(999)}',
+              type: type,
+              description: 'Surchauffe compresseur: ${unit.id}',
+              targetId: unit.id);
+          _coolingUnits[_coolingUnits.indexOf(unit)] =
+              unit.copyWith(status: CoolingUnitStatus.error);
         }
         break;
       case IncidentType.serverError:
         final srv = _servers[rand.nextInt(_servers.length)];
         if (srv.status == ServerStatus.running) {
-          incident = Incident(id: 'INC-${rand.nextInt(999)}', type: type, description: 'Kernel Panic: ${srv.id}', targetId: srv.id);
-          _servers[_servers.indexOf(srv)] = srv.copyWith(status: ServerStatus.error, cpuUsage: 0, powerConsumption: 5);
+          incident = Incident(
+              id: 'INC-${rand.nextInt(999)}',
+              type: type,
+              description: 'Kernel Panic: ${srv.id}',
+              targetId: srv.id);
+          _servers[_servers.indexOf(srv)] = srv.copyWith(
+              status: ServerStatus.error, cpuUsage: 0, powerConsumption: 5);
         }
         break;
     }
 
-    if (incident != null && !_activeIncidents.any((i) => i.targetId == incident!.targetId)) {
+    if (incident != null &&
+        !_activeIncidents.any((i) => i.targetId == incident!.targetId)) {
       _activeIncidents.add(incident);
     }
   }
@@ -156,13 +181,18 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
       _activeIncidents.remove(incident);
       if (incident.type == IncidentType.powerFailure) {
         final i = _powerUnits.indexWhere((u) => u.id == incident.targetId);
-        if (i != -1) _powerUnits[i] = _powerUnits[i].copyWith(status: PowerUnitStatus.active);
+        if (i != -1)
+          _powerUnits[i] =
+              _powerUnits[i].copyWith(status: PowerUnitStatus.active);
       } else if (incident.type == IncidentType.coolingFailure) {
         final i = _coolingUnits.indexWhere((u) => u.id == incident.targetId);
-        if (i != -1) _coolingUnits[i] = _coolingUnits[i].copyWith(status: CoolingUnitStatus.active);
+        if (i != -1)
+          _coolingUnits[i] =
+              _coolingUnits[i].copyWith(status: CoolingUnitStatus.active);
       } else {
         final i = _servers.indexWhere((s) => s.id == incident.targetId);
-        if (i != -1) _servers[i] = _servers[i].copyWith(status: ServerStatus.running);
+        if (i != -1)
+          _servers[i] = _servers[i].copyWith(status: ServerStatus.running);
       }
     });
   }
@@ -173,7 +203,9 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
       children: [
         Container(
           padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(color: TdcColors.surface, border: Border(bottom: BorderSide(color: TdcColors.border))),
+          decoration: const BoxDecoration(
+              color: TdcColors.surface,
+              border: Border(bottom: BorderSide(color: TdcColors.border))),
           child: Row(
             children: [
               const Icon(Icons.dns, color: TdcColors.info, size: 28),
@@ -181,8 +213,17 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Datacenter Explorer', style: TextStyle(color: TdcColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text('${_activeIncidents.length} incidents actifs', style: TextStyle(color: _activeIncidents.isEmpty ? TdcColors.success : TdcColors.danger, fontSize: 11)),
+                  const Text('Datacenter Explorer',
+                      style: TextStyle(
+                          color: TdcColors.textPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
+                  Text('${_activeIncidents.length} incidents actifs',
+                      style: TextStyle(
+                          color: _activeIncidents.isEmpty
+                              ? TdcColors.success
+                              : TdcColors.danger,
+                          fontSize: 11)),
                 ],
               ),
               const Spacer(),
@@ -190,7 +231,8 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
                 onPressed: _isMonitoring ? null : _initializeDatacenter,
                 icon: const Icon(Icons.refresh, size: 16),
                 label: const Text('Reset'),
-                style: ElevatedButton.styleFrom(backgroundColor: TdcColors.surfaceAlt),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: TdcColors.surfaceAlt),
               ),
             ],
           ),
@@ -208,7 +250,19 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
               const Tab(text: 'Serveurs'),
               const Tab(text: 'Énergie'),
               const Tab(text: 'Refroidissement'),
-              Tab(child: Row(children: [const Text('Incidents'), if(_activeIncidents.isNotEmpty) Container(margin: const EdgeInsets.only(left: 8), padding: const EdgeInsets.all(4), decoration: const BoxDecoration(color: TdcColors.danger, shape: BoxShape.circle), child: Text('${_activeIncidents.length}', style: const TextStyle(color: TdcColors.textPrimary, fontSize: 10)))]))
+              Tab(
+                  child: Row(children: [
+                const Text('Incidents'),
+                if (_activeIncidents.isNotEmpty)
+                  Container(
+                      margin: const EdgeInsets.only(left: 8),
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                          color: TdcColors.danger, shape: BoxShape.circle),
+                      child: Text('${_activeIncidents.length}',
+                          style: const TextStyle(
+                              color: TdcColors.textPrimary, fontSize: 10)))
+              ]))
             ],
           ),
         ),
@@ -230,7 +284,13 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
 
   Widget _buildIncidentsTab() {
     if (_activeIncidents.isEmpty) {
-      return const Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.check_circle_outline, color: TdcColors.success, size: 64), SizedBox(height: 16), Text('Tous les systèmes sont nominaux', style: TextStyle(color: TdcColors.textMuted))]));
+      return const Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Icon(Icons.check_circle_outline, color: TdcColors.success, size: 64),
+        SizedBox(height: 16),
+        Text('Tous les systèmes sont nominaux',
+            style: TextStyle(color: TdcColors.textMuted))
+      ]));
     }
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -239,12 +299,21 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
         final inc = _activeIncidents[i];
         return Card(
           color: TdcColors.danger.withValues(alpha: 0.05),
-          shape: const RoundedRectangleBorder(borderRadius: TdcRadius.md, side: BorderSide(color: TdcColors.danger, width: 0.5)),
+          shape: const RoundedRectangleBorder(
+              borderRadius: TdcRadius.md,
+              side: BorderSide(color: TdcColors.danger, width: 0.5)),
           child: ListTile(
-            leading: const Icon(Icons.warning_amber_rounded, color: TdcColors.danger),
-            title: Text(inc.description, style: const TextStyle(fontWeight: FontWeight.bold, color: TdcColors.danger)),
+            leading: const Icon(Icons.warning_amber_rounded,
+                color: TdcColors.danger),
+            title: Text(inc.description,
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: TdcColors.danger)),
             subtitle: Text('ID: ${inc.id} | Target: ${inc.targetId}'),
-            trailing: ElevatedButton(onPressed: () => _resolveIncident(inc), style: ElevatedButton.styleFrom(backgroundColor: TdcColors.success), child: const Text('RÉPARER')),
+            trailing: ElevatedButton(
+                onPressed: () => _resolveIncident(inc),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: TdcColors.success),
+                child: const Text('RÉPARER')),
           ),
         );
       },
@@ -254,15 +323,24 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
   Widget _buildMetricsBar() {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surfaceAlt.withValues(alpha: 0.2), border: const Border(bottom: BorderSide(color: TdcColors.border))),
+      decoration: BoxDecoration(
+          color: TdcColors.surfaceAlt.withValues(alpha: 0.2),
+          border: const Border(bottom: BorderSide(color: TdcColors.border))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildMetric('⚡', '${_totalPowerConsumption.toStringAsFixed(0)}W', 'Puissance'),
-          _buildMetric('🌡️', '${_totalTemperature.toStringAsFixed(1)}°C', 'Temp'),
+          _buildMetric('⚡', '${_totalPowerConsumption.toStringAsFixed(0)}W',
+              'Puissance'),
+          _buildMetric(
+              '🌡️', '${_totalTemperature.toStringAsFixed(1)}°C', 'Temp'),
           IconButton(
-            onPressed: _toggleMonitoring, 
-            icon: Icon(_isMonitoring ? Icons.pause_circle_filled : Icons.play_circle_fill, size: 40, color: _isMonitoring ? TdcColors.danger : TdcColors.success)),
+              onPressed: _toggleMonitoring,
+              icon: Icon(
+                  _isMonitoring
+                      ? Icons.pause_circle_filled
+                      : Icons.play_circle_fill,
+                  size: 40,
+                  color: _isMonitoring ? TdcColors.danger : TdcColors.success)),
           _buildMetric('💧', '45%', 'Humidité'),
           _buildMetric('🖥️', '${_servers.length}', 'Hosts'),
         ],
@@ -270,82 +348,200 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
     );
   }
 
-  Widget _buildMetric(String icon, String val, String sub) => Column(children: [Text(icon, style: const TextStyle(fontSize: 20)), Text(val, style: const TextStyle(fontWeight: FontWeight.bold)), Text(sub, style: const TextStyle(fontSize: 10, color: TdcColors.textMuted))]);
+  Widget _buildMetric(String icon, String val, String sub) => Column(children: [
+        Text(icon, style: const TextStyle(fontSize: 20)),
+        Text(val, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(sub,
+            style: const TextStyle(fontSize: 10, color: TdcColors.textMuted))
+      ]);
 
-  Widget _buildRacksTab() => GridView.builder(padding: const EdgeInsets.all(16), gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.5, crossAxisSpacing: 12, mainAxisSpacing: 12), itemCount: _racks.length, itemBuilder: (_, i) => _buildRackCard(_racks[i]));
+  Widget _buildRacksTab() => GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.5,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12),
+      itemCount: _racks.length,
+      itemBuilder: (_, i) => _buildRackCard(_racks[i]));
 
   Widget _buildRackCard(Rack rack) {
-    final hasError = _activeIncidents.any((inc) => inc.targetId == rack.id || rack.servers.any((s) => s.status == ServerStatus.error));
+    final hasError = _activeIncidents.any((inc) =>
+        inc.targetId == rack.id ||
+        rack.servers.any((s) => s.status == ServerStatus.error));
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: hasError ? TdcColors.danger : TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(
+              color: hasError ? TdcColors.danger : TdcColors.border)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [Text(rack.id, style: const TextStyle(fontWeight: FontWeight.bold)), const Spacer(), if(hasError) const Icon(Icons.error, color: TdcColors.danger, size: 14)]),
+        Row(children: [
+          Text(rack.id, style: const TextStyle(fontWeight: FontWeight.bold)),
+          const Spacer(),
+          if (hasError)
+            const Icon(Icons.error, color: TdcColors.danger, size: 14)
+        ]),
         const Spacer(),
-        LinearProgressIndicator(value: rack.temperature / 80, backgroundColor: TdcColors.surfaceAlt, color: _getTemperatureColor(rack.temperature)),
+        LinearProgressIndicator(
+            value: rack.temperature / 80,
+            backgroundColor: TdcColors.surfaceAlt,
+            color: _getTemperatureColor(rack.temperature)),
         const SizedBox(height: 8),
-        Text('${rack.servers.length} serveurs | ${rack.temperature.toStringAsFixed(1)}°C', style: const TextStyle(fontSize: 11, color: TdcColors.textMuted)),
+        Text(
+            '${rack.servers.length} serveurs | ${rack.temperature.toStringAsFixed(1)}°C',
+            style: const TextStyle(fontSize: 11, color: TdcColors.textMuted)),
       ]),
     );
   }
 
-  Widget _buildServersTab() => ListView.separated(padding: const EdgeInsets.all(16), itemCount: _servers.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, i) => _buildServerCard(_servers[i]));
+  Widget _buildServersTab() => ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: _servers.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      itemBuilder: (_, i) => _buildServerCard(_servers[i]));
 
   Widget _buildServerCard(Server server) {
     final isError = server.status == ServerStatus.error;
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: isError ? TdcColors.danger : TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border:
+              Border.all(color: isError ? TdcColors.danger : TdcColors.border)),
       child: Row(children: [
-        Container(width: 8, height: 32, decoration: BoxDecoration(color: _getServerStatusColor(server.status), borderRadius: BorderRadius.circular(4))),
+        Container(
+            width: 8,
+            height: 32,
+            decoration: BoxDecoration(
+                color: _getServerStatusColor(server.status),
+                borderRadius: BorderRadius.circular(4))),
         const SizedBox(width: 12),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(server.id, style: const TextStyle(fontWeight: FontWeight.bold)), Text(server.rackId, style: const TextStyle(fontSize: 11, color: TdcColors.textMuted))])),
+        Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(server.id, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(server.rackId,
+              style: const TextStyle(fontSize: 11, color: TdcColors.textMuted))
+        ])),
         _buildMiniMetric('CPU', '${server.cpuUsage.toInt()}%'),
         _buildMiniMetric('Temp', '${server.temperature.toInt()}°C'),
-        if(isError) IconButton(icon: const Icon(Icons.build, size: 18, color: TdcColors.success), onPressed: () => _resolveIncident(_activeIncidents.firstWhere((inc) => inc.targetId == server.id))),
+        if (isError)
+          IconButton(
+              icon: const Icon(Icons.build, size: 18, color: TdcColors.success),
+              onPressed: () => _resolveIncident(_activeIncidents
+                  .firstWhere((inc) => inc.targetId == server.id))),
       ]),
     );
   }
 
-  Widget _buildMiniMetric(String label, String val) => Padding(padding: const EdgeInsets.only(left: 16), child: Column(children: [Text(label, style: const TextStyle(fontSize: 9, color: TdcColors.textMuted)), Text(val, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))]));
+  Widget _buildMiniMetric(String label, String val) => Padding(
+      padding: const EdgeInsets.only(left: 16),
+      child: Column(children: [
+        Text(label,
+            style: const TextStyle(fontSize: 9, color: TdcColors.textMuted)),
+        Text(val,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))
+      ]));
 
-  Widget _buildPowerTab() => GridView.builder(padding: const EdgeInsets.all(16), gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.2, crossAxisSpacing: 12, mainAxisSpacing: 12), itemCount: _powerUnits.length, itemBuilder: (_, i) => _buildPowerUnitCard(_powerUnits[i]));
+  Widget _buildPowerTab() => GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12),
+      itemCount: _powerUnits.length,
+      itemBuilder: (_, i) => _buildPowerUnitCard(_powerUnits[i]));
 
   Widget _buildPowerUnitCard(PowerUnit unit) {
     final isError = unit.status == PowerUnitStatus.error;
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: isError ? TdcColors.danger : TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border:
+              Border.all(color: isError ? TdcColors.danger : TdcColors.border)),
       child: Column(children: [
-        Row(children: [const Icon(Icons.bolt, size: 16), const SizedBox(width: 8), Text(unit.id), const Spacer(), Icon(Icons.circle, color: isError ? TdcColors.danger : TdcColors.success, size: 10)]),
+        Row(children: [
+          const Icon(Icons.bolt, size: 16),
+          const SizedBox(width: 8),
+          Text(unit.id),
+          const Spacer(),
+          Icon(Icons.circle,
+              color: isError ? TdcColors.danger : TdcColors.success, size: 10)
+        ]),
         const Spacer(),
-        Text('${unit.currentLoad.toInt()}W / ${unit.capacity.toInt()}W', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-        if(isError) ElevatedButton(onPressed: () => _resolveIncident(_activeIncidents.firstWhere((inc) => inc.targetId == unit.id)), style: ElevatedButton.styleFrom(backgroundColor: TdcColors.warning, minimumSize: const Size(double.infinity, 30)), child: const Text('Réparer PDU')),
+        Text('${unit.currentLoad.toInt()}W / ${unit.capacity.toInt()}W',
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+        if (isError)
+          ElevatedButton(
+              onPressed: () => _resolveIncident(_activeIncidents
+                  .firstWhere((inc) => inc.targetId == unit.id)),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: TdcColors.warning,
+                  minimumSize: const Size(double.infinity, 30)),
+              child: const Text('Réparer PDU')),
       ]),
     );
   }
 
-  Widget _buildCoolingTab() => GridView.builder(padding: const EdgeInsets.all(16), gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.2, crossAxisSpacing: 12, mainAxisSpacing: 12), itemCount: _coolingUnits.length, itemBuilder: (_, i) => _buildCoolingUnitCard(_coolingUnits[i]));
+  Widget _buildCoolingTab() => GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12),
+      itemCount: _coolingUnits.length,
+      itemBuilder: (_, i) => _buildCoolingUnitCard(_coolingUnits[i]));
 
   Widget _buildCoolingUnitCard(CoolingUnit unit) {
     final isError = unit.status == CoolingUnitStatus.error;
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: isError ? TdcColors.danger : TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border:
+              Border.all(color: isError ? TdcColors.danger : TdcColors.border)),
       child: Column(children: [
-        Row(children: [const Icon(Icons.ac_unit, size: 16), const SizedBox(width: 8), Text(unit.id), const Spacer(), Icon(Icons.circle, color: isError ? TdcColors.danger : TdcColors.success, size: 10)]),
+        Row(children: [
+          const Icon(Icons.ac_unit, size: 16),
+          const SizedBox(width: 8),
+          Text(unit.id),
+          const Spacer(),
+          Icon(Icons.circle,
+              color: isError ? TdcColors.danger : TdcColors.success, size: 10)
+        ]),
         const Spacer(),
-        Text('Fan: ${unit.fanSpeed}%', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-        if(isError) ElevatedButton(onPressed: () => _resolveIncident(_activeIncidents.firstWhere((inc) => inc.targetId == unit.id)), style: ElevatedButton.styleFrom(backgroundColor: TdcColors.warning, minimumSize: const Size(double.infinity, 30)), child: const Text('Réparer CRAC')),
+        Text('Fan: ${unit.fanSpeed}%',
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+        if (isError)
+          ElevatedButton(
+              onPressed: () => _resolveIncident(_activeIncidents
+                  .firstWhere((inc) => inc.targetId == unit.id)),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: TdcColors.warning,
+                  minimumSize: const Size(double.infinity, 30)),
+              child: const Text('Réparer CRAC')),
       ]),
     );
   }
 
   void _toggleMonitoring() {
-    setState(() { _isMonitoring = !_isMonitoring; });
+    setState(() {
+      _isMonitoring = !_isMonitoring;
+    });
     if (_isMonitoring) {
       _monitoringTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (!_isMonitoring || !mounted) { timer.cancel(); return; }
+        if (!_isMonitoring || !mounted) {
+          timer.cancel();
+          return;
+        }
         _updateMetrics();
         _triggerRandomIncident();
       });
@@ -360,41 +556,62 @@ class _DatacenterSimulatorState extends State<DatacenterSimulator>
       final s = _servers[i];
       if (s.status == ServerStatus.running) {
         _servers[i] = s.copyWith(
-          cpuUsage: (s.cpuUsage + (random.nextDouble() - 0.5) * 10).clamp(5, 95),
-          temperature: (s.temperature + (random.nextDouble() - 0.5) * 4).clamp(30, 75),
-          powerConsumption: (s.powerConsumption + (random.nextDouble() - 0.5) * 20).clamp(100, 450),
+          cpuUsage:
+              (s.cpuUsage + (random.nextDouble() - 0.5) * 10).clamp(5, 95),
+          temperature:
+              (s.temperature + (random.nextDouble() - 0.5) * 4).clamp(30, 75),
+          powerConsumption:
+              (s.powerConsumption + (random.nextDouble() - 0.5) * 20)
+                  .clamp(100, 450),
         );
       }
     }
     for (int i = 0; i < _racks.length; i++) {
       final r = _racks[i];
       final srvs = _servers.where((s) => s.rackId == r.id);
-      final avgT = srvs.isEmpty ? 25.0 : srvs.fold<double>(0.0, (sum, s) => sum + s.temperature) / srvs.length;
-      _racks[i] = r.copyWith(temperature: avgT, powerUsage: srvs.fold<double>(0.0, (sum, s) => sum + s.powerConsumption));
+      final avgT = srvs.isEmpty
+          ? 25.0
+          : srvs.fold<double>(0.0, (sum, s) => sum + s.temperature) /
+              srvs.length;
+      _racks[i] = r.copyWith(
+          temperature: avgT,
+          powerUsage:
+              srvs.fold<double>(0.0, (sum, s) => sum + s.powerConsumption));
     }
     _calculateMetrics();
     setState(() {});
   }
 
-  Color _getTemperatureColor(double temp) => temp > 60 ? TdcColors.danger : (temp > 45 ? TdcColors.warning : TdcColors.success);
+  Color _getTemperatureColor(double temp) => temp > 60
+      ? TdcColors.danger
+      : (temp > 45 ? TdcColors.warning : TdcColors.success);
   Color _getServerStatusColor(ServerStatus status) {
-    switch(status) {
-      case ServerStatus.running: return TdcColors.success;
-      case ServerStatus.error: return TdcColors.danger;
-      case ServerStatus.maintenance: return TdcColors.warning;
-      case ServerStatus.stopped: return TdcColors.textMuted;
+    switch (status) {
+      case ServerStatus.running:
+        return TdcColors.success;
+      case ServerStatus.error:
+        return TdcColors.danger;
+      case ServerStatus.maintenance:
+        return TdcColors.warning;
+      case ServerStatus.stopped:
+        return TdcColors.textMuted;
     }
   }
 }
 
 // Models & Enums
 enum IncidentType { powerFailure, coolingFailure, serverError }
+
 class Incident {
   final String id;
   final IncidentType type;
   final String description;
   final String targetId;
-  Incident({required this.id, required this.type, required this.description, required this.targetId});
+  Incident(
+      {required this.id,
+      required this.type,
+      required this.description,
+      required this.targetId});
 }
 
 class Rack {
@@ -403,8 +620,18 @@ class Rack {
   final List<Server> servers;
   final double temperature;
   final double powerUsage;
-  const Rack({required this.id, required this.position, required this.servers, required this.temperature, required this.powerUsage});
-  Rack copyWith({double? temperature, double? powerUsage}) => Rack(id: id, position: position, servers: servers, temperature: temperature ?? this.temperature, powerUsage: powerUsage ?? this.powerUsage);
+  const Rack(
+      {required this.id,
+      required this.position,
+      required this.servers,
+      required this.temperature,
+      required this.powerUsage});
+  Rack copyWith({double? temperature, double? powerUsage}) => Rack(
+      id: id,
+      position: position,
+      servers: servers,
+      temperature: temperature ?? this.temperature,
+      powerUsage: powerUsage ?? this.powerUsage);
 }
 
 class Server {
@@ -417,11 +644,35 @@ class Server {
   final double temperature;
   final double powerConsumption;
   final Duration uptime;
-  const Server({required this.id, required this.rackId, required this.position, required this.status, required this.cpuUsage, required this.memoryUsage, required this.temperature, required this.powerConsumption, required this.uptime});
-  Server copyWith({ServerStatus? status, double? cpuUsage, double? temperature, double? powerConsumption}) => Server(id: id, rackId: rackId, position: position, status: status ?? this.status, cpuUsage: cpuUsage ?? this.cpuUsage, memoryUsage: memoryUsage, temperature: temperature ?? this.temperature, powerConsumption: powerConsumption ?? this.powerConsumption, uptime: uptime);
+  const Server(
+      {required this.id,
+      required this.rackId,
+      required this.position,
+      required this.status,
+      required this.cpuUsage,
+      required this.memoryUsage,
+      required this.temperature,
+      required this.powerConsumption,
+      required this.uptime});
+  Server copyWith(
+          {ServerStatus? status,
+          double? cpuUsage,
+          double? temperature,
+          double? powerConsumption}) =>
+      Server(
+          id: id,
+          rackId: rackId,
+          position: position,
+          status: status ?? this.status,
+          cpuUsage: cpuUsage ?? this.cpuUsage,
+          memoryUsage: memoryUsage,
+          temperature: temperature ?? this.temperature,
+          powerConsumption: powerConsumption ?? this.powerConsumption,
+          uptime: uptime);
 }
 
 enum ServerStatus { running, stopped, maintenance, error }
+
 class PowerUnit {
   final String id;
   final PowerUnitStatus status;
@@ -429,11 +680,25 @@ class PowerUnit {
   final double currentLoad;
   final double voltage;
   final double frequency;
-  const PowerUnit({required this.id, required this.status, required this.capacity, required this.currentLoad, required this.voltage, required this.frequency});
-  PowerUnit copyWith({PowerUnitStatus? status, double? currentLoad}) => PowerUnit(id: id, status: status ?? this.status, capacity: capacity, currentLoad: currentLoad ?? this.currentLoad, voltage: voltage, frequency: frequency);
+  const PowerUnit(
+      {required this.id,
+      required this.status,
+      required this.capacity,
+      required this.currentLoad,
+      required this.voltage,
+      required this.frequency});
+  PowerUnit copyWith({PowerUnitStatus? status, double? currentLoad}) =>
+      PowerUnit(
+          id: id,
+          status: status ?? this.status,
+          capacity: capacity,
+          currentLoad: currentLoad ?? this.currentLoad,
+          voltage: voltage,
+          frequency: frequency);
 }
 
 enum PowerUnitStatus { active, inactive, maintenance, error }
+
 class CoolingUnit {
   final String id;
   final CoolingUnitStatus status;
@@ -442,8 +707,22 @@ class CoolingUnit {
   final int fanSpeed;
   final double coolingCapacity;
   final double currentLoad;
-  const CoolingUnit({required this.id, required this.status, required this.targetTemperature, required this.currentTemperature, required this.fanSpeed, required this.coolingCapacity, required this.currentLoad});
-  CoolingUnit copyWith({CoolingUnitStatus? status}) => CoolingUnit(id: id, status: status ?? this.status, targetTemperature: targetTemperature, currentTemperature: currentTemperature, fanSpeed: fanSpeed, coolingCapacity: coolingCapacity, currentLoad: currentLoad);
+  const CoolingUnit(
+      {required this.id,
+      required this.status,
+      required this.targetTemperature,
+      required this.currentTemperature,
+      required this.fanSpeed,
+      required this.coolingCapacity,
+      required this.currentLoad});
+  CoolingUnit copyWith({CoolingUnitStatus? status}) => CoolingUnit(
+      id: id,
+      status: status ?? this.status,
+      targetTemperature: targetTemperature,
+      currentTemperature: currentTemperature,
+      fanSpeed: fanSpeed,
+      coolingCapacity: coolingCapacity,
+      currentLoad: currentLoad);
 }
 
 enum CoolingUnitStatus { active, inactive, maintenance, error }

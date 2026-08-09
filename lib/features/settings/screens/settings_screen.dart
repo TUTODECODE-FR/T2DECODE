@@ -83,7 +83,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildSection({required String title, required IconData icon, required List<Widget> children}) {
+  Widget _buildSection(
+      {required String title,
+      required IconData icon,
+      required List<Widget> children}) {
     return Container(
       padding: const EdgeInsets.all(TdcSpacing.lg),
       decoration: BoxDecoration(
@@ -98,7 +101,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               Icon(icon, color: TdcColors.accent, size: 20),
               const SizedBox(width: 12),
-              Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: TdcColors.textPrimary)),
+              Text(title,
+                  style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: TdcColors.textPrimary)),
             ],
           ),
           const SizedBox(height: 16),
@@ -110,14 +117,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildNetworkSection(SettingsProvider settings, CoursesProvider courses) {
+  Widget _buildNetworkSection(
+      SettingsProvider settings, CoursesProvider courses) {
     return _buildSection(
       title: 'Gestion de la Transparence Réseau',
       icon: Icons.lan,
       children: [
         _buildSwitchTile(
           title: 'Mode Zéro Réseau (Ultra Sécurité)',
-          subtitle: 'Bloque toute requête HTTP (GitHub + Ollama inclus) sur toutes les plateformes',
+          subtitle:
+              'Bloque toute requête HTTP (GitHub + Ollama inclus) sur toutes les plateformes',
           value: settings.zeroNetworkMode,
           onChanged: settings.setZeroNetworkMode,
         ),
@@ -131,13 +140,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const SizedBox(height: 12),
         const Text(
           'Mises à jour distantes désactivées : aucune synchronisation réseau.',
-          style: TextStyle(color: TdcColors.textMuted, fontSize: 12, height: 1.3),
+          style:
+              TextStyle(color: TdcColors.textMuted, fontSize: 12, height: 1.3),
         ),
         if (settings.zeroNetworkMode) ...[
           const SizedBox(height: 8),
           const Text(
             'Réseau désactivé : aucune synchronisation et aucune IA distante/locale via HTTP ne pourra fonctionner.',
-            style: TextStyle(color: TdcColors.warning, fontSize: 12, height: 1.3),
+            style:
+                TextStyle(color: TdcColors.warning, fontSize: 12, height: 1.3),
           ),
         ],
         _buildModuleManagementSection(courses),
@@ -162,35 +173,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Row(
           children: [
             Expanded(
-              child: Builder(
-                builder: (context) {
-                  final availableModels = _status?.models ?? [settings.ollamaModel];
-                  String? selectedValue = settings.ollamaModel;
-                  if (!availableModels.contains(selectedValue)) {
-                    selectedValue = availableModels.isNotEmpty ? availableModels.first : null;
-                  }
-                  
-                  return DropdownButtonFormField<String>(
-                    initialValue: selectedValue,
-                    decoration: const InputDecoration(labelText: 'Sélecteur de modèle'),
-                    items: availableModels.toSet().toList().map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
-                    onChanged: (val) => val != null ? settings.setOllamaModel(val) : null,
-                  );
+              child: Builder(builder: (context) {
+                final availableModels =
+                    _status?.models ?? [settings.ollamaModel];
+                String? selectedValue = settings.ollamaModel;
+                if (!availableModels.contains(selectedValue)) {
+                  selectedValue =
+                      availableModels.isNotEmpty ? availableModels.first : null;
                 }
-              ),
+
+                return DropdownButtonFormField<String>(
+                  initialValue: selectedValue,
+                  decoration:
+                      const InputDecoration(labelText: 'Sélecteur de modèle'),
+                  items: availableModels
+                      .toSet()
+                      .toList()
+                      .map((m) => DropdownMenuItem(value: m, child: Text(m)))
+                      .toList(),
+                  onChanged: (val) =>
+                      val != null ? settings.setOllamaModel(val) : null,
+                );
+              }),
             ),
             const SizedBox(width: 16),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: (_status?.running ?? false) ? TdcColors.success.withValues(alpha: 0.1) : TdcColors.danger.withValues(alpha: 0.1),
+                color: (_status?.running ?? false)
+                    ? TdcColors.success.withValues(alpha: 0.1)
+                    : TdcColors.danger.withValues(alpha: 0.1),
                 borderRadius: TdcRadius.sm,
               ),
               child: Row(
                 children: [
-                  Icon(Icons.circle, size: 10, color: (_status?.running ?? false) ? TdcColors.success : TdcColors.danger),
+                  Icon(Icons.circle,
+                      size: 10,
+                      color: (_status?.running ?? false)
+                          ? TdcColors.success
+                          : TdcColors.danger),
                   const SizedBox(width: 8),
-                  Text((_status?.running ?? false) ? 'Connecté' : 'Hors-ligne', style: TextStyle(color: (_status?.running ?? false) ? TdcColors.success : TdcColors.danger, fontSize: 12)),
+                  Text((_status?.running ?? false) ? 'Connecté' : 'Hors-ligne',
+                      style: TextStyle(
+                          color: (_status?.running ?? false)
+                              ? TdcColors.success
+                              : TdcColors.danger,
+                          fontSize: 12)),
                 ],
               ),
             ),
@@ -199,18 +227,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
           initialValue: settings.tutorPersonality,
-          decoration: const InputDecoration(labelText: 'Personnalité du tuteur'),
+          decoration:
+              const InputDecoration(labelText: 'Personnalité du tuteur'),
           items: const [
-            DropdownMenuItem(value: 'Direct', child: Text('Direct (Donne la réponse)')),
-            DropdownMenuItem(value: 'Socratique', child: Text('Socratique (Guide sans donner la solution)')),
+            DropdownMenuItem(
+                value: 'Direct', child: Text('Direct (Donne la réponse)')),
+            DropdownMenuItem(
+                value: 'Socratique',
+                child: Text('Socratique (Guide sans donner la solution)')),
           ],
-          onChanged: (val) => val != null ? settings.setTutorPersonality(val) : null,
+          onChanged: (val) =>
+              val != null ? settings.setTutorPersonality(val) : null,
         ),
       ],
     );
   }
 
-  Widget _buildPrivacySection(SettingsProvider settings, CoursesProvider courses) {
+  Widget _buildPrivacySection(
+      SettingsProvider settings, CoursesProvider courses) {
     return _buildSection(
       title: 'Données et Vie Privée (Le Nettoyeur)',
       icon: Icons.cleaning_services,
@@ -222,7 +256,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onTap: () async {
             await settings.clearChatHistory();
             if (!mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Historique effacé.')));
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Historique effacé.')));
           },
         ),
         const SizedBox(height: 12),
@@ -232,26 +267,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
           icon: Icons.restart_alt,
           danger: true,
           onTap: () async {
-            final confirm = await _showConfirmDialog('Réinitialiser la progression ?');
+            final confirm =
+                await _showConfirmDialog('Réinitialiser la progression ?');
             if (confirm) {
               await settings.resetProgress();
               await courses.reload();
               if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Progression réinitialisée.')));
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Progression réinitialisée.')));
             }
           },
         ),
         const SizedBox(height: 12),
         _buildActionTile(
           title: 'Export des données',
-          subtitle: 'Exporter progression + réglages en fichier chiffré (AES) avec mot de passe',
+          subtitle:
+              'Exporter progression + réglages en fichier chiffré (AES) avec mot de passe',
           icon: Icons.file_download,
           onTap: _exportEncryptedBackup,
         ),
         const SizedBox(height: 12),
         _buildActionTile(
           title: 'Import des données',
-          subtitle: 'Restaurer progression + réglages depuis une sauvegarde chiffrée',
+          subtitle:
+              'Restaurer progression + réglages depuis une sauvegarde chiffrée',
           icon: Icons.file_upload,
           onTap: _importEncryptedBackup,
         ),
@@ -267,8 +306,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (password == null || password.isEmpty) return;
 
     final now = DateTime.now();
-    final stamp = '${now.year.toString().padLeft(4, '0')}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
-    final location = await getSaveLocation(suggestedName: 'TUTODECODE-backup-$stamp.tdc');
+    final stamp =
+        '${now.year.toString().padLeft(4, '0')}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+    final location =
+        await getSaveLocation(suggestedName: 'TUTODECODE-backup-$stamp.tdc');
     if (location == null) return;
 
     final bytes = await _backup.exportEncrypted(password: password);
@@ -296,7 +337,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (fileSize <= 0 || fileSize > maxBackupBytes) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Fichier de sauvegarde invalide (taille).'), backgroundColor: TdcColors.danger),
+        const SnackBar(
+            content: Text('Fichier de sauvegarde invalide (taille).'),
+            backgroundColor: TdcColors.danger),
       );
       return;
     }
@@ -324,19 +367,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Import impossible: $e'), backgroundColor: TdcColors.danger),
+        SnackBar(
+            content: Text('Import impossible: $e'),
+            backgroundColor: TdcColors.danger),
       );
     }
   }
 
-  Future<String?> _promptPassword({required String title, required bool confirm}) async {
+  Future<String?> _promptPassword(
+      {required String title, required bool confirm}) async {
     final c1 = TextEditingController();
     final c2 = TextEditingController();
     return showDialog<String?>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: TdcColors.surface,
-        title: Text(title, style: const TextStyle(color: TdcColors.textPrimary)),
+        title:
+            Text(title, style: const TextStyle(color: TdcColors.textPrimary)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -354,7 +401,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, null), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, null),
+              child: const Text('Annuler')),
           ElevatedButton(
             onPressed: () {
               final p1 = c1.text;
@@ -374,7 +423,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       title: 'Personnalisation de l\'Atelier',
       icon: Icons.palette,
       children: [
-        const Text('Style du Terminal', style: TextStyle(fontWeight: FontWeight.bold)),
+        const Text('Style du Terminal',
+            style: TextStyle(fontWeight: FontWeight.bold)),
         Slider(
           value: settings.terminalFontSize,
           min: 10,
@@ -407,18 +457,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
       children: [
         const Text(
           'Association TUTODECODE (Loi 1901)',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: TdcColors.textPrimary),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              color: TdcColors.textPrimary),
         ),
         const SizedBox(height: 4),
         const Text(
           'Structure à but non lucratif dédiée à l\'éducation numérique et à la liberté technologique.',
-          style: TextStyle(color: TdcColors.textSecondary, fontSize: 13, height: 1.4),
+          style: TextStyle(
+              color: TdcColors.textSecondary, fontSize: 13, height: 1.4),
         ),
         const SizedBox(height: 16),
         Row(
           children: [
             OutlinedButton(
-              onPressed: () => Navigator.pushNamed(context, '/mentions-legales'),
+              onPressed: () =>
+                  Navigator.pushNamed(context, '/mentions-legales'),
               child: const Row(
                 children: [
                   Icon(Icons.badge_outlined, size: 14, color: TdcColors.accent),
@@ -432,11 +487,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const SizedBox(height: 16),
         const Row(
           children: [
-            Text('LOGICIEL : ', style: TextStyle(color: TdcColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
-            Text('T2DECODE', style: TextStyle(color: TdcColors.textPrimary, fontSize: 11, fontWeight: FontWeight.bold)),
+            Text('LOGICIEL : ',
+                style: TextStyle(
+                    color: TdcColors.textMuted,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold)),
+            Text('T2DECODE',
+                style: TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold)),
             SizedBox(width: 16),
-            Text('LICENCE : ', style: TextStyle(color: TdcColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
-            Text('GPL-3.0-only', style: TextStyle(color: TdcColors.textPrimary, fontSize: 11, fontWeight: FontWeight.bold)),
+            Text('LICENCE : ',
+                style: TextStyle(
+                    color: TdcColors.textMuted,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold)),
+            Text('GPL-3.0-only',
+                style: TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: 12),
@@ -457,7 +528,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Expanded(
                 child: Text(
                   'Signature : v1.0.3-official-release-verified',
-                  style: TextStyle(fontFamily: 'monospace', fontSize: 11, color: TdcColors.textSecondary),
+                  style: TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 11,
+                      color: TdcColors.textSecondary),
                 ),
               ),
             ],
@@ -467,22 +541,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildSwitchTile({required String title, required String subtitle, required bool value, required ValueChanged<bool>? onChanged}) {
+  Widget _buildSwitchTile(
+      {required String title,
+      required String subtitle,
+      required bool value,
+      required ValueChanged<bool>? onChanged}) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: TdcColors.textSecondary)),
+      title: Text(title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+      subtitle: Text(subtitle,
+          style: const TextStyle(fontSize: 12, color: TdcColors.textSecondary)),
       trailing: Switch(value: value, onChanged: onChanged),
     );
   }
 
-  Widget _buildActionTile({required String title, required String subtitle, required IconData icon, required VoidCallback onTap, bool danger = false}) {
+  Widget _buildActionTile(
+      {required String title,
+      required String subtitle,
+      required IconData icon,
+      required VoidCallback onTap,
+      bool danger = false}) {
     return InkWell(
       onTap: onTap,
       borderRadius: TdcRadius.md,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: const BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: TdcRadius.md),
+        decoration: const BoxDecoration(
+            color: TdcColors.surfaceAlt, borderRadius: TdcRadius.md),
         child: Row(
           children: [
             Icon(icon, color: danger ? TdcColors.danger : TdcColors.accent),
@@ -491,8 +577,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: danger ? TdcColors.danger : TdcColors.textPrimary)),
-                  Text(subtitle, style: const TextStyle(fontSize: 12, color: TdcColors.textSecondary)),
+                  Text(title,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: danger
+                              ? TdcColors.danger
+                              : TdcColors.textPrimary)),
+                  Text(subtitle,
+                      style: const TextStyle(
+                          fontSize: 12, color: TdcColors.textSecondary)),
                 ],
               ),
             ),
@@ -509,8 +602,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
           builder: (ctx) => AlertDialog(
             title: Text(title),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
-              TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Confirmer', style: TextStyle(color: TdcColors.danger))),
+              TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Annuler')),
+              TextButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text('Confirmer',
+                      style: TextStyle(color: TdcColors.danger))),
             ],
           ),
         ) ??
@@ -522,19 +620,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
       title: 'Diagnostic de Sécurité',
       subtitle: 'Journaux locaux, état des hôtes et validation des modules',
       icon: Icons.shield,
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SecurityDiagnosticScreen())),
+      onTap: () => Navigator.push(context,
+          MaterialPageRoute(builder: (_) => const SecurityDiagnosticScreen())),
     );
   }
 
   Widget _buildModuleManagementSection(CoursesProvider courses) {
-    final external = courses.courses.where((c) => c.keywords.contains('EXTERNAL')).toList();
+    final external =
+        courses.courses.where((c) => c.keywords.contains('EXTERNAL')).toList();
     if (external.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
-        const Text('Modules Installés', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: TdcColors.textMuted)),
+        const Text('Modules Installés',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: TdcColors.textMuted)),
         const SizedBox(height: 8),
         ...external.map((c) {
           final fileName = '${c.id}.json';
@@ -543,9 +647,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: Text(c.title, style: const TextStyle(fontSize: 13)),
             subtitle: Text('ID: ${c.id}', style: const TextStyle(fontSize: 11)),
             trailing: IconButton(
-              icon: const Icon(Icons.delete_outline, size: 20, color: TdcColors.danger),
+              icon: const Icon(Icons.delete_outline,
+                  size: 20, color: TdcColors.danger),
               onPressed: () async {
-                final ok = await _showConfirmDialog('Supprimer le module ${c.title} ?');
+                final ok = await _showConfirmDialog(
+                    'Supprimer le module ${c.title} ?');
                 if (ok) await courses.deleteModule(fileName);
               },
             ),
@@ -554,5 +660,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ],
     );
   }
-
 }

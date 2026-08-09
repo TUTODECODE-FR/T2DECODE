@@ -42,45 +42,77 @@ const _kPaths = [
     id: 'beginner',
     title: 'Débutant',
     subtitle: 'Cybersécurité & Réseaux',
-    targetAudience: 'Vous n\'avez aucune base. Vous voulez comprendre comment fonctionne Internet, Linux et la sécurité informatique en partant de zéro.',
+    targetAudience:
+        'Vous n\'avez aucune base. Vous voulez comprendre comment fonctionne Internet, Linux et la sécurité informatique en partant de zéro.',
     duration: '4 à 6 semaines',
     icon: Icons.school,
     color: Color(0xFF10B981),
-    courseIds: ['networking-fundamentals', 'linux-basics', 'cybersecurity-basics'],
-    skills: ['OSI & TCP/IP', 'Commandes Linux essentielles', 'Menaces & bonnes pratiques', 'Bases de la cryptographie'],
+    courseIds: [
+      'networking-fundamentals',
+      'linux-basics',
+      'cybersecurity-basics'
+    ],
+    skills: [
+      'OSI & TCP/IP',
+      'Commandes Linux essentielles',
+      'Menaces & bonnes pratiques',
+      'Bases de la cryptographie'
+    ],
   ),
   _Path(
     id: 'pentester',
     title: 'Red Team',
     subtitle: 'Pentest & Offensive Security',
-    targetAudience: 'Vous avez des bases en réseaux/Linux. Vous voulez apprendre à penser comme un attaquant pour mieux défendre.',
+    targetAudience:
+        'Vous avez des bases en réseaux/Linux. Vous voulez apprendre à penser comme un attaquant pour mieux défendre.',
     duration: '6 à 10 semaines',
     icon: Icons.bug_report,
     color: Color(0xFFEF4444),
     courseIds: ['bash-scripting', 'python-basics', 'sql-basics'],
-    skills: ['Scripting Bash & Python', 'Reconnaissance & OSINT', 'Injection SQL', 'Exploitation basique'],
+    skills: [
+      'Scripting Bash & Python',
+      'Reconnaissance & OSINT',
+      'Injection SQL',
+      'Exploitation basique'
+    ],
   ),
   _Path(
     id: 'forensic',
     title: 'Blue Team',
     subtitle: 'Forensic & Défense',
-    targetAudience: 'Vous maîtrisez Linux et la sécurité de base. Vous voulez analyser des incidents, investiguer des compromissions et durcir des systèmes.',
+    targetAudience:
+        'Vous maîtrisez Linux et la sécurité de base. Vous voulez analyser des incidents, investiguer des compromissions et durcir des systèmes.',
     duration: '8 à 12 semaines',
     icon: Icons.search,
     color: Color(0xFF3B82F6),
     courseIds: ['cryptography-applied', 'regex-mastery', 'python-advanced'],
-    skills: ['Cryptographie appliquée', 'Analyse de logs & Regex', 'Python avancé', 'Réponse sur incident'],
+    skills: [
+      'Cryptographie appliquée',
+      'Analyse de logs & Regex',
+      'Python avancé',
+      'Réponse sur incident'
+    ],
   ),
   _Path(
     id: 'sysadmin',
     title: 'Sysadmin & DevOps',
     subtitle: 'Infrastructure & Automatisation',
-    targetAudience: 'Vous gérez ou souhaitez gérer des serveurs. Vous voulez automatiser, conteneuriser et industrialiser votre infrastructure.',
+    targetAudience:
+        'Vous gérez ou souhaitez gérer des serveurs. Vous voulez automatiser, conteneuriser et industrialiser votre infrastructure.',
     duration: '8 à 14 semaines',
     icon: Icons.dns,
     color: Color(0xFF8B5CF6),
-    courseIds: ['bash-scripting', 'networking-fundamentals', 'cybersecurity-basics'],
-    skills: ['Administration Linux', 'Docker & Conteneurs', 'CI/CD & Automatisation', 'Durcissement système'],
+    courseIds: [
+      'bash-scripting',
+      'networking-fundamentals',
+      'cybersecurity-basics'
+    ],
+    skills: [
+      'Administration Linux',
+      'Docker & Conteneurs',
+      'CI/CD & Automatisation',
+      'Durcissement système'
+    ],
   ),
 ];
 
@@ -106,9 +138,9 @@ class _RoadmapScreenState extends State<RoadmapScreen>
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
-        title: 'Roadmap',
-        showBackButton: true,
-      );
+            title: 'Roadmap',
+            showBackButton: true,
+          );
     });
   }
 
@@ -141,28 +173,30 @@ class _RoadmapScreenState extends State<RoadmapScreen>
         labelColor: _kPaths[_selected].color,
         unselectedLabelColor: TdcColors.textMuted,
         labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-        tabs: _kPaths.map((p) => Tab(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(p.icon, size: 15),
-              const SizedBox(width: 7),
-              Text(p.title),
-            ],
-          ),
-        )).toList(),
+        tabs: _kPaths
+            .map((p) => Tab(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(p.icon, size: 15),
+                      const SizedBox(width: 7),
+                      Text(p.title),
+                    ],
+                  ),
+                ))
+            .toList(),
       ),
     );
   }
 
   Widget _buildContent(_Path path, CoursesProvider prov) {
-    final courses = prov.courses
-        .where((c) => path.courseIds.contains(c.id))
-        .toList();
+    final courses =
+        prov.courses.where((c) => path.courseIds.contains(c.id)).toList();
 
     final done = courses.fold<int>(
       0,
-      (s, c) => s + (prov.courseCompletedCount(c.id) == c.chapters.length ? 1 : 0),
+      (s, c) =>
+          s + (prov.courseCompletedCount(c.id) == c.chapters.length ? 1 : 0),
     );
     final total = courses.length;
     final percent = total == 0 ? 0.0 : done / total;
@@ -207,11 +241,13 @@ class _RoadmapScreenState extends State<RoadmapScreen>
           TdcCard(
             child: Column(
               children: [
-                Icon(path.icon, color: path.color.withValues(alpha: 0.4), size: 40),
+                Icon(path.icon,
+                    color: path.color.withValues(alpha: 0.4), size: 40),
                 const SizedBox(height: 12),
                 const Text(
                   'Les modules de ce parcours sont en cours de préparation.',
-                  style: TextStyle(color: TdcColors.textSecondary, fontSize: 14),
+                  style:
+                      TextStyle(color: TdcColors.textSecondary, fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -219,8 +255,9 @@ class _RoadmapScreenState extends State<RoadmapScreen>
           )
         else
           ...courses.asMap().entries.map(
-            (e) => _buildNode(e.value, e.key, courses.length, prov, path.color),
-          ),
+                (e) => _buildNode(
+                    e.value, e.key, courses.length, prov, path.color),
+              ),
 
         const SizedBox(height: 32),
       ],
@@ -287,7 +324,8 @@ class _RoadmapScreenState extends State<RoadmapScreen>
               ),
               // Progress badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: path.color.withValues(alpha: 0.1),
                   borderRadius: TdcRadius.md,
@@ -326,7 +364,8 @@ class _RoadmapScreenState extends State<RoadmapScreen>
             ),
             child: Row(
               children: [
-                Icon(Icons.person_outline, color: TdcColors.textMuted, size: 16),
+                Icon(Icons.person_outline,
+                    color: TdcColors.textMuted, size: 16),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -350,7 +389,8 @@ class _RoadmapScreenState extends State<RoadmapScreen>
               const SizedBox(width: 6),
               Text(
                 'Durée estimée : ${path.duration}',
-                style: const TextStyle(color: TdcColors.textMuted, fontSize: 12),
+                style:
+                    const TextStyle(color: TdcColors.textMuted, fontSize: 12),
               ),
               const Spacer(),
               if (total > 0) ...[
@@ -379,7 +419,10 @@ class _RoadmapScreenState extends State<RoadmapScreen>
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.04, end: 0, duration: 350.ms);
+    )
+        .animate()
+        .fadeIn(duration: 350.ms)
+        .slideY(begin: 0.04, end: 0, duration: 350.ms);
   }
 
   // ── Skills section ────────────────────────────────────────────
@@ -415,7 +458,8 @@ class _RoadmapScreenState extends State<RoadmapScreen>
             runSpacing: 8,
             children: path.skills.asMap().entries.map((e) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                 decoration: BoxDecoration(
                   color: path.color.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(20),
@@ -453,8 +497,10 @@ class _RoadmapScreenState extends State<RoadmapScreen>
 
   // ── Nœud de progression ────────────────────────────────────────
 
-  Widget _buildNode(course, int i, int total, CoursesProvider prov, Color color) {
-    final completed = prov.courseCompletedCount(course.id) == course.chapters.length;
+  Widget _buildNode(
+      course, int i, int total, CoursesProvider prov, Color color) {
+    final completed =
+        prov.courseCompletedCount(course.id) == course.chapters.length;
     final inProgress = prov.courseCompletedCount(course.id) > 0 && !completed;
     final completedChapters = prov.courseCompletedCount(course.id);
     final totalChapters = (course.chapters as List).length;
@@ -482,7 +528,8 @@ class _RoadmapScreenState extends State<RoadmapScreen>
       curve: Curves.easeOut,
       builder: (context, value, child) => Opacity(
         opacity: value,
-        child: Transform.translate(offset: Offset(0, 12 * (1 - value)), child: child),
+        child: Transform.translate(
+            offset: Offset(0, 12 * (1 - value)), child: child),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -507,7 +554,8 @@ class _RoadmapScreenState extends State<RoadmapScreen>
                 ),
                 child: Center(
                   child: completed
-                      ? const Icon(Icons.check, size: 18, color: TdcColors.success)
+                      ? const Icon(Icons.check,
+                          size: 18, color: TdcColors.success)
                       : inProgress
                           ? Icon(Icons.play_arrow, size: 18, color: color)
                           : Text(
@@ -524,7 +572,9 @@ class _RoadmapScreenState extends State<RoadmapScreen>
                 Container(
                   width: 2,
                   height: 40,
-                  color: i < _firstIncompletedIndex(total, prov, _kPaths[_selected])
+                  color: i <
+                          _firstIncompletedIndex(
+                              total, prov, _kPaths[_selected])
                       ? TdcColors.success.withValues(alpha: 0.4)
                       : TdcColors.border,
                 ),
@@ -568,7 +618,8 @@ class _RoadmapScreenState extends State<RoadmapScreen>
                         const SizedBox(width: 8),
                         // Status badge
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: nodeColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
@@ -607,7 +658,9 @@ class _RoadmapScreenState extends State<RoadmapScreen>
                       ClipRRect(
                         borderRadius: BorderRadius.circular(3),
                         child: LinearProgressIndicator(
-                          value: totalChapters > 0 ? completedChapters / totalChapters : 0,
+                          value: totalChapters > 0
+                              ? completedChapters / totalChapters
+                              : 0,
                           backgroundColor: color.withValues(alpha: 0.1),
                           color: color,
                           minHeight: 4,
@@ -620,19 +673,29 @@ class _RoadmapScreenState extends State<RoadmapScreen>
                       child: ElevatedButton(
                         onPressed: () {
                           if ((course.chapters as List).isNotEmpty) {
-                            prov.selectChapter(course.id, course.chapters.first.id);
+                            prov.selectChapter(
+                                course.id, course.chapters.first.id);
                             Navigator.pushNamed(context, '/chapter');
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: completed ? TdcColors.surfaceAlt : color,
-                          foregroundColor: completed ? TdcColors.textSecondary : Colors.white,
+                          backgroundColor:
+                              completed ? TdcColors.surfaceAlt : color,
+                          foregroundColor: completed
+                              ? TdcColors.textSecondary
+                              : Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: const RoundedRectangleBorder(borderRadius: TdcRadius.sm),
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: TdcRadius.sm),
                         ),
                         child: Text(
-                          completed ? 'Revoir le cours' : inProgress ? 'Continuer →' : 'Commencer →',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                          completed
+                              ? 'Revoir le cours'
+                              : inProgress
+                                  ? 'Continuer →'
+                                  : 'Commencer →',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 13),
                         ),
                       ),
                     ),
@@ -647,9 +710,11 @@ class _RoadmapScreenState extends State<RoadmapScreen>
   }
 
   int _firstIncompletedIndex(int total, CoursesProvider prov, _Path path) {
-    final courses = prov.courses.where((c) => path.courseIds.contains(c.id)).toList();
+    final courses =
+        prov.courses.where((c) => path.courseIds.contains(c.id)).toList();
     for (int i = 0; i < courses.length; i++) {
-      if (prov.courseCompletedCount(courses[i].id) < courses[i].chapters.length) {
+      if (prov.courseCompletedCount(courses[i].id) <
+          courses[i].chapters.length) {
         return i;
       }
     }

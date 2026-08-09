@@ -15,15 +15,15 @@ import 'package:easy_localization/easy_localization.dart';
 
 // ── Métadonnées de difficulté ──────────────────────────────────
 const Map<String, _DifficultyInfo> _labDifficulty = {
-  'network':    _DifficultyInfo('Intermédiaire', Color(0xFFF59E0B)),
-  'security':   _DifficultyInfo('Expert',        Color(0xFFEF4444)),
-  'ctf_prep':   _DifficultyInfo('Expert',        Color(0xFFEF4444)),
-  'system':     _DifficultyInfo('Intermédiaire', Color(0xFFF59E0B)),
-  'cloud':      _DifficultyInfo('Expert',        Color(0xFFEF4444)),
-  'crypto':     _DifficultyInfo('Intermédiaire', Color(0xFFF59E0B)),
-  'theory':     _DifficultyInfo('Débutant',      Color(0xFF22C55E)),
-  'linux':      _DifficultyInfo('Intermédiaire', Color(0xFFF59E0B)),
-  'algorithms': _DifficultyInfo('Expert',        Color(0xFFEF4444)),
+  'network': _DifficultyInfo('Intermédiaire', Color(0xFFF59E0B)),
+  'security': _DifficultyInfo('Expert', Color(0xFFEF4444)),
+  'ctf_prep': _DifficultyInfo('Expert', Color(0xFFEF4444)),
+  'system': _DifficultyInfo('Intermédiaire', Color(0xFFF59E0B)),
+  'cloud': _DifficultyInfo('Expert', Color(0xFFEF4444)),
+  'crypto': _DifficultyInfo('Intermédiaire', Color(0xFFF59E0B)),
+  'theory': _DifficultyInfo('Débutant', Color(0xFF22C55E)),
+  'linux': _DifficultyInfo('Intermédiaire', Color(0xFFF59E0B)),
+  'algorithms': _DifficultyInfo('Expert', Color(0xFFEF4444)),
 };
 
 class _DifficultyInfo {
@@ -82,7 +82,11 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
 
   Widget _buildLandingGrid() {
     final w = MediaQuery.of(context).size.width;
-    final crossCount = w > 1000 ? 3 : w > 650 ? 2 : 1;
+    final crossCount = w > 1000
+        ? 3
+        : w > 650
+            ? 2
+            : 1;
 
     return Container(
       color: TdcColors.surfaceElevated,
@@ -98,7 +102,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                   color: TdcColors.info.withValues(alpha: 0.12),
                   borderRadius: TdcRadius.md,
                 ),
-                child: const Icon(Icons.science, color: TdcColors.info, size: 30),
+                child:
+                    const Icon(Icons.science, color: TdcColors.info, size: 30),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -117,7 +122,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                             color: TdcColors.textPrimary,
                             fontSize: 26,
                             fontWeight: FontWeight.bold)),
-                    Text('${labCatalog.length} simulateurs hors-ligne · Pratiquez en conditions réelles',
+                    Text(
+                        '${labCatalog.length} simulateurs hors-ligne · Pratiquez en conditions réelles',
                         style: const TextStyle(
                             color: TdcColors.textSecondary, fontSize: 13)),
                   ],
@@ -232,7 +238,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.science, color: TdcColors.infoDim, size: 16),
+                        const Icon(Icons.science,
+                            color: TdcColors.infoDim, size: 16),
                         const SizedBox(width: 8),
                         const Text('SIMULATION CORE',
                             style: TextStyle(
@@ -273,7 +280,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
               // Liste des labs
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   itemCount: labCatalog.length,
                   itemBuilder: (context, i) => _buildSidebarItem(i),
                 ),
@@ -289,7 +297,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                 ),
                 child: Column(
                   children: [
-                    _buildFooterStat('SIMULATEURS', '${labCatalog.length} ACTIFS', TdcColors.success),
+                    _buildFooterStat('SIMULATEURS',
+                        '${labCatalog.length} ACTIFS', TdcColors.success),
                     const SizedBox(height: 6),
                     _buildFooterStat('MODE', 'HORS-LIGNE', TdcColors.info),
                   ],
@@ -320,7 +329,9 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
         margin: const EdgeInsets.symmetric(vertical: 2),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? lab.color.withValues(alpha: 0.15) : Colors.transparent,
+          color: isSelected
+              ? lab.color.withValues(alpha: 0.15)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: isSelected
@@ -351,9 +362,12 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                   Text(
                     lab.label,
                     style: TextStyle(
-                      color: isSelected ? TdcColors.textPrimary : TdcColors.textPrimary,
+                      color: isSelected
+                          ? TdcColors.textPrimary
+                          : TdcColors.textPrimary,
                       fontSize: 13,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.w700 : FontWeight.w500,
                     ),
                   ),
                   Row(
@@ -410,7 +424,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     borderRadius: TdcRadius.sm,
                     border: Border.all(color: TdcColors.border),
                   ),
-                  child: const Icon(Icons.grid_view, color: TdcColors.textMuted, size: 16),
+                  child: const Icon(Icons.grid_view,
+                      color: TdcColors.textMuted, size: 16),
                 ),
               ),
               const SizedBox(width: 8),
@@ -428,7 +443,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 180),
                           margin: const EdgeInsets.only(right: 8),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? lab.color.withValues(alpha: 0.2)
@@ -444,7 +460,9 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(lab.icon,
-                                  color: isSelected ? lab.color : TdcColors.textSecondary,
+                                  color: isSelected
+                                      ? lab.color
+                                      : TdcColors.textSecondary,
                                   size: 13),
                               const SizedBox(width: 5),
                               Text(lab.label,
@@ -501,7 +519,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
             // Barre de titre redesignée
             if (!lab.hasOwnHeader)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 decoration: BoxDecoration(
                   color: lab.color.withValues(alpha: 0.04),
                   border: Border(
@@ -517,8 +536,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                       decoration: BoxDecoration(
                         color: lab.color.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(10),
-                        border:
-                            Border.all(color: lab.color.withValues(alpha: 0.35)),
+                        border: Border.all(
+                            color: lab.color.withValues(alpha: 0.35)),
                       ),
                       child: Icon(lab.icon, color: lab.color, size: 18),
                     ),
@@ -536,7 +555,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                               )),
                           Text(lab.subtitle,
                               style: TextStyle(
-                                color: TdcColors.textPrimary.withValues(alpha: 0.5),
+                                color: TdcColors.textPrimary
+                                    .withValues(alpha: 0.5),
                                 fontSize: 12,
                               )),
                         ],
@@ -544,7 +564,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                     ),
                     // Difficulty badge
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: diff.color.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(6),
@@ -614,8 +635,8 @@ class _ProfessionalLabScreenState extends State<ProfessionalLabScreen> {
                       backgroundColor: TdcColors.surfaceAlt,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
-                        side: BorderSide(
-                            color: lab.color.withValues(alpha: 0.3)),
+                        side:
+                            BorderSide(color: lab.color.withValues(alpha: 0.3)),
                       ),
                       icon: Icon(Icons.menu_book, color: lab.color, size: 18),
                       label: Text('Théorie',
@@ -747,7 +768,8 @@ class _LabCardState extends State<_LabCard> {
                     const Spacer(),
                     // Difficulty badge
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: diff.color.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(6),

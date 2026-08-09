@@ -9,7 +9,8 @@ import 'package:flutter/services.dart';
 class StudentExamService {
   bool _isKioskActive = false;
   int _focusLostCount = 0;
-  final StreamController<int> _focusLostController = StreamController<int>.broadcast();
+  final StreamController<int> _focusLostController =
+      StreamController<int>.broadcast();
 
   bool get isKioskActive => _isKioskActive;
   int get focusLostCount => _focusLostCount;
@@ -48,7 +49,11 @@ class StudentExamService {
     final client = HttpClient();
     client.connectionTimeout = const Duration(seconds: 5);
     try {
-      final cleanIp = teacherIp.replaceAll('http://', '').replaceAll('https://', '').split(':')[0].trim();
+      final cleanIp = teacherIp
+          .replaceAll('http://', '')
+          .replaceAll('https://', '')
+          .split(':')[0]
+          .trim();
       final uri = Uri.parse('http://$cleanIp:$port/api/submit-score');
       final request = await client.postUrl(uri);
       request.headers.contentType = ContentType.json;
@@ -60,7 +65,9 @@ class StudentExamService {
         'total': total,
         'timestamp': DateTime.now().toIso8601String(),
         'cheatAlert': focusLostCount > 0,
-        'cheatReason': focusLostCount > 0 ? '$focusLostCount changement(s) de fenêtre (Alt+Tab)' : '',
+        'cheatReason': focusLostCount > 0
+            ? '$focusLostCount changement(s) de fenêtre (Alt+Tab)'
+            : '',
       };
 
       request.write(jsonEncode(payload));
@@ -68,7 +75,10 @@ class StudentExamService {
       final resBody = await response.transform(utf8.decoder).join();
       return jsonDecode(resBody) as Map<String, dynamic>;
     } catch (e) {
-      return {'success': false, 'error': 'Serveur du professeur injoignable ($e)'};
+      return {
+        'success': false,
+        'error': 'Serveur du professeur injoignable ($e)'
+      };
     } finally {
       client.close();
     }

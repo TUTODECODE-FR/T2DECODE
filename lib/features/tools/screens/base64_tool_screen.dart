@@ -35,7 +35,13 @@ class _Base64ToolScreenState extends State<Base64ToolScreen> {
 
   void _process() {
     final input = _inputCtrl.text.trim();
-    if (input.isEmpty) { setState(() { _output = ''; _error = null; }); return; }
+    if (input.isEmpty) {
+      setState(() {
+        _output = '';
+        _error = null;
+      });
+      return;
+    }
     setState(() {
       _error = null;
       try {
@@ -52,7 +58,10 @@ class _Base64ToolScreenState extends State<Base64ToolScreen> {
   }
 
   @override
-  void dispose() { _inputCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _inputCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +79,10 @@ class _Base64ToolScreenState extends State<Base64ToolScreen> {
   Widget _buildInputCard() {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(color: TdcColors.border)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -85,7 +97,10 @@ class _Base64ToolScreenState extends State<Base64ToolScreen> {
           TextField(
             controller: _inputCtrl,
             maxLines: 6,
-            style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 13),
+            style: const TextStyle(
+                color: TdcColors.textPrimary,
+                fontFamily: 'monospace',
+                fontSize: 13),
             decoration: InputDecoration(
               labelText: _encodeMode ? 'Texte à encoder' : 'Base64 à décoder',
               filled: true,
@@ -98,8 +113,11 @@ class _Base64ToolScreenState extends State<Base64ToolScreen> {
             child: ElevatedButton.icon(
               onPressed: _process,
               icon: Icon(_encodeMode ? Icons.arrow_forward : Icons.arrow_back),
-              label: Text(_encodeMode ? 'ENCODER MAINTENANT' : 'DÉCODER MAINTENANT'),
-              style: ElevatedButton.styleFrom(backgroundColor: TdcColors.accent, padding: const EdgeInsets.symmetric(vertical: 16)),
+              label: Text(
+                  _encodeMode ? 'ENCODER MAINTENANT' : 'DÉCODER MAINTENANT'),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: TdcColors.accent,
+                  padding: const EdgeInsets.symmetric(vertical: 16)),
             ),
           ),
         ],
@@ -111,18 +129,28 @@ class _Base64ToolScreenState extends State<Base64ToolScreen> {
     final active = _encodeMode == mode;
     return Expanded(
       child: InkWell(
-        onTap: () => setState(() { _encodeMode = mode; _output = ''; _error = null; }),
+        onTap: () => setState(() {
+          _encodeMode = mode;
+          _output = '';
+          _error = null;
+        }),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: active ? TdcColors.accent.withValues(alpha: 0.1) : Colors.transparent,
+            color: active
+                ? TdcColors.accent.withValues(alpha: 0.1)
+                : Colors.transparent,
             borderRadius: TdcRadius.sm,
-            border: Border.all(color: active ? TdcColors.accent : TdcColors.border),
+            border:
+                Border.all(color: active ? TdcColors.accent : TdcColors.border),
           ),
           child: Center(
             child: Text(
               label,
-              style: TextStyle(color: active ? TdcColors.accent : TdcColors.textMuted, fontWeight: FontWeight.bold, fontSize: 12),
+              style: TextStyle(
+                  color: active ? TdcColors.accent : TdcColors.textMuted,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12),
             ),
           ),
         ),
@@ -133,22 +161,41 @@ class _Base64ToolScreenState extends State<Base64ToolScreen> {
   Widget _buildResultCard() {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(color: TdcColors.border)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('RÉSULTAT', style: TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontWeight: FontWeight.bold)),
-              if (_output.isNotEmpty) IconButton(icon: const Icon(Icons.copy, size: 16, color: TdcColors.accent), onPressed: () => Clipboard.setData(ClipboardData(text: _output)), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+              const Text('RÉSULTAT',
+                  style: TextStyle(
+                      color: TdcColors.textSecondary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold)),
+              if (_output.isNotEmpty)
+                IconButton(
+                    icon: const Icon(Icons.copy,
+                        size: 16, color: TdcColors.accent),
+                    onPressed: () =>
+                        Clipboard.setData(ClipboardData(text: _output)),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints()),
             ],
           ),
           const SizedBox(height: 16),
           if (_error != null)
-            Text(_error!, style: const TextStyle(color: TdcColors.danger, fontSize: 13))
+            Text(_error!,
+                style: const TextStyle(color: TdcColors.danger, fontSize: 13))
           else
-            Text(_output, style: const TextStyle(color: TdcColors.accent, fontFamily: 'monospace', fontSize: 14)),
+            Text(_output,
+                style: const TextStyle(
+                    color: TdcColors.accent,
+                    fontFamily: 'monospace',
+                    fontSize: 14)),
         ],
       ),
     );

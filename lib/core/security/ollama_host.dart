@@ -44,7 +44,9 @@ class OllamaHost {
     if (uri.host.isEmpty) {
       throw const FormatException('Missing host');
     }
-    if ((uri.path.isNotEmpty && uri.path != '/') || uri.hasQuery || uri.hasFragment) {
+    if ((uri.path.isNotEmpty && uri.path != '/') ||
+        uri.hasQuery ||
+        uri.hasFragment) {
       throw const FormatException('Path/query/fragment not allowed');
     }
 
@@ -76,7 +78,8 @@ class OllamaHost {
 
   static bool _isAllowed(Uri uri) {
     final host = uri.host.toLowerCase();
-    final isLoopback = host == 'localhost' || host == '127.0.0.1' || host == '::1';
+    final isLoopback =
+        host == 'localhost' || host == '127.0.0.1' || host == '::1';
 
     if (uri.scheme == 'http') {
       return isLoopback;
@@ -91,7 +94,8 @@ class OllamaHost {
   }
 
   static bool _isPrivateIpv4(String host) {
-    final m = RegExp(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$').firstMatch(host);
+    final m = RegExp(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$')
+        .firstMatch(host);
     if (m == null) return false;
 
     final o1 = int.parse(m.group(1)!);

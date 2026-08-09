@@ -35,7 +35,9 @@ void main() {
       expect(r1.nonce, isNot(equals(r2.nonce)));
     });
 
-    test('different encryptions produce different ciphertexts (due to random salt)', () async {
+    test(
+        'different encryptions produce different ciphertexts (due to random salt)',
+        () async {
       const plaintext = 'Same text';
       const passphrase = 'key';
       final r1 = await CryptoEngine.aesGcmEncrypt(plaintext, passphrase);
@@ -49,12 +51,16 @@ void main() {
       const plaintext = 'ChaCha20 test data';
       const passphrase = 'MyPass123';
 
-      final encrypted = await CryptoEngine.chacha20Encrypt(plaintext, passphrase);
-      final decrypted = await CryptoEngine.chacha20Decrypt(encrypted, passphrase);
+      final encrypted =
+          await CryptoEngine.chacha20Encrypt(plaintext, passphrase);
+      final decrypted =
+          await CryptoEngine.chacha20Decrypt(encrypted, passphrase);
       expect(decrypted, plaintext);
     });
 
-    test('different encryptions produce different ciphertexts (due to random salt)', () async {
+    test(
+        'different encryptions produce different ciphertexts (due to random salt)',
+        () async {
       const plaintext = 'Same text';
       const passphrase = 'key';
       final r1 = await CryptoEngine.chacha20Encrypt(plaintext, passphrase);
@@ -182,25 +188,31 @@ void main() {
       final keyPair = await CryptoEngine.generateEd25519KeyPair();
       const message = 'Sign this message';
 
-      final signature = await CryptoEngine.ed25519Sign(message, keyPair.privateKey);
+      final signature =
+          await CryptoEngine.ed25519Sign(message, keyPair.privateKey);
       expect(signature, isNotEmpty);
 
-      final valid = await CryptoEngine.ed25519Verify(message, signature, keyPair.publicKey);
+      final valid = await CryptoEngine.ed25519Verify(
+          message, signature, keyPair.publicKey);
       expect(valid, true);
     });
 
     test('wrong message fails verification', () async {
       final keyPair = await CryptoEngine.generateEd25519KeyPair();
-      final signature = await CryptoEngine.ed25519Sign('original', keyPair.privateKey);
-      final valid = await CryptoEngine.ed25519Verify('tampered', signature, keyPair.publicKey);
+      final signature =
+          await CryptoEngine.ed25519Sign('original', keyPair.privateKey);
+      final valid = await CryptoEngine.ed25519Verify(
+          'tampered', signature, keyPair.publicKey);
       expect(valid, false);
     });
 
     test('wrong key fails verification', () async {
       final kp1 = await CryptoEngine.generateEd25519KeyPair();
       final kp2 = await CryptoEngine.generateEd25519KeyPair();
-      final signature = await CryptoEngine.ed25519Sign('message', kp1.privateKey);
-      final valid = await CryptoEngine.ed25519Verify('message', signature, kp2.publicKey);
+      final signature =
+          await CryptoEngine.ed25519Sign('message', kp1.privateKey);
+      final valid =
+          await CryptoEngine.ed25519Verify('message', signature, kp2.publicKey);
       expect(valid, false);
     });
   });
@@ -210,8 +222,10 @@ void main() {
       final alice = await CryptoEngine.generateX25519KeyPair();
       final bob = await CryptoEngine.generateX25519KeyPair();
 
-      final secretA = await CryptoEngine.x25519SharedSecret(alice.privateKey, bob.publicKey);
-      final secretB = await CryptoEngine.x25519SharedSecret(bob.privateKey, alice.publicKey);
+      final secretA = await CryptoEngine.x25519SharedSecret(
+          alice.privateKey, bob.publicKey);
+      final secretB = await CryptoEngine.x25519SharedSecret(
+          bob.privateKey, alice.publicKey);
 
       expect(secretA, secretB);
     });
@@ -219,18 +233,28 @@ void main() {
 
   group('Input Validation Coverage', () {
     test('AES-GCM validates inputs', () async {
-      await expectLater(() => CryptoEngine.aesGcmEncrypt('', 'pass'), throwsArgumentError);
-      await expectLater(() => CryptoEngine.aesGcmEncrypt('text', ''), throwsArgumentError);
-      await expectLater(() => CryptoEngine.aesGcmDecrypt(const AesGcmResult(ciphertext: '', nonce: '1', mac: '1'), 'pass'), throwsArgumentError);
-      await expectLater(() => CryptoEngine.aesGcmDecrypt(const AesGcmResult(ciphertext: '1', nonce: '1', mac: '1'), ''), throwsArgumentError);
+      await expectLater(
+          () => CryptoEngine.aesGcmEncrypt('', 'pass'), throwsArgumentError);
+      await expectLater(
+          () => CryptoEngine.aesGcmEncrypt('text', ''), throwsArgumentError);
+      await expectLater(
+          () => CryptoEngine.aesGcmDecrypt(
+              const AesGcmResult(ciphertext: '', nonce: '1', mac: '1'), 'pass'),
+          throwsArgumentError);
+      await expectLater(
+          () => CryptoEngine.aesGcmDecrypt(
+              const AesGcmResult(ciphertext: '1', nonce: '1', mac: '1'), ''),
+          throwsArgumentError);
     });
 
     test('Classic Ciphers validate inputs', () {
       expect(() => CryptoEngine.caesarEncrypt('', 3), throwsArgumentError);
       expect(() => CryptoEngine.caesarDecrypt('', 3), throwsArgumentError);
       expect(() => CryptoEngine.caesarEncrypt('text', -1), throwsArgumentError);
-      expect(() => CryptoEngine.vigenereEncrypt('', 'key'), throwsArgumentError);
-      expect(() => CryptoEngine.vigenereDecrypt('', 'key'), throwsArgumentError);
+      expect(
+          () => CryptoEngine.vigenereEncrypt('', 'key'), throwsArgumentError);
+      expect(
+          () => CryptoEngine.vigenereDecrypt('', 'key'), throwsArgumentError);
       expect(() => CryptoEngine.xorEncrypt('', 'key'), throwsArgumentError);
       expect(() => CryptoEngine.xorEncrypt('text', ''), throwsArgumentError);
       expect(() => CryptoEngine.xorDecrypt('', 'key'), throwsArgumentError);
@@ -240,13 +264,20 @@ void main() {
     test('Asymmetric & HMAC validate inputs', () async {
       expect(() => CryptoEngine.hmacSha256('', 'key'), throwsArgumentError);
       expect(() => CryptoEngine.hmacSha256('text', ''), throwsArgumentError);
-      await expectLater(() => CryptoEngine.ed25519Sign('', 'key'), throwsArgumentError);
-      await expectLater(() => CryptoEngine.ed25519Sign('text', ''), throwsArgumentError);
-      await expectLater(() => CryptoEngine.ed25519Verify('', 'sig', 'pub'), throwsArgumentError);
-      await expectLater(() => CryptoEngine.ed25519Verify('text', '', 'pub'), throwsArgumentError);
-      await expectLater(() => CryptoEngine.ed25519Verify('text', 'sig', ''), throwsArgumentError);
-      await expectLater(() => CryptoEngine.x25519SharedSecret('', 'pub'), throwsArgumentError);
-      await expectLater(() => CryptoEngine.x25519SharedSecret('priv', ''), throwsArgumentError);
+      await expectLater(
+          () => CryptoEngine.ed25519Sign('', 'key'), throwsArgumentError);
+      await expectLater(
+          () => CryptoEngine.ed25519Sign('text', ''), throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Verify('', 'sig', 'pub'),
+          throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Verify('text', '', 'pub'),
+          throwsArgumentError);
+      await expectLater(() => CryptoEngine.ed25519Verify('text', 'sig', ''),
+          throwsArgumentError);
+      await expectLater(() => CryptoEngine.x25519SharedSecret('', 'pub'),
+          throwsArgumentError);
+      await expectLater(() => CryptoEngine.x25519SharedSecret('priv', ''),
+          throwsArgumentError);
     });
   });
 }

@@ -406,7 +406,8 @@ class TdcToolHeader extends StatelessWidget {
             decoration: BoxDecoration(
               color: TdcColors.bg,
               borderRadius: TdcRadius.md,
-              border: Border.all(color: TdcColors.border.withValues(alpha: 0.5)),
+              border:
+                  Border.all(color: TdcColors.border.withValues(alpha: 0.5)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

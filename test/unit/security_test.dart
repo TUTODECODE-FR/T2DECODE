@@ -22,7 +22,8 @@ void main() {
     });
 
     test('SourceAuthentication constants', () {
-      expect(SourceAuthentication.OFFICIAL_DEVELOPER['name'], 'Association TUTODECODE');
+      expect(SourceAuthentication.OFFICIAL_DEVELOPER['name'],
+          'Association TUTODECODE');
     });
   });
 }
