@@ -204,6 +204,52 @@ clamav_antivirus:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: on_success
 
+zero_trust_tamper_defense:
+  stage: validate
+  script:
+    - echo "🛡️ Running Military-Grade Zero-Trust Asset & Bidi Attack Audit..."
+    - python3 scripts/verify_checksums.py
+    - |
+      # CVE-2021-42574 Trojan Source / Unicode Bidi Attack Scan
+      if grep -rnU $'\u202A\|\u202B\|\u202D\|\u202E\|\u2066\|\u2067\|\u2068\|\u202C\|\u2069' lib/ scripts/; then
+        echo "❌ CRITICAL SECURITY ERROR: Invisible Trojan Source / Bidi character attack detected!"
+        exit 1
+      else
+        echo "✅ Zero-Trust Bidi Attack & Asset Integrity Audit PASSED."
+      fi
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+military_hardening_audit:
+  stage: validate
+  script:
+    - echo "🛡️ Running Military-Grade Code Hardening & Unsafe Execution Audit..."
+    - |
+      UNSAFE_EXEC=0
+      # Audit for raw shell calls with dynamic interpolation
+      if grep -rE "Process\.run\(['\"](sh|bash|zsh|cmd|powershell)" lib/ \
+        --binary-files=without-match; then
+        echo "⚠️ Warning: Raw shell process execution detected in lib/. Verify argument sanitization."
+      fi
+      # Audit for unsafe C/C++ memory functions if C/C++ code is present
+      if grep -rE "\b(strcpy|strcat|sprintf|gets)\b" linux/ windows/ macos/ 2>/dev/null; then
+        echo "❌ CRITICAL SECURITY ERROR: Unsafe C/C++ memory functions (strcpy/sprintf/gets) detected!"
+        UNSAFE_EXEC=1
+      fi
+      if [ $UNSAFE_EXEC -eq 1 ]; then
+        exit 1
+      else
+        echo "✅ Military-Grade Hardening Audit PASSED."
+      fi
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
 # === STAGE: BUILD-TEST (Unsigned) ===
 build_android_unsigned:
   stage: build-test
