@@ -1,9 +1,5 @@
 <meta name="fediverse:creator" content="@TUTODECODE@mastodon.social">
 
-> [!NOTE]
-> 💙 **Welcome to the T2DECODE GitHub mirror!**  
-> This repository is the official mirror for distribution and automated releases. To contribute code, report issues, or connect with the community, visit our main [GitLab repository](https://gitlab.com/tutodecode-org/T2DECODE). Feel free to drop a star ⭐ to support the project!
-
 
 <div align="center">
   <p>
