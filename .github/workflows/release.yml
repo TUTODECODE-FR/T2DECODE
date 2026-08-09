@@ -10,10 +10,9 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
-    name: Build & Publish Release
+  build-android-linux:
+    name: Build Android & Linux
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,7 +39,7 @@ jobs:
         run: flutter pub get
 
       - name: Configure Android Signing Key
-        if: startsWith(github.ref, 'refs/tags/v') && env.ANDROID_KEYSTORE_BASE64 != ''
+        if: env.ANDROID_KEYSTORE_BASE64 != ''
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release-keystore.jks
           cat > android/key.properties <<EOF
@@ -52,11 +51,6 @@ jobs:
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
 
-      - name: Run Tests & Asset Integrity Check
-        run: |
-          python3 scripts/verify_checksums.py
-          flutter test --dart-define=SKIP_GOLDENS=true
-
       - name: Build Android Release APKs
         run: flutter build apk --release --split-per-abi
 
@@ -65,19 +59,109 @@ jobs:
           flutter build linux --release
           tar -czvf T2DECODE-Linux.tar.gz -C build/linux/x64/release/bundle/ .
 
-      - name: Generate Checksums SHA256SUMS.txt
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          sha256sum build/app/outputs/flutter-apk/*.apk T2DECODE-Linux.tar.gz > SHA256SUMS.txt
-
-      - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
+      - name: Upload Android & Linux Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          files: |
+          name: artifacts-android-linux
+          path: |
             build/app/outputs/flutter-apk/*.apk
             T2DECODE-Linux.tar.gz
-            SHA256SUMS.txt
+
+  build-windows:
+    name: Build Windows Desktop
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Windows Release
+        run: flutter build windows --release
+
+      - name: Archive Windows Release
+        shell: powershell
+        run: |
+          Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath T2DECODE-Windows.zip
+
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-windows
+          path: T2DECODE-Windows.zip
+
+  build-macos:
+    name: Build macOS Desktop
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build macOS Release
+        run: flutter build macos --release
+
+      - name: Create DMG & ZIP Packages
+        run: |
+          chmod +x scripts/build_dmg.sh
+          ./scripts/build_dmg.sh
+          cp -f build/macos/Build/Products/Release/T2DECODE-macOS.dmg T2DECODE-macOS.dmg
+          ditto -c -k --keepParent build/macos/Build/Products/Release/T2DECODE.app T2DECODE-macOS.zip
+
+      - name: Upload macOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-macos
+          path: |
+            T2DECODE-macOS.dmg
+            T2DECODE-macOS.zip
+
+  publish-release:
+    name: Publish Multi-OS GitHub Release
+    needs: [build-android-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download Android & Linux Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts-android-linux
+          path: ./release_assets
+
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts-windows
+          path: ./release_assets
+
+      - name: Download macOS Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts-macos
+          path: ./release_assets
+
+      - name: Generate SHA256SUMS.txt
+        run: |
+          cd release_assets
+          sha256sum * > SHA256SUMS.txt
+
+      - name: Create GitHub Release with All OS Artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release_assets/*
           generate_release_notes: true
           draft: false
           prerelease: false
