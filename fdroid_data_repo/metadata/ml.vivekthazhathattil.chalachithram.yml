@@ -1,0 +1,38 @@
+Categories:
+  - Educational Game
+License: MIT
+AuthorName: Vivek Thazhathattil
+AuthorEmail: vivek.thazhathattil@gmail.com
+AuthorWebSite: https://vivekthazhathattil.github.io
+SourceCode: https://github.com/VivekThazhathattil/Chalachithram/
+IssueTracker: https://github.com/VivekThazhathattil/Chalachithram/issues
+Changelog: https://github.com/VivekThazhathattil/dekadico/releases
+
+AutoName: Chalachithram
+
+RepoType: git
+Repo: https://github.com/VivekThazhathattil/Chalachithram/
+
+Builds:
+  - versionName: '1.2'
+    versionCode: 2
+    commit: 8bb34bf7ead6ccf5aef20f8cb5a0c1422525d1e0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.4'
+    versionCode: 4
+    commit: 1902772a0ed019410d82b1a28847ffc858754766
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/6.7.1/7.3.3/' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i -e 's/4.2.2/7.2.0/' ../build.gradle
+      - sed -i -e '/android {/a lintOptions { checkReleaseBuilds false }' build.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.4'
+CurrentVersionCode: 4

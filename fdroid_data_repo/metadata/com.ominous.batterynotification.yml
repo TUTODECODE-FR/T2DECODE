@@ -1,0 +1,87 @@
+Categories:
+  - Battery
+  - System
+License: GPL-3.0-or-later
+AuthorName: TylerWilliamson
+SourceCode: https://github.com/TylerWilliamson/BatteryNotification
+IssueTracker: https://github.com/TylerWilliamson/BatteryNotification/issues/
+
+AutoName: Battery Notification
+
+RepoType: git
+Repo: https://github.com/TylerWilliamson/BatteryNotification
+
+Builds:
+  - versionName: 1.4.1
+    versionCode: 11
+    commit: f67d7eb4ea4288eb95b6deeffb32e4e96f5b95b1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.2
+    versionCode: 12
+    commit: d60b4b8ee5724f9a072e4046b0f5e46f0b0a87a3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.3
+    versionCode: 13
+    commit: e201b6a30f17b294d32c12aa1af5d213e24634c3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.4
+    versionCode: 15
+    commit: b83f4d945abadd24d41cd1e1ef9f63756bf6b882
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.5
+    versionCode: 17
+    commit: 1cab0eb0cd8fa5aa8e9f10511d0278959165e5e1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.6
+    versionCode: 18
+    commit: ce1b2838ecdf762178de40df23d2541ee0b9bcfb
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.7
+    versionCode: 19
+    commit: 4e3ec923499ed6f6ee99b8c5757453d42ca8da8c
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.4.7
+CurrentVersionCode: 19

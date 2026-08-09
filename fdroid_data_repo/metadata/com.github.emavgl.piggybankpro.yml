@@ -1,0 +1,3890 @@
+Categories:
+  - Finance Manager
+License: GPL-3.0-only
+AuthorName: emavgl
+AuthorEmail: emavgl.app@gmail.com
+WebSite: https://github.com/emavgl/oinkoin
+SourceCode: https://github.com/emavgl/oinkoin
+IssueTracker: https://github.com/emavgl/oinkoin/issues
+Changelog: https://github.com/emavgl/oinkoin/releases
+
+AutoName: Oinkoin
+
+RepoType: git
+Repo: https://github.com/emavgl/oinkoin.git
+
+Builds:
+  - versionName: 1.0.18
+    versionCode: 8008
+    commit: 9b246c98ee6b740a622adea4f61b7e5b0f91427c
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.21
+    versionCode: 8011
+    commit: 8270df8ddbd7efce29c60c80faa11baf11929883
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.22
+    versionCode: 8015
+    commit: 82018464e1fbed15060a6baaac6411d463da6ab1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.22
+    versionCode: 8016
+    commit: 63b780d976b5427751776c5c6f00a913b85febd5
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.23
+    versionCode: 8017
+    commit: 7d83f5ed4ea19d52f33ae87278b283c58f610268
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.24
+    versionCode: 8018
+    commit: bdb19a02e29b4c94e94b0d89f5217d3d3d6262ab
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.25
+    versionCode: 8019
+    commit: a8b10df25dc6c092324f7daee9c063871cfc5f12
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.26
+    versionCode: 8020
+    commit: 6355004cfaa2498def1fa68e1b293e711a6a37f9
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.28
+    versionCode: 8022
+    commit: 1a28d0d04ed390e3d13272e260ae7a0a4a14c2ab
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.29
+    versionCode: 8023
+    commit: fca5ba796f754801db423940e27e168839fc191b
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/packages/flutter_tools/gradle/flutter.gradle
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.31
+    versionCode: 8025
+    commit: 121896fcd65f162b33977db8db100a95d19bcf1b
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.32
+    versionCode: 8028
+    commit: 1443e7a861441d32240898607d92043cb634c9f1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.34
+    versionCode: 8030
+    commit: 54e293bffbd4f92ef66db4b4646db1023aa0e477
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.35
+    versionCode: 8031
+    commit: 8b7a2ca92cbad725e3d91ec475d2d436aab8a66b
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.36
+    versionCode: 8032
+    commit: aeba7c82e1fdc8a7b035d81a816839e8fca892e4
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.39
+    versionCode: 8035
+    commit: 01348d6461bd201230d7dfe68f9555e717a54d01
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.40
+    versionCode: 8036
+    commit: d90436149e370d22884613150c07834f2011dd2f
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.43
+    versionCode: 8039
+    commit: 1148df2f3d18334aa91d62e0007d01ec4ae1f205
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.45
+    versionCode: 8041
+    commit: 62ca640b7252c6fe27f99d67ea0afe4236e92c0e
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.46
+    versionCode: 8042
+    commit: 860eb6c907ef2bba5c8395b2fe54134ca495258d
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.48
+    versionCode: 8044
+    commit: 2d30833932b511f18e0bac63e381ee98175feba1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.52
+    versionCode: 8047
+    commit: 07c5608f430b0e6bde913a46e835af549353e2f5
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.54
+    versionCode: 8048
+    commit: d69195dca312b17672d43ab50bca217d0332cb24
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.55
+    versionCode: 8049
+    commit: 8a9cbb27bfe096b0fa1703d9bd5a7717de94c6e1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.56
+    versionCode: 8050
+    commit: 0c65ceb735d35e63f57deef61dcf266672e223d5
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.57
+    versionCode: 8051
+    commit: d53f1f2e417b44c7731e01f755603ff32fd0ba3c
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.60
+    versionCode: 8054
+    commit: 56a384fc3a6ea2c497d03db1c9906edf5743e39f
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.63
+    versionCode: 6056001
+    commit: 0dc58ad498dba9129da3da4e66e785632055bc5c
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.63
+    versionCode: 6056002
+    commit: 0dc58ad498dba9129da3da4e66e785632055bc5c
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.63
+    versionCode: 6056004
+    commit: 0dc58ad498dba9129da3da4e66e785632055bc5c
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.64
+    versionCode: 6057001
+    commit: cba7f4d432eb655dbafa2c151cf9e872c169b5d2
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.64
+    versionCode: 6057002
+    commit: cba7f4d432eb655dbafa2c151cf9e872c169b5d2
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.64
+    versionCode: 6057004
+    commit: cba7f4d432eb655dbafa2c151cf9e872c169b5d2
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.65
+    versionCode: 6058001
+    commit: 10aac7cc1553c61508316d12cd85b6835987a89a
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.65
+    versionCode: 6058002
+    commit: 10aac7cc1553c61508316d12cd85b6835987a89a
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.65
+    versionCode: 6058004
+    commit: 10aac7cc1553c61508316d12cd85b6835987a89a
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.66
+    versionCode: 6059001
+    commit: a1c90b595dbd78e5740d57ee9a4931b2c4f7798b
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.66
+    versionCode: 6059002
+    commit: a1c90b595dbd78e5740d57ee9a4931b2c4f7798b
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.66
+    versionCode: 6059004
+    commit: a1c90b595dbd78e5740d57ee9a4931b2c4f7798b
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.68
+    versionCode: 6061001
+    commit: 2c90f243ff5cef4ce7e5007dd8b55bb69315a47a
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.68
+    versionCode: 6061002
+    commit: 2c90f243ff5cef4ce7e5007dd8b55bb69315a47a
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.68
+    versionCode: 6061004
+    commit: 2c90f243ff5cef4ce7e5007dd8b55bb69315a47a
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.69
+    versionCode: 6062001
+    commit: f2691258c4800b17f05d23684e1388cb7ad928ab
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.69
+    versionCode: 6062002
+    commit: f2691258c4800b17f05d23684e1388cb7ad928ab
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.69
+    versionCode: 6062004
+    commit: f2691258c4800b17f05d23684e1388cb7ad928ab
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.71
+    versionCode: 6064001
+    commit: ec6e830ca8c3b72f562d3a4b32975c966470857c
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.71
+    versionCode: 6064002
+    commit: ec6e830ca8c3b72f562d3a4b32975c966470857c
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.71
+    versionCode: 6064004
+    commit: ec6e830ca8c3b72f562d3a4b32975c966470857c
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.72
+    versionCode: 6065001
+    commit: 9122847f37d0f42a5063edaba3ebe16bd447ed65
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.72
+    versionCode: 6065002
+    commit: 9122847f37d0f42a5063edaba3ebe16bd447ed65
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.72
+    versionCode: 6065004
+    commit: 9122847f37d0f42a5063edaba3ebe16bd447ed65
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.73
+    versionCode: 6066001
+    commit: 2e8283ba9c96b1a5409ebc6aefdc2b035adf2a96
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.73
+    versionCode: 6066002
+    commit: 2e8283ba9c96b1a5409ebc6aefdc2b035adf2a96
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.73
+    versionCode: 6066004
+    commit: 2e8283ba9c96b1a5409ebc6aefdc2b035adf2a96
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.75
+    versionCode: 6068001
+    commit: d5c0b39d85934b7744c736589075449490e36e32
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.75
+    versionCode: 6068002
+    commit: d5c0b39d85934b7744c736589075449490e36e32
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.75
+    versionCode: 6068004
+    commit: d5c0b39d85934b7744c736589075449490e36e32
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.76
+    versionCode: 6069001
+    commit: b1da2eb81b592c7425e68c8e8f87b96a6a973661
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.76
+    versionCode: 6069002
+    commit: b1da2eb81b592c7425e68c8e8f87b96a6a973661
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.76
+    versionCode: 6069004
+    commit: b1da2eb81b592c7425e68c8e8f87b96a6a973661
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.77
+    versionCode: 6070001
+    commit: d7d542e1958862c8d6065dbde48984abee8f11ee
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.77
+    versionCode: 6070002
+    commit: d7d542e1958862c8d6065dbde48984abee8f11ee
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.77
+    versionCode: 6070004
+    commit: d7d542e1958862c8d6065dbde48984abee8f11ee
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.78
+    versionCode: 6071001
+    commit: 8f92f3649e54ede7a227dc00e60e979c956d54e8
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.78
+    versionCode: 6071002
+    commit: 8f92f3649e54ede7a227dc00e60e979c956d54e8
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.78
+    versionCode: 6071004
+    commit: 8f92f3649e54ede7a227dc00e60e979c956d54e8
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.79
+    versionCode: 6072001
+    commit: cf69cb5887c4b97597084114ce82884923b5438b
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.79
+    versionCode: 6072002
+    commit: cf69cb5887c4b97597084114ce82884923b5438b
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.79
+    versionCode: 6072004
+    commit: cf69cb5887c4b97597084114ce82884923b5438b
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.81
+    versionCode: 6074001
+    commit: be3dfb2ff0797fa587f0bbd9798717f1c4381c68
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.81
+    versionCode: 6074002
+    commit: be3dfb2ff0797fa587f0bbd9798717f1c4381c68
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.81
+    versionCode: 6074004
+    commit: be3dfb2ff0797fa587f0bbd9798717f1c4381c68
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.83
+    versionCode: 6076001
+    commit: c363e8510b1057fbfe1fde7f482c04a790bfae3d
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.83
+    versionCode: 6076002
+    commit: c363e8510b1057fbfe1fde7f482c04a790bfae3d
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.83
+    versionCode: 6076004
+    commit: c363e8510b1057fbfe1fde7f482c04a790bfae3d
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.84
+    versionCode: 6077001
+    commit: 51fae9e47d742d0c93176d37f85091c66cd1faa2
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.84
+    versionCode: 6077002
+    commit: 51fae9e47d742d0c93176d37f85091c66cd1faa2
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.84
+    versionCode: 6077004
+    commit: 51fae9e47d742d0c93176d37f85091c66cd1faa2
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.85
+    versionCode: 6078001
+    commit: 6ae30f860b4bb3e000a00c2d56a21369350429e6
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.85
+    versionCode: 6078002
+    commit: 6ae30f860b4bb3e000a00c2d56a21369350429e6
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.85
+    versionCode: 6078004
+    commit: 6ae30f860b4bb3e000a00c2d56a21369350429e6
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.88
+    versionCode: 6081001
+    commit: 4e430278886a64c827d49c5fa4a6b246b8726524
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.88
+    versionCode: 6081002
+    commit: 4e430278886a64c827d49c5fa4a6b246b8726524
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.88
+    versionCode: 6081004
+    commit: 4e430278886a64c827d49c5fa4a6b246b8726524
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.90
+    versionCode: 6083001
+    commit: 06daead7a3116d3a7020d099f86eedb3276825a4
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.90
+    versionCode: 6083002
+    commit: 06daead7a3116d3a7020d099f86eedb3276825a4
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.90
+    versionCode: 6083004
+    commit: 06daead7a3116d3a7020d099f86eedb3276825a4
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.0.93
+    versionCode: 6087001
+    commit: 7b23fee2b88e0c96c5e88668ce08fdeb6c433569
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.0.93
+    versionCode: 6087002
+    commit: 7b23fee2b88e0c96c5e88668ce08fdeb6c433569
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.0.93
+    versionCode: 6087004
+    commit: 7b23fee2b88e0c96c5e88668ce08fdeb6c433569
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.1.1
+    versionCode: 7096001
+    commit: edf895bbc228dd2d7b4c621f50742511b6b0b4ab
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.1.1
+    versionCode: 7096002
+    commit: edf895bbc228dd2d7b4c621f50742511b6b0b4ab
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.1.1
+    versionCode: 7096004
+    commit: edf895bbc228dd2d7b4c621f50742511b6b0b4ab
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.1.4
+    versionCode: 7099001
+    commit: 37321927f5f34087a264dce82f9a896ac75ac3fa
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.1.4
+    versionCode: 7099002
+    commit: 37321927f5f34087a264dce82f9a896ac75ac3fa
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.1.4
+    versionCode: 7099004
+    commit: 37321927f5f34087a264dce82f9a896ac75ac3fa
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.1.5
+    versionCode: 7101001
+    commit: eae9f462268741da719cf21c1bd516c01fb6c8e8
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.1.5
+    versionCode: 7101002
+    commit: eae9f462268741da719cf21c1bd516c01fb6c8e8
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.1.5
+    versionCode: 7101004
+    commit: eae9f462268741da719cf21c1bd516c01fb6c8e8
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.1.6
+    versionCode: 7102001
+    commit: eb5321c50586ccb9ca64463ea1d233cef1bab68e
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+
+  - versionName: 1.1.6
+    versionCode: 7102002
+    commit: eb5321c50586ccb9ca64463ea1d233cef1bab68e
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+
+  - versionName: 1.1.6
+    versionCode: 7102004
+    commit: eb5321c50586ccb9ca64463ea1d233cef1bab68e
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+
+  - versionName: 1.1.10
+    versionCode: 7106001
+    commit: 4e5873f92411459b0fdbb271ba19f66b31d81335
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.1.10
+    versionCode: 7106002
+    commit: 4e5873f92411459b0fdbb271ba19f66b31d81335
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.1.10
+    versionCode: 7106004
+    commit: 4e5873f92411459b0fdbb271ba19f66b31d81335
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.2.1
+    versionCode: 7108001
+    commit: 37c9315eed8bb0388d47481247aae355d92eda76
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.2.1
+    versionCode: 7108002
+    commit: 37c9315eed8bb0388d47481247aae355d92eda76
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.2.1
+    versionCode: 7108004
+    commit: 37c9315eed8bb0388d47481247aae355d92eda76
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.3.0
+    versionCode: 7109001
+    commit: 1fc284bb34e3d8c6ca2af2bb544a81ccb73f68e0
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.3.0
+    versionCode: 7109002
+    commit: 1fc284bb34e3d8c6ca2af2bb544a81ccb73f68e0
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.3.0
+    versionCode: 7109004
+    commit: 1fc284bb34e3d8c6ca2af2bb544a81ccb73f68e0
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.3.2
+    versionCode: 7111001
+    commit: 9dac6838997152a6f3759e2e263da8438aaf7449
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.3.2
+    versionCode: 7111002
+    commit: 9dac6838997152a6f3759e2e263da8438aaf7449
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.3.2
+    versionCode: 7111004
+    commit: 9dac6838997152a6f3759e2e263da8438aaf7449
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.3.3
+    versionCode: 7112001
+    commit: b5ef9ce58c143ce6d376f8c4e1ede266166f4ee5
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.3.3
+    versionCode: 7112002
+    commit: b5ef9ce58c143ce6d376f8c4e1ede266166f4ee5
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.3.3
+    versionCode: 7112004
+    commit: b5ef9ce58c143ce6d376f8c4e1ede266166f4ee5
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.4.0
+    versionCode: 7113001
+    commit: 67689700b8ee29d7ccbc6c52c404c1156c9678d3
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.4.0
+    versionCode: 7113002
+    commit: 67689700b8ee29d7ccbc6c52c404c1156c9678d3
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.4.0
+    versionCode: 7113004
+    commit: 67689700b8ee29d7ccbc6c52c404c1156c9678d3
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.4.1
+    versionCode: 7114001
+    commit: 7b8a7020a691fe69b084e99d0282697e15f32bea
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.4.1
+    versionCode: 7114002
+    commit: 7b8a7020a691fe69b084e99d0282697e15f32bea
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.4.1
+    versionCode: 7114004
+    commit: 7b8a7020a691fe69b084e99d0282697e15f32bea
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.4.2
+    versionCode: 7115001
+    commit: 65b1e5b9caadb517aaaa07740fe418fdb1d04c77
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.4.2
+    versionCode: 7115002
+    commit: 65b1e5b9caadb517aaaa07740fe418fdb1d04c77
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.4.2
+    versionCode: 7115004
+    commit: 65b1e5b9caadb517aaaa07740fe418fdb1d04c77
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.5.0
+    versionCode: 7116001
+    commit: f11305a0dfa8132b2ae468733f741f3bfeebcebf
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.5.0
+    versionCode: 7116002
+    commit: f11305a0dfa8132b2ae468733f741f3bfeebcebf
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.5.0
+    versionCode: 7116004
+    commit: f11305a0dfa8132b2ae468733f741f3bfeebcebf
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.6.0
+    versionCode: 7117001
+    commit: 3dc79096aa8bf89bc457ce84fe696861c6c4f4a1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.6.0
+    versionCode: 7117002
+    commit: 3dc79096aa8bf89bc457ce84fe696861c6c4f4a1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.6.0
+    versionCode: 7117004
+    commit: 3dc79096aa8bf89bc457ce84fe696861c6c4f4a1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.6.1
+    versionCode: 7118001
+    commit: 500399e1161a8b93521ca5dc62751b9917c5d6a7
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.6.1
+    versionCode: 7118002
+    commit: 500399e1161a8b93521ca5dc62751b9917c5d6a7
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.6.1
+    versionCode: 7118004
+    commit: 500399e1161a8b93521ca5dc62751b9917c5d6a7
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.6.3
+    versionCode: 7120001
+    commit: 8069b42dea5d7399e52f30edb90f6c09b36668e1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.6.3
+    versionCode: 7120002
+    commit: 8069b42dea5d7399e52f30edb90f6c09b36668e1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.6.3
+    versionCode: 7120004
+    commit: 8069b42dea5d7399e52f30edb90f6c09b36668e1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.7.0
+    versionCode: 7121001
+    commit: 34c07f6799d4ed6c9fd68025b510b841ee306825
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.7.0
+    versionCode: 7121002
+    commit: 34c07f6799d4ed6c9fd68025b510b841ee306825
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.7.0
+    versionCode: 7121004
+    commit: 34c07f6799d4ed6c9fd68025b510b841ee306825
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.7.2
+    versionCode: 7123001
+    commit: e32d370768b9e1b70819d68951c180edc19cb7ea
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.7.2
+    versionCode: 7123002
+    commit: e32d370768b9e1b70819d68951c180edc19cb7ea
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.7.2
+    versionCode: 7123004
+    commit: e32d370768b9e1b70819d68951c180edc19cb7ea
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.7.3
+    versionCode: 7124001
+    commit: 34605efb61b20bec01bda63036c5fd4f5f3ae7bb
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.7.3
+    versionCode: 7124002
+    commit: 34605efb61b20bec01bda63036c5fd4f5f3ae7bb
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.7.3
+    versionCode: 7124004
+    commit: 34605efb61b20bec01bda63036c5fd4f5f3ae7bb
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.7.5
+    versionCode: 7126001
+    commit: d76decebb7a4606b1e941d6b33309d7719fbf486
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.7.5
+    versionCode: 7126002
+    commit: d76decebb7a4606b1e941d6b33309d7719fbf486
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.7.5
+    versionCode: 7126004
+    commit: d76decebb7a4606b1e941d6b33309d7719fbf486
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.7.6
+    versionCode: 7127001
+    commit: ef4c183ee6273c8e8cc1ccfde6b6475ab60daf26
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.7.6
+    versionCode: 7127002
+    commit: ef4c183ee6273c8e8cc1ccfde6b6475ab60daf26
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.7.6
+    versionCode: 7127004
+    commit: ef4c183ee6273c8e8cc1ccfde6b6475ab60daf26
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.7.7
+    versionCode: 7128001
+    commit: e2be6407462dfe72adf0db797aa80c8da4848008
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.7.7
+    versionCode: 7128002
+    commit: e2be6407462dfe72adf0db797aa80c8da4848008
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.7.7
+    versionCode: 7128004
+    commit: e2be6407462dfe72adf0db797aa80c8da4848008
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.8.0
+    versionCode: 7129001
+    commit: 01404a5114e9be5baeaab5a4074f649499f3b4c1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.8.0
+    versionCode: 7129002
+    commit: 01404a5114e9be5baeaab5a4074f649499f3b4c1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.8.0
+    versionCode: 7129004
+    commit: 01404a5114e9be5baeaab5a4074f649499f3b4c1
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.8.1
+    versionCode: 7130001
+    commit: 541bd593fccf78e017e457b548144868acbba7bb
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.8.1
+    versionCode: 7130002
+    commit: 541bd593fccf78e017e457b548144868acbba7bb
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.8.1
+    versionCode: 7130004
+    commit: 541bd593fccf78e017e457b548144868acbba7bb
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.8.2
+    versionCode: 7131001
+    commit: d091ef78a123595c8b206266dc049cf8490f98ec
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.8.2
+    versionCode: 7131002
+    commit: d091ef78a123595c8b206266dc049cf8490f98ec
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.8.2
+    versionCode: 7131004
+    commit: d091ef78a123595c8b206266dc049cf8490f98ec
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.8.3
+    versionCode: 7132001
+    commit: a760ec79b6875ea4d370d8049749880162347100
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.8.3
+    versionCode: 7132002
+    commit: a760ec79b6875ea4d370d8049749880162347100
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.8.3
+    versionCode: 7132004
+    commit: a760ec79b6875ea4d370d8049749880162347100
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.8.4
+    versionCode: 7133001
+    commit: 32bcc3d21bb7e3dcf839c4530a8c92d303578514
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get --enforce-lockfile
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.8.4
+    versionCode: 7133002
+    commit: 32bcc3d21bb7e3dcf839c4530a8c92d303578514
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get --enforce-lockfile
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.8.4
+    versionCode: 7133004
+    commit: 32bcc3d21bb7e3dcf839c4530a8c92d303578514
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-fdroid-release.apk
+    rm:
+      - ios
+      - macos
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter pub get --enforce-lockfile
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter build apk --release --flavor fdroid --split-per-abi
+        --target-platform="android-x64"
+    ndk: r28c
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+VercodeOperation:
+  - 1000 * %c + 1
+  - 1000 * %c + 2
+  - 1000 * %c + 4
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.8.4
+CurrentVersionCode: 7133004

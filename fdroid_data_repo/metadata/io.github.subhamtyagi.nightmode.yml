@@ -1,0 +1,31 @@
+Categories:
+  - System
+License: MIT
+AuthorName: Shubham
+SourceCode: https://github.com/SubhamTyagi/night-mode-tile
+IssueTracker: https://github.com/SubhamTyagi/night-mode-tile/issues
+
+AutoName: Night Mode
+Description: |-
+  Note: This app is unmaintained, its app repository is archived by the dev
+
+  A shortcut to night mode via Tiles,
+
+  Many android devices doesn't explicitly have the night mode by this app you can enable or disable night mode.
+
+RepoType: git
+Repo: https://github.com/SubhamTyagi/night-mode-tile.git
+
+Builds:
+  - versionName: '0.1'
+    versionCode: 1
+    commit: v0.1
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '0.1'
+CurrentVersionCode: 1

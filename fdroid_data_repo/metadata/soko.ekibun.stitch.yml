@@ -1,0 +1,37 @@
+Categories:
+  - Multimedia
+License: LGPL-2.1-only
+AuthorName: ekibun
+AuthorEmail: soekibun@gmail.com
+SourceCode: https://github.com/ekibun/Stitch
+IssueTracker: https://github.com/ekibun/Stitch/issues
+
+AutoName: Stitch
+
+RepoType: git
+Repo: https://github.com/ekibun/Stitch.git
+
+Builds:
+  - versionName: v1.1.12
+    versionCode: 30
+    commit: v1.1.12
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/enable true/d' build.gradle
+      - sdkmanager 'cmake;3.22.1'
+    scandelete:
+      - app/src/main/jni
+    ndk: 22.1.7171670
+
+AutoUpdateMode: Version %v
+UpdateCheckMode: HTTP
+UpdateCheckData: 
+  https://github.com/ekibun/Stitch/releases/latest/download/output-metadata.json|"versionCode":\s(\d+)|.|"versionName":\s"(.+)"
+CurrentVersion: v1.1.12
+CurrentVersionCode: 30

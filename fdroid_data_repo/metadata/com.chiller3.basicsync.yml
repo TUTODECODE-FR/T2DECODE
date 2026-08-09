@@ -1,0 +1,1823 @@
+Categories:
+  - Cloud Storage & File Sync
+  - Internet
+License: GPL-3.0-only
+AuthorName: Andrew Gunnerson
+SourceCode: https://github.com/chenxiaolong/BasicSync
+IssueTracker: https://github.com/chenxiaolong/BasicSync/issues
+Changelog: https://github.com/chenxiaolong/BasicSync/blob/HEAD/CHANGELOG.md
+
+RepoType: git
+Repo: https://github.com/chenxiaolong/BasicSync.git
+Binaries: 
+  https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+
+Builds:
+  - versionName: '1.18'
+    versionCode: 70144
+    commit: 0c91607795d589c64646f50ca60a99d02af8db15
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.19'
+    versionCode: 70400
+    commit: 0030761b8f64bd6dec2d76abf32d5447d9148d3e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.20'
+    versionCode: 70656
+    commit: 0951aebd8882bd6c4d3a9278c1c5c904dffe5367
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.21'
+    versionCode: 70912
+    commit: affb4aac6d30a2ce98fd826c65e4d0b6ffa53977
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.22'
+    versionCode: 71168
+    commit: 1779e1d92bc83f1734a973ba702ecf8d63fccd06
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.23'
+    versionCode: 71424
+    commit: c18d01915c4bcb6aa922199ecd55c131fa8fd9da
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.24'
+    versionCode: 71680
+    commit: 0bafa4263390795464e8ea80e749fb93d4cc5f7a
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.25'
+    versionCode: 71936
+    commit: beca670509f5f8c608fbcc29a4743ff17e2ca398
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.26'
+    versionCode: 72193
+    commit: 352227c19e9acdd453e93a5ee09707d0a35659a7
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.26'
+    versionCode: 72194
+    commit: 352227c19e9acdd453e93a5ee09707d0a35659a7
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.26'
+    versionCode: 72195
+    commit: 352227c19e9acdd453e93a5ee09707d0a35659a7
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.26'
+    versionCode: 72196
+    commit: 352227c19e9acdd453e93a5ee09707d0a35659a7
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.27'
+    versionCode: 72449
+    commit: 9e9763bf6e6c9bddf863b1fb0cc75c949c51db0e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.27'
+    versionCode: 72450
+    commit: 9e9763bf6e6c9bddf863b1fb0cc75c949c51db0e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.27'
+    versionCode: 72451
+    commit: 9e9763bf6e6c9bddf863b1fb0cc75c949c51db0e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.27'
+    versionCode: 72452
+    commit: 9e9763bf6e6c9bddf863b1fb0cc75c949c51db0e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.28'
+    versionCode: 72705
+    commit: d6919af8a5ba3c685b34d21dc14ee404f92e110b
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.28'
+    versionCode: 72706
+    commit: d6919af8a5ba3c685b34d21dc14ee404f92e110b
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.28'
+    versionCode: 72707
+    commit: d6919af8a5ba3c685b34d21dc14ee404f92e110b
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.28'
+    versionCode: 72708
+    commit: d6919af8a5ba3c685b34d21dc14ee404f92e110b
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.29'
+    versionCode: 72961
+    commit: 4582e99def72700ffd5d904fcb0ed5c9c80ac9fe
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.29'
+    versionCode: 72962
+    commit: 4582e99def72700ffd5d904fcb0ed5c9c80ac9fe
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.29'
+    versionCode: 72963
+    commit: 4582e99def72700ffd5d904fcb0ed5c9c80ac9fe
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.29'
+    versionCode: 72964
+    commit: 4582e99def72700ffd5d904fcb0ed5c9c80ac9fe
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.30'
+    versionCode: 73217
+    commit: 3bd75936a51b8876514b71d30412317450772429
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.30'
+    versionCode: 73218
+    commit: 3bd75936a51b8876514b71d30412317450772429
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.30'
+    versionCode: 73219
+    commit: 3bd75936a51b8876514b71d30412317450772429
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '1.30'
+    versionCode: 73220
+    commit: 3bd75936a51b8876514b71d30412317450772429
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.0'
+    versionCode: 131073
+    commit: 9d7d7680678feb04f2156a1cb7182d7e877a6658
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.0'
+    versionCode: 131074
+    commit: 9d7d7680678feb04f2156a1cb7182d7e877a6658
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.0'
+    versionCode: 131075
+    commit: 9d7d7680678feb04f2156a1cb7182d7e877a6658
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.0'
+    versionCode: 131076
+    commit: 9d7d7680678feb04f2156a1cb7182d7e877a6658
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.1'
+    versionCode: 131329
+    commit: bac85cf35ea9648ebffb895c6740107518494f3f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.1'
+    versionCode: 131330
+    commit: bac85cf35ea9648ebffb895c6740107518494f3f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.1'
+    versionCode: 131331
+    commit: bac85cf35ea9648ebffb895c6740107518494f3f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.1'
+    versionCode: 131332
+    commit: bac85cf35ea9648ebffb895c6740107518494f3f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+      - sed -i -e '/bootgo/s/1.24.6/1.24.4/' ../external/go/src/make.*
+      - sed -i -e '/minBootstrap/s/1.24.6/1.24.4/' ../external/go/src/cmd/dist/buildtool.go
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.2'
+    versionCode: 131585
+    commit: 0e44fb80b5e46dcbd59d7fc92ed2f2010fd790a8
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.2'
+    versionCode: 131586
+    commit: 0e44fb80b5e46dcbd59d7fc92ed2f2010fd790a8
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.2'
+    versionCode: 131587
+    commit: 0e44fb80b5e46dcbd59d7fc92ed2f2010fd790a8
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.2'
+    versionCode: 131588
+    commit: 0e44fb80b5e46dcbd59d7fc92ed2f2010fd790a8
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.3'
+    versionCode: 131841
+    commit: 8be9993ede98572df9d5e119842031ee23ad8f95
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.3'
+    versionCode: 131842
+    commit: 8be9993ede98572df9d5e119842031ee23ad8f95
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.3'
+    versionCode: 131843
+    commit: 8be9993ede98572df9d5e119842031ee23ad8f95
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.3'
+    versionCode: 131844
+    commit: 8be9993ede98572df9d5e119842031ee23ad8f95
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.4'
+    versionCode: 132097
+    commit: cde7b1bf02fd8b07f9f5c5f98149ad03221fd7af
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.4'
+    versionCode: 132098
+    commit: cde7b1bf02fd8b07f9f5c5f98149ad03221fd7af
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.4'
+    versionCode: 132099
+    commit: cde7b1bf02fd8b07f9f5c5f98149ad03221fd7af
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '2.4'
+    versionCode: 132100
+    commit: cde7b1bf02fd8b07f9f5c5f98149ad03221fd7af
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.2'
+    versionCode: 197121
+    commit: 7f51cf2b73ceb61e2f256defa619e632dba1ae68
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.2'
+    versionCode: 197122
+    commit: 7f51cf2b73ceb61e2f256defa619e632dba1ae68
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.2'
+    versionCode: 197123
+    commit: 7f51cf2b73ceb61e2f256defa619e632dba1ae68
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.2'
+    versionCode: 197124
+    commit: 7f51cf2b73ceb61e2f256defa619e632dba1ae68
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.3'
+    versionCode: 197377
+    commit: fbea45949e9123019a87e001a70d4d1696115c93
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.3'
+    versionCode: 197378
+    commit: fbea45949e9123019a87e001a70d4d1696115c93
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.3'
+    versionCode: 197379
+    commit: fbea45949e9123019a87e001a70d4d1696115c93
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.3'
+    versionCode: 197380
+    commit: fbea45949e9123019a87e001a70d4d1696115c93
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.4'
+    versionCode: 197633
+    commit: 812fe8247dfbc85762cfcc8b625e251cebc03b10
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.4'
+    versionCode: 197634
+    commit: 812fe8247dfbc85762cfcc8b625e251cebc03b10
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.4'
+    versionCode: 197635
+    commit: 812fe8247dfbc85762cfcc8b625e251cebc03b10
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.4'
+    versionCode: 197636
+    commit: 812fe8247dfbc85762cfcc8b625e251cebc03b10
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.5'
+    versionCode: 197889
+    commit: 4622b83f4411363b5271b6305e01d6c2c662b628
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.5'
+    versionCode: 197890
+    commit: 4622b83f4411363b5271b6305e01d6c2c662b628
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.5'
+    versionCode: 197891
+    commit: 4622b83f4411363b5271b6305e01d6c2c662b628
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.5'
+    versionCode: 197892
+    commit: 4622b83f4411363b5271b6305e01d6c2c662b628
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.6'
+    versionCode: 198145
+    commit: 2ebe57adf824c1a3722a1ea23eab2b2a3c13a60f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-armeabi-v7a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm|' -e 's/include(.*)/include("armeabi-v7a")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.6'
+    versionCode: 198146
+    commit: 2ebe57adf824c1a3722a1ea23eab2b2a3c13a60f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-arm64-v8a-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/arm64|' -e 's/include(.*)/include("arm64-v8a")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.6'
+    versionCode: 198147
+    commit: 2ebe57adf824c1a3722a1ea23eab2b2a3c13a60f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/386|' -e 's/include(.*)/include("x86")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+  - versionName: '3.6'
+    versionCode: 198148
+    commit: 2ebe57adf824c1a3722a1ea23eab2b2a3c13a60f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y -t trixie-backports golang-go
+    gradle:
+      - yes
+    binary: 
+      https://github.com/chenxiaolong/BasicSync/releases/download/v%v/BasicSync-%v-x86_64-release.apk
+    prebuild:
+      - sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - sed -i -e 's|-target=android|-target=android/amd64|' -e 's/include(.*)/include("x86_64")/'
+        build.gradle.kts
+      - sed -i -e 's/compileSdk = 37/compileSdk { version = release(37) { minorApiLevel
+        = 0 } }/' -e 's/${android.compileSdk}/${android.compileSdk}.0/' build.gradle.kts
+    scanignore:
+      - external/go/lib/fips140/*.zip
+      - external/go/lib/time/zoneinfo.zip
+    scandelete:
+      - external/go/src
+      - external/syncthing/lib/model/testdata/tmpfile
+    build: gradle stbridge
+    ndk: r29
+
+AllowedAPKSigningKeys: 08f8267bbd8827eaafc6f43294e5fb13e8e36e0bb2af2648d4e7b906cae713fa
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+VercodeOperation:
+  - 1 + %c
+  - 2 + %c
+  - 3 + %c
+  - 4 + %c
+UpdateCheckData: metadata/version.txt|(\d+)||v([\d.]+)
+CurrentVersion: '3.6'
+CurrentVersionCode: 198148

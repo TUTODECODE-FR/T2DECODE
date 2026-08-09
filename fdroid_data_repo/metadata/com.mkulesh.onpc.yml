@@ -1,0 +1,350 @@
+Categories:
+  - Multimedia
+  - Remote Controller
+License: GPL-3.0-or-later
+SourceCode: https://github.com/mkulesh/onpc
+IssueTracker: https://github.com/mkulesh/onpc/issues
+Changelog: https://github.com/mkulesh/onpc/releases
+
+AutoName: Enhanced Music Controller Lite
+
+RepoType: git
+Repo: https://github.com/mkulesh/onpc
+
+Builds:
+  - versionName: '0.8'
+    versionCode: 8
+    commit: v0.8
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '0.9'
+    versionCode: 9
+    commit: v0.9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.0'
+    versionCode: 10
+    commit: v1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.1'
+    versionCode: 11
+    commit: v1.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.2'
+    versionCode: 12
+    commit: v1.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.3'
+    versionCode: 13
+    commit: v1.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.4'
+    versionCode: 15
+    commit: v1.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.5'
+    versionCode: 16
+    commit: v1.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.6'
+    versionCode: 17
+    commit: v1.6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.7'
+    versionCode: 18
+    commit: v1.7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.8'
+    versionCode: 19
+    commit: v1.8
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.9.2
+    versionCode: 22
+    commit: v1.9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.10'
+    versionCode: 23
+    commit: v1.10
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.11'
+    versionCode: 24
+    commit: v1.11
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.12'
+    versionCode: 25
+    commit: v1.12
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.13'
+    versionCode: 26
+    commit: v1.13
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.14'
+    versionCode: 27
+    commit: v1.14
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.15'
+    versionCode: 28
+    commit: v1.15
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.16'
+    versionCode: 29
+    commit: v1.16
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.17'
+    versionCode: 30
+    commit: v1.17
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.18'
+    versionCode: 31
+    commit: v1.18
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.19'
+    versionCode: 32
+    commit: v1.19
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.20'
+    versionCode: 33
+    commit: v1.20
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.21'
+    versionCode: 34
+    commit: v1.21
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.22'
+    versionCode: 35
+    commit: v1.22
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.23'
+    versionCode: 36
+    commit: v1.23
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.24'
+    versionCode: 37
+    commit: 3f7ac9348dc3818585389311eb13a2d5dd8c46cf
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.25'
+    versionCode: 38
+    commit: a68fa2209cbf695b86e2a20159c7998599e8d3ba
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.26'
+    versionCode: 39
+    commit: 3a9a6f1be21720bfa3403eddee1d58d1d714d832
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.27'
+    versionCode: 40
+    commit: 6d1053f466e071a7802cc20d87103df49397873a
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 $$SDK$$/tools/bin/sdkmanager 'build-tools;32.0.0'
+        'build-tools;30.0.3' > /dev/null
+      - cp $$SDK$$/build-tools/30.0.3/lib/dx.jar $$SDK$$/build-tools/32.0.0/lib/dx.jar
+      - cp $$SDK$$/build-tools/30.0.3/dx $$SDK$$/build-tools/32.0.0/dx
+
+  - versionName: '1.29'
+    versionCode: 42
+    commit: 579fdfda77bf97553561e0f35de56649139cf5db
+    subdir: app
+    sudo:
+      - sdkmanager 'build-tools;33.0.2' 'build-tools;30.0.3'
+      - cp /opt/android-sdk/build-tools/30.0.3/lib/dx.jar /opt/android-sdk/build-tools/33.0.2/lib/dx.jar
+      - cp /opt/android-sdk/build-tools/30.0.3/dx /opt/android-sdk/build-tools/33.0.2/dx
+    gradle:
+      - yes
+    rm:
+      - doc
+
+  - versionName: '1.30'
+    versionCode: 43
+    commit: ff460defb1cc35aea4ef0a0ca347caca6585b7a8
+    subdir: app
+    sudo:
+      - sdkmanager 'build-tools;33.0.2' 'build-tools;30.0.3'
+      - cp /opt/android-sdk/build-tools/30.0.3/lib/dx.jar /opt/android-sdk/build-tools/33.0.2/lib/dx.jar
+      - cp /opt/android-sdk/build-tools/30.0.3/dx /opt/android-sdk/build-tools/33.0.2/dx
+    gradle:
+      - yes
+    rm:
+      - doc
+
+  - versionName: '1.31'
+    versionCode: 44
+    commit: e9e7da2cb7c88f0fef4057a1485d5a8a0be18ac2
+    subdir: app
+    sudo:
+      - sdkmanager 'build-tools;33.0.2' 'build-tools;30.0.3'
+      - cp /opt/android-sdk/build-tools/30.0.3/lib/dx.jar /opt/android-sdk/build-tools/33.0.2/lib/dx.jar
+      - cp /opt/android-sdk/build-tools/30.0.3/dx /opt/android-sdk/build-tools/33.0.2/dx
+    gradle:
+      - yes
+    rm:
+      - doc
+
+  - versionName: '1.32'
+    versionCode: 45
+    commit: 9ef0fd2cb700c995b8e319b6d55e2b4953795f71
+    subdir: app
+    sudo:
+      - sdkmanager 'build-tools;33.0.2' 'build-tools;30.0.3'
+      - cp /opt/android-sdk/build-tools/30.0.3/lib/dx.jar /opt/android-sdk/build-tools/33.0.2/lib/dx.jar
+      - cp /opt/android-sdk/build-tools/30.0.3/dx /opt/android-sdk/build-tools/33.0.2/dx
+    gradle:
+      - yes
+    rm:
+      - doc
+
+  - versionName: '1.33'
+    versionCode: 46
+    commit: 6a334937f72c2a367c143ca0dd31d862fb47efb1
+    subdir: app
+    sudo:
+      - sdkmanager 'build-tools;33.0.2' 'build-tools;30.0.3'
+      - cp /opt/android-sdk/build-tools/30.0.3/lib/dx.jar /opt/android-sdk/build-tools/33.0.2/lib/dx.jar
+      - cp /opt/android-sdk/build-tools/30.0.3/dx /opt/android-sdk/build-tools/33.0.2/dx
+    gradle:
+      - yes
+    rm:
+      - doc
+
+  - versionName: '1.34'
+    versionCode: 47
+    commit: f883c26587818dfee5ad6bbb3b6f75f2f169a617
+    subdir: app
+    sudo:
+      - sdkmanager 'build-tools;33.0.2' 'build-tools;30.0.3'
+      - cp /opt/android-sdk/build-tools/30.0.3/lib/dx.jar /opt/android-sdk/build-tools/33.0.2/lib/dx.jar
+      - cp /opt/android-sdk/build-tools/30.0.3/dx /opt/android-sdk/build-tools/33.0.2/dx
+    gradle:
+      - yes
+    rm:
+      - doc
+
+  - versionName: '1.35'
+    versionCode: 48
+    commit: d8ef77f71b0fe7bcb9ea42199a86a89ddf4e8513
+    subdir: app
+    sudo:
+      - sdkmanager 'build-tools;33.0.2' 'build-tools;30.0.3'
+      - cp /opt/android-sdk/build-tools/30.0.3/lib/dx.jar /opt/android-sdk/build-tools/33.0.2/lib/dx.jar
+      - cp /opt/android-sdk/build-tools/30.0.3/dx /opt/android-sdk/build-tools/33.0.2/dx
+    gradle:
+      - yes
+    rm:
+      - doc
+
+  - versionName: '1.36'
+    versionCode: 49
+    commit: db6590d4a5bbbd668fbd1807791d2308d4921e52
+    subdir: app
+    sudo:
+      - sdkmanager 'build-tools;33.0.2' 'build-tools;30.0.3'
+      - cp /opt/android-sdk/build-tools/30.0.3/lib/dx.jar /opt/android-sdk/build-tools/33.0.2/lib/dx.jar
+      - cp /opt/android-sdk/build-tools/30.0.3/dx /opt/android-sdk/build-tools/33.0.2/dx
+    gradle:
+      - yes
+    rm:
+      - doc
+
+  - versionName: '1.37'
+    versionCode: 50
+    commit: 9b7fdd12eea59ea8ec66dcb78d44d81aaa724ce4
+    subdir: app
+    sudo:
+      - sdkmanager 'build-tools;33.0.2' 'build-tools;30.0.3'
+      - cp /opt/android-sdk/build-tools/30.0.3/lib/dx.jar /opt/android-sdk/build-tools/33.0.2/lib/dx.jar
+      - cp /opt/android-sdk/build-tools/30.0.3/dx /opt/android-sdk/build-tools/33.0.2/dx
+    gradle:
+      - yes
+    rm:
+      - doc
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.37'
+CurrentVersionCode: 50

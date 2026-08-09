@@ -1,0 +1,46 @@
+Categories:
+  - Multimedia
+  - Remote Controller
+License: GPL-3.0-only
+AuthorName: claha
+AuthorEmail: claha.apps@gmail.com
+WebSite: https://movian.tv/
+SourceCode: https://github.com/claha/movianremote
+IssueTracker: https://github.com/claha/movianremote/issues
+Changelog: https://github.com/claha/movianremote/blob/HEAD/CHANGELOG.md
+
+AutoName: Movian Remote
+Description: |-
+  Remote control for a <a href="https://movian.tv/">Movian</a> media center instance.
+
+  Features:
+
+  * Buttons for most common actions, see below for a more detailed description
+  * Use the integrated searchbar to search in Movian
+  * Use profiles if you are running Movian on multiple devices
+  * Swipe to switch between profiles
+  * Swipe to switch between navigation and media remote
+
+RepoType: git
+Repo: https://github.com/claha/movianremote
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: v1.0.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.0
+    versionCode: 2
+    commit: 019295b72ba2e59f65673bb89135a7447500ec6a
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.1.0
+CurrentVersionCode: 2

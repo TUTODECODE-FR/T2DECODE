@@ -1,0 +1,815 @@
+Categories:
+  - Wallet
+License: Apache-2.0
+AuthorName: Encointer Association
+WebSite: https://encointer.org
+SourceCode: https://github.com/encointer/encointer-wallet-flutter
+IssueTracker: https://github.com/encointer/encointer-wallet-flutter/issues
+Changelog: https://github.com/encointer/encointer-wallet-flutter/releases
+Bitcoin: 3P2rNo2vgwodoP7D6oesRkqhr1UHmYoJiD
+
+AutoName: Encointerwallet
+
+RepoType: git
+Repo: https://github.com/encointer/encointer-wallet-flutter.git
+
+Builds:
+  - versionName: 0.8.2
+    versionCode: 802
+    commit: v0.8.2
+    init:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v12.18.2/node-v12.18.2-linux-x64.tar.xz
+      - echo "b8dc634798ee783482c2ae1755bd7dff09d83fa7bb037cdc370b601d0a5e5cbb node.tar.xz"
+        | sha256sum -c -
+      - tar -vxf node.tar.xz
+      - curl -Lo yarn.tar.gz https://github.com/yarnpkg/yarn/releases/download/v1.22.4/yarn-v1.22.4.tar.gz
+      - echo "bc5316aa110b2f564a71a3d6e235be55b98714660870c5b6b2d2d3f12587fb58  yarn.tar.gz"
+        | sha256sum -c -
+      - tar zvxf yarn.tar.gz
+      - export PATH=$PATH:$PWD/node-v12.18.2-linux-x64/bin:$PWD/yarn-v1.22.4/bin
+      - pushd ./lib/js_service_encointer
+      - yarn install
+      - yarn run build
+      - popd
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@1.20.1
+    rm:
+      - node-v12.18.2-linux-x64
+      - yarn-v1.22.4
+      - node.tar.xz
+      - yarn.tar.gz
+      - lib/js_service_encointer/node_modules
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 0.8.4
+    versionCode: 804
+    commit: v0.8.4
+    init:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v12.18.2/node-v12.18.2-linux-x64.tar.xz
+      - echo "b8dc634798ee783482c2ae1755bd7dff09d83fa7bb037cdc370b601d0a5e5cbb node.tar.xz"
+        | sha256sum -c -
+      - tar -vxf node.tar.xz
+      - curl -Lo yarn.tar.gz https://github.com/yarnpkg/yarn/releases/download/v1.22.4/yarn-v1.22.4.tar.gz
+      - echo "bc5316aa110b2f564a71a3d6e235be55b98714660870c5b6b2d2d3f12587fb58  yarn.tar.gz"
+        | sha256sum -c -
+      - tar zvxf yarn.tar.gz
+      - export PATH=$PATH:$PWD/node-v12.18.2-linux-x64/bin:$PWD/yarn-v1.22.4/bin
+      - pushd ./lib/js_service_encointer
+      - yarn install
+      - yarn run build
+      - popd
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@1.22.2
+    rm:
+      - node-v12.18.2-linux-x64
+      - yarn-v1.22.4
+      - node.tar.xz
+      - yarn.tar.gz
+      - lib/js_service_encointer/node_modules
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 0.9.0
+    versionCode: 805
+    commit: v0.9.0
+    init:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v12.18.2/node-v12.18.2-linux-x64.tar.xz
+      - echo "b8dc634798ee783482c2ae1755bd7dff09d83fa7bb037cdc370b601d0a5e5cbb node.tar.xz"
+        | sha256sum -c -
+      - tar -vxf node.tar.xz
+      - curl -Lo yarn.tar.gz https://github.com/yarnpkg/yarn/releases/download/v1.22.4/yarn-v1.22.4.tar.gz
+      - echo "bc5316aa110b2f564a71a3d6e235be55b98714660870c5b6b2d2d3f12587fb58  yarn.tar.gz"
+        | sha256sum -c -
+      - tar zvxf yarn.tar.gz
+      - export PATH=$PATH:$PWD/node-v12.18.2-linux-x64/bin:$PWD/yarn-v1.22.4/bin
+      - pushd ./lib/js_service_encointer
+      - yarn install
+      - yarn run build
+      - popd
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@1.22.2
+    rm:
+      - node-v12.18.2-linux-x64
+      - yarn-v1.22.4
+      - node.tar.xz
+      - yarn.tar.gz
+      - lib/js_service_encointer/node_modules
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 0.9.1
+    versionCode: 806
+    commit: v0.9.1
+    init:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v12.18.2/node-v12.18.2-linux-x64.tar.xz
+      - echo "b8dc634798ee783482c2ae1755bd7dff09d83fa7bb037cdc370b601d0a5e5cbb node.tar.xz"
+        | sha256sum -c -
+      - tar -vxf node.tar.xz
+      - curl -Lo yarn.tar.gz https://github.com/yarnpkg/yarn/releases/download/v1.22.4/yarn-v1.22.4.tar.gz
+      - echo "bc5316aa110b2f564a71a3d6e235be55b98714660870c5b6b2d2d3f12587fb58  yarn.tar.gz"
+        | sha256sum -c -
+      - tar zvxf yarn.tar.gz
+      - export PATH=$PATH:$PWD/node-v12.18.2-linux-x64/bin:$PWD/yarn-v1.22.4/bin
+      - pushd ./lib/js_service_encointer
+      - yarn install
+      - yarn run build
+      - popd
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@1.22.2
+    rm:
+      - node-v12.18.2-linux-x64
+      - yarn-v1.22.4
+      - node.tar.xz
+      - yarn.tar.gz
+      - lib/js_service_encointer/node_modules
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.0.0
+    versionCode: 808
+    commit: v1.0.0
+    init:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v12.18.2/node-v12.18.2-linux-x64.tar.xz
+      - echo "b8dc634798ee783482c2ae1755bd7dff09d83fa7bb037cdc370b601d0a5e5cbb node.tar.xz"
+        | sha256sum -c -
+      - tar -vxf node.tar.xz
+      - curl -Lo yarn.tar.gz https://github.com/yarnpkg/yarn/releases/download/v1.22.4/yarn-v1.22.4.tar.gz
+      - echo "bc5316aa110b2f564a71a3d6e235be55b98714660870c5b6b2d2d3f12587fb58  yarn.tar.gz"
+        | sha256sum -c -
+      - tar zvxf yarn.tar.gz
+      - export PATH=$PATH:$PWD/node-v12.18.2-linux-x64/bin:$PWD/yarn-v1.22.4/bin
+      - pushd ./lib/js_service_encointer
+      - yarn install
+      - yarn run build
+      - popd
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.1
+    rm:
+      - node-v12.18.2-linux-x64
+      - yarn-v1.22.4
+      - node.tar.xz
+      - yarn.tar.gz
+      - lib/js_service_encointer/node_modules
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.0.2
+    versionCode: 810
+    commit: v1.0.2
+    init:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v12.18.2/node-v12.18.2-linux-x64.tar.xz
+      - echo "b8dc634798ee783482c2ae1755bd7dff09d83fa7bb037cdc370b601d0a5e5cbb node.tar.xz"
+        | sha256sum -c -
+      - tar -vxf node.tar.xz
+      - curl -Lo yarn.tar.gz https://github.com/yarnpkg/yarn/releases/download/v1.22.4/yarn-v1.22.4.tar.gz
+      - echo "bc5316aa110b2f564a71a3d6e235be55b98714660870c5b6b2d2d3f12587fb58  yarn.tar.gz"
+        | sha256sum -c -
+      - tar zvxf yarn.tar.gz
+      - export PATH=$PATH:$PWD/node-v12.18.2-linux-x64/bin:$PWD/yarn-v1.22.4/bin
+      - pushd ./lib/js_service_encointer
+      - yarn install
+      - yarn run build
+      - popd
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.1
+    rm:
+      - node-v12.18.2-linux-x64
+      - yarn-v1.22.4
+      - node.tar.xz
+      - yarn.tar.gz
+      - lib/js_service_encointer/node_modules
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.0.3
+    versionCode: 811
+    commit: f1a8ebf2fb85c412f4ea51a11cacab0e098717f9
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.1.1
+    versionCode: 813
+    commit: 44f327130edf499fe4b5df1630fd3c6a4f3154ae
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.1.2
+    versionCode: 817
+    commit: cbe769e531a5a5745fd9154f184097c2e153e35b
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.2.0
+    versionCode: 818
+    commit: 83d325bf8256bcdff231637408e40c5965872e3c
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.3.1
+    versionCode: 822
+    commit: a94627420481de76165f21924417a479251a4592
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.3.2
+    versionCode: 823
+    commit: 10d38664d8b7dd65399f990001744ea829f0ed5f
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.4.1
+    versionCode: 826
+    commit: a67539edf3203308ea10ba3458ba1b570bb96c51
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.4.5
+    versionCode: 830
+    commit: 83a3277f57ac570d260ce51ef1fd870a783ef8a5
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.5.0
+    versionCode: 831
+    commit: 2ad8a8835ebbf65f9e5dbdb513f671536b58d00a
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.5.2
+    versionCode: 833
+    commit: b96c19b421ead0b0484cd49728b7eb93a6fde5b3
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.5.3
+    versionCode: 834
+    commit: fe6d7d4c88327b1028d435b003a5dc819ebd5a6f
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.5.5
+    versionCode: 836
+    commit: 6bd9dead2c2c0cddb4b7a79191690a63d8600321
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.5.6
+    versionCode: 837
+    commit: d3ae5e2d527da429e6fef7a4962fd2c57a6d99dc
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.5.7
+    versionCode: 838
+    commit: 8852923af7a198528480c4609eba02b6baeeb2e7
+    init:
+      - echo "${PWD}"
+      - ls -alt scripts
+      - ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.6.0
+    versionCode: 840
+    commit: 40a3706230e6eca6d611826b9438dcefeffc7a87
+    init: ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.6.1
+    versionCode: 841
+    commit: dd03d53c12fa64d0a0f5ff9c237f2fe7f3058b96
+    init: ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.7.0
+    versionCode: 842
+    commit: c1b6242bbd6cc7ab70d69d40b4df930fa2905c21
+    init: ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.7.1
+    versionCode: 843
+    commit: eed4ef7aa5447c855fc64efe424cfc405c9d0953
+    init: ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.7.2
+    versionCode: 844
+    commit: 228665bd749c76322b30cc0ae63169f4a194988b
+    init: ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.7.3
+    versionCode: 845
+    commit: b8c06a61b9c903d9108715fcb67b5774103a3997
+    init: ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.7.5
+    versionCode: 847
+    commit: 0afe6b53c0fdc946051e5cda65b411ef88a5a79e
+    init: ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@2.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.8.11
+    versionCode: 858
+    commit: e4a1219473e5c2e8c22889c328c0c9bf0a2ce46f
+    init: ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    srclibs:
+      - flutter@3.3.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.8.12
+    versionCode: 859
+    commit: v1.8.12-f-droid
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    rm:
+      - ios
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/packages/flutter_tools/gradle/flutter.gradle
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.9.0
+    versionCode: 860
+    commit: d78ebfeb4bfa0c352b6190a552f2c3346a2caa23
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: build/app/outputs/flutter-apk/app-fdroid-release.apk
+    rm:
+      - ios
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/packages/flutter_tools/gradle/flutter.gradle
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.9.2
+    versionCode: 862
+    commit: c5a6db72929709d9bcd97192650a377561f63cc4
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/packages/flutter_tools/gradle/flutter.gradle
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.11.0
+    versionCode: 871
+    commit: 93d06c68095c6ec729759247e3b27615c5864783
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.11.1
+    versionCode: 872
+    commit: d6d5738beb38f17779b653cecc190dbf9550b16a
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.11.2
+    versionCode: 873
+    commit: 5d47cce76ee2e963292a99df12750893bc35d971
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.11.3
+    versionCode: 874
+    commit: 19ecd77775ee30877a9d51c42067f3cddecd0a68
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.11.4
+    versionCode: 875
+    commit: 9c7a56ae0e56d0f917e3a74b141ef02278adb149
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.11.6
+    versionCode: 877
+    commit: ce0c3f552727047fe7c414cb90726b3b4cdc27d8
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.12.0
+    versionCode: 878
+    commit: 7f5b280bcd1347ae114a251f7835ad878c60782f
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.12.1
+    versionCode: 879
+    commit: cce88b12949b550e3a5a6a6421f662329bbd9137
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.18.0
+    versionCode: 904
+    commit: ed7831c6109dfd0a338c4966a00f41f61bcced8f
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.18.4
+    versionCode: 908
+    commit: b822379450f7b7d5a9905a42fa20d57161ac431a
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.18.6
+    versionCode: 910
+    commit: 211e7e98125c17bae8802d52d46be73dcd3ad203
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.18.7
+    versionCode: 911
+    commit: 72f0c4dd9178382dae936e3bfbdeabe8c1e860bd
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.18.10
+    versionCode: 914
+    commit: ee97e03750d48876fbcad2c98a0901b7016a9f63
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+  - versionName: 1.18.11
+    versionCode: 915
+    commit: 942d2adaa0e10d0228d45e5e3c9949eb8b785fe9
+    submodules: true
+    init: ./scripts/fdroid_init.sh
+    output: app/build/app/outputs/flutter-apk/app-fdroid-release.apk
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - ./scripts/fdroid_build.sh
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[\d.]+-f-droid$
+UpdateCheckData: app/pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.18.11
+CurrentVersionCode: 915

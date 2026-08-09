@@ -1,0 +1,117 @@
+Categories:
+  - Connectivity
+  - Messaging
+License: GPL-2.0-or-later
+AuthorName: NAND
+AuthorEmail: nand@seers.chat
+WebSite: https://seers.chat/
+SourceCode: https://gitlab.com/nand-apps/seers-lodge
+IssueTracker: https://gitlab.com/nand-apps/seers-lodge/-/issues
+Changelog: https://gitlab.com/nand-apps/seers-lodge/-/blob/main/CHANGELOG.md
+
+AutoName: Seers Lodge
+
+RepoType: git
+Repo: https://gitlab.com/nand-apps/seers-lodge.git
+Binaries: 
+  https://gitlab.com/nand-apps/seers-lodge/-/releases/%v/downloads/SeersLodge-%v.apk
+
+Builds:
+  - versionName: 1.1.0
+    versionCode: 3
+    commit: 1.1.0
+    subdir: composeApp
+    sudo:
+      - apt-get update
+      - apt-get install git-lfs wget unzip gcc g++ cmake autoconf automake libtool
+        pkg-config ninja-build yasm dpkg-dev
+    gradle:
+      - yes
+    rm:
+      - iosApp
+    prebuild:
+      - git lfs fetch
+      - git lfs pull
+    preassemble:
+      - buildAndroidNativeLibraries
+
+  - versionName: 1.1.1
+    versionCode: 4
+    commit: added111fa6b3ff888b19b81b598f1685648b975
+    subdir: composeApp
+    sudo:
+      - apt-get update
+      - apt-get install git-lfs wget unzip gcc g++ cmake autoconf automake libtool
+        pkg-config ninja-build yasm dpkg-dev
+    gradle:
+      - yes
+    rm:
+      - iosApp
+    prebuild:
+      - git lfs fetch
+      - git lfs pull
+    preassemble:
+      - buildAndroidNativeLibraries
+
+  - versionName: 1.1.2
+    versionCode: 5
+    commit: 3d6669703e6063338bfa81266db708404a028e33
+    subdir: composeApp
+    sudo:
+      - apt-get update
+      - apt-get install git-lfs wget unzip gcc g++ cmake autoconf automake libtool
+        pkg-config ninja-build yasm dpkg-dev
+    gradle:
+      - yes
+    rm:
+      - iosApp
+    prebuild:
+      - git lfs fetch
+      - git lfs pull
+    preassemble:
+      - buildAndroidNativeLibraries
+
+  - versionName: 1.1.3
+    versionCode: 6
+    commit: 13131313acee0b41b8b0f140f01cb7d57106878a
+    subdir: composeApp
+    sudo:
+      - apt-get update
+      - apt-get install git-lfs wget unzip gcc g++ cmake autoconf automake libtool
+        pkg-config ninja-build yasm dpkg-dev
+    gradle:
+      - yes
+    rm:
+      - iosApp
+    prebuild:
+      - git lfs fetch
+      - git lfs pull
+    preassemble:
+      - buildAndroidNativeLibraries
+
+  - versionName: 1.1.4
+    versionCode: 7
+    commit: e9891b91542cc3df4068d7f560429455b2db2f16
+    subdir: composeApp
+    sudo:
+      - apt-get update
+      - apt-get install git-lfs wget unzip gcc g++ cmake autoconf automake libtool
+        pkg-config ninja-build yasm dpkg-dev
+    gradle:
+      - yes
+    rm:
+      - iosApp
+    prebuild:
+      - git lfs fetch
+      - git lfs pull
+    preassemble:
+      - buildAndroidNativeLibraries
+
+AllowedAPKSigningKeys: f0385c2195240e01d0800399e734a0573b7f52204900f6d65245ac37754d2fb5
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+UpdateCheckData: composeApp/build.gradle.kts|appVersionCode = (\d+)||([\d.]+)
+CurrentVersion: 1.1.4
+CurrentVersionCode: 7

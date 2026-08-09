@@ -1,0 +1,59 @@
+Categories:
+  - Connectivity
+  - Navigation
+License: Apache-2.0
+AuthorName: project-kaat
+AuthorEmail: unsad.me@protonmail.com
+AuthorWebSite: https://github.com/project-kaat
+SourceCode: https://github.com/project-kaat/gpsdRelay
+IssueTracker: https://github.com/project-kaat/gpsdRelay/issues
+
+AutoName: gpsdRelay
+
+RepoType: git
+Repo: https://github.com/project-kaat/gpsdRelay.git
+Binaries: 
+  https://github.com/project-kaat/gpsdRelay/releases/download/v%v/gpsdRelay-v%v.apk
+
+Builds:
+  - versionName: '1.2'
+    versionCode: 3
+    commit: f266068900e5b7221c0888eded643149315c40d7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.3'
+    versionCode: 4
+    commit: da9caa666f750f2aac8847d6ca8ae1f1be4a36bb
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.0'
+    versionCode: 5
+    commit: 6faceb5ec4d6017015c15338ba74b4ca01f1c75a
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.1'
+    versionCode: 6
+    commit: 04b000a82196e2f6e45a7a66f7f62682c67b9f1b
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.2'
+    versionCode: 7
+    commit: e1c205750e97b7190a6e2bfd92152b8bdf607d52
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: d27ba8e564dbd8ee8499d3146b8485d2049ebd8c7a76e0f157de5a5751654d82
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '2.2'
+CurrentVersionCode: 7

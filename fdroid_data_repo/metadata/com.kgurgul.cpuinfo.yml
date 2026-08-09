@@ -1,0 +1,298 @@
+Categories:
+  - System
+License: Apache-2.0
+AuthorName: KG Soft
+AuthorEmail: kamgsoft@gmail.com
+SourceCode: https://github.com/kamgurgul/cpu-info
+IssueTracker: https://github.com/kamgurgul/cpu-info/issues
+Changelog: https://github.com/kamgurgul/cpu-info/releases
+
+RepoType: git
+Repo: https://github.com/kamgurgul/cpu-info.git
+
+Builds:
+  - versionName: 4.1.0
+    versionCode: 40100
+    commit: 4.1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.2.0
+    versionCode: 40200
+    commit: 4.2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.3.0
+    versionCode: 40300
+    commit: 4.3.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.3.1
+    versionCode: 40301
+    commit: 4.3.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.3.2
+    versionCode: 40302
+    commit: 4.3.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.3.3
+    versionCode: 40303
+    commit: 4.3.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.4.2
+    versionCode: 40402
+    commit: 4.4.2
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    prebuild: sed -i -e "s/fileTree.*/'com.opencsv:opencsv:4.5'/" build.gradle
+    scandelete:
+      - external
+      - app/libs
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../external/cpuinfo/lib/$arch; done
+    ndk: r21d
+
+  - versionName: 4.4.3
+    versionCode: 40403
+    commit: 4.4.3
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    prebuild: sed -i -e "s/fileTree.*/'com.opencsv:opencsv:4.5'/" build.gradle
+    scandelete:
+      - external
+      - app/libs
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../external/cpuinfo/lib/$arch; done
+    ndk: r21d
+
+  - versionName: 4.5.0
+    versionCode: 40500
+    commit: 4.5.0
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - external
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../external/cpuinfo/lib/$arch; done
+    ndk: r22b
+
+  - versionName: 4.6.0
+    versionCode: 40600
+    commit: 4.6.0
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - external
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../external/cpuinfo/lib/$arch; done
+    ndk: r25b
+
+  - versionName: 4.7.0
+    versionCode: 40700
+    commit: 4.7.0
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - external
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../external/cpuinfo/lib/$arch; done
+    ndk: r25b
+
+  - versionName: 5.0.1
+    versionCode: 50001
+    commit: 5.0.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - external
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../external/cpuinfo/lib/$arch; done
+    ndk: r25b
+
+  - versionName: 5.1.0
+    versionCode: 50100
+    commit: 5.1.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - external
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../external/cpuinfo/lib/$arch; done
+    ndk: r25b
+
+  - versionName: 5.2.0
+    versionCode: 50200
+    commit: 5.2.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - external
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../external/cpuinfo/lib/$arch; done
+    ndk: r25b
+
+  - versionName: 5.3.1
+    versionCode: 50301
+    commit: 5.3.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - external
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../external/cpuinfo/lib/$arch; done
+    ndk: r25b
+
+  - versionName: 5.4.0
+    versionCode: 50400
+    commit: 5.4.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - external
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../external/cpuinfo/lib/$arch; done
+    ndk: r25b
+
+  - versionName: 6.0.1
+    versionCode: 60001
+    commit: android-6.0.1
+    subdir: androidApp
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - shared/src/androidMain/cpp/external
+      - shared/src/nativeInterop/cinterop
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../shared/src/androidMain/cpp/external/cpuinfo/lib/$arch; done
+    ndk: r27b
+
+  - versionName: 6.1.1
+    versionCode: 60101
+    commit: android-6.1.1
+    subdir: androidApp
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - shared/src/androidMain/cpp/external
+      - shared/src/nativeInterop/cinterop
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../shared/src/androidMain/cpp/external/cpuinfo/lib/$arch; done
+    ndk: r27b
+
+  - versionName: 6.3.0
+    versionCode: 60300
+    commit: android-6.3.0
+    subdir: androidApp
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - shared/src/androidMain/cpp/external
+      - shared/src/nativeInterop/cinterop
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../shared/src/androidMain/cpp/external/cpuinfo/lib/$arch; done
+    ndk: r27b
+
+  - versionName: 6.5.1
+    versionCode: 60501
+    commit: android-6.5.1
+    subdir: androidApp
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - native-android/src/main/cpp/external
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../native-android/src/main/cpp/external/cpuinfo/lib/$arch; done
+    ndk: r28c
+
+  - versionName: 6.6.1
+    versionCode: 60601
+    commit: android-6.6.1
+    subdir: androidApp
+    gradle:
+      - yes
+    srclibs:
+      - cpuinfo@63b254577ed77a8004a9be6ac707f3dccc4e1fd9
+    scandelete:
+      - native-android/src/main/cpp/external
+    build: for arch in x86 x86_64 armeabi-v7a arm64-v8a; do cp $$cpuinfo$$/obj/local/$arch/libcpuinfo.a
+      ../native-android/src/main/cpp/external/cpuinfo/lib/$arch; done
+    ndk: r28c
+
+MaintainerNotes: We can't use auto update because version code and name are dynamic.
+
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 6.6.1
+CurrentVersionCode: 60601

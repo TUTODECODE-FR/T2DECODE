@@ -1,0 +1,49 @@
+Categories:
+  - Market & Price
+License: MIT
+AuthorName: æon
+SourceCode: https://github.com/aeonBTC/Mempal
+IssueTracker: https://github.com/aeonBTC/Mempal/issues
+
+AutoName: Mempal
+
+RepoType: git
+Repo: https://github.com/aeonBTC/Mempal.git
+Binaries: https://github.com/aeonBTC/Mempal/releases/download/v%v/mempal-v%v.apk
+
+Builds:
+  - versionName: 1.5.2
+    versionCode: 14
+    commit: ec0cd97ff36c69d3426078ed6d82d82e761d02d7
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 1.5.3
+    versionCode: 15
+    commit: a6ffb998abe92af27f192202c4c32f06d79a72a4
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*'
+
+  - versionName: '2.0'
+    versionCode: 20
+    commit: a2bccc3eb35b6ce51f793d91d3f69ed86211ddd4
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: c1a48b5a792369aacfb1655fb39449718109d67dfbbd507bc31d4e3e07a04e39
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '2.0'
+CurrentVersionCode: 20

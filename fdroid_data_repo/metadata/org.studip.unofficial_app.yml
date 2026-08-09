@@ -1,0 +1,57 @@
+Categories:
+  - Science & Education
+  - Voice & Video Chat
+License: GPL-3.0-only
+AuthorName: Tarek Sander
+SourceCode: https://github.com/tareksander/Stud.IP-App
+IssueTracker: https://github.com/tareksander/Stud.IP-App/issues
+
+AutoName: Stud.IP
+
+RepoType: git
+Repo: https://github.com/tareksander/Stud.IP-App
+
+Builds:
+  - versionName: 0.3.1
+    versionCode: 7
+    commit: v0.3.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.4.0
+    versionCode: 8
+    commit: v0.4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.0
+    versionCode: 14
+    commit: 50a60662e3aee48236d85c28be67856190cfb61e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.6.0
+    versionCode: 15
+    commit: 659908ff24d86ef49a9b5a585776d86f87290561
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.0
+    versionCode: 16
+    commit: 17f47ecc7a21e554e1664085edabdcaa9f0ba7e9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.0
+CurrentVersionCode: 16

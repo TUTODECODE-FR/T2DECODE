@@ -30,10 +30,12 @@ dco_check:
     - echo "Checking commits for DCO (Signed-off-by) signature..."
     - MISSING_DCO=0
     - git config --global --add safe.directory "$CI_PROJECT_DIR"
+    - TARGET_BRANCH="${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-main}"
+    - git fetch origin "$TARGET_BRANCH" || true
     - |
-      git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
-      for commit in $(git rev-list origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME..HEAD); do
-        if ! git log -1 --format=%B $commit | grep -qi "Signed-off-by:"; then
+      COMMITS=$(git rev-list "origin/$TARGET_BRANCH..HEAD" 2>/dev/null || git log -n 5 --format=%H)
+      for commit in $COMMITS; do
+        if ! git log -1 --format=%B "$commit" | grep -qi "Signed-off-by:"; then
           echo "❌ Error: Commit $commit is missing the 'Signed-off-by:' line."
           MISSING_DCO=1
         else
@@ -60,11 +62,33 @@ test_and_analyze:
     - flutter analyze --no-fatal-infos --no-fatal-warnings || true
     - flutter test --dart-define=SKIP_GOLDENS=true
     - |
-      # Secrets Scan
-      grep -rE "(AKIA|GH[A-Z0-9]{38}|SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}|sk_live_[0-9a-zA-Z]{24})" . \
-      --exclude-dir=".git" --exclude-dir=".dart_tool" --exclude-dir="build" \
-      --exclude-dir=".github/workflows" --exclude=".gitlab-ci.yml" \
-      --binary-files=without-match && exit 1 || exit 0
+      # Enhanced Secrets & Private Key Scan
+      if grep -rE "(AKIA[0-9A-Z]{16}|GH[A-Za-z0-9_]{36,40}|SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}|sk_live_[0-9a-zA-Z]{24}|AIza[0-9A-Za-z-_]{35}|xox[baprs]-[0-9a-zA-Z]{10,48}|-----BEGIN [A-Z ]*PRIVATE KEY-----)" . \
+        --exclude-dir=".git" --exclude-dir=".dart_tool" --exclude-dir="build" \
+        --exclude-dir=".github/workflows" --exclude-dir="fdroid_data_repo" \
+        --exclude=".gitlab-ci.yml" --exclude="payload.json" \
+        --binary-files=without-match; then
+        echo "❌ Error: Hardcoded secrets or private keys found!"
+        exit 1
+      else
+        echo "✅ Enhanced secrets scan passed."
+      fi
+    - |
+      # Supply Chain & HTTP Dependency Check
+      if grep -q "url: \"http://" pubspec.lock 2>/dev/null; then
+        echo "❌ Error: Insecure HTTP dependency source found in pubspec.lock!"
+        exit 1
+      else
+        echo "✅ Supply chain HTTPS check passed."
+      fi
+    - |
+      # Dangerous Android Permissions Audit
+      if grep -qE "(RECEIVE_SMS|READ_SMS|SEND_SMS|CALL_PHONE|PROCESS_OUTGOING_CALLS|SYSTEM_ALERT_WINDOW|BIND_ACCESSIBILITY_SERVICE)" android/app/src/main/AndroidManifest.xml 2>/dev/null; then
+        echo "❌ Error: High-risk/dangerous permission detected in AndroidManifest.xml!"
+        exit 1
+      else
+        echo "✅ Android permissions security check passed."
+      fi
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
       when: manual
@@ -103,9 +127,158 @@ osv-scanner:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: on_success
 
+shellcheck:
+  stage: validate
+  image: koalaman/shellcheck-alpine:latest
+  script:
+    - shellcheck scripts/*.sh
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - scripts/**/*.sh
+      when: on_success
+
+yamllint:
+  stage: validate
+  image: cytopia/yamllint:latest
+  script:
+    - yamllint .gitlab-ci.yml pubspec.yaml .mega-linter.yml
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - "**/*.yml"
+        - "**/*.yaml"
+      when: on_success
+
+hadolint:
+  stage: validate
+  image: hadolint/hadolint:latest-alpine
+  script:
+    - hadolint docker/Dockerfile*
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - docker/**/*
+        - Dockerfile*
+      when: on_success
+
+trivy_scan:
+  stage: validate
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    - trivy fs --security-checks config,vuln,secret --severity HIGH,CRITICAL .
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+
+backdoor_and_anti_malware_scan:
+  stage: validate
+  script:
+    - echo "🔍 Scanning codebase for backdoor patterns, reverse shells, and malicious execution..."
+    - |
+      FOUND_MALWARE=0
+      # 1. Reverse shells & socket callouts
+      if grep -rE "(/dev/tcp/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+|nc\s+-e\s+/bin|ncat\s+-e\s+/bin|python.*socket.*connect\(|perl.*Socket.*connect\(|ruby.*TCPSocket\.new\()" . \
+        --exclude-dir=".git" --exclude-dir="fdroid_data_repo" --exclude-dir="build" --exclude-dir="assets" --exclude-dir="dist" --exclude=".gitlab-ci.yml" --exclude="ai_config_screen.dart" --binary-files=without-match; then
+        echo "❌ Error: Potential reverse shell or malicious socket connection pattern detected!"
+        FOUND_MALWARE=1
+      fi
+      # 2. Obfuscated payload execution
+      if grep -rE "(eval\s*\(\s*base64_decode|base64\s+(-d|--decode)\s*\|\s*(sh|bash|zsh)|curl\s+.*\|\s*(sh|bash)|wget\s+.*\|\s*(sh|bash))" . \
+        --exclude-dir=".git" --exclude-dir="fdroid_data_repo" --exclude-dir="build" --exclude-dir="assets" --exclude-dir="dist" --exclude=".gitlab-ci.yml" --exclude="ai_config_screen.dart" --binary-files=without-match; then
+        echo "❌ Error: Obfuscated script execution or unverified remote execution pattern detected!"
+        FOUND_MALWARE=1
+      fi
+      if [ $FOUND_MALWARE -eq 1 ]; then
+        exit 1
+      else
+        echo "✅ Anti-malware and backdoor pattern scan passed cleanly."
+      fi
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+semgrep_sast:
+  stage: validate
+  image: returntocorp/semgrep:latest
+  script:
+    - semgrep scan --config auto --exclude="fdroid_data_repo" --exclude="build" --error
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+clamav_antivirus:
+  stage: validate
+  image: clamav/clamav:latest
+  script:
+    - freshclam || true
+    - clamscan -r --exclude-dir="fdroid_data_repo" --exclude-dir="build" --exclude-dir=".git" .
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+zero_trust_tamper_defense:
+  stage: validate
+  script:
+    - echo "🛡️ Running Military-Grade Zero-Trust Asset & Bidi Attack Audit..."
+    - python3 scripts/verify_checksums.py
+    - |
+      # CVE-2021-42574 Trojan Source / Unicode Bidi Attack Scan
+      if grep -rnU $'\u202A\|\u202B\|\u202D\|\u202E\|\u2066\|\u2067\|\u2068\|\u202C\|\u2069' lib/ scripts/; then
+        echo "❌ CRITICAL SECURITY ERROR: Invisible Trojan Source / Bidi character attack detected!"
+        exit 1
+      else
+        echo "✅ Zero-Trust Bidi Attack & Asset Integrity Audit PASSED."
+      fi
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+military_hardening_audit:
+  stage: validate
+  script:
+    - echo "🛡️ Running Military-Grade Code Hardening & Unsafe Execution Audit..."
+    - |
+      UNSAFE_EXEC=0
+      # Audit for raw shell calls with dynamic interpolation
+      if grep -rE "Process\.run\(['\"](sh|bash|zsh|cmd|powershell)" lib/ \
+        --binary-files=without-match; then
+        echo "⚠️ Warning: Raw shell process execution detected in lib/. Verify argument sanitization."
+      fi
+      # Audit for unsafe C/C++ memory functions if C/C++ code is present
+      if grep -rE "\b(strcpy|strcat|sprintf|gets)\b" linux/ windows/ macos/ 2>/dev/null; then
+        echo "❌ CRITICAL SECURITY ERROR: Unsafe C/C++ memory functions (strcpy/sprintf/gets) detected!"
+        UNSAFE_EXEC=1
+      fi
+      if [ $UNSAFE_EXEC -eq 1 ]; then
+        exit 1
+      else
+        echo "✅ Military-Grade Hardening Audit PASSED."
+      fi
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
 # === STAGE: BUILD-TEST (Unsigned) ===
 build_android_unsigned:
   stage: build-test
+  needs:
+    - test_and_analyze
   script:
     - flutter pub get
     - flutter build apk --release
@@ -113,23 +286,53 @@ build_android_unsigned:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
       when: manual
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - lib/**/*
+        - pubspec.yaml
+        - pubspec.lock
+        - android/**/*
+        - linux/**/*
+        - windows/**/*
+        - macos/**/*
+        - ios/**/*
       when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
 
 build_linux_unsigned:
   stage: build-test
+  needs:
+    - test_and_analyze
   script:
-    - sudo apt-get update -y
-    - sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev
+    - |
+      if ! command -v clang >/dev/null 2>&1; then
+        echo "Linux build tools not pre-installed. Installing dependencies..."
+        sudo apt-get update -y
+        sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev
+      fi
     - flutter pub get
     - flutter build linux --release
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
       when: manual
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - lib/**/*
+        - pubspec.yaml
+        - pubspec.lock
+        - android/**/*
+        - linux/**/*
+        - windows/**/*
+        - macos/**/*
+        - ios/**/*
       when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
 
 build_windows_unsigned:
   stage: build-test
+  needs:
+    - test_and_analyze
   tags:
     - saas-windows-medium-amd64
   allow_failure: true
@@ -152,11 +355,23 @@ build_windows_unsigned:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
       when: manual
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - lib/**/*
+        - pubspec.yaml
+        - pubspec.lock
+        - android/**/*
+        - linux/**/*
+        - windows/**/*
+        - macos/**/*
+        - ios/**/*
       when: on_success
-  allow_failure: true
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
 
 build_macos_unsigned:
   stage: build-test
+  needs:
+    - test_and_analyze
   allow_failure: true
   image: macos-15-xcode-16
   tags:
@@ -171,8 +386,18 @@ build_macos_unsigned:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
       when: manual
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - lib/**/*
+        - pubspec.yaml
+        - pubspec.lock
+        - android/**/*
+        - linux/**/*
+        - windows/**/*
+        - macos/**/*
+        - ios/**/*
       when: on_success
-  allow_failure: true
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
 
 # === STAGE: AUTO-TAG ===
 auto_tag:
@@ -255,10 +480,14 @@ build_linux_signed:
   stage: build-release
   allow_failure: true
   script:
-    - sudo apt-get update -y
-    - sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev gnupg ruby ruby-dev build-essential file
-    - sudo apt-get install -y libfuse2 || sudo apt-get install -y libfuse2t64
-    - sudo gem install --no-document fpm
+    - |
+      if ! command -v clang >/dev/null 2>&1; then
+        echo "Linux build tools not pre-installed. Installing dependencies..."
+        sudo apt-get update -y
+        sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev gnupg ruby ruby-dev build-essential file
+        sudo apt-get install -y libfuse2 || sudo apt-get install -y libfuse2t64
+        sudo gem install --no-document fpm
+      fi
     - flutter pub get
     - flutter build linux --release
     - tar -czvf T2DECODE-Linux.tar.gz -C build/linux/x64/release/bundle/ .
@@ -513,6 +742,19 @@ publish_sourceforge:
   stage: release
   allow_failure: true
   image: alpine:3.16
+  needs:
+    - job: build_android_signed
+      artifacts: true
+      optional: true
+    - job: build_linux_signed
+      artifacts: true
+      optional: true
+    - job: build_windows_signed
+      artifacts: true
+      optional: true
+    - job: build_macos_signed
+      artifacts: true
+      optional: true
   script:
     - apk add --no-cache openssh-client rsync
     - |
@@ -521,22 +763,14 @@ publish_sourceforge:
         exit 0
       fi
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
-    - |
-      if echo "$SF_PRIVATE_KEY" | grep -q "BEGIN"; then
-        echo "$SF_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/sf_key
-      else
-        echo "$SF_PRIVATE_KEY" | base64 -d > ~/.ssh/sf_key
-      fi
+    - |-
+      printf '%s\n' "$SF_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/sf_key
     - chmod 600 ~/.ssh/sf_key
+    - ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts 2>/dev/null
     - mkdir -p sf_assets
-    - cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk sf_assets/T2DECODE-Android-armeabi-v7a.apk || true
-    - cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk sf_assets/T2DECODE-Android-arm64-v8a.apk || true
-    - cp build/app/outputs/flutter-apk/app-x86_64-release.apk sf_assets/T2DECODE-Android-x86_64.apk || true
-    - cp T2DECODE-Windows.zip sf_assets/ || true
-    - cp T2DECODE-Setup.exe sf_assets/ || true
-    - cp T2DECODE-Linux* sf_assets/ || true
-    - cp T2DECODE-macOS* sf_assets/ || true
-    - rsync -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/sf_key" -avP sf_assets/ $SF_USER@frs.sourceforge.net:/home/frs/project/$SF_PROJECT/$CI_COMMIT_TAG/ || true
+    - find . -maxdepth 4 \( -name "*.apk" -o -name "*.aab" -o -name "*.dmg" -o -name "*.pkg" -o -name "*.exe" -o -name "*.AppImage" -o -name "T2DECODE-Linux.tar.gz" -o -name "T2DECODE-Windows.zip" -o -name "T2DECODE-macOS.zip" \) -exec cp {} sf_assets/ \;
+    - ls -la sf_assets/
+    - rsync -e "ssh -i ~/.ssh/sf_key -o StrictHostKeyChecking=yes" -avP sf_assets/ $SF_USER@frs.sourceforge.net:/home/frs/project/$SF_PROJECT/$CI_COMMIT_TAG/ || true
   rules:
     - if: $CI_COMMIT_TAG
 

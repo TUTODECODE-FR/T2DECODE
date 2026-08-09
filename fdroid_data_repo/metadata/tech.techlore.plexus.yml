@@ -1,0 +1,118 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Connects to Google Play to retrieve icons.
+Categories:
+  - Connectivity
+  - Internet
+  - System
+License: GPL-3.0-only
+AuthorName: Techlore
+AuthorEmail: contact@techlore.tech
+AuthorWebSite: https://www.techlore.tech
+WebSite: https://plexus.techlore.tech
+SourceCode: https://github.com/techlore/Plexus-app
+IssueTracker: https://github.com/techlore/Plexus-app/issues
+Translation: https://hosted.weblate.org/engage/plexus-app/
+Changelog: https://github.com/techlore/Plexus-app/blob/HEAD/CHANGELOG.md
+
+AutoName: Plexus
+
+RepoType: git
+Repo: https://github.com/techlore/Plexus-app.git
+Binaries: https://github.com/techlore/Plexus-app/releases/download/v%v/Plexus_v%v.apk
+
+Builds:
+  - versionName: 2.0.3
+    versionCode: 203
+    commit: 1d295470b0c312d13732282b4bf54a9bf2f265cc
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.8
+    versionCode: 208
+    commit: 33451c748c9111f76d7504dc04192ba8787445c5
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.0.9
+    versionCode: 209
+    commit: a06cac5862d20c9c12340edfa5b14f2c39eeb0da
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.1.0
+    versionCode: 210
+    commit: fc543b7c7725608312bc0b9aeb978310c1189340
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.1.2
+    versionCode: 212
+    commit: 6c4f0f7f531ecccbcc423a634e423eddc20c41ca
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.1.5
+    versionCode: 215
+    commit: c95bda01c3a51f39e615935a57702a33cb528445
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.1.7
+    versionCode: 217
+    commit: cc998660237e800a60287eb80c3f27a9b1e3a760
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.9
+    versionCode: 219
+    commit: 0d96c7aa28dadf014055656958f82453f08df8eb
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.0
+    versionCode: 220
+    commit: aba3617c115aee4f97f69775f48ce71cd4020412
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: f02b66e8e6183704c3fd6ae0632f6240de8eec0d6bdbe917731c41ab8c7d9aab
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.2.0
+CurrentVersionCode: 220

@@ -1,0 +1,67 @@
+Categories:
+  - Code & Forge
+License: Apache-2.0
+AuthorName: Rongjian Zhang
+SourceCode: https://github.com/git-touch/git-touch
+IssueTracker: https://github.com/git-touch/git-touch/issues
+
+AutoName: GitTouch
+
+RepoType: git
+Repo: https://github.com/git-touch/git-touch
+
+Builds:
+  - versionName: 1.11.1
+    versionCode: 20
+    commit: v1.11.1
+    output: build/app/outputs/apk/release/app-release.apk
+    srclibs:
+      - flutter@1.22.5
+    prebuild: echo 'android.applicationVariants.all { variant -> variant.outputs.all
+      { output -> outputFileName = "app-${output.baseName}.apk" } }' >> android/app/build.gradle
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --no-tree-shake-icons
+
+  - versionName: 1.12.0
+    versionCode: 21
+    commit: v1.12.0
+    output: build/app/outputs/apk/release/app-release.apk
+    srclibs:
+      - flutter@1.22.5
+    prebuild: echo 'android.applicationVariants.all { variant -> variant.outputs.all
+      { output -> outputFileName = "app-${output.baseName}.apk" } }' >> android/app/build.gradle
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --no-tree-shake-icons
+
+  - versionName: 1.12.2
+    versionCode: 23
+    commit: v1.12.2
+    output: build/app/outputs/apk/release/app-release.apk
+    srclibs:
+      - flutter@1.22.5
+    prebuild: echo 'android.applicationVariants.all { variant -> variant.outputs.all
+      { output -> outputFileName = "app-${output.baseName}.apk" } }' >> android/app/build.gradle
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --no-tree-shake-icons
+
+  - versionName: 1.12.3
+    versionCode: 24
+    commit: v1.12.3
+    output: build/app/outputs/apk/release/app-release.apk
+    srclibs:
+      - flutter@1.22.5
+    prebuild: echo 'android.applicationVariants.all { variant -> variant.outputs.all
+      { output -> outputFileName = "app-${output.baseName}.apk" } }' >> android/app/build.gradle
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --no-tree-shake-icons
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.12.3
+CurrentVersionCode: 24

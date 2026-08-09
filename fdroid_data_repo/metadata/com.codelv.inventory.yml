@@ -1,0 +1,131 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on digikey to import data.
+Categories:
+  - Inventory
+License: GPL-3.0-only
+WebSite: https://codelv.com/projects/electronics-inventory/
+SourceCode: https://github.com/codelv/inventory
+IssueTracker: https://github.com/codelv/inventory/issues
+Donate: https://codelv.com/donate/
+
+AutoName: Inventory
+
+RepoType: git
+Repo: https://github.com/codelv/inventory.git
+Binaries: https://codelv.com/assets/apps/Inventory-%v.apk
+
+Builds:
+  - versionName: 1.0.2
+    versionCode: 2
+    commit: a2f7f0802c092dac87b7f05e8b1ab4c10ec4dde1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.3
+    versionCode: 3
+    commit: 98415e14b98a30a67cc5a7205b4b6ca09fd77ea4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.4
+    versionCode: 4
+    commit: ee28819f6d98301e92b61cc494ae2396311d47b2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.5
+    versionCode: 5
+    commit: eb9ab8febb2c4999f3e1b44d9b6c355729d052ce
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.6
+    versionCode: 6
+    commit: f4ef5de92e9b67975fe0187537f51ccfabcca031
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.8
+    versionCode: 8
+    commit: fa36588fddb0afdd1f70fb9617c12a3eab75fb97
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.0.9
+    versionCode: 9
+    commit: ef949b8d7c5ad97c7c980813d567beced3a270df
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.0.10
+    versionCode: 10
+    commit: b7691917a3780b473c491ae78c008d836ab513a7
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.0.11
+    versionCode: 11
+    commit: 936746b91dcb114eb8380e6707de708e35e4d008
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.0.12
+    versionCode: 12
+    commit: 2b2002e6d230208b7ebfde975c14d926cd199f26
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.0.13
+    versionCode: 13
+    commit: b0d1440046d3c8776aaff9bfa2eaa33ac633630d
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: 802630d5d6e6f35d25a7acd9172b8a438281ce298217f846652704de6f5c2510
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.13
+CurrentVersionCode: 13

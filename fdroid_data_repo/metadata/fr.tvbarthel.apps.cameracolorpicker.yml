@@ -1,0 +1,30 @@
+Categories:
+  - Multimedia
+License: Apache-2.0
+AuthorName: tvbarthel
+WebSite: https://tvbarthel.fr/CameraColorPicker/
+SourceCode: https://github.com/tvbarthel/CameraColorPicker
+IssueTracker: https://github.com/tvbarthel/CameraColorPicker/issues
+Changelog: https://github.com/tvbarthel/CameraColorPicker/releases
+
+AutoName: Camera Color Picker
+Description: |-
+  Camera Color Picker lets you capture, in real time, the colors around you using
+  the camera of your device.
+
+RepoType: git
+Repo: https://github.com/tvbarthel/CameraColorPicker
+
+Builds:
+  - versionName: foss-0.0.7
+    versionCode: 7
+    commit: v0.0.7
+    subdir: CameraColorPicker/app
+    gradle:
+      - foss
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: gp-0.0.7
+CurrentVersionCode: 7

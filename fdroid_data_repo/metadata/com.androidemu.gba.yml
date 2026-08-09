@@ -1,0 +1,36 @@
+Categories:
+  - Emulator
+License: GPL-3.0-or-later
+WebSite: https://sourceforge.net/projects/gameboid/
+SourceCode: https://sourceforge.net/p/gameboid/code/
+IssueTracker: https://sourceforge.net/p/gameboid/tickets/
+Translation: https://explore.transifex.com/projects/p/gameboid/
+
+AutoName: GameBoid
+Description: |-
+  This project is based on sources published by original GameBoid developer, who
+  in turn used code of gpSP.
+
+  To run this, you need a non-free BIOS file, which must be obtained elsewhere.
+
+RepoType: git
+Repo: https://git.code.sf.net/p/gameboid/code
+
+Builds:
+  - versionName: 1.3.2
+    versionCode: 6
+    commit: 1.3.2
+    subdir: GameBoid
+    submodules: true
+    patch:
+      - target_api_10.diff
+    target: android-15
+    buildjni:
+      - yes
+    ndk: r12b
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.3.2
+CurrentVersionCode: 6

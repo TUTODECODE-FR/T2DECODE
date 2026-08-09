@@ -1,0 +1,833 @@
+Categories:
+  - Development
+License: MIT
+AuthorName: The Godot Foundation
+WebSite: https://godotengine.org/
+SourceCode: https://github.com/godotengine/godot/
+IssueTracker: https://github.com/godotengine/godot/issues/
+Donate: https://godotengine.org/donate/
+
+Description: |-
+  Godot Engine is a feature-packed, cross-platform game engine to create 2D and 3D
+  games from a unified interface. It provides a comprehensive set of common tools,
+  so that you can focus on making games without having to reinvent the wheel.
+
+  The Android editor is currently in an experimental stage. The UI has not been adapted
+  for touch screens yet; using a hardware keyboard and mouse is strongly recommended.
+  Currently, android version of godot editor doesn't support exporting projects.
+
+  This is a 4.x branch of godot editor. It provides a massive overhaul of the
+  engine with many new features. It's advised to use 3.x branch of godot editor
+  for stability and compatibility with older godot projects.
+
+  Screenshots for projects in asset library are automatically downloaded
+  when browsing. They are user-submitted and some of them may be hosted
+  on third-party services which may violate your privacy (imgur, etc).
+
+RepoType: git
+Repo: https://github.com/godotengine/godot.git
+
+Builds:
+  - versionName: 4.0.0.beta.0
+    versionCode: 400002000
+    commit: 1ed549e64b141e068bfe1a59bf65e943cde3fc6c
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y scons
+    output: bin/android_editor.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/editorBuildNumber\ =\ 0/editorBuildNumber\ =\ 0/' editor/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86 production=yes target=editor
+      - cd platform/android/java
+      - gradle generateGodotEditor
+    ndk: r23c
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 4.0.0.beta.0
+    versionCode: 400002001
+    commit: 1ed549e64b141e068bfe1a59bf65e943cde3fc6c
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y scons
+    output: bin/android_editor.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/editorBuildNumber\ =\ 0/editorBuildNumber\ =\ 0/' editor/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_64 production=yes target=editor
+      - cd platform/android/java
+      - gradle generateGodotEditor
+    ndk: r23c
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 4.0.0.beta.0
+    versionCode: 400002002
+    commit: 1ed549e64b141e068bfe1a59bf65e943cde3fc6c
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y scons
+    output: bin/android_editor.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/editorBuildNumber\ =\ 0/editorBuildNumber\ =\ 0/' editor/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=armv7 production=yes target=editor
+      - cd platform/android/java
+      - gradle generateGodotEditor
+    ndk: r23c
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 4.0.0.beta.0
+    versionCode: 400002003
+    commit: 1ed549e64b141e068bfe1a59bf65e943cde3fc6c
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y scons
+    output: bin/android_editor.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/editorBuildNumber\ =\ 0/editorBuildNumber\ =\ 0/' editor/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm64v8 production=yes target=editor
+      - cd platform/android/java
+      - gradle generateGodotEditor
+    ndk: r23c
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 4.0.1.stable.0
+    versionCode: 400014000
+    commit: cacf49999e3fb37281d66cc591ca8bebc5712d4d
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y scons
+    output: bin/android_editor.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/editorBuildNumber\ =\ 0/editorBuildNumber\ =\ 0/' editor/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86 production=yes target=editor
+      - cd platform/android/java
+      - gradle generateGodotEditor
+    ndk: r23c
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 4.0.1.stable.0
+    versionCode: 400014001
+    commit: cacf49999e3fb37281d66cc591ca8bebc5712d4d
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y scons
+    output: bin/android_editor.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/editorBuildNumber\ =\ 0/editorBuildNumber\ =\ 0/' editor/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_64 production=yes target=editor
+      - cd platform/android/java
+      - gradle generateGodotEditor
+    ndk: r23c
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 4.0.1.stable.0
+    versionCode: 400014002
+    commit: cacf49999e3fb37281d66cc591ca8bebc5712d4d
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y scons
+    output: bin/android_editor.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/editorBuildNumber\ =\ 0/editorBuildNumber\ =\ 0/' editor/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=armv7 production=yes target=editor
+      - cd platform/android/java
+      - gradle generateGodotEditor
+    ndk: r23c
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 4.0.1.stable.0
+    versionCode: 400014003
+    commit: cacf49999e3fb37281d66cc591ca8bebc5712d4d
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y scons
+    output: bin/android_editor.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/editorBuildNumber\ =\ 0/editorBuildNumber\ =\ 0/' editor/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm64v8 production=yes target=editor
+      - cd platform/android/java
+      - gradle generateGodotEditor
+    ndk: r23c
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 4.1.2.stable
+    versionCode: 402024000
+    commit: 399c9dc393f6f84c0b4e4d4117906c70c048ecf2
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+    build:
+      - export ANDROID_SDK_ROOT=$$SDK$$
+      - scons platform=android arch=x86 production=yes target=editor store_release=true
+      - cd platform/android/java
+      - gradle generateGodotEditor
+    ndk: 23.2.8568313
+
+  - versionName: 4.1.2.stable
+    versionCode: 402024001
+    commit: 399c9dc393f6f84c0b4e4d4117906c70c048ecf2
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+    build:
+      - export ANDROID_SDK_ROOT=$$SDK$$
+      - scons platform=android arch=x86_64 production=yes target=editor store_release=true
+      - cd platform/android/java
+      - gradle generateGodotEditor
+    ndk: 23.2.8568313
+
+  - versionName: 4.1.2.stable
+    versionCode: 402024002
+    commit: 399c9dc393f6f84c0b4e4d4117906c70c048ecf2
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+    build:
+      - export ANDROID_SDK_ROOT=$$SDK$$
+      - scons platform=android arch=armv7 production=yes target=editor store_release=true
+      - cd platform/android/java
+      - gradle generateGodotEditor
+    ndk: 23.2.8568313
+
+  - versionName: 4.1.2.stable
+    versionCode: 402024003
+    commit: 399c9dc393f6f84c0b4e4d4117906c70c048ecf2
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+    build:
+      - export ANDROID_SDK_ROOT=$$SDK$$
+      - scons platform=android arch=arm64v8 production=yes target=editor store_release=true
+      - cd platform/android/java
+      - gradle generateGodotEditor
+    ndk: 23.2.8568313
+
+  - versionName: 4.2.1.stable
+    versionCode: 402025000
+    commit: b09f793f564a6c95dc76acc654b390e68441bd01
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdk_root + "/cmdline-tools/latest/bin/sdkmanager"!"/usr/bin/sdkmanager"!'
+        ../detect.py
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_32 production=yes target=editor store_release=yes
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.2.1.stable
+    versionCode: 402025001
+    commit: b09f793f564a6c95dc76acc654b390e68441bd01
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdk_root + "/cmdline-tools/latest/bin/sdkmanager"!"/usr/bin/sdkmanager"!'
+        ../detect.py
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_64 production=yes target=editor store_release=yes
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.2.1.stable
+    versionCode: 402025002
+    commit: b09f793f564a6c95dc76acc654b390e68441bd01
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdk_root + "/cmdline-tools/latest/bin/sdkmanager"!"/usr/bin/sdkmanager"!'
+        ../detect.py
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm32 production=yes target=editor store_release=yes
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.2.1.stable
+    versionCode: 402025003
+    commit: b09f793f564a6c95dc76acc654b390e68441bd01
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdk_root + "/cmdline-tools/latest/bin/sdkmanager"!"/usr/bin/sdkmanager"!'
+        ../detect.py
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm64 production=yes target=editor store_release=yes
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.3.0.stable
+    versionCode: 403005000
+    commit: 77dcf97d82cbfe4e4615475fa52ca03da645dbd8
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdk_root + "/cmdline-tools/latest/bin/sdkmanager"!"/usr/bin/sdkmanager"!'
+        ../detect.py
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_32 production=yes target=editor store_release=yes
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.3.0.stable
+    versionCode: 403005001
+    commit: 77dcf97d82cbfe4e4615475fa52ca03da645dbd8
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdk_root + "/cmdline-tools/latest/bin/sdkmanager"!"/usr/bin/sdkmanager"!'
+        ../detect.py
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_64 production=yes target=editor store_release=yes
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.3.0.stable
+    versionCode: 403005002
+    commit: 77dcf97d82cbfe4e4615475fa52ca03da645dbd8
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdk_root + "/cmdline-tools/latest/bin/sdkmanager"!"/usr/bin/sdkmanager"!'
+        ../detect.py
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm32 production=yes target=editor store_release=yes
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.3.0.stable
+    versionCode: 403005003
+    commit: 77dcf97d82cbfe4e4615475fa52ca03da645dbd8
+    timeout: 15000
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdk_root + "/cmdline-tools/latest/bin/sdkmanager"!"/usr/bin/sdkmanager"!'
+        ../detect.py
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm64 production=yes target=editor store_release=yes
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.4.1.stable
+    versionCode: 404015000
+    commit: 49a5bc7b616bd04689a2c89e89bda41f50241464
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdk_root + "/cmdline-tools/latest/bin/sdkmanager"!"/usr/bin/sdkmanager"!'
+        ../detect.py
+    scandelete:
+      - modules/mono/thirdparty
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_32 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.4.1.stable
+    versionCode: 404015001
+    commit: 49a5bc7b616bd04689a2c89e89bda41f50241464
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdk_root + "/cmdline-tools/latest/bin/sdkmanager"!"/usr/bin/sdkmanager"!'
+        ../detect.py
+    scandelete:
+      - modules/mono/thirdparty
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_64 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.4.1.stable
+    versionCode: 404015002
+    commit: 49a5bc7b616bd04689a2c89e89bda41f50241464
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdk_root + "/cmdline-tools/latest/bin/sdkmanager"!"/usr/bin/sdkmanager"!'
+        ../detect.py
+    scandelete:
+      - modules/mono/thirdparty
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm32 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.4.1.stable
+    versionCode: 404015003
+    commit: 49a5bc7b616bd04689a2c89e89bda41f50241464
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdk_root + "/cmdline-tools/latest/bin/sdkmanager"!"/usr/bin/sdkmanager"!'
+        ../detect.py
+    scandelete:
+      - modules/mono/thirdparty
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm64 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.5.0.stable
+    versionCode: 405005000
+    commit: 876b290332ec6f2e6d173d08162a02aa7e6ca46d
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdkmanager =.*!sdkmanager = "/usr/bin/sdkmanager"!' ../detect.py
+    scandelete:
+      - modules/zip/tests/data/test.zip
+      - modules/mono/thirdparty
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_32 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.5.0.stable
+    versionCode: 405005001
+    commit: 876b290332ec6f2e6d173d08162a02aa7e6ca46d
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdkmanager =.*!sdkmanager = "/usr/bin/sdkmanager"!' ../detect.py
+    scandelete:
+      - modules/zip/tests/data/test.zip
+      - modules/mono/thirdparty
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_64 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.5.0.stable
+    versionCode: 405005002
+    commit: 876b290332ec6f2e6d173d08162a02aa7e6ca46d
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdkmanager =.*!sdkmanager = "/usr/bin/sdkmanager"!' ../detect.py
+    scandelete:
+      - modules/zip/tests/data/test.zip
+      - modules/mono/thirdparty
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm32 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.5.0.stable
+    versionCode: 405005003
+    commit: 876b290332ec6f2e6d173d08162a02aa7e6ca46d
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdkmanager =.*!sdkmanager = "/usr/bin/sdkmanager"!' ../detect.py
+    scandelete:
+      - modules/zip/tests/data/test.zip
+      - modules/mono/thirdparty
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm64 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.5.1.stable
+    versionCode: 405015000
+    commit: f62fdbde15035c5576dad93e586201f4d41ef0cb
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdkmanager =.*!sdkmanager = "/usr/bin/sdkmanager"!' ../detect.py
+    scandelete:
+      - modules/zip/tests/data/test.zip
+      - modules/mono/thirdparty
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_32 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.5.1.stable
+    versionCode: 405015001
+    commit: f62fdbde15035c5576dad93e586201f4d41ef0cb
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdkmanager =.*!sdkmanager = "/usr/bin/sdkmanager"!' ../detect.py
+    scandelete:
+      - modules/zip/tests/data/test.zip
+      - modules/mono/thirdparty
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_64 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.5.1.stable
+    versionCode: 405015002
+    commit: f62fdbde15035c5576dad93e586201f4d41ef0cb
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdkmanager =.*!sdkmanager = "/usr/bin/sdkmanager"!' ../detect.py
+    scandelete:
+      - modules/zip/tests/data/test.zip
+      - modules/mono/thirdparty
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm32 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.5.1.stable
+    versionCode: 405015003
+    commit: f62fdbde15035c5576dad93e586201f4d41ef0cb
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdkmanager =.*!sdkmanager = "/usr/bin/sdkmanager"!' ../detect.py
+    scandelete:
+      - modules/zip/tests/data/test.zip
+      - modules/mono/thirdparty
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm64 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.6.1.stable
+    versionCode: 406015001
+    disable: arch libs mix-up
+    commit: 14d19694e0c88a3f9e82d899a0400f27a24c176e
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdkmanager =.*!sdkmanager = "/usr/bin/sdkmanager"!' ../detect.py
+    scandelete:
+      - modules/zip/tests/data/test.zip
+      - modules/mono/thirdparty
+      - platform
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=x86_64 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.6.1.stable
+    versionCode: 406015002
+    disable: arch libs mix-up
+    commit: 14d19694e0c88a3f9e82d899a0400f27a24c176e
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdkmanager =.*!sdkmanager = "/usr/bin/sdkmanager"!' ../detect.py
+    scandelete:
+      - modules/zip/tests/data/test.zip
+      - modules/mono/thirdparty
+      - platform
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm32 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+  - versionName: 4.6.1.stable
+    versionCode: 406015003
+    disable: arch libs mix-up
+    commit: 14d19694e0c88a3f9e82d899a0400f27a24c176e
+    sudo:
+      - apt-get update
+      - apt-get install -y pkg-config scons
+    output: bin/android_editor_builds/android_editor-android-release-unsigned.apk
+    prebuild:
+      - cd platform/android/java
+      - sed -i 's/url repoUrl//' app/build.gradle
+      - sed -i 's/versionCode\ generateVersionCode()/versionCode $$VERCODE$$/' editor/build.gradle
+      - sed -i -e 's!sdkmanager =.*!sdkmanager = "/usr/bin/sdkmanager"!' ../detect.py
+    scandelete:
+      - modules/zip/tests/data/test.zip
+      - modules/mono/thirdparty
+      - platform
+      - tests
+    build:
+      - export ANDROID_SDK_ROOT="$$SDK$$"
+      - scons platform=android arch=arm64 production=yes target=editor store_release=yes
+        swappy=no
+      - cd platform/android/java
+      - gradle generateGodotEditor
+
+MaintainerNotes: |-
+  VersionCode is generated at compile time upstream. F-Droid builds correspond
+  to upstream version codes with an addition of a single digit at the end to
+  differentiate builds for different architecture:
+
+  x86 - 0
+  x86_64 - 1
+  armv7 - 2
+  arm64v8 - 3
+
+  editor/build.gradle supports incrementing versionName and versionCode
+  via 'editorBuildsNumber` variable. VersionName is incremented, however versionCode is
+  replaced by the one from the build, with a digit for different architectures
+  (and being identical to the generated one otherwise).
+  For future F-Droid builds, editorBuildsNumber should be incremented and
+  it should be reflected in versionCode in the build section:
+  (with buildNumber = 0, arm64v8 will be 400002003, with buildNumber = 5 it will be
+  400002053 and so on).
+
+  Scanner complains about `url repoUrl` in app/build.gradle, however it's not a
+  maven repo, but a piece of code to add user supplied maven repos when exporting
+  a project (not used in the build of android editor itself).
+
+  Upstream also provides android export templates in form of APKs, however, exporting projects
+  is currently not supported in the android version of godot editor, so there's no point in
+  building them.
+
+ArchivePolicy: 12
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 4.5.1.stable
+CurrentVersionCode: 405015003

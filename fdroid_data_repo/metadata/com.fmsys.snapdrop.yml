@@ -1,0 +1,225 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: App depends on Google Stun server.
+Categories:
+  - Connectivity
+  - File Transfer
+  - System
+License: GPL-3.0-only
+AuthorName: fm-sys
+SourceCode: https://github.com/fm-sys/snapdrop-android
+IssueTracker: https://github.com/fm-sys/snapdrop-android/issues
+Translation: https://crowdin.com/project/snapdrop-android
+Changelog: https://github.com/fm-sys/snapdrop-android/releases
+
+AutoName: PairDrop
+
+RepoType: git
+Repo: https://github.com/fm-sys/snapdrop-android
+
+Builds:
+  - versionName: 1.7.0
+    versionCode: 12
+    commit: v1.7.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.1
+    versionCode: 13
+    commit: d7b62c66589084aa44a0c6449f9fda6539712fdb
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.0
+    versionCode: 14
+    commit: 05b063eb73ade02994135c959f56782e1f8c3669
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.3
+    versionCode: 17
+    commit: a0eb43489ca01a949e4ad893c803fb35df22a576
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.9.0
+    versionCode: 18
+    commit: 71a339ffc5b294f1c13c49f39f94530319330c43
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.9.1
+    versionCode: 20
+    commit: 06918584c92a186df36886aa8fcfc2fe1e7c13c9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.9.2
+    versionCode: 21
+    commit: 7554058cec36945bfda9b35340f18fb38cdf9ae3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.9.3
+    versionCode: 22
+    commit: 6c625f35196ddf784837fc6bdb3591fac8fb6347
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.10.0
+    versionCode: 24
+    commit: 1163d6e04e1dd85c6d09d8b8472429361920cfa9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.10.1
+    versionCode: 25
+    commit: 8e034089413da6dbb14729cbcbfced992ba32703
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.11.0
+    versionCode: 26
+    commit: d81d8d078e05ac1dc6ad482caf0fabb7810371aa
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.11.1
+    versionCode: 27
+    commit: 0504942c6639d5ed7f132479eebe07d32dd5493e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.11.3
+    versionCode: 29
+    commit: eb0a4076e167033c19d0ded51471bd7c64eca1ca
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.11.5
+    versionCode: 31
+    commit: 3d4e9a474adc4e1f68cd43e50aabe0204d50e668
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.12.0
+    versionCode: 32
+    commit: 9225847d6a0a341c1d42ae454d3562d97423aa8c
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.0
+    versionCode: 34
+    commit: 8eb761472aa80b4f6f062d8738bbccad94701c06
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.3
+    versionCode: 37
+    commit: cd0a375ac07d3fd50739c450a244994839824815
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.0
+    versionCode: 39
+    commit: 30c28562496afb2a5f9f1b06b2948c0855a86f03
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.1
+    versionCode: 40
+    commit: 214ecff8c13aaa1a99c5c5fd8b9bc888f6e833a3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.2
+    versionCode: 41
+    commit: 0f8bfb6d66a938dffefed442fc70259c3b2647d5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.4
+    versionCode: 43
+    commit: 4e6078439a923a5e828cda72b3c7e7de724a6c20
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.3.0
+    versionCode: 44
+    commit: e65699c62eed9914a759b7ca3b21457bb01e6976
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.3.1
+    versionCode: 45
+    commit: 2906228d58d4765b6d062ac4b4b763b4dea17364
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.3.1
+CurrentVersionCode: 45

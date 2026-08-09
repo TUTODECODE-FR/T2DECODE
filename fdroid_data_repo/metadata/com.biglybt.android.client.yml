@@ -1,0 +1,231 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Connects to *.biglybt.com and searches through google.com
+  Tracking:
+    en-US: Connects to version.biglybt.com at start
+Categories:
+  - Download
+License: GPL-2.0-or-later
+WebSite: https://www.biglybt.com
+SourceCode: https://github.com/BiglySoftware/BiglyBT-Android
+IssueTracker: https://github.com/BiglySoftware/BiglyBT-Android/issues
+Translation: https://crowdin.com/project/biglybt-android
+Changelog: https://github.com/BiglySoftware/BiglyBT-Android/releases
+Donate: https://www.biglybt.com/donation/donate.php
+Bitcoin: 1BiGLYBT38ttJhvZkjGc5mCw5uKoRHcUmr
+Litecoin: LKGc2utCrGfojpYsX3naT9n1AxjLiZ5MMG
+
+Name: BiglyBT, Torrent Downloader
+AutoName: BiglyBT
+
+RepoType: git
+Repo: https://github.com/BiglySoftware/BiglyBT-Android.git
+
+Builds:
+  - versionName: 1.1.0
+    versionCode: 9
+    commit: v1.1.0
+    subdir: BiglyBT
+    patch:
+      - noDexClassLoader.patch
+    gradle:
+      - CoreFlavorNogaFlavor
+    prebuild:
+      - sed -i -e '/gaFlavorCompile/d; /dexcount/d; /google-services/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.1.1
+    versionCode: 15
+    commit: v1.1.1
+    subdir: BiglyBT
+    patch:
+      - noDexClassLoader.patch
+    gradle:
+      - CoreFlavorNogaFlavor
+    prebuild:
+      - sed -i -e '/gaFlavorCompile/d; /dexcount/d; /google-services/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.1.2
+    versionCode: 17
+    commit: v1.1.2
+    subdir: BiglyBT
+    patch:
+      - noDexClassLoader.patch
+    gradle:
+      - CoreFlavorNogaFlavor
+    prebuild:
+      - sed -i -e '/gaFlavorCompile/d; /dexcount/d; /google-services/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.1.4
+    versionCode: 19
+    commit: v1.1.4
+    subdir: BiglyBT
+    patch:
+      - noDexClassLoader.patch
+    gradle:
+      - CoreFlavorNogaFlavor
+    prebuild:
+      - sed -i -e '/gaFlavorCompile/d; /dexcount/d; /google-services/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.1.7
+    versionCode: 28
+    commit: v1.1.7
+    subdir: BiglyBT
+    submodules: true
+    patch:
+      - noDexClassLoader.patch
+    gradle:
+      - CoreFlavorFossFlavor
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.1.8
+    versionCode: 29
+    commit: v1.1.8
+    subdir: BiglyBT
+    submodules: true
+    gradle:
+      - CoreFlavorFossFlavor
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.1.9
+    versionCode: 32
+    commit: v1.1.9
+    subdir: BiglyBT
+    submodules: true
+    gradle:
+      - CoreFlavorFossFlavor
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.2.1
+    versionCode: 35
+    commit: v1.2.1
+    subdir: BiglyBT
+    submodules: true
+    gradle:
+      - CoreFlavorFossFlavor
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.2.2
+    versionCode: 37
+    commit: v1.2.2
+    subdir: BiglyBT
+    submodules: true
+    gradle:
+      - CoreFlavorFossFlavor
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.2.4
+    versionCode: 1020400
+    commit: v1.2.4
+    subdir: BiglyBT
+    submodules: true
+    gradle:
+      - CoreFlavorFossFlavor
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.2.5
+    versionCode: 1020504
+    commit: v1.2.5
+    subdir: BiglyBT
+    submodules: true
+    gradle:
+      - CoreFlavorFossFlavor
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.2.6
+    versionCode: 1020600
+    commit: v1.2.6
+    subdir: BiglyBT
+    submodules: true
+    gradle:
+      - CoreFlavorFossFlavor
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.2.6.6
+    versionCode: 1020606
+    commit: v1.2.6.6
+    subdir: BiglyBT
+    submodules: true
+    gradle:
+      - CoreFlavorFossFlavor
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.3.0.2
+    versionCode: 1030002
+    commit: v1.3.0.2
+    subdir: BiglyBT
+    submodules: true
+    gradle:
+      - CoreFlavorFossFlavor
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.3.0.8
+    versionCode: 1030008
+    commit: v1.3.0.8
+    subdir: BiglyBT
+    submodules: true
+    gradle:
+      - CoreFlavorFossFlavor
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.3.3
+    versionCode: 1030304
+    commit: 04dc37f8fdc48c91f1b959299fb62e542b7eec1f
+    subdir: app
+    submodules: true
+    gradle:
+      - CoreFlavorFossFlavor
+    rm:
+      - core/uis/lib
+      - core/core/lib
+      - core/.mvn
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+  - versionName: 1.3.4.3
+    versionCode: 1030403
+    commit: dba0f004bc3cdd44948327635465e00d8ffca3f4
+    subdir: app
+    submodules: true
+    gradle:
+      - CoreFlavorFossFlavor
+    rm:
+      - core/uis/lib
+      - core/core/lib
+      - core/.mvn
+    prebuild:
+      - sed -i -e '/googleFlavorImplementation/d; /dexcount/d' build.gradle
+      - sed -i -e '/google-services/d' ../build.gradle
+
+MaintainerNotes: Repo has metadata structure for description, title, images, etc
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9.]*$
+CurrentVersion: 1.3.4.3
+CurrentVersionCode: 1030403

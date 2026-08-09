@@ -1,0 +1,856 @@
+Categories:
+  - Internet
+  - Social Network
+License: GPL-3.0-only
+AuthorName: Team Tusky
+AuthorEmail: contact@tusky.app
+WebSite: https://tusky.app/
+SourceCode: https://codeberg.org/tusky/Tusky
+IssueTracker: https://codeberg.org/tusky/Tusky/issues
+Translation: https://weblate.tusky.app/projects/tusky/
+Changelog: https://codeberg.org/tusky/Tusky/src/branch/develop/CHANGELOG.md
+OpenCollective: tusky
+
+AutoName: Tusky
+
+RepoType: git
+Repo: https://codeberg.org/tusky/Tusky.git
+
+Builds:
+  - versionName: 1.0.0-alpha.5
+    versionCode: 5
+    commit: v1.0.0-alpha.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.0-alpha.7
+    versionCode: 7
+    commit: v1.0.0-alpha.7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.0-alpha.8
+    versionCode: 8
+    commit: v1.0.0-alpha.8
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.3
+    versionCode: 16
+    commit: 31fff630f3e92b0bdc3683b00fc7ebc24ac60f49
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/googleCompile/d' -e '/google-services/d' ../build.gradle build.gradle
+      - sed -i -e 's/com.google.firebase.iid.FirebaseInstanceId.getInstance().getToken()/"null"/g'  src/main/java/com/keylesspalace/tusky/BaseActivity.java
+
+  - versionName: 1.1.4
+    versionCode: 25
+    commit: v1.1.4
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/googleCompile/d' -e '/google-services/d' ../build.gradle build.gradle
+      - sed -i -e 's/com.google.firebase.iid.FirebaseInstanceId.getInstance().getToken()/"null"/g'  src/main/java/com/keylesspalace/tusky/BaseActivity.java
+
+  - versionName: 1.2.0
+    versionCode: 26
+    commit: v1.2.0
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.2.1
+    versionCode: 27
+    commit: v1.2.1
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.3.1
+    versionCode: 29
+    commit: v1.3.1
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.4.1
+    versionCode: 31
+    commit: v1.4.1
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.5.0
+    versionCode: 32
+    commit: v1.5.0
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.5.1
+    versionCode: 33
+    commit: v1.5.1
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.5.2
+    versionCode: 34
+    commit: v1.5.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 35
+    commit: v1.6.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.1
+    versionCode: 36
+    commit: v1.6.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.0
+    versionCode: 37
+    commit: v1.7.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.0
+    versionCode: 38
+    commit: v1.8.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.0'
+    versionCode: 41
+    commit: v2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.1'
+    versionCode: 42
+    commit: v2.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.2'
+    versionCode: 44
+    commit: v2.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.3'
+    versionCode: 45
+    commit: v2.3
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '3.0'
+    versionCode: 48
+    commit: v3.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '3.1'
+    versionCode: 49
+    commit: v3.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '4.0'
+    versionCode: 51
+    commit: v4.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '4.1'
+    versionCode: 52
+    commit: v4.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '5.0'
+    versionCode: 54
+    commit: v5.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '5.1'
+    versionCode: 55
+    commit: v5.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '5.2'
+    versionCode: 56
+    commit: v5.2
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '6.0'
+    versionCode: 58
+    commit: v6.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '6.1'
+    versionCode: 59
+    commit: v6.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '7.0'
+    versionCode: 61
+    commit: v7.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '7.1'
+    versionCode: 62
+    commit: v7.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '8.0'
+    versionCode: 64
+    commit: v8.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '8.1'
+    versionCode: 65
+    commit: v8.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '9.0'
+    versionCode: 67
+    commit: v9.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '9.1'
+    versionCode: 68
+    commit: v9.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 10.0 beta 1
+    versionCode: 69
+    commit: v10.0-beta.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '10.0'
+    versionCode: 70
+    commit: v10.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 11.0 beta 1
+    versionCode: 71
+    commit: v11.0-beta.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '11.0'
+    versionCode: 72
+    commit: v11.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 12.0 beta 1
+    versionCode: 73
+    commit: v12.0-beta.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '12.0'
+    versionCode: 74
+    commit: v12.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '12.1'
+    versionCode: 75
+    commit: v12.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 13.0 beta 1
+    versionCode: 76
+    commit: v13.0-beta.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '13.0'
+    versionCode: 77
+    commit: v13.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '13.1'
+    versionCode: 78
+    commit: v13.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '14.0'
+    versionCode: 80
+    commit: v14.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 15.0 beta 1
+    versionCode: 81
+    commit: v15.0-beta.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '15.0'
+    versionCode: 82
+    commit: v15.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '15.1'
+    versionCode: 83
+    commit: v15.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 16.0 beta 1
+    versionCode: 84
+    commit: v16.0-beta.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: 16.0 beta 2
+    versionCode: 85
+    commit: v16.0-beta.2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: 16.0 beta 3
+    versionCode: 86
+    commit: v16.0-beta.3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: '16.0'
+    versionCode: 87
+    commit: fcc926570386e1c64504f679d5dc93e2aab2328a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: 17.0 beta 1
+    versionCode: 88
+    commit: v17.0-beta.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: '17.0'
+    versionCode: 89
+    commit: 0c840a706d92aa0b20cf8adb9e9ce63632c54660
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: 18.0 beta 1
+    versionCode: 90
+    commit: v18.0-beta.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: '18.0'
+    versionCode: 91
+    commit: 20f3ec921f4040b1a1ca69ee89aa9f27b3561c2f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: 19.0 beta 1
+    versionCode: 92
+    commit: v19.0-beta.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: 19.0 beta 2
+    versionCode: 93
+    commit: v19.0-beta.2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: '19.0'
+    versionCode: 94
+    commit: 3ae18fd9231ba9d8f36df4b8187488b9e2cb2f01
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: 20.0 beta 1
+    versionCode: 95
+    commit: v20.0-beta.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 20.0 beta 2
+    versionCode: 96
+    commit: v20.0-beta.2
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '20.0'
+    versionCode: 97
+    commit: b53f097d459ecace7ff46ce3b4d0e6ab29f65dc1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 21.0 beta 1
+    versionCode: 98
+    commit: v21.0-beta.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 21.0 beta 2
+    versionCode: 99
+    commit: v21.0-beta.2
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '21.0'
+    versionCode: 100
+    commit: be935655a5dc07b8b7edd951398e92d351eaa0f2
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 22.0 beta 1
+    versionCode: 103
+    commit: v22.0-beta.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 22.0 beta 3
+    versionCode: 105
+    commit: v22.0-beta.3
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 22.0 beta 4
+    versionCode: 106
+    commit: v22.0-beta.4
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 22.0 beta 5
+    versionCode: 107
+    commit: v22.0-beta.5
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 22.0 beta 6
+    versionCode: 108
+    commit: v22.0-beta.6
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 22.0 beta 7
+    versionCode: 109
+    commit: v22.0-beta.7
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '22.0'
+    versionCode: 110
+    commit: 039f18ce255cc7804ff43a3fd9db35ed3245a146
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 23.0 beta 1
+    versionCode: 111
+    commit: v23.0-beta.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 23.0 beta 2
+    versionCode: 112
+    commit: v23.0-beta.2
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '23.0'
+    versionCode: 113
+    commit: bfc84e4b85a62b84fbfaa121dfaf5665105c1661
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 24.0 beta 1
+    versionCode: 114
+    commit: v24.0-beta.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - blue
+
+  - versionName: '24.0'
+    versionCode: 115
+    commit: a7e0fa26b7ba60ce996cf6e19c9b496750b1b1d4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - blue
+
+  - versionName: 24.1 beta 1
+    versionCode: 116
+    commit: v24.1-beta.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - blue
+
+  - versionName: '24.1'
+    versionCode: 117
+    commit: 3bea267407e80df0f6af384c6df0987deb779e2f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - blue
+
+  - versionName: 25.0 beta 1
+    versionCode: 118
+    commit: v25.0-beta.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '25.0'
+    versionCode: 119
+    commit: e96ca01dec325e9852d42c39cb8d14f45cdb1226
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '25.1'
+    versionCode: 120
+    commit: 7e9e729331bbb5bbe7fc8b09108b6c4636f76c68
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '25.2'
+    versionCode: 121
+    commit: bf9be47f0f5a1382ad9cbda1f927929c22a3fcd8
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 26.0 beta 1
+    versionCode: 122
+    commit: v26.0-beta.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '26.0'
+    versionCode: 123
+    commit: 000af7fb94140d0433c6f4c87e0bece73ca12676
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '26.1'
+    versionCode: 124
+    commit: f3732cc48ef0af226f4ccef43dc1b15a5f22b579
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '26.2'
+    versionCode: 125
+    commit: 85a59ec1f52af4a5459813ccb93fbdd001bfa7e6
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: 27.0 beta 1
+    versionCode: 126
+    commit: v27.0-beta.1
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '27.0'
+    versionCode: 127
+    commit: 043f88b2f592901add0ec265d98de2e6bb95ee83
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '27.1'
+    versionCode: 128
+    commit: c630c47744c760cc4a21d048cff92252d317a479
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: '27.2'
+    versionCode: 129
+    commit: 280f2f0a01df59ce765a7214f05055cc6109ce9a
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: 28.0 beta 1
+    versionCode: 130
+    commit: v28.0-beta.1
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: '28.0'
+    versionCode: 131
+    commit: c53803df8fe8827663009a79294ab77328a818c4
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: 29.0 beta 1
+    versionCode: 132
+    commit: v29.0-beta.1
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: '29.0'
+    versionCode: 133
+    commit: 4605398381f7ffd0f2ce0d20a550cd462ca4cbd0
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: 30.0 beta 1
+    versionCode: 134
+    commit: v30.0-beta.1
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: '30.0'
+    versionCode: 135
+    commit: c12951f7591315135d53b36733d374e34f143cc5
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: '31.1'
+    versionCode: 138
+    commit: cd09826b07c595dde06b46d1b39492dc5fa22c90
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - blue
+
+  - versionName: 32.0 beta 1
+    versionCode: 139
+    commit: v32.0-beta.01
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '32'
+    versionCode: 140
+    commit: v32.0
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '32.1'
+    versionCode: 141
+    commit: 5d5667694de68c1e15a8bbf5aa31cfabe14d8819
+    subdir: app
+    gradle:
+      - blue
+
+  - versionName: '32.2'
+    versionCode: 142
+    commit: ff0c9f58874fafc72a53789f079ce0dc1a7e9207
+    subdir: app
+    gradle:
+      - blue
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[\d.]+$
+UpdateCheckData: app/build.gradle|versionCode\s=\s(\d+)|.|versionName\s=\s"([\d.]+)"
+CurrentVersion: '32.2'
+CurrentVersionCode: 142

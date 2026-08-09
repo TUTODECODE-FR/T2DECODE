@@ -1,0 +1,159 @@
+Categories:
+  - Multimedia
+  - Remote Controller
+License: GPL-3.0-or-later
+AuthorName: Atharok
+AuthorEmail: atharok@duck.com
+WebSite: https://atharok.gitlab.io/site/projects/bt-remote/
+SourceCode: https://gitlab.com/Atharok/BtRemote
+IssueTracker: https://gitlab.com/Atharok/BtRemote/-/issues
+Translation: https://translate.codeberg.org/projects/btremote/
+Changelog: https://gitlab.com/Atharok/BtRemote/-/releases
+Liberapay: Atharok
+
+AutoName: BT Remote
+
+RepoType: git
+Repo: https://gitlab.com/Atharok/BtRemote.git
+Binaries: https://gitlab.com/Atharok/BtRemote/-/releases/%v/downloads/bt-remote-%v.apk
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 1
+    commit: 1e576019a95a3abd59517e3cc1d13d537ca8dafe
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.1.0
+    versionCode: 2
+    commit: 705c2b9e9d4dff46790515255a544ba7b53cc45d
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.3.2
+    versionCode: 8
+    commit: 21c64ff2474acf387f09e22466e9d9d0d22eff46
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.4.0
+    versionCode: 9
+    commit: 7d2678ab73f2c125161493678b86a7efc89338a2
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.5.1
+    versionCode: 11
+    commit: a0dd5575683a3a643777e689ffa53a8e74e8aec2
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.6.0
+    versionCode: 12
+    commit: 73f48dcfe8d3f808ff203483ec5db86ff7f1657b
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.7.0
+    versionCode: 13
+    commit: 33477150bf5acbb5c1b5417ce5cf251d51cf300b
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.7.1
+    versionCode: 14
+    commit: 27cb6541eeecc879c8cdb8c38b5be1c4a8ad6f92
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.7.2
+    versionCode: 15
+    commit: 195eb817f2bf3e2591eacc8e60cb3bdd8cdedda8
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.8.1
+    versionCode: 17
+    commit: c164e462e9f34631496f5e398ade4eb256aa8db8
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.8.2
+    versionCode: 18
+    commit: 752cb35e01a3d0fb035eaf760deef2578837c8d3
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.8.3
+    versionCode: 19
+    commit: b68a8bdac315626d6cfad54ba47d2e7b8c3de0d8
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.9.0
+    versionCode: 20
+    commit: e48d13ec8418655c0f9e628db6555304212aa1cf
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.9.1
+    versionCode: 21
+    commit: 734c8bfa44f5aee058d36a3904f7712ecf8d67e9
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.10.0
+    versionCode: 22
+    commit: 3b625bb0872d61bf5479d2a0d8b47d2212c771b0
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.10.1
+    versionCode: 23
+    commit: f4638fec5c1be74a5cf40663f0ae2679ba48386a
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.11.0
+    versionCode: 24
+    commit: 3f30434339629d8233f8eb4d5f65014d0bbe184c
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.12.0
+    versionCode: 25
+    commit: 2c7a04f2f8dba806a8443e0bc9294de8712ae4dc
+    subdir: app
+    gradle:
+      - default
+
+  - versionName: 1.12.1
+    versionCode: 26
+    commit: 56ea84e6b8f16e45c6467768b72e1bcd8f322f72
+    subdir: app
+    gradle:
+      - default
+
+AllowedAPKSigningKeys: e6cf1629d462a3686aa4ba2d37e02777257fd0a3bbe5540d8c70f80e12d111cd
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.12.1
+CurrentVersionCode: 26

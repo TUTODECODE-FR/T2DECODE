@@ -1,0 +1,25 @@
+Categories:
+  - Science & Education
+License: GPL-3.0-only
+AuthorEmail: abla.ue@web.de
+SourceCode: https://github.com/uestueab/app-thesis
+IssueTracker: https://github.com/uestueab/app-thesis/issues
+Changelog: https://github.com/uestueab/app-thesis/releases
+
+AutoName: Yokatta
+
+RepoType: git
+Repo: https://github.com/uestueab/app-thesis
+
+Builds:
+  - versionName: v0.3.4
+    versionCode: 4
+    commit: v0.3.4
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: v0.3.4
+CurrentVersionCode: 4

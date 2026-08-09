@@ -1,0 +1,28 @@
+Categories:
+  - Security
+  - System
+License: GPL-3.0-only
+AuthorName: ThreadpoolX and Tapadyuti Baral
+SourceCode: https://github.com/threadpoolx/DissPair
+IssueTracker: https://github.com/threadpoolx/DissPair/issues
+
+AutoName: DissPair
+
+RepoType: git
+Repo: https://github.com/threadpoolx/DissPair
+Binaries: https://github.com/threadpoolx/DissPair/releases/download/v%v/disspairV%v.apk
+
+Builds:
+  - versionName: 2.1.2
+    versionCode: 3
+    commit: 836caae775bfbcb9347c8821e408462150151281
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: 88b9f43d991aec89f07a8effc6f9db8a103aef7971b6ea9295906136c6cd0e18
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.1.2
+CurrentVersionCode: 3

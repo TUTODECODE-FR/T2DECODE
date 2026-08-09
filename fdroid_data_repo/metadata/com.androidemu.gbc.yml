@@ -1,0 +1,34 @@
+Categories:
+  - Emulator
+License: GPL-3.0-only
+WebSite: https://sourceforge.net/projects/gbcoid/files/
+SourceCode: https://sourceforge.net/p/gbcoid/code/
+IssueTracker: https://sourceforge.net/p/gbcoid/tickets/
+Translation: https://explore.transifex.com/projects/p/gbcoid/
+
+AutoName: GBCoid
+Description: |-
+  This project is based on sources made available by original GBCoid developer,
+  who in turn used code of gnuboy.
+
+RepoType: git
+Repo: https://git.code.sf.net/p/gbcoid/code
+
+Builds:
+  - versionName: 1.8.5
+    versionCode: 32
+    commit: 1.8.5
+    subdir: GBCoid
+    submodules: true
+    patch:
+      - target_api_10.diff
+    target: android-15
+    buildjni:
+      - yes
+    ndk: r12b
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.8.5
+CurrentVersionCode: 32

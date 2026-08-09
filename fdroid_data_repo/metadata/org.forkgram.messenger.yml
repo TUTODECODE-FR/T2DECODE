@@ -1,0 +1,4318 @@
+AntiFeatures:
+  Ads:
+    en-US: Displays advertisements in channels, bot chats, and search
+  NonFreeNet:
+    en-US: Relies on telegram's servers
+Categories:
+  - Internet
+  - Messaging
+License: GPL-2.0-or-later
+AuthorName: 23rd
+AuthorEmail: 23rd@vivaldi.net
+AuthorWebSite: https://github.com/forkgram
+SourceCode: https://github.com/Forkgram/TelegramAndroid
+IssueTracker: https://github.com/Forkgram/TelegramAndroid/issues
+Changelog: https://github.com/Forkgram/TelegramAndroid/releases
+
+AutoName: Forkgram
+
+RepoType: git
+Repo: https://github.com/Forkgram/TelegramAndroid.git
+
+Builds:
+  - versionName: 8.4.3.0
+    versionCode: 253109
+    commit: 8.4.3.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      Tracking:
+        en-US: DoH is used
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.4.4.0
+    versionCode: 253809
+    commit: 8.4.4.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      Tracking:
+        en-US: DoH is used
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.5.0.0
+    versionCode: 254709
+    commit: 8.5.0.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      Tracking:
+        en-US: DoH is used
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.5.1.0
+    versionCode: 255109
+    commit: 8.5.1.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      Tracking:
+        en-US: DoH is used
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.5.2.0
+    versionCode: 256309
+    commit: 8.5.2.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      Tracking:
+        en-US: DoH is used
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.5.4.0
+    versionCode: 256609
+    commit: 8.5.4.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      Tracking:
+        en-US: DoH is used
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.6.0.0
+    versionCode: 258709
+    commit: 8.6.0.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.6.1.0
+    versionCode: 259409
+    commit: 8.6.1.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.6.2.0
+    versionCode: 260009
+    commit: 8.6.2.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.7.0.0
+    versionCode: 262209
+    commit: 8.7.0.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.7.1.0
+    versionCode: 262909
+    commit: 8.7.1.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.7.2.0
+    versionCode: 263409
+    commit: 8.7.2.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.7.4.0
+    versionCode: 263609
+    commit: 8.7.4.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.8.2.0
+    versionCode: 270209
+    commit: 8.8.2.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.8.3.0
+    versionCode: 270509
+    commit: 8.8.3.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.8.4.0
+    versionCode: 271109
+    commit: 8.8.4.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.8.5.0
+    versionCode: 272109
+    commit: 8.8.5.0
+    timeout: 18000
+    subdir: TMessagesProj
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    prebuild: ./jni/prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 8.9.3.0
+    versionCode: 275709
+    commit: 8.9.3.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.0.0.0
+    versionCode: 279909
+    commit: 9.0.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+      - curl -Lo cmake.tar.gz 
+        https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-linux-x86_64.tar.gz
+      - echo "73565c72355c6652e9db149249af36bcab44d9d478c5546fd926e69ad6b43640 cmake.tar.gz"
+        | sha256sum -c -
+      - tar xzf cmake.tar.gz --strip-components=1 -C /usr/local/
+    gradle:
+      - afat
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.0.2.0
+    versionCode: 280809
+    commit: 9.0.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk ninja-build golang-go
+      - update-alternatives --auto java
+    gradle:
+      - afat
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i '6 s/"$(ANDROID_SDK)"/$ANDROID_SDK/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i 's/${cmakePath}cmake/$cmakePath/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i '9 s/.$//' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i 's/<application/<application android:label="@string\/AppNameBeta"/g'
+        ../TMessagesProj/src/main/AndroidManifest.xml
+      - ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.1.1.0
+    versionCode: 290009
+    commit: 9.1.1.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afat
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.1.2.0
+    versionCode: 290207
+    commit: 9.1.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.1.2.0
+    versionCode: 290208
+    commit: 9.1.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.1.3.0
+    versionCode: 291707
+    commit: 9.1.3.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.1.3.0
+    versionCode: 291708
+    commit: 9.1.3.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.1.5.0
+    versionCode: 292807
+    commit: 9.1.5.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.1.5.0
+    versionCode: 292808
+    commit: 9.1.5.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.1.6.0
+    versionCode: 292907
+    commit: 9.1.6.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.1.6.0
+    versionCode: 292908
+    commit: 9.1.6.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.2.0.0
+    versionCode: 295607
+    commit: 9.2.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.2.0.0
+    versionCode: 295608
+    commit: 9.2.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.2.1.0
+    versionCode: 296207
+    commit: 9.2.1.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.2.1.0
+    versionCode: 296208
+    commit: 9.2.1.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.2.2.0
+    versionCode: 296507
+    commit: 9.2.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.2.2.0
+    versionCode: 296508
+    commit: 9.2.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.3.2.0
+    versionCode: 302307
+    commit: 9.3.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.3.2.0
+    versionCode: 302308
+    commit: 9.3.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.3.3.0
+    versionCode: 302607
+    commit: 9.3.3.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.3.3.0
+    versionCode: 302608
+    commit: 9.3.3.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.4.0.0
+    versionCode: 309807
+    commit: 9.4.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.4.0.0
+    versionCode: 309808
+    commit: 9.4.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.4.1.0
+    versionCode: 310207
+    commit: 9.4.1.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.4.1.0
+    versionCode: 310208
+    commit: 9.4.1.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.4.2.0
+    versionCode: 310607
+    commit: 9.4.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.4.2.0
+    versionCode: 310608
+    commit: 9.4.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.4.8.0
+    versionCode: 316107
+    commit: 9.4.8.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.4.8.0
+    versionCode: 316108
+    commit: 9.4.8.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.4.9.0
+    versionCode: 316407
+    commit: 9.4.9.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.4.9.0
+    versionCode: 316408
+    commit: 9.4.9.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.5.1.0
+    versionCode: 319907
+    commit: 9.5.1.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.5.1.0
+    versionCode: 319908
+    commit: 9.5.1.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.5.2.0
+    versionCode: 320807
+    commit: 9.5.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.5.2.0
+    versionCode: 320808
+    commit: 9.5.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.5.3.0
+    versionCode: 321307
+    commit: 9.5.3.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.5.3.0
+    versionCode: 321308
+    commit: 9.5.3.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.5.4.0
+    versionCode: 322707
+    commit: 9.5.4.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.5.4.0
+    versionCode: 322708
+    commit: 9.5.4.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.5.6.0
+    versionCode: 323707
+    commit: 9.5.6.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.5.6.0
+    versionCode: 323708
+    commit: 9.5.6.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.5.8.0
+    versionCode: 325207
+    commit: 9.5.8.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.5.8.0
+    versionCode: 325208
+    commit: 9.5.8.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.6.0.0
+    versionCode: 331907
+    commit: 9.6.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.6.0.0
+    versionCode: 331908
+    commit: 9.6.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.6.2.0
+    versionCode: 334107
+    commit: 9.6.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.6.2.0
+    versionCode: 334108
+    commit: 9.6.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.6.3.0
+    versionCode: 334407
+    commit: 9.6.3.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.6.3.0
+    versionCode: 334408
+    commit: 9.6.3.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.6.5.0
+    versionCode: 335607
+    commit: 9.6.5.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.6.5.0
+    versionCode: 335608
+    commit: 9.6.5.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.6.6.0
+    versionCode: 336207
+    commit: 9.6.6.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.6.6.0
+    versionCode: 336208
+    commit: 9.6.6.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.7.2.0
+    versionCode: 370507
+    commit: 9.7.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.7.2.0
+    versionCode: 370508
+    commit: 9.7.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.7.4.0
+    versionCode: 371207
+    commit: 9.7.4.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.7.4.0
+    versionCode: 371208
+    commit: 9.7.4.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.7.6.0
+    versionCode: 372107
+    commit: 9.7.6.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.7.6.0
+    versionCode: 372108
+    commit: 9.7.6.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.7.7.0
+    versionCode: 372207
+    commit: 9.7.7.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.7.7.0
+    versionCode: 372208
+    commit: 9.7.7.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.7.8.0
+    versionCode: 372507
+    commit: 9.7.8.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.7.8.0
+    versionCode: 372508
+    commit: 9.7.8.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.7.9.0
+    versionCode: 372607
+    commit: 9.7.9.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.7.9.0
+    versionCode: 372608
+    commit: 9.7.9.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.9.0.0
+    versionCode: 373007
+    commit: 9.9.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.9.0.0
+    versionCode: 373008
+    commit: 9.9.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+    antifeatures:
+      KnownVuln:
+        en-US: Vulnerability in showing WebP images (CVE-2023-4863)
+
+  - versionName: 9.9.2.0
+    versionCode: 373407
+    commit: 9.9.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 9.9.2.0
+    versionCode: 373408
+    commit: 9.9.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.2.0.0
+    versionCode: 405607
+    commit: 10.2.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.2.0.0
+    versionCode: 405608
+    commit: 10.2.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.2.2.0
+    versionCode: 407107
+    commit: 10.2.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.2.2.0
+    versionCode: 407108
+    commit: 10.2.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.2.3.0
+    versionCode: 407507
+    commit: 10.2.3.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.2.3.0
+    versionCode: 407508
+    commit: 10.2.3.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.2.6.0
+    versionCode: 408207
+    commit: 10.2.6.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.2.6.0
+    versionCode: 408208
+    commit: 10.2.6.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.2.9.0
+    versionCode: 408707
+    commit: 10.2.9.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.2.9.0
+    versionCode: 408708
+    commit: 10.2.9.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.3.2.0
+    versionCode: 414507
+    commit: 10.3.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.3.2.0
+    versionCode: 414508
+    commit: 10.3.2.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.5.0.0
+    versionCode: 422807
+    commit: 10.5.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.5.0.0
+    versionCode: 422808
+    commit: 10.5.0.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.6.1.0
+    versionCode: 427507
+    commit: 10.6.1.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.6.1.0
+    versionCode: 427508
+    commit: 10.6.1.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.6.4.0
+    versionCode: 436507
+    commit: 10.6.4.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.6.4.0
+    versionCode: 436508
+    commit: 10.6.4.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.8.1.0
+    versionCode: 440407
+    commit: 10.8.1.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.8.1.0
+    versionCode: 440408
+    commit: 10.8.1.0
+    timeout: 18000
+    subdir: TMessagesProj_AppFork
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild: ./prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.9.1.0
+    versionCode: 446407
+    commit: 10.9.1.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    prebuild: ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.9.1.0
+    versionCode: 446408
+    commit: 10.9.1.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    prebuild: ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 10.9.2.0
+    versionCode: 458307
+    commit: 10.9.2.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.2.0
+    versionCode: 458308
+    commit: 10.9.2.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.3.0
+    versionCode: 471007
+    commit: 10.9.3.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.3.0
+    versionCode: 471008
+    commit: 10.9.3.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.4.0
+    versionCode: 484507
+    commit: 10.9.4.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.4.0
+    versionCode: 484508
+    commit: 10.9.4.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.5.0
+    versionCode: 491107
+    commit: 10.9.5.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.5.0
+    versionCode: 491108
+    commit: 10.9.5.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.6.0
+    versionCode: 492707
+    commit: 10.9.6.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.6.0
+    versionCode: 492708
+    commit: 10.9.6.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.7.0
+    versionCode: 494507
+    commit: 10.9.7.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.7.0
+    versionCode: 494508
+    commit: 10.9.7.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.8.0
+    versionCode: 514307
+    commit: 10.9.8.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 10.9.8.0
+    versionCode: 514308
+    commit: 10.9.8.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.1.3.0
+    versionCode: 524507
+    commit: 11.1.3.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.1.3.0
+    versionCode: 524508
+    commit: 11.1.3.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.2.3.0
+    versionCode: 533507
+    commit: 11.2.3.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.2.3.0
+    versionCode: 533508
+    commit: 11.2.3.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.4.2.0
+    versionCode: 546907
+    commit: 11.4.2.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.4.2.0
+    versionCode: 546908
+    commit: 11.4.2.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.5.3.0
+    versionCode: 551107
+    commit: 11.5.3.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.5.3.0
+    versionCode: 551108
+    commit: 11.5.3.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.5.6.0
+    versionCode: 551207
+    commit: 11.5.6.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.5.6.0
+    versionCode: 551208
+    commit: 11.5.6.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.7.1.0
+    versionCode: 566307
+    commit: 11.7.1.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.7.1.0
+    versionCode: 566308
+    commit: 11.7.1.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.8.2.0
+    versionCode: 578407
+    commit: 11.8.2.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.8.2.0
+    versionCode: 578408
+    commit: 11.8.2.0
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.9.0.2
+    versionCode: 583727
+    commit: 11.9.0.2
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - version="$$VERSION$$"
+      - ../prebuild_fdroid.sh "${version##*.}" 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.9.0.2
+    versionCode: 583728
+    commit: 11.9.0.2
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e 's/ -XX:MaxPermSize=4096m//' ../gradle.properties
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - version="$$VERSION$$"
+      - ../prebuild_fdroid.sh "${version##*.}" 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: 21.4.7075529
+
+  - versionName: 11.9.1.0
+    versionCode: 590007
+    commit: 76239a63b53d393fc7fac8f132ea5d9e1121ade7
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 11.9.1.0
+    versionCode: 590008
+    commit: 76239a63b53d393fc7fac8f132ea5d9e1121ade7
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 11.9.2.0
+    versionCode: 599707
+    commit: e574e4a0c4f36bb0aac1949dbd938c44acba5ee2
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 11.9.2.0
+    versionCode: 599708
+    commit: e574e4a0c4f36bb0aac1949dbd938c44acba5ee2
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 11.9.3.0
+    versionCode: 599807
+    commit: 491a4e993ca6204f656716f2f06305a788019bac
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 11.9.3.0
+    versionCode: 599808
+    commit: 491a4e993ca6204f656716f2f06305a788019bac
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 11.9.4.0
+    versionCode: 604707
+    commit: 10ff2f606c49e8f50958780da817c3d5a53962a3
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 11.9.4.0
+    versionCode: 604708
+    commit: 10ff2f606c49e8f50958780da817c3d5a53962a3
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 11.9.5.0
+    versionCode: 610807
+    commit: 03320c005f8dcfa4df9077e2583a8e18db69816e
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 11.9.5.0
+    versionCode: 610808
+    commit: 03320c005f8dcfa4df9077e2583a8e18db69816e
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.0.2.0
+    versionCode: 616707
+    commit: 7d4de1f9afdb3a2eb260de01b7834f7549c1d1d2
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.0.2.0
+    versionCode: 616708
+    commit: 7d4de1f9afdb3a2eb260de01b7834f7549c1d1d2
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.1.1.0
+    versionCode: 621107
+    commit: c8cf341799fd966306fbb4d3db39ef747abeb4e3
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    ndk: r21e
+
+  - versionName: 12.1.1.0
+    versionCode: 621108
+    commit: c8cf341799fd966306fbb4d3db39ef747abeb4e3
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scandelete:
+      - TMessagesProj/jni
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    ndk: r21e
+
+  - versionName: 12.2.3.0
+    versionCode: 629807
+    commit: 1bf0ae8c00a8b77b50e8d54ea5932c233c609040
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.2.3.0
+    versionCode: 629808
+    commit: 1bf0ae8c00a8b77b50e8d54ea5932c233c609040
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.2.6.0
+    versionCode: 630107
+    commit: abe07f45e6b889dd1537fc725f9cd7606886cad9
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.2.6.0
+    versionCode: 630108
+    commit: abe07f45e6b889dd1537fc725f9cd7606886cad9
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.2.7.0
+    versionCode: 630207
+    commit: 462dea1145a69debd4e5f49db837b75c76083f2e
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.2.7.0
+    versionCode: 630208
+    commit: 462dea1145a69debd4e5f49db837b75c76083f2e
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.3.1.0
+    versionCode: 638507
+    commit: 37be7b7a6930bad426e31bc94539fc21b81f13ee
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.3.1.0
+    versionCode: 638508
+    commit: 37be7b7a6930bad426e31bc94539fc21b81f13ee
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.3.2.0
+    versionCode: 638607
+    commit: e6d127044f420d5332508f70823a534076059e83
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.3.2.0
+    versionCode: 638608
+    commit: e6d127044f420d5332508f70823a534076059e83
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.4.2.0
+    versionCode: 651107
+    commit: b55b00680cddd5e1c3a46a41605dfaa74f4dfdd1
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.4.2.0
+    versionCode: 651108
+    commit: b55b00680cddd5e1c3a46a41605dfaa74f4dfdd1
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.5.1.0
+    versionCode: 658007
+    commit: 72b8bb973a50745e902f6f13c5ca27fa5b545d92
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.5.1.0
+    versionCode: 658008
+    commit: 72b8bb973a50745e902f6f13c5ca27fa5b545d92
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.5.2.0
+    versionCode: 658107
+    commit: e58bee380520c826ef0298567d3b1b12899fa2c6
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.5.2.0
+    versionCode: 658108
+    commit: e58bee380520c826ef0298567d3b1b12899fa2c6
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.6.3.0
+    versionCode: 665707
+    commit: 0debd7d9b89afe1c548862af73be9b51e53bc054
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.6.3.0
+    versionCode: 665708
+    commit: 0debd7d9b89afe1c548862af73be9b51e53bc054
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.6.4.0
+    versionCode: 665807
+    commit: 6ce38c00d52b472af1e3780b328b576b6215e60e
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.6.4.0
+    versionCode: 665808
+    commit: 6ce38c00d52b472af1e3780b328b576b6215e60e
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.6.5.0
+    versionCode: 666607
+    commit: dfc9dbca4bdf0353321f2f6afe4b260e80204bc2
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.6.5.0
+    versionCode: 666608
+    commit: dfc9dbca4bdf0353321f2f6afe4b260e80204bc2
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.6.6.0
+    versionCode: 667007
+    commit: 4e70f39ba83d69d0033764c20005b4c5915357bd
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.6.6.0
+    versionCode: 667008
+    commit: 4e70f39ba83d69d0033764c20005b4c5915357bd
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.6.7.0
+    versionCode: 667307
+    commit: ae2361ae80559185240a935a3fb845a1b42993fe
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.6.7.0
+    versionCode: 667308
+    commit: ae2361ae80559185240a935a3fb845a1b42993fe
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sdkmanager 'ndk;r23c'
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+    ndk: r21e
+
+  - versionName: 12.7.3.0
+    versionCode: 675007
+    commit: 5c171c8cf0023dd294291bc87c58152e1c3df7a4
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+      - sed -i -e 's/ANDROID_API=16/ANDROID_API=21/g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 's/API=16/API=21/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i -e 's|${TOOLS_PREFIX}ld|${LLVM_BIN}/ld.lld|g' -e 's|${TOOLS_PREFIX}ar|${LLVM_BIN}/llvm-ar|g'
+        -e 's|${TOOLS_PREFIX}strip|${LLVM_BIN}/llvm-strip|g' -e 's|${TOOLS_PREFIX}nm|${LLVM_BIN}/llvm-nm|g'
+        -e 's|${TOOLS_PREFIX}ranlib|${LLVM_BIN}/llvm-ranlib|g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_libvpx_clang.sh ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 
+        's|CROSS_PREFIX=${PREBUILT}/bin/${ARCH_NAME}-linux-${BIN_MIDDLE}-|CROSS_PREFIX=${LLVM_BIN}/llvm-|'
+        ../TMessagesProj/jni/build_dav1d_clang.sh ../TMessagesProj/jni/build_libvpx_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e '/export ISYSTEM=/d' -e '/--libc=/d' -e 's/-std=c++11/-std=c++17/g'
+        ../TMessagesProj/jni/build_libvpx_clang.sh
+      - sed -i -e 's|git checkout -- tde2e/|& \&\& sed -i -e "s/23.2.8568313/27.2.12479018/g"
+        -e "s/android-16/android-21/g" tde2e/build-tdlib.sh|' ../TMessagesProj/jni/prepare.py
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+
+  - versionName: 12.7.3.0
+    versionCode: 675008
+    commit: 5c171c8cf0023dd294291bc87c58152e1c3df7a4
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+      - sed -i -e 's/ANDROID_API=16/ANDROID_API=21/g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 's/API=16/API=21/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i -e 's|${TOOLS_PREFIX}ld|${LLVM_BIN}/ld.lld|g' -e 's|${TOOLS_PREFIX}ar|${LLVM_BIN}/llvm-ar|g'
+        -e 's|${TOOLS_PREFIX}strip|${LLVM_BIN}/llvm-strip|g' -e 's|${TOOLS_PREFIX}nm|${LLVM_BIN}/llvm-nm|g'
+        -e 's|${TOOLS_PREFIX}ranlib|${LLVM_BIN}/llvm-ranlib|g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_libvpx_clang.sh ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 
+        's|CROSS_PREFIX=${PREBUILT}/bin/${ARCH_NAME}-linux-${BIN_MIDDLE}-|CROSS_PREFIX=${LLVM_BIN}/llvm-|'
+        ../TMessagesProj/jni/build_dav1d_clang.sh ../TMessagesProj/jni/build_libvpx_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e '/export ISYSTEM=/d' -e '/--libc=/d' -e 's/-std=c++11/-std=c++17/g'
+        ../TMessagesProj/jni/build_libvpx_clang.sh
+      - sed -i -e 's|git checkout -- tde2e/|& \&\& sed -i -e "s/23.2.8568313/27.2.12479018/g"
+        -e "s/android-16/android-21/g" tde2e/build-tdlib.sh|' ../TMessagesProj/jni/prepare.py
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+
+  - versionName: 12.8.2.0
+    versionCode: 691707
+    commit: 39883086c63c8678484d50e5063a872b3aacb0fe
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+      - sed -i -e 's/ANDROID_API=16/ANDROID_API=21/g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 's/API=16/API=21/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i -e 's|${TOOLS_PREFIX}ld|${LLVM_BIN}/ld.lld|g' -e 's|${TOOLS_PREFIX}ar|${LLVM_BIN}/llvm-ar|g'
+        -e 's|${TOOLS_PREFIX}strip|${LLVM_BIN}/llvm-strip|g' -e 's|${TOOLS_PREFIX}nm|${LLVM_BIN}/llvm-nm|g'
+        -e 's|${TOOLS_PREFIX}ranlib|${LLVM_BIN}/llvm-ranlib|g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_libvpx_clang.sh ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 
+        's|CROSS_PREFIX=${PREBUILT}/bin/${ARCH_NAME}-linux-${BIN_MIDDLE}-|CROSS_PREFIX=${LLVM_BIN}/llvm-|'
+        ../TMessagesProj/jni/build_dav1d_clang.sh ../TMessagesProj/jni/build_libvpx_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e '/export ISYSTEM=/d' -e '/--libc=/d' -e 's/-std=c++11/-std=c++17/g'
+        ../TMessagesProj/jni/build_libvpx_clang.sh
+      - sed -i -e 's|git checkout -- tde2e/|& \&\& sed -i -e "s/23.2.8568313/27.2.12479018/g"
+        -e "s/android-16/android-21/g" tde2e/build-tdlib.sh|' ../TMessagesProj/jni/prepare.py
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+
+  - versionName: 12.8.2.0
+    versionCode: 691708
+    commit: 39883086c63c8678484d50e5063a872b3aacb0fe
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+      - sed -i -e 's/ANDROID_API=16/ANDROID_API=21/g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 's/API=16/API=21/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i -e 's|${TOOLS_PREFIX}ld|${LLVM_BIN}/ld.lld|g' -e 's|${TOOLS_PREFIX}ar|${LLVM_BIN}/llvm-ar|g'
+        -e 's|${TOOLS_PREFIX}strip|${LLVM_BIN}/llvm-strip|g' -e 's|${TOOLS_PREFIX}nm|${LLVM_BIN}/llvm-nm|g'
+        -e 's|${TOOLS_PREFIX}ranlib|${LLVM_BIN}/llvm-ranlib|g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_libvpx_clang.sh ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 
+        's|CROSS_PREFIX=${PREBUILT}/bin/${ARCH_NAME}-linux-${BIN_MIDDLE}-|CROSS_PREFIX=${LLVM_BIN}/llvm-|'
+        ../TMessagesProj/jni/build_dav1d_clang.sh ../TMessagesProj/jni/build_libvpx_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e '/export ISYSTEM=/d' -e '/--libc=/d' -e 's/-std=c++11/-std=c++17/g'
+        ../TMessagesProj/jni/build_libvpx_clang.sh
+      - sed -i -e 's|git checkout -- tde2e/|& \&\& sed -i -e "s/23.2.8568313/27.2.12479018/g"
+        -e "s/android-16/android-21/g" tde2e/build-tdlib.sh|' ../TMessagesProj/jni/prepare.py
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+
+  - versionName: 12.8.3.0
+    versionCode: 691807
+    commit: 09cc5ae6e48efcdeed444864a0a50b46a8b18128
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+      - sed -i -e 's/ANDROID_API=16/ANDROID_API=21/g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 's/API=16/API=21/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i -e 's|${TOOLS_PREFIX}ld|${LLVM_BIN}/ld.lld|g' -e 's|${TOOLS_PREFIX}ar|${LLVM_BIN}/llvm-ar|g'
+        -e 's|${TOOLS_PREFIX}strip|${LLVM_BIN}/llvm-strip|g' -e 's|${TOOLS_PREFIX}nm|${LLVM_BIN}/llvm-nm|g'
+        -e 's|${TOOLS_PREFIX}ranlib|${LLVM_BIN}/llvm-ranlib|g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_libvpx_clang.sh ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 
+        's|CROSS_PREFIX=${PREBUILT}/bin/${ARCH_NAME}-linux-${BIN_MIDDLE}-|CROSS_PREFIX=${LLVM_BIN}/llvm-|'
+        ../TMessagesProj/jni/build_dav1d_clang.sh ../TMessagesProj/jni/build_libvpx_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e '/export ISYSTEM=/d' -e '/--libc=/d' -e 's/-std=c++11/-std=c++17/g'
+        ../TMessagesProj/jni/build_libvpx_clang.sh
+      - sed -i -e 's|git checkout -- tde2e/|& \&\& sed -i -e "s/23.2.8568313/27.2.12479018/g"
+        -e "s/android-16/android-21/g" tde2e/build-tdlib.sh|' ../TMessagesProj/jni/prepare.py
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+
+  - versionName: 12.8.3.0
+    versionCode: 691808
+    commit: 09cc5ae6e48efcdeed444864a0a50b46a8b18128
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+      - sed -i -e 's/ANDROID_API=16/ANDROID_API=21/g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 's/API=16/API=21/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i -e 's|${TOOLS_PREFIX}ld|${LLVM_BIN}/ld.lld|g' -e 's|${TOOLS_PREFIX}ar|${LLVM_BIN}/llvm-ar|g'
+        -e 's|${TOOLS_PREFIX}strip|${LLVM_BIN}/llvm-strip|g' -e 's|${TOOLS_PREFIX}nm|${LLVM_BIN}/llvm-nm|g'
+        -e 's|${TOOLS_PREFIX}ranlib|${LLVM_BIN}/llvm-ranlib|g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_libvpx_clang.sh ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 
+        's|CROSS_PREFIX=${PREBUILT}/bin/${ARCH_NAME}-linux-${BIN_MIDDLE}-|CROSS_PREFIX=${LLVM_BIN}/llvm-|'
+        ../TMessagesProj/jni/build_dav1d_clang.sh ../TMessagesProj/jni/build_libvpx_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e '/export ISYSTEM=/d' -e '/--libc=/d' -e 's/-std=c++11/-std=c++17/g'
+        ../TMessagesProj/jni/build_libvpx_clang.sh
+      - sed -i -e 's|git checkout -- tde2e/|& \&\& sed -i -e "s/23.2.8568313/27.2.12479018/g"
+        -e "s/android-16/android-21/g" tde2e/build-tdlib.sh|' ../TMessagesProj/jni/prepare.py
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+
+  - versionName: 12.8.4.0
+    versionCode: 691907
+    commit: 04c1fc9a67ada42d3cbd8bd8d08d349d451a93d9
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+      - sed -i -e 's/ANDROID_API=16/ANDROID_API=21/g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 's/API=16/API=21/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i -e 's|${TOOLS_PREFIX}ld|${LLVM_BIN}/ld.lld|g' -e 's|${TOOLS_PREFIX}ar|${LLVM_BIN}/llvm-ar|g'
+        -e 's|${TOOLS_PREFIX}strip|${LLVM_BIN}/llvm-strip|g' -e 's|${TOOLS_PREFIX}nm|${LLVM_BIN}/llvm-nm|g'
+        -e 's|${TOOLS_PREFIX}ranlib|${LLVM_BIN}/llvm-ranlib|g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_libvpx_clang.sh ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 
+        's|CROSS_PREFIX=${PREBUILT}/bin/${ARCH_NAME}-linux-${BIN_MIDDLE}-|CROSS_PREFIX=${LLVM_BIN}/llvm-|'
+        ../TMessagesProj/jni/build_dav1d_clang.sh ../TMessagesProj/jni/build_libvpx_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e '/export ISYSTEM=/d' -e '/--libc=/d' -e 's/-std=c++11/-std=c++17/g'
+        ../TMessagesProj/jni/build_libvpx_clang.sh
+      - sed -i -e 's|git checkout -- tde2e/|& \&\& sed -i -e "s/23.2.8568313/27.2.12479018/g"
+        -e "s/android-16/android-21/g" tde2e/build-tdlib.sh|' ../TMessagesProj/jni/prepare.py
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+
+  - versionName: 12.8.4.0
+    versionCode: 691908
+    commit: 04c1fc9a67ada42d3cbd8bd8d08d349d451a93d9
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+      - sed -i -e 's/ANDROID_API=16/ANDROID_API=21/g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 's/API=16/API=21/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i -e 's|${TOOLS_PREFIX}ld|${LLVM_BIN}/ld.lld|g' -e 's|${TOOLS_PREFIX}ar|${LLVM_BIN}/llvm-ar|g'
+        -e 's|${TOOLS_PREFIX}strip|${LLVM_BIN}/llvm-strip|g' -e 's|${TOOLS_PREFIX}nm|${LLVM_BIN}/llvm-nm|g'
+        -e 's|${TOOLS_PREFIX}ranlib|${LLVM_BIN}/llvm-ranlib|g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_libvpx_clang.sh ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 
+        's|CROSS_PREFIX=${PREBUILT}/bin/${ARCH_NAME}-linux-${BIN_MIDDLE}-|CROSS_PREFIX=${LLVM_BIN}/llvm-|'
+        ../TMessagesProj/jni/build_dav1d_clang.sh ../TMessagesProj/jni/build_libvpx_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e '/export ISYSTEM=/d' -e '/--libc=/d' -e 's/-std=c++11/-std=c++17/g'
+        ../TMessagesProj/jni/build_libvpx_clang.sh
+      - sed -i -e 's|git checkout -- tde2e/|& \&\& sed -i -e "s/23.2.8568313/27.2.12479018/g"
+        -e "s/android-16/android-21/g" tde2e/build-tdlib.sh|' ../TMessagesProj/jni/prepare.py
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+
+  - versionName: 12.8.5.0
+    versionCode: 692007
+    commit: 4e348213828dbcc8352e07eeedc67754c63bd547
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+      - sed -i -e 's/ANDROID_API=16/ANDROID_API=21/g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 's/API=16/API=21/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i -e 's|${TOOLS_PREFIX}ld|${LLVM_BIN}/ld.lld|g' -e 's|${TOOLS_PREFIX}ar|${LLVM_BIN}/llvm-ar|g'
+        -e 's|${TOOLS_PREFIX}strip|${LLVM_BIN}/llvm-strip|g' -e 's|${TOOLS_PREFIX}nm|${LLVM_BIN}/llvm-nm|g'
+        -e 's|${TOOLS_PREFIX}ranlib|${LLVM_BIN}/llvm-ranlib|g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_libvpx_clang.sh ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 
+        's|CROSS_PREFIX=${PREBUILT}/bin/${ARCH_NAME}-linux-${BIN_MIDDLE}-|CROSS_PREFIX=${LLVM_BIN}/llvm-|'
+        ../TMessagesProj/jni/build_dav1d_clang.sh ../TMessagesProj/jni/build_libvpx_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e '/export ISYSTEM=/d' -e '/--libc=/d' -e 's/-std=c++11/-std=c++17/g'
+        ../TMessagesProj/jni/build_libvpx_clang.sh
+      - sed -i -e 's|git checkout -- tde2e/|& \&\& sed -i -e "s/23.2.8568313/27.2.12479018/g"
+        -e "s/android-16/android-21/g" tde2e/build-tdlib.sh|' ../TMessagesProj/jni/prepare.py
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+
+  - versionName: 12.8.5.0
+    versionCode: 692008
+    commit: 4e348213828dbcc8352e07eeedc67754c63bd547
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+      - sed -i -e 's/ANDROID_API=16/ANDROID_API=21/g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 's/API=16/API=21/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i -e 's|${TOOLS_PREFIX}ld|${LLVM_BIN}/ld.lld|g' -e 's|${TOOLS_PREFIX}ar|${LLVM_BIN}/llvm-ar|g'
+        -e 's|${TOOLS_PREFIX}strip|${LLVM_BIN}/llvm-strip|g' -e 's|${TOOLS_PREFIX}nm|${LLVM_BIN}/llvm-nm|g'
+        -e 's|${TOOLS_PREFIX}ranlib|${LLVM_BIN}/llvm-ranlib|g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_libvpx_clang.sh ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 
+        's|CROSS_PREFIX=${PREBUILT}/bin/${ARCH_NAME}-linux-${BIN_MIDDLE}-|CROSS_PREFIX=${LLVM_BIN}/llvm-|'
+        ../TMessagesProj/jni/build_dav1d_clang.sh ../TMessagesProj/jni/build_libvpx_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e '/export ISYSTEM=/d' -e '/--libc=/d' -e 's/-std=c++11/-std=c++17/g'
+        ../TMessagesProj/jni/build_libvpx_clang.sh
+      - sed -i -e 's|git checkout -- tde2e/|& \&\& sed -i -e "s/23.2.8568313/27.2.12479018/g"
+        -e "s/android-16/android-21/g" tde2e/build-tdlib.sh|' ../TMessagesProj/jni/prepare.py
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+
+  - versionName: 12.9.0.0
+    versionCode: 696607
+    commit: f46f7b8671fbcd60c8014b0004c025d01509f1a9
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v7a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+      - sed -i -e 's/ANDROID_API=16/ANDROID_API=21/g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 's/API=16/API=21/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i -e 's|${TOOLS_PREFIX}ld|${LLVM_BIN}/ld.lld|g' -e 's|${TOOLS_PREFIX}ar|${LLVM_BIN}/llvm-ar|g'
+        -e 's|${TOOLS_PREFIX}strip|${LLVM_BIN}/llvm-strip|g' -e 's|${TOOLS_PREFIX}nm|${LLVM_BIN}/llvm-nm|g'
+        -e 's|${TOOLS_PREFIX}ranlib|${LLVM_BIN}/llvm-ranlib|g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_libvpx_clang.sh ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 
+        's|CROSS_PREFIX=${PREBUILT}/bin/${ARCH_NAME}-linux-${BIN_MIDDLE}-|CROSS_PREFIX=${LLVM_BIN}/llvm-|'
+        ../TMessagesProj/jni/build_dav1d_clang.sh ../TMessagesProj/jni/build_libvpx_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e '/export ISYSTEM=/d' -e '/--libc=/d' -e 's/-std=c++11/-std=c++17/g'
+        ../TMessagesProj/jni/build_libvpx_clang.sh
+      - sed -i -e 's|git checkout -- tde2e/|& \&\& sed -i -e "s/23.2.8568313/27.2.12479018/g"
+        -e "s/android-16/android-21/g" tde2e/build-tdlib.sh|' ../TMessagesProj/jni/prepare.py
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+
+  - versionName: 12.9.0.0
+    versionCode: 696608
+    commit: f46f7b8671fbcd60c8014b0004c025d01509f1a9
+    timeout: 18000
+    subdir: TMessagesProj_App
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build golang-go yasm cmake libuv1 make meson gperf
+        ninja-build g++
+    gradle:
+      - afatFd_v8a
+    rm:
+      - TMessagesProj_AppHuawei
+    prebuild:
+      - sed -i -e '/JavaVersion/s/17/21/' {../TMessagesProj,.}/build.gradle
+      - sed -i -e '/play/d' ../TMessagesProj/build.gradle
+      - sed -i -e '/gms/d' ../TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
+      - ../prebuild_fdroid.sh 0 14577864 54d3ae230fd8f985ce9adccf08fbd9d6
+      - sed -i -e 's/ANDROID_API=16/ANDROID_API=21/g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 's/API=16/API=21/g' ../TMessagesProj/jni/build_boringssl.sh
+      - sed -i -e 's|${TOOLS_PREFIX}ld|${LLVM_BIN}/ld.lld|g' -e 's|${TOOLS_PREFIX}ar|${LLVM_BIN}/llvm-ar|g'
+        -e 's|${TOOLS_PREFIX}strip|${LLVM_BIN}/llvm-strip|g' -e 's|${TOOLS_PREFIX}nm|${LLVM_BIN}/llvm-nm|g'
+        -e 's|${TOOLS_PREFIX}ranlib|${LLVM_BIN}/llvm-ranlib|g' ../TMessagesProj/jni/build_dav1d_clang.sh
+        ../TMessagesProj/jni/build_libvpx_clang.sh ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e 
+        's|CROSS_PREFIX=${PREBUILT}/bin/${ARCH_NAME}-linux-${BIN_MIDDLE}-|CROSS_PREFIX=${LLVM_BIN}/llvm-|'
+        ../TMessagesProj/jni/build_dav1d_clang.sh ../TMessagesProj/jni/build_libvpx_clang.sh
+        ../TMessagesProj/jni/build_ffmpeg_clang.sh
+      - sed -i -e '/export ISYSTEM=/d' -e '/--libc=/d' -e 's/-std=c++11/-std=c++17/g'
+        ../TMessagesProj/jni/build_libvpx_clang.sh
+      - sed -i -e 's|git checkout -- tde2e/|& \&\& sed -i -e "s/23.2.8568313/27.2.12479018/g"
+        -e "s/android-16/android-21/g" tde2e/build-tdlib.sh|' ../TMessagesProj/jni/prepare.py
+    scanignore:
+      - TMessagesProj/src/main/assets/emoji/metadata.bin
+    scandelete:
+      - TMessagesProj/jni
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+VercodeOperation:
+  - 100 * %c + 7
+  - 100 * %c + 8
+UpdateCheckData: gradle.properties|APP_VERSION_CODE=(\d+)||([\d.]+)
+CurrentVersion: 12.9.0.0
+CurrentVersionCode: 696608

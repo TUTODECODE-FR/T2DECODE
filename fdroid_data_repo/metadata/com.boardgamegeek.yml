@@ -1,0 +1,71 @@
+Categories:
+  - Game Helper
+License: GPL-3.0-only
+WebSite: https://github.com/ccomeaux/boardgamegeek4android/wiki
+SourceCode: 
+  https://archive.softwareheritage.org/browse/origin/https://github.com/ccomeaux/boardgamegeek4android/directory/
+IssueTracker: https://github.com/ccomeaux/boardgamegeek4android/issues
+Changelog: https://github.com/ccomeaux/boardgamegeek4android/blob/HEAD/CHANGELOG.md
+
+AutoName: BoardGameGeek
+Description: |-
+  This app searches the board game data from boardgamegeek.com. It's not a game
+  itself -- it's a reference tool that provides information about board games.
+
+RepoType: git
+Repo: https://github.com/ccomeaux/boardgamegeek4android
+
+Builds:
+  - versionName: 4.7.3
+    versionCode: 36
+    commit: V4.7.3
+    subdir: BoardGameGeek
+    prebuild: sed -i 's@\\@/@g' project.properties
+
+  - versionName: '4.8'
+    versionCode: 37
+    commit: '4.8'
+    subdir: BoardGameGeek
+    prebuild:
+      - sed -i 's@\\@/@g' project.properties
+      - echo -e 'java.source=1.7\njava.target=1.7' > ant.properties
+
+  - versionName: 4.8.1
+    versionCode: 38
+    commit: 4.8.1
+    subdir: BoardGameGeek
+    prebuild:
+      - sed -i 's@\\@/@g' project.properties
+      - echo -e 'java.source=1.7\njava.target=1.7' > ant.properties
+
+  - versionName: 4.8.2
+    versionCode: 39
+    commit: 4.8.2
+    subdir: BoardGameGeek
+    prebuild:
+      - sed -i 's@\\@/@g' project.properties
+      - echo -e 'java.source=1.7\njava.target=1.7' > ant.properties
+
+  - versionName: 4.8.3
+    versionCode: 40
+    commit: 4.8.3
+    subdir: BoardGameGeek
+    prebuild:
+      - sed -i 's@\\@/@g' project.properties
+      - echo -e 'java.source=1.7\njava.target=1.7' > ant.properties
+
+  - versionName: 4.8.4
+    versionCode: 41
+    commit: 4.8.4
+    subdir: BoardGameGeek
+    prebuild:
+      - sed -i 's@\\@/@g' project.properties
+      - echo -e 'java.source=1.7\njava.target=1.7' > ant.properties
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 4.8.4
+CurrentVersionCode: 41
+
+NoSourceSince: 4.8.4

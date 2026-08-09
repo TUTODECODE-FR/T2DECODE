@@ -1,0 +1,132 @@
+Categories:
+  - Security
+License: ISC
+AuthorName: RoundSalmon4
+SourceCode: https://github.com/RoundSalmon4/AppVerifierBG
+IssueTracker: https://github.com/RoundSalmon4/AppVerifierBG/issues
+Changelog: 
+  https://github.com/RoundSalmon4/AppVerifierBG/blob/feature/all-enhancements/CHANGELOG.md
+
+AutoName: AppVerifier BG
+
+RepoType: git
+Repo: https://github.com/RoundSalmon4/AppVerifierBG
+Binaries: 
+  https://github.com/RoundSalmon4/AppVerifierBG/releases/download/v%v/AppVerifierBG-%v.apk
+
+Builds:
+  - versionName: 0.2.0
+    versionCode: 14
+    commit: 22248f059c666d8862623570c4c61d459647b78b
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.3.0
+    versionCode: 15
+    commit: 7ec1b283a44f890becd651d3d7b3023feea7a05d
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.4.0
+    versionCode: 16
+    commit: c3d76b4533eac21c035ff9cbe035cbc8e97ef8e1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.0
+    versionCode: 17
+    commit: 9b312dc2164cd1ccd5c6df36c367b2831cd532f1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.1
+    versionCode: 18
+    commit: 465be87e345b8cf29f7e7c3a6851bc43896e88e5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.2
+    versionCode: 19
+    commit: f128c44628ad111728855ee6766a59b89c3d0b87
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.3
+    versionCode: 20
+    commit: cab7de406ddd76fa43cdd5e11f4e3d4222a52b09
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.4
+    versionCode: 21
+    commit: 5719e0264c59b20cf331504cfe0dcf217a484444
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.5
+    versionCode: 22
+    commit: 80845d7a0218b81ab5df29345773e2bb9795c638
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.6
+    versionCode: 23
+    commit: 84fd678a5770c3686c5070e615f9f1d914b34cfb
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.6.0
+    versionCode: 24
+    commit: 47e46e461b916bc12d3b93170a8ec5edf3a467b9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.6.1
+    versionCode: 25
+    commit: 36854e5dee2bdc94b4aa367de5f2be8cbe7b5316
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.6.2
+    versionCode: 26
+    commit: c9ae4fe82a02eaa0592aafbc56286fdb53501c55
+    subdir: app
+    gradle:
+      - yes
+    ndk: r28c
+
+  - versionName: 0.6.3
+    versionCode: 27
+    commit: 0f24a06edee68aab5c14ef04e0b1b5e5f01b02ed
+    subdir: app
+    gradle:
+      - yes
+    ndk: r28c
+
+  - versionName: 0.7.0
+    versionCode: 28
+    commit: fd9793fba7537cacbf73c51ee4cc4faf06b3905b
+    subdir: app
+    gradle:
+      - yes
+    ndk: r28c
+
+AllowedAPKSigningKeys: 1e76f1a15cbe201f0fe26af27a12d91d0d3481fe7dcc7d89e9d2056930f6d5a9
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: gradle/version.gradle.kts|appVersionCode", (\d+)||v(.+)
+CurrentVersion: 0.7.0
+CurrentVersionCode: 28

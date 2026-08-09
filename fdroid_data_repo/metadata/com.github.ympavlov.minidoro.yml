@@ -1,0 +1,96 @@
+Categories:
+  - Timer
+License: MIT
+AuthorName: Yury Pavlov
+SourceCode: https://github.com/ympavlov/minidoro
+IssueTracker: https://github.com/ympavlov/minidoro/issues
+
+AutoName: Minidoro
+
+RepoType: git
+Repo: https://github.com/ympavlov/minidoro.git
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 10
+    commit: a9861cd1cd029327c22d61a3d2a43b128e79b7a0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.5'
+    versionCode: 15
+    commit: be142dda980095eadda2ccb8ca5e2db23ba6728d
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.6'
+    versionCode: 16
+    commit: 21832ffad84b0697fac2363e4e0a05305652d723
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.7'
+    versionCode: 17
+    commit: 022b7cd0a948f8ba12a58f07468119d7d53c1c59
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.8'
+    versionCode: 18
+    commit: da43d5284d3faf761d7265beab8fcfc026077100
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.9'
+    versionCode: 19
+    commit: 60c9053acc11e97a5c9d0fbc866c6ddcd7f8871d
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.10'
+    versionCode: 110
+    commit: f994cf0e6d66bc2975a71bde4c5f22c71468dc14
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.11'
+    versionCode: 111
+    commit: deb1c4880728e9ef6c840892d1570ca4b5538b98
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.12'
+    versionCode: 112
+    commit: 0aeecabff7c52b0aa7e59a928b5b60c475407edd
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.13'
+    versionCode: 113
+    commit: 9028e56fa3b1d99608fca64857ccdadffb81f055
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get remove openjdk-11-jdk-headless openjdk-11-jre-headless
+      - echo "deb http://deb.debian.org/debian sid main" > /etc/apt/sources.list.d/stretch.list
+      - apt-get update
+      - apt-get remove openjdk-17-jdk-headless openjdk-17-jre-headless
+      - apt-get install -y -t sid openjdk-8-jdk-headless
+      - apt-get remove openjdk-11-jdk-headless openjdk-11-jre-headless
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.13'
+CurrentVersionCode: 113

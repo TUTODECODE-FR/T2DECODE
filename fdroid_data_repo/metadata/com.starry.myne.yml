@@ -1,0 +1,567 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: App connects to gutenberg.org and gutendex.com.
+Categories:
+  - Download
+  - Ebook Reader
+  - Reading
+License: Apache-2.0
+AuthorName: Starry Shivam
+AuthorEmail: loafy.hawk@gmail.com
+AuthorWebSite: https://github.com/starry-shivam
+SourceCode: https://github.com/Pool-Of-Tears/Myne
+IssueTracker: https://github.com/Pool-Of-Tears/Myne/issues
+Translation: https://toolate.othing.xyz/projects/myne/
+Changelog: https://github.com/Pool-Of-Tears/Myne/releases
+Donate: https://github.com/Pool-Of-Tears/Myne#donations
+
+AutoName: Myne
+
+RepoType: git
+Repo: https://github.com/Pool-Of-Tears/Myne.git
+Binaries: https://github.com/Pool-Of-Tears/Myne/releases/download/v%v/Myne-v%v.apk
+
+Builds:
+  - versionName: 1.1.1
+    versionCode: 3
+    commit: v1.1.1
+    subdir: app
+    output: build/outputs/apk/release/*.apk
+    srclibs:
+      - reproducible-apk-tools@c08142d2cd256e7c0f3b7eebf1fad21ee307f9c3
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines build/outputs/apk/release/*.apk
+        'META-INF/services/*'
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 1.2.0
+    versionCode: 4
+    commit: 8eb6094db521212c74ff5ceb5adb79a8df782447
+    subdir: app
+    output: build/outputs/apk/release/*.apk
+    srclibs:
+      - reproducible-apk-tools@c08142d2cd256e7c0f3b7eebf1fad21ee307f9c3
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines build/outputs/apk/release/*.apk
+        'META-INF/services/*'
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 1.3.0
+    versionCode: 5
+    commit: 2f2fce285b254c8c005f04cdfa6a5dc98db9efc4
+    subdir: app
+    output: build/outputs/apk/release/*.apk
+    srclibs:
+      - reproducible-apk-tools@c08142d2cd256e7c0f3b7eebf1fad21ee307f9c3
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines build/outputs/apk/release/*.apk
+        'META-INF/services/*'
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 1.4.0
+    versionCode: 7
+    commit: b3a1786156862295fd44a89772898651185e2834
+    subdir: app
+    output: build/outputs/apk/release/*.apk
+    srclibs:
+      - reproducible-apk-tools@c08142d2cd256e7c0f3b7eebf1fad21ee307f9c3
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines build/outputs/apk/release/*.apk
+        'META-INF/services/*'
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 1.5.0
+    versionCode: 8
+    commit: 92495d977e9b15c66ba7183b8acc91b2558e8175
+    subdir: app
+    output: build/outputs/apk/release/*.apk
+    srclibs:
+      - reproducible-apk-tools@c08142d2cd256e7c0f3b7eebf1fad21ee307f9c3
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines build/outputs/apk/release/*.apk
+        'META-INF/services/*'
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 2.6.0
+    versionCode: 20
+    commit: 4ace350f42dca1ec0bd2e7a4032691f1fd64b534
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 2.7.0
+    versionCode: 21
+    commit: cb6c9a5879fc940eda7b75eb5af9669c41b03249
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 2.8.0
+    versionCode: 22
+    commit: bb25858c8651b4ba7a249461e7731870610c1bd4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 2.8.1
+    versionCode: 23
+    commit: 42a704ca2cd9051df5137b51f1218cddeea3451d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 2.9.0
+    versionCode: 290
+    commit: 9f4c560069efab6c48b83b0a33585181dc130ef7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 3.0.0
+    versionCode: 300
+    commit: 68f90b5831e06f00717b5c4d1a3f9cceb25eac05
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 3.1.0
+    versionCode: 310
+    commit: 9da2d7ec2c59b16f19b85ac4a1d0d41c989fc931
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 3.2.5
+    versionCode: 325
+    commit: 4c5cb6ca611c7ef1239934ef4ede2b111c5c0bc3
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 3.3.0
+    versionCode: 330
+    commit: 2e8301310bfd5b1f6d80c15716ed3d2fe09bd201
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 3.4.0
+    versionCode: 340
+    commit: 4b7d0f1dec519a5b57058213699c4f018a724411
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 3.5.1
+    versionCode: 351
+    commit: 4857529e406d4b4902ba555ca4aac1d100b81065
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 3.6.0
+    versionCode: 360
+    commit: 98c05c1b881d16644ca22b1190d65c199f627602
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 3.7.0
+    versionCode: 370
+    commit: b3d9c92ef9a5143402c272b4e93126ce48907c60
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 3.8.0
+    versionCode: 380
+    commit: 5b312629fa3257d9022cd22c3534fa3695bd2bce
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 3.9.0
+    versionCode: 390
+    commit: 99417c39c563d1f96e402c1b8f04957c9c5075a4
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 3.9.1
+    versionCode: 391
+    commit: 1268294b8fca3a5d76131ac9154d1901950d384a
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 4.0.0
+    versionCode: 400
+    commit: 8a67080b9daecab10975ed746790057eefab90a9
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 4.1.0
+    versionCode: 410
+    commit: bd25a5f5f0c7b1eb6909a91471617ea8ef9e57a4
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+    antifeatures:
+      NonFreeAssets:
+        en-US: Figerona font
+
+  - versionName: 4.2.0
+    versionCode: 420
+    commit: 5b9aaceee78970c12555ebfe43e4c89c84cb3677
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 4.2.1
+    versionCode: 421
+    commit: 4ad8b451a216d42d18c5f3b39978f2609614b5da
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 4.3.0
+    versionCode: 430
+    commit: bd9b20ede0ac45a3a5a3eb9242f934939d75082e
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 4.4.0
+    versionCode: 440
+    commit: bf2339e0f0e2c3077f344c90fb7f2634dcdbf448
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 4.5.0
+    versionCode: 450
+    commit: 1e4810ab5cc7e27b7907d821e4e373f52f25663a
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 4.5.1
+    versionCode: 451
+    commit: f5552996bd75ea4ad57c570f964d6ced5f1664fe
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 4.6.1
+    versionCode: 461
+    commit: 8d88fd5600e1f0090e02ec465186f0f0d92d7b02
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 4.7.1
+    versionCode: 471
+    commit: 7ef3ef9091cb69048772b91a18694de0151b1d9a
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 4.7.2
+    versionCode: 472
+    commit: b9837b3b9612c990d2c6942a0c33779266fded36
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild: echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+      | base64 --decode >> ../local.properties
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 4.8.0
+    versionCode: 480
+    commit: f68e9340d7b8ccdb05731c124adcb605c3c3d0c1
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild:
+      - echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+        | base64 --decode >> ../local.properties
+      - sed -i -e '/foojay/d' ../settings.gradle
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 4.9.0
+    versionCode: 490
+    commit: e703daf1271439c7aceaa645a4c82c10c6870580
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild:
+      - echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+        | base64 --decode >> ../local.properties
+      - sed -i -e '/foojay/d' ../settings.gradle
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 4.9.1
+    versionCode: 491
+    commit: 3bc46bc1a2d8aa349d4ff07e1c71d536b581089a
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@719c3471fd1bcb807510dc8e035a69e395ca37f4
+    prebuild:
+      - echo R09PR0xFX0FQSV9LRVk9IkFJemFTeUE0alB3dS00RFZONzNLbk9TZFN0b0NSeUxPdE54bkxnWSIK
+        | base64 --decode >> ../local.properties
+      - sed -i -e '/foojay/d' ../settings.gradle
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 5.0.0
+    versionCode: 500
+    commit: 37357a102703e529b16766a5305c2f9845872624
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+AllowedAPKSigningKeys: 5dfe06da0fe3b0813f3f3dc5305699c2dbb9dfdbab1349da7c41c59d2fcf319c
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 5.0.0
+CurrentVersionCode: 500

@@ -1,0 +1,39 @@
+Categories:
+  - Graphics
+  - System
+License: Apache-2.0
+SourceCode: https://github.com/beatbrot/ScreenshotAssistant
+IssueTracker: https://github.com/beatbrot/ScreenshotAssistant/issues
+
+AutoName: Screenshot Assistant
+
+RepoType: git
+Repo: https://github.com/beatbrot/ScreenshotAssistant.git
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: v1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.0'
+    versionCode: 2
+    commit: v2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.1
+    versionCode: 3
+    commit: v2.0.1
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 2.0.1
+CurrentVersionCode: 3

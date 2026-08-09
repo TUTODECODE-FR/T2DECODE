@@ -1,0 +1,73 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Rely on aladhan.com
+Categories:
+  - Notification
+  - Religion
+License: GPL-3.0-only
+AuthorName: Yahyaoui Mohamed Brahim
+AuthorEmail: prayermode@outlook.com
+SourceCode: https://github.com/prayermode/prayermode
+IssueTracker: https://github.com/prayermode/prayermode/issues
+Donate: https://www.paypal.me/prayermode
+
+AutoName: Prayer mode
+
+RepoType: git
+Repo: https://github.com/prayermode/prayermode
+
+Builds:
+  - versionName: '1.3'
+    versionCode: 4
+    commit: 811bcab9e93cae3caafcd7e9ec47dd421c40f89f
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+  - versionName: '1.4'
+    versionCode: 5
+    commit: 8506232acd2db0fdaedf28a275b210647a306600
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.5'
+    versionCode: 6
+    commit: 506edad65bebe0bf97bac0fcd8e8562b9436028b
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.6'
+    versionCode: 7
+    commit: 5f28d771bd4c7189fd3dcdd3ca705ffb2c350ae2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.7'
+    versionCode: 8
+    commit: 7c4b33f031002f4c5017bbc9bc8279d378ebdb73
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.8'
+    versionCode: 9
+    commit: a26a38f108f89d96aaf2e456eccd8646062de38d
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.1
+    versionCode: 10
+    commit: bb53831b0b3ce4d851949951dcc2a0d623df4200
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.8.1
+CurrentVersionCode: 10

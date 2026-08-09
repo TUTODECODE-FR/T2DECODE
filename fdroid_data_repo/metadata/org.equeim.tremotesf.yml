@@ -1,0 +1,896 @@
+Categories:
+  - Download
+  - Remote Controller
+License: GPL-3.0-or-later
+AuthorName: equeim
+AuthorEmail: equeim@gmail.com
+SourceCode: https://github.com/equeim/tremotesf-android
+IssueTracker: https://github.com/equeim/tremotesf-android/issues
+Translation: https://explore.transifex.com/equeim/tremotesf-android
+Changelog: https://github.com/equeim/tremotesf-android/blob/HEAD/CHANGELOG.md
+
+AutoName: Tremotesf
+
+RepoType: git
+Repo: https://github.com/equeim/tremotesf-android
+
+Builds:
+  - versionName: 1.2.1
+    versionCode: 5
+    commit: 1.2.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.0
+    versionCode: 6
+    commit: 1.3.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.0
+    versionCode: 7
+    commit: 1.4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.1
+    versionCode: 8
+    commit: 1.4.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.2
+    versionCode: 9
+    commit: 1.4.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.0
+    versionCode: 10
+    commit: 1.5.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.1
+    versionCode: 11
+    commit: 1.5.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.1
+    versionCode: 13
+    commit: 1.6.1
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.6.2
+    versionCode: 14
+    commit: 1.6.2
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.6.3
+    versionCode: 15
+    commit: 1.6.3
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.7.0
+    versionCode: 16
+    commit: 1.7.0
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_0_2o
+      - QtBase@v5.9.6
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - sed -i -e "806s/\"\$MAKE\"/\"\$MAKE\" -j $(nproc)/" $$QtBase$$/configure
+      - ln -s $(realpath $$OpenSSL$$) ../3rdparty/openssl/openssl
+      - ln -s $(realpath $$QtBase$$) ../3rdparty/qt/qtbase
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r15c
+
+  - versionName: 1.7.1
+    versionCode: 17
+    commit: 1.7.1
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_0h
+      - QtBase@v5.11.1
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - sed -i -e "806s/\"\$MAKE\"/\"\$MAKE\" -j $(nproc)/" $$QtBase$$/configure
+      - ln -s $(realpath $$OpenSSL$$) ../3rdparty/openssl/openssl
+      - ln -s $(realpath $$QtBase$$) ../3rdparty/qt/qtbase
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r17b
+
+  - versionName: 1.8.0
+    versionCode: 18
+    commit: 1.8.0
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_0h
+      - QtBase@v5.11.1
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - sed -i -e "806s/\"\$MAKE\"/\"\$MAKE\" -j $(nproc)/" $$QtBase$$/configure
+      - ln -s $(realpath $$OpenSSL$$) ../3rdparty/openssl/openssl
+      - ln -s $(realpath $$QtBase$$) ../3rdparty/qt/qtbase
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r17b
+
+  - versionName: 1.8.1
+    versionCode: 19
+    commit: 1.8.1
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_0h
+      - QtBase@v5.11.1
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - sed -i -e "806s/\"\$MAKE\"/\"\$MAKE\" -j $(nproc)/" $$QtBase$$/configure
+      - ln -s $(realpath $$OpenSSL$$) ../3rdparty/openssl/openssl
+      - ln -s $(realpath $$QtBase$$) ../3rdparty/qt/qtbase
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r17b
+
+  - versionName: 1.8.2
+    versionCode: 20
+    commit: 1.8.2
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_0h
+      - QtBase@v5.11.1
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - sed -i -e "806s/\"\$MAKE\"/\"\$MAKE\" -j $(nproc)/" $$QtBase$$/configure
+      - ln -s $(realpath $$OpenSSL$$) ../3rdparty/openssl/openssl
+      - ln -s $(realpath $$QtBase$$) ../3rdparty/qt/qtbase
+      - sed -i -e 's/4.10/4.9/' ../gradle/wrapper/gradle-wrapper.properties
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r17b
+
+  - versionName: 1.8.3
+    versionCode: 21
+    commit: 1.8.3
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1
+      - QtBase@v5.11.1
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - sed -i -e "806s/\"\$MAKE\"/\"\$MAKE\" -j $(nproc)/" $$QtBase$$/configure
+      - ln -s $(realpath $$OpenSSL$$) ../3rdparty/openssl/openssl
+      - ln -s $(realpath $$QtBase$$) ../3rdparty/qt/qtbase
+      - sed -i -e 's/4.10/4.9/' ../gradle/wrapper/gradle-wrapper.properties
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r17b
+
+  - versionName: 1.8.4
+    versionCode: 22
+    commit: 1.8.4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1
+      - QtBase@v5.11.2
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - cp -a $$OpenSSL$$ ../3rdparty/openssl/openssl
+      - cp -a $$QtBase$$ ../3rdparty/qt/qtbase
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r17b
+
+  - versionName: 1.8.5
+    versionCode: 23
+    commit: 1.8.5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1a
+      - QtBase@v5.12.0
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - cp -a $$OpenSSL$$ ../3rdparty/openssl/openssl
+      - cp -a $$QtBase$$ ../3rdparty/qt/qtbase
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r18b
+
+  - versionName: 1.9.0
+    versionCode: 24
+    commit: 1.9.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1a
+      - QtBase@v5.12.0
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - cp -a $$OpenSSL$$ ../3rdparty/openssl/openssl
+      - cp -a $$QtBase$$ ../3rdparty/qt/qtbase
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r18b
+
+  - versionName: 1.9.3
+    versionCode: 27
+    commit: 1.9.3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1c
+      - QtBase@v5.13.0
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - cp -a $$OpenSSL$$ ../3rdparty/openssl/openssl
+      - cp -a $$QtBase$$ ../3rdparty/qt/qtbase
+      - "\"$$SDK$$/tools/bin/sdkmanager\" 'cmake;3.10.2.4988404'"
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r19c
+
+  - versionName: 1.10.0
+    versionCode: 28
+    commit: 1.10.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1c
+      - QtBase@v5.13.0
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - cp -a $$OpenSSL$$ ../3rdparty/openssl/openssl
+      - cp -a $$QtBase$$ ../3rdparty/qt/qtbase
+      - "\"$$SDK$$/tools/bin/sdkmanager\" 'cmake;3.10.2.4988404'"
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r19c
+
+  - versionName: 1.10.1
+    versionCode: 29
+    commit: 1.10.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1c
+      - QtBase@v5.13.0
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - cp -a $$OpenSSL$$ ../3rdparty/openssl/openssl
+      - cp -a $$QtBase$$ ../3rdparty/qt/qtbase
+      - "\"$$SDK$$/tools/bin/sdkmanager\" 'cmake;3.10.2.4988404'"
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r19c
+
+  - versionName: 2.0.1
+    versionCode: 31
+    commit: 2.0.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1c
+      - QtBase@v5.13.0
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - cp -a $$OpenSSL$$ ../3rdparty/openssl/openssl
+      - cp -a $$QtBase$$ ../3rdparty/qt/qtbase
+      - "\"$$SDK$$/tools/bin/sdkmanager\" 'cmake;3.10.2.4988404'"
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r19c
+
+  - versionName: 2.0.2
+    versionCode: 32
+    commit: 2.0.2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1d
+      - QtBase@v5.13.2
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - cp -a $$OpenSSL$$ ../3rdparty/openssl/openssl
+      - cp -a $$QtBase$$ ../3rdparty/qt/qtbase
+      - "\"$$SDK$$/tools/bin/sdkmanager\" 'cmake;3.10.2.4988404'"
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r20b
+
+  - versionName: 2.2.0
+    versionCode: 35
+    commit: 2.2.0
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1h
+      - QtBase@v5.15.1
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle
+      - sed -i -e 's/android:extractNativeLibs=\"false\"/android:extractNativeLibs=\"true\"/'
+        src/main/AndroidManifest.xml
+      - cp -a $$OpenSSL$$ ../3rdparty/openssl/openssl
+      - cp -a $$QtBase$$ ../3rdparty/qt/qtbase
+      - "\"$$SDK$$/tools/bin/sdkmanager\" 'cmake;3.10.2.4988404'"
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r21d
+
+  - versionName: 2.3.0
+    versionCode: 36
+    commit: 2.3.0
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1i
+      - QtBase@v5.15.2
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle.kts
+      - cp -a $$OpenSSL$$ ../3rdparty/openssl/openssl
+      - cp -a $$QtBase$$ ../3rdparty/qt/qtbase
+      - "\"$$SDK$$/tools/bin/sdkmanager\" 'cmake;3.10.2.4988404'"
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r21d
+
+  - versionName: 2.3.1
+    versionCode: 37
+    commit: 2.3.1
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1i
+      - QtBase@v5.15.2
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle.kts
+      - cp -a $$OpenSSL$$ ../3rdparty/openssl/openssl
+      - cp -a $$QtBase$$ ../3rdparty/qt/qtbase
+      - "\"$$SDK$$/tools/bin/sdkmanager\" 'cmake;3.10.2.4988404'"
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r21d
+
+  - versionName: 2.3.2
+    versionCode: 38
+    commit: 2.3.2
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    srclibs:
+      - OpenSSL@OpenSSL_1_1_1i
+      - QtBase@v5.15.2
+    prebuild:
+      - sed -i -e '/splits/,+7d' build.gradle.kts
+      - cp -a $$OpenSSL$$ ../3rdparty/openssl/openssl
+      - cp -a $$QtBase$$ ../3rdparty/qt/qtbase
+      - "\"$$SDK$$/tools/bin/sdkmanager\" 'cmake;3.10.2.4988404'"
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r21d
+
+  - versionName: 2.4.0
+    versionCode: 4039
+    commit: 2.4.0
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    prebuild: "\"$$SDK$$/tools/bin/sdkmanager\" 'cmake;3.18.1'"
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r22b
+
+  - versionName: 2.4.2
+    versionCode: 4041
+    commit: 2.4.2
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y g++
+    gradle:
+      - fdroid
+    prebuild: "\"$$SDK$$/tools/bin/sdkmanager\" 'cmake;3.18.1'"
+    scandelete:
+      - 3rdparty
+    build: ANDROID_SDK_ROOT="$$SDK$$" ANDROID_NDK_ROOT="$$NDK$$" ../build-native.sh
+      -j $(nproc)
+    ndk: r22b
+
+  - versionName: 2.5.1
+    versionCode: 4043
+    commit: c4e5cde288a37c4bd33a354a42c800fe99ff75c9
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y clang-7 libc++-7-dev libc++abi-7-dev ninja-build make patch
+        perl
+    gradle:
+      - fdroid
+    prebuild: "\"$$SDK$$/tools/bin/sdkmanager\" 'cmake;3.18.1'"
+    scanignore:
+      - gradle-plugin/build
+    scandelete:
+      - 3rdparty
+    ndk: r22b
+    gradleprops:
+      - org.equeim.tremotesf.use-cmake-from-sdk=true
+      - org.equeim.tremotesf.host-qt-cmake-flags=-DCMAKE_C_COMPILER=clang-7 -DCMAKE_CXX_COMPILER=clang++-7
+        -DCMAKE_CXX_FLAGS=-stdlib=libc++
+
+  - versionName: 2.5.3
+    versionCode: 4045
+    commit: 033c0284fd23bceca8a008004821ad42481e43f7
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y clang-7 libc++-7-dev libc++abi-7-dev ninja-build make patch
+        perl
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    prebuild: JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 $$SDK$$/tools/bin/sdkmanager
+      'cmake;3.18.1'
+    scanignore:
+      - gradle-plugin/build
+    scandelete:
+      - 3rdparty
+    ndk: r23
+    gradleprops:
+      - org.equeim.tremotesf.use-cmake-from-sdk=true
+      - org.equeim.tremotesf.host-qt-cmake-flags=-DCMAKE_C_COMPILER=clang-7 -DCMAKE_CXX_COMPILER=clang++-7
+        -DCMAKE_CXX_FLAGS=-stdlib=libc++
+
+  - versionName: 2.5.4
+    versionCode: 4046
+    commit: d9ad5c938958e7cdf16bbef5f4cb6e4ccfe5b61e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y clang-7 libc++-7-dev libc++abi-7-dev ninja-build make patch
+        perl
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    prebuild: JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 $$SDK$$/tools/bin/sdkmanager
+      'cmake;3.18.1'
+    scanignore:
+      - gradle-plugin/build
+    scandelete:
+      - 3rdparty
+    ndk: r23
+    gradleprops:
+      - org.equeim.tremotesf.use-cmake-from-sdk=true
+      - org.equeim.tremotesf.host-qt-cmake-flags=-DCMAKE_C_COMPILER=clang-7 -DCMAKE_CXX_COMPILER=clang++-7
+        -DCMAKE_CXX_FLAGS=-stdlib=libc++
+
+  - versionName: 2.6.0
+    versionCode: 4047
+    commit: a0548a174e8d8ac202e3d49d28c901cdade69f7a
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y clang-7 libc++-7-dev libc++abi-7-dev ninja-build make patch
+        perl
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    prebuild: JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 $$SDK$$/tools/bin/sdkmanager
+      'cmake;3.18.1'
+    scanignore:
+      - gradle-plugin/build
+    scandelete:
+      - 3rdparty
+    ndk: r24
+    gradleprops:
+      - org.equeim.tremotesf.host-qt-cmake-flags=-DCMAKE_C_COMPILER=clang-7 -DCMAKE_CXX_COMPILER=clang++-7
+        -DCMAKE_CXX_FLAGS=-stdlib=libc++
+      - org.equeim.tremotesf.print-3rdparty-build-log-on-error=true
+
+  - versionName: 2.6.1
+    versionCode: 4048
+    commit: 2.6.1
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y clang-11 libc++-11-dev libc++abi-11-dev ninja-build make
+        patch perl openjdk-11-jdk-headless
+      - update-alternatives --auto java
+      - update-alternatives --auto javac
+      - update-alternatives --auto jar
+    gradle:
+      - fdroid
+    prebuild: JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 $$SDK$$/tools/bin/sdkmanager
+      'cmake;3.18.1'
+    scanignore:
+      - gradle-plugin/build
+    scandelete:
+      - 3rdparty
+    ndk: r24
+    gradleprops:
+      - org.equeim.tremotesf.host-qt-cmake-flags=-DCMAKE_C_COMPILER=clang-11 -DCMAKE_CXX_COMPILER=clang++-11
+        -DCMAKE_CXX_FLAGS=-stdlib=libc++
+      - org.equeim.tremotesf.print-3rdparty-build-log-on-error=true
+
+  - versionName: 2.7.1
+    versionCode: 4050
+    commit: 2.7.1
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y g++ ninja-build make patch perl
+    gradle:
+      - fdroid
+    srclibs:
+      - FirefoxAndroid@v107.0.6
+    prebuild:
+      - sdkmanager 'cmake;3.22.1'
+      - sed -i -e 's|maven.*mozilla.*|mavenLocal\(\)|' ../settings.gradle.kts
+      - cd '$$FirefoxAndroid$$/android-components'
+      - tasks=":lib-publicsuffixlist:publishToMavenLocal $(gradle :lib-publicsuffixlist:dependencies
+        --configuration releaseRuntimeClasspath | perl -lne 'print "$1:publishToMavenLocal"
+        if /^.*--- project ([^\s]+)$/')"
+      - gradle $tasks
+    scanignore:
+      - gradle-plugin/build
+    scandelete:
+      - 3rdparty
+    ndk: r25b
+    gradleprops:
+      - org.equeim.tremotesf.print-3rdparty-build-log-on-error=true
+
+  - versionName: 2.7.2
+    versionCode: 4051
+    commit: 7f374e0ece638d3b901abe3f3146b742be726619
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y g++ ninja-build make patch perl
+    gradle:
+      - fdroid
+    srclibs:
+      - FirefoxAndroid@v107.0.6
+    prebuild:
+      - sdkmanager 'cmake;3.22.1'
+      - sed -i -e 's|maven.*mozilla.*|mavenLocal\(\)|' ../settings.gradle.kts
+      - cd '$$FirefoxAndroid$$/android-components'
+      - tasks=":lib-publicsuffixlist:publishToMavenLocal $(gradle :lib-publicsuffixlist:dependencies
+        --configuration releaseRuntimeClasspath | perl -lne 'print "$1:publishToMavenLocal"
+        if /^.*--- project ([^\s]+)$/')"
+      - gradle $tasks
+    scanignore:
+      - gradle-plugin/build
+    scandelete:
+      - 3rdparty
+    ndk: r25b
+    gradleprops:
+      - org.equeim.tremotesf.print-3rdparty-build-log-on-error=true
+
+  - versionName: 2.8.0
+    versionCode: 4052
+    commit: 4177f7f67b5d23a78f9f11877a12760a4775d35e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y g++ ninja-build make patch perl
+    gradle:
+      - fdroid
+    srclibs:
+      - FirefoxAndroid@v108.0.8
+    prebuild:
+      - sdkmanager 'cmake;3.22.1'
+      - sed -i -e 's|maven.*mozilla.*|mavenLocal\(\)|' ../settings.gradle.kts
+      - cd '$$FirefoxAndroid$$/android-components'
+      - tasks=":lib-publicsuffixlist:publishToMavenLocal $(gradle :lib-publicsuffixlist:dependencies
+        --configuration releaseRuntimeClasspath | perl -lne 'print "$1:publishToMavenLocal"
+        if /^.*--- project ([^\s]+)$/')"
+      - gradle $tasks
+    scanignore:
+      - gradle-plugin/build
+    scandelete:
+      - 3rdparty
+    ndk: r25b
+    gradleprops:
+      - org.equeim.tremotesf.print-3rdparty-build-log-on-error=true
+
+  - versionName: 2.9.0
+    versionCode: 4053
+    commit: 9d24b3b3db77eecb3cd332f8c721684e3fe09d80
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y build-essential pkgconf ninja-build autoconf automake libtool
+        python3-setuptools
+    gradle:
+      - fdroid
+    prebuild: sdkmanager 'cmake;3.22.1'
+    scanignore:
+      - gradle-plugin/build
+    ndk: r25c
+
+  - versionName: 2.9.1
+    versionCode: 4054
+    commit: 8f49c588666a4a611b254ae6f10cb651d23acc6d
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y build-essential pkgconf ninja-build autoconf automake libtool
+        python3-setuptools
+    gradle:
+      - fdroid
+    prebuild: sdkmanager 'cmake;3.22.1'
+    scanignore:
+      - gradle-plugin/build
+    ndk: r25c
+
+  - versionName: 2.10.0
+    versionCode: 4055
+    commit: 2.10.0
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    scanignore:
+      - gradle-plugin/build
+
+  - versionName: 2.10.1
+    versionCode: 4056
+    commit: 3811f7b9844a76445e3089d1dbcf26a5ba033436
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    scanignore:
+      - gradle-plugin/build
+
+  - versionName: 2.10.2
+    versionCode: 4057
+    commit: 2437f3c40aeb7ed3af5fef4ee82ff97a7488c94f
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+    scanignore:
+      - gradle-plugin/build
+
+  - versionName: 2.11.0
+    versionCode: 4058
+    commit: 23cd097ee328dff026decfefdfd8d8a4ff9e3c92
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+    scanignore:
+      - gradle-plugin/build
+
+  - versionName: 2.11.1
+    versionCode: 4059
+    commit: 2161cdd81e2c4f1677b3c22071042344081a7ab7
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.12.0
+    versionCode: 4060
+    commit: 40c4260405c2abbc357ae2667f3ccfc2986b7253
+    subdir: app
+    submodules: true
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 2.12.1
+    versionCode: 4061
+    commit: b8892782d1aaa29f8b523978cc209b55707078ef
+    subdir: app
+    submodules: true
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 2.13.0
+    versionCode: 4062
+    commit: 3b6b0b9c8e1cbb57024191fb34d12bb6e6e2c4b3
+    subdir: app
+    submodules: true
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 2.13.1
+    versionCode: 4063
+    commit: ded5d7b54c00a04eb357c069ecdf7b913d988dce
+    subdir: app
+    submodules: true
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+MaintainerNotes: |
+  Tremotesf uses Gradle plugin in its build process, which is compiled from source on first Gradle invocation.
+  Since it happens before scanning for binaries, we need to scanignore plugin's build directory.
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckName: Ignore
+UpdateCheckData: app/build.gradle.kts|versionCode = (\d+)|app/build.gradle.kts|versionName
+  = "([\d.]+)"
+CurrentVersion: 2.13.1
+CurrentVersionCode: 4063

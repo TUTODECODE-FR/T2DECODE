@@ -1,0 +1,55 @@
+Categories:
+  - Local Media Player
+  - Multimedia
+License: GPL-3.0-only
+AuthorName: Muntashir Al-Islam
+AuthorEmail: muntashirakon@riseup.net
+SourceCode: https://github.com/MuntashirAkon/Metro
+IssueTracker: https://github.com/MuntashirAkon/Metro/issues
+
+AutoName: Metro
+
+RepoType: git
+Repo: https://github.com/MuntashirAkon/Metro
+
+Builds:
+  - versionName: 4.0.010
+    versionCode: 10503
+    commit: v4.0.010
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 5.8.4
+    versionCode: 10579
+    commit: b103387d73b897b16f9560dc6c3a426bd5a7d246
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 5.8.5
+    versionCode: 10580
+    commit: 2fa5407b496ac7522c2cea9f0925e9e34e290f16
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 6.1.0
+    versionCode: 10603
+    commit: 32e0a24358b8f92bf1da748e7fcd08499346478c
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 6.1.0
+CurrentVersionCode: 10603

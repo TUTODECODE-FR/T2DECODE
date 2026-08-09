@@ -1,0 +1,67 @@
+Categories:
+  - Browser
+License: GPL-3.0-only
+WebSite: https://consoleflow.karrarnazim.space
+SourceCode: https://github.com/SANDRO00O/ConsoleFlow-mobile
+IssueTracker: https://github.com/SANDRO00O/ConsoleFlow-mobile/issues
+
+AutoName: ConsoleFlow
+
+RepoType: git
+Repo: https://github.com/SANDRO00O/ConsoleFlow-mobile
+
+Builds:
+  - versionName: 2.0.0
+    versionCode: 4
+    disable: Broken previous release; replaced by 2.1.2
+    commit: 06efd30b8df7c93fca485555c28e3234574c9c47
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.2
+    versionCode: 5
+    commit: 415c336e7a1c4a6e37c16ef0471dd917fc018871
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.5
+    versionCode: 7
+    commit: b9edb335f43435eecb5388da58ce030bc2eff950
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.8
+    versionCode: 8
+    commit: b3c650e01982e702f5c2e025f0fe35cc1d563152
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.6
+    versionCode: 11
+    commit: 168611c83002a365904e1082212c47467c74848f
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.7
+    versionCode: 12
+    commit: 801ff3bdc879dcf43408eb4eb1e17419e2a571c5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.8
+    versionCode: 13
+    commit: d4477f51f80f5b246f6738153f27d9e7325c9ce2
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.2.8
+CurrentVersionCode: 13

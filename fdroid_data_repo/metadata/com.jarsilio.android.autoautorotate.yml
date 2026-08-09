@@ -1,0 +1,355 @@
+Categories:
+  - System
+License: GPL-3.0-only
+AuthorName: juanitobananas
+SourceCode: https://gitlab.com/juanitobananas/auto-auto-rotate
+IssueTracker: https://gitlab.com/juanitobananas/auto-auto-rotate/issues
+Liberapay: juanitobananas
+Bitcoin: bc1qdl8md3dwmg39e9umyjfsdn9sy7mcpxfypen45a
+
+AutoName: Auto Auto-Rotate
+
+RepoType: git
+Repo: https://gitlab.com/juanitobananas/auto-auto-rotate.git
+
+Builds:
+  - versionName: '0.2'
+    versionCode: 2
+    commit: v0.2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '0.3'
+    versionCode: 3
+    commit: v0.3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '0.4'
+    versionCode: 4
+    commit: v0.4
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '0.5'
+    versionCode: 5
+    commit: v0.5
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '0.7'
+    versionCode: 7
+    commit: v0.7
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.8.1
+    versionCode: 9
+    commit: v0.8.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.8.2
+    versionCode: 10
+    commit: v0.8.2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.8.3
+    versionCode: 11
+    commit: v0.8.3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '0.9'
+    versionCode: 12
+    commit: v0.9
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '0.10'
+    versionCode: 13
+    commit: v0.10
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.10.1
+    versionCode: 14
+    commit: v0.10.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.10.2
+    versionCode: 15
+    commit: v0.10.2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.10.3
+    versionCode: 16
+    commit: v0.10.3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.10.4
+    versionCode: 17
+    commit: v0.10.4
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.10.5
+    versionCode: 18
+    commit: v0.10.5
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.10.6
+    versionCode: 19
+    commit: v0.10.6
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.10.7
+    versionCode: 20
+    commit: v0.10.7
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.10.8
+    versionCode: 21
+    commit: v0.10.8
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '0.11'
+    versionCode: 22
+    commit: v0.11
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.11.1
+    versionCode: 23
+    commit: v0.11.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.11.2
+    versionCode: 24
+    commit: d5c493938a3b3fa026cbe01ea99b50b09c8c8f91
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.11.4
+    versionCode: 26
+    commit: 01f5bbbbf4a5e7163618639c0c531bae224acd4d
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.11.5
+    versionCode: 27
+    commit: ccadda9ebe81ce13804fd1d709d4306cccdf2683
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.11.7
+    versionCode: 29
+    commit: 987d21e4ef696281e4fd121de829e99614af2bab
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '0.12'
+    versionCode: 30
+    commit: b1013b74a9922e7dcdc7d945ea038a2272394fa0
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.12.1
+    versionCode: 31
+    commit: df732ec915865f714b885daf81fbe0cd3d61637c
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.12.2
+    versionCode: 32
+    commit: e186491ee717b122ceecbac3e04465a87e5e37b2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.12.3
+    versionCode: 33
+    commit: 9c289f3b354c1cff3670e22ac99dda0658c2f3f7
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 0.12.4
+    versionCode: 34
+    commit: 6dcdc70e4f4840a6869c7238395cc63fbef07f87
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 0.12.5
+    versionCode: 35
+    commit: b65c3b1f5a2c546e701a97aefd03c2e10c417bcf
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 0.12.7
+    versionCode: 37
+    commit: 0e06bc53d476780d58bc0a064cd62b5a81393885
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.12.9
+    versionCode: 39
+    commit: c7981367d6a5f7609b65edcecf898c35976495ee
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '0.13'
+    versionCode: 40
+    commit: 81bde5323a94c9275d5ddb5dcce97d8e2fc4ebe1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.14.1
+    versionCode: 42
+    commit: 0631698628030fc8ec9a9d1969bafc392cc3adb7
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.14.2
+    versionCode: 43
+    commit: fe23ed05c6adc097c61bac6046b57777f1e45844
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.14.3
+    versionCode: 44
+    commit: 717d6cc3aafeeaabe6dc24b940e4c57a2fc60c39
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.14.4
+    versionCode: 45
+    commit: 1ae2bf98bf07d500dfadc60d07de21f1bd523ce1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.14.5
+    versionCode: 46
+    commit: dfcc4f5bfedbef41011a219d42ef1d63acc35155
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.14.5
+CurrentVersionCode: 46

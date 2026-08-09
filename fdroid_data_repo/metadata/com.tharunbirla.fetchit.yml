@@ -1,0 +1,50 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on api.cobalt.tools and other servers to fetch files.
+Categories:
+  - Internet
+License: MIT
+SourceCode: https://github.com/tharunbirla/FetchIt
+IssueTracker: https://github.com/tharunbirla/FetchIt/issues
+
+AutoName: FetchIt
+
+RepoType: git
+Repo: https://github.com/tharunbirla/FetchIt.git
+Binaries: https://github.com/tharunbirla/FetchIt/releases/download/v%v/app-release.apk
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: dba66fd2f27a7895bafee046f14a3511bae87344
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.2'
+    versionCode: 3
+    commit: 0ba85ff433b736de02608061f861aee1b7cb4017
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.3'
+    versionCode: 4
+    commit: 95a88e76ffcee37a31c93b04da6bdb1a13fb7f2d
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.4'
+    versionCode: 5
+    commit: d481175ff5dbcf96fe5edea87a00c50df14bcfef
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: 5ed4cb8f82efdc24cd482a165b85a6e4741598e23b0166ebe2a1121d553a0f33
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.4'
+CurrentVersionCode: 5

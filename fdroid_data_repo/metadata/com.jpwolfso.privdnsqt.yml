@@ -1,0 +1,63 @@
+Categories:
+  - Connectivity
+  - System
+License: GPL-3.0-only
+AuthorName: Joshua Wolfsohn
+AuthorEmail: jpwolfso@edu.uwaterloo.ca
+SourceCode: https://github.com/joshuawolfsohn/Private-DNS-Quick-Tile
+IssueTracker: https://github.com/joshuawolfsohn/Private-DNS-Quick-Tile/issues
+Changelog: https://github.com/joshuawolfsohn/Private-DNS-Quick-Tile/releases
+
+AutoName: Private DNS Quick Tile
+Description: |-
+  Adds a Private DNS quick tile to the Android Quick Settings.
+
+  In order to change the Private DNS settings, this app requires the
+  WRITE_SECURE_SETTINGS permission.
+
+  This permission can only be granted in an ADB shell with the command "pm
+  grant com.jpwolfso.privdnsqt android.permission.WRITE_SECURE_SETTINGS"
+
+RepoType: git
+Repo: https://github.com/joshuawolfsohn/Private-DNS-Quick-Tile.git
+
+Builds:
+  - versionName: 1.1.1
+    versionCode: 2
+    commit: v1.1.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.2'
+    versionCode: 3
+    commit: v1.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.3'
+    versionCode: 4
+    commit: v1.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.4'
+    versionCode: 5
+    commit: v1.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.5'
+    versionCode: 6
+    commit: v1.5
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.5'
+CurrentVersionCode: 6

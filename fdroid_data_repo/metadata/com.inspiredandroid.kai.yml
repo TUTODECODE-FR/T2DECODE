@@ -1,0 +1,735 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Rely on Gemini and Groq
+Categories:
+  - AI Chat
+License: Apache-2.0
+AuthorName: Simon Schubert
+AuthorEmail: simon@librem.one
+AuthorWebSite: https://schubert-simon.de/
+WebSite: https://simonschubert.github.io/Kai/
+SourceCode: https://github.com/SimonSchubert/Kai
+IssueTracker: https://github.com/SimonSchubert/Kai/issues
+Changelog: https://github.com/SimonSchubert/Kai/releases
+Donate: https://github.com/sponsors/SimonSchubert
+
+AutoName: Kai 9000
+
+RepoType: git
+Repo: https://github.com/SimonSchubert/Kai
+Binaries: https://github.com/SimonSchubert/Kai/releases/download/v%v/Kai-%v-android.apk
+
+Builds:
+  - versionName: 1.2.12
+    versionCode: 29
+    commit: 2d022eaad5b407025664db1fea050e9d5eaca475
+    subdir: composeApp
+    gradle:
+      - yes
+    binary: https://github.com/SimonSchubert/Kai/releases/download/v%v/Kai.apk
+    rm:
+      - iosApp
+
+  - versionName: 1.2.13
+    versionCode: 30
+    commit: 7d9b801cd2f0737db3dd1e0b5c4947644bf17b67
+    subdir: composeApp
+    gradle:
+      - yes
+    binary: https://github.com/SimonSchubert/Kai/releases/download/v%v/Kai.apk
+    rm:
+      - iosApp
+
+  - versionName: 1.2.14
+    versionCode: 31
+    commit: 7ae6f61e2c2dc97197f3704f7f702c771ebd0115
+    subdir: composeApp
+    gradle:
+      - yes
+    binary: https://github.com/SimonSchubert/Kai/releases/download/v%v/Kai.apk
+    rm:
+      - iosApp
+
+  - versionName: 1.3.0
+    versionCode: 32
+    commit: 2747504d5c64d8ffa2d8e1f5af83bc8ec33d1502
+    subdir: composeApp
+    gradle:
+      - yes
+    binary: https://github.com/SimonSchubert/Kai/releases/download/v%v/Kai.apk
+    rm:
+      - iosApp
+
+  - versionName: 1.3.1
+    versionCode: 33
+    commit: bbe8d8b10fafbe73cbe84380253ae354cc192abc
+    subdir: composeApp
+    gradle:
+      - yes
+    binary: https://github.com/SimonSchubert/Kai/releases/download/v%v/Kai.apk
+    rm:
+      - iosApp
+
+  - versionName: 1.3.3
+    versionCode: 35
+    commit: f7a51814ce93ff3439e7eacdec5294f84fb18f1b
+    subdir: composeApp
+    gradle:
+      - yes
+    rm:
+      - iosApp
+
+  - versionName: 1.6.2
+    versionCode: 46
+    commit: 0f931a2dc6a99553c9cf06bd991b5b6e4682dc4f
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.7.0
+    versionCode: 47
+    commit: b701420dccbd68cf98095ef9f5316972f612e404
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.7.3
+    versionCode: 52
+    commit: d41b299b72a40615e7e466b55226786a6dcf5706
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.7.5
+    versionCode: 54
+    commit: ef90466402d51397cf690571672226d23112bcda
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.7.6
+    versionCode: 55
+    commit: c0b72ff4a4a065d06c275bff3206c5a80dea1aa4
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.7.7
+    versionCode: 56
+    commit: 98cea2902c5753d5aaeedcf196c63297664939e4
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.7.8
+    versionCode: 58
+    commit: 70339b281ceb93a8f989ca7737b790f6f7cd3af8
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.7.9
+    versionCode: 59
+    commit: 1c7c40e005f26c291ff4b893568ea0b5de96ac44
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.7.10
+    versionCode: 60
+    commit: ac166e48930d9bbee19c8eefb9f3d504935d3112
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.7.11
+    versionCode: 61
+    commit: 14135ff9efc9c4c6ab2b0fb314bd786cdcabd805
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.8.0
+    versionCode: 62
+    commit: 4562cc5fe8f587c4a9b1ed154742756d7d02c217
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.8.1
+    versionCode: 63
+    commit: 85bbb5c678c9c7383674c3a06b236c77ebb99d74
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.8.2
+    versionCode: 64
+    commit: 5bbee72ddabb089e3524558398fecdbc058cba01
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.9.3
+    versionCode: 68
+    commit: f311cdabec7b03072c2af7794d5097e9e717da42
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.9.4
+    versionCode: 69
+    commit: 42b1795d670644798c9b002fbff2daa215d463ae
+    subdir: composeApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.9.7
+    versionCode: 72
+    commit: aa89d2c67fdde4d6ed5c935dbad77a25c16b35a0
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.9.8
+    versionCode: 73
+    commit: 250ca82c0ac692d8465597692f05b3de523eb079
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.10.0
+    versionCode: 74
+    commit: 1dd34de255881ffc393515cd83afa3a88edceac8
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 1.11.1
+    versionCode: 76
+    commit: 552b337bb9d02e85de641e839ade3cf40e78d05e
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    ndk: r28c
+
+  - versionName: 1.11.2
+    versionCode: 77
+    commit: 3799281417a1547bca8f19cea53ec2d46f2de54a
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    ndk: r28c
+
+  - versionName: 1.12.3
+    versionCode: 81
+    commit: 00a379f2171d3c1f3e09cdb97e4cc45b907969ee
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.0.0
+    versionCode: 82
+    commit: 06977e962a46561efa991ae38481455f86c7c237
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.0.1
+    versionCode: 83
+    commit: c78732214b3ad0ebc6b845bdbc217af376d7c8ad
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.0.2
+    versionCode: 84
+    commit: e171850a1ea017453e1650536e4a7db35d08eb12
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.0.3
+    versionCode: 85
+    commit: a2c5e7612d527a463d4a0e80fd5b85ccf7775020
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.1.4
+    versionCode: 90
+    commit: 16f6c9b049d608f268d422cd15156b73e3e5824a
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.1.5
+    versionCode: 91
+    commit: 44ba7f2c3261e0f2ecf1fec43c8b050639d850db
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.2.0
+    versionCode: 92
+    commit: 090672d90f984e53824aec5e2efc3861e1b4290f
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.2.1
+    versionCode: 93
+    commit: 8d6753d206aad35644035934e5f0ba8f9ff4ae63
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.3.0
+    versionCode: 94
+    commit: 83dec3e835438d84dd00f4d5359742c92966930d
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.3.1
+    versionCode: 95
+    commit: 11e04a9698e10548a48a93154baf0f4409d8f8e9
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.3.2
+    versionCode: 96
+    commit: 2748ae0f863bd38ca4f2959992fac407c7f95fe3
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.3.3
+    versionCode: 97
+    commit: 70d8b440976faf196d6aaedad9773cc93c5ee36d
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.3.4
+    versionCode: 98
+    commit: b4b95108904fa9cb3057a0c1366d68fc9184221e
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.4.0
+    versionCode: 99
+    commit: 2f62de892b827300fcc5304e6a3364177de3b5a4
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.4.1
+    versionCode: 100
+    commit: 17e69e1efffb51112cd9fe4706a040cb270d9c92
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.5.0
+    versionCode: 101
+    commit: e1561fe576b12ee63a746a92de7d588ab29cf441
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.5.1
+    versionCode: 102
+    commit: 225f8da5e53c902b86f90639d2bd930866f3d6db
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.6.0
+    versionCode: 103
+    commit: b75ab2d2474ee101db04f216eb0fdfdf6d36ddd1
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.6.1
+    versionCode: 104
+    commit: 087ec608dac7f9d884dae80a5796ad983444961b
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.6.2
+    versionCode: 105
+    commit: e08e2251bb4ca576891c586a154a239b3ab5fec5
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.6.3
+    versionCode: 106
+    commit: db02b0b8fcdfca949291f31a897e99eb48c5f508
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.7.0
+    versionCode: 107
+    commit: b30b8096e0bb27cae37de4b77daf9ef35444e1b5
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.7.1
+    versionCode: 108
+    commit: 3189e658974f574c3f902d91dff37ac11dbbfe3a
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.8.0
+    versionCode: 109
+    commit: 363146afa1404308401d8f2317e064dde2cd1806
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.8.1
+    versionCode: 110
+    commit: b5077d5448f134db83bf5f3de845ad60f69bb438
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.8.2
+    versionCode: 111
+    commit: 5a551d7999aaa664e66f067eeaebd966a98ea98d
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.8.3
+    versionCode: 112
+    commit: 9f7f79a6a8f1f418b9ceeada3f7c9868d57f08ec
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+  - versionName: 2.9.0
+    versionCode: 113
+    commit: 14b347f50056d27fbf39c16d33b7dbbf189e5cdf
+    subdir: androidApp
+    sudo:
+      - apt-get update
+      - apt-get install -y make libntirpc-dev gawk
+    gradle:
+      - foss
+    rm:
+      - iosApp
+    scandelete:
+      - androidApp/src/main/jniLibs
+    build: bash ../build-proot.sh
+    ndk: r29
+
+AllowedAPKSigningKeys: 9963a272dc3828e23ccdddf2121a32ad428c6633f188c5c263b74414dc20a33f
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: gradle/libs.versions.toml|android-versionCode = "(\d+)"|.|appVersion
+  = "(.+)"
+CurrentVersion: 2.9.0
+CurrentVersionCode: 113

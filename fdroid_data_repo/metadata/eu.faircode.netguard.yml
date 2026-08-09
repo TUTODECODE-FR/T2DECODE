@@ -1,0 +1,1536 @@
+Categories:
+  - DNS & Hosts
+  - Firewall
+  - Internet
+  - Network Analyzer
+  - Security
+  - VPN & Proxy
+License: GPL-3.0-only
+AuthorName: Marcel Bokhorst (M66B)
+WebSite: https://www.netguard.me/
+SourceCode: https://github.com/M66B/NetGuard
+IssueTracker: https://contact.faircode.eu/?product=netguard%2B
+Translation: https://crowdin.com/project/netguard
+Changelog: https://github.com/M66B/NetGuard/releases
+Donate: https://www.netguard.me
+Bitcoin: bc1q8rpjevzq698adgnjduu2jtls9hh4hknd7psc2s
+
+AutoName: NetGuard
+
+RepoType: git
+Repo: https://github.com/M66B/NetGuard.git
+
+Builds:
+  - versionName: '0.7'
+    versionCode: 7
+    commit: 42ad6c2c8137cb82f73fa2efd5e5f47959f92f17
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.12'
+    versionCode: 12
+    commit: '0.12'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.13'
+    versionCode: 13
+    commit: '0.13'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.14'
+    versionCode: 14
+    commit: '0.14'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.16'
+    versionCode: 16
+    commit: '0.16'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.17'
+    versionCode: 17
+    commit: '0.17'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.18'
+    versionCode: 18
+    commit: '0.18'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.19'
+    versionCode: 19
+    commit: '0.19'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.21'
+    versionCode: 21
+    commit: '0.21'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.24'
+    versionCode: 24
+    commit: '0.24'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.28'
+    versionCode: 28
+    commit: '0.28'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.29'
+    versionCode: 29
+    commit: '0.29'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.33'
+    versionCode: 33
+    commit: '0.33'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.34'
+    versionCode: 34
+    commit: '0.34'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.35'
+    versionCode: 35
+    commit: '0.35'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.37'
+    versionCode: 37
+    commit: '0.37'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def setOutputFile/i/*' -e
+      '/dependencies {/i*/' build.gradle
+
+  - versionName: '0.62'
+    versionCode: 2015122301
+    commit: '0.62'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.8\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.63'
+    versionCode: 2015122501
+    commit: '0.63'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.8\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.64'
+    versionCode: 2015122801
+    commit: '0.64'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.8\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.65'
+    versionCode: 2016010301
+    commit: '0.65'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.8\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.66'
+    versionCode: 2016010401
+    commit: '0.66'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.8\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.67'
+    versionCode: 2016010501
+    commit: '0.67'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.8\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.68'
+    versionCode: 2016010502
+    commit: '0.68'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.8\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.69'
+    versionCode: 2016010701
+    commit: '0.69'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.9\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.72'
+    versionCode: 2016010803
+    commit: '0.72'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.9\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.73'
+    versionCode: 2016010901
+    commit: '0.73'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.9\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.75'
+    versionCode: 2016011004
+    commit: '0.75'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.9\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.76'
+    versionCode: 2016011801
+    commit: '0.76'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.9\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.78'
+    versionCode: 2016012701
+    commit: '0.78'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.9\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.83'
+    versionCode: 2016020401
+    commit: '0.83'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.9\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.95'
+    versionCode: 2016022502
+    commit: '0.95'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.97'
+    versionCode: 2016022601
+    commit: '0.97'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '0.98'
+    versionCode: 2016022701
+    commit: '0.98'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.0'
+    versionCode: 2016022901
+    commit: '2.0'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.2'
+    versionCode: 2016030102
+    commit: '2.2'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.3'
+    versionCode: 2016030301
+    commit: '2.3'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.4'
+    versionCode: 2016030501
+    commit: '2.4'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.5'
+    versionCode: 2016030701
+    commit: '2.5'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.6'
+    versionCode: 2016031001
+    commit: '2.6'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.6'
+    versionCode: 2016031002
+    commit: '2.6'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.7'
+    versionCode: 2016031203
+    commit: '2.7'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.10'
+    versionCode: 2016031801
+    commit: '2.10'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.11'
+    versionCode: 2016032001
+    commit: '2.11'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.12'
+    versionCode: 2016032201
+    commit: '2.12'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.13'
+    versionCode: 2016032801
+    commit: '2.13'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.14'
+    versionCode: 2016033001
+    commit: '2.14'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.15'
+    versionCode: 2016033101
+    commit: '2.15'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.16'
+    versionCode: 2016033102
+    commit: '2.16'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.17'
+    versionCode: 2016040801
+    commit: '2.17'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.18'
+    versionCode: 2016040812
+    commit: '2.18'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.19'
+    versionCode: 2016041501
+    commit: '2.19'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.20'
+    versionCode: 2016041601
+    commit: '2.20'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.21'
+    versionCode: 2016042701
+    commit: '2.21'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.22'
+    versionCode: 2016050201
+    commit: '2.22'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.23'
+    versionCode: 2016050601
+    commit: '2.23'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.24'
+    versionCode: 2016051301
+    commit: '2.24'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.25'
+    versionCode: 2016051401
+    commit: '2.25'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.26'
+    versionCode: 2016062501
+    commit: '2.26'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.27'
+    versionCode: 2016062701
+    commit: '2.27'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.28'
+    versionCode: 2016070301
+    commit: '2.28'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.29'
+    versionCode: 2016070701
+    commit: '2.29'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.30'
+    versionCode: 2016070801
+    commit: '2.30'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.32'
+    versionCode: 2016070904
+    commit: '2.32'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.33'
+    versionCode: 2016071001
+    commit: '2.33'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.36'
+    versionCode: 2016071401
+    commit: '2.36'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.37'
+    versionCode: 2016071601
+    commit: '2.37'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.38'
+    versionCode: 2016071701
+    commit: '2.38'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.39'
+    versionCode: 2016071901
+    commit: '2.39'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.42'
+    versionCode: 2016072303
+    commit: '2.42'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+
+  - versionName: '2.44'
+    versionCode: 2016072411
+    commit: '2.44'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+    output: build/outputs/apk/NetGuard-v2.44-kitkat-release-unsigned.apk
+
+  - versionName: '2.44'
+    versionCode: 2016072421
+    commit: '2.44'
+    subdir: app
+    init: "echo 'task wrapper(type: Wrapper) { gradleVersion = \"2.10\" }' >> ../build.gradle"
+    gradle:
+      - yes
+    output: build/outputs/apk/NetGuard-v2.44-lollipop-release-unsigned.apk
+
+  - versionName: '2.197'
+    versionCode: 2018052201
+    commit: '2.197'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.198'
+    versionCode: 2018052301
+    commit: '2.198'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.199'
+    versionCode: 2018062601
+    commit: '2.199'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.200'
+    versionCode: 2018070101
+    commit: '2.200'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.203'
+    versionCode: 2018070901
+    commit: '2.203'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.204'
+    versionCode: 2018071001
+    commit: '2.204'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.205'
+    versionCode: 2018080101
+    commit: '2.205'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.206'
+    versionCode: 2018082301
+    commit: '2.206'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.207'
+    versionCode: 2018091101
+    commit: '2.207'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.209'
+    versionCode: 2018100201
+    commit: '2.209'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.212'
+    versionCode: 2018100703
+    commit: '2.212'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.213'
+    versionCode: 2018101201
+    commit: '2.213'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.215'
+    versionCode: 2018101702
+    commit: '2.215'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.216'
+    versionCode: 2018102001
+    commit: '2.216'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.217'
+    versionCode: 2018111701
+    commit: '2.217'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.218'
+    versionCode: 2018120701
+    commit: '2.218'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.219'
+    versionCode: 2019010701
+    commit: '2.219'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.221'
+    versionCode: 2019010901
+    commit: '2.221'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.222'
+    versionCode: 2019011301
+    commit: '2.222'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.224'
+    versionCode: 2019012001
+    commit: '2.224'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.225'
+    versionCode: 2019013101
+    commit: '2.225'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.226'
+    versionCode: 2019021701
+    commit: '2.226'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.228'
+    versionCode: 2019022702
+    commit: '2.228'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.229'
+    versionCode: 2019030702
+    commit: '2.229'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.231'
+    versionCode: 2019041702
+    commit: '2.231'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.233'
+    versionCode: 2019041902
+    commit: '2.233'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.234'
+    versionCode: 2019042201
+    commit: '2.234'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.236'
+    versionCode: 2019042302
+    commit: '2.236'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.237'
+    versionCode: 2019042801
+    commit: '2.237'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.238'
+    versionCode: 2019043001
+    commit: '2.238'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.239'
+    versionCode: 2019050401
+    commit: '2.239'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.240'
+    versionCode: 2019050501
+    commit: '2.240'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.241'
+    versionCode: 2019050601
+    commit: '2.241'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.242'
+    versionCode: 2019050701
+    commit: '2.242'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.243'
+    versionCode: 2019050801
+    commit: '2.243'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.244'
+    versionCode: 2019051501
+    commit: '2.244'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.245'
+    versionCode: 2019051701
+    commit: '2.245'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.247'
+    versionCode: 2019052202
+    commit: '2.247'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.248'
+    versionCode: 2019052901
+    commit: '2.248'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.249'
+    versionCode: 2019060101
+    commit: '2.249'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.250'
+    versionCode: 2019060601
+    commit: '2.250'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.251'
+    versionCode: 2019062901
+    commit: '2.251'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.252'
+    versionCode: 2019070901
+    commit: '2.252'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.253'
+    versionCode: 2019071301
+    commit: '2.253'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.255'
+    versionCode: 2019072301
+    commit: '2.255'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.256'
+    versionCode: 2019072801
+    commit: '2.256'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.258'
+    versionCode: 2019080402
+    commit: '2.258'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.260'
+    versionCode: 2019080601
+    commit: '2.260'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.261'
+    versionCode: 2019081001
+    commit: '2.261'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+
+  - versionName: '2.262'
+    versionCode: 2019082401
+    commit: '2.262'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r19c
+
+  - versionName: '2.263'
+    versionCode: 2019090101
+    commit: '2.263'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r19c
+
+  - versionName: '2.265'
+    versionCode: 2019090109
+    commit: '2.265'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r19c
+
+  - versionName: '2.266'
+    versionCode: 2019091001
+    commit: '2.266'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r19c
+
+  - versionName: '2.267'
+    versionCode: 2019101301
+    commit: '2.267'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r19c
+
+  - versionName: '2.268'
+    versionCode: 2019102401
+    commit: '2.268'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r19c
+
+  - versionName: '2.269'
+    versionCode: 2019102901
+    commit: '2.269'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r19c
+
+  - versionName: '2.270'
+    versionCode: 2019122601
+    commit: '2.270'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r19c
+
+  - versionName: '2.273'
+    versionCode: 2020011002
+    commit: '2.273'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r19c
+
+  - versionName: '2.274'
+    versionCode: 2020021401
+    commit: '2.274'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r19c
+
+  - versionName: '2.275'
+    versionCode: 2020032001
+    commit: '2.275'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21
+
+  - versionName: '2.276'
+    versionCode: 2020032201
+    commit: '2.276'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21
+
+  - versionName: '2.279'
+    versionCode: 2020041901
+    commit: '2.279'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21
+
+  - versionName: '2.280'
+    versionCode: 2020042401
+    commit: '2.280'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21
+
+  - versionName: '2.281'
+    versionCode: 2020051801
+    commit: '2.281'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21
+
+  - versionName: '2.283'
+    versionCode: 2020061401
+    commit: '2.283'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21d
+
+  - versionName: '2.284'
+    versionCode: 2020070801
+    commit: '2.284'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21d
+
+  - versionName: '2.285'
+    versionCode: 2020071701
+    commit: '2.285'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21d
+
+  - versionName: '2.286'
+    versionCode: 2020081601
+    commit: '2.286'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21d
+
+  - versionName: '2.287'
+    versionCode: 2020081801
+    commit: '2.287'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21d
+
+  - versionName: '2.288'
+    versionCode: 2020082601
+    commit: '2.288'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21d
+
+  - versionName: '2.289'
+    versionCode: 2020100301
+    commit: '2.289'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21d
+
+  - versionName: '2.290'
+    versionCode: 2020120301
+    commit: '2.290'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21d
+
+  - versionName: '2.291'
+    versionCode: 2021020601
+    commit: '2.291'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21d
+
+  - versionName: '2.293'
+    versionCode: 2021022302
+    commit: '2.293'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21d
+
+  - versionName: '2.294'
+    versionCode: 2021030201
+    commit: '2.294'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21d
+
+  - versionName: '2.295'
+    versionCode: 2021032201
+    commit: '2.295'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21e
+
+  - versionName: '2.296'
+    versionCode: 2021061401
+    commit: '2.296'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21e
+
+  - versionName: '2.297'
+    versionCode: 2021091001
+    commit: a9f60e5c4fd7cd12ddd1fc9609bbe130d4eb0de9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21e
+
+  - versionName: '2.298'
+    versionCode: 2021100101
+    commit: ff00966bad172de624eca04a24533c029c34b974
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21e
+
+  - versionName: '2.299'
+    versionCode: 2021111301
+    commit: 3bae3a9c49586ccc6e686d45cb30d79bbd931085
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21e
+
+  - versionName: '2.300'
+    versionCode: 2022011901
+    commit: 9b95d909d365ebdb4b959db0301853998998e6e1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21e
+
+  - versionName: '2.301'
+    versionCode: 2022060401
+    commit: c6297c9eab611d0d46091804a075b8b23930fb6b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r21e
+
+  - versionName: '2.302'
+    versionCode: 2022061401
+    commit: a9c4da69c701eb9b650d8c5929f904add8140a1d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r23c
+
+  - versionName: '2.303'
+    versionCode: 2022111001
+    commit: c0faba1e1d9e05349554e632ce5a85f73db51ce8
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r23c
+
+  - versionName: '2.304'
+    versionCode: 2023052001
+    commit: d770a95b3579239a06e142c922804da3bdc36521
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r23c
+
+  - versionName: '2.305'
+    versionCode: 2023061101
+    commit: ebf1ab27e519fdc0cbb40782ae12c8ac3932f6c2
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r23c
+
+  - versionName: '2.306'
+    versionCode: 2023081801
+    commit: d909a6080ea9043cd1b6da6ad8b6b085bafb4682
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r23c
+
+  - versionName: '2.309'
+    versionCode: 2023082401
+    commit: 27cfbe8aba9d66ca91c775b6d3e56e512194b634
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r23c
+
+  - versionName: '2.311'
+    versionCode: 2023091701
+    commit: ddb5ce73fadb53b41e8b2b2eb98790f742296f17
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r23c
+
+  - versionName: '2.312'
+    versionCode: 2023092001
+    commit: e51571512a718355ea741c889fdfb76d78c0d703
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r23c
+
+  - versionName: '2.313'
+    versionCode: 2023092101
+    commit: 658ea3df8486116f0e8aef61b14874d7646d9f21
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r23c
+
+  - versionName: '2.319'
+    versionCode: 2023093001
+    commit: 913b28ccbbac8016271d15b743a9cc7a090db7e5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r23c
+
+  - versionName: '2.322'
+    versionCode: 2023100401
+    commit: 0ac87d0756c4b05471c931b31bd740c89e69463a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r23c
+
+  - versionName: '2.324'
+    versionCode: 2023110201
+    commit: 1b344292f3da94ea9f902db5302ad7cffe6a5e48
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r25c
+
+  - versionName: '2.325'
+    versionCode: 2023110601
+    commit: 9bc65a16fdae27f4ba15a0cfda5b50e934d47b86
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r25c
+
+  - versionName: '2.326'
+    versionCode: 2023120101
+    commit: b3dd446dd3a19f5612fc5e1c7e2db2b046ba1f96
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r25c
+
+  - versionName: '2.327'
+    versionCode: 2023120301
+    commit: a3375e11c871039e65aae3f668ef6e65bad90f04
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r25c
+
+  - versionName: '2.328'
+    versionCode: 2024022201
+    commit: 69e2a3720011f45534cac035f15232239566bbf1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r25c
+
+  - versionName: '2.329'
+    versionCode: 2024062001
+    commit: 6cb4d591ccda7cab5f85b681f10918e434207be5
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r25c
+
+  - versionName: '2.330'
+    versionCode: 2024090101
+    commit: f07ec3b6ed5d27215dc59f30ba0305e0accd4e2b
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r25c
+
+  - versionName: '2.332'
+    versionCode: 2024122801
+    commit: 2691d67c2dc45fc85f931fd1d0686f2e39421adb
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r25c
+
+  - versionName: '2.334'
+    versionCode: 2025101201
+    commit: fa88991fb0574dac744f5176d6cd4f262d00d4b1
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r25c
+
+  - versionName: '2.335'
+    versionCode: 2026052101
+    commit: d3e8b6991aee056b112caa5bc6233f7baba011d3
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystore/d' -e '/signingConfigs/d' build.gradle
+    ndk: r25c
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^[0-9.]+$
+CurrentVersion: '2.335'
+CurrentVersionCode: 2026052101

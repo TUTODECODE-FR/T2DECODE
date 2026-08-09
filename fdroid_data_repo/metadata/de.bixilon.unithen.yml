@@ -1,0 +1,71 @@
+AntiFeatures:
+  - NonFreeNet
+Categories:
+  - Pass Wallet
+License: GPL-3.0-or-later
+AuthorName: Moritz Zwerger
+AuthorEmail: bixilon@bixilon.de
+WebSite: https://gitlab.bixilon.de/bixilon/unithen
+SourceCode: https://gitlab.bixilon.de/bixilon/unithen
+IssueTracker: https://gitlab.bixilon.de/bixilon/unithen/-/issues
+
+AutoName: UniThen
+
+RepoType: git
+Repo: https://gitlab.bixilon.de/bixilon/unithen.git
+Binaries: 
+  https://gitlab.bixilon.de/api/v4/projects/444/packages/generic/apk/%v/app-release.apk
+
+Builds:
+  - versionName: 1.0.1
+    versionCode: 1
+    commit: 649ca464505832644acec6eb5ffa5a97cf4a12e2
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - fdroid=true
+
+  - versionName: 1.1.1
+    versionCode: 2
+    commit: 839ff7ab9d01892f0bfd117a8d0e67c98a1a53a9
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - fdroid=true
+
+  - versionName: '1.2'
+    versionCode: 3
+    commit: 91faeeeb714f001172fef55d82664003ca361f75
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - fdroid=true
+
+  - versionName: 1.2.1
+    versionCode: 4
+    commit: 8656e530a448c0f21132ed4899b845ed15e7fa41
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - fdroid=true
+
+  - versionName: 1.2.2
+    versionCode: 5
+    commit: 891e31292354e37ed69f0b6bca3581974162f758
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - fdroid=true
+
+AllowedAPKSigningKeys: f44dcdebfb54333fa205ff11eaa5aa1f47cde8217dd63a9fd979cd1fcf6d4241
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: fdroid.txt|\n(\d+)|.|v(.*)
+CurrentVersion: 1.2.2
+CurrentVersionCode: 5

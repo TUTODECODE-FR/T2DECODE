@@ -1,0 +1,165 @@
+Categories:
+  - Multimedia
+  - System
+License: Unlicense
+AuthorName: Egor Yakovlev
+SourceCode: https://codeberg.org/yakovlevegor/DroidRec
+IssueTracker: https://codeberg.org/yakovlevegor/DroidRec/issues
+Changelog: https://codeberg.org/yakovlevegor/DroidRec/releases
+
+AutoName: DroidRec
+
+RepoType: git
+Repo: https://codeberg.org/yakovlevegor/DroidRec.git
+
+Builds:
+  - versionName: '1.2'
+    versionCode: 3
+    commit: 078000b6ccf3579f259173bfd9ba816f89cae042
+    output: out-aligned.apk
+    prebuild: $$SDK$$/tools/bin/sdkmanager 'build-tools;32.0.0' 'platforms;android-32'
+      > /dev/null
+    build: ./build.bash $$SDK$$/platforms/android-32 $$SDK$$/build-tools/32.0.0
+
+  - versionName: '1.4'
+    versionCode: 5
+    commit: e64d6479b86701ef313253759a7a4d29ee3c3d02
+    output: build/out-aligned.apk
+    prebuild: sdkmanager 'build-tools;32.0.0' 'platforms;android-32'
+    build: ./build.bash $$SDK$$/platforms/android-32 $$SDK$$/build-tools/32.0.0
+
+  - versionName: '1.5'
+    versionCode: 6
+    commit: 9ae1d5f68ebaac504771c4848721d14c6dc687b8
+    output: build/out-aligned.apk
+    prebuild: sdkmanager 'build-tools;32.0.0' 'platforms;android-32'
+    build: ./build.bash $$SDK$$/platforms/android-32 $$SDK$$/build-tools/32.0.0
+
+  - versionName: '1.7'
+    versionCode: 8
+    commit: 562c91863782ca1a918c23309bf15fe2de20e1fc
+    output: build/out-aligned.apk
+    prebuild: sdkmanager 'build-tools;32.0.0' 'platforms;android-32'
+    build: ./build.bash $$SDK$$/platforms/android-32 $$SDK$$/build-tools/32.0.0
+
+  - versionName: '1.9'
+    versionCode: 10
+    commit: 53edfaf92545264953c5961aa1c134e3b591c7da
+    output: build/out-aligned.apk
+    prebuild: sdkmanager 'build-tools;32.0.0' 'platforms;android-32'
+    build: ./build.bash $$SDK$$/platforms/android-32 $$SDK$$/build-tools/32.0.0
+
+  - versionName: '2.1'
+    versionCode: 12
+    commit: a4f1dc046c92171701ed2e3936b81432199266b2
+    output: build/out-aligned.apk
+    prebuild: sdkmanager 'build-tools;32.0.0' 'platforms;android-32'
+    build: ./build.bash $$SDK$$/platforms/android-32 $$SDK$$/build-tools/32.0.0
+
+  - versionName: '2.2'
+    versionCode: 13
+    commit: 4094157849d3cc8770332e169ae4d20d6921a266
+    output: build/out-aligned.apk
+    prebuild: sdkmanager 'build-tools;32.0.0' 'platforms;android-32'
+    build: ./build.bash $$SDK$$/platforms/android-32 $$SDK$$/build-tools/32.0.0
+
+  - versionName: '2.3'
+    versionCode: 14
+    commit: c55fbcd4190eebab2b68e4c0aaea1f58c05f2d93
+    output: build/out-aligned.apk
+    prebuild: sdkmanager 'build-tools;32.0.0' 'platforms;android-32'
+    build: ./build.bash $$SDK$$/platforms/android-32 $$SDK$$/build-tools/32.0.0
+
+  - versionName: '2.4'
+    versionCode: 15
+    commit: 01c154c8ca6687f3bdef7f73a58079f038718f94
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.5'
+    versionCode: 16
+    commit: 13e912d2114276cfd9a6e11b803b7791b5b55fce
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '3.0'
+    versionCode: 21
+    commit: 7c345bc50f9f6dda352fbb6036b98def361feff3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '3.1'
+    versionCode: 22
+    commit: 8ad17c1bce9e9f627ff2654ce8fc0c5c6f7466d3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '3.2'
+    versionCode: 23
+    commit: eab93c5fbcf748062c745b6f161bc73e4d491088
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '3.3'
+    versionCode: 24
+    commit: 53ad8f5e9048bc55c16532fcc7b146b978b4eadf
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '3.4'
+    versionCode: 25
+    commit: 24a246b5420b87a164814068ef240c277951dc1a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '3.5'
+    versionCode: 26
+    commit: 87a37580625c27db74347abca41fd3010e40e79d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '3.6'
+    versionCode: 27
+    commit: 32a0f88c14629063909b427cbe6784889512a388
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '3.7'
+    versionCode: 28
+    commit: 1181ca7bdd820880f332e8322b7ecd24f171b023
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '3.7'
+CurrentVersionCode: 28
+
+NoSourceSince: '3.7'

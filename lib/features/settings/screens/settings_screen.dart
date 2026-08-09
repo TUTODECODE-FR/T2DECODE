@@ -7,7 +7,7 @@ import 'package:tutodecode/core/providers/settings_provider.dart';
 import 'package:tutodecode/features/courses/providers/courses_provider.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
-import 'package:easy_localization/easy_localization.dart';
+
 import 'package:tutodecode/core/responsive/responsive.dart';
 import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 import 'package:tutodecode/core/services/backup_service.dart';
@@ -394,16 +394,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               DropdownMenuItem(value: 'System', child: Text('Automatique')),
             ],
             onChanged: (val) => val != null ? settings.setAppTheme(val) : null,
-          ),
-        ),
-        const SizedBox(height: 16),
-        ListTile(
-          title: const Text('Langue de l\'application'),
-          trailing: OutlinedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/language-selection');
-            },
-            child: Text(context.locale.languageCode.toUpperCase()),
           ),
         ),
       ],

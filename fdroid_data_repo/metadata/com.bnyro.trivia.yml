@@ -1,0 +1,143 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: The Trivia API used is not libre.
+Categories:
+  - Educational Game
+  - Multimedia
+License: GPL-3.0-or-later
+AuthorName: You Apps
+WebSite: https://you-apps.github.io/
+SourceCode: https://github.com/you-apps/TriviaYou
+IssueTracker: https://github.com/you-apps/TriviaYou/issues
+Translation: https://hosted.weblate.org/projects/you-apps/trivia-you
+Changelog: https://github.com/you-apps/TriviaYou/releases
+
+AutoName: Trivia You
+
+RepoType: git
+Repo: https://github.com/you-apps/TriviaYou.git
+
+Builds:
+  - versionName: '0.6'
+    versionCode: 6
+    commit: a8e33aee485b826bca01c58dc616eb47338596b8
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '0.7'
+    versionCode: 7
+    commit: bfd02b1b24e0320f82abbf61eaa4380a4a74bba8
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '0.8'
+    versionCode: 8
+    commit: 371990c5bf716bef03b6cbd9bc6224120e753c3d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '0.9'
+    versionCode: 9
+    commit: e076e42cc4edb52040f3b6bf5a806c089b793526
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '0.10'
+    versionCode: 10
+    commit: 06da07a14dddca1cf5ae302402e76bd8bde921eb
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '0.11'
+    versionCode: 11
+    commit: 925e74bd55dd11b4458585f49defe58f00038148
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '0.12'
+    versionCode: 12
+    commit: 4285aac3b8695f4fca731ee97018343fd45c1302
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '0.13'
+    versionCode: 13
+    commit: ed2483cacf34d35f20b07699ad27a7c9b5eba9f7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '0.14'
+    versionCode: 14
+    commit: 2ece2e4ebc55a0287e0217893857f948b2b85bf0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '0.15'
+    versionCode: 15
+    commit: ed5817c552ddc08ab9625f92d667d9a767be7c92
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '0.16'
+    versionCode: 16
+    commit: 9f073806fa54b48dbdce776a99b790c8e643b061
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.0'
+    versionCode: 17
+    commit: 71adf5c5d3f3017272daf86f451572cc4b25f22f
+    subdir: app
+    gradle:
+      - yes
+
+MaintainerNotes: Upstream repo was archived 2023-05-17
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.0'
+CurrentVersionCode: 17

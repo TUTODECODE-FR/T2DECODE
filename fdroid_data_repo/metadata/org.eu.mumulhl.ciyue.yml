@@ -1,0 +1,5159 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: AI translate function relies on non-free service providers.
+Categories:
+  - Reading
+  - Translation & Dictionary
+License: MIT
+AuthorName: Mumulhl
+AuthorEmail: mumulhl.666@gmail.com
+AuthorWebSite: https://mumulhl.eu.org
+SourceCode: https://github.com/mumu-lhl/Ciyue
+IssueTracker: https://github.com/mumu-lhl/Ciyue/issues
+Changelog: https://github.com/mumu-lhl/Ciyue/blob/HEAD/CHANGELOG.md
+
+AutoName: Ciyue
+
+RepoType: git
+Repo: https://github.com/mumu-lhl/Ciyue
+Binaries: 
+  https://github.com/mumu-lhl/Ciyue/releases/download/v%v%2B%c/ciyue-universal-release.apk
+
+Builds:
+  - versionName: 0.4.3
+    versionCode: 12
+    commit: v0.4.3+12
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.4.3
+    versionCode: 14
+    commit: bddeab5a3f50edcbf59d8fea0b1872b5a1e22651
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.5.0
+    versionCode: 15
+    commit: 9fc5e85c210416f49f14b5bce78c001fa45fe05f
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.7.1
+    versionCode: 18
+    commit: 404c9d6b29896140ec3c819881357b4c0c239e18
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.8.2
+    versionCode: 211
+    commit: 1be4d735c8d80d45d0747ca3d0fc7afccceed927
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.8.2
+    versionCode: 212
+    commit: 1be4d735c8d80d45d0747ca3d0fc7afccceed927
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.8.2
+    versionCode: 213
+    commit: 1be4d735c8d80d45d0747ca3d0fc7afccceed927
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.8.3
+    versionCode: 221
+    commit: fb85273e287fa73041babba10b57b2fd80095484
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.8.3
+    versionCode: 222
+    commit: fb85273e287fa73041babba10b57b2fd80095484
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.8.3
+    versionCode: 223
+    commit: fb85273e287fa73041babba10b57b2fd80095484
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.9.0
+    versionCode: 231
+    commit: 82a6acba3fe8d00884ec072694e87d525b440745
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.9.0
+    versionCode: 232
+    commit: 82a6acba3fe8d00884ec072694e87d525b440745
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.9.0
+    versionCode: 233
+    commit: 82a6acba3fe8d00884ec072694e87d525b440745
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.10.0
+    versionCode: 241
+    commit: 16fb8e6124757cb322d9c86d200498926c565377
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.10.0
+    versionCode: 242
+    commit: 16fb8e6124757cb322d9c86d200498926c565377
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.10.0
+    versionCode: 243
+    commit: 16fb8e6124757cb322d9c86d200498926c565377
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.10.1
+    versionCode: 251
+    commit: 00d584daa89524aad82d07e154b5dc7d271a69c6
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.10.1
+    versionCode: 252
+    commit: 00d584daa89524aad82d07e154b5dc7d271a69c6
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.10.1
+    versionCode: 253
+    commit: 00d584daa89524aad82d07e154b5dc7d271a69c6
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.11.0
+    versionCode: 261
+    commit: 8e5c6ccb35e8a8d6d10b233a1cdc95391e4163ce
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.11.0
+    versionCode: 262
+    commit: 8e5c6ccb35e8a8d6d10b233a1cdc95391e4163ce
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.11.0
+    versionCode: 263
+    commit: 8e5c6ccb35e8a8d6d10b233a1cdc95391e4163ce
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.11.1
+    versionCode: 271
+    commit: 527ff5ec427b9cc494e252bfc3c22de455393a28
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.11.1
+    versionCode: 272
+    commit: 527ff5ec427b9cc494e252bfc3c22de455393a28
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.11.1
+    versionCode: 273
+    commit: 527ff5ec427b9cc494e252bfc3c22de455393a28
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.11.2
+    versionCode: 281
+    commit: 6d930f73f6297fa660783d10318e2bd8b4f93694
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.11.2
+    versionCode: 282
+    commit: 6d930f73f6297fa660783d10318e2bd8b4f93694
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.11.2
+    versionCode: 283
+    commit: 6d930f73f6297fa660783d10318e2bd8b4f93694
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.12.0
+    versionCode: 291
+    commit: a4814df45c6b10eafb47a9b27c8d69f1b92cc194
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.12.0
+    versionCode: 292
+    commit: a4814df45c6b10eafb47a9b27c8d69f1b92cc194
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.12.0
+    versionCode: 293
+    commit: a4814df45c6b10eafb47a9b27c8d69f1b92cc194
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.13.0
+    versionCode: 301
+    commit: 2bc2157b5ff0e1143897f603783424a858929abe
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.13.0
+    versionCode: 302
+    commit: 2bc2157b5ff0e1143897f603783424a858929abe
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.13.0
+    versionCode: 303
+    commit: 2bc2157b5ff0e1143897f603783424a858929abe
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.13.1
+    versionCode: 311
+    commit: a0512caafe16a1a0d5450cbc10e0ab64850d5b39
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.13.1
+    versionCode: 312
+    commit: a0512caafe16a1a0d5450cbc10e0ab64850d5b39
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.13.1
+    versionCode: 313
+    commit: a0512caafe16a1a0d5450cbc10e0ab64850d5b39
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.14.0
+    versionCode: 321
+    commit: 068e4ab32c8df6363ef447e216831f03ca09e490
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.14.0
+    versionCode: 322
+    commit: 068e4ab32c8df6363ef447e216831f03ca09e490
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.14.0
+    versionCode: 323
+    commit: 068e4ab32c8df6363ef447e216831f03ca09e490
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.15.0
+    versionCode: 331
+    commit: 3e383ba8c4b1908b213367cf1c2a48fa70bd7418
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.15.0
+    versionCode: 332
+    commit: 3e383ba8c4b1908b213367cf1c2a48fa70bd7418
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.15.0
+    versionCode: 333
+    commit: 3e383ba8c4b1908b213367cf1c2a48fa70bd7418
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.15.1
+    versionCode: 341
+    commit: cbaa41d7ed8be4cd4d38f3cb35b92415cfae8a62
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.15.1
+    versionCode: 342
+    commit: cbaa41d7ed8be4cd4d38f3cb35b92415cfae8a62
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.15.1
+    versionCode: 343
+    commit: cbaa41d7ed8be4cd4d38f3cb35b92415cfae8a62
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.16.0
+    versionCode: 371
+    commit: 8ec59bfb16de3e0d926f77db6ed2160dd0881028
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.16.0
+    versionCode: 372
+    commit: 8ec59bfb16de3e0d926f77db6ed2160dd0881028
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 0.16.0
+    versionCode: 373
+    commit: 8ec59bfb16de3e0d926f77db6ed2160dd0881028
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.0.0
+    versionCode: 421
+    commit: 48c7cab238a21cfeafcbd53735e4e19e0fe2bf67
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.0.0
+    versionCode: 422
+    commit: 48c7cab238a21cfeafcbd53735e4e19e0fe2bf67
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.0.0
+    versionCode: 423
+    commit: 48c7cab238a21cfeafcbd53735e4e19e0fe2bf67
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.1.0
+    versionCode: 441
+    commit: 20ec39682afeb4ea5357a474d037128f9f186251
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.1.0
+    versionCode: 442
+    commit: 20ec39682afeb4ea5357a474d037128f9f186251
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.1.0
+    versionCode: 443
+    commit: 20ec39682afeb4ea5357a474d037128f9f186251
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.2.0
+    versionCode: 461
+    commit: 8fced32a859229583c92a94748441212b8e9bc43
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.2.0
+    versionCode: 462
+    commit: 8fced32a859229583c92a94748441212b8e9bc43
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.2.0
+    versionCode: 463
+    commit: 8fced32a859229583c92a94748441212b8e9bc43
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.3.0
+    versionCode: 471
+    commit: a5b5ab285b7b90788c146856df535694b6f46094
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.3.0
+    versionCode: 472
+    commit: a5b5ab285b7b90788c146856df535694b6f46094
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.3.0
+    versionCode: 473
+    commit: a5b5ab285b7b90788c146856df535694b6f46094
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.3.1
+    versionCode: 481
+    commit: e18ad3687d708f4fca856535cc41e7a6b5df2a04
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.3.1
+    versionCode: 482
+    commit: e18ad3687d708f4fca856535cc41e7a6b5df2a04
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.3.1
+    versionCode: 483
+    commit: e18ad3687d708f4fca856535cc41e7a6b5df2a04
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.4.0
+    versionCode: 491
+    commit: 9539133e90daf3ce5164e6bcb311d1e69f517972
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.4.0
+    versionCode: 492
+    commit: 9539133e90daf3ce5164e6bcb311d1e69f517972
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.4.0
+    versionCode: 493
+    commit: 9539133e90daf3ce5164e6bcb311d1e69f517972
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.5.0
+    versionCode: 501
+    commit: 4e9a88220ebbaffa5007003db9216797d008125a
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.5.0
+    versionCode: 502
+    commit: 4e9a88220ebbaffa5007003db9216797d008125a
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.5.0
+    versionCode: 503
+    commit: 4e9a88220ebbaffa5007003db9216797d008125a
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.6.0
+    versionCode: 511
+    commit: 60377406a179b1eef1b606e6f9b8222eb5c40935
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.6.0
+    versionCode: 512
+    commit: 60377406a179b1eef1b606e6f9b8222eb5c40935
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.6.0
+    versionCode: 513
+    commit: 60377406a179b1eef1b606e6f9b8222eb5c40935
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.7.0
+    versionCode: 531
+    commit: 2571f4d05fbc6119670fc1942d59f0abf778e022
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.7.0
+    versionCode: 532
+    commit: 2571f4d05fbc6119670fc1942d59f0abf778e022
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.7.0
+    versionCode: 533
+    commit: 2571f4d05fbc6119670fc1942d59f0abf778e022
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.8.0
+    versionCode: 541
+    commit: 18a4b2ca5b189792b282599cf2ad1c1a67b174e3
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.8.0
+    versionCode: 542
+    commit: 18a4b2ca5b189792b282599cf2ad1c1a67b174e3
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.8.0
+    versionCode: 543
+    commit: 18a4b2ca5b189792b282599cf2ad1c1a67b174e3
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.9.0
+    versionCode: 551
+    commit: 7b3d0aa2707095859b245978bf2b7642dab0bfb5
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.9.0
+    versionCode: 552
+    commit: 7b3d0aa2707095859b245978bf2b7642dab0bfb5
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.9.0
+    versionCode: 553
+    commit: 7b3d0aa2707095859b245978bf2b7642dab0bfb5
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.10.0
+    versionCode: 561
+    commit: 685ef820061b2368debdf5a9a7645f4bc4476e2e
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.10.0
+    versionCode: 562
+    commit: 685ef820061b2368debdf5a9a7645f4bc4476e2e
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.10.0
+    versionCode: 563
+    commit: 685ef820061b2368debdf5a9a7645f4bc4476e2e
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+      - package.json
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.11.0
+    versionCode: 571
+    commit: afb51b83f50ec8184e712bb255779d19fb8514e8
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.11.0
+    versionCode: 572
+    commit: afb51b83f50ec8184e712bb255779d19fb8514e8
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.11.0
+    versionCode: 573
+    commit: afb51b83f50ec8184e712bb255779d19fb8514e8
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.13.0
+    versionCode: 604000
+    commit: bc181d76df44e0398afc0f38c01c748c3262651a
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.13.0
+    versionCode: 605000
+    commit: bc181d76df44e0398afc0f38c01c748c3262651a
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.13.0
+    versionCode: 606000
+    commit: bc181d76df44e0398afc0f38c01c748c3262651a
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.14.1
+    versionCode: 644000
+    commit: 99ade416327110e9384a680b26192f4b1010d049
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.14.1
+    versionCode: 645000
+    commit: 99ade416327110e9384a680b26192f4b1010d049
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.14.1
+    versionCode: 646000
+    commit: 99ade416327110e9384a680b26192f4b1010d049
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.16.0
+    versionCode: 671000
+    commit: 0a9bd927d6a5a292d2aeeb42e0da52aa40859aa0
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-common-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.16.0
+    versionCode: 672000
+    commit: 0a9bd927d6a5a292d2aeeb42e0da52aa40859aa0
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.16.0
+    versionCode: 673000
+    commit: 0a9bd927d6a5a292d2aeeb42e0da52aa40859aa0
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.17.0
+    versionCode: 691000
+    commit: d09be2bfc0207479783583ee6efd83b7439fe888
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-common-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.17.0
+    versionCode: 692000
+    commit: d09be2bfc0207479783583ee6efd83b7439fe888
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.17.0
+    versionCode: 693000
+    commit: d09be2bfc0207479783583ee6efd83b7439fe888
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.18.0
+    versionCode: 701000
+    commit: 208e29d99ce7aeb4e8ad832075fadf1a14782d07
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-common-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.18.0
+    versionCode: 702000
+    commit: 208e29d99ce7aeb4e8ad832075fadf1a14782d07
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.18.0
+    versionCode: 703000
+    commit: 208e29d99ce7aeb4e8ad832075fadf1a14782d07
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.19.1
+    versionCode: 781000
+    commit: ae824a26f6f0a3914c3110074e8fe0d47b760e45
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-common-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.19.1
+    versionCode: 782000
+    commit: ae824a26f6f0a3914c3110074e8fe0d47b760e45
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.19.1
+    versionCode: 783000
+    commit: ae824a26f6f0a3914c3110074e8fe0d47b760e45
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]] || exit 1'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.20.1
+    versionCode: 821000
+    commit: c73a6264b98fc0904d8dd1f19a150e1de7d37fb3
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-x86_64-common-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.20.1
+    versionCode: 822000
+    commit: c73a6264b98fc0904d8dd1f19a150e1de7d37fb3
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.20.1
+    versionCode: 823000
+    commit: c73a6264b98fc0904d8dd1f19a150e1de7d37fb3
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+
+  - versionName: 1.21.0
+    versionCode: 831000
+    commit: 1f5d3cbd1ba8db0c3b7b014a59cbd62364aa41a3
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-x86_64-common-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    ndk: r27
+
+  - versionName: 1.21.0
+    versionCode: 832000
+    commit: 1f5d3cbd1ba8db0c3b7b014a59cbd62364aa41a3
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    ndk: r27
+
+  - versionName: 1.21.0
+    versionCode: 833000
+    commit: 1f5d3cbd1ba8db0c3b7b014a59cbd62364aa41a3
+    sudo:
+      - mkdir -p /home/runner/
+      - chown vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - mv $$flutter$$ .flutter/
+      - export repo=/home/runner/work/Ciyue
+      - mkdir -p $repo
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter config --no-analytics
+      - .flutter/bin/flutter pub get
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    scanignore:
+      - .flutter/bin/cache
+    scandelete:
+      - .flutter
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo/Ciyue
+      - pushd $repo/Ciyue
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - .flutter/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo/Ciyue org.eu.mumulhl.ciyue
+    ndk: r27
+
+  - versionName: 1.22.2
+    versionCode: 861000
+    commit: 3db7060b665d353146dab920ea07591ad287f0ad
+    sudo:
+      - mkdir -p /home/runner/work/Ciyue
+      - chown -R vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-x86_64-common-release.apk
+    binary: https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export repo=/home/runner/work/Ciyue/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo
+      - pushd $repo
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - popd
+      - mv $repo org.eu.mumulhl.ciyue
+    scandelete:
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo
+      - pushd $repo
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --split-per-abi --target-platform=android-x64
+      - popd
+      - mv $repo org.eu.mumulhl.ciyue
+    ndk: r27
+
+  - versionName: 1.22.2
+    versionCode: 862000
+    commit: 3db7060b665d353146dab920ea07591ad287f0ad
+    sudo:
+      - mkdir -p /home/runner/work/Ciyue
+      - chown -R vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export repo=/home/runner/work/Ciyue/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo
+      - pushd $repo
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - popd
+      - mv $repo org.eu.mumulhl.ciyue
+    scandelete:
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo
+      - pushd $repo
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --split-per-abi --target-platform=android-arm
+      - popd
+      - mv $repo org.eu.mumulhl.ciyue
+    ndk: r27
+
+  - versionName: 1.22.2
+    versionCode: 863000
+    commit: 3db7060b665d353146dab920ea07591ad287f0ad
+    sudo:
+      - mkdir -p /home/runner/work/Ciyue
+      - chown -R vagrant /home/runner/
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-common-release.apk
+    binary: 
+      https://github.com/mumu-lhl/Ciyue/releases/download/v%v/ciyue-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*FLUTTER_VERSION:\ (.*)/\1/p" .github/workflows/release.yml
+        | head -n 1)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export repo=/home/runner/work/Ciyue/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo
+      - pushd $repo
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - popd
+      - mv $repo org.eu.mumulhl.ciyue
+    scandelete:
+      - .pub-cache
+    build:
+      - export repo=/home/runner/work/Ciyue/Ciyue
+      - cd ..
+      - mv org.eu.mumulhl.ciyue $repo
+      - pushd $repo
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --split-per-abi --target-platform=android-arm64
+      - popd
+      - mv $repo org.eu.mumulhl.ciyue
+    ndk: r27
+
+AllowedAPKSigningKeys: cd22b5c47ac2f1b67422fabeed25ac89f153ed3d37bf631b01aee47a8bb6aa6a
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[\d.]+$
+VercodeOperation:
+  - '%c * 10000 + 1000'
+  - '%c * 10000 + 2000'
+  - '%c * 10000 + 3000'
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.22.2
+CurrentVersionCode: 863000

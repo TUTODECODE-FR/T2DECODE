@@ -1,0 +1,71 @@
+Categories:
+  - Game Helper
+License: GPL-3.0-or-later
+AuthorName: Fabian Schmitthenner
+AuthorEmail: development@schmitthenner.eu
+WebSite: https://potsdam-pnp.github.io/initiative-tracker/
+SourceCode: https://github.com/potsdam-pnp/initiative-tracker
+IssueTracker: https://github.com/potsdam-pnp/initiative-tracker/issues
+
+RepoType: git
+Repo: https://github.com/potsdam-pnp/initiative-tracker
+Binaries: 
+  https://github.com/potsdam-pnp/initiative-tracker/releases/download/v%v/app-release.apk
+
+Builds:
+  - versionName: 0.1.0
+    versionCode: 100
+    commit: v0.1.0
+    subdir: composeApp
+    gradle:
+      - yes
+
+  - versionName: 0.2.0
+    versionCode: 124
+    commit: a97a6afe93b4c146da41d420ffb8d5e3f89c079b
+    subdir: composeApp
+    gradle:
+      - yes
+
+  - versionName: 0.2.1
+    versionCode: 125
+    commit: 44deb4250e3c59ee62f681a1cd5040ca221bd1bf
+    subdir: composeApp
+    gradle:
+      - yes
+
+  - versionName: 0.3.0
+    versionCode: 130
+    commit: 9470f72a9f16cdd54f2b0f4622094182cbe78e38
+    subdir: composeApp
+    gradle:
+      - yes
+
+  - versionName: 0.4.0
+    versionCode: 200
+    commit: fb7a6290fb65b9605a95eb6800145cd7de7cb8c3
+    subdir: composeApp
+    gradle:
+      - yes
+
+  - versionName: 0.5.0
+    versionCode: 215
+    commit: 780e07d6a6b55c935d6087fed28bc5965597f791
+    subdir: composeApp
+    gradle:
+      - fdroid
+
+  - versionName: 0.5.1
+    versionCode: 220
+    commit: 9778134cfc873fd8295e1adfd2946f089f775c7e
+    subdir: composeApp
+    gradle:
+      - fdroid
+
+AllowedAPKSigningKeys: 3a733bbe1ff537ae6d402fb57fccc6e024f9640027c94533e9d09e1e83ac0049
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: composeApp/build.gradle.kts|versionCode.*\?:\s(\d+)|.|versionName.*\?:\s"(.+)"
+CurrentVersion: 0.5.1
+CurrentVersionCode: 220

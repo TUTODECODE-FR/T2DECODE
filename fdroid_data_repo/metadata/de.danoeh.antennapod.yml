@@ -1,0 +1,982 @@
+Categories:
+  - Multimedia
+  - News
+  - Podcast
+License: GPL-3.0-only
+AuthorEmail: info@antennapod.org
+WebSite: https://antennapod.org
+SourceCode: https://github.com/AntennaPod/AntennaPod
+IssueTracker: https://github.com/AntennaPod/AntennaPod/issues
+Translation: https://hosted.weblate.org/engage/antennapod
+Changelog: https://github.com/AntennaPod/AntennaPod/releases
+
+AutoName: AntennaPod
+
+RepoType: git
+Repo: https://github.com/AntennaPod/AntennaPod.git
+
+Builds:
+  - versionName: 0.9.4.4
+    versionCode: 14
+    commit: 0.9.4.4
+    srclibs:
+      - ActionBarSherlock@6e3f2bb5
+      - ViewPagerIndicator@65457e
+    prebuild:
+      - sed -i 's@\(android.library.reference.1=\).*@\1$$ActionBarSherlock$$@' project.properties
+      - sed -i 's@\(android.library.reference.2=\).*@\1$$ViewPagerIndicator$$@' project.properties
+      - wget http://www.shredzone.org/attachments/download/223/flattr4j-core-2.4.jar
+        -P libs/
+      - wget 
+        http://ftp.heanet.ie/mirrors/www.apache.org/dist//commons/lang/binaries/commons-lang3-3.1-bin.zip
+      - unzip commons-lang3-3.1-bin.zip commons-lang3-3.1/commons-lang3-3.1.jar -d
+        libs/
+      - mv libs/commons-lang3-3.1/commons-lang3-3.1.jar libs/commons-lang3-3.1.jar
+      - cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.4.6
+    versionCode: 16
+    commit: 0.9.4.6
+    srclibs:
+      - ActionBarSherlock@6e3f2bb5
+      - ViewPagerIndicator@65457e
+    extlibs:
+      - flattr4j/flattr4j-core-2.4.jar
+      - commons-lang/commons-lang3-3.1.jar
+    prebuild:
+      - sed -i 's@\(android.library.reference.1=\).*@\1$$ActionBarSherlock$$@' project.properties
+      - sed -i 's@\(android.library.reference.2=\).*@\1$$ViewPagerIndicator$$@' project.properties
+      - cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.5
+    versionCode: 17
+    commit: 0.9.5
+    srclibs:
+      - ActionBarSherlock@6e3f2bb5
+      - ViewPagerIndicator@65457e
+    extlibs:
+      - flattr4j/flattr4j-core-2.4.jar
+      - commons-lang/commons-lang3-3.1.jar
+      - commons-io/commons-io-2.4.jar
+    prebuild:
+      - sed -i 's@\(android.library.reference.1=\).*@\1$$ActionBarSherlock$$@' project.properties
+      - sed -i 's@\(android.library.reference.2=\).*@\1$$ViewPagerIndicator$$@' project.properties
+      - cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.5.1
+    versionCode: 18
+    commit: 0.9.5.1
+    srclibs:
+      - ActionBarSherlock@6e3f2bb5
+      - ViewPagerIndicator@65457e
+    extlibs:
+      - flattr4j/flattr4j-core-2.4.jar
+      - commons-lang/commons-lang3-3.1.jar
+      - commons-io/commons-io-2.4.jar
+    prebuild:
+      - sed -i 's@\(android.library.reference.1=\).*@\1$$ActionBarSherlock$$@' project.properties
+      - sed -i 's@\(android.library.reference.2=\).*@\1$$ViewPagerIndicator$$@' project.properties
+      - cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.5.2
+    versionCode: 19
+    commit: 0.9.5.2
+    srclibs:
+      - ActionBarSherlock@6e3f2bb5
+      - ViewPagerIndicator@65457e
+    extlibs:
+      - flattr4j/flattr4j-core-2.4.jar
+      - commons-lang/commons-lang3-3.1.jar
+      - commons-io/commons-io-2.4.jar
+    prebuild:
+      - sed -i 's@\(android.library.reference.1=\).*@\1$$ActionBarSherlock$$@' project.properties
+      - sed -i 's@\(android.library.reference.2=\).*@\1$$ViewPagerIndicator$$@' project.properties
+      - cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.5.3
+    versionCode: 20
+    commit: 0.9.5.3
+    srclibs:
+      - ActionBarSherlock@6e3f2bb5
+      - ViewPagerIndicator@65457e
+    extlibs:
+      - flattr4j/flattr4j-core-2.4.jar
+      - commons-lang/commons-lang3-3.1.jar
+      - commons-io/commons-io-2.4.jar
+    prebuild:
+      - sed -i 's@\(android.library.reference.1=\).*@\1$$ActionBarSherlock$$@' project.properties
+      - sed -i 's@\(android.library.reference.2=\).*@\1$$ViewPagerIndicator$$@' project.properties
+      - cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.6
+    versionCode: 21
+    commit: 0.9.6
+    srclibs:
+      - ActionBarSherlock@4.1.0
+      - ViewPagerIndicator@2.3.1
+    extlibs:
+      - flattr4j/flattr4j-core-2.4.jar
+      - commons-lang/commons-lang3-3.1.jar
+      - commons-io/commons-io-2.4.jar
+    prebuild:
+      - sed -i 's@\(android.library.reference.1=\).*@\1$$ActionBarSherlock$$@' project.properties
+      - sed -i 's@\(android.library.reference.2=\).*@\1$$ViewPagerIndicator$$@' project.properties
+      - cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.6.1
+    versionCode: 22
+    commit: 0.9.6.1
+    srclibs:
+      - ActionBarSherlock@4.1.0
+      - ViewPagerIndicator@2.3.1
+    extlibs:
+      - flattr4j/flattr4j-core-2.4.jar
+      - commons-lang/commons-lang3-3.1.jar
+      - commons-io/commons-io-2.4.jar
+    prebuild:
+      - sed -i 's@\(android.library.reference.1=\).*@\1$$ActionBarSherlock$$@' project.properties
+      - sed -i 's@\(android.library.reference.2=\).*@\1$$ViewPagerIndicator$$@' project.properties
+      - cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.6.2
+    versionCode: 23
+    commit: 0.9.6.2
+    srclibs:
+      - ActionBarSherlock@4.1.0
+      - ViewPagerIndicator@2.3.1
+    extlibs:
+      - flattr4j/flattr4j-core-2.4.jar
+      - commons-lang/commons-lang3-3.1.jar
+      - commons-io/commons-io-2.4.jar
+    prebuild:
+      - sed -i 's@\(android.library.reference.1=\).*@\1$$ActionBarSherlock$$@' project.properties
+      - sed -i 's@\(android.library.reference.2=\).*@\1$$ViewPagerIndicator$$@' project.properties
+      - cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.6.3
+    versionCode: 24
+    commit: 0.9.6.3
+    srclibs:
+      - ActionBarSherlock@4.1.0
+      - ViewPagerIndicator@2.3.1
+    extlibs:
+      - flattr4j/flattr4j-core-2.4.jar
+      - commons-lang/commons-lang3-3.1.jar
+      - commons-io/commons-io-2.4.jar
+    prebuild:
+      - sed -i 's@\(android.library.reference.1=\).*@\1$$ActionBarSherlock$$@' project.properties
+      - sed -i 's@\(android.library.reference.2=\).*@\1$$ViewPagerIndicator$$@' project.properties
+      - cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.6.4
+    versionCode: 25
+    commit: 0.9.6.4
+    srclibs:
+      - ActionBarSherlock@4.1.0
+      - ViewPagerIndicator@2.4.1
+    extlibs:
+      - flattr4j/flattr4j-core-2.4.jar
+      - commons-lang/commons-lang3-3.1.jar
+      - commons-io/commons-io-2.4.jar
+    prebuild:
+      - sed -i 's@\(android.library.reference.1=\).*@\1$$ActionBarSherlock$$@' project.properties
+      - sed -i 's@\(android.library.reference.2=\).*@\1$$ViewPagerIndicator$$@' project.properties
+      - cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.7
+    versionCode: 26
+    commit: 0.9.7
+    submodules: true
+    init: mvn clean install -f submodules/dslv/pom.xml
+    maven: yes
+    prebuild: cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.7.2
+    versionCode: 29
+    commit: 0.9.7.2
+    submodules: true
+    init: mvn clean install -f submodules/dslv/pom.xml
+    maven: yes
+    prebuild: cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.7.3
+    versionCode: 30
+    commit: 0.9.7.3
+    submodules: true
+    init: mvn clean install -f submodules/dslv/pom.xml
+    maven: yes
+    prebuild: cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.7.4
+    versionCode: 31
+    commit: 0.9.7.4
+    submodules: true
+    init: mvn clean install -f submodules/dslv/pom.xml
+    maven: yes
+    prebuild:
+      - cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+      - sed -i '97s/true/false/g' pom.xml
+
+  - versionName: 0.9.8.0
+    versionCode: 33
+    commit: 0.9.8.0
+    submodules: true
+    gradle:
+      - yes
+    prebuild: cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.8.3
+    versionCode: 36
+    commit: 0.9.8.3
+    submodules: true
+    gradle:
+      - yes
+    prebuild: cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.9.0
+    versionCode: 37
+    commit: 0.9.9.0
+    submodules: true
+    gradle:
+      - yes
+    prebuild: cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.9.1
+    versionCode: 38
+    commit: 0.9.9.1
+    submodules: true
+    gradle:
+      - yes
+    prebuild: cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.9.2
+    versionCode: 39
+    commit: 0.9.9.2
+    submodules: true
+    gradle:
+      - yes
+    prebuild: cp src/de/danoeh/antennapod/util/flattr/FlattrConfig.java.example src/de/danoeh/antennapod/util/flattr/FlattrConfig.java
+
+  - versionName: 0.9.9.3
+    versionCode: 40
+    commit: 0.9.9.3
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.9.9.4
+    versionCode: 41
+    commit: 0.9.9.4
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '1.0'
+    versionCode: 44
+    commit: '1.0'
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild:
+      - rm settings.gradle
+      - sed -i -e 's/build:gradle:0.12.+/build:gradle:1.0.0/g' -e 's/android-library/com.android.library/g'
+        dslv/library/build.gradle
+
+  - versionName: 1.1.1
+    versionCode: 51
+    commit: 393e647b1039af8916c387551ef390a8892a6475
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.2
+    versionCode: 52
+    commit: 1.1.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.1
+    versionCode: 58
+    commit: 1.2.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.2
+    versionCode: 62
+    commit: 1.2.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.1
+    versionCode: 1030100
+    commit: 1.3.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.4.1
+    versionCode: 1030401
+    commit: a083a0cc7a2eb3b025c8f905df7b91ce48d91ca8
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.0.12
+    versionCode: 1040012
+    commit: 1.4.0.12
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.1.4
+    versionCode: 1040104
+    commit: 1.4.1.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.2.1
+    versionCode: 1040201
+    commit: 1.4.2.1
+    subdir: app
+    init: echo 'android { lintOptions { checkReleaseBuilds false } }' >>build.gradle
+    gradle:
+      - yes
+
+  - versionName: 1.4.2.2
+    versionCode: 1040202
+    commit: 1.4.2.2
+    subdir: app
+    init: echo 'android { lintOptions { checkReleaseBuilds false } }' >>build.gradle
+    gradle:
+      - yes
+
+  - versionName: 1.5.0.8
+    versionCode: 1050008
+    commit: 1.5.0.8
+    subdir: app
+    init: echo 'android { lintOptions { checkReleaseBuilds false } }' >>build.gradle
+    gradle:
+      - yes
+
+  - versionName: 1.5.0.9
+    versionCode: 1050009
+    commit: 1.5.0.9
+    subdir: app
+    init: echo 'android { lintOptions { checkReleaseBuilds false } }' >>build.gradle
+    gradle:
+      - yes
+
+  - versionName: 1.5.1.2
+    versionCode: 1050102
+    commit: 1.5.1.2
+    subdir: app
+    init: echo 'android { lintOptions { checkReleaseBuilds false } }' >>build.gradle
+    gradle:
+      - yes
+
+  - versionName: 1.5.1.4
+    versionCode: 1050104
+    commit: 1.5.1.4
+    subdir: app
+    init: echo 'android { lintOptions { checkReleaseBuilds false } }' >>build.gradle
+    gradle:
+      - yes
+
+  - versionName: 1.5.2.0
+    versionCode: 1050200
+    commit: 1.5.2.0
+    subdir: app
+    init: echo 'android { lintOptions { checkReleaseBuilds false } }' >>build.gradle
+    gradle:
+      - yes
+
+  - versionName: 1.6.1.0
+    versionCode: 1060101
+    commit: 1.6.1.0
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+
+  - versionName: 1.6.1.2
+    versionCode: 1060102
+    commit: 1.6.1.2
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+
+  - versionName: 1.6.2.2
+    versionCode: 1060202
+    commit: 1.6.2.2
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+
+  - versionName: 1.6.2.3
+    versionCode: 1060203
+    commit: 1.6.2.3
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+
+  - versionName: 1.6.4.1
+    versionCode: 1060401
+    commit: 1.6.4.1
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+
+  - versionName: 1.6.4.2
+    versionCode: 1060402
+    commit: 1.6.4.2
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+
+  - versionName: 1.6.4.5
+    versionCode: 1060405
+    commit: 1.6.4.5
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+
+  - versionName: 1.6.5
+    versionCode: 1060595
+    commit: 1.6.5
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+
+  - versionName: 1.7.0
+    versionCode: 1070000
+    commit: 1.7.0
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+
+  - versionName: 1.7.1
+    versionCode: 1070195
+    commit: 1.7.1
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+
+  - versionName: 1.7.2b
+    versionCode: 1070296
+    commit: 1.7.2b
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+
+  - versionName: 1.7.3c
+    versionCode: 1070397
+    commit: 1.7.3c
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 1.8.0
+    versionCode: 1080095
+    commit: 1.8.0
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 1.8.1
+    versionCode: 1080195
+    commit: 1.8.1
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 1.8.2
+    versionCode: 1080200
+    commit: 1.8.2
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 1.8.3
+    versionCode: 1080300
+    commit: 1.8.3
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.0.1
+    versionCode: 2000195
+    commit: 2.0.1
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.0.2
+    versionCode: 2000295
+    commit: 2.0.2
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.0.3
+    versionCode: 2000395
+    commit: 2.0.3
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.1.1
+    versionCode: 2010195
+    commit: 2.1.1
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.1.2
+    versionCode: 2010295
+    commit: 2.1.2
+    subdir: app
+    init: sed -i '/playCompile/d' ../core/build.gradle
+    gradle:
+      - free
+    gradleprops:
+      - freeBuild
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.1.4
+    versionCode: 2010495
+    commit: 2.1.4
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.2.0
+    versionCode: 2020095
+    commit: 2.2.0
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.2.1
+    versionCode: 2020195
+    commit: 2.2.1
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.3.0
+    versionCode: 2030095
+    commit: e83f746b3657109947978476bf50afa3544946db
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.3.1
+    versionCode: 2030195
+    commit: 8b183915bee1419a0577196b19414529fca75432
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.3.2
+    versionCode: 2030295
+    commit: 7b87b9cd03c4596adbdf383ac540e83d7f4650c1
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.4.0
+    versionCode: 2040095
+    commit: f4d3ebb22de54985466c5776e22ca4da8b3c7acc
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.4.1
+    versionCode: 2040195
+    commit: 19dfa08905e33943995edb1703b8ddc3bb9fc0ea
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.4.2
+    versionCode: 2040295
+    commit: 83f564ffcae24fe2ee56303b6b09e963948d18bf
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.5.0
+    versionCode: 2050095
+    commit: 6a366f0ad190a620eca555f5b9e4396810730349
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.5.1
+    versionCode: 2050195
+    commit: 832b51de7def1f63780c285991733522e6fbd333
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.5.2
+    versionCode: 2050296
+    commit: 1bc02fd84870a98534509878cf87f12c484800b7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.6.1
+    versionCode: 2060195
+    commit: 50eee88484a94eabdd1978961b5c604ea3b818d8
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.6.2
+    versionCode: 2060295
+    commit: 9e87cf6115cdda78794e7958190a165c4542ae01
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 2.7.1
+    versionCode: 2070195
+    commit: d5f0ef244863923b7b77141012fcd2b5e61ee05a
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+    antifeatures:
+      - NonFreeNet
+
+  - versionName: 3.0.2
+    versionCode: 3000295
+    commit: b063f0508f6e6439509f22769374c57f77cb499f
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+
+  - versionName: 3.1.0
+    versionCode: 3010095
+    commit: 087770026f63f83f2edd9aa236a37322ef3c94a4
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+
+  - versionName: 3.1.1
+    versionCode: 3010195
+    commit: 8073de55af3c7cb749b6be2b80768bc07807e16c
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+
+  - versionName: 3.1.2
+    versionCode: 3010295
+    commit: 8d4270ab87d82dadccab177f6710637b28750c7a
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+
+  - versionName: 3.2.0
+    versionCode: 3020095
+    commit: 58081fe5bf7d9ad28f089cf10b2c17bfcfc8bbc7
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+
+  - versionName: 3.3.2
+    versionCode: 3030295
+    commit: 701b1ce33999616ec3c032b00e1cc2dc3e3e801b
+    subdir: app
+    gradle:
+      - free
+    prebuild: sed -i -r -e '/play(Api|Implementation)/d' build.gradle ../core/build.gradle
+    ndk: r20
+
+  - versionName: 3.4.0
+    versionCode: 3040095
+    commit: 5f5d744e71a920585609f46024d2ce6642266852
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+    ndk: r20
+
+  - versionName: 3.4.1
+    versionCode: 3040195
+    commit: 8c2d641ba39cf96f15e1300753a38fdecbb47279
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+    ndk: r20
+
+  - versionName: 3.5.0
+    versionCode: 3050095
+    commit: 300baf6ddfbe541775f10f884f8ce87c9d21c4c6
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+    ndk: r20
+
+  - versionName: 3.6.0
+    versionCode: 3060095
+    commit: 26175298968afabdd6555040f07a78c6e7524bf2
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+    ndk: r20
+
+  - versionName: 3.6.1
+    versionCode: 3060195
+    commit: 8ec7d08e2672b87ca730e2ba142c27b32c6f7282
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+    ndk: r20
+
+  - versionName: 3.7.0
+    versionCode: 3070095
+    commit: 8331bc1287dbac7354d1e6beaa3a903f4edfbd86
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+    ndk: r20
+
+  - versionName: 3.8.0
+    versionCode: 3080095
+    commit: f68387199c569197346f50fc2e6ab832d7c781d4
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+    ndk: r20
+
+  - versionName: 3.9.0
+    versionCode: 3090095
+    commit: 1f242876df8c9735152bdc243e10d2107c54d49b
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+    ndk: r20
+
+  - versionName: 3.10.2
+    versionCode: 3100295
+    commit: e92cbd33b760bf25c89f3a40386b672c908b53dc
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+    ndk: r20
+
+  - versionName: 3.10.3
+    versionCode: 3100395
+    commit: ab8841b6add03248e98fca72aa1c9fc59f0fb973
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+
+  - versionName: 3.11.0
+    versionCode: 3110095
+    commit: 26e5f549c3e0d6ec29a23665f671bccc220d5076
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+
+  - versionName: 3.11.2
+    versionCode: 3110295
+    commit: 98712dca38e8137e7f4252c49bd7fce1d4548bef
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+
+  - versionName: 3.11.4
+    versionCode: 3110495
+    commit: 6c3492af7239b46e8c9933ff04984fcdd07c3a6f
+    subdir: app
+    submodules: true
+    gradle:
+      - free
+
+MaintainerNotes: Upstream devs don't need more donation so donation links are removed.
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags .*[0-9]$
+CurrentVersion: 3.11.4
+CurrentVersionCode: 3110495

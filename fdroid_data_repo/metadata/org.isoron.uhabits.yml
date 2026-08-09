@@ -1,0 +1,402 @@
+Categories:
+  - Habit Tracker
+  - Sports & Health
+License: GPL-3.0-only
+AuthorName: Alinson Xavier
+AuthorWebSite: https://axavier.org/
+WebSite: https://github.com/iSoron/uhabits/wiki
+SourceCode: https://github.com/iSoron/uhabits
+IssueTracker: https://github.com/iSoron/uhabits/issues
+Translation: http://translate.loophabits.org/
+Changelog: https://github.com/iSoron/uhabits/blob/HEAD/CHANGELOG.md
+
+Name: Loop Habit Tracker
+AutoName: Habits
+Description: |-
+  Loop is a simple app that helps you create and maintain good habits, allowing
+  you to achieve your long-term goals. Detailed graphs and statistics show you how
+  your habits improved over time.
+
+  Features
+
+  * Simple, beautiful and modern interface: Loop has a minimalistic interface that is easy to use and follows the material design guidelines.
+  * Habit score: In addition to showing your current streak, Loop has an advanced algorithm for calculating the strength of your habits. Every repetition makes your habit stronger, and every missed day makes it weaker. A few missed days after a long streak, however, will not completely destroy your entire progress.
+  * Detailed graphs and statistics: Clearly see how your habits improved over time with beautiful and detailed graphs. Scroll back to see the complete history of your habits.
+  * Flexible schedules: Supports both daily habits and habits with more complex schedules, such as 3 times every week; one time every other week; or every other day.
+  * Reminders: Create an individual reminder for each habit, at a chosen hour of the day. Easily check, dismiss or snooze your habit directly from the notification, without opening the app.
+
+  <a href="https://github.com/iSoron/uhabits/blob/HEAD/README.md#screenshots">Screenshots</a>
+
+RepoType: git
+Repo: https://github.com/iSoron/uhabits.git
+
+Builds:
+  - versionName: 1.2.0
+    versionCode: 9
+    commit: v1.2.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - ActiveAndroid@08c6335cd7324c6e72da536b0c6fffa5a798f6a2
+    rm:
+      - app/libs/*.jar
+    prebuild: cp -fR $$ActiveAndroid$$/src/com src/main/java
+
+  - versionName: 1.3.0
+    versionCode: 10
+    commit: v1.3.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - ActiveAndroid@08c6335cd7324c6e72da536b0c6fffa5a798f6a2
+    rm:
+      - app/libs/*.jar
+    prebuild: cp -fR $$ActiveAndroid$$/src/com src/main/java
+
+  - versionName: 1.3.1
+    versionCode: 11
+    commit: v1.3.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - ActiveAndroid@08c6335cd7324c6e72da536b0c6fffa5a798f6a2
+    rm:
+      - app/libs/*.jar
+    prebuild: cp -fR $$ActiveAndroid$$/src/com src/main/java
+
+  - versionName: 1.3.2
+    versionCode: 12
+    commit: v1.3.2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - ActiveAndroid@08c6335cd7324c6e72da536b0c6fffa5a798f6a2
+    rm:
+      - app/libs/*.jar
+    prebuild: cp -fR $$ActiveAndroid$$/src/com src/main/java
+
+  - versionName: 1.3.3
+    versionCode: 13
+    commit: v1.3.3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - ActiveAndroid@08c6335cd7324c6e72da536b0c6fffa5a798f6a2
+    rm:
+      - app/libs/*.jar
+    prebuild: cp -fR $$ActiveAndroid$$/src/com src/main/java
+
+  - versionName: 1.4.0
+    versionCode: 14
+    commit: v1.4.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - ActiveAndroid@08c6335cd7324c6e72da536b0c6fffa5a798f6a2
+    rm:
+      - app/libs/*.jar
+    prebuild: cp -fR $$ActiveAndroid$$/src/com src/main/java
+
+  - versionName: 1.4.1
+    versionCode: 15
+    commit: v1.4.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - ActiveAndroid@08c6335cd7324c6e72da536b0c6fffa5a798f6a2
+    rm:
+      - app/libs/*.jar
+    prebuild: cp -fR $$ActiveAndroid$$/src/com src/main/java
+
+  - versionName: 1.5.1
+    versionCode: 17
+    commit: v1.5.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 1.5.2
+    versionCode: 18
+    commit: v1.5.2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 1.5.3
+    versionCode: 19
+    commit: v1.5.3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 1.5.4
+    versionCode: 20
+    commit: v1.5.4
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 1.5.6
+    versionCode: 22
+    commit: v1.5.6
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 1.6.2
+    versionCode: 25
+    commit: v1.6.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.0
+    versionCode: 27
+    commit: v1.7.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.1
+    versionCode: 28
+    commit: v1.7.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.2
+    versionCode: 29
+    commit: v1.7.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.4
+    versionCode: 31
+    commit: v1.7.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.5
+    versionCode: 32
+    commit: v1.7.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.6
+    versionCode: 33
+    commit: v1.7.6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.8
+    versionCode: 35
+    commit: v1.7.8
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.9
+    versionCode: 36
+    commit: v1.7.9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.11
+    versionCode: 38
+    commit: v1.7.11
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.7
+    versionCode: 50
+    commit: v1.8.7
+    subdir: android/uhabits-android
+    gradle:
+      - yes
+    rm:
+      - android/tools
+      - .secret
+
+  - versionName: 1.8.8
+    versionCode: 51
+    commit: v1.8.8
+    subdir: android/uhabits-android
+    gradle:
+      - yes
+    rm:
+      - android/tools
+      - .secret
+
+  - versionName: 1.8.9
+    versionCode: 52
+    commit: v1.8.9
+    subdir: android/uhabits-android
+    gradle:
+      - yes
+    rm:
+      - android/tools
+      - .secret
+
+  - versionName: 1.8.10
+    versionCode: 10810
+    commit: v1.8.10
+    subdir: android/uhabits-android
+    gradle:
+      - yes
+    rm:
+      - android/tools
+      - .secret
+
+  - versionName: 1.8.11
+    versionCode: 10811
+    commit: v1.8.11
+    subdir: android/uhabits-android
+    gradle:
+      - yes
+    rm:
+      - android/tools
+      - .secret
+
+  - versionName: 1.8.12
+    versionCode: 10812
+    commit: v1.8.12
+    subdir: android/uhabits-android
+    gradle:
+      - yes
+    rm:
+      - android/tools
+      - .secret
+
+  - versionName: 2.0.1
+    versionCode: 20001
+    commit: v2.0.1
+    subdir: uhabits-android
+    gradle:
+      - yes
+    rm:
+      - .secret
+
+  - versionName: 2.0.2
+    versionCode: 20002
+    commit: v2.0.2
+    subdir: uhabits-android
+    gradle:
+      - yes
+    rm:
+      - .secret
+
+  - versionName: 2.0.3
+    versionCode: 20003
+    commit: 6b9a7917b4efbcb4df1feb91d104e344000072b1
+    subdir: uhabits-android
+    gradle:
+      - yes
+    rm:
+      - .secret
+
+  - versionName: 2.1.0
+    versionCode: 20100
+    commit: ec1f0c535660cc90f1621e1ab51c5086057a8535
+    subdir: uhabits-android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .secret
+
+  - versionName: 2.1.1
+    versionCode: 20101
+    commit: 40a4d254f5e520fc906685ef3edf7058437762d8
+    subdir: uhabits-android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - .secret
+
+  - versionName: 2.1.2
+    versionCode: 20102
+    commit: 69b5ed3a6d6ceae877230e3cd99a04d8cc3f398b
+    subdir: uhabits-android
+    gradle:
+      - yes
+    rm:
+      - .secret
+
+  - versionName: 2.1.3
+    versionCode: 20103
+    commit: 6116ef945059553db28000f8571b900ec7f45f1d
+    subdir: uhabits-android
+    gradle:
+      - yes
+    rm:
+      - .secret
+
+  - versionName: 2.2.0
+    versionCode: 20200
+    commit: d10538e72064c196a9ec5da26c76fc6a0fe0cd80
+    subdir: uhabits-android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 2.3.0
+    versionCode: 20300
+    commit: 9ed4630f9ba0c7f17f134e72d04bc4fb1e1bffbd
+    subdir: uhabits-android
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/VERSION_11/VERSION_17/g' build.gradle.kts
+      - sed -i -e 's/jvmToolchain(11)/jvmToolchain(17)/' ../uhabits-core/build.gradle.kts
+        build.gradle.kts
+
+  - versionName: 2.3.1
+    versionCode: 20301
+    commit: 516bf394f85a5a3ab25f476da230ae2a93815a40
+    subdir: uhabits-android
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/VERSION_11/VERSION_17/g' build.gradle.kts
+      - sed -i -e 's/jvmToolchain(11)/jvmToolchain(17)/' ../uhabits-core/build.gradle.kts
+        build.gradle.kts
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.3.1
+CurrentVersionCode: 20301

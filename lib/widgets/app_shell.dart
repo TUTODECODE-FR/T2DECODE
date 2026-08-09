@@ -7,6 +7,7 @@
 // ── Mobile  : drawer + BottomNavigationBar
 // ============================================================
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -14,6 +15,7 @@ import '../core/theme/app_theme.dart';
 import '../core/responsive/responsive.dart';
 import '../features/courses/providers/courses_provider.dart';
 import '../features/ghost_ai/providers/ai_tutor_provider.dart';
+import '../features/tools/providers/phantom_provider.dart';
 import '../core/providers/shell_provider.dart';
 import '../core/navigation/nav_keys.dart';
 import '../core/providers/search_provider.dart';
@@ -56,9 +58,16 @@ class _AppShellState extends State<AppShell> {
         ),
         _NavItem(Icons.settings, 'menu.settings'.tr(), '/settings'),
         _NavItem(Icons.map, 'menu.roadmap'.tr(), '/roadmap'),
-        _NavItem(Icons.school, 'Éducation (Prof)', '/education'),
         _NavItem(Icons.science, 'menu.lab'.tr(), '/lab'),
         _NavItem(Icons.wifi_tethering, 'menu.ghost_link'.tr(), '/ghost-link'),
+        _NavItem(
+          Icons.terminal,
+          'T2C-Phantom',
+          '/phantom',
+          trailing: Consumer<PhantomProvider>(
+            builder: (context, phantom, _) => _phantomDot(phantom),
+          ),
+        ),
       ];
 
   // ── Petites icônes de statut IA ───────────────────────────
@@ -77,6 +86,25 @@ class _AppShellState extends State<AppShell> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: ai.isConnected ? TdcColors.info : TdcColors.textMuted,
+      ),
+    );
+  }
+
+  Widget _phantomDot(PhantomProvider phantom) {
+    if (!phantom.hasChecked) {
+      return const SizedBox(
+        width: 8,
+        height: 8,
+        child: CircularProgressIndicator(
+            strokeWidth: 1.5, color: TdcColors.textMuted),
+      );
+    }
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: phantom.isRunning ? Colors.green : TdcColors.textMuted,
       ),
     );
   }
@@ -795,8 +823,24 @@ class _GlobalSearchDialog extends StatefulWidget {
 
 class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
   String _query = '';
+  Timer? _debounceTimer;
 
-// Removed hardcoded _commands
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String val) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 250), () {
+      if (mounted) {
+        setState(() {
+          _query = val;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -834,7 +878,7 @@ class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
               child: TextField(
                 autofocus: true,
                 style: const TextStyle(color: TdcColors.textPrimary),
-                onChanged: (v) => setState(() => _query = v),
+                onChanged: _onSearchChanged,
                 onSubmitted: (value) => search.recordQuery(value),
                 decoration: const InputDecoration(
                   hintText: 'Pages, cours ou commandes...',

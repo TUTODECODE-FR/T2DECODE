@@ -1,0 +1,50 @@
+Categories:
+  - Notification
+License: GPL-3.0-only
+AuthorName: Chinmai
+AuthorEmail: chinmai.enc@gmail.com
+SourceCode: https://github.com/snap24/notification-vault
+IssueTracker: https://github.com/snap24/notification-vault/issues
+
+AutoName: Notification Vault
+
+RepoType: git
+Repo: https://github.com/snap24/notification-vault.git
+Binaries: 
+  https://github.com/snap24/notification-vault/releases/download/v%v/Notification_vault-signed-v%v.apk
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 1
+    commit: e4e7a53056e33acbacdfc0457726e74bc2c16470
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.0
+    versionCode: 2
+    commit: ad9ea89d818548bbe95519567497d75b6282c975
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.1
+    versionCode: 3
+    commit: 520af8fca8ebaa3586d538f6369320946930c11e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.0
+    versionCode: 4
+    commit: 78008c441279b12e575d7248aa97ae7ffa76aa08
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: e3a48d62658a10467108126dd5f88898d1ca5b9f94bbeecff708f80dbd1cbca1
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.1.0
+CurrentVersionCode: 4

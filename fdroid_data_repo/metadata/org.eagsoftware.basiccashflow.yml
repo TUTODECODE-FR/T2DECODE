@@ -1,0 +1,45 @@
+Categories:
+  - Finance Manager
+License: GPL-3.0-or-later
+AuthorName: Minardil
+SourceCode: https://codeberg.org/minardil/BasicCashFlow
+IssueTracker: https://codeberg.org/minardil/BasicCashFlow/issues
+Changelog: https://codeberg.org/minardil/BasicCashFlow/releases
+Donate: https://buymeacoffee.com/minardil
+
+AutoName: BasicCashFlow
+
+RepoType: git
+Repo: https://codeberg.org/minardil/BasicCashFlow.git
+Binaries: 
+  https://codeberg.org/minardil/BasicCashFlow/releases/download/v%v/app-release.apk
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    disable: key lost
+    commit: v1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.0'
+    versionCode: 2
+    commit: v2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '3.0'
+    versionCode: 3
+    commit: 41a4dffc0f5fbc3020bbc47c0ec0d8a717652337
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: afbd67fad9be2807411fc238f8c28bc68710220c4a22781ebaacebc3e9ef282f
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '3.0'
+CurrentVersionCode: 3

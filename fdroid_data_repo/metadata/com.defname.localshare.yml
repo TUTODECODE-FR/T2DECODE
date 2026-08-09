@@ -1,0 +1,128 @@
+Categories:
+  - File Transfer
+License: GPL-3.0-or-later
+AuthorName: defname
+SourceCode: https://github.com/defname/LocalShare
+IssueTracker: https://github.com/defname/LocalShare/issues
+
+AutoName: LocalShare
+
+RepoType: git
+Repo: https://github.com/defname/LocalShare
+Binaries: https://github.com/defname/LocalShare/releases/download/v%v/LocalShare-v%v.apk
+
+Builds:
+  - versionName: 0.1.1
+    versionCode: 2
+    commit: 73a6d8fecea7ec223051ac4a35570d5384a0883f
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.2.0
+    versionCode: 3
+    commit: 0a3d752a89cfd7e5a5541910b26ead6333cb7a0e
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.2.3
+    versionCode: 6
+    commit: bb2c2d34dc4fb178310971030ea309602ba2484f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y npm
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/jetbrains.space/d' ../settings.gradle.kts
+      - cd ../web-build
+      - npm install --build-from-source
+
+  - versionName: 0.2.4
+    versionCode: 7
+    commit: bd47c3ed6b082ae421049dac3740f01c44b2c6b1
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y npm
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/jetbrains.space/d' ../settings.gradle.kts
+      - cd ../web-build
+      - npm install --build-from-source
+
+  - versionName: 0.2.5
+    versionCode: 8
+    commit: 4170b697e2ac96ef364efd1dd09cb450a1e6512c
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y npm
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/jetbrains.space/d' ../settings.gradle.kts
+      - cd ../web-build
+      - npm install --build-from-source
+
+  - versionName: 0.2.6
+    versionCode: 9
+    commit: bbf60d2a28d73d453765a9455c2386b298331601
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y npm
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/jetbrains.space/d' ../settings.gradle.kts
+      - cd ../web-build
+      - npm install --build-from-source
+
+  - versionName: 0.2.8
+    versionCode: 13
+    commit: e5acf743cffc8d2c998296c379fb8a3537446756
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y npm
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/jetbrains.space/d' ../settings.gradle.kts
+      - cd ../web-build
+      - npm install --build-from-source
+
+  - versionName: 0.2.9
+    versionCode: 14
+    commit: 8cfa9f87c6c8cbe2999a63922777e101f280119f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y npm
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/jetbrains.space/d' ../settings.gradle.kts
+      - cd ../web-build
+      - npm install --build-from-source
+    scandelete:
+      - web-build
+
+AllowedAPKSigningKeys: 27c0a62196708ec70b3c9b7699d421a06f24cf6aa1fa37016872a63f5293d603
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags v[0-9]+\.[0-9]+\.[0-9]+
+CurrentVersion: 0.2.9
+CurrentVersionCode: 14

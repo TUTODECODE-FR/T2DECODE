@@ -1,0 +1,247 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: LBRY itself is not libre.
+  Tracking:
+    en-US: is sending some data to LBRY servers while not allowing user to disable
+      it.
+Categories:
+  - Online Media Player
+License: MIT
+SourceCode: https://github.com/lbryio/lbry-fdroid
+IssueTracker: https://github.com/lbryio/lbry-fdroid/issues
+
+AutoName: LBRY
+
+RepoType: git
+Repo: https://github.com/lbryio/lbry-fdroid
+
+Builds:
+  - versionName: 0.15.12
+    versionCode: 15122
+    commit: v0.15.12-fdroid
+    subdir: app
+    gradle:
+      - __64bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild:
+      - sed "/lbryio/d" -i ../build.gradle
+      - sed -r "s:29.0.1:29.0.2:" -i build.gradle
+    ndk: r21d
+
+  - versionName: 0.15.14
+    versionCode: 15141
+    commit: v0.15.14-fdroid
+    subdir: app
+    gradle:
+      - __32bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild:
+      - sed "/lbryio/d" -i ../build.gradle
+      - sed -r "s:29.0.1:29.0.2:" -i build.gradle
+      - sed "/firebase/d" -i build.gradle
+      - sed "/gms/d" -i build.gradle
+      - sed "/GoogleServicesPlugin/d" -i build.gradle
+    ndk: r21d
+
+  - versionName: 0.15.14
+    versionCode: 15142
+    commit: v0.15.14-fdroid
+    subdir: app
+    gradle:
+      - __64bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild:
+      - sed "/lbryio/d" -i ../build.gradle
+      - sed -r "s:29.0.1:29.0.2:" -i build.gradle
+      - sed "/firebase/d" -i build.gradle
+      - sed "/gms/d" -i build.gradle
+      - sed "/GoogleServicesPlugin/d" -i build.gradle
+    ndk: r21d
+
+  - versionName: 0.15.16
+    versionCode: 15161
+    commit: v0.15.16-fdroid
+    subdir: app
+    gradle:
+      - __32bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild:
+      - sed -r "s:29.0.1:29.0.2:" -i build.gradle
+      - sed "/firebase/d" -i build.gradle
+      - sed "/gms/d" -i build.gradle
+      - sed "/GoogleServicesPlugin/d" -i build.gradle
+    ndk: r21d
+    antifeatures:
+      - Tracking
+
+  - versionName: 0.15.16
+    versionCode: 15162
+    commit: v0.15.16-fdroid
+    subdir: app
+    gradle:
+      - __64bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild:
+      - sed -r "s:29.0.1:29.0.2:" -i build.gradle
+      - sed "/firebase/d" -i build.gradle
+      - sed "/gms/d" -i build.gradle
+      - sed "/GoogleServicesPlugin/d" -i build.gradle
+    ndk: r21d
+    antifeatures:
+      - Tracking
+
+  - versionName: 0.16.1
+    versionCode: 16012
+    commit: v0.16.1-fdroid
+    subdir: app
+    gradle:
+      - __64bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild:
+      - sed -r "s:29.0.1:29.0.2:" -i build.gradle
+      - sed "/firebase/d" -i build.gradle
+      - sed "/gms/d" -i build.gradle
+      - sed "/GoogleServicesPlugin/d" -i build.gradle
+    ndk: r21d
+    antifeatures:
+      - Tracking
+
+  - versionName: 0.16.2
+    versionCode: 16022
+    commit: v0.16.2-fdroid
+    subdir: app
+    gradle:
+      - __64bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild:
+      - sed -r "s:29.0.1:29.0.2:" -i build.gradle
+      - sed "/firebase/d" -i build.gradle
+      - sed "/gms/d" -i build.gradle
+      - sed "/GoogleServicesPlugin/d" -i build.gradle
+    ndk: r21d
+    antifeatures:
+      - Tracking
+
+  - versionName: 0.16.6
+    versionCode: 16061
+    commit: v0.16.6-fdroid
+    subdir: app
+    gradle:
+      - __32bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild: sed -r "s:29.0.1:29.0.2:" -i build.gradle
+    ndk: r21d
+    antifeatures:
+      - Tracking
+
+  - versionName: 0.16.7
+    versionCode: 16071
+    commit: v0.16.7-fdroid
+    subdir: app
+    gradle:
+      - __32bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild: sed -r "s:29.0.1:29.0.2:" -i build.gradle
+    ndk: r21d
+    antifeatures:
+      - Tracking
+
+  - versionName: 0.16.9
+    versionCode: 16091
+    commit: v0.16.9-fdroid
+    subdir: app
+    gradle:
+      - __32bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild: sed -r "s:29.0.1:29.0.2:" -i build.gradle
+    ndk: r21d
+    antifeatures:
+      - Tracking
+
+  - versionName: 0.16.10
+    versionCode: 16101
+    commit: v0.16.10-fdroid
+    subdir: app
+    gradle:
+      - __32bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild: sed -r "s:29.0.1:29.0.2:" -i build.gradle
+    ndk: r21d
+
+  - versionName: 0.16.11
+    versionCode: 16111
+    commit: v0.16.11-fdroid
+    subdir: app
+    gradle:
+      - __32bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild: sed -r "s:29.0.1:29.0.2:" -i build.gradle
+    ndk: r21d
+
+  - versionName: 0.16.12
+    versionCode: 16121
+    commit: v0.16.12-fdroid
+    subdir: app
+    gradle:
+      - __32bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild: sed -r "s:29.0.1:29.0.2:" -i build.gradle
+    ndk: r21d
+
+  - versionName: 0.16.15
+    versionCode: 16151
+    commit: v0.16.15-fdroid
+    subdir: app
+    gradle:
+      - __32bit
+    rm:
+      - .gitsecret/keys/random_seed
+    prebuild: sed -r "s:29.0.1:29.0.2:" -i build.gradle
+    ndk: r21d
+
+  - versionName: 0.17.0
+    versionCode: 17001
+    commit: v0.17.0-fdroid
+    subdir: app
+    gradle:
+      - __32bit
+    rm:
+      - .gitsecret/keys/random_seed
+    ndk: r21e
+
+  - versionName: 0.17.1
+    versionCode: 17011
+    commit: 624e0d785703f11c2c1c8f3df32f9526bcd95b85
+    subdir: app
+    gradle:
+      - __32bit
+    rm:
+      - .gitsecret/keys/random_seed
+    ndk: r21e
+
+MaintainerNotes: |-
+  +0: - (upstream)
+  +1: armv7 (CV)
+  +2: armv8
+  AF see https://gitlab.com/fdroid/fdroiddata/-/merge_requests/7173
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+VercodeOperation:
+  - '%c*10 + 1'
+CurrentVersion: 0.17.1
+CurrentVersionCode: 17011

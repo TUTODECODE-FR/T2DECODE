@@ -1,0 +1,129 @@
+Categories:
+  - Ebook Reader
+  - Reading
+License: GPL-3.0-only
+AuthorName: Acclorite
+SourceCode: https://github.com/Acclorite/book-story
+IssueTracker: https://github.com/Acclorite/book-story/issues
+Translation: https://hosted.weblate.org/projects/book-story/
+Changelog: https://github.com/Acclorite/book-story/releases
+
+AutoName: Book's Story
+
+RepoType: git
+Repo: https://github.com/Acclorite/book-story.git
+Binaries: https://github.com/Acclorite/book-story/releases/download/v%v/book-story.apk
+
+Builds:
+  - versionName: 1.1.0
+    versionCode: 5
+    commit: v1.1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.1
+    versionCode: 6
+    commit: 0e5c4a13e878790300647324fa535b9454875e60
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*' 'res/M7.json'
+
+  - versionName: 1.2.0
+    versionCode: 7
+    commit: 4e849d94a792e5fd9175355809eb3fa9e0c2d018
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 1.3.0
+    versionCode: 8
+    commit: 82d8fa8e3bef9b889b370202b34260ed61ff1fe3
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 1.4.0
+    versionCode: 9
+    commit: d1d83c2bb93183eaacfa976864c61197abf2f643
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 1.5.0
+    versionCode: 10
+    commit: aa657790d0f5b6e4f1f9d16fe659f59b0145ac64
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 1.6.0
+    versionCode: 11
+    commit: 72908737c221ff3bd8f32b4d07473bf6d6f76f08
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 1.7.0
+    versionCode: 12
+    commit: c49e7f95006f6c4016896e2c34d79cf83971fab5
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 1.7.1
+    versionCode: 13
+    commit: e22e172ddbe45da903a0c6d2547132073f43928a
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'META-INF/services/*'
+
+  - versionName: 1.8.0
+    versionCode: 14
+    commit: b0a21c116fc8ba7eaa59dc8887e5230cfba1a19d
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'res/M7.json'
+
+AllowedAPKSigningKeys: a661a0c81f138e53dff32f8fdc1dd19f8130523914027e2c0296fe245131a7d4
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.8.0
+CurrentVersionCode: 14

@@ -1,0 +1,285 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: The optional Esri World Imagery map layer uses Esri's proprietary hosted
+      imagery service.
+  TetheredNet:
+    en-US: Forecasts use the fixed Open-Meteo API endpoint. Launch sites use the fixed
+      ParaglidingEarth API endpoint. Bundled map layers use fixed hosted services
+      from OpenFreeMap, OpenTopoMap, NASA GIBS, and Esri World Imagery. Users can
+      choose between bundled map layers and can disable launch sites, but cannot configure
+      alternate service instances.
+Categories:
+  - Weather
+License: GPL-3.0-or-later
+AuthorName: CloudbasePredictor
+SourceCode: https://github.com/CloudbasePredictor/CloudbasePredictor
+IssueTracker: https://github.com/CloudbasePredictor/CloudbasePredictor/issues
+Changelog: https://github.com/CloudbasePredictor/CloudbasePredictor/releases
+
+AutoName: Cloudbase Predictor
+
+RepoType: git
+Repo: https://github.com/CloudbasePredictor/CloudbasePredictor.git
+
+Builds:
+  - versionName: 1.4.0
+    versionCode: 91
+    commit: 5a7b3df15ca50eae76da03ded0ce0040be73fe50
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=armeabi-v7a
+
+  - versionName: 1.4.0
+    versionCode: 92
+    commit: 5a7b3df15ca50eae76da03ded0ce0040be73fe50
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=arm64-v8a
+
+  - versionName: 1.4.0
+    versionCode: 93
+    commit: 5a7b3df15ca50eae76da03ded0ce0040be73fe50
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86
+
+  - versionName: 1.4.0
+    versionCode: 94
+    commit: 5a7b3df15ca50eae76da03ded0ce0040be73fe50
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86_64
+
+  - versionName: 1.5.0
+    versionCode: 101
+    commit: ce7f0d04d7f5cd7fb4ec0b97f8c8d126d93beaad
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=armeabi-v7a
+
+  - versionName: 1.5.0
+    versionCode: 102
+    commit: ce7f0d04d7f5cd7fb4ec0b97f8c8d126d93beaad
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=arm64-v8a
+
+  - versionName: 1.5.0
+    versionCode: 103
+    commit: ce7f0d04d7f5cd7fb4ec0b97f8c8d126d93beaad
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86
+
+  - versionName: 1.5.0
+    versionCode: 104
+    commit: ce7f0d04d7f5cd7fb4ec0b97f8c8d126d93beaad
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86_64
+
+  - versionName: 1.5.1
+    versionCode: 111
+    commit: d584675f3f2b5d6291dd0e0cae30669d23429944
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=armeabi-v7a
+
+  - versionName: 1.5.1
+    versionCode: 112
+    commit: d584675f3f2b5d6291dd0e0cae30669d23429944
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=arm64-v8a
+
+  - versionName: 1.5.1
+    versionCode: 113
+    commit: d584675f3f2b5d6291dd0e0cae30669d23429944
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86
+
+  - versionName: 1.5.1
+    versionCode: 114
+    commit: d584675f3f2b5d6291dd0e0cae30669d23429944
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86_64
+
+  - versionName: 1.6.1
+    versionCode: 131
+    commit: aea5c54eaf9b409f2d35d01ab8721be85295889d
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=armeabi-v7a
+
+  - versionName: 1.6.1
+    versionCode: 132
+    commit: aea5c54eaf9b409f2d35d01ab8721be85295889d
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=arm64-v8a
+
+  - versionName: 1.6.1
+    versionCode: 133
+    commit: aea5c54eaf9b409f2d35d01ab8721be85295889d
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86
+
+  - versionName: 1.6.1
+    versionCode: 134
+    commit: aea5c54eaf9b409f2d35d01ab8721be85295889d
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86_64
+
+  - versionName: 1.7.0
+    versionCode: 141
+    commit: 864da9941adc7ba4d5465d02259a851aedf5c913
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=armeabi-v7a
+
+  - versionName: 1.7.0
+    versionCode: 142
+    commit: 864da9941adc7ba4d5465d02259a851aedf5c913
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=arm64-v8a
+
+  - versionName: 1.7.0
+    versionCode: 143
+    commit: 864da9941adc7ba4d5465d02259a851aedf5c913
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86
+
+  - versionName: 1.7.0
+    versionCode: 144
+    commit: 864da9941adc7ba4d5465d02259a851aedf5c913
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86_64
+
+  - versionName: 1.8.0
+    versionCode: 151
+    commit: 3fc611c5512114fdb5ddc035d66f82790e125504
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=armeabi-v7a
+
+  - versionName: 1.8.0
+    versionCode: 152
+    commit: 3fc611c5512114fdb5ddc035d66f82790e125504
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=arm64-v8a
+
+  - versionName: 1.8.0
+    versionCode: 153
+    commit: 3fc611c5512114fdb5ddc035d66f82790e125504
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86
+
+  - versionName: 1.8.0
+    versionCode: 154
+    commit: 3fc611c5512114fdb5ddc035d66f82790e125504
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86_64
+
+  - versionName: 1.8.1
+    versionCode: 161
+    commit: 29b69bc2bb0071fbddcdef1e75a5a048c37a90d7
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=armeabi-v7a
+
+  - versionName: 1.8.1
+    versionCode: 162
+    commit: 29b69bc2bb0071fbddcdef1e75a5a048c37a90d7
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=arm64-v8a
+
+  - versionName: 1.8.1
+    versionCode: 163
+    commit: 29b69bc2bb0071fbddcdef1e75a5a048c37a90d7
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86
+
+  - versionName: 1.8.1
+    versionCode: 164
+    commit: 29b69bc2bb0071fbddcdef1e75a5a048c37a90d7
+    subdir: app
+    gradle:
+      - yes
+    gradleprops:
+      - ABI_FILTERS=x86_64
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v
+VercodeOperation:
+  - 10 * %c + 1
+  - 10 * %c + 2
+  - 10 * %c + 3
+  - 10 * %c + 4
+CurrentVersion: 1.8.1
+CurrentVersionCode: 164

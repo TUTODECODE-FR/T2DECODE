@@ -1,0 +1,45 @@
+Categories:
+  - Multimedia
+License: ISC
+SourceCode: https://github.com/vomitcuddle/nori
+Donate: 
+  https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FSVJZBNKMVZ9J
+
+AutoName: Nori
+Summary: Online gallery viewer
+Description: |-
+  This app has been deprecated in favor of https://f-droid.org/packages/io.github.tjg1.nori from the same
+  author.
+
+  Connect to Danbooru image galleries and browse by tags (A swipe from the side
+  reveals the action bar).
+
+  The safebooru.org site is preloaded which shows Anime images that are considered
+  'safe for work'. Note that the images there are usually of high quality and
+  though the app is fast, a lot of data will be downloaded.
+
+Builds:
+  - versionName: 1.1.1
+    versionCode: 6
+    commit: v1.1.2
+    srclibs:
+      - ActionBarSherlock@4.4.0
+      - Volley@android-4.4_r1.2
+    prebuild: mv libs/android-support-v4.jar $$ActionBarSherlock$$/libs/
+
+  - versionName: 1.2.0
+    versionCode: 11
+    commit: v1.2.0
+    srclibs:
+      - Volley@android-4.4_r1.2
+      - NoAnalytics@c8d7785075
+    rm:
+      - libs/libGoogleAnalyticsV2.jar
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.2.0
+CurrentVersionCode: 11
+
+NoSourceSince: 1.2.0

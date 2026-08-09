@@ -1,0 +1,138 @@
+Categories:
+  - Sports & Health
+  - Workout
+License: GPL-3.0-or-later
+AuthorName: SECUSO - Security Usability Society
+AuthorEmail: pfa@secuso.org
+AuthorWebSite: https://secuso.aifb.kit.edu/english/105.php
+WebSite: https://secuso.aifb.kit.edu/english/Pedometer.php
+SourceCode: https://github.com/SecUSo/privacy-friendly-pedometer
+IssueTracker: https://github.com/SecUSo/privacy-friendly-pedometer/issues
+Changelog: https://github.com/SecUSo/privacy-friendly-pedometer/blob/HEAD/CHANGELOG.md
+
+AutoName: Pedometer
+
+RepoType: git
+Repo: https://github.com/SecUSo/privacy-friendly-pedometer.git
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: v1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.1
+    versionCode: 2
+    commit: v1.0.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.2
+    versionCode: 3
+    commit: v.1.0.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.3
+    versionCode: 4
+    commit: v1.0.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.4
+    versionCode: 5
+    commit: v1.0.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.5
+    versionCode: 6
+    commit: v1.0.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.2'
+    versionCode: 9
+    commit: 91ff2e12f190abc65b4d74e4f1d93085ba1b3b41
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '2.3'
+    versionCode: 11
+    commit: 7a28a37bdcf610f05f20b3eb038af8f3b33febec
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: '2.4'
+    versionCode: 12
+    commit: d4611c7305c18fd3bb3cf183cbeab5750509984a
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 3.0.0
+    versionCode: 14
+    commit: 41eca8d966e3627338da45ad79b9a23aac877675
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 3.0.1
+    versionCode: 15
+    commit: v3.0.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 3.1.0
+    versionCode: 16
+    commit: e3343a1e66e756f344d946b9f62a5e5a6cc8b5d4
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 3.1.1
+    versionCode: 17
+    commit: 80ba9aebf4c7da752b331c78963f0575ea7e2297
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sed -i -e "/help_permission_boot_heading/d" src/main/res/values-it/strings.xml
+
+  - versionName: 3.1.2
+    versionCode: 100
+    commit: 017f24f0660b8874529f6daf91ea94640f6f921a
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild: sed -i -e "/help_permission_boot_heading/d" src/main/res/values-it/strings.xml
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 3.1.2
+CurrentVersionCode: 100

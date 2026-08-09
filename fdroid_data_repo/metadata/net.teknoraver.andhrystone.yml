@@ -1,0 +1,28 @@
+Categories:
+  - System
+License: GPL-3.0-or-later
+AuthorName: Matteo Croce
+AuthorEmail: mcroce@redhat.com
+AuthorWebSite: https://teknoraver.net/
+SourceCode: https://github.com/teknoraver/andhrystone
+IssueTracker: https://github.com/teknoraver/andhrystone/issues
+
+AutoName: Andhrystone
+Description: A port of the popular integer precision benchmark
+
+RepoType: git
+Repo: https://github.com/teknoraver/andhrystone
+
+Builds:
+  - versionName: 1.6.1
+    versionCode: 9
+    commit: v1.6.1
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.6.1
+CurrentVersionCode: 9

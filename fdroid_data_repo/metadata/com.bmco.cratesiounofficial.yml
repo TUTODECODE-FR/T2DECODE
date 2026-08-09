@@ -1,0 +1,44 @@
+Categories:
+  - Development
+License: Apache-2.0
+AuthorName: B & M CO
+AuthorEmail: bertus.michael.co@gmail.com
+SourceCode: https://github.com/TheUberCatman/crates-io-android
+IssueTracker: https://github.com/TheUberCatman/crates-io-android/issues
+Changelog: https://github.com/Catman155/crates-io-android/releases
+
+AutoName: Crates.io unofficial
+Description: |-
+  This app is made for making it easy to browse Rust crates. Where you can
+  subscribe to your favorites and get notifications when they got updates or when
+  they get downloaded more.
+
+RepoType: git
+Repo: https://github.com/TheUberCatman/crates-io-android
+
+Builds:
+  - versionName: 1.3.2
+    versionCode: 6
+    commit: 1.3.2-fix
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.2
+    versionCode: 11
+    commit: 1.5.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.3
+    versionCode: 12
+    commit: 1.5.3
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.5.3
+CurrentVersionCode: 12

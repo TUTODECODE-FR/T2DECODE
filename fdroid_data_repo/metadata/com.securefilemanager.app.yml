@@ -1,0 +1,120 @@
+Categories:
+  - File Encryption & Vault
+  - File Manager
+  - Security
+  - System
+License: GPL-3.0-or-later
+SourceCode: https://github.com/Secure-File-Manager/Secure-File-Manager
+IssueTracker: https://github.com/Secure-File-Manager/Secure-File-Manager/issues
+Translation: https://crowdin.com/project/secure-file-manager
+Changelog: 
+  https://github.com/Secure-File-Manager/Secure-File-Manager/blob/HEAD/CHANGELOG.md
+
+AutoName: Secure File Manager Beta
+
+RepoType: git
+Repo: https://github.com/Secure-File-Manager/Secure-File-Manager.git
+
+Builds:
+  - versionName: 0.1.2-beta2
+    versionCode: 4
+    commit: v0.1.2-beta2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.3-beta
+    versionCode: 5
+    commit: v0.1.3-beta
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.4-beta
+    versionCode: 6
+    commit: v0.1.4-beta
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.1.5-beta
+    versionCode: 7
+    commit: v0.1.5-beta
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/gradle-7.0-rc-1/gradle-7.0/' ../gradle/wrapper/gradle-wrapper.properties
+
+  - versionName: 0.1.6-beta
+    versionCode: 8
+    commit: v0.1.6-beta
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/gradle-7.0-rc-1/gradle-7.0/' ../gradle/wrapper/gradle-wrapper.properties
+
+  - versionName: 0.1.7-beta
+    versionCode: 9
+    commit: v0.1.7-beta
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/gradle-7.0-rc-1/gradle-7.0/' ../gradle/wrapper/gradle-wrapper.properties
+
+  - versionName: 0.1.7-beta2
+    versionCode: 10
+    commit: v0.1.7-beta2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/gradle-7.0-rc-1/gradle-7.0/' ../gradle/wrapper/gradle-wrapper.properties
+
+  - versionName: 0.1.8-beta
+    versionCode: 11
+    commit: v0.1.8-beta
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/gradle-7.0-rc-1/gradle-7.0/' ../gradle/wrapper/gradle-wrapper.properties
+
+  - versionName: 0.1.9-beta
+    versionCode: 12
+    commit: 5566ab3d7c2b69eb28e3b68309f09d527e4cee6d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/gradle-7.0-rc-1/gradle-7.0/' ../gradle/wrapper/gradle-wrapper.properties
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 0.1.9-beta
+CurrentVersionCode: 12

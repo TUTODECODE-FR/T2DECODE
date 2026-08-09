@@ -1,0 +1,590 @@
+Categories:
+  - Development
+License: MIT
+AuthorName: Rico Berger
+AuthorWebSite: https://ricoberger.de
+WebSite: https://kubenav.io
+SourceCode: https://github.com/kubenav/kubenav
+IssueTracker: https://github.com/kubenav/kubenav/issues
+Changelog: https://github.com/kubenav/kubenav/blob/HEAD/CHANGELOG.md
+Donate: https://www.paypal.me/ricoberger
+
+AutoName: kubenav
+
+RepoType: git
+Repo: https://github.com/kubenav/kubenav
+
+Builds:
+  - versionName: 3.4.1
+    versionCode: 33
+    commit: 3.4.1
+    subdir: android/app
+    sudo:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
+      - echo "fa198afa9a2872cde991c3aa71796894bf7b5310d6eb178c3eafcf66e3ae79a7 node.tar.xz"
+        | sha256sum -c -
+      - tar xJf node.tar.xz
+      - cp -a node-v14.15.5-linux-x64/. /usr/local/
+      - curl -L -o ~/go1.16.2.linux-amd64.tar.gz https://golang.org/dl/go1.16.2.linux-amd64.tar.gz
+      - tar -C /usr/local -xzf ~/go1.16.2.linux-amd64.tar.gz
+      - npm install -g npm@latest
+      - npm install -g @ionic/cli
+    gradle:
+      - yes
+    forcevercode: true
+    rm:
+      - .github
+      - .vscode
+      - cmd/electron
+      - cmd/server
+      - ios
+    prebuild:
+      - cd ../..
+      - npm install
+      - sed -i '/com.google.android.gms:play-services-location/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/com.google.firebase:firebase-messaging/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/import com.getcapacitor.plugin.Geolocation;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/import com.getcapacitor.plugin.PushNotifications;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(Geolocation.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(PushNotifications.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapacitorFirebaseMessagingService.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/PushNotifications.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/Geolocation.java
+      - ionic build
+      - npx cap sync android
+      - rm -rf node_modules/node-notifier
+    build:
+      - mkdir ~/go
+      - export GOROOT=/usr/local/go
+      - export GOPATH=$HOME/go
+      - export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+      - export ANDROID_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - $ANDROID_HOME/tools/bin/sdkmanager 'platforms;android-29' > /dev/null 2>&1
+      - cd ../..
+      - go get golang.org/x/mobile/cmd/gomobile
+      - gomobile init
+      - make bindings-android
+    ndk: r21e
+
+  - versionName: 3.5.0
+    versionCode: 35
+    commit: 3.5.0
+    subdir: android/app
+    sudo:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
+      - echo "fa198afa9a2872cde991c3aa71796894bf7b5310d6eb178c3eafcf66e3ae79a7 node.tar.xz"
+        | sha256sum -c -
+      - tar xJf node.tar.xz
+      - cp -a node-v14.15.5-linux-x64/. /usr/local/
+      - curl -L -o ~/go1.16.2.linux-amd64.tar.gz https://golang.org/dl/go1.16.2.linux-amd64.tar.gz
+      - tar -C /usr/local -xzf ~/go1.16.2.linux-amd64.tar.gz
+      - npm install -g npm@latest
+      - npm install -g @ionic/cli
+    gradle:
+      - yes
+    forcevercode: true
+    rm:
+      - .github
+      - .vscode
+      - cmd/electron
+      - cmd/server
+      - ios
+    prebuild:
+      - cd ../..
+      - npm install
+      - sed -i '/com.google.android.gms:play-services-location/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/com.google.firebase:firebase-messaging/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/import com.getcapacitor.plugin.Geolocation;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/import com.getcapacitor.plugin.PushNotifications;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(Geolocation.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(PushNotifications.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapacitorFirebaseMessagingService.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/PushNotifications.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/Geolocation.java
+      - ionic build
+      - npx cap sync android
+      - rm -rf node_modules/node-notifier
+    build:
+      - mkdir ~/go
+      - export GOROOT=/usr/local/go
+      - export GOPATH=$HOME/go
+      - export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+      - export ANDROID_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - $ANDROID_HOME/tools/bin/sdkmanager 'platforms;android-29' > /dev/null 2>&1
+      - cd ../..
+      - go get golang.org/x/mobile/cmd/gomobile
+      - gomobile init
+      - make bindings-android
+    ndk: r21e
+
+  - versionName: 3.6.0
+    versionCode: 39
+    commit: 3.6.0
+    subdir: android/app
+    sudo:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
+      - echo "fa198afa9a2872cde991c3aa71796894bf7b5310d6eb178c3eafcf66e3ae79a7 node.tar.xz"
+        | sha256sum -c -
+      - tar xJf node.tar.xz
+      - cp -a node-v14.15.5-linux-x64/. /usr/local/
+      - curl -L -o ~/go1.16.2.linux-amd64.tar.gz https://golang.org/dl/go1.16.2.linux-amd64.tar.gz
+      - tar -C /usr/local -xzf ~/go1.16.2.linux-amd64.tar.gz
+      - npm install -g npm@latest
+      - npm install -g @ionic/cli
+    gradle:
+      - yes
+    forcevercode: true
+    rm:
+      - .github
+      - .vscode
+      - cmd/electron
+      - cmd/server
+      - ios
+    prebuild:
+      - cd ../..
+      - npm install
+      - sed -i '/com.google.android.gms:play-services-location/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/com.google.firebase:firebase-messaging/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/import com.getcapacitor.plugin.Geolocation;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/import com.getcapacitor.plugin.PushNotifications;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(Geolocation.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(PushNotifications.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapacitorFirebaseMessagingService.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/PushNotifications.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/Geolocation.java
+      - ionic build
+      - npx cap sync android
+      - rm -rf node_modules/node-notifier
+    build:
+      - mkdir ~/go
+      - export GOROOT=/usr/local/go
+      - export GOPATH=$HOME/go
+      - export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+      - export ANDROID_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - $ANDROID_HOME/tools/bin/sdkmanager 'platforms;android-29' > /dev/null 2>&1
+      - cd ../..
+      - go get golang.org/x/mobile/cmd/gomobile
+      - gomobile init
+      - make bindings-android
+    ndk: r21e
+
+  - versionName: 3.7.0
+    versionCode: 42
+    commit: b6a23baac5fd401034e47ad6376ced72df2bd06d
+    subdir: android/app
+    sudo:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
+      - echo "fa198afa9a2872cde991c3aa71796894bf7b5310d6eb178c3eafcf66e3ae79a7 node.tar.xz"
+        | sha256sum -c -
+      - tar xJf node.tar.xz
+      - cp -a node-v14.15.5-linux-x64/. /usr/local/
+      - curl -L -o ~/go1.16.2.linux-amd64.tar.gz https://golang.org/dl/go1.16.2.linux-amd64.tar.gz
+      - tar -C /usr/local -xzf ~/go1.16.2.linux-amd64.tar.gz
+      - npm install -g npm@latest
+      - npm install -g @ionic/cli
+    gradle:
+      - yes
+    forcevercode: true
+    rm:
+      - .github
+      - .vscode
+      - cmd/electron
+      - cmd/server
+      - ios
+    prebuild:
+      - cd ../..
+      - npm install
+      - sed -i '/com.google.android.gms:play-services-location/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/com.google.firebase:firebase-messaging/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/import com.getcapacitor.plugin.Geolocation;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/import com.getcapacitor.plugin.PushNotifications;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(Geolocation.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(PushNotifications.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapacitorFirebaseMessagingService.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/PushNotifications.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/Geolocation.java
+      - ionic build
+      - npx cap sync android
+      - rm -rf node_modules/node-notifier
+    build:
+      - mkdir ~/go
+      - export GOROOT=/usr/local/go
+      - export GOPATH=$HOME/go
+      - export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+      - export ANDROID_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - $ANDROID_HOME/tools/bin/sdkmanager 'platforms;android-29' > /dev/null 2>&1
+      - cd ../..
+      - go get golang.org/x/mobile/cmd/gomobile
+      - gomobile init
+      - make bindings-android
+    ndk: r21e
+
+  - versionName: 3.7.1
+    versionCode: 45
+    commit: 4c279276dde018748b9e2745ffba9b6747e3862e
+    subdir: android/app
+    sudo:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
+      - echo "fa198afa9a2872cde991c3aa71796894bf7b5310d6eb178c3eafcf66e3ae79a7 node.tar.xz"
+        | sha256sum -c -
+      - tar xJf node.tar.xz
+      - cp -a node-v14.15.5-linux-x64/. /usr/local/
+      - curl -L -o ~/go1.16.2.linux-amd64.tar.gz https://golang.org/dl/go1.16.2.linux-amd64.tar.gz
+      - tar -C /usr/local -xzf ~/go1.16.2.linux-amd64.tar.gz
+      - npm install -g npm@latest
+      - npm install -g @ionic/cli
+    gradle:
+      - yes
+    forcevercode: true
+    rm:
+      - .github
+      - .vscode
+      - cmd/electron
+      - cmd/server
+      - ios
+    prebuild:
+      - cd ../..
+      - npm install
+      - sed -i '/com.google.android.gms:play-services-location/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/com.google.firebase:firebase-messaging/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/import com.getcapacitor.plugin.Geolocation;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/import com.getcapacitor.plugin.PushNotifications;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(Geolocation.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(PushNotifications.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapacitorFirebaseMessagingService.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/PushNotifications.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/Geolocation.java
+      - ionic build
+      - npx cap sync android
+      - rm -rf node_modules/node-notifier
+    build:
+      - mkdir ~/go
+      - export GOROOT=/usr/local/go
+      - export GOPATH=$HOME/go
+      - export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+      - export ANDROID_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - $ANDROID_HOME/tools/bin/sdkmanager 'platforms;android-29' > /dev/null 2>&1
+      - cd ../..
+      - go get golang.org/x/mobile/cmd/gomobile
+      - gomobile init
+      - make bindings-android
+    ndk: r21e
+
+  - versionName: 3.7.2
+    versionCode: 46
+    commit: 6b2aae83c4ca652161b00fc98b8dc47363373882
+    subdir: android/app
+    sudo:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
+      - echo "fa198afa9a2872cde991c3aa71796894bf7b5310d6eb178c3eafcf66e3ae79a7 node.tar.xz"
+        | sha256sum -c -
+      - tar xJf node.tar.xz
+      - cp -a node-v14.15.5-linux-x64/. /usr/local/
+      - curl -L -o ~/go1.16.2.linux-amd64.tar.gz https://golang.org/dl/go1.16.2.linux-amd64.tar.gz
+      - tar -C /usr/local -xzf ~/go1.16.2.linux-amd64.tar.gz
+      - npm install -g npm@latest
+      - npm install -g @ionic/cli
+    gradle:
+      - yes
+    forcevercode: true
+    rm:
+      - .github
+      - .vscode
+      - cmd/electron
+      - cmd/server
+      - ios
+    prebuild:
+      - cd ../..
+      - npm install
+      - sed -i '/com.google.android.gms:play-services-location/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/com.google.firebase:firebase-messaging/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/import com.getcapacitor.plugin.Geolocation;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/import com.getcapacitor.plugin.PushNotifications;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(Geolocation.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(PushNotifications.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapacitorFirebaseMessagingService.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/PushNotifications.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/Geolocation.java
+      - ionic build
+      - npx cap sync android
+      - rm -rf node_modules/node-notifier
+    build:
+      - mkdir ~/go
+      - export GOROOT=/usr/local/go
+      - export GOPATH=$HOME/go
+      - export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+      - export ANDROID_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - $ANDROID_HOME/tools/bin/sdkmanager 'platforms;android-29' > /dev/null 2>&1
+      - cd ../..
+      - go get golang.org/x/mobile/cmd/gomobile
+      - gomobile init
+      - make bindings-android
+    ndk: r21e
+
+  - versionName: 3.8.1
+    versionCode: 50
+    commit: c0d01933fd98b113cbc4e9a3cb6357ed5ee914dd
+    subdir: android/app
+    sudo:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
+      - echo "fa198afa9a2872cde991c3aa71796894bf7b5310d6eb178c3eafcf66e3ae79a7 node.tar.xz"
+        | sha256sum -c -
+      - tar xJf node.tar.xz
+      - cp -a node-v14.15.5-linux-x64/. /usr/local/
+      - curl -L -o ~/go1.16.2.linux-amd64.tar.gz https://golang.org/dl/go1.16.2.linux-amd64.tar.gz
+      - tar -C /usr/local -xzf ~/go1.16.2.linux-amd64.tar.gz
+      - npm install -g npm@latest
+      - npm install -g @ionic/cli
+    gradle:
+      - yes
+    forcevercode: true
+    rm:
+      - .github
+      - .vscode
+      - cmd/electron
+      - cmd/server
+      - ios
+    prebuild:
+      - cd ../..
+      - npm install
+      - sed -i '/com.google.android.gms:play-services-location/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/com.google.firebase:firebase-messaging/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/import com.getcapacitor.plugin.Geolocation;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/import com.getcapacitor.plugin.PushNotifications;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(Geolocation.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(PushNotifications.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapacitorFirebaseMessagingService.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/PushNotifications.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/Geolocation.java
+      - ionic build
+      - npx cap sync android
+      - rm -rf node_modules/node-notifier
+    scandelete:
+      - node_modules/@capacitor/cli/assets/*.tar.gz
+    build:
+      - mkdir ~/go
+      - export GOROOT=/usr/local/go
+      - export GOPATH=$HOME/go
+      - export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+      - export ANDROID_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - $ANDROID_HOME/tools/bin/sdkmanager 'platforms;android-29' > /dev/null 2>&1
+      - cd ../..
+      - go get golang.org/x/mobile/cmd/gomobile
+      - gomobile init
+      - make bindings-android
+    ndk: r21e
+
+  - versionName: 3.8.2
+    versionCode: 51
+    commit: 02ac752a510c1222d549b37898d55d83d0c4af11
+    subdir: android/app
+    sudo:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
+      - echo "fa198afa9a2872cde991c3aa71796894bf7b5310d6eb178c3eafcf66e3ae79a7 node.tar.xz"
+        | sha256sum -c -
+      - tar xJf node.tar.xz
+      - cp -a node-v14.15.5-linux-x64/. /usr/local/
+      - curl -L -o ~/go1.16.2.linux-amd64.tar.gz https://golang.org/dl/go1.16.2.linux-amd64.tar.gz
+      - tar -C /usr/local -xzf ~/go1.16.2.linux-amd64.tar.gz
+      - npm install -g npm@latest
+      - npm install -g @ionic/cli
+    gradle:
+      - yes
+    forcevercode: true
+    rm:
+      - .github
+      - .vscode
+      - cmd/electron
+      - cmd/server
+      - ios
+    prebuild:
+      - cd ../..
+      - npm install
+      - sed -i '/com.google.android.gms:play-services-location/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/com.google.firebase:firebase-messaging/d' node_modules/@capacitor/android/capacitor/build.gradle
+      - sed -i '/import com.getcapacitor.plugin.Geolocation;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/import com.getcapacitor.plugin.PushNotifications;/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(Geolocation.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - sed -i '/this.registerPlugin(PushNotifications.class);/d' 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapacitorFirebaseMessagingService.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/PushNotifications.java
+      - rm -rf 
+        node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/Geolocation.java
+      - ionic build
+      - npx cap sync android
+      - rm -rf node_modules/node-notifier
+    scandelete:
+      - node_modules/@capacitor/cli/assets/*.tar.gz
+    build:
+      - mkdir ~/go
+      - export GOROOT=/usr/local/go
+      - export GOPATH=$HOME/go
+      - export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+      - export ANDROID_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - $ANDROID_HOME/tools/bin/sdkmanager 'platforms;android-29' > /dev/null 2>&1
+      - cd ../..
+      - go get golang.org/x/mobile/cmd/gomobile
+      - gomobile init
+      - make bindings-android
+    ndk: r21e
+
+  - versionName: 3.9.0
+    versionCode: 52
+    commit: 96b8537c10ca670295c33d3be72d649c6180a9ad
+    subdir: android/app
+    sudo:
+      - curl -Lo node.tar.xz https://nodejs.org/dist/v16.13.1/node-v16.13.1-linux-x64.tar.xz
+      - echo "a3721f87cecc0b52b0be8587c20776ac7305db413751db02c55aa2bffac15198 node.tar.xz"
+        | sha256sum -c -
+      - tar xJf node.tar.xz
+      - cp -a node-v16.13.1-linux-x64/. /usr/local/
+      - curl -Lo go.tar.gz https://golang.org/dl/go1.17.5.linux-amd64.tar.gz
+      - echo "bd78114b0d441b029c8fe0341f4910370925a4d270a6a590668840675b0c653e go.tar.gz"
+        | sha256sum -c -
+      - tar -C /usr/local -xzf go.tar.gz
+      - npm install -g npm@latest
+      - npm install -g @ionic/cli
+    gradle:
+      - yes
+    forcevercode: true
+    rm:
+      - .github
+      - .vscode
+      - cmd/electron
+      - cmd/server
+      - ios
+    prebuild:
+      - cd ../..
+      - npm install
+      - ionic build
+      - npx cap sync android
+      - rm -rf node_modules/node-notifier
+    scandelete:
+      - node_modules/@capacitor/cli/assets/*.tar.gz
+    build:
+      - mkdir ~/go
+      - export GOROOT=/usr/local/go
+      - export GOPATH=$HOME/go
+      - export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+      - export ANDROID_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - $ANDROID_HOME/tools/bin/sdkmanager 'platforms;android-30' > /dev/null 2>&1
+      - cd ../..
+      - go get golang.org/x/mobile/cmd/gomobile
+      - gomobile init
+      - make bindings-android
+    ndk: r21e
+
+  - versionName: 4.2.3
+    versionCode: 89
+    commit: f76fc7ad9f12b300c8c6de41c50c856d3b70ca08
+    sudo:
+      - apt-get update
+      - apt-get install -y -t bullseye-backports golang-go
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - kubenav.io
+      - macos
+      - windows
+    prebuild:
+      - flutterVerion=$(sed -n -E "s/.*flutter-version:\s'([0-9.]+)'/\1/p" .github/workflows/continuous-delivery.yaml
+        | head -n 1)
+      - pushd $$flutter$$
+      - git checkout -f $flutterVerion
+      - popd
+      - sed -i -e 's/Platform.isAndroid/Platform.isIOS/g' lib/widgets/home/overview/overview_actions.dart
+        lib/widgets/settings/settings/settings_sponsor.dart lib/widgets/settings/settings/sponsor/settings_sponsor_banner.dart
+        lib/repositories/sponsor_repository.dart
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/android/iOS/' -e '/android/Id' .pub-cache/hosted/pub.dev/in_app_purchase-*/lib/in_app_purchase.dart
+      - rm -r .pub-cache/hosted/pub.dev/in_app_purchase_android-*
+    scandelete:
+      - .pub-cache
+    build:
+      - sdkmanager 'platforms;android-29'
+      - export GOPATH="$PWD/golang"
+      - export PATH="$GOPATH/bin:$PATH"
+      - go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20231006135142-2b44d11868fe
+      - gomobile init
+      - mkdir -p android/app/src/libs
+      - gomobile bind -o android/app/src/libs/kubenav.aar -target=android/arm,android/arm64,android/amd64
+        github.com/kubenav/kubenav/cmd/mobile
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+    ndk: r23c
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 4.2.3
+CurrentVersionCode: 89

@@ -1,0 +1,39 @@
+Categories:
+  - Science & Education
+License: MIT
+SourceCode: https://github.com/Kent1/Manille
+IssueTracker: https://github.com/Kent1/Manille/issues
+
+AutoName: Constellations
+Description: |-
+  Star charts and data of the 88 modern constellations, based on data by
+  Wikipedia.
+
+Builds:
+  - versionName: 2.0.2
+    versionCode: 10004
+    commit: v2.0.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.3
+    versionCode: 10005
+    commit: v2.0.3
+    subdir: app
+    gradle:
+      - yes
+
+MaintainerNotes: |-
+  SourceCode points to https://github.com/Kent1/Manille, which has (2021-03-08) the tags
+  v1.0 and v1.1 defined (contrary to 2.0.2 and 2.0.3). Also the source code has no hints for
+  com.phg.constellations.
+  Please double check if it's the same app before releasing a new version.
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 2.0.3
+CurrentVersionCode: 10005
+
+NoSourceSince: 2.0.3

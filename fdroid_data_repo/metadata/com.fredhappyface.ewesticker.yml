@@ -1,0 +1,180 @@
+Categories:
+  - Keyboard & IME
+  - Multimedia
+License: MIT
+AuthorName: FredHappyface
+SourceCode: https://github.com/fredhappyface/android.EweSticker
+IssueTracker: https://github.com/fredhappyface/android.EweSticker/issues
+Changelog: https://github.com/FredHappyface/Android.EweSticker/blob/HEAD/CHANGELOG.md
+
+AutoName: EweSticker
+
+RepoType: git
+Repo: https://github.com/fredhappyface/android.EweSticker.git
+
+Builds:
+  - versionName: 2021.07.23
+    versionCode: 20210723
+    commit: '20210723'
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2021.08.10
+    versionCode: 20210810
+    commit: 8e93b09e057fe2764617daddff07b65357d4ead5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2021.09.09
+    versionCode: 20210909
+    commit: 52b81ebad23c38104265215b75b7fc14576fda1f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2021.10.11
+    versionCode: 20211011
+    commit: c3e528de91fd870ebdd7f73561329d4dd2b2c035
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2021.10.29
+    versionCode: 20211029
+    commit: 15ca179f0823bd37fa4e3b3b201090df5aa2fc29
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2021.11.14
+    versionCode: 20211114
+    commit: df418f1f69d130047b88c78d25525e344889ecb0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2021.11.18
+    versionCode: 20211118
+    commit: fad49d5d61bb7c348cd78f5177dabc5b025d887c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2022.01.03
+    versionCode: 20220103
+    commit: 396e860f6edffbf0c58796ff651172c79308eebe
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2022.01.28
+    versionCode: 20220128
+    commit: 00b2bbfe9f1c14ed2f566188f2ea673d4607317d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2022.03.11
+    versionCode: 20220311
+    commit: 0b4ccfe57985aae4dcd8f62f561f81f6cb38ff06
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '20230828'
+    versionCode: 20230828
+    commit: c7030d8d5f4fd1b2be56901672974b2d9ba13c2e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '20240322'
+    versionCode: 20240322
+    commit: 84b8c2c6f22f5e27b00a1c576f0a7a7fcc972a62
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - documentation
+      - example-files
+      - readme-assets
+
+  - versionName: '20240825'
+    versionCode: 20240825
+    commit: 9c73832ad33eeda6b356f3165203884b39fb684c
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - documentation
+      - example-files
+      - readme-assets
+
+  - versionName: '20250209'
+    versionCode: 20250209
+    commit: d36829e7caa95304444f52a151bcade98a533bd0
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - documentation
+      - example-files
+      - readme-assets
+
+  - versionName: '20250217'
+    versionCode: 20250217
+    commit: 43cda5728e4e31e177ab5df642614ff7233cdab2
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - documentation
+      - example-files
+      - readme-assets
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '20250217'
+CurrentVersionCode: 20250217

@@ -1,0 +1,190 @@
+Categories:
+  - Local Media Player
+  - Multimedia
+License: GPL-3.0-only
+AuthorName: MGGames
+AuthorEmail: martinmimigames@gmail.com
+AuthorWebSite: https://martinmimigames.github.io
+WebSite: https://martinmimigames.github.io/projects/little-music-player
+SourceCode: https://github.com/martinmimigames/little-music-player
+IssueTracker: https://github.com/martinmimigames/little-music-player/issues
+Changelog: https://github.com/martinmimigames/little-music-player/releases
+
+AutoName: Little Music Player
+
+RepoType: git
+Repo: https://github.com/martinmimigames/little-music-player
+
+Builds:
+  - versionName: '2.1'
+    versionCode: 3
+    commit: '2.1'
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/signingConfig/d' build.gradle
+      - sed -i -e '/keystoreProperties.load/d' build.gradle
+
+  - versionName: '2.2'
+    versionCode: 4
+    commit: 4f0291496ad1a6d7a88ed5d894367aaae85c1f9e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/signingConfig/d' build.gradle
+      - sed -i -e '/keystoreProperties.load/d' build.gradle
+
+  - versionName: '2.3'
+    versionCode: 5
+    commit: 3e436b4b7ae8b47b905306286a9e0abf362ce234
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/signingConfig/d' build.gradle
+      - sed -i -e '/keystoreProperties.load/d' build.gradle
+
+  - versionName: '2.4'
+    versionCode: 6
+    commit: ac2e70cc31b7b1e6b2f9427423f5f13902f8e976
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/signingConfig/d' build.gradle
+      - sed -i -e '/keystoreProperties.load/d' build.gradle
+
+  - versionName: '2.5'
+    versionCode: 7
+    commit: ce79c772166d9101b856493c4fd0335ba9552c2b
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/signingConfig/d' build.gradle
+      - sed -i -e '/keystoreProperties.load/d' build.gradle
+
+  - versionName: '2.6'
+    versionCode: 8
+    commit: 045e153d0da28fbe6b864b6194f6f07185daf57b
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/signingConfig/d' build.gradle
+      - sed -i -e '/keystoreProperties.load/d' build.gradle
+
+  - versionName: '2.7'
+    versionCode: 9
+    commit: df4773dd939d6c7591ececc3a52d8a5112284eec
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/signingConfig/d' build.gradle
+      - sed -i -e '/keystoreProperties.load/d' build.gradle
+
+  - versionName: '2.9'
+    versionCode: 11
+    commit: 61925596d3c0c4616c10e49b9fdd81b716165557
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/signingConfig/d' build.gradle
+      - sed -i -e '/keystoreProperties.load/d' build.gradle
+
+  - versionName: '2.10'
+    versionCode: 12
+    commit: 7f1eb6f7c4520302bf6ccd2de4d72f382d649a0e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/signingConfig/d' -e '/keystoreProperties.load/d' -e 's/VERSION_16/VERSION_17/'
+      build.gradle
+
+  - versionName: '2.11'
+    versionCode: 13
+    commit: 6166cbb90f7faf324cee3fdf6239554a6e9b166e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/signingConfig/d' -e '/keystoreProperties.load/d' -e 's/VERSION_16/VERSION_17/'
+      build.gradle
+
+  - versionName: '2.12'
+    versionCode: 14
+    commit: 2ebaf34cebc793f3804b62f81c7601a400df9bc8
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/signingConfig/d' -e '/keystoreProperties.load/d' -e 's/VERSION_16/VERSION_17/'
+      build.gradle
+
+  - versionName: '2.13'
+    versionCode: 15
+    commit: 1ae6d61c00b97e4550cb6839e25d5fa2a8dccf54
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/signingConfig/d' -e '/keystoreProperties.load/d' -e 's/VERSION_16/VERSION_17/'
+      build.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '2.13'
+CurrentVersionCode: 15

@@ -263,6 +263,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Contrôles de scan
           Card(

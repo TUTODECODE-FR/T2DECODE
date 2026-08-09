@@ -1,0 +1,87 @@
+Categories:
+  - Security
+License: GPL-3.0-or-later
+AuthorName: Aidin Gharibnavaz
+SourceCode: https://github.com/aidin36/simpletextcrypt
+IssueTracker: https://github.com/aidin36/simpletextcrypt/issues
+Changelog: https://github.com/aidin36/simpletextcrypt/releases/
+
+AutoName: SimpleTextCrypt
+
+RepoType: git
+Repo: https://github.com/aidin36/simpletextcrypt.git
+
+Builds:
+  - versionName: '3.2'
+    versionCode: 7
+    commit: v3.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '3.3'
+    versionCode: 8
+    commit: v3.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '4.1'
+    versionCode: 9
+    commit: v4.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '4.2'
+    versionCode: 10
+    commit: v4.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '4.4'
+    versionCode: 12
+    commit: v4.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '4.5'
+    versionCode: 14
+    commit: 484ef4829b6f5f6a2283f85c930b6602a42c4e43
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: '4.6'
+    versionCode: 15
+    commit: 5826a31c0b82b8a9526c0dc1cfa703215eb50199
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '5.1'
+    versionCode: 16
+    commit: 922cc5224eb723c684013ed909b38d451c1b79e0
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle
+
+  - versionName: '6.0'
+    versionCode: 17
+    commit: 2471122f5d258cc732e834de0452958540a2ad49
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '6.0'
+CurrentVersionCode: 17

@@ -1,0 +1,406 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: App uses a third party service for currency exchange rates
+Categories:
+  - Launcher
+  - System
+License: GPL-3.0-or-later
+AuthorName: U. N. Owen
+WebSite: https://kvaesitso.mm20.de
+SourceCode: https://github.com/MM2-0/Kvaesitso
+IssueTracker: https://github.com/MM2-0/Kvaesitso/issues
+Donate: https://github.com/sponsors/MM2-0
+
+RepoType: git
+Repo: https://github.com/MM2-0/Kvaesitso.git
+
+Builds:
+  - versionName: 1.20.0
+    versionCode: 12000
+    commit: v1.20.0
+    subdir: app/app
+    patch:
+      - remove_ms-services_12000.patch
+      - remove_gservices_12000.patch
+    gradle:
+      - yes
+    prebuild:
+      - sed -i 's/^org\.gradle\.java\.home.*$//' ../../gradle.properties
+      - sed -i 's/exclude(group\ =\ "com\.google\.guava".*$//' build.gradle.kts
+      - sed -i 's/versionCode\ =\ versionCodeDate()/versionCode = 12000/' build.gradle.kts
+      - sed -i 's/versionNameSuffix.*$//' build.gradle.kts
+
+  - versionName: 1.21.1-fdroid
+    versionCode: 2023012300
+    commit: v1.21.2
+    subdir: app/app
+    patch:
+      - remove_ms_g_2023012300.patch
+    gradle:
+      - fdroid
+    prebuild:
+      - cd ../..
+      - sed -i 's/^org\.gradle\.java\.home.*$//' gradle.properties
+      - sed -i 's/^.*pkgs\.dev\.azure\.com.*$//' build.gradle.kts
+      - sed -i 's/exclude(group\ =\ "com\.google\.guava".*$//' app/app/build.gradle.kts
+      - for i in build.gradle.kts settings.gradle.kts app/app/build.gradle.kts app/ui/build.gradle.kts
+        data/files/build.gradle.kts services/accounts/build.gradle.kts; do sed -i
+        's/^.*:ms-services.*$//' "$i"; sed -i 's/^.*:g-services.*$//' "$i"; done
+
+  - versionName: 1.25.0-fdroid
+    versionCode: 2023051600
+    commit: 1ddee5d493db70e3d259080c82cf00c66520b7ba
+    patch:
+      - remove_ms_g_2023051600.patch
+    gradle:
+      - fdroid
+    output: app/app/build/outputs/apk/fdroid/release/app-fdroid-release-unsigned.apk
+
+  - versionName: 1.26.4-fdroid
+    versionCode: 2023071201
+    commit: v1.26.4
+    patch:
+      - remove_ms_g_2023071201.patch
+    gradle:
+      - fdroid
+    output: app/app/build/outputs/apk/fdroid/release/app-fdroid-release-unsigned.apk
+
+  - versionName: 1.27.1-fdroid
+    versionCode: 2023090800
+    commit: v1.27.1
+    sudo:
+      - apt-get update
+      - apt-get install openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    patch:
+      - remove_ms_g_2023090800.patch
+    gradle:
+      - fdroid
+    output: app/app/build/outputs/apk/fdroid/release/app-fdroid-release-unsigned.apk
+    prebuild: cp libs/g-services/consumer-rules.pro libs/nextcloud/consumer-rules.pro
+
+  - versionName: 1.28.0-fdroid
+    versionCode: 2023101300
+    commit: v1.28.0
+    sudo:
+      - apt-get update
+      - apt-get install openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    patch:
+      - remove_ms_g_2023101300.patch
+    gradle:
+      - fdroid
+    output: app/app/build/outputs/apk/fdroid/release/app-fdroid-release-unsigned.apk
+    prebuild: cp libs/g-services/consumer-rules.pro libs/nextcloud/consumer-rules.pro
+
+  - versionName: 1.29.1
+    versionCode: 2024022100
+    commit: v1.29.1
+    sudo:
+      - apt-get update
+      - apt-get install openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: app/app/build/outputs/apk/default/release/app-default-release-unsigned.apk
+    rm:
+      - plugins/sdk/build.gradle.kts
+    prebuild:
+      - sed -i 's/4096/3072/g' gradle.properties
+      - perl -0777 -i -pe 's/signing {.*?}//sg' core/shared/build.gradle.kts
+      - perl -0777 -i -pe 's/publishing {\n    publications.*\n}\n//sg' core/shared/build.gradle.kts
+
+  - versionName: 1.30.3
+    versionCode: 2024050900
+    commit: daa78ff8a75be63352864ba1b02501818d0ef112
+    gradle:
+      - yes
+    output: app/app/build/outputs/apk/default/release/app-default-release-unsigned.apk
+    rm:
+      - plugins/sdk/build.gradle.kts
+    prebuild:
+      - sed -i 's/4096/3072/g' gradle.properties
+      - perl -0777 -i -pe 's/signing {.*?}//sg' core/shared/build.gradle.kts
+      - perl -0777 -i -pe 's/publishing {\n    publications.*\n}\n//sg' core/shared/build.gradle.kts
+
+  - versionName: 1.30.4
+    versionCode: 2024051000
+    commit: 9b252cb5e8a47f9a38b28283e1b5bddafaa4d585
+    gradle:
+      - yes
+    output: app/app/build/outputs/apk/default/release/app-default-release-unsigned.apk
+    rm:
+      - plugins/sdk/build.gradle.kts
+    prebuild:
+      - sed -i 's/4096/3072/g' gradle.properties
+      - perl -0777 -i -pe 's/signing {.*?}//sg' core/shared/build.gradle.kts
+      - perl -0777 -i -pe 's/publishing {\n    publications.*\n}\n//sg' core/shared/build.gradle.kts
+
+  - versionName: 1.31.1
+    versionCode: 2024070100
+    commit: 9424663dac948853b461c19721593a9594c41ddf
+    gradle:
+      - yes
+    output: app/app/build/outputs/apk/default/release/app-default-release-unsigned.apk
+    rm:
+      - plugins/sdk/build.gradle.kts
+    prebuild:
+      - sed -i 's/4096/3072/g' gradle.properties
+      - perl -0777 -i -pe 's/signing {.*?}//sg' core/shared/build.gradle.kts
+      - perl -0777 -i -pe 's/publishing {\n    publications.*\n}\n//sg' core/shared/build.gradle.kts
+
+  - versionName: 1.31.2
+    versionCode: 2024070300
+    commit: ed4491eff968bc1c5bc75090006998e760590b40
+    gradle:
+      - yes
+    output: app/app/build/outputs/apk/default/release/app-default-release-unsigned.apk
+    rm:
+      - plugins/sdk/build.gradle.kts
+    prebuild:
+      - sed -i 's/4096/3072/g' gradle.properties
+      - perl -0777 -i -pe 's/signing {.*?}//sg' core/shared/build.gradle.kts
+      - perl -0777 -i -pe 's/publishing {\n    publications.*\n}\n//sg' core/shared/build.gradle.kts
+
+  - versionName: 1.32.0
+    versionCode: 2024071900
+    commit: 3f62610896c803ef838c7496693a5c00185690bd
+    gradle:
+      - yes
+    output: app/app/build/outputs/apk/default/release/app-default-release-unsigned.apk
+    rm:
+      - plugins/sdk/build.gradle.kts
+    prebuild:
+      - sed -i 's/4096/3072/g' gradle.properties
+      - perl -0777 -i -pe 's/signing {.*?}//sg' core/shared/build.gradle.kts
+      - perl -0777 -i -pe 's/publishing {\n    publications.*\n}\n//sg' core/shared/build.gradle.kts
+
+  - versionName: 1.32.1
+    versionCode: 2024072200
+    commit: 8ae5fdfcdae09739fd0122028715fab34bc3319e
+    gradle:
+      - yes
+    output: app/app/build/outputs/apk/default/release/app-default-release-unsigned.apk
+    rm:
+      - plugins/sdk/build.gradle.kts
+    prebuild:
+      - sed -i 's/4096/3072/g' gradle.properties
+      - perl -0777 -i -pe 's/signing {.*?}//sg' core/shared/build.gradle.kts
+      - perl -0777 -i -pe 's/publishing {\n    publications.*\n}\n//sg' core/shared/build.gradle.kts
+
+  - versionName: 1.32.2
+    versionCode: 2024072400
+    commit: d2b134bfd2b22ed20aeda9cddbb2c4656dc29ae3
+    gradle:
+      - yes
+    output: app/app/build/outputs/apk/default/release/app-default-release-unsigned.apk
+    rm:
+      - plugins/sdk/build.gradle.kts
+    prebuild:
+      - sed -i 's/4096/3072/g' gradle.properties
+      - perl -0777 -i -pe 's/signing {.*?}//sg' core/shared/build.gradle.kts
+      - perl -0777 -i -pe 's/publishing {\n    publications.*\n}\n//sg' core/shared/build.gradle.kts
+
+  - versionName: 1.33.1-fdroid
+    versionCode: 2024090300
+    commit: 9d08326a9da4b1ea3c39b608ec16d57ac3fd0ad4
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild:
+      - cp -R ../../gradle .
+      - sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|' ../../{core/shared,plugins/sdk}/build.gradle.kts
+
+  - versionName: 1.34.0-fdroid
+    versionCode: 2024120500
+    commit: d565da1492b3d5122e495d00344e45879b82d2d1
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild:
+      - cp -R ../../gradle .
+      - sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|' ../../{core/shared,plugins/sdk}/build.gradle.kts
+
+  - versionName: 1.34.1-fdroid
+    versionCode: 2024122400
+    commit: 0ad7303a0448565a6001407b62219fc811d600c0
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild:
+      - cp -R ../../gradle .
+      - sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|' ../../{core/shared,plugins/sdk}/build.gradle.kts
+
+  - versionName: 1.35.2-fdroid
+    versionCode: 2025040301
+    commit: fb33c859d33f2193d59418db02d1d35cf8cc11f7
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild:
+      - cp -R ../../gradle .
+      - sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|' ../../{core/shared,plugins/sdk}/build.gradle.kts
+
+  - versionName: 1.35.4-fdroid
+    versionCode: 2025042101
+    commit: 6036d044762c59e379cf18455d7399708644e8a4
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild:
+      - cp -R ../../gradle .
+      - sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|' ../../{core/shared,plugins/sdk}/build.gradle.kts
+
+  - versionName: 1.36.1-fdroid
+    versionCode: 2025050301
+    commit: 269c107a8e79bc909c41c7784a3545ed7658d686
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild:
+      - cp -R ../../gradle .
+      - sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|' ../../{core/shared,plugins/sdk}/build.gradle.kts
+
+  - versionName: 1.37.0-fdroid
+    versionCode: 2025070400
+    commit: 83b96e4fcdc454adef2009f185a469f47fe130fe
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild:
+      - cp -R ../../gradle .
+      - sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|' ../../{core/shared,plugins/sdk}/build.gradle.kts
+
+  - versionName: 1.38.0-fdroid
+    versionCode: 2025101700
+    commit: f991e579c039e36e78a1996af38758ec17c7e37f
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild:
+      - cp -R ../../gradle .
+      - sed -i -e 's|https.maven.pkg.github.com/MM2-0/Kvaesitso|https://maven.google.com|'
+        ../../plugins/sdk/build.gradle.kts
+      - sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|' ../../core/shared/build.gradle.kts
+      - sed -i -e 's/8.12.0/8.11.1/' ../../gradle/libs.versions.toml
+
+  - versionName: 1.39.0-fdroid
+    versionCode: 2025122300
+    commit: ff417e57c5be32a96968137d3b21d6cfe85c7924
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild:
+      - cp -R ../../gradle .
+      - sed -i -e 's|https.maven.pkg.github.com/MM2-0/Kvaesitso|https://maven.google.com|'
+        ../../plugins/sdk/build.gradle.kts
+      - sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|' ../../core/shared/build.gradle.kts
+
+  - versionName: 1.39.1-fdroid
+    versionCode: 2025122400
+    commit: 3cd660058e9826d7f06caeb95e61463d1440510b
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild:
+      - cp -R ../../gradle .
+      - sed -i -e 's|https.maven.pkg.github.com/MM2-0/Kvaesitso|https://maven.google.com|'
+        ../../plugins/sdk/build.gradle.kts
+      - sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|' ../../core/shared/build.gradle.kts
+
+  - versionName: 1.39.2-fdroid
+    versionCode: 2025123000
+    commit: b66d48c87e4499760638d5ff078ed9d17d5bc11e
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild:
+      - cp -R ../../gradle .
+      - sed -i -e 's|https.maven.pkg.github.com/MM2-0/Kvaesitso|https://maven.google.com|'
+        ../../plugins/sdk/build.gradle.kts
+      - sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|' ../../core/shared/build.gradle.kts
+
+  - versionName: 1.39.3-fdroid
+    versionCode: 2026012400
+    commit: e7d794d9c2ebfa14509690fa75437bc8cd97d95e
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e 's|https.maven.pkg.github.com/MM2-0/Kvaesitso|https://maven.google.com|'
+        ../../plugins/sdk/build.gradle.kts
+      - sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|' ../../core/shared/build.gradle.kts
+
+  - versionName: 1.40.1-fdroid
+    versionCode: 2026041400
+    commit: 47596ad484bb530c3530225d3092c92f6585bfea
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|'
+      ../../{plugins/sdk,core/shared}/build.gradle.kts
+
+  - versionName: 1.40.2-fdroid
+    versionCode: 2026053100
+    commit: 8e236e1d1dec445e2f166b5241d10ee1208e5511
+    subdir: app/app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e 's|maven.pkg.github.com/MM2-0/Kvaesitso|maven.google.com|'
+      ../../{plugins/sdk,core/shared}/build.gradle.kts
+
+MaintainerNotes: |-
+  Kvaesitso uses several external APIs for search providers.
+  Several of them require signing up to obtain a developer API
+  key: gdrive search, openweathermap, HERE and Meteorologisk
+  institutt. It's not possible for users to provide these keys
+  as explained here:
+  https://github.com/MM2-0/Kvaesitso/issues/227#issuecomment-1366826219
+  If keys are not provided, these features are automatically
+  disabled during the build.
+
+  core/shared/build.gradle.kts and plugins/sdk/build.gradle.kts
+  have configurations in them for publishing artifacts to
+  maven repos. They are not used during the build, but detected
+  by F-Droid scanner anyway. We patch it out from
+  core/shared/build.gradle.kts, since this module itself is
+  still used in compilation, and delete plugins/sdk/build.gradle.kts
+  because it's not used in app compilation.
+
+  Kvaesitso depended on different libraries used for gdrive
+  login in the past that pulled GMS dependency, however it's
+  not the case anymore:
+  https://github.com/MM2-0/Kvaesitso/issues/583#issuecomment-1775268896
+  The new libraries pull OpenTelemetry though, but it's unclear
+  if it's used (considering gdrive integration is disabled).
+
+  Max heap size is reduced in gradle.properties to avoid gradle
+  daemon being killed by OOM manager.
+
+  Older versions of Kvaesitso had onedrive integration that
+  depended on non-whitelisted maven repos, but it was removed.
+
+  Upstream provides an fdroid flavor, however there's no difference
+  with default flavor except for different versionName.
+
+  For some reason, F-Droid fails to pick up the correct gradle
+  version from distributionUrl if subdir is used.
+
+  Older patches:
+  * remove_ms-services.patch removes microsoft azure sdk maven
+  repo and its usage (onedrive integration) across the project.
+
+  * remove_gservices.patch removes gdrive integration, as one
+  of dependencies it relies on contains known non-free classes,
+  according to f-droid scanner.
+
+  * remove_ms_g_2023012300.patch removes microsoft and google
+  services from the source code, while patching of respective
+  modules build.gradle.kts files is done with sed edits, since
+  these files are changed often.
+
+AutoUpdateMode: Version +-fdroid v.%v
+UpdateCheckMode: Tags
+UpdateCheckData: app/app/build.gradle.kts|versionCode\s=\s.*\?:\s(\d+)|.|versionName\s=\s"(.+)"
+CurrentVersion: 1.40.2
+CurrentVersionCode: 2026053100

@@ -1,0 +1,36 @@
+Categories:
+  - Emulator
+License: GPL-3.0-only
+SourceCode: https://github.com/dkanada/chip-emulator
+IssueTracker: https://github.com/dkanada/chip-emulator/issues
+Changelog: https://github.com/dkanada/chip-emulator/blob/HEAD/CHANGELOG.md
+
+AutoName: Chip8
+Description: |-
+  This is a basic Chip8 emulator that supports all instructions, key
+  input, and video output. If you are having issues with a specific game, try
+  enabling one of the two common emulation quirks in the settings.
+
+RepoType: git
+Repo: https://github.com/dkanada/chip-emulator
+
+Builds:
+  - versionName: '0.7'
+    versionCode: 1
+    commit: v0.7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.7.1
+    versionCode: 2
+    commit: v0.7.1
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 0.7.1
+CurrentVersionCode: 2

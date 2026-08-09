@@ -1,0 +1,32 @@
+Categories:
+  - Sports & Health
+License: Apache-2.0
+SourceCode: https://github.com/spriyan/CricScoreApp
+IssueTracker: https://github.com/spriyan/CricScoreApp/issues
+
+AutoName: Cricscore
+Description: |-
+  Show score of cricket matches from an <a href="http://cricscore-api.appspot.com">AppSpot</a>
+  service, which is also open-source: <a href="https://github.com/spriyan/CricScoreGAE">CricScoreGAE</a>.
+
+RepoType: git
+Repo: https://github.com/spriyan/CricScoreApp
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: 6da2a3055e6862c6fd77ec7091e859b599c35b2c
+    srclibs:
+      - ActionBarSherlock@4.4.0
+    rm:
+      - lib/*
+    extlibs:
+      - android/android-support-v4.jar
+    prebuild: cp libs/android-support-v4.jar $$ActionBarSherlock$$/libs/
+    target: android-17
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.0'
+CurrentVersionCode: 1

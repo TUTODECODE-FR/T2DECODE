@@ -1,0 +1,400 @@
+Categories:
+  - System
+License: Apache-2.0
+SourceCode: https://gitlab.com/termapps/termoneplus
+IssueTracker: https://gitlab.com/termapps/termoneplus/issues
+
+AutoName: Terminal Emulator
+Description: |-
+  "TermOne Plus" is a terminal emulator for communicating with the built-in
+  Android shell. It emulates a reasonably large subset of Digital Equipment
+  Corporation VT-100 terminal codes. Supported terminal types include vt100,
+  screen (default), linux and xterm. As result console programs like "vi"
+  (unix visual editor), "emacs", "mc" (Midnight Commander file manager), nano
+  (Nano's ANOther editor) and other work smoothly.
+
+  This application is a clone of Jack Palevich's https://f-droid.org/packages/jackpal.androidterm.
+
+RepoType: git
+Repo: https://gitlab.com/termapps/termoneplus.git
+
+Builds:
+  - versionName: 3.0.0
+    versionCode: 300
+    commit: v3.0.0
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.1.0
+    versionCode: 310
+    commit: v3.1.0
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.1.1
+    versionCode: 311
+    commit: v3.1.1
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.2.0
+    versionCode: 320
+    commit: v3.2.0
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.2.3
+    versionCode: 323
+    commit: v3.2.3
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.2.4
+    versionCode: 324
+    commit: v3.2.4
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.3.1
+    versionCode: 331
+    commit: v3.3.1
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.3.2
+    versionCode: 332
+    commit: v3.3.2
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.3.3
+    versionCode: 333
+    commit: v3.3.3
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.3.4
+    versionCode: 334
+    commit: v3.3.4
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.3.5
+    versionCode: 335
+    commit: v3.3.5
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.4.2
+    versionCode: 342
+    commit: v3.4.2
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.5.0
+    versionCode: 350
+    commit: v3.5.0
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.5.1
+    versionCode: 351
+    commit: v3.5.1
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.5.2
+    versionCode: 352
+    commit: v3.5.2
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.5.3
+    versionCode: 353
+    commit: v3.5.3
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.5.4
+    versionCode: 354
+    commit: v3.5.4
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.6.0
+    versionCode: 360
+    commit: v3.6.0
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.6.1
+    versionCode: 361
+    commit: b9917f83c1960624bfb247ff00d8dc5f86de18c2
+    subdir: term
+    gradle:
+      - yes
+    ndk: r17c
+
+  - versionName: 3.6.2
+    versionCode: 362
+    commit: 249573c3bb7462bfd0e4ee48c62889f66f7d7bd7
+    subdir: term
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    ndk: r21e
+
+  - versionName: 3.6.3
+    versionCode: 363
+    commit: fb352a5f817f0b3a2c6e1244c920d3d693b1fa60
+    subdir: term
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    ndk: r21e
+
+  - versionName: 4.0.0/X
+    versionCode: 400
+    commit: 2372115e66a4c5fa791a585d6eccd723ee2aeab1
+    subdir: term
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - full
+    ndk: r21e
+
+  - versionName: 4.0.1/X
+    versionCode: 401
+    commit: fa75a2c7628372a4174d16b3986555e00b6e9c7c
+    subdir: term
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - full
+    ndk: r21e
+
+  - versionName: 4.1.0/X
+    versionCode: 410
+    commit: 9678d474b97aff6f1e45706f90931f213e1dd908
+    subdir: term
+    gradle:
+      - full
+    ndk: r23c
+
+  - versionName: 4.2.0/X
+    versionCode: 420
+    commit: f05af04daa53b12127f76ac2d1dda29c4c5a2d66
+    subdir: term
+    gradle:
+      - full
+    ndk: r23c
+
+  - versionName: 4.3.0/X
+    versionCode: 430
+    commit: 98e656c2a168d057890146ddcbb271946d4ee5df
+    subdir: term
+    gradle:
+      - full
+    ndk: r23c
+
+  - versionName: 4.3.1/X
+    versionCode: 431
+    commit: 677156206bde8abac75bf93af2a04a14e836e3e6
+    subdir: term
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 4.4.0/X
+    versionCode: 440
+    commit: 5eb93382b8acd5c4c7f5dbc3e7d7b85e53935405
+    subdir: term
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 4.5.0/X
+    versionCode: 450
+    commit: 4c26212437f0c191843337f3db7444fa5c511d34
+    subdir: term
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 4.6.0/X
+    versionCode: 460
+    commit: 7b81c76f1e29f59b6fc6c2c8622b06ac67e929ff
+    subdir: term
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 4.7.0/X
+    versionCode: 470
+    commit: 4fbdc59407645a906c6b26b05d87a2cb2ff87b39
+    subdir: term
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 4.7.1/X
+    versionCode: 471
+    commit: 5b72c8a267bddb01676bbe05ce7e7803e65132d4
+    subdir: term
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 5.0.0/X
+    versionCode: 500
+    commit: c65c1fdde3b008d202b4b1100ec699ec8056dbb2
+    subdir: term
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 5.0.1/X
+    versionCode: 501
+    commit: 6827ef23af2b42e474f1906e447b8325701d3db6
+    subdir: term
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 5.1.0/X
+    versionCode: 510
+    commit: 5b574113be172b357f4e737bd6d2f40d2dbc3182
+    subdir: term
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 5.2.0/X
+    versionCode: 520
+    commit: 3aea5867bedb2ffb9eab6f43eca0376b580643be
+    subdir: term
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 5.3.0/X
+    versionCode: 530
+    commit: c693145104e467f2a30de38934e305c15531fb69
+    subdir: term
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 5.4.0/X
+    versionCode: 540
+    commit: 64a994f4cde6d6226f0ffe12698747e198cc3877
+    subdir: term
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 5.5.0/X
+    versionCode: 550
+    commit: 8437f919f1bc7c2950ce45e507c697671a823d27
+    subdir: term
+    gradle:
+      - full
+    prebuild: sed -i -e 's/elf-cleaner/echo/' build.gradle
+    ndk: r23c
+
+  - versionName: 5.6.1/X
+    versionCode: 561
+    commit: e72b3f7041786c1a9ee5bd0c6ab3a75baacc067b
+    subdir: term
+    gradle:
+      - full
+    prebuild:
+      - sed -i -e 's/elf-cleaner/echo/' build.gradle
+      - sed -i -e '/agp/s/8.12.2/8.11.1/' ../gradle/libs.versions.toml
+      - sed -i -e '/foojay/d' ../settings.gradle
+      - sed -i -e '/languageVersion/d' ../*/build.gradle
+    ndk: r23c
+
+  - versionName: 5.7.0/X
+    versionCode: 570
+    commit: 1355c8d7735cb190e14e742492864baf27cff13f
+    subdir: term
+    gradle:
+      - full
+    prebuild:
+      - sed -i -e 's/elf-cleaner/echo/' build.gradle
+      - sed -i -e '/agp/s/8.12.2/8.11.1/' ../gradle/libs.versions.toml
+      - sed -i -e '/foojay/d' ../settings.gradle
+      - sed -i -e '/languageVersion/d' ../*/build.gradle
+    ndk: r23c
+
+AutoUpdateMode: Version +/X v%v
+UpdateCheckMode: Tags
+CurrentVersion: 5.7.0
+CurrentVersionCode: 570

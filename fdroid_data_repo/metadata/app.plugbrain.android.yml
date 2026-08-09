@@ -1,0 +1,93 @@
+Categories:
+  - Science & Education
+License: GPL-3.0-only
+AuthorName: Mohammed-Said Belaid
+AuthorEmail: sbelaid@univ-usto.dz
+SourceCode: https://github.com/msbelaid/PlugBrain
+IssueTracker: https://github.com/msbelaid/PlugBrain/issues
+
+AutoName: PlugBrain 🧠
+
+RepoType: git
+Repo: https://github.com/msbelaid/PlugBrain.git
+Binaries: https://github.com/msbelaid/PlugBrain/releases/download/v%v/app-release.apk
+
+Builds:
+  - versionName: '1.3'
+    versionCode: 13
+    commit: 44c671e4155d90933b6edc34fb8d3554b8221e39
+    subdir: app
+    sudo:
+      - export CPUS_MAX=4
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.4.1
+    versionCode: 14
+    commit: b5768d532166637c9843d54682106124466d3c9d
+    subdir: app
+    sudo:
+      - export CPUS_MAX=4
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.5.1
+    versionCode: 151
+    commit: 9a2cf271580cc05e69009c2fa91caf536320efeb
+    subdir: app
+    sudo:
+      - export CPUS_MAX=4
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.5.2
+    versionCode: 152
+    commit: 19ef24a6875da1416a1d79cfa248f0840a39ece2
+    subdir: app
+    sudo:
+      - export CPUS_MAX=4
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.5.3
+    versionCode: 153
+    commit: b1fa9f261322991a1d808498eb8bfd3631a31d35
+    subdir: app
+    sudo:
+      - export CPUS_MAX=4
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.5.4
+    versionCode: 154
+    commit: e284195cf00c02e3cdc0e45f66fdfc305fc00516
+    subdir: app
+    sudo:
+      - export CPUS_MAX=4
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: 776dfaa24e8316225bd4a1caa00cfdfdd87beb17571e5b3469cfdb92453d4ba9
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.5.4
+CurrentVersionCode: 154

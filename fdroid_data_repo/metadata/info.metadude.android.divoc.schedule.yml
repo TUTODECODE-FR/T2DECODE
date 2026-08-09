@@ -1,0 +1,111 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Tethered to the schedule site.
+Categories:
+  - Schedule
+License: Apache-2.0
+AuthorName: Tobias Preuss
+SourceCode: https://github.com/johnjohndoe/CampFahrplan
+IssueTracker: https://github.com/EventFahrplan/EventFahrplan/issues
+Liberapay: EventFahrplan
+
+AutoName: DiVOC Fahrplan
+Description: |
+  Programm App für das Digital Verteiltes Online-Chaos.
+
+  https://di.c3voc.de
+
+  Wir spielen gerade ein sehr gefährliches Spiel auf unserem Planeten und jedes Mal, wenn wir sehen, dass es uns und unsere Lebensgrundlage zerstört, drücken wir dennoch immer wieder auf „continue“. In Wirklichkeit wird nur – wenn überhaupt – ein kompletter Reboot helfen, sowohl politisch als auch wirtschaftlich, sozial und auch kulturell. Wir haben nur eine Erde als Hardware und unser Life-Support läuft aus.
+
+  Dabei ist die Diskussion, ob etwas getan werden muss, ehrlich gesagt auch schon durch. Deshalb muss jetzt endlich darüber geredet werden, was getan werden soll und wie. Und so ist das Motto des DiVOC zu Ostern „Reboot to Respawn“.
+
+  <b>Funktionen:</b>
+  * Tagesüberblick über alle Programmpunkte (Vorträge und Self-Organized Sessions)
+  * Beschreibung von Veranstaltungen lesen
+  * Veranstaltungen in persönlicher Favoritenliste verwalten
+  * Favoritenliste exportieren
+  * Alarm für Veranstaltungen setzen
+  * Veranstaltungen in Kalender eintragen
+  * Link zu Veranstaltungen mit anderen teilen
+  * Programmänderungen einsehen
+  * Bewertungen und Kommentare für Vorträge und Workshops hinterlassen
+  * Integration mit dem Engelsystem-Projekt <a href="https://engelsystem.de">https://engelsystem.de</a> - Online-Tool für Helfer- und Schichtplanung auf großen Events
+  * Integration mit Chaosflix https://github.com/NiciDieNase/chaosflix - Android App für https://media.ccc.de, teile Fahrplan-Favoriten mit Chaosflix und importiere sie als Bookmarks
+
+  🔤 <b>Unterstützte Sprachen</b>
+  (Programmtexte ausgenommen)
+  * Deutsch
+  * Englisch
+  * Französisch
+  * Italienisch
+  * Japanisch
+  * Niederländisch
+  * Polnisch
+  * Portugiesisch
+  * Russisch
+  * Spanisch
+  * Schwedisch
+
+  💡 Inhaltliche Fragen zum Programm kann nur das Content-Team vom DiVOC beantworten. Diese App stellt lediglich das Programm zur Verfügung.
+
+  💣 Fehlerberichte sind herzlich willkommen, aber achte darauf, dass du erklärst, wie man den Fehler reproduzieren kann. Bitte nutze den Issue-Tracker: https://github.com/EventFahrplan/EventFahrplan/issues.
+
+  🏆 Die App basiert auf der <b>EventFahrplan-App</b>
+  https://play.google.com/store/apps/details?id=info.metadude.android.congress.schedule
+  für den Kongress des Chaos Computer Clubs. Der Quellcode der Anwendung ist auf GitHub
+  https://github.com/johnjohndoe/CampFahrplan/tree/divoc-2021 zu finden.
+
+  🎨 DiVOC Design von faab_e: https://twitter.com/faab_e
+
+RepoType: git
+Repo: https://github.com/johnjohndoe/CampFahrplan.git
+
+Builds:
+  - versionName: 1.41.5
+    versionCode: 67
+    commit: v.1.41.5-DiVOC-Edition
+    subdir: app
+    gradle:
+      - divoc2020
+
+  - versionName: 1.45.2-DiVOC-Edition
+    versionCode: 75
+    commit: v.1.45.2-DiVOC-Edition
+    subdir: app
+    gradle:
+      - divoc2020
+    prebuild: sed -i -e 's/6.6/6.5/' ../gradle/wrapper/gradle-wrapper.properties
+
+  - versionName: 1.45.3-DiVOC-Edition
+    versionCode: 76
+    commit: v.1.45.3-DiVOC-Edition
+    subdir: app
+    gradle:
+      - divoc2020
+    prebuild: sed -i -e 's/6.6/6.5/' ../gradle/wrapper/gradle-wrapper.properties
+
+  - versionName: 1.50.0-DiVOC-Edition
+    versionCode: 82
+    commit: v.1.50.0-DiVOC-Edition
+    subdir: app
+    gradle:
+      - divoc2021
+
+  - versionName: 1.54.0-DiVOC-Edition
+    versionCode: 88
+    commit: v.1.54.0-DiVOC-Edition
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - divoc2022
+
+MaintainerNotes: Disable auto update in favor of manual update.
+
+ArchivePolicy: 1
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.54.0-DiVOC-Edition
+CurrentVersionCode: 88

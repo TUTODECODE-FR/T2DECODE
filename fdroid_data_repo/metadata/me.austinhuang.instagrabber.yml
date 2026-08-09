@@ -1,0 +1,153 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on the Instagram website, which is proprietary.
+Categories:
+  - Internet
+  - Multimedia
+License: GPL-3.0-or-later
+AuthorName: Austin Huang & Ammar Githam
+AuthorEmail: barinsta@austinhuang.me
+AuthorWebSite: https://austinhuang.me
+WebSite: https://barinsta.austinhuang.me
+SourceCode: https://github.com/austinhuang0131/barinsta
+IssueTracker: https://github.com/austinhuang0131/barinsta/issues
+Translation: https://crowdin.com/project/instagrabber
+Changelog: https://github.com/austinhuang0131/barinsta/releases
+Donate: https://austinhuang.me/donate
+Liberapay: austinhuang
+
+AutoName: Barinsta
+Description: |-
+  <b>NOTE:</b> App no longer can connect to Instagram
+
+  If you don't upload posts or stories on Instagram, but can't get rid of it because of people and contents, you now have an alternative: Barinsta is a beautiful client that allows you to browse and interact with Instagram, while giving you more options to control your data.
+
+  * For those not having an account, you can access public profiles/hashtags/locations (depends on availability)!
+  * For those logged in, Barinsta can achieve most viewing and interaction features, with extra features such as downloading posts/stories/avatars, copying texts, comparing followers/following, and more!
+
+RepoType: git
+Repo: https://github.com/austinhuang0131/barinsta.git
+
+Builds:
+  - versionName: '17.9'
+    versionCode: 45
+    commit: v17.9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '18.0'
+    versionCode: 46
+    commit: v18.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '18.1'
+    versionCode: 47
+    commit: v18.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '18.2'
+    versionCode: 48
+    commit: v18.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '18.3'
+    versionCode: 49
+    commit: v18.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 19.0.1
+    versionCode: 53
+    commit: v19.0.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 19.0.2
+    versionCode: 54
+    commit: v19.0.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 19.0.3
+    versionCode: 55
+    commit: v19.0.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 19.0.4
+    versionCode: 56
+    commit: v19.0.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 19.0.5
+    versionCode: 57
+    commit: v19.0.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 19.1.0
+    versionCode: 60
+    commit: v19.1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 19.2.0-fdroid
+    versionCode: 61
+    commit: v19.2.0
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 19.2.1-fdroid
+    versionCode: 62
+    commit: v19.2.1
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 19.2.2-fdroid
+    versionCode: 63
+    commit: v19.2.2
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 19.2.3-fdroid
+    versionCode: 64
+    commit: 405b1e038dbb7caaa38f537c66028132a5ccdf3d
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 19.2.4-fdroid
+    versionCode: 65
+    commit: effb276aa8b262e3c76a6cb51d3aa83f55a04724
+    subdir: app
+    gradle:
+      - fdroid
+
+MaintainerNotes: upstream repo was removed due to a Cease-and-Desist from Facebook,
+  see e.g. https://blog.avalos.me/2021/08/14/barinsta/
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 19.2.4-fdroid
+CurrentVersionCode: 65
+
+NoSourceSince: 19.2.4-fdroid

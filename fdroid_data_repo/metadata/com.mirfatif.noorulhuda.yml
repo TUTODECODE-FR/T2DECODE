@@ -1,0 +1,64 @@
+Categories:
+  - Reading
+  - Religion
+License: AGPL-3.0-or-later
+AuthorName: Irfan Latif
+AuthorEmail: mirfatif@gmail.com
+SourceCode: https://github.com/mirfatif/NoorUlHuda
+IssueTracker: https://github.com/mirfatif/NoorUlHuda/issues
+Translation: https://crowdin.com/project/nuh
+Changelog: https://github.com/mirfatif/NoorUlHuda/releases
+
+AutoName: نور الهدى
+
+RepoType: git
+Repo: https://github.com/mirfatif/NoorUlHuda.git
+
+Builds:
+  - versionName: v1.01
+    versionCode: 101
+    commit: v1.01
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i 
+      's|pref_settings_check_for_updates_default">true<|pref_settings_check_for_updates_default">false<|'
+      src/main/res/values/pref_strings.xml
+
+  - versionName: v1.02
+    versionCode: 102
+    commit: ab782bd738552247acd25c72d57fa1d08f9aef8c
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i 
+      's|pref_settings_check_for_updates_default">true<|pref_settings_check_for_updates_default">false<|'
+      src/main/res/values/pref_strings.xml
+
+  - versionName: v1.03
+    versionCode: 103
+    commit: aac5dc352fb7b98eafafda6b8f3575409b590a52
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: sed -i '/pref_settings_check_for_updates_default/s/true/false/' src/main/res/values/pref_strings.xml
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: v1.03
+CurrentVersionCode: 103

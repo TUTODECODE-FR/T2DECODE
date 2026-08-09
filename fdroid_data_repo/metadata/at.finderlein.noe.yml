@@ -1,0 +1,282 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: The Service of the Niederösterreich-CARD itself is not libre.
+    de: Der Service der Niederösterreich-CARD selbst ist nicht libre.
+Categories:
+  - Internet
+  - Navigation
+License: GPL-3.0-or-later
+AuthorEmail: admin@finderlein.at
+WebSite: https://finderlein.at
+SourceCode: https://github.com/finderlein/noefinderlein_flutter
+IssueTracker: https://github.com/finderlein/noefinderlein_flutter/issues/new/choose
+Donate: https://finderlein.at/donate
+Liberapay: derqurps
+
+AutoName: NÖ Finderlein
+
+RepoType: git
+Repo: https://github.com/finderlein/noefinderlein_flutter.git
+
+Builds:
+  - versionName: 2.0.6
+    versionCode: 206
+    commit: v2.0.6
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.13.0-0.4.pre
+    rm:
+      - .github
+      - .vscode
+      - ios
+      - linux
+      - macos
+      - test
+      - web
+      - windows
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - echo 'var mapAccessToken = 
+        "pk.eyJ1IjoiZGVycXVycHMiLCJhIjoiY2wzY3dqeGhkMDJxeTNja2p1cHZmNWJhYSJ9.dnnM2GDwtxAVog4xvJzTJw";'>
+        lib/auth/secrets.dart
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter pub run build_runner build
+      - $$flutter$$/bin/flutter build apk --release --dart-define=ANDROID_FLOSS=true
+
+  - versionName: 2.0.7
+    versionCode: 207
+    commit: abf6f12c8835bfb94a7a82b4ab7b772605ac4992
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.13.0-0.4.pre
+    rm:
+      - .github
+      - .vscode
+      - ios
+      - linux
+      - macos
+      - test
+      - web
+      - windows
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - echo 'var mapAccessToken = 
+        "pk.eyJ1IjoiZGVycXVycHMiLCJhIjoiY2wzY3dqeGhkMDJxeTNja2p1cHZmNWJhYSJ9.dnnM2GDwtxAVog4xvJzTJw";'>
+        lib/auth/secrets.dart
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter pub run build_runner build
+      - $$flutter$$/bin/flutter build apk --release --dart-define=ANDROID_FLOSS=true
+
+  - versionName: 2.0.10
+    versionCode: 2010
+    commit: 16600ed37a3c99255a19abb0f493f7155ec5cd4b
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.13.0-0.4.pre
+    rm:
+      - .github
+      - .vscode
+      - ios
+      - linux
+      - macos
+      - test
+      - web
+      - windows
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - echo 'var mapAccessToken = 
+        "pk.eyJ1IjoiZGVycXVycHMiLCJhIjoiY2wzY3dqeGhkMDJxeTNja2p1cHZmNWJhYSJ9.dnnM2GDwtxAVog4xvJzTJw";'>
+        lib/auth/secrets.dart
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter pub run build_runner build
+      - $$flutter$$/bin/flutter build apk --release --dart-define=ANDROID_FLOSS=true
+
+  - versionName: 2.0.14
+    versionCode: 2014
+    commit: 94250e5b0b0c071379faa4878b19c8b9297f81e7
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.1
+    rm:
+      - .github
+      - .vscode
+      - appimage
+      - flatpak
+      - ios
+      - linux
+      - macos
+      - test
+      - web
+      - windows
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - echo 'var mapAccessToken = 
+        "pk.eyJ1IjoiZGVycXVycHMiLCJhIjoiY2wzY3dqeGhkMDJxeTNja2p1cHZmNWJhYSJ9.dnnM2GDwtxAVog4xvJzTJw";'>
+        lib/auth/secrets.dart
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter pub run build_runner build
+      - $$flutter$$/bin/flutter build apk --release --dart-define=ANDROID_FLOSS=true
+
+  - versionName: 2.0.15
+    versionCode: 2015
+    commit: 3c36fca02c3ab05051d926c61bbe5a48c48a5b82
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.1
+    rm:
+      - .github
+      - .vscode
+      - appimage
+      - flatpak
+      - ios
+      - linux
+      - macos
+      - test
+      - web
+      - windows
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - echo 'var mapAccessToken = 
+        "pk.eyJ1IjoiZGVycXVycHMiLCJhIjoiY2wzY3dqeGhkMDJxeTNja2p1cHZmNWJhYSJ9.dnnM2GDwtxAVog4xvJzTJw";'>
+        lib/auth/secrets.dart
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter pub run build_runner build
+      - $$flutter$$/bin/flutter build apk --release --dart-define=ANDROID_FLOSS=true
+
+  - versionName: 2.0.16
+    versionCode: 2016
+    commit: 8ee6214517abc6ab7de78d91bb79879d4ef7bc70
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.7.10
+    rm:
+      - .github
+      - .vscode
+      - appimage
+      - flatpak
+      - ios
+      - linux
+      - macos
+      - test
+      - web
+      - windows
+    prebuild:
+      - sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo 'var mapAccessToken = 
+        "pk.eyJ1IjoiZGVycXVycHMiLCJhIjoiY2wzY3dqeGhkMDJxeTNja2p1cHZmNWJhYSJ9.dnnM2GDwtxAVog4xvJzTJw";'>
+        lib/auth/secrets.dart
+      - $$flutter$$/bin/flutter pub run build_runner build
+      - $$flutter$$/bin/flutter build apk --release --dart-define=ANDROID_FLOSS=true
+
+  - versionName: 2.0.19
+    versionCode: 2019
+    commit: 2c021af04fcc10fd0a53a42946d8ff9489c670a3
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.7.10
+    rm:
+      - .github
+      - .vscode
+      - appimage
+      - flatpak
+      - ios
+      - linux
+      - macos
+      - test
+      - web
+      - windows
+    prebuild:
+      - sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo 'var mapAccessToken = 
+        "pk.eyJ1IjoiZGVycXVycHMiLCJhIjoiY2wzY3dqeGhkMDJxeTNja2p1cHZmNWJhYSJ9.dnnM2GDwtxAVog4xvJzTJw";'>
+        lib/auth/secrets.dart
+      - $$flutter$$/bin/flutter pub run build_runner build
+      - $$flutter$$/bin/flutter build apk --release --dart-define=ANDROID_FLOSS=true
+
+  - versionName: 2.0.20
+    versionCode: 2020
+    commit: 8330d83fe21d89a0f9003032d1378e8409a7666b
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - .github
+      - .vscode
+      - appimage
+      - flatpak
+      - ios
+      - linux
+      - macos
+      - test
+      - web
+      - windows
+    prebuild:
+      - export version=$(grep "^\ \ flutter:\ " pubspec.yaml| cut -d " " -f4)
+      - pushd $$flutter$$
+      - git checkout -f $version
+      - popd
+      - sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - cd .pub-cache/hosted/pub.dev/geolocator_android-*/android
+      - sed -i -e '/gms/d' build.gradle
+      - cd src/main/java/com/baseflow/geolocator/location
+      - rm FusedLocationClient.java
+      - sed -i -e '/if (forceAndroidLocationManager) {/,/^  }/c return new LocationManagerClient(context,
+        locationOptions);}' -e '/isGooglePlayServicesAvailable/,/^  }/d' -e '/gms/d'
+        GeolocationManager.java
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo 'var mapAccessToken = 
+        "pk.eyJ1IjoiZGVycXVycHMiLCJhIjoiY2wzY3dqeGhkMDJxeTNja2p1cHZmNWJhYSJ9.dnnM2GDwtxAVog4xvJzTJw";'>
+        lib/auth/secrets.dart
+      - $$flutter$$/bin/flutter pub run build_runner build
+      - $$flutter$$/bin/flutter build apk --release --dart-define=IS_RELEASE=true
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags v[\d.]+
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 2.0.20
+CurrentVersionCode: 2020

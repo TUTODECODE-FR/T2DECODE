@@ -1,0 +1,432 @@
+Categories:
+  - Calculator
+  - Science & Education
+  - Unit Convertor
+License: GPL-3.0-only
+AuthorName: Sad Ellie
+AuthorEmail: sadellie.dev@gmail.com
+AuthorWebSite: https://sadellie.github.io/
+WebSite: https://sadellie.github.io/unitto/
+SourceCode: https://github.com/sadellie/unitto
+IssueTracker: https://github.com/sadellie/unitto/issues
+Changelog: https://github.com/sadellie/unitto/releases
+
+AutoName: Unitto
+
+RepoType: git
+Repo: https://github.com/sadellie/unitto.git
+
+Builds:
+  - versionName: Electric purple
+    versionCode: 10
+    commit: d4f2be1b559a98d2b329b52622b1a23f23efe83f
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Fire engine red
+    versionCode: 11
+    commit: 0a48201595e97df72af7749f721803f6e1431f5b
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Fire engine red
+    versionCode: 12
+    commit: b18b38bc8569a0ac258a89f33309bcf87141c235
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Fire engine red
+    versionCode: 13
+    commit: f40731044e236b8ea2fd51054c65e4ee870bb0fe
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Hot magenta
+    versionCode: 16
+    commit: 3bc9891b81a9f85c18d56ab6852224ea50666a9b
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Illuminating emerald
+    versionCode: 17
+    commit: 0a9f94b919b031417ac4f83bd1d66e8c662aed24
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Illuminating emerald
+    versionCode: 18
+    commit: 0ef363322e56ce965d8b792a0a425a056b4c2144
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Jazzberry jam
+    versionCode: 19
+    commit: cd2b27c094bc4147f524386639039db19ce96978
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Kobicha
+    versionCode: 20
+    commit: fcebc14ffbca08640686500990ed9a065088837c
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Lilac Luster
+    versionCode: 22
+    commit: d6f8d2e9127ebaf30c77bdf8d4bbe69348b93481
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Mikado Yellow
+    versionCode: 24
+    commit: 7e6b158414e5e1caa6d4955d400062a15d791b0c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Nadeshiko Pink
+    versionCode: 25
+    commit: 0d26fb78a1a4eb6c4b87df627afcc3d18e1ffe67
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Nadeshiko Pink
+    versionCode: 26
+    commit: 9207906919ddef254720f156d222c54d72412a10
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Olive Green
+    versionCode: 29
+    commit: 48e75093bd2eb3677a626b9d198b736eee60c693
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Popstar
+    versionCode: 33
+    commit: f623e989e514edc5d86e00b0b67fc09461394acb
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Quick Silver
+    versionCode: 35
+    commit: 99b0b37ad0313f66c922165b8df6db5c18f8f61b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Quick Silver
+    versionCode: 36
+    commit: 32c8f3184d5d195a4b44f3efdb1056e89038a264
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+    prebuild:
+      - sed -i -e '/google-services/d' -e '/firebase/d' build.gradle.kts ../build.gradle.kts
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Titanium yellow
+    versionCode: 63
+    commit: c4232c68704369ecf0eb1d27c1a1e01788757619
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+      - sed -i -e '/maven.pkg.jetbrains.space/d' ../settings.gradle.kts
+      - sed -i -e '/jvm/s/11/17/' -e '/initWith/d' build.gradle.kts
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Titanium yellow
+    versionCode: 65
+    commit: 6b67a73780218a1b11a1cda6745b1bf31a5e7811
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+      - sed -i -e '/maven.pkg.jetbrains.space/d' ../settings.gradle.kts
+      - sed -i -e '/jvm/s/11/17/' -e '/initWith/d' build.gradle.kts
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Slimy green
+    versionCode: 66
+    commit: 1811eff1bb21e68b110a3845e62c0dfd037c8bdc
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+      - sed -i -e '/maven.pkg.jetbrains.space/d' ../settings.gradle.kts
+      - sed -i -e '/jvm/s/11/17/' -e '/initWith/d' build.gradle.kts
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Slimy green
+    versionCode: 68
+    commit: 55271aaeccbb4236be342650af7a78b8cad37702
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+      - sed -i -e '/maven.pkg.jetbrains.space/d' ../settings.gradle.kts
+      - sed -i -e '/jvm/s/11/17/' -e '/initWith/d' build.gradle.kts
+    scandelete:
+      - build-logic/convention
+    antifeatures:
+      NonFreeNet:
+        en-US: Currency converter uses an online service
+
+  - versionName: Titanium yellow
+    versionCode: 69
+    commit: 16c066bf183de826b2179abc143fded3a4cfa9fe
+    subdir: androidApp
+    gradle:
+      - yes
+    prebuild:
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+      - sed -i -e '/maven.pkg.jetbrains.space/d' ../settings.gradle.kts
+      - sed -i -e '/jvmToolchain/d' -e '/initWith/d' build.gradle.kts
+    scandelete:
+      - build-logic/convention
+
+  - versionName: Titanium yellow
+    versionCode: 70
+    commit: fe1217b8544bee25570eb7a0d5ff7317b451350d
+    subdir: androidApp
+    gradle:
+      - yes
+    prebuild:
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+      - sed -i -e '/maven.pkg.jetbrains.space/d' ../settings.gradle.kts
+      - sed -i -e '/jvmToolchain/d' -e '/initWith/d' build.gradle.kts
+    scandelete:
+      - build-logic/convention
+
+  - versionName: Titanium yellow
+    versionCode: 71
+    commit: 2009930de6714390703dc6209af07afd03cc7fd8
+    subdir: androidApp
+    gradle:
+      - yes
+    prebuild:
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+      - sed -i -e '/maven.pkg.jetbrains.space/d' ../settings.gradle.kts
+      - sed -i -e '/jvmToolchain/d' -e '/initWith/d' build.gradle.kts
+    scandelete:
+      - build-logic/convention
+
+  - versionName: Titanium yellow
+    versionCode: 72
+    commit: 7bad351d032bbafb27bfc65967d800c35af7f5a8
+    subdir: androidApp
+    gradle:
+      - yes
+    prebuild:
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+      - sed -i -e '/maven.pkg.jetbrains.space/d' ../settings.gradle.kts
+      - sed -i -e '/jvmToolchain/d' -e '/initWith/d' build.gradle.kts
+    scandelete:
+      - build-logic/convention
+
+  - versionName: Titanium yellow
+    versionCode: 76
+    commit: 02791d63a0ad0d9866322889ae980a923e53fd82
+    subdir: androidApp
+    gradle:
+      - yes
+    prebuild:
+      - echo -e "\norg.gradle.unsafe.configuration-cache=false" >> ../gradle.properties
+      - sed -i -e '/maven.pkg.jetbrains.space/d' ../settings.gradle.kts
+      - sed -i -e '/jvmToolchain/d' -e '/initWith/d' build.gradle.kts
+    scandelete:
+      - build-logic/convention
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^(?!.*preview).*$
+UpdateCheckData: gradle/libs.versions.toml|versionCode\s=\s"(\d+)"|.|versionName\s=\s"(.*)"
+CurrentVersion: Titanium yellow
+CurrentVersionCode: 76

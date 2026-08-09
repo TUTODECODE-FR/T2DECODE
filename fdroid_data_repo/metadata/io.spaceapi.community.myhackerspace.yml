@@ -1,0 +1,68 @@
+Categories:
+  - Internet
+License: GPL-3.0-only
+WebSite: https://github.com/spaceapi-community/my-hackerspace
+SourceCode: https://github.com/spaceapi-community/my-hackerspace
+IssueTracker: https://github.com/spaceapi-community/my-hackerspace/issues
+Changelog: https://github.com/spaceapi-community/my-hackerspace/blob/HEAD/CHANGELOG.md
+
+AutoName: MyHackerspace
+
+RepoType: git
+Repo: https://github.com/spaceapi-community/my-hackerspace.git
+
+Builds:
+  - versionName: 2.0.2
+    versionCode: 102
+    commit: v2.0.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.0
+    versionCode: 103
+    commit: 32bedbe650e5cb65333e2c51021abd5c7348e2ab
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.1
+    versionCode: 104
+    commit: 42a57a2ba2e207fc20edc97c5024b0df3a716c6c
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.2
+    versionCode: 105
+    commit: 19187e481fc51a8076b74a62063d85b1ecb3bc98
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.3
+    versionCode: 106
+    commit: d45dee0d920aec01cf7d43f9dffc9c047a2be720
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.0
+    versionCode: 107
+    commit: 20bf06eda6a98b79a963e80e7d9e9e713b5ad1d6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.3.1
+    versionCode: 109
+    commit: 1b4ca5c024cb123622705bd635ad6597c5c6b05b
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/bundletool {/,/^}/d' build.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.3.1
+CurrentVersionCode: 109

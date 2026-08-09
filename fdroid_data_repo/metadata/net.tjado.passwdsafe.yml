@@ -1,0 +1,61 @@
+Categories:
+  - Keyboard & IME
+  - Password & 2FA
+  - Security
+License: GPL-3.0-only
+AuthorName: tjado mäcke
+AuthorEmail: tjado@maecke.de
+SourceCode: https://github.com/tejado/Authorizer
+IssueTracker: https://github.com/tejado/Authorizer/issues
+Changelog: https://github.com/tejado/Authorizer/releases
+
+AutoName: Authorizer
+Description: |-
+  The idea behind Authorizer is, to use old smartphones as a hardware password
+  manager only. To avoid manual typing of long and complex passwords everytime you
+  need them, Authorizer pretends to be an USB keyboard (e.g. over an USB On-The-Go
+  adapter). With a button press inside the App, it will automatically enters the
+  password for you on your pc, laptop, tablet or main smartphone.
+
+RepoType: git
+Repo: https://github.com/tejado/Authorizer.git
+
+Builds:
+  - versionName: 0.3.0
+    versionCode: 300
+    commit: v0.3.0
+    subdir: authorizer
+    gradle:
+      - yes
+
+  - versionName: 0.4.0
+    versionCode: 400
+    commit: v0.4.0
+    subdir: authorizer
+    gradle:
+      - yes
+
+  - versionName: 0.4.1
+    versionCode: 401
+    commit: 92a6e9a2401541ffb805105fb0b7f64a0ef94915
+    subdir: authorizer
+    gradle:
+      - yes
+    ndk: r20
+
+  - versionName: 0.5.0
+    versionCode: 500
+    commit: f9d7cc24bded3f330fe1a65e234dc52f18a9ce9f
+    subdir: authorizer
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    ndk: r21d
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.5.0
+CurrentVersionCode: 500

@@ -1,0 +1,182 @@
+Categories:
+  - Phone & SMS
+  - Sports & Health
+License: Apache-2.0
+AuthorEmail: dev@keep-alive.io
+SourceCode: https://github.com/keepalivedev/KeepAlive
+IssueTracker: https://github.com/keepalivedev/KeepAlive/issues
+Donate: https://ko-fi.com/keepalivedev
+Bitcoin: bc1q756uyj9d4alkqxk5y9t7jex568qzkeekqflryv
+
+AutoName: Keep Alive
+
+RepoType: git
+Repo: https://github.com/keepalivedev/KeepAlive
+Binaries: 
+  https://github.com/keepalivedev/KeepAlive/releases/download/%v/app-fDroid-release.apk
+
+Builds:
+  - versionName: 1.0.5
+    versionCode: 105
+    commit: 872fbe1c67faab2cfa669acb93240d1c23fb541d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fDroid
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'META-INF/services/*'
+
+  - versionName: 1.1.1
+    versionCode: 111
+    commit: 850b98ab88d2102f4b7327ed28571ce962bd6943
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fDroid
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'META-INF/services/*'
+
+  - versionName: 1.1.2
+    versionCode: 112
+    commit: 0ea1fb9b5d047ccde6a5c11244e160091fe74100
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fDroid
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'META-INF/services/*'
+
+  - versionName: 1.1.3
+    versionCode: 113
+    commit: c48a738150e1bdd93ce47917aa857df7f5777b55
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fDroid
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'META-INF/services/*'
+
+  - versionName: 1.1.4
+    versionCode: 114
+    commit: 49228d9a04c932d20d27e092f73133412320d641
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fDroid
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'META-INF/services/*'
+
+  - versionName: 1.2.0-beta1
+    versionCode: 115
+    commit: 45d108ebe9056fd5077aee6a94b1e6832740b136
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fDroid
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'META-INF/services/*'
+
+  - versionName: 1.2.0
+    versionCode: 120
+    commit: af31d293af58508276eea741f2edb1ee856512df
+    subdir: app
+    gradle:
+      - fDroid
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'META-INF/services/*'
+
+  - versionName: 1.2.3
+    versionCode: 123
+    commit: 580260de42369fc5e3573a8c3f2104b316e1418a
+    subdir: app
+    gradle:
+      - fDroid
+    srclibs:
+      - reproducible-apk-tools@v0.2.3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'META-INF/services/*'
+
+  - versionName: 1.3.0
+    versionCode: 130
+    commit: 32866a7741c61ff99bee49de451fa97f8b61b87f
+    subdir: app
+    gradle:
+      - fDroid
+    prebuild: sed -i -e '/D:/d' build.gradle
+
+  - versionName: 1.3.1
+    versionCode: 131
+    commit: 34d9206fd26edc380c662f26ac89a1b45e8d0c9b
+    subdir: app
+    gradle:
+      - fDroid
+    prebuild: sed -i -e '/D:/d' build.gradle
+
+  - versionName: 1.3.2
+    versionCode: 132
+    commit: c066b07449c70e11063349adceff43d00180a721
+    subdir: app
+    gradle:
+      - fDroid
+    prebuild: sed -i -e '/D:/d' build.gradle
+
+  - versionName: 1.3.3
+    versionCode: 133
+    commit: 88a4c7bf897f6a5957fc43334939385a0b4ea1a4
+    subdir: app
+    gradle:
+      - fDroid
+    prebuild: sed -i -e '/D:/d' build.gradle
+
+  - versionName: 1.5.1
+    versionCode: 151
+    commit: 97ebba0fc6d4fc04237f045933e3f0a6d856d02f
+    subdir: app
+    gradle:
+      - fDroid
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/D:/d' build.gradle
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --pad-like-apksigner --replace unaligned.apk
+        $$OUT$$
+
+AllowedAPKSigningKeys: c45567b712d6fd7979df14f66f8a5c25859ee223e1f07e915a7eee201c14baef
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^[\d.]+$
+CurrentVersion: 1.5.1
+CurrentVersionCode: 151

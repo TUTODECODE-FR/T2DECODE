@@ -1,0 +1,329 @@
+Categories:
+  - Science & Education
+License: GPL-3.0-only
+SourceCode: https://github.com/marunjar/anewjkuapp
+IssueTracker: https://github.com/marunjar/anewjkuapp/issues
+
+AutoName: JKU App
+Description: |-
+  This is an app for the students of JKU Linz that provides most of the data from
+  KUSSS and also information from ÖH and the JKU in general:
+
+  * synchronize timetable with local or Google Calendar.
+  * access Exams, Grades, Courses.
+  * get notifications for new exams, grades and changed course dates
+  * included campus map for "navigation"
+  * shows menu for JKU Mensa, Raab Mensa and KHG Mensa
+
+RepoType: git
+Repo: https://github.com/marunjar/anewjkuapp.git
+
+Builds:
+  - versionName: '0.38'
+    versionCode: 140038
+    commit: v0.38
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    srclibs:
+      - MPAndroidChart@d9ae5fae0a07bdbd526e9e89d32ba99cc7501935
+    rm:
+      - tools
+    prebuild:
+      - sed -i -e '/jitpack/d' ../build.gradle
+      - sed -i -e '/applicationVariants/,+2d' -e '/def appendVersionNameVersionCode/,+7d'
+        -e 's|googleCompile|//googleCompile|g' build.gradle
+      - cp -fR $$MPAndroidChart$$ ../
+      - echo -e 'include ":MPChartLib"' >> ../settings.gradle
+      - sed -i -e '/MPAndroidChart/acompile project(":MPChartLib")' build.gradle
+      - sed -i -e '/MPAndroidChart/d' build.gradle
+      - sed -i -e '/android-maven/d' ../MPChartLib/build.gradle
+
+  - versionName: '0.39'
+    versionCode: 140039
+    commit: v0.39
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    srclibs:
+      - MPAndroidChart@d9ae5fae0a07bdbd526e9e89d32ba99cc7501935
+    rm:
+      - tools
+    prebuild:
+      - sed -i -e '/jitpack/d' ../build.gradle
+      - sed -i -e '/applicationVariants/,+2d' -e '/def appendVersionNameVersionCode/,+7d'
+        -e 's|googleCompile|//googleCompile|g' build.gradle
+      - cp -fR $$MPAndroidChart$$ ../
+      - echo -e 'include ":MPChartLib"' >> ../settings.gradle
+      - sed -i -e '/MPAndroidChart/acompile project(":MPChartLib")' build.gradle
+      - sed -i -e '/MPAndroidChart/d' build.gradle
+      - sed -i -e '/android-maven/d' ../MPChartLib/build.gradle
+
+  - versionName: '0.40'
+    versionCode: 140040
+    commit: v0.40
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    srclibs:
+      - MPAndroidChart@a0347bb782810992ad015e0dc1b90e1b71658ea2
+    rm:
+      - tools
+    prebuild:
+      - sed -i -e '/jitpack/d' ../build.gradle
+      - sed -i -e '/applicationVariants/,+2d' -e '/def appendVersionNameVersionCode/,+7d'
+        -e 's|googleCompile|//googleCompile|g' build.gradle
+      - cp -fR $$MPAndroidChart$$ ../
+      - echo -e 'include ":MPChartLib"' >> ../settings.gradle
+      - sed -i -e '/MPAndroidChart/acompile project(":MPChartLib")' build.gradle
+      - sed -i -e '/MPAndroidChart/d' build.gradle
+      - sed -i -e '/android-maven/d' ../MPChartLib/build.gradle
+
+  - versionName: '0.41'
+    versionCode: 140041
+    commit: v0.41
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    srclibs:
+      - MPAndroidChart@2eca41fc8f71e7f889494df743a078c0b5a389da
+    rm:
+      - tools
+    prebuild:
+      - sed -i -e '/jitpack/d' ../build.gradle
+      - sed -i -e '/applicationVariants/,+2d' -e '/def appendVersionNameVersionCode/,+7d'
+        -e 's|googleCompile|//googleCompile|g' build.gradle
+      - cp -fR $$MPAndroidChart$$ ../
+      - echo -e 'include ":MPChartLib"' >> ../settings.gradle
+      - sed -i -e '/MPAndroidChart/acompile project(":MPChartLib")' build.gradle
+      - sed -i -e '/MPAndroidChart/d' build.gradle
+      - sed -i -e '/android-maven/d' ../MPChartLib/build.gradle
+
+  - versionName: 0.42.4
+    versionCode: 140046
+    commit: v0.42.4
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def appendVersionNameVersionCode/,+7d'
+      -e 's|googleCompile|//googleCompile|g' build.gradle
+
+  - versionName: 0.43.1
+    versionCode: 140049
+    commit: v0.43.1
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def appendVersionNameVersionCode/,+7d'
+      -e 's|googleCompile|//googleCompile|g' build.gradle
+
+  - versionName: 0.44.1
+    versionCode: 140053
+    commit: v0.44.1
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild: sed -i -e '/applicationVariants/,+2d' -e '/def appendVersionNameVersionCode/,+7d'
+      -e 's|googleCompile|//googleCompile|g' build.gradle
+
+  - versionName: 0.45.2
+    versionCode: 140056
+    commit: 0.45.2
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild: sed -i -e '/applicationVariants/,+6d' -e 's|googleCompile|//googleCompile|g'
+      build.gradle
+
+  - versionName: 0.45.3
+    versionCode: 140057
+    commit: 0.45.3
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild: sed -i -e '/applicationVariants/,+6d' -e 's|googleCompile|//googleCompile|g'
+      build.gradle
+
+  - versionName: 0.50.0
+    versionCode: 140059
+    commit: v0.50.0
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild: sed -i -e '/applicationVariants/,+4d' -e 's|googleCompile|//googleCompile|g'
+      build.gradle
+
+  - versionName: 0.50.2
+    versionCode: 140061
+    commit: v0.50.2
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild: sed -i -e '/applicationVariants/,+4d' -e 's|googleCompile|//googleCompile|g'
+      build.gradle
+
+  - versionName: 0.51.1
+    versionCode: 140064
+    commit: v0.51.1
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild: sed -i -e '/applicationVariants/,+4d' -e 's|googleCompile|//googleCompile|g'
+      build.gradle
+
+  - versionName: 0.51.3
+    versionCode: 140066
+    commit: v0.51.3
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild: sed -i -e '/applicationVariants/,+4d' -e 's|googleCompile|//googleCompile|g'
+      build.gradle
+
+  - versionName: 0.51.9
+    versionCode: 140072
+    commit: v0.51.9
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild: sed -i -e '/applicationVariants/,+4d' -e 's|googleCompile|//googleCompile|g'
+      build.gradle
+
+  - versionName: 0.52.4
+    versionCode: 140077
+    commit: v52.4
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild:
+      - sed -i -e '/maven {$/,/}/d; /com.google.gms/d; /io.fabric.tools/d' ../build.gradle
+      - sed -i -e '/applicationVariants/,+4d; /googleImplementation/d' build.gradle
+
+  - versionName: 0.52.5
+    versionCode: 140078
+    commit: v0.52.5
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild:
+      - sed -i -e '/maven {$/,/}/d; /com.google.gms/d; /io.fabric.tools/d' ../build.gradle
+      - sed -i -e '/applicationVariants/,+4d; /googleImplementation/d' build.gradle
+
+  - versionName: 0.53.1
+    versionCode: 140080
+    commit: v0.53.1
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild:
+      - sed -i -e '/maven {$/,/}/d; /com.google.gms/d; /io.fabric.tools/d' ../build.gradle
+      - sed -i -e '/applicationVariants/,+4d; /googleImplementation/d' build.gradle
+
+  - versionName: 0.53.2
+    versionCode: 140081
+    commit: v0.53.2
+    subdir: aNewJKUApp
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild:
+      - sed -i -e '/maven {$/,/}/d; /com.google.gms/d; /io.fabric.tools/d' ../build.gradle
+      - sed -i -e '/applicationVariants/,+4d; /googleImplementation/d' build.gradle
+
+  - versionName: 0.53.3
+    versionCode: 140082
+    commit: v0.53.3
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild:
+      - sed -i -e '/maven {$/,/}/d; /com.google.gms/d; /io.fabric.tools/d' ../build.gradle
+      - sed -i -e '/applicationVariants/,+4d; /googleImplementation/d' build.gradle
+
+  - versionName: 0.53.4
+    versionCode: 140083
+    commit: v0.53.4
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild:
+      - sed -i -e '/maven {$/,/}/d; /com.google.gms/d; /io.fabric.tools/d' ../build.gradle
+      - sed -i -e '/applicationVariants/,+4d; /googleImplementation/d' build.gradle
+
+  - versionName: 0.53.5-fdroid
+    versionCode: 140084
+    commit: v0.53.5
+    subdir: app
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild:
+      - sed -i -e '/maven {$/,/}/d; /com.google.gms/d; /io.fabric.tools/d' ../build.gradle
+      - sed -i -e '/applicationVariants/,+4d; /googleImplementation/d' build.gradle
+
+  - versionName: 0.53.6-fdroid
+    versionCode: 140085
+    commit: 4efbfe98adb5c8678a1c8878d75108b902dc17cb
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild:
+      - sed -i -e '/maven {$/,/}/d; /com.google.gms/d; /io.fabric.tools/d' ../build.gradle
+      - sed -i -e '/applicationVariants/,+4d; /googleImplementation/d' build.gradle
+
+  - versionName: 0.55.0-fdroid
+    versionCode: 140087
+    commit: 56f9ac54ab3243831e016f7972034e1dced6d7c9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+    rm:
+      - tools
+    prebuild: sed -i -e '/gms/d' -e '/com.google.firebase/d' {.,..}/build.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.55.0-fdroid
+CurrentVersionCode: 140087

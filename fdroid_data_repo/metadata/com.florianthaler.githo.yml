@@ -1,0 +1,221 @@
+Categories:
+  - Habit Tracker
+  - Sports & Health
+License: GPL-3.0-or-later
+AuthorName: Glitchy-Tozier
+SourceCode: https://github.com/Glitchy-Tozier/githo
+IssueTracker: https://github.com/Glitchy-Tozier/githo/issues
+Changelog: https://github.com/Glitchy-Tozier/githo/releases
+
+AutoName: Githo
+
+RepoType: git
+Repo: https://github.com/Glitchy-Tozier/githo.git
+
+Builds:
+  - versionName: 1.0.1
+    versionCode: 2
+    commit: v1.0.1
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - linux
+      - web
+      - .vscode
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.0.2
+    versionCode: 3
+    commit: 687f8a7f78e7d3cd93f7a08d17b9a820b8a531b1
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - linux
+      - web
+      - .vscode
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.1.0
+    versionCode: 4
+    commit: 53374cca311be686924a673b1e840658d1811242
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - linux
+      - web
+      - .vscode
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.2.0
+    versionCode: 5
+    commit: 38284b65ce608e2e49b1a18a4ac0326482d138f7
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - linux
+      - web
+      - .vscode
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.2.1
+    versionCode: 6
+    commit: c09db1d9220812b58bc08687da9689847046a6b0
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - linux
+      - web
+      - .vscode
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.2.2
+    versionCode: 7
+    commit: 5bd68469fcd476dc3dfced193ac0d7caece7c352
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - linux
+      - web
+      - .vscode
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.3.0
+    versionCode: 8
+    commit: v1.3.0
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.2
+    rm:
+      - databases_across_versions
+      - ios
+      - linux
+      - web
+      - .vscode
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.3.1
+    versionCode: 9
+    commit: 8ae0de00fe1db614d07f2a1e00a6b7bdbebf3ef8
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.2
+    rm:
+      - databases_across_versions
+      - ios
+      - linux
+      - web
+      - .vscode
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.3.2
+    versionCode: 10
+    commit: b2e050535e66eb63d582f18fa457d114e5fb1e0f
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.2
+    rm:
+      - databases_across_versions
+      - ios
+      - linux
+      - web
+      - .vscode
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.3.3
+    versionCode: 11
+    commit: 24a0b8a0bad050796fff414142e0a3ab307adb5b
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.2
+    rm:
+      - databases_across_versions
+      - ios
+      - linux
+      - web
+      - .vscode
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get
+      - $$flutter$$/bin/flutter build apk
+
+  - versionName: 1.3.4
+    versionCode: 12
+    commit: 5ed16b8cb66f53c54c0defd0f3f2d0994c95942f
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.2
+    rm:
+      - databases_across_versions
+      - ios
+      - linux
+      - web
+      - .vscode
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get
+      - $$flutter$$/bin/flutter build apk
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.3.4
+CurrentVersionCode: 12

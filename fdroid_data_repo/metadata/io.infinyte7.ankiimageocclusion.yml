@@ -1,0 +1,48 @@
+Categories:
+  - Science & Education
+License: GPL-3.0-or-later
+AuthorName: Mani
+SourceCode: https://github.com/infinyte7/Anki-Occlusion
+IssueTracker: https://github.com/infinyte7/Anki-Occlusion/issues
+Donate: https://www.patreon.com/kr_mani
+
+AutoName: Anki Image Occlusion
+Description: The app is moved and next update will be here https://f-droid.org/packages/io.krmanik.ankiimageocclusion
+
+RepoType: git
+Repo: https://github.com/infinyte7/Anki-Occlusion
+
+Builds:
+  - versionName: 1.4.2
+    versionCode: 14200
+    commit: v1.4.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.3
+    versionCode: 14300
+    commit: v1.4.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.5
+    versionCode: 14500
+    commit: 5ade8f81bd278b8247f848430bd6f17c7367799f
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.7
+    versionCode: 14700
+    commit: fb95688f33f3b7a93300db61cb163780c8d0ecf2
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.4.7
+CurrentVersionCode: 14700

@@ -1,0 +1,141 @@
+Categories:
+  - Multimedia
+License: Apache-2.0
+AuthorName: ZXing Team
+AuthorEmail: srowen@gmail.com
+WebSite: https://github.com/zxing/zxing/wiki/Frequently-Asked-Questions
+SourceCode: https://github.com/zxing/zxing
+IssueTracker: https://github.com/zxing/zxing/issues
+Changelog: https://github.com/zxing/zxing/releases
+
+AutoName: Barcode Scanner
+
+RepoType: git
+Repo: https://github.com/zxing/zxing.git
+
+Builds:
+  - versionName: 4.3.1
+    versionCode: 87
+    commit: 38b3fe1280
+    subdir: android
+    prebuild:
+      - cd ../core
+      - ant build export
+      - cd ../android
+
+  - versionName: '4.4'
+    versionCode: 91
+    commit: '2220400644'
+    subdir: android
+    prebuild: sed -i '477s/shopperMarketListener/null/g;s/R.string.msg_install_google_shopper/"Google
+      Shopper is non-free software"/g' src/com/google/zxing/client/android/result/ResultHandler.java
+    build: mvn package -f ../core/pom.xml
+
+  - versionName: '4.5'
+    versionCode: 93
+    commit: 0d6eabd6fc
+    subdir: android
+    build: mvn package -f ../core/pom.xml
+
+  - versionName: 4.5.1
+    versionCode: 94
+    commit: a9fe6ccde1
+    subdir: android
+    build: mvn package -f ../core/pom.xml
+
+  - versionName: 4.5.2
+    versionCode: 95
+    commit: 3de3374dd2
+    subdir: android
+    build: mvn package -f ../core/pom.xml
+
+  - versionName: 4.6.1
+    versionCode: 96
+    commit: BS-4.6.1
+    subdir: android
+    build: mvn package -f ../core/pom.xml
+
+  - versionName: 4.6.2
+    versionCode: 97
+    commit: BS-4.6.2
+    subdir: android
+    build: mvn package -f ../core/pom.xml
+
+  - versionName: 4.6.3
+    versionCode: 98
+    commit: BS-4.6.3
+    subdir: android
+    prebuild: echo -e "java.source=7\njava.target=7" >> local.properties
+    target: android-19
+    build: mvn package -f ../core/pom.xml
+
+  - versionName: 4.6.4
+    versionCode: 99
+    commit: BS-4.6.4
+    subdir: android
+    prebuild: echo -e "java.source=7\njava.target=7" >> local.properties
+    target: android-19
+    build: mvn package -f ../core/pom.xml
+
+  - versionName: 4.7.0
+    versionCode: 100
+    commit: BS-4.7.0
+    subdir: android
+    prebuild:
+      - echo -e "java.source=7\njava.target=7" >> local.properties
+      - echo 'source.dir=src;../android-core/src' >> project.properties
+    target: android-19
+    build: mvn package -f ../core/pom.xml
+
+  - versionName: 4.7.3
+    versionCode: 103
+    commit: BS-4.7.3
+    subdir: android
+    prebuild:
+      - echo -e "java.source=7\njava.target=7" >> local.properties
+      - echo 'source.dir=src;../android-core/src' >> project.properties
+    target: android-19
+    scanignore:
+      - core/src/test
+    build: mvn package -f ../core/pom.xml
+
+  - versionName: 4.7.7
+    versionCode: 107
+    commit: BS-4.7.7
+    sudo:
+      - apt-get update
+      - apt-get -y install -t jessie-backports maven
+    output: android/target/android-$$VERSION$$-aligned.apk
+    rm:
+      - core/src/test
+    prebuild: sed -i '/<application /a\               android:debuggable="false"'
+      android/AndroidManifest.xml
+    build:
+      - mvn -Dmaven.jar.sign.skip=true -Dmaven.test.skip=true -Dandroid.sign.debug=false
+        -Dandroid.release=true package
+      - zip -d android/target/android-$$VERSION$$-aligned.apk 'META-INF/*'
+
+  - versionName: 4.7.8
+    versionCode: 108
+    commit: BS-4.7.8
+    sudo:
+      - apt-get update
+      - apt-get -y install -t jessie-backports maven
+    output: android/target/android-$$VERSION$$-aligned.apk
+    rm:
+      - core/src/test
+    prebuild: sed -i '/<application /a\               android:debuggable="false"'
+      android/AndroidManifest.xml
+    build:
+      - mvn -Dmaven.jar.sign.skip=true -Dmaven.test.skip=true -Dandroid.sign.debug=false
+        -Dandroid.release=true package
+      - zip -d android/target/android-$$VERSION$$-aligned.apk 'META-INF/*'
+
+MaintainerNotes: Enable AUM again once they switch to a sane build system, possibly
+  gradle.
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 4.7.8
+CurrentVersionCode: 108

@@ -1,0 +1,41 @@
+Categories:
+  - Development
+  - Science & Education
+  - System
+License: CC-BY-4.0
+AuthorName: TrianguloY
+AuthorEmail: correo--correo+iuam@hotmail.com
+AuthorWebSite: https://triangularapps.blogspot.com/
+WebSite: https://triangularapps.blogspot.com/search/label/isUserAMonkey
+SourceCode: https://github.com/TrianguloY/isUserAMonkey
+IssueTracker: https://github.com/TrianguloY/isUserAMonkey/issues
+Donate: https://triangularapps.blogspot.com/p/support.html
+
+AutoName: AndroidSDK easter egg showcase
+
+RepoType: git
+Repo: https://github.com/TrianguloY/isUserAMonkey.git
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: v1.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '2.0'
+    versionCode: 3
+    commit: 7b998d40b0f79192fbfe3256d1129f8f80729476
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[\d.]+$
+CurrentVersion: '2.0'
+CurrentVersionCode: 3

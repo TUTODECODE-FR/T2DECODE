@@ -1,0 +1,450 @@
+Categories:
+  - Connectivity
+  - Internet
+  - Network Analyzer
+  - System
+License: GPL-3.0-only
+AuthorName: Janek Zangenberg
+AuthorEmail: zangenbergjanek@googlemail.com
+SourceCode: https://github.com/w2sv/WiFi-Widget
+IssueTracker: https://github.com/w2sv/WiFi-Widget/issues
+Donate: https://buymeacoffee.com/w2sv
+
+AutoName: WiFi Widget
+
+RepoType: git
+Repo: https://github.com/w2sv/WiFi-Widget.git
+Binaries: https://github.com/w2sv/WiFi-Widget/releases/download/%v/%v.apk
+
+Builds:
+  - versionName: 1.1.13
+    versionCode: 17
+    commit: 335ef164d9d1104d4a75df000742e06de54f2692
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.0
+    versionCode: 18
+    commit: b7c1a688fe6528469f3da11ba68dd726d3d77489
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.20
+    versionCode: 22
+    commit: e9deabef7b3edcf49d3cf3668006ca28f7e604ba
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.31
+    versionCode: 24
+    commit: ea2b81280cbe2d66c2edf9a3e1ea107c409068c5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.40
+    versionCode: 27
+    commit: c88e17de377494c6bbe0b642db5d74d18b927831
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.52
+    versionCode: 30
+    commit: f38baebb9cd1a1fd5b45fdf1b54cf801cbd12e62
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.61
+    versionCode: 33
+    commit: 4ae2ca0b1ef0d5f0284c9fbcba89d16cf3a470aa
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.72
+    versionCode: 36
+    commit: af2566be09519e49a21410d445a41313a05a9cff
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.73
+    versionCode: 37
+    commit: 34e096d3783faeb7dc1003392a7e88f209585720
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.3.01
+    versionCode: 40
+    commit: 3e9f46096c8863482e2ad011eaaa09b2d919b28b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.3.02
+    versionCode: 41
+    commit: 7a4f764302ac4496095258a32ed6bef16fbcda34
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.3.03
+    versionCode: 42
+    commit: b2643ac572c807fa08dd8550ae7d9f6581226010
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.3.04
+    versionCode: 43
+    commit: b184602032d64e42ab8e174495af2bffe6bd98c8
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.03
+    versionCode: 47
+    commit: 70e08abac7dda496a3771e9b29887a18df77f13a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    scandelete:
+      - plugins
+
+  - versionName: 1.4.04
+    versionCode: 48
+    commit: 4715038b499fe16f1e7f25d91b755739bb1b1681
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    scandelete:
+      - plugins
+
+  - versionName: 1.4.05
+    versionCode: 49
+    commit: 89ace6473ce7442802541a29b387e67abf076597
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    scandelete:
+      - plugins
+
+  - versionName: 1.4.11
+    versionCode: 52
+    commit: 806112628d0bc5f8e77d26d98ef0eb0c208febf8
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    scandelete:
+      - plugins
+
+  - versionName: 1.4.12
+    versionCode: 53
+    commit: 2ac9460829a9a842d4f84856b78aa3130470549b
+    subdir: app
+    gradle:
+      - yes
+    scandelete:
+      - plugins
+
+  - versionName: 1.4.13
+    versionCode: 54
+    commit: c91372ee1f98f6dccc3d9d51552b8b1b1ffa2475
+    subdir: app
+    gradle:
+      - yes
+    scandelete:
+      - plugins
+
+  - versionName: 1.4.14
+    versionCode: 55
+    commit: cd78d31b01c4defd5dc5b7f813798ded54562287
+    subdir: app
+    gradle:
+      - yes
+    scandelete:
+      - plugins
+
+  - versionName: 1.5.0
+    versionCode: 56
+    commit: ff92a4b51fc61ecb24fe83d154688db41d13b52d
+    subdir: app
+    gradle:
+      - yes
+    scandelete:
+      - plugins
+
+  - versionName: 1.5.01
+    versionCode: 57
+    commit: 10e7fecd3829da9a2322fa105df68ba60070837c
+    subdir: app
+    gradle:
+      - yes
+    scandelete:
+      - plugins
+
+  - versionName: 1.5.02
+    versionCode: 58
+    commit: 96ebe56e2b4052412b2422c2422f641b815f55ca
+    subdir: app
+    gradle:
+      - yes
+    scandelete:
+      - plugins
+
+  - versionName: 1.6.0
+    versionCode: 61
+    commit: b0c5af62f893f4a73afc83bf3f83c4a709efde95
+    subdir: app
+    gradle:
+      - yes
+    scandelete:
+      - plugins
+
+  - versionName: 1.6.0.1
+    versionCode: 62
+    commit: 928cc3b67cbecb8dac777b0446b1bf850e9fbf77
+    subdir: app
+    gradle:
+      - yes
+    scandelete:
+      - plugins
+
+  - versionName: 1.6.1
+    versionCode: 63
+    commit: 6e7b7d132b7e851bc020ff733398000d7e354a3a
+    subdir: app
+    sudo:
+      - export CPUS_MAX=6
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    output: build/outputs/apk/release/$$VERSION$$.apk
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/w2sv/WiFi-Widget/releases/download/$$VERSION$$/$$VERSION$$.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/*.apk; export localhash=$(sha256sum
+        assets/dexopt/baseline.prof|cut -d " " -f1); [[ $localhash == $upstreamhash
+        ]] && break ; popd; rm -fr local; done
+
+  - versionName: 1.6.3
+    versionCode: 65
+    commit: c4a1e50a90ee4bf43bbd4c11920ca34cfb4b6721
+    subdir: app
+    sudo:
+      - export CPUS_MAX=6
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    output: build/outputs/apk/release/$$VERSION$$.apk
+    scandelete:
+      - build-logic/convention/build
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/w2sv/WiFi-Widget/releases/download/$$VERSION$$/$$VERSION$$.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/*.apk; export localhash=$(sha256sum
+        assets/dexopt/baseline.prof|cut -d " " -f1); [[ $localhash == $upstreamhash
+        ]] && break ; popd; rm -fr local; done
+
+  - versionName: 1.6.4
+    versionCode: 66
+    commit: 3cced1e6119c235330d1f2acbdc6df4371c48d90
+    subdir: app
+    sudo:
+      - export CPUS_MAX=6
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    output: build/outputs/apk/release/$$VERSION$$.apk
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/w2sv/WiFi-Widget/releases/download/$$VERSION$$/$$VERSION$$.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/*.apk; export localhash=$(sha256sum
+        assets/dexopt/baseline.prof|cut -d " " -f1); [[ $localhash == $upstreamhash
+        ]] && break ; popd; rm -fr local; done
+
+  - versionName: 1.7.0
+    versionCode: 67
+    commit: d8c1c65138b678a5fe58b77340766b4117bd8de6
+    subdir: app
+    sudo:
+      - export CPUS_MAX=6
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    output: build/outputs/apk/release/$$VERSION$$.apk
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/w2sv/WiFi-Widget/releases/download/$$VERSION$$/$$VERSION$$.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/*.apk; export localhash=$(sha256sum
+        assets/dexopt/baseline.prof|cut -d " " -f1); [[ $localhash == $upstreamhash
+        ]] && break ; popd; rm -fr local; done
+
+  - versionName: 1.7.2-fdroid
+    versionCode: 69
+    commit: b5843f915c5b531e4fca4c725fb888001b857fae
+    subdir: app
+    sudo:
+      - export CPUS_MAX=6
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    output: build/outputs/apk/release/$$VERSION$$.apk
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/w2sv/WiFi-Widget/releases/download/$$VERSION$$/$$VERSION$$.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/*.apk; export localhash=$(sha256sum
+        assets/dexopt/baseline.prof|cut -d " " -f1); [[ $localhash == $upstreamhash
+        ]] && break ; popd; rm -fr local; done
+
+  - versionName: 1.8.0
+    versionCode: 70
+    commit: 05ed4b83ece4df68b8d48af88c86f7129653f375
+    subdir: app
+    sudo:
+      - export CPUS_MAX=4
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    scandelete:
+      - build-logic/convention/build
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: 1.8.1
+    versionCode: 71
+    commit: 707595f4dfac5e0cfb38b618b65c6e58c36568ae
+    subdir: app
+    sudo:
+      - export CPUS_MAX=4
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+AllowedAPKSigningKeys: e22bed7909bce21fa5bc900a8c056eaa0773761f70774d1d808bbbafb3aa1958
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^[\d.]+$
+UpdateCheckData: gradle.properties|versionCode=(\d+)|.|version=([\d.]+)
+CurrentVersion: 1.8.1
+CurrentVersionCode: 71

@@ -1,0 +1,68 @@
+Categories:
+  - Navigation
+License: GPL-3.0-only
+AuthorName: Thomas
+WebSite: https://framagit.org/tom79/openmaps
+SourceCode: https://framagit.org/tom79/openmaps
+IssueTracker: https://framagit.org/tom79/openmaps/issues
+Translation: https://crowdin.com/project/openmaps
+
+AutoName: OpenMultiMaps
+
+RepoType: git
+Repo: https://framagit.org/tom79/openmaps.git
+
+Builds:
+  - versionName: 1.0.5
+    versionCode: 6
+    commit: 1.0.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.6
+    versionCode: 7
+    commit: 1.0.6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.0
+    versionCode: 8
+    commit: 1.1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.2
+    versionCode: 10
+    commit: 1.1.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.3
+    versionCode: 11
+    commit: 1.1.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.0
+    versionCode: 12
+    commit: 1.2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.0
+    versionCode: 13
+    commit: 1.3.0
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.3.0
+CurrentVersionCode: 13

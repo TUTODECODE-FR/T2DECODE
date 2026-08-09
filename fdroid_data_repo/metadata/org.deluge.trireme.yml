@@ -1,0 +1,171 @@
+Categories:
+  - Download
+  - Remote Controller
+License: GPL-3.0-or-later
+AuthorName: Aashrava Holla
+SourceCode: https://github.com/teal77/trireme
+IssueTracker: https://github.com/teal77/trireme/issues
+Changelog: https://github.com/teal77/trireme/releases
+
+Name: Trireme for Deluge
+AutoName: Deluge
+Description: |-
+  Use this app to connect and manage your Deluge Daemon.
+
+  Deluge is a popular torrent client which follows a server client model.
+
+  This app will act as a client.
+
+RepoType: git
+Repo: https://github.com/teal77/trireme.git
+
+Builds:
+  - versionName: 0.8.1
+    versionCode: 5
+    commit: v0.8.1
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@beta
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - export PATH=$$flutter$$/bin:$PATH
+      - flutter config --no-analytics
+      - flutter build apk --flavor fdroid
+
+  - versionName: '0.9'
+    versionCode: 6
+    commit: v0.9
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@beta
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - export PATH=$$flutter$$/bin:$PATH
+      - flutter config --no-analytics
+      - flutter build apk --flavor fdroid
+
+  - versionName: 0.9.1
+    versionCode: 7
+    commit: v0.9.1
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@v0.8.2
+    prebuild:
+      - sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+      - sed -i '/repositories {/a google()' $$flutter$$/packages/flutter_tools/gradle/flutter.gradle
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.0.2
+    versionCode: 9
+    commit: v1.0.2
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@v1.0.0
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.0.3
+    versionCode: 11
+    commit: v1.0.3
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@v1.1.8
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.1.0
+    versionCode: 15
+    commit: v1.1.0
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@v1.5.4
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.2.0
+    versionCode: 18
+    commit: v1.2.0
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@v1.9.1+hotfix.6
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.3.0
+    versionCode: 20
+    commit: v1.3.0
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@1.17.5
+    prebuild: sed -i -e 's|git@github.com:|https://github.com/|' pubspec.lock pubspec.yaml
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.4.0
+    versionCode: 24
+    commit: 55e74b82f6e2cf1688a41ec89b4af4e3b8327ba7
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@3.16.4
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.4.1
+    versionCode: 25
+    commit: a9f8ea0b45ee59d5c45d26432a58b344e27c2377
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@3.16.4
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+  - versionName: 1.4.3
+    versionCode: 27
+    commit: 96197865e62c968d7b67c8847c76674f28174bcc
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@3.16.4
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --flavor fdroid
+
+MaintainerNotes: |-
+  Builds will fail when the srclib ref of flutter and the version with which
+  upstream has been built with differ.
+  In that case we need to manually give the correct ref to srclib.
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9.]*$
+CurrentVersion: 1.4.3
+CurrentVersionCode: 27

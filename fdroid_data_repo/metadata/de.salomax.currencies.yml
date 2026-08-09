@@ -1,0 +1,284 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: App depends on non-libre currency exchange APIs.
+Categories:
+  - Market & Price
+License: GPL-3.0-or-later
+AuthorName: Maximilian Salomon
+AuthorEmail: msal.coding@gmail.com
+SourceCode: https://github.com/sal0max/currencies
+IssueTracker: https://github.com/sal0max/currencies/issues
+Translation: https://translate.codeberg.org/projects/currencies/
+Changelog: https://github.com/sal0max/currencies/releases
+Donate: https://www.paypal.com/donate/?hosted_button_id=2JCY7E99V9DGC
+
+AutoName: Currencies
+
+RepoType: git
+Repo: https://github.com/sal0max/currencies.git
+
+Builds:
+  - versionName: 1.1.1
+    versionCode: 10101
+    commit: 1.1.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.0
+    versionCode: 10200
+    commit: 1.2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.0
+    versionCode: 10400
+    commit: 1.4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.1
+    versionCode: 10401
+    commit: 1.4.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.0
+    versionCode: 10500
+    commit: 1.5.0
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.5.1
+    versionCode: 10501
+    commit: eea32cd4f6e4fd2cb6416b66327f1d3915343be2
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.6.0
+    versionCode: 10600
+    commit: 1bebd8658ac6437d1e26dea2415917e4fc7b28b4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.7.0
+    versionCode: 10700
+    commit: ed5633aa2c57d0e536a8a51399c131e049d7db51
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.8.0
+    versionCode: 10800
+    commit: 41362aef068de6f82efd278377ae16f6ad026022
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.8.1
+    versionCode: 10801
+    commit: 803ee11cad0b310669d24e4d890946d3415a2b1e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.9.0
+    versionCode: 10900
+    commit: ed0d927a48eaa59dd0e94fb9dbbb8ca6394f1cf5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.10.0
+    versionCode: 11000
+    commit: e0cba77a22fa8a589729b350ab69a121349ae630
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.10.1
+    versionCode: 11001
+    commit: 121e3c7c618d84de2ceec7a06a615e820d58e8e7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.10.2
+    versionCode: 11002
+    commit: 29b5d039191c9ca8f47c738484b843081c77cf21
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.10.3
+    versionCode: 11003
+    commit: 37f12322ae4cd0e34e8e051107da9295b5d86acb
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.11.0
+    versionCode: 11100
+    commit: 5bb6508c27d87d18c63a24bcf4368060091f082c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.12.0
+    versionCode: 11200
+    commit: 2aab3f1e4b7231ce58479ebacfe207fb6ce9f5fa
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.12.1
+    versionCode: 11201
+    commit: 89ba81f4f866ece7e811c68d248c2c7180b115c6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.13.0
+    versionCode: 11300
+    commit: 1d9996e175a8243ef512ab3d02b169e6f8c5633f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.14.0
+    versionCode: 11400
+    commit: c833b29259a900b8ee4130b9d310616f7436a69b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.15.0
+    versionCode: 11500
+    commit: 7e5997618f4934877f814d33ee67161c90c0203b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 1.22.0
+    versionCode: 12200
+    commit: 8428bc5f4f7ffd5fb474d73e0440ccc37b849a3e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+
+  - versionName: 1.22.1
+    versionCode: 12201
+    commit: d9301d2792a76cf0ef1a24cae04907f131fed0a0
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.22.2
+    versionCode: 12202
+    commit: 5e2c9393b353d87f901edcd26eb2e5bbfcf257be
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.22.3
+    versionCode: 12203
+    commit: 5954afc11d944f854c28d1e3fce6a935059a166f
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.22.5
+    versionCode: 12205
+    commit: 702e13c613f31049d65fa22bb16f501390deea8d
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.22.6
+    versionCode: 12206
+    commit: 499e46ca848f1c77d8d6ac03e0571664ef5df7b6
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 1.23.0
+    versionCode: 12300
+    commit: 013eed45e6ad62af8aa5456822fef0cdada22128
+    subdir: app
+    gradle:
+      - fdroid
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags \d+\.\d+\.\d+
+CurrentVersion: 1.23.0
+CurrentVersionCode: 12300

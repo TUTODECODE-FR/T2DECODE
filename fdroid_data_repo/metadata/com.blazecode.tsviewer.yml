@@ -1,0 +1,109 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on proprietary TeamSpeak server.
+Categories:
+  - Connectivity
+  - Internet
+License: MIT
+AuthorName: BlazeCodeDev
+AuthorEmail: info@blazecodeapps.com
+AuthorWebSite: https://blazecodeapps.com/
+SourceCode: https://github.com/BlazeCodeDev/TSViewer
+IssueTracker: https://github.com/BlazeCodeDev/TSViewer/issues
+
+AutoName: TSViewer
+
+RepoType: git
+Repo: https://github.com/BlazeCodeDev/TSViewer
+
+Builds:
+  - versionName: '1.1'
+    versionCode: 2
+    commit: 1ee132490b609dd72cf62b025ab62bc893d0671b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.2'
+    versionCode: 4
+    commit: 893340eefaa744857338bfaa5eba4cecb4cefba3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.1
+    versionCode: 5
+    commit: fad9b4109c59bb0f862264902467039d705925ac
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.3'
+    versionCode: 6
+    commit: 06ec6c7c70ac386bd38173f105d7117e816f36f9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.0-foss
+    versionCode: 8
+    commit: a7e0ec44c376b6bd22c6569e987f105d7c6c696a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - foss
+    rm:
+      - wear
+    prebuild: sed -i -e '/wear/d' build.gradle ../settings.gradle
+
+  - versionName: 2.0.2-foss
+    versionCode: 10
+    commit: 7ec64b226826526cee0164feb156681b0eae76de
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - foss
+    rm:
+      - wear
+    prebuild: sed -i -e '/wear/d' build.gradle ../settings.gradle
+
+  - versionName: 2.1.0-foss
+    versionCode: 11
+    commit: 2605f4d29587f0162b6ce1f0222c0397ee24716a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - foss
+    rm:
+      - wear
+    prebuild: sed -i -e '/wear/d' build.gradle.kts ../settings.gradle.kts
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.1.0-foss
+CurrentVersionCode: 11

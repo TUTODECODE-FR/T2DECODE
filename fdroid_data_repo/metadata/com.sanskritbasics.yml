@@ -1,0 +1,40 @@
+Categories:
+  - Educational Game
+  - Science & Education
+License: GPL-3.0-or-later
+SourceCode: https://github.com/sanskritbscs/letters
+IssueTracker: https://github.com/sanskritbscs/letters/issues
+Liberapay: sanskritbscs
+Bitcoin: bc1q3xasvfn2c84dprkk2mxj5g7n6ujwylphu8qsf3
+
+AutoName: SanskritBasicsLetters
+
+RepoType: git
+Repo: https://github.com/sanskritbscs/letters.git
+
+Builds:
+  - versionName: '3.1'
+    versionCode: 31
+    commit: v3.1
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: '3.3'
+    versionCode: 33
+    commit: afdf4e4276bba8cefb68923a560759dd7ef88299
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: '3.4'
+    versionCode: 34
+    commit: 54fc8854495d4dad2cc2db7280a72f3f913fbd01
+    subdir: app
+    gradle:
+      - fdroid
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags .*[0-9]$
+CurrentVersion: '3.4'
+CurrentVersionCode: 34

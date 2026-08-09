@@ -1,0 +1,34 @@
+Categories:
+  - Phone & SMS
+  - System
+License: MIT
+AuthorName: whitequark
+AuthorEmail: whitequark@whitequark.org
+AuthorWebSite: https://lab.whitequark.org/
+SourceCode: https://github.com/whitequark/SIPCaller
+IssueTracker: https://github.com/whitequark/SIPCaller/issues
+
+AutoName: SIP Caller
+Description: |-
+  <b>Note:</b> this app is no longer maintained, its repo was archived.
+
+  Stock Android dialer does not support dialing SIP numbers directly; the only way
+  to do it is to add a contact or run am start -a android.intent.action.CALL
+  sip:... in terminal. SIP Caller allows dialing SIP numbers directly.
+
+RepoType: git
+Repo: https://github.com/whitequark/SIPCaller
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: r1
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.0'
+CurrentVersionCode: 1

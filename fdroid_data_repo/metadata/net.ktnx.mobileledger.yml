@@ -1,0 +1,314 @@
+Categories:
+  - Finance Manager
+License: GPL-3.0-or-later
+AuthorName: Damyan Ivanov
+AuthorEmail: dam+mole@ktnx.net
+WebSite: https://mole.ktnx.net/
+SourceCode: https://git.ktnx.net/?p=mobile-ledger.git
+Changelog: https://git.ktnx.net/?p=mobile-ledger.git;a=blob;f=CHANGES.md;hb=HEAD
+
+AutoName: MoLe
+
+RepoType: git
+Repo: https://git.ktnx.net/git/mobile-ledger.git
+
+Builds:
+  - versionName: '0.6'
+    versionCode: 16
+    commit: v0.6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '0.7'
+    versionCode: 17
+    commit: v0.7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '0.8'
+    versionCode: 18
+    commit: v0.8
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.8.1
+    versionCode: 19
+    commit: v0.8.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.9.2
+    versionCode: 22
+    commit: v0.9.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.9.3
+    versionCode: 23
+    commit: v0.9.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.9.5
+    versionCode: 25
+    commit: v0.9.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.10.0
+    versionCode: 26
+    commit: v0.10.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.10.1
+    versionCode: 27
+    commit: v0.10.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.10.2
+    versionCode: 28
+    commit: v0.10.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.10.3
+    versionCode: 29
+    commit: v0.10.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.11.0
+    versionCode: 30
+    commit: v0.11.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.12.0
+    versionCode: 31
+    commit: v0.12.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.13.1
+    versionCode: 33
+    commit: v0.13.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.14.0
+    versionCode: 34
+    commit: v0.14.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.14.1
+    versionCode: 35
+    commit: v0.14.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.15.0
+    versionCode: 36
+    commit: v0.15.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.16.0
+    versionCode: 37
+    commit: v0.16.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.17.0
+    versionCode: 38
+    commit: v0.17.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.17.1
+    versionCode: 39
+    commit: v0.17.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.18.0
+    versionCode: 40
+    commit: v0.18.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.19.0
+    versionCode: 41
+    commit: v0.19.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.19.1
+    versionCode: 42
+    commit: v0.19.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.19.2
+    versionCode: 43
+    commit: v0.19.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.20.0
+    versionCode: 44
+    commit: d3f26f816aeb5e3e75fdf207dfd7116e324d4b23
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.20.1
+    versionCode: 45
+    commit: 2129a89aea61a05f65f1193293e0fa96cd084ad2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.20.2
+    versionCode: 46
+    commit: 0a26b3a2165061e549cd195bd604ee525c93c54a
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.20.3
+    versionCode: 47
+    commit: 20ba42722fb3f8d2a26fe33275d6737161a09a17
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.20.4
+    versionCode: 48
+    commit: 4569e3be6fda444e1822fa53fe5c93d253c2ac1e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.21.0
+    versionCode: 49
+    commit: 3c15412cfcc89416b74c62ad78d06ceb7e0d00ce
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.21.1
+    versionCode: 50
+    commit: 27f8039e4dd9964f55be9a9fcf11ea28f2e0cc87
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.21.2
+    versionCode: 51
+    commit: 9f74c8574b50bce122ebfe6fccf5ffd8935c0a15
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - gradle
+
+  - versionName: 0.21.3
+    versionCode: 52
+    commit: 6c3a615c4036eb7cfa5f7b1288b7f0dd89b69cce
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - gradle
+
+  - versionName: 0.21.4
+    versionCode: 53
+    commit: 799e8cedace38bf7375137c75bf68680ab646609
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - gradle
+
+  - versionName: 0.21.5
+    versionCode: 54
+    commit: 87e526dbccb940f0442020e24724a63033951f0a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - gradle
+
+  - versionName: 0.21.6
+    versionCode: 55
+    commit: c356d5916ff4950a15d40f02ec6037e5765afd3c
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - gradle
+
+  - versionName: 0.21.7
+    versionCode: 56
+    commit: 18cc90fd341614bb30a321a7e790ff089828b76e
+    subdir: app
+    gradle:
+      - yes
+    rm:
+      - gradle
+
+  - versionName: 0.21.8
+    versionCode: 57
+    commit: c92fbd5f9a88ac55a60890bbad27188e50885efc
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e "/android {/a lint { abortOnError = false }" build.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.21.8
+CurrentVersionCode: 57

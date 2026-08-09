@@ -1,0 +1,84 @@
+Categories:
+  - System
+License: GPL-3.0-only
+AuthorName: hxreborn
+SourceCode: https://github.com/hxreborn/remember-my-sort
+IssueTracker: https://github.com/hxreborn/remember-my-sort/issues
+
+AutoName: Remember My Sort
+
+RepoType: git
+Repo: https://github.com/hxreborn/remember-my-sort.git
+Binaries: 
+  https://github.com/hxreborn/remember-my-sort/releases/download/v%v/app-release.apk
+
+Builds:
+  - versionName: 1.2.3
+    versionCode: 123
+    commit: 8b98a23ffdb7eb2c22dd5fe9c5c6e6bbae8fd182
+    subdir: app
+    submodules: true
+    sudo:
+      - echo "deb https://deb.debian.org/debian sid main" > /etc/apt/sources.list.d/sid.list
+      - apt-get update
+      - apt-get install -y -t sid openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/maven.pkg.github.com/d' ../libxposed/api/api/build.gradle.kts
+      - sed -i -e '/signingConfigs/,/takeIf/d' build.gradle.kts
+    build:
+      - pushd ../libxposed/api
+      - gradle :api:publishApiPublicationToMavenLocal -x :checks:compileKotlin
+      - popd
+
+  - versionName: 2.0.0
+    versionCode: 201
+    commit: f3c761dc4c0c590b1ae8765d53c07020f1406899
+    subdir: app
+    submodules: true
+    sudo:
+      - echo "deb https://deb.debian.org/debian sid main" > /etc/apt/sources.list.d/sid.list
+      - apt-get update
+      - apt-get install -y -t sid openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/maven.pkg.github.com/d' ../libxposed/api/api/build.gradle.kts
+      - sed -i -e '/signingConfigs/,/takeIf/d' build.gradle.kts
+    build:
+      - pushd ../libxposed/api
+      - gradle :api:publishApiPublicationToMavenLocal -x :checks:compileKotlin
+      - popd
+
+  - versionName: 2.0.1
+    versionCode: 202
+    commit: ef31320fd495b2d8ac23b42eff4fbfc6d6ef601c
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/maven.pkg.github.com/d' ../libxposed/api/api/build.gradle.kts
+      - sed -i -e '/signingConfigs/,/takeIf/d' build.gradle.kts
+    build:
+      - pushd ../libxposed/api
+      - gradle :api:publishApiPublicationToMavenLocal -x :checks:compileKotlin
+      - popd
+
+  - versionName: 3.0.0
+    versionCode: 300
+    commit: df217274040f5b3aebe2f364dade13ba07b13051
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/signingConfigs {/,/^    }/d' -e '/signingConfig = /d' build.gradle.kts
+
+AllowedAPKSigningKeys: 32b98dc709a7ee15fae073493a1aeca5d428316cc0d8b8f878eed64ba37f3297
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 3.0.0
+CurrentVersionCode: 300

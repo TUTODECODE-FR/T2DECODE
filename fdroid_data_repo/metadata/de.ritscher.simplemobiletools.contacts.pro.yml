@@ -1,0 +1,74 @@
+Categories:
+  - Phone & SMS
+License: GPL-3.0-only
+AuthorName: Stephan Ritscher
+AuthorEmail: stephan.ritscher@gmail.com
+WebSite: https://github.com/stephanritscher/Simple-Contacts
+SourceCode: https://github.com/stephanritscher/Simple-Contacts
+IssueTracker: https://github.com/stephanritscher/Simple-Contacts/issues
+Changelog: https://github.com/stephanritscher/Simple-Contacts/blob/HEAD/CHANGELOG.md
+
+Name: Simple Contacts Pro SE
+AutoName: Contacts
+
+RepoType: git
+Repo: https://github.com/stephanritscher/Simple-Contacts
+Binaries: 
+  https://github.com/stephanritscher/Simple-Contacts/releases/download/%v/contacts-fdroid-release.apk
+
+Builds:
+  - versionName: 6.22.1.2
+    versionCode: 102
+    commit: 597a5f00a54e1d95a7ba8dec1d88404a959c1bc9
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/keystore.*{/,/}/d; /keystore/d' build.gradle
+
+  - versionName: 6.22.2.1
+    versionCode: 104
+    commit: 95f85fe2b1977278ca1ff30ff73a376a2a0387b2
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/keystore.*{/,/}/d; /keystore/d' build.gradle
+
+  - versionName: 6.22.2.2
+    versionCode: 105
+    commit: dd7a4d911703707b14371d8afc849283ceff0457
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/keystore.*{/,/}/d; /keystore/d' build.gradle
+
+  - versionName: 6.22.3.1
+    versionCode: 106
+    commit: d8e34c843883a1ba2eddc908cd41419bc0ee257d
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/keystore.*{/,/}/d; /keystore/d' build.gradle
+
+  - versionName: 6.22.4.1
+    versionCode: 107
+    commit: f9c7738104288a358cd745cebd8ebcb5311ad888
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/keystore.*{/,/}/d; /keystore/d' build.gradle
+
+  - versionName: 6.22.4.2
+    versionCode: 108
+    commit: 42e39ac9b6ea507e5e9fb50c3fd3bb6efa041656
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/keystore.*{/,/}/d; /keystore/d' build.gradle
+
+AllowedAPKSigningKeys: f5638869f481e85efcfea4d9b87d3caee93491b1fbe2be28655391a9d5fecfb1
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 6.22.4.2
+CurrentVersionCode: 108

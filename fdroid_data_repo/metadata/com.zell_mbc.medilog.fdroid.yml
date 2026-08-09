@@ -1,0 +1,85 @@
+Categories:
+  - Health Manager
+  - Sports & Health
+License: GPL-3.0-or-later
+AuthorName: Thomas Zell
+AuthorEmail: thomas@zell-mbc.com
+WebSite: https://codeberg.org/toz/MediLog
+SourceCode: https://codeberg.org/toz/MediLog
+IssueTracker: https://codeberg.org/toz/MediLog/issues
+Translation: https://weblate.bubu1.eu/projects/medilog/core/
+Changelog: https://codeberg.org/toz/MediLog/src/branch/master/ChangeLog.md
+Donate: https://www.paypal.com/paypalme/thomaszellmbc
+Bitcoin: 1EUrRpjDAGgpS8J46tmsVWKbgNqAv7rWC7
+
+Name: MediLog (Reproducible build)
+AutoName: MediLog
+
+RepoType: git
+Repo: https://codeberg.org/toz/medilog.git
+Binaries: https://codeberg.org/toz/MediLog/releases/download/v%v/MediLog-fdroid-%v.apk
+
+Builds:
+  - versionName: 3.5.0
+    versionCode: 5506
+    commit: b044844fbb89416317a1d0b9d9385e4ee4c07da6
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.5.1
+    versionCode: 5507
+    commit: 0084eeeb8bad9201f2eaaadcc1041c430926bc2d
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.6.3
+    versionCode: 5520
+    commit: 0982e3bb01f47521875793fe1966ea3044d258f1
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.6.4
+    versionCode: 5521
+    commit: 381a3752b2ee63918484b6f33e040183fc2abfcd
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.6.5
+    versionCode: 5522
+    commit: ef3c9d05d809deebb2803ad3ed0c95a70dce099f
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.7.0
+    versionCode: 5524
+    commit: 7e4bce979319b675a3041e4f25c816f413665bad
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.7.1
+    versionCode: 5526
+    commit: 1d99d5d714ca2bab663251f1ae84871298e0a10c
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 3.7.2
+    versionCode: 5528
+    commit: d6b9888af11fda12ef5598b4726f99ca20f0e47b
+    subdir: app
+    gradle:
+      - fdroid
+
+AllowedAPKSigningKeys: 29e794d38b45dfc7df03932a92cf69e0ef037ee1cd6e3506dc82895fcf379f0f
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: gradle.properties|VERSION_CODE=(\d+)|.|VERSION_NAME=(.*)
+CurrentVersion: 3.7.2
+CurrentVersionCode: 5528

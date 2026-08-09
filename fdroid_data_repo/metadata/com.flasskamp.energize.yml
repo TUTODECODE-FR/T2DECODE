@@ -1,0 +1,792 @@
+Categories:
+  - Diet
+  - Internet
+  - Science & Education
+  - Sports & Health
+License: AGPL-3.0-only
+AuthorName: Christian Flaßkamp
+AuthorEmail: energize@flasskamp.com
+SourceCode: https://codeberg.org/epinez/Energize/
+IssueTracker: https://codeberg.org/epinez/Energize/issues
+Translation: https://hosted.weblate.org/projects/energize/
+Liberapay: epinez
+Bitcoin: 35DcbAwi66LDyvxfpmvxVrM7nYrrZVC59k
+
+AutoName: Energize
+
+RepoType: git
+Repo: https://codeberg.org/epinez/Energize.git
+
+Builds:
+  - versionName: 0.1.3
+    versionCode: 8
+    commit: v0.1.3
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.8.1
+    rm:
+      - ios
+      - test
+      - web
+    build:
+      - export PATH=$$flutter$$/bin:$PATH
+      - flutter config --no-analytics
+      - flutter packages pub get
+      - flutter pub run build_runner build --delete-conflicting-outputs
+      - flutter build apk
+
+  - versionName: 0.1.4
+    versionCode: 9
+    commit: 7becda931ae7aa984043ed7ca9df8443dd0c3a49
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.8.1
+    rm:
+      - ios
+      - test
+      - web
+    build:
+      - export PATH=$$flutter$$/bin:$PATH
+      - flutter config --no-analytics
+      - flutter packages pub get
+      - flutter pub run build_runner build --delete-conflicting-outputs
+      - flutter build apk
+
+  - versionName: 0.1.5
+    versionCode: 10
+    commit: 6375586f0781a1db53b035aab600f589e8e2cf1f
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.8.1
+    rm:
+      - ios
+      - test
+      - web
+    build:
+      - export PATH=$$flutter$$/bin:$PATH
+      - flutter config --no-analytics
+      - flutter packages pub get
+      - flutter pub run build_runner build --delete-conflicting-outputs
+      - flutter build apk
+
+  - versionName: 0.2.0
+    versionCode: 11
+    commit: 54c9f86019f390c50034c07f4dd65bb78c0bd136
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.5
+    rm:
+      - ios
+      - test
+      - web
+    build:
+      - export PATH=$$flutter$$/bin:$PATH
+      - flutter config --no-analytics
+      - flutter packages pub get
+      - flutter pub run build_runner build --delete-conflicting-outputs
+      - flutter build apk
+
+  - versionName: 0.3.0
+    versionCode: 12
+    commit: bb0d6f4321e2bbb53fe79f0b2a33b7153681c3a0
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.5
+    rm:
+      - ios
+      - test
+      - web
+    build:
+      - export PATH=$$flutter$$/bin:$PATH
+      - flutter config --no-analytics
+      - flutter packages pub get
+      - flutter pub run build_runner build --delete-conflicting-outputs
+      - flutter build apk
+
+  - versionName: 0.4.0
+    versionCode: 14
+    commit: 62d8c20c8fb0d02ef72a164317766b225f2a31b9
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.2
+    rm:
+      - ios
+      - test
+      - web
+    build:
+      - export PATH=$$flutter$$/bin:$PATH
+      - flutter config --no-analytics
+      - flutter packages pub get
+      - flutter pub run build_runner build --delete-conflicting-outputs
+      - flutter build apk
+
+  - versionName: 0.5.0
+    versionCode: 15
+    commit: a7933ed7505b57990f7e64393f30dc3c5448f3f4
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.2
+    rm:
+      - ios
+      - test
+      - web
+    build:
+      - export PATH=$$flutter$$/bin:$PATH
+      - flutter config --no-analytics
+      - flutter packages pub get
+      - flutter pub run build_runner build --delete-conflicting-outputs
+      - flutter build apk
+
+  - versionName: 0.5.1
+    versionCode: 16
+    commit: e3bdebffe8b3d49133cb07dec16682d3f35abbe4
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.3.9
+    rm:
+      - ios
+      - test
+      - web
+    build:
+      - export PATH=$$flutter$$/bin:$PATH
+      - flutter config --no-analytics
+      - flutter packages pub get
+      - flutter pub run build_runner build --delete-conflicting-outputs
+      - flutter build apk
+
+  - versionName: 0.6.1
+    versionCode: 18
+    commit: eec9038a5cb7f4d051f7054ca246b516f917e809
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.7.0
+    versionCode: 19
+    commit: b63dfd168a8540b3756c0bd43bdd627dbb3f566e
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.8.0
+    versionCode: 20
+    commit: ddba0b6cc1b7762bf9056e3232662885d37a5eaa
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.9.0
+    versionCode: 21
+    commit: d863088d664e6fd8b6c4fd3163e9f702a1b4a2d4
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.10.0
+    versionCode: 22
+    commit: 8f087844f1627f2cd9156dc7c415e7058878765f
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.10.1
+    versionCode: 23
+    commit: 136f26a8f98531ccd2798d2eaee21fddccaabe45
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.11.0
+    versionCode: 24
+    commit: 38ca833eb0ef3e59396ffbc326672d329572273a
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.12.0
+    versionCode: 25
+    commit: c8061fe9d95a61c46cc453b80ffdb4838c2eee4c
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.12.1
+    versionCode: 26
+    commit: d70007d5f26d0da4a8ad21b714569980a881e0b7
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.12.2
+    versionCode: 27
+    commit: 91cfae0f0e056f48ee5afeae71a6314a9e74158a
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.12.3
+    versionCode: 28
+    commit: 354f066250f17189aa49c384c25f42d28429389e
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.13.0
+    versionCode: 29
+    commit: 3e6dead21a308ee213e19ef44d52e4e761f3d039
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo "API_KEY_USDA='gGCnzW8jNmCQc4ava9cGFgpMINNHnGL2q2Fbh51v'" > .env
+      - echo "COPYRIGHT_NAME='Christian Flaßkamp'" >> .env
+      - echo "CONTACT_MAIL='energize@flasskamp.com'" >> .env
+      - echo "ISSUE_URL='https://codeberg.org/epinez/Energize/issues'" >> .env
+      - echo "REPO_URL='https://codeberg.org/epinez/Energize'" >> .env
+      - echo "TRANSLATION_URL='https://hosted.weblate.org/projects/energize/energize'"
+        >> .env
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.13.2
+    versionCode: 31
+    commit: a0102a5172235af2064b00209864e5e9c21feb9c
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - sed -i -e '/ndk {/,/^        }/d' android/app/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo "API_KEY_USDA='gGCnzW8jNmCQc4ava9cGFgpMINNHnGL2q2Fbh51v'" > .env
+      - echo "COPYRIGHT_NAME='Christian Flaßkamp'" >> .env
+      - echo "CONTACT_MAIL='energize@flasskamp.com'" >> .env
+      - echo "ISSUE_URL='https://codeberg.org/epinez/Energize/issues'" >> .env
+      - echo "REPO_URL='https://codeberg.org/epinez/Energize'" >> .env
+      - echo "TRANSLATION_URL='https://hosted.weblate.org/projects/energize/energize'"
+        >> .env
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk
+
+  - versionName: 0.13.3
+    versionCode: 321
+    commit: 91afc4839c72e0bf48b7c53c2518610c28d9c602
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo "API_KEY_USDA='gGCnzW8jNmCQc4ava9cGFgpMINNHnGL2q2Fbh51v'" > .env
+      - echo "COPYRIGHT_NAME='Christian Flaßkamp'" >> .env
+      - echo "CONTACT_MAIL='energize@flasskamp.com'" >> .env
+      - echo "ISSUE_URL='https://codeberg.org/epinez/Energize/issues'" >> .env
+      - echo "REPO_URL='https://codeberg.org/epinez/Energize'" >> .env
+      - echo "TRANSLATION_URL='https://hosted.weblate.org/projects/energize/energize'"
+        >> .env
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk --split-per-abi --target-platform="android-arm"
+
+  - versionName: 0.13.3
+    versionCode: 322
+    commit: 91afc4839c72e0bf48b7c53c2518610c28d9c602
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo "API_KEY_USDA='gGCnzW8jNmCQc4ava9cGFgpMINNHnGL2q2Fbh51v'" > .env
+      - echo "COPYRIGHT_NAME='Christian Flaßkamp'" >> .env
+      - echo "CONTACT_MAIL='energize@flasskamp.com'" >> .env
+      - echo "ISSUE_URL='https://codeberg.org/epinez/Energize/issues'" >> .env
+      - echo "REPO_URL='https://codeberg.org/epinez/Energize'" >> .env
+      - echo "TRANSLATION_URL='https://hosted.weblate.org/projects/energize/energize'"
+        >> .env
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 0.13.3
+    versionCode: 323
+    commit: 91afc4839c72e0bf48b7c53c2518610c28d9c602
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo "API_KEY_USDA='gGCnzW8jNmCQc4ava9cGFgpMINNHnGL2q2Fbh51v'" > .env
+      - echo "COPYRIGHT_NAME='Christian Flaßkamp'" >> .env
+      - echo "CONTACT_MAIL='energize@flasskamp.com'" >> .env
+      - echo "ISSUE_URL='https://codeberg.org/epinez/Energize/issues'" >> .env
+      - echo "REPO_URL='https://codeberg.org/epinez/Energize'" >> .env
+      - echo "TRANSLATION_URL='https://hosted.weblate.org/projects/energize/energize'"
+        >> .env
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk --split-per-abi --target-platform="android-x64"
+
+  - versionName: 0.13.4
+    versionCode: 331
+    commit: 236c23c4c0a08570e8a410a32eb57b6253da6dec
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+      - sed -i -e 's/8.12.1/8.11.1/' .pub-cache/hosted/pub.dev/share_plus-*/android/build.gradle
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo "API_KEY_USDA='gGCnzW8jNmCQc4ava9cGFgpMINNHnGL2q2Fbh51v'" > .env
+      - echo "COPYRIGHT_NAME='Christian Flaßkamp'" >> .env
+      - echo "CONTACT_MAIL='energize@flasskamp.com'" >> .env
+      - echo "ISSUE_URL='https://codeberg.org/epinez/Energize/issues'" >> .env
+      - echo "REPO_URL='https://codeberg.org/epinez/Energize'" >> .env
+      - echo "TRANSLATION_URL='https://hosted.weblate.org/projects/energize/energize'"
+        >> .env
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk --split-per-abi --target-platform="android-arm"
+
+  - versionName: 0.13.4
+    versionCode: 332
+    commit: 236c23c4c0a08570e8a410a32eb57b6253da6dec
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+      - sed -i -e 's/8.12.1/8.11.1/' .pub-cache/hosted/pub.dev/share_plus-*/android/build.gradle
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo "API_KEY_USDA='gGCnzW8jNmCQc4ava9cGFgpMINNHnGL2q2Fbh51v'" > .env
+      - echo "COPYRIGHT_NAME='Christian Flaßkamp'" >> .env
+      - echo "CONTACT_MAIL='energize@flasskamp.com'" >> .env
+      - echo "ISSUE_URL='https://codeberg.org/epinez/Energize/issues'" >> .env
+      - echo "REPO_URL='https://codeberg.org/epinez/Energize'" >> .env
+      - echo "TRANSLATION_URL='https://hosted.weblate.org/projects/energize/energize'"
+        >> .env
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 0.13.4
+    versionCode: 333
+    commit: 236c23c4c0a08570e8a410a32eb57b6253da6dec
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get
+      - sed -i -e 's/8.12.1/8.11.1/' .pub-cache/hosted/pub.dev/share_plus-*/android/build.gradle
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo "API_KEY_USDA='gGCnzW8jNmCQc4ava9cGFgpMINNHnGL2q2Fbh51v'" > .env
+      - echo "COPYRIGHT_NAME='Christian Flaßkamp'" >> .env
+      - echo "CONTACT_MAIL='energize@flasskamp.com'" >> .env
+      - echo "ISSUE_URL='https://codeberg.org/epinez/Energize/issues'" >> .env
+      - echo "REPO_URL='https://codeberg.org/epinez/Energize'" >> .env
+      - echo "TRANSLATION_URL='https://hosted.weblate.org/projects/energize/energize'"
+        >> .env
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk --split-per-abi --target-platform="android-x64"
+
+  - versionName: 0.13.5
+    versionCode: 341
+    commit: a4b897bdde782329341783b79d0d7218a85a9932
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get --enforce-lockfile
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo "API_KEY_USDA='gGCnzW8jNmCQc4ava9cGFgpMINNHnGL2q2Fbh51v'" > .env
+      - echo "COPYRIGHT_NAME='Christian Flaßkamp'" >> .env
+      - echo "CONTACT_MAIL='energize@flasskamp.com'" >> .env
+      - echo "ISSUE_URL='https://codeberg.org/epinez/Energize/issues'" >> .env
+      - echo "REPO_URL='https://codeberg.org/epinez/Energize'" >> .env
+      - echo "TRANSLATION_URL='https://hosted.weblate.org/projects/energize/energize'"
+        >> .env
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk --split-per-abi --target-platform="android-arm"
+
+  - versionName: 0.13.5
+    versionCode: 342
+    commit: a4b897bdde782329341783b79d0d7218a85a9932
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get --enforce-lockfile
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo "API_KEY_USDA='gGCnzW8jNmCQc4ava9cGFgpMINNHnGL2q2Fbh51v'" > .env
+      - echo "COPYRIGHT_NAME='Christian Flaßkamp'" >> .env
+      - echo "CONTACT_MAIL='energize@flasskamp.com'" >> .env
+      - echo "ISSUE_URL='https://codeberg.org/epinez/Energize/issues'" >> .env
+      - echo "REPO_URL='https://codeberg.org/epinez/Energize'" >> .env
+      - echo "TRANSLATION_URL='https://hosted.weblate.org/projects/energize/energize'"
+        >> .env
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 0.13.5
+    versionCode: 343
+    commit: a4b897bdde782329341783b79d0d7218a85a9932
+    submodules: true
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    rm:
+      - ios
+      - test
+      - web
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - submodules/flutter/bin/flutter config --no-analytics
+      - submodules/flutter/bin/flutter packages pub get --enforce-lockfile
+    scanignore:
+      - submodules/flutter/bin/cache
+    scandelete:
+      - submodules/flutter
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - echo "API_KEY_USDA='gGCnzW8jNmCQc4ava9cGFgpMINNHnGL2q2Fbh51v'" > .env
+      - echo "COPYRIGHT_NAME='Christian Flaßkamp'" >> .env
+      - echo "CONTACT_MAIL='energize@flasskamp.com'" >> .env
+      - echo "ISSUE_URL='https://codeberg.org/epinez/Energize/issues'" >> .env
+      - echo "REPO_URL='https://codeberg.org/epinez/Energize'" >> .env
+      - echo "TRANSLATION_URL='https://hosted.weblate.org/projects/energize/energize'"
+        >> .env
+      - submodules/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+      - submodules/flutter/bin/flutter build apk --split-per-abi --target-platform="android-x64"
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+VercodeOperation:
+  - 10 * %c + 1
+  - 10 * %c + 2
+  - 10 * %c + 3
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 0.13.5
+CurrentVersionCode: 343

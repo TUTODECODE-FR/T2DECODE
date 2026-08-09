@@ -1,0 +1,104 @@
+Categories:
+  - Internet
+License: GPL-3.0-only
+AuthorName: Mob-Dev
+AuthorEmail: developer@mob-dev.fr
+AuthorWebSite: https://mob-dev.fr/
+WebSite: http://www.gobl.im/
+SourceCode: https://git.mob-dev.fr/Schoumi/Goblim
+IssueTracker: https://git.mob-dev.fr/Schoumi/Goblim/issues
+Liberapay: Schoumi
+
+AutoName: Goblim
+Description: |-
+  Let's you share your photos on the Lut.im server of your choice. Use your own
+  server to regain control of your privacy!
+
+  * Multiple configurable hosting URLs -- Use your own server!
+  * Copy the sharing URL to clipboard or share it to another application
+  * Keep track of your storage lifetime
+  * HTTP & HTTPS support
+  * Share history with thumbnails, share control.
+  * Encryption of images on the server
+
+  For additional information on the client and server part, visite the
+  <a href="https://lut.im/">project page</a>.
+
+RepoType: git
+Repo: https://git.mob-dev.fr/Schoumi/Goblim.git
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 2
+    commit: release_v1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.0'
+    versionCode: 3
+    commit: release-v2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.1'
+    versionCode: 4
+    commit: release-v2.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.2'
+    versionCode: 5
+    commit: release-v2.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.3'
+    versionCode: 6
+    commit: release-v2.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.4'
+    versionCode: 7
+    commit: release-v2.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.5'
+    versionCode: 8
+    commit: release-v2.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.6'
+    versionCode: 9
+    commit: release-v2.6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.7'
+    versionCode: 10
+    commit: release-v2.7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.8'
+    versionCode: 11
+    commit: release-v2.8
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '2.8'
+CurrentVersionCode: 11

@@ -1,0 +1,221 @@
+Categories:
+  - Multimedia
+  - Music Practice Tool
+License: GPL-3.0-only
+AuthorName: Bill Farmer
+AuthorWebSite: https://billthefarmer.github.io/
+WebSite: https://github.com/billthefarmer/accordion/wiki
+SourceCode: https://github.com/billthefarmer/accordion
+IssueTracker: https://github.com/billthefarmer/accordion/issues
+Changelog: https://github.com/billthefarmer/accordion/releases
+
+AutoName: Accordion
+
+RepoType: git
+Repo: https://github.com/billthefarmer/accordion.git
+
+Builds:
+  - versionName: '1.01'
+    versionCode: 101
+    commit: v1.01
+    extlibs:
+      - arch-arm/libsonivox.so
+    scanignore:
+      - libs/libsonivox.so
+    build:
+      - mkdir -p ndk-r8e/toolchains
+      - find $$NDK$$ -maxdepth 1 -mindepth 1 -not -name toolchains -print0 | xargs
+        -0 cp -r -t ndk-r8e/
+      - cp -r $$NDK$$/toolchains/arm-linux-androideabi-4.6/ ndk-r8e/toolchains/
+      - mv libs/libsonivox.so ndk-r8e/platforms/android-14/arch-arm/usr/lib/
+      - ./ndk-r8e/ndk-build
+      - rm -rf ndk-r8e/
+
+  - versionName: '1.02'
+    versionCode: 102
+    commit: v1.02
+    extlibs:
+      - arch-arm/libsonivox.so
+    scanignore:
+      - libs/libsonivox.so
+    scandelete:
+      - libs/armeabi/libmidi.so
+    build:
+      - mkdir -p ndk-r9d/toolchains
+      - find $$NDK$$ -maxdepth 1 -mindepth 1 -not -name toolchains -print0 | xargs
+        -0 cp -r -t ndk-r9d/
+      - cp -r $$NDK$$/toolchains/arm-linux-androideabi-4.6/ ndk-r9d/toolchains/
+      - mv libs/libsonivox.so ndk-r9d/platforms/android-17/arch-arm/usr/lib/
+      - ./ndk-r9d/ndk-build
+      - rm -rf ndk-r9d/
+
+  - versionName: '1.03'
+    versionCode: 103
+    commit: v1.03
+    scanignore:
+      - jni/libs
+    scandelete:
+      - libs
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '1.04'
+    versionCode: 104
+    commit: v1.04
+    scanignore:
+      - jni/libs
+    scandelete:
+      - libs
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '1.05'
+    versionCode: 105
+    commit: v1.05
+    scanignore:
+      - jni/libs
+    scandelete:
+      - libs
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '1.06'
+    versionCode: 106
+    commit: v1.06
+    scandelete:
+      - libs
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '1.07'
+    versionCode: 107
+    commit: v1.07
+    scandelete:
+      - libs
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '1.08'
+    versionCode: 108
+    commit: v1.08
+    scandelete:
+      - libs
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '1.09'
+    versionCode: 109
+    commit: v1.09
+    scandelete:
+      - libs
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '1.10'
+    versionCode: 110
+    commit: v1.10
+    scandelete:
+      - libs
+    buildjni:
+      - yes
+    ndk: r12b
+
+  - versionName: '1.11'
+    versionCode: 111
+    commit: v1.11
+    gradle:
+      - yes
+
+  - versionName: '1.12'
+    versionCode: 112
+    commit: v1.12
+    gradle:
+      - yes
+
+  - versionName: '1.13'
+    versionCode: 113
+    commit: v1.13
+    gradle:
+      - yes
+
+  - versionName: '1.14'
+    versionCode: 114
+    commit: v1.14
+    gradle:
+      - yes
+
+  - versionName: '1.15'
+    versionCode: 115
+    commit: v1.15
+    gradle:
+      - yes
+
+  - versionName: '1.16'
+    versionCode: 116
+    commit: v1.16
+    gradle:
+      - yes
+
+  - versionName: '1.17'
+    versionCode: 117
+    commit: v1.17
+    gradle:
+      - yes
+
+  - versionName: '1.18'
+    versionCode: 118
+    commit: 27186e36addf822d84c42ab30136dc5886525859
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.19'
+    versionCode: 119
+    commit: 50f042f3b76c667a8e9618860d0187cf6df1b475
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.20'
+    versionCode: 120
+    commit: 0466f62609e10d6cd72de2e569171914b8b8a7cc
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.21'
+    versionCode: 121
+    commit: ef62a5aa132ecc82e1d295dd29a061e968fd7ed2
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.22'
+    versionCode: 122
+    commit: 6451a217fa7edb9f1b5fcc26b3ae4e58f5a7770a
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.22'
+CurrentVersionCode: 122

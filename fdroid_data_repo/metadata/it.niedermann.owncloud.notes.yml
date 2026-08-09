@@ -1,0 +1,1120 @@
+Categories:
+  - Internet
+  - Note
+  - Task
+  - Writing
+License: GPL-3.0-or-later
+AuthorName: Nextcloud GmbH
+AuthorWebSite: https://www.nextcloud.com
+SourceCode: https://github.com/nextcloud/notes-android
+IssueTracker: https://github.com/nextcloud/notes-android/issues
+Translation: https://explore.transifex.com/nextcloud/nextcloud/android-notes/
+Changelog: https://github.com/nextcloud/notes-android/releases
+Donate: https://nextcloud.com/include/
+
+AutoName: Nextcloud Notes
+
+RepoType: git
+Repo: https://github.com/nextcloud/notes-android.git
+
+Builds:
+  - versionName: 0.4.0
+    versionCode: 4
+    commit: v0.4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.0
+    versionCode: 5
+    commit: v0.5.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.5.2
+    versionCode: 7
+    commit: v0.5.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.6.0
+    versionCode: 8
+    commit: v0.6.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.7.0
+    versionCode: 9
+    commit: v0.7.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.7.1
+    versionCode: 10
+    commit: v0.7.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.7.2
+    versionCode: 11
+    commit: v0.7.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.8.0
+    versionCode: 12
+    commit: v0.8.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.8.1
+    versionCode: 13
+    commit: v0.8.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.9.0
+    versionCode: 14
+    commit: v0.9.0
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo -e "android { lintOptions { disable 'MissingTranslation' } }" >>
+      build.gradle
+
+  - versionName: 0.10.0
+    versionCode: 15
+    commit: v0.10.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.11.0
+    versionCode: 16
+    commit: v0.11.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.12.0
+    versionCode: 17
+    commit: v0.12.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.12.1
+    versionCode: 18
+    commit: v0.12.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.13.1
+    versionCode: 20
+    commit: v0.13.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.14.2
+    versionCode: 23
+    commit: v0.14.2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.15.2
+    versionCode: 26
+    commit: v0.15.2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.16.0
+    versionCode: 27
+    commit: v0.16.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.16.1
+    versionCode: 28
+    commit: v0.16.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.17.0
+    versionCode: 29
+    commit: v0.17.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.18.0
+    versionCode: 30
+    commit: v0.18.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.20.0
+    versionCode: 32
+    commit: v0.20.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.21.0
+    versionCode: 33
+    commit: v0.21.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.22.0
+    versionCode: 34
+    commit: v0.22.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.22.2
+    versionCode: 36
+    commit: v0.22.2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.22.3
+    versionCode: 37
+    commit: v0.22.3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.22.4
+    versionCode: 38
+    commit: v0.22.4
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.23.0
+    versionCode: 39
+    commit: v0.23.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.24.0
+    versionCode: 40
+    commit: v0.24.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.24.2
+    versionCode: 42
+    commit: v0.24.2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.24.3
+    versionCode: 43
+    commit: v0.24.3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.25.0
+    versionCode: 44
+    commit: v0.25.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 0.27.1
+    versionCode: 47
+    commit: v0.27.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 1.0.0
+    versionCode: 48
+    commit: v1.0.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 1.0.1
+    versionCode: 49
+    commit: v1.0.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.0.1
+    versionCode: 51
+    commit: v2.0.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.1.0
+    versionCode: 54
+    commit: v2.1.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.1.2
+    versionCode: 56
+    commit: v2.1.2
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.1.3
+    versionCode: 57
+    commit: v2.1.3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.2.0
+    versionCode: 58
+    commit: v2.2.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.3.0
+    versionCode: 61
+    commit: v2.3.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.4.0
+    versionCode: 63
+    commit: v2.4.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.4.1
+    versionCode: 64
+    commit: v2.4.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.4.4
+    versionCode: 67
+    commit: v2.4.4
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.4.6
+    versionCode: 69
+    commit: v2.4.6
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.4.8
+    versionCode: 71
+    commit: v2.4.8
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.8.0
+    versionCode: 75
+    commit: v2.8.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.9.0
+    versionCode: 77
+    commit: v2.9.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.10.0
+    versionCode: 78
+    commit: v2.10.0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.10.1
+    versionCode: 79
+    commit: v2.10.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.10.3
+    versionCode: 81
+    commit: v2.10.3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.11.1
+    versionCode: 2011001
+    commit: v2.11.1
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.11.3
+    versionCode: 2011003
+    commit: v2.11.3
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 2.11.6
+    versionCode: 2011006
+    commit: v2.11.6
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.11.7
+    versionCode: 2011007
+    commit: v2.11.7
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.11.8
+    versionCode: 2011008
+    commit: v2.11.8
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.11.10
+    versionCode: 2011010
+    commit: v2.11.10
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.11.12
+    versionCode: 2011012
+    commit: v2.11.12
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.11.13
+    versionCode: 2011013
+    commit: v2.11.13
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.12.0
+    versionCode: 2012000
+    commit: v2.12.0
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.12.1
+    versionCode: 2012001
+    commit: v2.12.1
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.12.2
+    versionCode: 2012002
+    commit: v2.12.2
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.13.0
+    versionCode: 2013000
+    commit: v2.13.0
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.13.3
+    versionCode: 2013003
+    commit: v2.13.3
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.14.0
+    versionCode: 2014000
+    commit: v2.14.0
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.14.1
+    versionCode: 2014001
+    commit: v2.14.1
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.15.0
+    versionCode: 2015000
+    commit: v2.15.0
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.16.0
+    versionCode: 2016000
+    commit: v2.16.0
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.16.1
+    versionCode: 2016001
+    commit: v2.16.1
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.16.2
+    versionCode: 2016002
+    commit: v2.16.2
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.16.3
+    versionCode: 2016003
+    commit: v2.16.3
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.16.4
+    versionCode: 2016004
+    commit: v2.16.4
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.16.5
+    versionCode: 2016005
+    commit: v2.16.5
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.16.7
+    versionCode: 2016007
+    commit: v2.16.7
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.17.0
+    versionCode: 2017000
+    commit: v2.17.0
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.17.1
+    versionCode: 2017001
+    commit: v2.17.1
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.18.1
+    versionCode: 2018001
+    commit: v2.18.1
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 2.19.0
+    versionCode: 2019000
+    commit: v2.19.0
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.0.0
+    versionCode: 3000000
+    commit: v3.0.0
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.0.1
+    versionCode: 3000001
+    commit: v3.0.1
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.1.0
+    versionCode: 3001000
+    commit: v3.1.0
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.1.1
+    versionCode: 3001001
+    commit: v3.1.1
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.1.2
+    versionCode: 3001002
+    commit: v3.1.2
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.1.3
+    versionCode: 3001003
+    commit: v3.1.3
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.1.4
+    versionCode: 3001004
+    commit: v3.1.4
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.2.0
+    versionCode: 3002000
+    commit: v3.2.0
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.2.1
+    versionCode: 3002001
+    commit: v3.2.1
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.2.2
+    versionCode: 3002002
+    commit: v3.2.2
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.2.3
+    versionCode: 3002003
+    commit: v3.2.3
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.2.4
+    versionCode: 3002004
+    commit: v3.2.4
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.2.5
+    versionCode: 3002005
+    commit: v3.2.5
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.3.1
+    versionCode: 3003001
+    commit: v3.3.1
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.0
+    versionCode: 3004000
+    commit: v3.4.0-beta1
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.1
+    versionCode: 3004001
+    commit: v3.4.1
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.2
+    versionCode: 3004002
+    commit: v3.4.2
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.3
+    versionCode: 3004003
+    commit: v3.4.3
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.4
+    versionCode: 3004004
+    commit: v3.4.4
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.5
+    versionCode: 3004005
+    commit: v3.4.5
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.7
+    versionCode: 3004007
+    commit: v3.4.7
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.8
+    versionCode: 3004008
+    commit: v3.4.8
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.9
+    versionCode: 3004009
+    commit: v3.4.9
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.10
+    versionCode: 3004010
+    commit: v3.4.10
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.11
+    versionCode: 3004011
+    commit: 3.4.11
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.12
+    versionCode: 3004012
+    commit: 3a25a4b1af881fbedc11a7d14b889fb0bc1862a7
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.13
+    versionCode: 3004013
+    commit: 7d7ea73fe9843de19e06a1d02fd61a97a0cbb5f6
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.14
+    versionCode: 3004014
+    commit: e3408a0c67d08e07bc63c7a9293ed1ce7cfd52ea
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.16
+    versionCode: 3004016
+    commit: 057430b3b091f1d8b454324d83e93310e96cf1cb
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.18
+    versionCode: 3004018
+    commit: ec7b141b96582597586e14514dd9ba112783d42c
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 3.4.19
+    versionCode: 3004019
+    commit: 4fc17227e1d886cd87f3352e1a8d784aa00fb8f7
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 3.5.00
+    versionCode: 3005000
+    commit: e3d537469e2f4723558e1b73fc0de80450fc373a
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 3.6.0
+    versionCode: 3006000
+    commit: 1430e200df29459e7a050701e65f4352c4f145d4
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - fdroid
+
+  - versionName: 3.7.0
+    versionCode: 3007000
+    commit: 2b8d479188d0ed1514035f58eabab70392831344
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 3.7.1
+    versionCode: 3007001
+    commit: 075ce5f8a9903915aa1afe3ba7f09d1b5f3d745c
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 4.0.0 RC1
+    versionCode: 40000051
+    commit: 62bff13202384a1200ef1649364e3fec131b973e
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 4.0.0
+    versionCode: 40000090
+    commit: 72818ac23c709e5b948c6ba57121f50f62987d93
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 4.1.0 RC1
+    versionCode: 40010051
+    commit: 6a4aded2972fdfff6a5a9502e3bcbe26105c18ee
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 4.1.0
+    versionCode: 40010090
+    commit: e1f3cc396d8f10e1541c0e76c8a6e6ec3225a764
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 4.2.0
+    versionCode: 40020090
+    commit: a9201eda2df572ded720fcd08dd34e1ce851fe5f
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 4.2.1
+    versionCode: 40020190
+    commit: 5d8c7e4f90cf195261902bccc5000b7e9ea8a45e
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+
+  - versionName: 4.3.0
+    versionCode: 40030090
+    commit: 308125aead479dfcd691cf22e343a237046af68c
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 4.3.1
+    versionCode: 40030190
+    commit: 78812882a80cd51f01d8bf3d145b86adfdcff20b
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 4.4.0
+    versionCode: 40040090
+    commit: da75908475294dd6600497ba2a2fbedac5a296b2
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 4.4.1
+    versionCode: 40040190
+    commit: f4e76b6bca97cea5fc5c249acb988ba8294f1d9e
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 4.4.2
+    versionCode: 40040290
+    commit: a713aad45a3e877d7d313edf17a643461b6f82d6
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 4.5.0 RC1
+    versionCode: 40050051
+    commit: b5d3000e2ffc540201eac855335fbdc476b6e09c
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+
+  - versionName: 4.5.1
+    versionCode: 40050190
+    commit: eedc0d50ee7975299c210f3af44b6bf59af981f3
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+
+  - versionName: 4.5.2 RC1
+    versionCode: 40050251
+    commit: 886ef325b6739adb66d4c2b11f3bf74328467c77
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+
+  - versionName: 4.5.2
+    versionCode: 40050290
+    commit: 37757bb164b27e60a3597abb8b1288b6989a939c
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 4.5.3
+    versionCode: 40050390
+    commit: d8d5b55b6d950e7eea1f20c3c37a6d285fa2442c
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 4.6.0 RC1
+    versionCode: 40060051
+    commit: 8e74b098b5746361138c03f36d6dfd11ec8e16c9
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 4.6.0 RC2
+    versionCode: 40060052
+    commit: 9a9f0498a781b7d908d18431e267a5ec62eaab34
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 33.0.0
+    versionCode: 330000090
+    commit: 6e1b5835a8094dc49e018e2fef840a6463bea976
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 33.1.0 RC 1
+    versionCode: 330010051
+    commit: 84ff1090780d197e3fb09ba136ddadac6f8e064a
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 33.1.0
+    versionCode: 330010090
+    commit: 3e467e7a5ae3a16738ac1957f74e749dd1d5e213
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 34.0.0
+    versionCode: 340000090
+    commit: ca3f7ff94fe84905c04f02921d9b379c90033cc8
+    subdir: app
+    gradle:
+      - fdroid
+
+  - versionName: 34.0.1 RC 1
+    versionCode: 340000151
+    commit: 855f3467254b6d4e726e50dddb42f6dddfeb6b4d
+    subdir: app
+    gradle:
+      - fdroid
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^[\d.]+$
+CurrentVersion: 34.0.0
+CurrentVersionCode: 340000090

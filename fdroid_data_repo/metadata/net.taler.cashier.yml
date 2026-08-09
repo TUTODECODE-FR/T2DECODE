@@ -1,0 +1,131 @@
+Categories:
+  - Wallet
+License: GPL-3.0-or-later
+AuthorName: GNU Taler
+WebSite: https://taler.net/
+SourceCode: https://git.taler.net/taler-android.git/
+IssueTracker: https://bugs.gnunet.org/
+Translation: https://weblate.taler.net/projects/gnu-taler/cashier-android
+
+AutoName: Taler Cashier
+
+RepoType: git
+Repo: https://git.taler.net/taler-android.git
+
+Builds:
+  - versionName: '0.1'
+    versionCode: 1
+    commit: cashier-0.1
+    subdir: cashier
+    submodules: true
+    gradle:
+      - yes
+    rm:
+      - multiplatform/wallet
+
+  - versionName: '0.2'
+    versionCode: 2
+    commit: 88fd7c5679b6b39496f6c0b4834c2ff68a8734ba
+    subdir: cashier
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - wallet
+
+  - versionName: '0.3'
+    versionCode: 3
+    commit: ad029fcaafa447e040fb925cfc7e6f4b1dc565f6
+    subdir: cashier
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    rm:
+      - wallet
+
+  - versionName: '0.4'
+    versionCode: 4
+    commit: 6f83492076eae27f3e519688b3a7f0fcb12c941b
+    subdir: cashier
+    gradle:
+      - yes
+    rm:
+      - wallet
+
+  - versionName: 0.5.1
+    versionCode: 5
+    commit: c872041f518f1211f30ae8c13269bcfe7b9063cc
+    subdir: cashier
+    gradle:
+      - yes
+    rm:
+      - wallet
+
+  - versionName: 1.0.0
+    versionCode: 6
+    commit: a97e2f4f71263fadeb36dc2598359fe6afc37ea8
+    subdir: cashier
+    gradle:
+      - yes
+    rm:
+      - donau-verificator
+      - merchant-terminal
+      - wallet
+
+  - versionName: 1.0.1
+    versionCode: 7
+    commit: 5cb5f38622d7521c22fa069beec3053556d6db3f
+    subdir: cashier
+    gradle:
+      - yes
+    rm:
+      - donau-verificator
+      - merchant-terminal
+      - wallet
+
+  - versionName: 1.0.3
+    versionCode: 9
+    commit: 1889d4e4046e69816674744ed5bb83370ae34369
+    subdir: cashier
+    gradle:
+      - yes
+    rm:
+      - donau-verificator
+      - merchant-terminal
+      - wallet
+
+  - versionName: 1.1.0
+    versionCode: 10
+    commit: 4c6ad06aba441f1c75a1ca8982cd4ab7259ab5ca
+    subdir: cashier
+    gradle:
+      - yes
+    rm:
+      - donau-verificator
+      - merchant-terminal
+      - wallet
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+
+  - versionName: 1.1.1
+    versionCode: 11
+    commit: aca428643aa5e8be2cec69e414ef51f92e97d2aa
+    subdir: cashier
+    gradle:
+      - yes
+    rm:
+      - donau-verificator
+      - merchant-terminal
+      - wallet
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.1.1
+CurrentVersionCode: 11

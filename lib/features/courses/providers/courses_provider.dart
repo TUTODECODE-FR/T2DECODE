@@ -6,10 +6,14 @@ import 'package:flutter/material.dart';
 import '../data/course_repository.dart';
 import 'package:tutodecode/core/services/storage_service.dart';
 import 'package:tutodecode/core/services/module_service.dart';
+import 'dart:convert';
+import 'package:tutodecode/core/services/phantom_cache_service.dart';
+import 'package:tutodecode/core/security/phantom_trust_validator.dart';
 
 class CoursesProvider with ChangeNotifier {
   final StorageService _storage = StorageService();
   final ModuleService _moduleService = ModuleService();
+  late final PhantomCacheService _phantomService;
 
   List<Course> _courses = [];
   List<String> _completed = [];
@@ -23,6 +27,7 @@ class CoursesProvider with ChangeNotifier {
   String _currentLocale = 'fr';
 
   CoursesProvider() {
+    _phantomService = PhantomCacheService(PhantomTrustValidator());
     _load();
   }
 
@@ -145,6 +150,31 @@ class CoursesProvider with ChangeNotifier {
     }
   }
 
+
+  Future<void> loadFromPhantomCache(String passphrase) async {
+    try {
+      _errorMessage = null;
+      _isUpdating = true;
+      notifyListeners();
+
+      // Pour l'exemple, on cherche un fichier "courses_index.json" dans le cache T2C-Phantom
+      final jsonStr = await _phantomService.readDecryptedString('courses_index.json', passphrase);
+      if (jsonStr != null) {
+        final decoded = json.decode(jsonStr) as List;
+        final phantomCourses = decoded.map((e) => Course.fromMap(e as Map<String, dynamic>)).toList();
+        
+        // Fusion des cours existants avec les cours Phantom
+        _courses = [..._courses, ...phantomCourses];
+      } else {
+        throw Exception("Impossible de lire le cache Phantom ou mot de passe incorrect.");
+      }
+    } catch (e) {
+      _errorMessage = "Erreur Phantom: $e";
+    } finally {
+      _isUpdating = false;
+      notifyListeners();
+    }
+  }
 
   Future<void> _load() async {
     try {

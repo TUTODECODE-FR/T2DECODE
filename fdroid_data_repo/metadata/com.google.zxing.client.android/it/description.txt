@@ -1,0 +1,27 @@
+Leggi le informazioni contenute nei codici a barre o crea codici QR per condividere indirizzi, contatti o messaggi tra dispositivi.
+
+Libri, prodotti e ricerche web vanno sui server di Google (in base alla scelta del Paese di origine), sebbene sia possibile creare un pulsante di ricerca personalizzato nelle impostazioni, ad esempio duckduckgo.com/?q=%s o it.wikibooks.org/w/index.php?search=%s.
+
+Sono supportati i seguenti tipi di codici a barre:
+
+* UPC-A e UPC-E
+* EAN-8 e EAN-13
+* Code 39; 93; 128
+* ITF
+* Codabar
+* RSS-14 (tutte le varianti)
+* codici QR
+* Data Matrix
+* Aztec (qualità 'beta')
+* PDF 417 (qualità 'alpha')
+
+Consulta il sito web per la risoluzione dei problemi e la spiegazione dei permessi. L'app ti permette di condividere contatti, applicazioni e segnalibri in un codice QR. Questo è il motivo per il quale è richiesto il permesso di accesso ai contatti. Consulta "Visita il sito web dello sviluppatore" sottostante (https://github.com/zxing/zxing/wiki/Frequently-Asked-Questions).
+
+Se il tuo dispositivo non sta scansionando, per prima cosa prova le soluzioni per i bug del dispositivo nelle impostazioni. Abilitale tutte e poi prova a disabilitarle una alla volta per determinare quali sono necessarie. Se questo non ti aiuta, prova a pulire la cache del dispositivo dalle impostazioni di Android.
+
+Se ancora non funziona e pensi sia un problema dell'app, invia un messaggio all'autore con le seguenti informazioni. I messaggi senza queste informazioni non posso essere ritenuti rilevanti e saranno ignorati.
+
+- Tipo di dispositivo
+- Una descrizione basilare di cosa non funziona: crash? non scansiona? sembra strano?
+- Conferma che prima hai provato tutti i passi proposti sopra
+- Un log del dispositivo ottenuto all'avvio

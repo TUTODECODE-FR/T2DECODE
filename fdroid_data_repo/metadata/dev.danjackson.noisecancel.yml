@@ -1,0 +1,38 @@
+Categories:
+  - Multimedia
+License: MIT
+SourceCode: https://github.com/danielgjackson/noisecancel
+IssueTracker: https://github.com/danielgjackson/noisecancel/issues
+
+AutoName: Noise Cancelling
+
+RepoType: git
+Repo: https://github.com/danielgjackson/noisecancel
+
+Builds:
+  - versionName: '1.4'
+    versionCode: 4
+    commit: '1.4'
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.5'
+    versionCode: 5
+    commit: b7cb2262fbf3e8d1cb85338ceb92840b72410433
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.5'
+CurrentVersionCode: 5

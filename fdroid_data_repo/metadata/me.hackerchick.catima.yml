@@ -1,0 +1,1263 @@
+Categories:
+  - Pass Wallet
+License: GPL-3.0-or-later
+AuthorName: Sylvia van Os
+AuthorEmail: catima.g9ex3@hackerchick.me
+AuthorWebSite: https://sylviavanos.nl
+WebSite: https://catima.app/
+SourceCode: https://github.com/CatimaLoyalty/Android
+IssueTracker: https://github.com/CatimaLoyalty/Android/issues
+Translation: https://hosted.weblate.org/projects/catima/catima/
+Changelog: https://github.com/CatimaLoyalty/Android/blob/HEAD/CHANGELOG.md
+Donate: https://paypal.me/sylviavanos
+
+AutoName: Catima
+
+RepoType: git
+Repo: https://github.com/CatimaLoyalty/Android.git
+
+Builds:
+  - versionName: 1.1.0
+    versionCode: 43
+    commit: v1.1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.0
+    versionCode: 44
+    commit: v1.2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.2
+    versionCode: 46
+    commit: v1.2.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.0
+    versionCode: 47
+    commit: v1.3.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.0
+    versionCode: 48
+    commit: v1.4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.1
+    versionCode: 49
+    commit: v1.4.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.1
+    versionCode: 51
+    commit: v1.5.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 52
+    commit: v1.6.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.1
+    versionCode: 53
+    commit: v1.6.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.2
+    versionCode: 54
+    commit: v1.6.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.1
+    versionCode: 56
+    commit: v1.7.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.8'
+    versionCode: 57
+    commit: v1.8
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.1
+    versionCode: 58
+    commit: v1.8.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.9'
+    versionCode: 59
+    commit: v1.9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.9.1
+    versionCode: 61
+    commit: v1.9.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.9.2
+    versionCode: 62
+    commit: v1.9.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.10'
+    versionCode: 63
+    commit: v1.10
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.11'
+    versionCode: 64
+    commit: v1.11
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.12'
+    versionCode: 66
+    commit: v1.12
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.13'
+    versionCode: 67
+    commit: v1.13
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.14'
+    versionCode: 68
+    commit: v1.14
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.14.1
+    versionCode: 69
+    commit: v1.14.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.0'
+    versionCode: 70
+    commit: cb979bfbecaa30441bc9cbb9e9cc21619eb3dbc3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.1
+    versionCode: 71
+    commit: 1d694f5f2ce86a218c53d6721ac0c3ea1a628bae
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.3
+    versionCode: 73
+    commit: c4f0d1bef68966055c480744cb1b54db09a21d10
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.0.4
+    versionCode: 74
+    commit: 5ca4d29a36155cf915e709198531a2a9cd2e73d6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.0
+    versionCode: 75
+    commit: c86cc22a9323e056e71afedff9dc03b03132403f
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.0
+    versionCode: 76
+    commit: 05dfd48f5727a77889e298149f622ae71af2daaa
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.2.1
+    versionCode: 77
+    commit: 44711043b90fe22a91383bdb5825dbc8ec0100de
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.2.2
+    versionCode: 78
+    commit: b8c022dc70bb25df057b1dad992f44fdee1b72ec
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.2.3
+    versionCode: 79
+    commit: 5be23086061d6d69d47ed1df78288d6b85abbb6f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.3.0
+    versionCode: 80
+    commit: 225058ab2b2df7c65886abd6a190e196b225fc13
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.4.0
+    versionCode: 81
+    commit: 78481516b0a06dab18ad442b92a2f2226e2f0600
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.5.0
+    versionCode: 82
+    commit: 7c54c01dfe310e57ee673840c874c75d58752c1e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.6.0
+    versionCode: 83
+    commit: 5ad02ae9cc15c9af80b5dfc828ea3410aabcb637
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.6.1
+    versionCode: 84
+    commit: cfc37d4af69280d068df8f0895665934442e04af
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.7.0
+    versionCode: 85
+    commit: 2811a146278a6aa7a6ee761ba2cef1860b1846cd
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.7.1
+    versionCode: 86
+    commit: fd7e6e4993fe4ce09ba9392ce9d16ba451eb5fb0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.7.3
+    versionCode: 88
+    commit: bf8f00f877e3c2975abbbfa554afbf3a92a889ac
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.8.0
+    versionCode: 89
+    commit: 7afbe41f959574e9798294f422e657178bda7496
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.8.1
+    versionCode: 90
+    commit: e2f33bf4b4378dec94165e8f5a04b6f5b8e33b81
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.9.0
+    versionCode: 91
+    commit: 2bc7d13d50f327b43718a6aaf38af989d58d72bb
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.10.0
+    versionCode: 92
+    commit: 00c005afcee86f5bb84387aa1f83854b93882313
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.11.0
+    versionCode: 93
+    commit: 0afc6f397643bc08e96fc54ec268fd7564ba84d3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.11.1
+    versionCode: 94
+    commit: 6b4a01c9542dec649d85f3ae139678ace45a277c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.11.2
+    versionCode: 95
+    commit: d2a500824a8eab167150d3582f2a5eff5579d337
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.12.0
+    versionCode: 96
+    commit: 21216f3aa67face7b715f4043a521aa1b804392d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.13.0
+    versionCode: 97
+    commit: 36237d9b3e51f76e11a7bda4827da4a4895f583f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.13.1
+    versionCode: 98
+    commit: c73e7924adc032e95db78c1e4b7dd086763b9b90
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.14.0
+    versionCode: 99
+    commit: a36775c6fd469d08f470ef1cd6b338954b596ee2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.14.1
+    versionCode: 100
+    commit: 551fbed8add97204e278822af7d4ef6f067793bb
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.15.0
+    versionCode: 101
+    commit: 5516acecce630f92582edd38f2b97a43cd7f810b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.15.1
+    versionCode: 102
+    commit: 84051555b69b55d3967fce9b3199ab0e0aa4cd94
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.15.2
+    versionCode: 103
+    commit: 8e452ed6bdcf510b77b7130a8d0c8fb45391eef3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.16.0
+    versionCode: 104
+    commit: 54fc1e910686e1ee9f6bcd3734be13ea667b9afa
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.16.1
+    versionCode: 105
+    commit: d7f43f8a2bf17b48ee45b9191fac14b9d81a72c0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.16.2
+    versionCode: 106
+    commit: f932d8f6e4425c2c8554b20d8f68432cb2f4d936
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.16.3
+    versionCode: 107
+    commit: 4bf6f6cd5f3d2a360ae231635ec47d5e1209f6e1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.17.0
+    versionCode: 108
+    commit: 2f0084a73b8990162867e37257f3a79de48c1c8d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.17.1
+    versionCode: 109
+    commit: 1c2e81031936308a74987b42c166a7113d945b0c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.18.1
+    versionCode: 111
+    commit: 0189f13ee652bd154f1171981880d2bac4f63e9d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.18.2
+    versionCode: 112
+    commit: 8dfbc0b5e64cb1342f41c3e3b4504a54c8bc26e7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.19.0
+    versionCode: 113
+    commit: e781e00256142319d66a6acf6f2ffb6118802bd2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.20.0
+    versionCode: 114
+    commit: 65ac1a25580acb94e4de801b1655b0ad80afadfd
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.21.0
+    versionCode: 115
+    commit: 08a4d4b11400f1976cebd31022c311d79b384b61
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.21.1
+    versionCode: 116
+    commit: e4b69e5cc53687804c682538351d7e00196eb0a3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.21.2
+    versionCode: 117
+    commit: 36e7ea5b20fae25f2289cab3a66e7be93d6844ad
+    subdir: app
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.22.0
+    versionCode: 118
+    commit: 729639e0e6132c2c6556a60594fdad3e5416bfe7
+    subdir: app
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.22.1
+    versionCode: 119
+    commit: 510995a5c5dc85663160cb94a929a9f677f5925d
+    subdir: app
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.23.1
+    versionCode: 121
+    commit: 9e0e8bab75157a8e27b71f2c47ca682ddc509a5c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.23.2
+    versionCode: 122
+    commit: e921aab322ac664cbdbe239d70ede379336ca65d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.23.3
+    versionCode: 123
+    commit: 7a4c9ce84f9dbd87cf1eef45cec47387f39cf1c0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.24.0
+    versionCode: 124
+    commit: e66c5e36fb42d61712a46c935ecf4a81dc9c28f0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.24.1
+    versionCode: 125
+    commit: 6937342226b56ef9104aab5df7a749f70f99d246
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.24.2
+    versionCode: 126
+    commit: 224ab7f2e71a860ad52786d15dda4cc4108e84de
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.25.0
+    versionCode: 127
+    commit: f4a5ae74d6ecfd541770e614deda02cb1f0b8788
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.25.1
+    versionCode: 128
+    commit: 93103c8c6dbab442a46d0284e527f2eca3564f35
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.25.2
+    versionCode: 129
+    commit: a408f8d727fed79a2e3750a17831d216eceae9e4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.25.3
+    versionCode: 130
+    commit: 2d4fa0fd85a38fad0c6790122bb2d379de3e6547
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.26.0
+    versionCode: 131
+    commit: 2030b6b08d1ac091ce6c03e750337081d9c9c66f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.27.0
+    versionCode: 132
+    commit: 84c343e41f4a09ee3fe6ee0924a3446ae325c4b7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.28.0
+    versionCode: 133
+    commit: 03a5a382e9ebb74226f0cea387579fa544ac656b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 2.29.0
+    versionCode: 134
+    commit: d67b17c58a4bbc0988519476da51ec6c9b14ba3c
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.29.1
+    versionCode: 135
+    commit: d5856e79749318c0f610614450031dd34474c114
+    subdir: app
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.30.0
+    versionCode: 136
+    commit: 61d2e9545e0a8efdd49f0ee1cc9f3a922d4331aa
+    subdir: app
+    output: build/outputs/apk/release/app-release-unsigned.apk
+    prebuild: gradle clean
+    build:
+      - gradle assembleRelease
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  build/outputs/apk/release/app-release-unsigned.apk"
+
+  - versionName: 2.31.0
+    versionCode: 137
+    commit: 469ed374ad8e516463e2d246e233e68886ddf7da
+    subdir: app
+    gradle:
+      - yes
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.31.1
+    versionCode: 138
+    commit: 1c8c4924000a198e93156126069ab6b9d9147fbb
+    subdir: app
+    gradle:
+      - yes
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.32.1
+    versionCode: 140
+    commit: ecf3b57679556ca9269e9b9d0371a9ea8352aef2
+    subdir: app
+    gradle:
+      - yes
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.33.0
+    versionCode: 141
+    commit: a74c4f822e12e64176e0899e2d83f870f6001301
+    subdir: app
+    gradle:
+      - yes
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.34.1
+    versionCode: 143
+    commit: 19bccc0c82453f2bdd4e60cd1d34b199eef9a729
+    subdir: app
+    gradle:
+      - yes
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F unsigned | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.34.2
+    versionCode: 144
+    commit: 83f9a2bcc9237ce727bdcff41210d8b16d6f5311
+    subdir: app
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.34.4
+    versionCode: 146
+    commit: e7aac163c28581884972400cc49928c0e7b54bee
+    subdir: app
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.34.5
+    versionCode: 147
+    commit: da3eaf36f1b2af8f331354985d4c15cbe79ffc3c
+    subdir: app
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.35.0
+    versionCode: 148
+    commit: 01e198c94b3ec304b248e780eb930a9938939264
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.35.1
+    versionCode: 149
+    commit: 43c9e7f7ace0b322f9345d6886c571878e51b4a8
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.39.1
+    versionCode: 154
+    commit: f777491dcd75f35b621fc0cd5a95bd855639d8ff
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - foss
+    prebuild: echo -e "\nandroid.aapt2FromMavenOverride=$(pwd)/aapt2" >> ../gradle.properties
+    scanignore:
+      - build.gradle.kts
+    build:
+      - curl -Lo aapt2.jar 
+        https://dl.google.com/android/maven2/com/android/tools/build/aapt2/8.11.2-12782657/aapt2-8.11.2-12782657-linux.jar
+      - sha256sum -c <<< "dc44dab4b02f1135c4f97aadabac8dddfa1f08ff9f030a7b1aa044b44fdd8a2d  aapt2.jar"
+      - unzip aapt2.jar aapt2
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.39.2
+    versionCode: 155
+    commit: 934d7ba041736c37a0228ee1477c1b8121a75799
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - foss
+    prebuild: echo -e "\nandroid.aapt2FromMavenOverride=$(pwd)/aapt2" >> ../gradle.properties
+    scanignore:
+      - build.gradle.kts
+      - app/build.gradle.kts
+    build:
+      - curl -Lo aapt2.jar 
+        https://dl.google.com/android/maven2/com/android/tools/build/aapt2/8.11.2-12782657/aapt2-8.11.2-12782657-linux.jar
+      - sha256sum -c <<< "dc44dab4b02f1135c4f97aadabac8dddfa1f08ff9f030a7b1aa044b44fdd8a2d  aapt2.jar"
+      - unzip aapt2.jar aapt2
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.40.0
+    versionCode: 156
+    commit: 479fce68d5bd51463bf2b24c2c8a79c79ef7a9f1
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.41.0
+    versionCode: 157
+    commit: 2c0efcb2c3bc59fb5d0107caa8993d7c2d77c8a6
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.41.1
+    versionCode: 158
+    commit: 68d5dcd5f32b1d0da679098c73ff7db5d204d096
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.41.2
+    versionCode: 159
+    commit: f507e15bfcf138748fdc0d726da01fcdf036ffd9
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.41.4
+    versionCode: 161
+    commit: 008b5254c62e66b33b09d874150509738b96a6b2
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.41.5
+    versionCode: 162
+    commit: f1087573dce12466ef2eb4e39d0120f67f09c94e
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.41.6
+    versionCode: 163
+    commit: 4518dadcf690be18e8d15f4f438f1b2a68d3a3dc
+    subdir: app
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.41.7
+    versionCode: 164
+    commit: 4376bf069c6c3988010d281a743af84b8c83563a
+    subdir: app
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.42.0
+    versionCode: 165
+    commit: 61b582f676d170788f5284eeb5f5863dc7a96fc4
+    subdir: app
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.42.1
+    versionCode: 166
+    commit: b675ad785decaf5304a63bae65c918108550d4cf
+    subdir: app
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+  - versionName: 2.43.0
+    versionCode: 167
+    commit: 909034d4f3c5ea086d272738d440329805c532d8
+    subdir: app
+    gradle:
+      - foss
+    postbuild:
+      - sha256sum="$( curl -L 
+        https://github.com/CatimaLoyalty/Android/releases/download/v$$VERSION$$/SHA256SUMS
+        | grep -F app-foss-release-unsigned.apk | cut -c-64 | tr -cd '0-9a-f' )"
+      - sha256sum -c <<< "$sha256sum  $$OUT$$"
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.43.0
+CurrentVersionCode: 167

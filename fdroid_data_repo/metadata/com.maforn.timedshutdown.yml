@@ -1,0 +1,155 @@
+Categories:
+  - System
+  - Timer
+License: GPL-3.0-only
+AuthorName: maforn
+SourceCode: https://github.com/maforn/TimedShutdownAndroid
+IssueTracker: https://github.com/maforn/TimedShutdownAndroid/issues
+
+Name: Timed Shutdown [No Root]
+AutoName: Timed Shutdown
+
+RepoType: git
+Repo: https://github.com/maforn/TimedShutdownAndroid
+
+Builds:
+  - versionName: v2.2
+    versionCode: 18
+    commit: v2.2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v2.3
+    versionCode: 19
+    commit: 7ac1195135625ccf92b0b5a1349377b7bd23801e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v2.4
+    versionCode: 20
+    commit: e65b8bf4bcc870e7636cc9f5bc162e3a53cd7612
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v2.41
+    versionCode: 21
+    commit: 224dfeddb3a926d5f275023559d1e96785894074
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v2.5
+    versionCode: 22
+    commit: efdf2353b1d624123844e9c2691d6f77d17c92c4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v2.51
+    versionCode: 23
+    commit: 5c5c64c07c1516f5156308ca2362a96ea7bbc8cc
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: v2.55
+    versionCode: 24
+    commit: 7ff38edc5f02204e970f06692a347c0c9f50f5c1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v2.56
+    versionCode: 25
+    commit: 3f5f2a48143b1ae86ee23ae1bbabc1c3d06b253d
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v2.60
+    versionCode: 26
+    commit: ca7a9f6cf6d16b3cb23452f24136b1c3c4ae4409
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v2.70
+    versionCode: 27
+    commit: 9fd26b34f1403b93f09cb8f3a046f421d2c18216
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v2.80
+    versionCode: 28
+    commit: 3dc40e2e2a87ceae0df4cfd63e837b8d9ecd8e59
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v2.85
+    versionCode: 29
+    commit: 3b619334ad736a9524eaa21263d4df4852bc6aab
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v2.90
+    versionCode: 32
+    commit: 75301694e0c7b3938f2ffcab44b0a9e07cd615a7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v2.92
+    versionCode: 33
+    commit: 9c5b59e9a181978047ff173686cb59fd804eb656
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v2.95
+    versionCode: 34
+    commit: f734b1c16b5af9177f3ff551c8bf957501168abb
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: v3.0
+    versionCode: 35
+    commit: e6480e698177b4c978ee71b1e8126c76dbb80108
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: v3.0
+CurrentVersionCode: 35

@@ -1,0 +1,1709 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on multiple proprietary Torrent sources and ngosang.github.io for
+      tracker list.
+Categories:
+  - Download
+License: Unlicense
+AuthorName: ForTheCommunity
+AuthorEmail: contact@shaswotdhungana.com.np
+AuthorWebSite: https://ShaswotDhungana.com.np
+SourceCode: https://gitlab.com/ForTheCommunity/torrentsdigger
+IssueTracker: https://gitlab.com/ForTheCommunity/torrentsdigger/-/issues
+Changelog: https://gitlab.com/ForTheCommunity/torrentsdigger/-/blob/main/CHANGELOG.md
+
+AutoName: Torrents Digger
+
+RepoType: git
+Repo: https://gitlab.com/ForTheCommunity/torrentsdigger.git
+
+Builds:
+  - versionName: 1.0.9
+    versionCode: 901
+    commit: 08251cf621c816013c9c12ff873b318d2727e9fc
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 1.0.9
+    versionCode: 902
+    commit: 08251cf621c816013c9c12ff873b318d2727e9fc
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 1.0.9
+    versionCode: 903
+    commit: 08251cf621c816013c9c12ff873b318d2727e9fc
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 1.1.0
+    versionCode: 1001
+    commit: d47bbf194a13e433414542308771920fecf9fcc0
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 1.1.0
+    versionCode: 1002
+    commit: d47bbf194a13e433414542308771920fecf9fcc0
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 1.1.0
+    versionCode: 1003
+    commit: d47bbf194a13e433414542308771920fecf9fcc0
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 1.1.1
+    versionCode: 1101
+    commit: e2b887e98b8aa21c0323c2a3064586116b91768e
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 1.1.1
+    versionCode: 1102
+    commit: e2b887e98b8aa21c0323c2a3064586116b91768e
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 1.1.1
+    versionCode: 1103
+    commit: e2b887e98b8aa21c0323c2a3064586116b91768e
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{path_provider,url_launcher}_android,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 1.1.2
+    versionCode: 1201
+    commit: 3db2668f4b11477cbc1ec281d2dce0c282b040db
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 1.1.2
+    versionCode: 1202
+    commit: 3db2668f4b11477cbc1ec281d2dce0c282b040db
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 1.1.2
+    versionCode: 1203
+    commit: 3db2668f4b11477cbc1ec281d2dce0c282b040db
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 1.1.3
+    versionCode: 1301
+    commit: f35a330eafe58dc5a9b9b774d96f28530a0df92a
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 1.1.3
+    versionCode: 1302
+    commit: f35a330eafe58dc5a9b9b774d96f28530a0df92a
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 1.1.3
+    versionCode: 1303
+    commit: f35a330eafe58dc5a9b9b774d96f28530a0df92a
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 1.1.4
+    versionCode: 1401
+    commit: a141eb5c4d12134f5859fe3dc101feca7bb96847
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 1.1.4
+    versionCode: 1402
+    commit: a141eb5c4d12134f5859fe3dc101feca7bb96847
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 1.1.4
+    versionCode: 1403
+    commit: a141eb5c4d12134f5859fe3dc101feca7bb96847
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 1.1.5
+    versionCode: 1501
+    commit: f0eb980f629e252a65d07fabbbd0ef7e3274265e
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 1.1.5
+    versionCode: 1502
+    commit: f0eb980f629e252a65d07fabbbd0ef7e3274265e
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 1.1.5
+    versionCode: 1503
+    commit: f0eb980f629e252a65d07fabbbd0ef7e3274265e
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 1.1.6
+    versionCode: 1601
+    commit: b5808c553586e99ba890c761056fc3614f3553c3
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 1.1.6
+    versionCode: 1602
+    commit: b5808c553586e99ba890c761056fc3614f3553c3
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 1.1.6
+    versionCode: 1603
+    commit: b5808c553586e99ba890c761056fc3614f3553c3
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 1.1.7
+    versionCode: 1701
+    commit: 4009256a830b4e01f2211a387324b02dca3fe3f6
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+
+  - versionName: 1.1.7
+    versionCode: 1702
+    commit: 4009256a830b4e01f2211a387324b02dca3fe3f6
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 1.1.7
+    versionCode: 1703
+    commit: 4009256a830b4e01f2211a387324b02dca3fe3f6
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 1.1.8
+    versionCode: 1801
+    commit: 5bbab9ce59e5e0b01d30d18138d3b7c9d5252daa
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.1.8
+    versionCode: 1802
+    commit: 5bbab9ce59e5e0b01d30d18138d3b7c9d5252daa
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.1.8
+    versionCode: 1803
+    commit: 5bbab9ce59e5e0b01d30d18138d3b7c9d5252daa
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.1.9
+    versionCode: 1901
+    commit: 5b9a3959955240384ae5d3ce737ca485e5c7b3b2
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.1.9
+    versionCode: 1902
+    commit: 5b9a3959955240384ae5d3ce737ca485e5c7b3b2
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.1.9
+    versionCode: 1903
+    commit: 5b9a3959955240384ae5d3ce737ca485e5c7b3b2
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.2.0
+    versionCode: 2001
+    commit: f8a3d9317a74da16b33db33dfc16c33f17216e8b
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.2.0
+    versionCode: 2002
+    commit: f8a3d9317a74da16b33db33dfc16c33f17216e8b
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.2.0
+    versionCode: 2003
+    commit: f8a3d9317a74da16b33db33dfc16c33f17216e8b
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.2.1
+    versionCode: 2101
+    commit: da5ad0febdd754e46ee42d6880ae77df8a2b04db
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.2.1
+    versionCode: 2102
+    commit: da5ad0febdd754e46ee42d6880ae77df8a2b04db
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.2.1
+    versionCode: 2103
+    commit: da5ad0febdd754e46ee42d6880ae77df8a2b04db
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.2.2
+    versionCode: 2201
+    commit: 83b939aa3bbaebbe56adf044bd9b372632edd654
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.2.2
+    versionCode: 2202
+    commit: 83b939aa3bbaebbe56adf044bd9b372632edd654
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.2.2
+    versionCode: 2203
+    commit: 83b939aa3bbaebbe56adf044bd9b372632edd654
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.2.3
+    versionCode: 2301
+    commit: cb218a15e6c2bc7d7760215601324e24c6b31848
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.2.3
+    versionCode: 2302
+    commit: cb218a15e6c2bc7d7760215601324e24c6b31848
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.2.3
+    versionCode: 2303
+    commit: cb218a15e6c2bc7d7760215601324e24c6b31848
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+      - rustup@1.27.1
+    prebuild:
+      - $$rustup$$/rustup-init.sh -y --default-toolchain none
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.2.4
+    versionCode: 2401
+    commit: 4f30a55e18990a879f4b23280df805f0732fb246
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.2.4
+    versionCode: 2402
+    commit: 4f30a55e18990a879f4b23280df805f0732fb246
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.2.4
+    versionCode: 2403
+    commit: 4f30a55e18990a879f4b23280df805f0732fb246
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.2.5
+    versionCode: 2501
+    commit: 6a54ea9d457eba8ce2df43da757c5154149d68fa
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.2.5
+    versionCode: 2502
+    commit: 6a54ea9d457eba8ce2df43da757c5154149d68fa
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.2.5
+    versionCode: 2503
+    commit: 6a54ea9d457eba8ce2df43da757c5154149d68fa
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.2.6
+    versionCode: 2601
+    commit: 177ad28e41735a6d28109b13744ecb26193ebecf
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.2.6
+    versionCode: 2602
+    commit: 177ad28e41735a6d28109b13744ecb26193ebecf
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.2.6
+    versionCode: 2603
+    commit: 177ad28e41735a6d28109b13744ecb26193ebecf
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.2.7
+    versionCode: 2701
+    commit: 161f610c474288411d1ff155590c22f48af73123
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.2.7
+    versionCode: 2702
+    commit: 161f610c474288411d1ff155590c22f48af73123
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.2.7
+    versionCode: 2703
+    commit: 161f610c474288411d1ff155590c22f48af73123
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+    ndk: r28c
+
+  - versionName: 1.2.8
+    versionCode: 2801
+    commit: e21dbe223eda6b979e91909638904fdb9fdce796
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+    ndk: r28c
+
+  - versionName: 1.2.8
+    versionCode: 2802
+    commit: e21dbe223eda6b979e91909638904fdb9fdce796
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+    ndk: r28c
+
+  - versionName: 1.2.8
+    versionCode: 2803
+    commit: e21dbe223eda6b979e91909638904fdb9fdce796
+    sudo:
+      - apt-get update
+      - apt-get install -y gcc libc-dev rustup
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - rustVersion=$(sed -n -E "s/.*rust-version:\ '(.*)'/\1/p" .current_versions.txt)
+      - sed -i -e "s/'stable'/'$rustVersion'/" rust_builder/cargokit/build_tool/lib/src/builder.dart
+      - '[[ $flutterVersion ]]'
+      - '[[ $rustVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - $$flutter$$/bin/dart run build_runner build
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export PATH=$$flutter$$/bin/:$PATH
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+    ndk: r28c
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v.*$
+VercodeOperation:
+  - 100 * %c + 1
+  - 100 * %c + 2
+  - 100 * %c + 3
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.2.8
+CurrentVersionCode: 2803

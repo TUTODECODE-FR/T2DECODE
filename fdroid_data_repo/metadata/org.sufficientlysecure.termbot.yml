@@ -1,0 +1,85 @@
+Categories:
+  - Internet
+  - Remote Access
+License: GPL-3.0-or-later
+AuthorName: Confidential Technologies GmbH
+AuthorEmail: contact@cotech.de
+AuthorWebSite: https://www.cotech.de/
+SourceCode: https://github.com/hwsecurity-sdk/termbot
+IssueTracker: https://github.com/hwsecurity-sdk/termbot/issues
+Donate: 
+  https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=android%40schuermann.eu&lc=US&item_name=Termbot+Donation&no_note=0&no_shipping=1&currency_code=EUR
+Bitcoin: 1LY6Hs6SurATjfxnihzLMDUMUuMxvQ4aEi
+
+AutoName: TermBot
+Description: |-
+  Log into your servers with SSH and authenticate with your Security Keys and
+  OpenPGP cards over NFC and USB.
+
+  TermBot is based on ConnectBot and uses the Cotech Hardware Security SDK.
+
+RepoType: git
+Repo: https://github.com/hwsecurity-sdk/termbot
+
+Builds:
+  - versionName: 1.9.2-termbot.2
+    versionCode: 19202
+    commit: v1.9.2-termbot.2
+    subdir: app
+    submodules: true
+    gradle:
+      - oss
+    prebuild: sed -i -e '/googleCompile/d;/versionNameSuffix/d' build.gradle
+
+  - versionName: 1.9.2-termbot.4
+    versionCode: 19204
+    commit: v1.9.2-termbot.4-oss
+    subdir: app
+    submodules: true
+    gradle:
+      - oss
+    prebuild: sed -i -e '/googleCompile/d' build.gradle
+
+  - versionName: 1.9.2-termbot.5
+    versionCode: 19205
+    commit: v1.9.2-termbot.5
+    subdir: app
+    submodules: true
+    gradle:
+      - oss
+    prebuild: sed -i -e '/googleCompile/d' build.gradle
+    scandelete:
+      - sshlib/publish.gradle
+
+  - versionName: 1.9.5-termbot8
+    versionCode: 10905077
+    commit: 1.9.5-termbot8
+    subdir: app
+    patch:
+      - build.patch
+    gradle:
+      - oss
+    prebuild:
+      - sed -i -e '/googleImplementation/d' -e 's/androidGitVersion.name()/"1.9.5-termbot8"/'
+        build.gradle
+      - sed -i -e '/MAVEN_REPO_CACHE/,+6d' ../settings.gradle
+
+  - versionName: 1.9.6-termbot3
+    versionCode: 10905217
+    commit: 1.9.6-termbot3
+    subdir: app
+    gradle:
+      - oss
+    prebuild:
+      - sed -i -e '/googleImplementation/d' build.gradle
+      - sed -i -e 's/androidGitVersion.name()/"$$VERSION$$"/' build.gradle
+      - sed -i -e 's/21.3.6528147/21.4.7075529/' build.gradle
+      - sed -i -e 's|url MAVEN_REPO_CACHE|url "https://jitpack.io"|' ../build.gradle
+        ../settings.gradle
+    ndk: r21e
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.9.6-termbot3
+CurrentVersionCode: 10905217

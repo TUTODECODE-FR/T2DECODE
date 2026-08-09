@@ -1,0 +1,378 @@
+Categories:
+  - Finance Manager
+License: MIT
+AuthorName: dreautall
+SourceCode: https://github.com/dreautall/waterfly-iii
+IssueTracker: https://github.com/dreautall/waterfly-iii/issues
+Translation: https://crowdin.com/project/waterfly-iii
+Donate: https://github.com/sponsors/dreautall
+
+AutoName: Waterfly III
+
+RepoType: git
+Repo: https://github.com/dreautall/waterfly-iii
+
+Builds:
+  - versionName: 1.1.7
+    versionCode: 5331
+    commit: fbe6a3f40f62b137aa339106cc0f4f7059053f94
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{local_auth,shared_preferences,quick_actions,url_launcher,path_provider,image_picker}_android,package_info_plus,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - sed -i -e 's/8.13.0/8.11.1/' .pub-cache/hosted/pub.dev/flutter_email_sender-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-x64" --dart-define=cronetHttpNoPlay=true
+
+  - versionName: 1.1.7
+    versionCode: 5332
+    commit: fbe6a3f40f62b137aa339106cc0f4f7059053f94
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{local_auth,shared_preferences,quick_actions,url_launcher,path_provider,image_picker}_android,package_info_plus,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - sed -i -e 's/8.13.0/8.11.1/' .pub-cache/hosted/pub.dev/flutter_email_sender-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-arm" --dart-define=cronetHttpNoPlay=true
+
+  - versionName: 1.1.7
+    versionCode: 5333
+    commit: fbe6a3f40f62b137aa339106cc0f4f7059053f94
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{local_auth,shared_preferences,quick_actions,url_launcher,path_provider,image_picker}_android,package_info_plus,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - sed -i -e 's/8.13.0/8.11.1/' .pub-cache/hosted/pub.dev/flutter_email_sender-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-arm64" --dart-define=cronetHttpNoPlay=true
+
+  - versionName: 1.1.8
+    versionCode: 5431
+    commit: cbcad8594b9bc0bd6c9785e68ea4016ca4e016a2
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{local_auth,shared_preferences,quick_actions,url_launcher,path_provider,image_picker}_android,package_info_plus,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - sed -i -e 's/8.13.0/8.11.1/' .pub-cache/hosted/pub.dev/flutter_email_sender-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-x64" --dart-define=cronetHttpNoPlay=true
+
+  - versionName: 1.1.8
+    versionCode: 5432
+    commit: cbcad8594b9bc0bd6c9785e68ea4016ca4e016a2
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{local_auth,shared_preferences,quick_actions,url_launcher,path_provider,image_picker}_android,package_info_plus,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - sed -i -e 's/8.13.0/8.11.1/' .pub-cache/hosted/pub.dev/flutter_email_sender-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-arm" --dart-define=cronetHttpNoPlay=true
+
+  - versionName: 1.1.8
+    versionCode: 5433
+    commit: cbcad8594b9bc0bd6c9785e68ea4016ca4e016a2
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+      - sed -i -e 's/8.12.1/8.11.1/' 
+        .pub-cache/hosted/pub.dev/{{local_auth,shared_preferences,quick_actions,url_launcher,path_provider,image_picker}_android,package_info_plus,flutter_plugin_android_lifecycle}-*/android/build.gradle
+      - sed -i -e 's/8.13.0/8.11.1/' .pub-cache/hosted/pub.dev/flutter_email_sender-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-arm64" --dart-define=cronetHttpNoPlay=true
+
+  - versionName: 1.1.9
+    versionCode: 5491
+    commit: c03efcadfd5b7ab3a9b23f615048b9aa7b5f95b4
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-x64" --dart-define=cronetHttpNoPlay=true
+
+  - versionName: 1.1.9
+    versionCode: 5492
+    commit: c03efcadfd5b7ab3a9b23f615048b9aa7b5f95b4
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-arm" --dart-define=cronetHttpNoPlay=true
+
+  - versionName: 1.1.9
+    versionCode: 5493
+    commit: c03efcadfd5b7ab3a9b23f615048b9aa7b5f95b4
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-arm64" --dart-define=cronetHttpNoPlay=true
+
+  - versionName: 1.1.10
+    versionCode: 5601
+    commit: d33e3531db43d44b20025e2f89f68e380b281c09
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-x64" --dart-define=cronetHttpNoPlay=true
+    ndk: r28c
+
+  - versionName: 1.1.10
+    versionCode: 5602
+    commit: d33e3531db43d44b20025e2f89f68e380b281c09
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-arm" --dart-define=cronetHttpNoPlay=true
+    ndk: r28c
+
+  - versionName: 1.1.10
+    versionCode: 5603
+    commit: d33e3531db43d44b20025e2f89f68e380b281c09
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-arm64" --dart-define=cronetHttpNoPlay=true
+    ndk: r28c
+
+  - versionName: 1.2.0
+    versionCode: 6271
+    commit: ecabc5cf10285d0b3e51549ccd22bcc77a632cc6
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-x64" --dart-define=cronetHttpNoPlay=true
+    ndk: r28c
+
+  - versionName: 1.2.0
+    versionCode: 6272
+    commit: ecabc5cf10285d0b3e51549ccd22bcc77a632cc6
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-arm" --dart-define=cronetHttpNoPlay=true
+    ndk: r28c
+
+  - versionName: 1.2.0
+    versionCode: 6273
+    commit: ecabc5cf10285d0b3e51549ccd22bcc77a632cc6
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    prebuild:
+      - git -C $$flutter$$ checkout -f $(cat fastlane/metadata/android/flutter-version.txt)
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/dart --disable-analytics
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sed -i -e '/gms/d' $PUB_CACHE/hosted/pub.dev/cronet_http-*/android/build.gradle
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter gen-l10n
+      - $$flutter$$/bin/flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols/apk
+        --release --split-per-abi --build-number $(( $$VERCODE$$/10 )) --build-name=$$VERSION$$
+        --target-platform="android-arm64" --dart-define=cronetHttpNoPlay=true
+    ndk: r28c
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+VercodeOperation:
+  - '%c * 10 + 1'
+  - '%c * 10 + 2'
+  - '%c * 10 + 3'
+UpdateCheckData: fastlane/metadata/android/version.txt|versionCode=(\d+)|.|versionName=(.*)
+CurrentVersion: 1.2.0
+CurrentVersionCode: 6273

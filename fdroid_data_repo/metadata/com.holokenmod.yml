@@ -1,0 +1,68 @@
+Categories:
+  - Puzzle Game
+License: GPL-3.0-only
+SourceCode: https://github.com/queler/holokenmod
+IssueTracker: https://github.com/queler/holokenmod/issues
+
+AutoName: HoloKenMod
+Description: |-
+  Adding some bug fixes and features to https://f-droid.org/packages/com.tortuca.holoken which was: Based
+  on KenKen and forked from https://f-droid.org/packages/net.cactii.mathdoku v1.9, now featuring a
+  Holo-inspired design and more user-friendly functionalities.
+
+  Also known as Mathdoku or Kendoku, this KenKen game will test your mental
+  arithmetic and challenge your mind. The goal is to fill in the entire grid with
+  numbers while meeting the operation restrictions for each grid cage. No
+  description available
+
+RepoType: git
+Repo: https://github.com/queler/holokenmod
+
+Builds:
+  - versionName: '1.3'
+    versionCode: 13
+    commit: 889ab1f3d8349efdf93e7fa6b0abce49a0551592
+    target: android-22
+
+  - versionName: '1.4'
+    versionCode: 14
+    commit: v1.4
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/^android {/a lintOptions {\n\nabortOnError false\n\n}\n\n'
+      build.gradle
+
+  - versionName: 1.4.1
+    versionCode: 15
+    commit: v1.4.1rc1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.1
+    versionCode: 17
+    commit: v1.5.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 20
+    commit: v1.6.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.1
+    versionCode: 21
+    commit: v1.6.1
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 1.6.1
+CurrentVersionCode: 21

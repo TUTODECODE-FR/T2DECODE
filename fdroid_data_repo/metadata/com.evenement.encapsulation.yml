@@ -1,0 +1,52 @@
+Categories:
+  - Connectivity
+  - Development
+License: GPL-3.0-only
+SourceCode: 
+  https://archive.softwareheritage.org/browse/origin/https://github.com/e-venement/eve-control/directory/
+
+AutoName: Eve-control
+Description: |-
+  Control tickets with an existing <a href="http://www.e-venement.org/">e-venement</a>
+  instance.
+
+  When launched, the user is prompted to enter the host name as well as his login
+  credentials wich will be stored for future authentifications.
+
+  Once the form submitted, the app will connect to the instance's server and
+  display the access control page (tck.php/ticket/control), and tickets can be
+  controlled directly from there.
+
+  During use, the app will automatically re-authenticate the user on server
+  periodically to keep the session alive as long as needed.
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: 36a87f06556c0192c6a9f8e969c41573f154f386
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.1'
+    versionCode: 2
+    commit: c786edc9aa1065ae9a2fd24a357ebf7abb501ac9
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionCode/d' -e '/versionName/d' build.gradle
+
+  - versionName: '1.2'
+    versionCode: 3
+    commit: '1.2'
+    subdir: app
+    gradle:
+      - yes
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '1.2'
+CurrentVersionCode: 3
+
+NoSourceSince: '1.2'

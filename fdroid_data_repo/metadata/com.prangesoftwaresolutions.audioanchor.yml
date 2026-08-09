@@ -1,0 +1,211 @@
+Categories:
+  - Multimedia
+  - Podcast
+License: GPL-3.0-only
+SourceCode: https://github.com/flackbash/AudioAnchor
+IssueTracker: https://github.com/flackbash/AudioAnchor/issues
+Changelog: https://github.com/flackbash/AudioAnchor/releases
+
+AutoName: AudioAnchor
+Description: |-
+  <i>AudioAnchor</i> is an audio player that tracks the listening process of
+  your audio books and podcasts.
+
+  <b>Features:</b>
+
+  AudioAnchor offers a clean and intuitive interface for listening to audio
+  files while keeping track of the listening process. Additional features
+  include:
+
+  * lock screen media controls
+  * sleep timer
+  * export / import listening progress as sql database
+
+RepoType: git
+Repo: https://github.com/flackbash/AudioAnchor
+
+Builds:
+  - versionName: '1.7'
+    versionCode: 8
+    commit: v1.7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.8'
+    versionCode: 9
+    commit: v1.8
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.1
+    versionCode: 10
+    commit: v1.8.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.9'
+    versionCode: 11
+    commit: v1.9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.9.1
+    versionCode: 12
+    commit: v1.9.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.0'
+    versionCode: 13
+    commit: v2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.1'
+    versionCode: 14
+    commit: v2.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.1
+    versionCode: 15
+    commit: v2.1.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.2
+    versionCode: 16
+    commit: v2.1.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.3
+    versionCode: 17
+    commit: v2.1.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.1.4
+    versionCode: 18
+    commit: v2.1.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.2'
+    versionCode: 19
+    commit: v2.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.1
+    versionCode: 20
+    commit: v2.2.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.2
+    versionCode: 21
+    commit: v2.2.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.3
+    versionCode: 22
+    commit: v2.2.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.4
+    versionCode: 23
+    commit: v2.2.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.5
+    versionCode: 24
+    commit: 5d007a31cec3ba589f98b3bc67dd7fe7442705b0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.6
+    versionCode: 25
+    commit: e7292af65828eb6e7234ef163ee88009dced152c
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.3.0
+    versionCode: 26
+    commit: 38f5f2d262c87c8aeabad9440b44525bc151adc4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.3.1
+    versionCode: 27
+    commit: a35f24e02f95e65048281c3b4fdb849332d084d7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.3.2
+    versionCode: 28
+    commit: 4becf321d3aeab2bb7937e59dbc7bde08dc814b0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 2.3.3
+    versionCode: 29
+    commit: d222f1e5ddd2f403aac237e9b516cf061d27f710
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.4.0
+    versionCode: 31
+    commit: ba867b90dd13f78af3918d7834b687f4b6f98388
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/org.gradle.java.home/d' ../gradle.properties
+
+  - versionName: 2.5.0
+    versionCode: 32
+    commit: e99062486c86a486cdec902f02ec9d9c55e37cfc
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/org.gradle.java.home/d' ../gradle.properties
+      - sed -i -e 's/8.2.0/8.2.1/' ../build.gradle.kts
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.5.0
+CurrentVersionCode: 32

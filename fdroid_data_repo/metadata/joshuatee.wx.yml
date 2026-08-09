@@ -1,0 +1,1442 @@
+AntiFeatures:
+  - NonFreeNet
+Categories:
+  - Science & Education
+  - Weather
+License: GPL-3.0-only
+AuthorName: Joshua Tee
+SourceCode: https://gitlab.com/joshua.tee/wx
+IssueTracker: https://gitlab.com/joshua.tee/wx/issues
+Changelog: https://gitlab.com/joshua.tee/wx/-/blob/HEAD/doc/ChangeLog_User.md
+
+AutoName: wX
+Description: |-
+  NWS ( United State's National Weather Service ) data is optimized for mobile format and provided for divisions not normally covered together in the mobile space: SPC, WPC, NHC, OPC, etc. Level 3 and Level 2 Nexrad radar ( single, dual, quad pane ) are provided and displayed using the mobile variant of OpenGL. This weather app is not affiliated with NOAA or the National Weather Service.
+
+  If you *only* need current conditions and your local 7 day forecast then this app is probably more then you need although it will easily provide those 2 things as well. If you are looking for wasted screen real estate or fancy graphics this app is not for you. Given the depth of information covered there is a steep learning curve if you seek to use the program in it's entirety, help information is available and touched on below. Common weather acronyms are used throughout so you should be familiar with those as well. Currently United States locations are supported.
+
+  HELP is available from the main menu and by tapping on any text in the settings activities.
+
+  Features:
+  * Current forecast, 7 day conditions, sounding data for an unlimited number of USA locations from NWS.
+  * Customizable home screen
+  * (Android only) Tiles can be rearranged by long press and then drag and drop on Tabs: SPC, MISC, and IMAGES
+  * OpenGL based Nexrad radar interface with numerous options. Level 2 in the lowest tilt for base reflectivity/velocity is also available. 2 pane and 4 pane version also available in MISC tab.
+  * Optimized text product viewer for easy access to AFD,HWO and others from any NWS WFO.
+  * Vis/IR/WV/Radar mosaic viewer ( with animations ).
+  * Widgets ( nexrad radar, radar mosaic, vis, afd/hwo )
+  * SPC products ( such as Watches/MCDs/Convective Outlooks/Mesoanalysis )
+  * WPC products
+  * Weather models
+  * NHC products
+
+  Notifications:
+  * Local alerts
+  * MCDs impacting your location
+  * MPDs impacting your location
+  * Convective outlooks for your location
+  * US MCD/Watches
+  * US tornadoes
+  * US MCD
+  * US MPD
+  * NHC Atlantic and EPAC advisories
+
+RepoType: git
+Repo: https://gitlab.com/joshua.tee/wx.git
+
+Builds:
+  - versionName: '55039'
+    versionCode: 55039
+    commit: '55039'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|\"..\/..\/..\/\$ndkVersion\"|\"$$NDK$$\"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55103'
+    versionCode: 55103
+    commit: '55103'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55114'
+    versionCode: 55114
+    commit: '55114'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55115'
+    versionCode: 55115
+    commit: '55115'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55120'
+    versionCode: 55120
+    commit: '55120'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55127'
+    versionCode: 55127
+    commit: '55127'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55128'
+    versionCode: 55128
+    commit: '55128'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55148'
+    versionCode: 55148
+    commit: '55148'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55154'
+    versionCode: 55154
+    commit: '55154'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55158'
+    versionCode: 55158
+    commit: '55158'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55164'
+    versionCode: 55164
+    commit: '55164'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55175'
+    versionCode: 55175
+    commit: '55175'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55217'
+    versionCode: 55217
+    commit: '55217'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55223'
+    versionCode: 55223
+    commit: '55223'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55236'
+    versionCode: 55236
+    commit: '55236'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55260'
+    versionCode: 55260
+    commit: '55260'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55265'
+    versionCode: 55265
+    commit: '55265'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55269'
+    versionCode: 55269
+    commit: '55269'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55272'
+    versionCode: 55272
+    commit: '55272'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55289'
+    versionCode: 55289
+    commit: '55289'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55291'
+    versionCode: 55291
+    commit: '55291'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55295'
+    versionCode: 55295
+    commit: '55295'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55306'
+    versionCode: 55306
+    commit: '55306'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55310'
+    versionCode: 55310
+    commit: '55310'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55341'
+    versionCode: 55341
+    commit: '55341'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55350'
+    versionCode: 55350
+    commit: '55350'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55358'
+    versionCode: 55358
+    commit: '55358'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55381'
+    versionCode: 55381
+    commit: '55381'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55386'
+    versionCode: 55386
+    commit: '55386'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55420'
+    versionCode: 55420
+    commit: '55420'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55476'
+    versionCode: 55476
+    commit: '55476'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55483'
+    versionCode: 55483
+    commit: '55483'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55485'
+    versionCode: 55485
+    commit: '55485'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55487'
+    versionCode: 55487
+    commit: '55487'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+    ndk: r18b
+
+  - versionName: '55522'
+    versionCode: 55522
+    commit: '55522'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r21d
+
+  - versionName: '55525'
+    versionCode: 55525
+    commit: '55525'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r21d
+
+  - versionName: '55529'
+    versionCode: 55529
+    commit: '55529'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r21d
+
+  - versionName: '55539'
+    versionCode: 55539
+    commit: '55539'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55545'
+    versionCode: 55545
+    commit: '55545'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55546'
+    versionCode: 55546
+    commit: '55546'
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55557'
+    versionCode: 55557
+    commit: 5ea40d2ef12935f81f89daa5791b77c9125bcacb
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55569'
+    versionCode: 55569
+    commit: 3f635c737b2866e57f0fd5d1f0da003089741096
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55570'
+    versionCode: 55570
+    commit: 31588c33c967d32a31d70060b3d1b3814fa37e84
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55593'
+    versionCode: 55593
+    commit: 76fc331154ba181f44c953ac6c586305b897583c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55594'
+    versionCode: 55594
+    commit: 28e8e7d828ce259144a090b8cf311e48f4087067
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55595'
+    versionCode: 55595
+    commit: e45b2dcea8917fc68b09338d9026bcc42ce70669
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55596'
+    versionCode: 55596
+    commit: 2eaa5c837e21e66cd4d0ee3e6b7c0dba5b5148da
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55598'
+    versionCode: 55598
+    commit: ffb9ea4983d27ede0981a80d6393b2eb4582dcfc
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55599'
+    versionCode: 55599
+    commit: f408edb11b21ee06a4b5f4d2ba50a5406a830523
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55699'
+    versionCode: 55699
+    commit: 83d76f63a625217c7f7de117100306cb29d3026d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55729'
+    versionCode: 55729
+    commit: 57b140966e9cf17b83547980375365f7cf8989c6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55731'
+    versionCode: 55731
+    commit: e23e62d2c137bc6c505737901f842a0c3f244988
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55733'
+    versionCode: 55733
+    commit: acbd01ab14a22b1089c5db05c7ce54390aebf73a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55737'
+    versionCode: 55737
+    commit: 1b4830cc5770cc22100a6dcef4704e61902b0617
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55740'
+    versionCode: 55740
+    commit: f4a429b2643942985f670c1e12e187a2e7c7a7ce
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55742'
+    versionCode: 55742
+    commit: ccc2d77a1ab3fd27a4037a97053c5649110a3852
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55744'
+    versionCode: 55744
+    commit: 849aee4ecc37fd31c9c09a86000f52070f42f407
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55747'
+    versionCode: 55747
+    commit: 407cf2bb38ada8893abde3a9f57d6bbeadb40973
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55759'
+    versionCode: 55759
+    commit: 6b51770fb49023165f044baba19ff30acd8fdea3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55780'
+    versionCode: 55780
+    commit: f32f94aea8cf754ad651d9678a193b706e6710b9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55782'
+    versionCode: 55782
+    commit: a86416b6fd07a9eb484f555ff0e4cd324bd223ae
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55787'
+    versionCode: 55787
+    commit: 15027ef668f131603e2fc3d3bafd1664afc61697
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55791'
+    versionCode: 55791
+    commit: 91a71c7d458a469d31afca253e4e05cf607ad68d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55795'
+    versionCode: 55795
+    commit: 5d2acbf02559990c4e46ed4dddd5c2940f5f94bd
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55797'
+    versionCode: 55797
+    commit: c3663b320c5b321f8ca4aeedf223dc16d03d28d2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55803'
+    versionCode: 55803
+    commit: 3e96d1c0dadc7ecc1f10e33e64b73087ef78342e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55805'
+    versionCode: 55805
+    commit: cf3c049599fbc8dd97e6f39fb4c1c014c859706c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55815'
+    versionCode: 55815
+    commit: 7faeccf3a869a40a1f97873850ddc05ce295fcbd
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55826'
+    versionCode: 55826
+    commit: eb81711c05e347ba61b9580d6fecfb3da44ab727
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55835'
+    versionCode: 55835
+    commit: d437920fd128914400da8528399baae37a12b03a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55836'
+    versionCode: 55836
+    commit: 62c22207a71dd4b7de1bae187321851a5dcb7469
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55853'
+    versionCode: 55853
+    commit: 48debe9469995c5e1054adedf2fa35bb3f8dac50
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55854'
+    versionCode: 55854
+    commit: 0fc4768b2d3b8075f166e06910112fb2090f1d9d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = ".*"|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: r22b
+
+  - versionName: '55856'
+    versionCode: 55856
+    commit: 8a525e7320a0cdaf9f9d1a3c08fdff3deb9836e7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55857'
+    versionCode: 55857
+    commit: 3925e530dc512a59331bb299cc58109015d6a359
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55862'
+    versionCode: 55862
+    commit: ea409c8129dc4e99f7fac2cd04792c2e5dc354d4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55872'
+    versionCode: 55872
+    commit: 23796b0923412023110f2fc990fee27172c8b79c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55877'
+    versionCode: 55877
+    commit: f270b48e3d0888f5091f380602e33ff1938225ed
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55881'
+    versionCode: 55881
+    commit: cda8c310a954926b930979c64ecb2fa124fcf7f9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55883'
+    versionCode: 55883
+    commit: 740e27d48f9f35e7eb06a79a435d0c0cde4d59d9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55892'
+    versionCode: 55892
+    commit: edd5971208dd174384c6576a4b9fce9a847e9eab
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55893'
+    versionCode: 55893
+    commit: 74a349ca02ab3a2755ed8c80fc49a69058ca6a1d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55901'
+    versionCode: 55901
+    commit: 16ccd4b7e11ea0fdc056e8448e2e3d880e332afb
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/-XX:MaxPermSize=2048m\ //' ../gradle.properties
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55902'
+    versionCode: 55902
+    commit: ba7feae1394ebdccffb6784202eee1ff3ab5ba8f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55920'
+    versionCode: 55920
+    commit: 330ef7df7b3c840ddb9ccce8fed56a43dd4e9830
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55922'
+    versionCode: 55922
+    commit: 3429d1c40e32bcb72f33e373ffc97c3e25de2313
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55925'
+    versionCode: 55925
+    commit: 4827e06f6eeba4dfe43ddd91dc8b8ebac0c00927
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55947'
+    versionCode: 55947
+    commit: e63363dd41d6556df7498f25499de871fbec760c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/GEO/RawFiles
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55952'
+    versionCode: 55952
+    commit: d2298f8f15e919b84bc34e47b66ba3009cee5f41
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/GEO/RawFiles
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55955'
+    versionCode: 55955
+    commit: da47987eea90ae0308e9c0e925ef28ca96d46818
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/GEO/RawFiles
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55962'
+    versionCode: 55962
+    commit: 79a959ee945a4cdeede476b1d1e2529a54986065
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/GEO/RawFiles
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55968'
+    versionCode: 55968
+    commit: 223584b665b39aaa5a8623d6b7148711fd3df092
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/GEO/RawFiles
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55978'
+    versionCode: 55978
+    commit: e6286fe64f742002cb258d2f07fc0bee9c3042aa
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/GEO/RawFiles
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55981'
+    versionCode: 55981
+    commit: d45ccb4f9e5b6b20c7e2a89a97ec029776328d7e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/GEO/RawFiles
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55985'
+    versionCode: 55985
+    commit: 53232c03a339bc94181be175ba3889ef721bc8cf
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+      - sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/GEO/RawFiles
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+  - versionName: '55990'
+    versionCode: 55990
+    commit: 0ce9f619d8a64a5302eaeb569a8dee37ba9d7da1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y file
+    gradle:
+      - yes
+    prebuild: sed -i -e 's|def ndkDir = .*|def ndkDir = "$$NDK$$"|' build.gradle
+    scanignore:
+      - app/src/main/res/raw/*
+      - doc/GEO/RawFiles
+      - doc/SCRIPTS/Gaz_places_national.txt.gz
+    ndk: 26.1.10909125
+
+MaintainerNotes: |-
+  app/src/main/res/raw are not executable files and they're from US GOVT so they should be very open:
+  https://catalog.data.gov/dataset (license: https://www.usa.gov/government-works)
+  https://www.nohrsc.noaa.gov/gisdatasets/ (license: https://www.weather.gov/disclaimer)
+  doc/SCRIPTS/Gaz_places_national.txt.gz is a compressed text file.
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '55990'
+CurrentVersionCode: 55990

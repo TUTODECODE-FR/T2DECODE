@@ -1,0 +1,89 @@
+Categories:
+  - Calendar & Agenda
+License: GPL-3.0-or-later
+WebSite: https://www.micmun.de/deufeitage-english/
+SourceCode: https://codeberg.org/MicMun/deufeitage
+IssueTracker: https://codeberg.org/MicMun/deufeitage/issues
+Changelog: https://codeberg.org/MicMun/deufeitage/src/branch/master/Changelog.md
+
+AutoName: DeuFeiTage
+Description: |-
+  Find the date of a public holiday for this or another year.
+
+  * Choose a German state
+  * Choose a year between this year-4 and this year+4
+  * Every holiday can be touched to show a short description
+  * The next coming holiday is marked in a different background color
+
+RepoType: git
+Repo: https://codeberg.org/MicMun/deufeitage.git
+
+Builds:
+  - versionName: 4.1.0
+    versionCode: 402
+    commit: v4.1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.2.0
+    versionCode: 403
+    commit: v4.2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.3.0
+    versionCode: 404
+    commit: v4.3.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.4.0
+    versionCode: 405
+    commit: v4.4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.5.0
+    versionCode: 406
+    commit: v4.5.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 5.0.1
+    versionCode: 501
+    commit: b459027898061945b5055fefb117703e49325af3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 5.1.0
+    versionCode: 510
+    commit: b67a3d88504804c00e6145667e1414d18a9b3aac
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 5.2.0
+    versionCode: 520
+    commit: e6dc0c99c0d596e5e134f6fe3685b9d169815a62
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 5.2.0
+CurrentVersionCode: 520

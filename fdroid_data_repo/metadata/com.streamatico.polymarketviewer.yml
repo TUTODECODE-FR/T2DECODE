@@ -1,0 +1,338 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on polymarket.com servers
+Categories:
+  - Market & Price
+License: GPL-3.0-or-later
+SourceCode: https://github.com/streamatico/PolymarketViewer
+IssueTracker: https://github.com/Streamatico/PolymarketViewer/issues
+
+AutoName: Polymarket Viewer
+
+RepoType: git
+Repo: https://github.com/streamatico/PolymarketViewer.git
+Binaries: 
+  https://github.com/Streamatico/PolymarketViewer/releases/download/v%v/polymarket-viewer-%v-signed.apk
+
+Builds:
+  - versionName: '1.18'
+    versionCode: 9
+    commit: 4bc0c04d50f1bb969bc75b4c25d303583f685b8a
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.20'
+    versionCode: 20
+    commit: d700981166ef6bcc5c70990492a99e098560f68e
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.23'
+    versionCode: 23
+    commit: 225b1153ae249ca1ac9f800698885f05637d13be
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.24'
+    versionCode: 24
+    commit: 88700250dc50c804cf2ab97d3a544f92e5e7b116
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.25'
+    versionCode: 25
+    commit: 8ed13628b629844a89a1fa83cad28b62f71736c9
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.26'
+    versionCode: 26
+    commit: eb216289802b34c8f7b0a0e38607ce9cdec8331d
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.27'
+    versionCode: 27
+    commit: 8cfc3e71af618e4bf482321f24306a4c7d1a36d7
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.28'
+    versionCode: 28
+    commit: 995ec31bfbf6af6683dfe70d372d82a676b0ebcc
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.29'
+    versionCode: 29
+    commit: 47cf5fdaa4ae85d8daadbc0bcf9ee4c5135c4616
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.30'
+    versionCode: 30
+    commit: 81c73912459715d0fe72f706d1b3e8b5b26216f7
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.31'
+    versionCode: 31
+    commit: 7dddda2f516c98390781bcb861e88c396656440f
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.32'
+    versionCode: 32
+    commit: 3217520531fb142dd959cddc3fa63df92693060e
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.33'
+    versionCode: 33
+    commit: e8363dee27ecb234883c24d3e8daef705a674608
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.34'
+    versionCode: 34
+    commit: 703767aa727a17063d7915e92158b239136faed2
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.35'
+    versionCode: 35
+    commit: 47fbe9870dd0b560bff2aa2ea5f4c9897c5d7bfd
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.36'
+    versionCode: 36
+    commit: 0fc12784c6187e486d25d2606e8982b06a3f506b
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.37'
+    versionCode: 37
+    commit: 0109a519d4a66e6bae59af12c8f20bab8bf1b883
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.38'
+    versionCode: 38
+    commit: 702e0eae7bc907515b76930ea07a2c6141a6b5ec
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.40'
+    versionCode: 40
+    commit: 6bb4bb961c243279050bc0ecc40090b0742c7613
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.41'
+    versionCode: 41
+    commit: d7eecf40b4d1ff5a226e41ecc216921fe7f7d2db
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+  - versionName: '1.42'
+    versionCode: 42
+    commit: ca8cb751e40e2b6a9688f2812e83074b078be761
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    build: taskset --cpu-list 0-3 gradle assembleRelease;
+    ndk: r28c
+    postbuild:
+      - mv $$OUT$$ unaligned.apk
+      - $$reproducible-apk-tools$$/zipalign.py --page-size 16 --pad-like-apksigner
+        --replace unaligned.apk $$OUT$$
+
+AllowedAPKSigningKeys: f7c7bb57a3b8617bb292071d2ad505c5d95c085e9caa19f36b4b12d02037fbee
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.42'
+CurrentVersionCode: 42

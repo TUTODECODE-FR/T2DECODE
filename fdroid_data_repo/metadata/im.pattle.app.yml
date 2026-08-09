@@ -1,0 +1,54 @@
+Categories:
+  - Connectivity
+  - Phone & SMS
+License: AGPL-3.0-or-later
+AuthorName: Wilko Manger
+AuthorEmail: wilko@pattle.org
+WebSite: https://pattle.im
+SourceCode: https://pattle.dev/pattle/app
+IssueTracker: https://pattle.dev/pattle/app/issues
+Changelog: https://pattle.dev/pattle/app/releases
+Liberapay: wilko
+
+AutoName: Pattle
+Description: |-
+  Pattle is an ethical and easy to use app for the Matrix protocol, with the goal
+  to replace proprietary alternatives such as WhatsApp.
+
+  Please note that Pattle is no longer in development (repo was archived).
+
+  Registration is not implemented at the moment, so to get an account,
+  use <a href="https://riot.im">Riot</a> for now.
+
+  Also note that notifications are not implemented yet.
+
+RepoType: git
+Repo: https://pattle.dev/pattle/app.git
+
+Builds:
+  - versionName: 0.18.0
+    versionCode: 810
+    commit: v0.18.0
+    output: build/app/outputs/apk/fdroid/release/app-fdroid-release.apk
+    srclibs:
+      - flutter@1.17.3
+    prebuild:
+      - echo 'BUILD_TYPE=fdroid' > .env
+      - echo 'SENTRY_DSN=https://41b254e4b27a4ec9a297da3e801bd8c2@sentry.pattle.dev/3'
+        >> .env
+      - 'echo "version: $$VERSION$$+$$VERCODE$$" >> pubspec.yaml'
+      - sed -i -e '/google-services/g' -e '/firebase/g' -e '/signingConfigs/,+8d'
+        -e '/signingConfig/d' android/app/build.gradle android/build.gradle
+      - sed -i -e '/FlutterFirebaseMessagingService/g' android/app/src/main/kotlin/im/pattle/app/App.kt
+      - sed -i -e "/import 'service\/firebase.dart';/g" lib/src/notifications/bloc.dart
+      - sed -i -e 's/FirebaseService()/DummyService()/g' lib/src/notifications/bloc.dart
+      - sed -i -e '/firebase_/g' pubspec.yaml
+      - rm lib/src/notifications/service/firebase.dart
+    build: $$flutter$$/bin/flutter build apk --flavor fdroid -v --suppress-analytics
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+UpdateCheckData: https://version.pattle.im/|\ ([0-9]+)|.|([0-9]+\.[0-9]+\.[0-9]+)
+CurrentVersion: 0.18.0
+CurrentVersionCode: 810

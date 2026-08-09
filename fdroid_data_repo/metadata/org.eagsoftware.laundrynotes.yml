@@ -1,0 +1,59 @@
+Categories:
+  - Inventory
+License: GPL-3.0-or-later
+AuthorName: Minardil
+SourceCode: https://codeberg.org/minardil/laundrynotes
+IssueTracker: https://codeberg.org/minardil/laundrynotes/issues
+Changelog: https://codeberg.org/minardil/laundrynotes/releases
+Donate: https://buymeacoffee.com/minardil
+
+AutoName: LaundryNotes
+
+RepoType: git
+Repo: https://codeberg.org/minardil/laundrynotes.git
+Binaries: https://codeberg.org/minardil/laundrynotes/releases/download/v%v/app-release.apk
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    disable: key lost
+    commit: v1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.1'
+    versionCode: 2
+    disable: key lost
+    commit: 1c4ffc0ee85d16e840659f2673eabfbc7d2dd467
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.0'
+    versionCode: 3
+    commit: 8d99da547e1bbe70f9c196b761fb49a3cb88fdc6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '2.1'
+    versionCode: 4
+    commit: b7e773443457b0ce2dbb2c0a35efb0eb946d0280
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '3.0'
+    versionCode: 5
+    commit: 0bb3997ccb74c8a6cd9cd682b8716c5e64fd34c3
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: afbd67fad9be2807411fc238f8c28bc68710220c4a22781ebaacebc3e9ef282f
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '3.0'
+CurrentVersionCode: 5

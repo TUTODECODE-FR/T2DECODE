@@ -1,0 +1,627 @@
+Categories:
+  - Internet
+  - Voice & Video Chat
+License: GPL-3.0-only
+AuthorName: Daniel Lublin
+AuthorEmail: mumla@lublin.se
+WebSite: https://mumla-app.gitlab.io
+SourceCode: https://gitlab.com/quite/mumla
+IssueTracker: https://gitlab.com/quite/mumla/issues
+Translation: https://hosted.weblate.org/engage/mumla/
+Donate: https://paypal.me/dlublin
+Liberapay: quite
+
+AutoName: Mumla
+
+RepoType: git
+Repo: https://gitlab.com/quite/mumla.git
+
+Builds:
+  - versionName: 3.4.2
+    versionCode: 76
+    commit: 3.4.2
+    subdir: app
+    submodules: true
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    build:
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r21
+
+  - versionName: 3.4.4
+    versionCode: 78
+    commit: 3.4.4
+    subdir: app
+    submodules: true
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    build:
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r21
+
+  - versionName: 3.5.0
+    versionCode: 84
+    commit: 3.5.0
+    subdir: app
+    submodules: true
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    build:
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r21
+
+  - versionName: 3.5.1
+    versionCode: 85
+    commit: 3.5.1
+    subdir: app
+    submodules: true
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    build:
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r21
+
+  - versionName: 3.5.4
+    versionCode: 88
+    commit: 3.5.4
+    subdir: app
+    submodules: true
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    build:
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r21d
+
+  - versionName: 3.5.5
+    versionCode: 89
+    commit: 3.5.5
+    subdir: app
+    submodules: true
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    build:
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r21d
+
+  - versionName: 3.5.6
+    versionCode: 90
+    commit: 3.5.6
+    subdir: app
+    submodules: true
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    build:
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r21d
+
+  - versionName: 3.5.8
+    versionCode: 92
+    commit: 3.5.8
+    subdir: app
+    submodules: true
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r21e
+
+  - versionName: 3.5.9-beta1
+    versionCode: 93
+    commit: 3.5.9-beta1
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r22b
+
+  - versionName: 3.5.10
+    versionCode: 94
+    commit: 62c4e22a0283565e2a15fdfd098adae2472ce07c
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r22b
+
+  - versionName: 3.6.0
+    versionCode: 95
+    commit: bdde87931c23d90e64b90fb9cfae98d5fd99d8c8
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r22b
+
+  - versionName: 3.6.1
+    versionCode: 96
+    commit: 1ffac0879f670a02ed9c4980b04e0a62c2ddfdc0
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r22b
+
+  - versionName: 3.6.2
+    versionCode: 97
+    commit: 77ba8267e7cc2a15ebe590e7c3750b9f90deea7e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r22b
+
+  - versionName: 3.6.3
+    versionCode: 98
+    commit: 81d03f7171419372d0d5a20639f9a38ec65fe59e
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r22b
+
+  - versionName: 3.6.4
+    versionCode: 99
+    commit: 759fbe6509115d5ba97b9aac93c6d047bc9260b2
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r22b
+
+  - versionName: 3.6.5
+    versionCode: 100
+    commit: 8ba3e22025e8fc9d8f3d87c0d8157f3138487ed0
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r22b
+
+  - versionName: 3.6.6
+    versionCode: 101
+    commit: 12684b5eb0c3baf027deb165c5c11c8e002ce177
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+  - versionName: 3.6.7
+    versionCode: 102
+    commit: f8b003b0c76207539bbef18a5f30cac9492e2aec
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+  - versionName: 3.6.8
+    versionCode: 103
+    commit: aa92bfbda3aedc1620c640e8726204d1476802b9
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+  - versionName: 3.6.9
+    versionCode: 104
+    commit: 7d91afccc9d477710ebb30abe472e0293aa70b4d
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+  - versionName: 3.6.10
+    versionCode: 105
+    commit: c8b3a29f8e73b7712b9a2998ab0e3c258d34a2b4
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+  - versionName: 3.6.11
+    versionCode: 106
+    commit: d13a17cf41eb6c26ce0f65ab05b9c229e4fab8ae
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+  - versionName: 3.6.12
+    versionCode: 107
+    commit: 9ac839f9c5c2449ea45600266a6c9ae7915b92cb
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+  - versionName: 3.6.13
+    versionCode: 108
+    commit: 1e9a4ff7928d28a99306ecf9f0e21c1e6913470f
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+  - versionName: 3.6.14
+    versionCode: 109
+    commit: 45f7b85dd0f5f6de029bda77dc60d0e593b9a6c4
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+  - versionName: 3.6.15
+    versionCode: 110
+    commit: a43ff8031e862da77e8ec9a8d2f22433b7a8eaa1
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - official
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    prebuild: cp -r ../libraries/humla/gradle ../libraries/humla/libs/humla-spongycastle
+    build:
+      - printf >../local.properties "sdk.dir=%s\nndk.dir=%s" "$$SDK$$" "$$NDK$$"
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+  - versionName: 3.7.0
+    versionCode: 3070007
+    commit: fddba98e7579da47e82272656db2071c2d6110e3
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - foss
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    build:
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+  - versionName: 3.7.1
+    versionCode: 3070100
+    commit: ed6392fa5633b6f5a65472ad23060f23cb900123
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - foss
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    build:
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+  - versionName: 3.7.3
+    versionCode: 3070300
+    commit: c179d8ff5a38e8e758cb84011e3845764b6f6976
+    subdir: app
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y file make
+    gradle:
+      - foss
+    rm:
+      - libraries/humla/tools
+      - libraries/humla/libs/humla-spongycastle/core/src/test/data
+    build:
+      - cd ../libraries/humla/libs/humla-spongycastle
+      - gradle jar
+    buildjni:
+      - ../libraries/humla/src/main/jni
+    ndk: r25b
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^[^-]*$
+UpdateCheckData: app/build.gradle|versionCode (\d+)||(.+)
+CurrentVersion: 3.7.3
+CurrentVersionCode: 3070300

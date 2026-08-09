@@ -1,0 +1,192 @@
+Categories:
+  - Internet
+  - Messaging
+License: AGPL-3.0-only
+SourceCode: https://codeberg.org/emersion/goguma
+IssueTracker: https://todo.sr.ht/~emersion/goguma
+
+AutoName: Goguma
+
+RepoType: git
+Repo: https://codeberg.org/emersion/goguma
+
+Builds:
+  - versionName: 0.1.0
+    versionCode: 1
+    commit: 3a6e823c6237a988ea0593bce493ec8fb7ad6f4c
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.2
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --verbose
+
+  - versionName: 0.2.0
+    versionCode: 516
+    commit: 0ff181ff6dfceb90fb4d78cecb40d0fcaacb47ec
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.2
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --verbose
+
+  - versionName: 0.3.0
+    versionCode: 583
+    commit: 73749cfef8b6f3976d6ad6a1a37ad1548fb9cabc
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.2
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release --verbose
+
+  - versionName: 0.4.1
+    versionCode: 712
+    commit: da34cc05d6bc227d9afbd5a0c2864d99df4ab5ad
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.5
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub remove firebase_core firebase_messaging
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 0.5.1
+    versionCode: 905
+    commit: ef1856ecdae12050d74b90e220b81788ee06f2bb
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.10.1
+    rm:
+      - ios
+      - linux
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub remove firebase_core firebase_messaging
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 0.6.0
+    versionCode: 998
+    commit: 7359d1ffda513be55e05da1bbe55d6b072d9d62b
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.16.3
+    rm:
+      - ios
+      - linux
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - "$$flutter$$/bin/flutter pub add -- 'override:geolocator_android:{\"git\"
+        : {\"url\": \"https://github.com/Zverik/flutter-geolocator.git\", \"ref\"
+        : \"floss\", \"path\": \"geolocator_android\"}}'"
+      - $$flutter$$/bin/flutter pub remove firebase_core firebase_messaging
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 0.7.0
+    versionCode: 1079
+    commit: 60842d205e4b47d8db3bb95e3cee3547c49f2b07
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.22.2
+    rm:
+      - ios
+      - linux
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - "$$flutter$$/bin/flutter pub add -- 'override:geolocator_android:{\"git\"
+        : {\"url\": \"https://github.com/Zverik/flutter-geolocator.git\", \"ref\"
+        : \"floss\", \"path\": \"geolocator_android\"}}'"
+      - $$flutter$$/bin/flutter pub remove firebase_core firebase_messaging
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 0.8.0
+    versionCode: 1206
+    commit: 2a457f64efb480fa7bc9611e8ffe84a835ba5bec
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.29.3
+    rm:
+      - ios
+      - linux
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - "$$flutter$$/bin/flutter pub add -- 'override:geolocator_android:{\"git\"
+        : {\"url\": \"https://github.com/Zverik/flutter-geolocator.git\", \"ref\"
+        : \"floss\", \"path\": \"geolocator_android\"}}'"
+      - $$flutter$$/bin/flutter pub remove firebase_core firebase_messaging
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 0.9.0
+    versionCode: 1360
+    commit: 207467df22d7eeba8c2cf9be651158c64dcf24ff
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.38.7
+    rm:
+      - ios
+      - linux
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - "$$flutter$$/bin/flutter pub add -- 'override:geolocator_android:{\"git\"
+        : {\"url\": \"https://github.com/Zverik/flutter-geolocator.git\", \"ref\"
+        : \"floss\", \"path\": \"geolocator_android\"}}'"
+      - $$flutter$$/bin/flutter pub remove firebase_core firebase_messaging
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+  - versionName: 0.9.1
+    versionCode: 1365
+    commit: 500ba75cf167afa37be69516e7ae50985c8342c0
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.38.7
+    rm:
+      - ios
+      - linux
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - "$$flutter$$/bin/flutter pub add -- 'override:geolocator_android:{\"git\"
+        : {\"url\": \"https://github.com/Zverik/flutter-geolocator.git\", \"ref\"
+        : \"floss\", \"path\": \"geolocator_android\"}}'"
+      - $$flutter$$/bin/flutter pub remove firebase_core firebase_messaging
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 0.9.1
+CurrentVersionCode: 1365

@@ -1,0 +1,33 @@
+Categories:
+  - Keyboard & IME
+License: Apache-2.0
+AuthorName: Menny Even Danan
+AuthorEmail: ask@evendanan.net
+WebSite: https://anysoftkeyboard.github.io
+SourceCode: https://github.com/AnySoftKeyboard/AnySoftKeyboard
+IssueTracker: https://github.com/AnySoftKeyboard/AnySoftKeyboard/issues
+Donate: https://github.com/sponsors/menny
+
+RepoType: git
+Repo: https://github.com/AnySoftKeyboard/AnySoftKeyboard.git
+
+Builds:
+  - versionName: 5.1.6158
+    versionCode: 6158
+    commit: b10a79fcc1a61c1e737d7aac43aab0141f065185
+    subdir: addons/themes/three_d/apk
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/navigation-dynamic-features-fragment/d' ../../../../ime/app/build.gradle
+      - cp -R ../../../../gradle .
+    scanignore:
+      - addons/languages/*/pack/dictionary/*.gz
+    ndk: r27c
+    gradleprops:
+      - forceVersionBuildCount=8461
+
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 5.1.6158
+CurrentVersionCode: 6158

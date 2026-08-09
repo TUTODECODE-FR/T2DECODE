@@ -1,0 +1,43 @@
+Categories:
+  - Action Game
+License: Apache-2.0
+AuthorName: Mariano Alvarez
+AuthorEmail: malfer007@gmail.com
+WebSite: https://www.fgrim.com/msnake/
+SourceCode: https://gitlab.com/f-droid-mirrors/msnake
+IssueTracker: https://gitlab.com/f-droid-mirrors/msnake/-/issues
+
+AutoName: MSnake
+Description: |-
+  The classic snake game.
+
+  Derived from the Snake game in the Android SDK, with added features:
+
+  * touch control, you can choose between three modes: four directional buttons, two turn buttons, only finger gestures
+  * three board sizes (only two for QVGA devices)
+  * with or without walls
+  * slow and fast speed
+  * highscore for each size, walls and speed
+  * pause the game at any time (touch de screen)
+  * eating a red pepper slow down the snake
+  * eating a green pepper makes the snake to go faster
+
+RepoType: git
+Repo: https://gitlab.com/f-droid-mirrors/msnake.git
+
+Builds:
+  - versionName: '1.6'
+    versionCode: 7
+    commit: v1.6
+    target: android-8
+
+  - versionName: '2.0'
+    versionCode: 12
+    commit: v2.0
+    target: android-8
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '2.0'
+CurrentVersionCode: 12

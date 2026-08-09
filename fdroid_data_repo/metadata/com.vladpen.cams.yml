@@ -1,0 +1,455 @@
+Categories:
+  - Camera
+  - Multimedia
+License: GPL-2.0-or-later
+AuthorWebSite: https://github.com/vladpen
+SourceCode: https://github.com/vladpen/cams
+IssueTracker: https://github.com/vladpen/cams/issues
+Changelog: https://github.com/vladpen/cams/blob/HEAD/CHANGELOG.md
+
+Name: Cams
+AutoName: Cams
+
+RepoType: git
+Repo: https://github.com/vladpen/cams.git
+
+Builds:
+  - versionName: 1.0.3
+    versionCode: 1000301
+    commit: f7c8a617fd810d1f8cb380d39a636a814ad39dcf
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild: sed -i -e 's/versionCode .*$/versionCode $$VERCODE$$/' build.gradle
+
+  - versionName: 1.0.3
+    versionCode: 1000302
+    commit: f7c8a617fd810d1f8cb380d39a636a814ad39dcf
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild: sed -i -e 's/versionCode .*$/versionCode $$VERCODE$$/' build.gradle
+
+  - versionName: 1.0.3
+    versionCode: 1000303
+    commit: f7c8a617fd810d1f8cb380d39a636a814ad39dcf
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild: sed -i -e 's/versionCode .*$/versionCode $$VERCODE$$/' build.gradle
+
+  - versionName: 1.0.3
+    versionCode: 1000304
+    commit: f7c8a617fd810d1f8cb380d39a636a814ad39dcf
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild: sed -i -e 's/versionCode .*$/versionCode $$VERCODE$$/' build.gradle
+
+  - versionName: 1.1.1
+    versionCode: 1010101
+    commit: beeb5fd7114f29afb4d243cd4676f59f11a92da6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk
+    prebuild: sed -i -e 's/versionCode .*$/versionCode $$VERCODE$$/' build.gradle
+
+  - versionName: 1.1.1
+    versionCode: 1010102
+    commit: beeb5fd7114f29afb4d243cd4676f59f11a92da6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+    prebuild: sed -i -e 's/versionCode .*$/versionCode $$VERCODE$$/' build.gradle
+
+  - versionName: 1.1.1
+    versionCode: 1010103
+    commit: beeb5fd7114f29afb4d243cd4676f59f11a92da6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86-release-unsigned.apk
+    prebuild: sed -i -e 's/versionCode .*$/versionCode $$VERCODE$$/' build.gradle
+
+  - versionName: 1.1.1
+    versionCode: 1010104
+    commit: beeb5fd7114f29afb4d243cd4676f59f11a92da6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-x86_64-release-unsigned.apk
+    prebuild: sed -i -e 's/versionCode .*$/versionCode $$VERCODE$$/' build.gradle
+
+  - versionName: 1.1.2
+    versionCode: 1010105
+    commit: 1861e29b6dee4bb638f933ee4ec909340107886b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.1.3
+    versionCode: 1010106
+    commit: 21d3d858da4b2aad1c43461720915fbe59d6f13d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.1.4
+    versionCode: 1010107
+    commit: 4cbd49acc65d732282a6a342e9d3d07a3a777bc2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.2.0
+    versionCode: 1010108
+    commit: e2c4bda60d06e7989bcf1ef229a034b7695ebc0b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.2.1
+    versionCode: 1010109
+    commit: 4946a8b784b89299b5788ffccd6ffaeb78ba0f84
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.2.2
+    versionCode: 1010110
+    commit: f49881a62bd07f8bb869719ca1904fd0dbcc1e18
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.3.0
+    versionCode: 1010111
+    commit: c92b4730f928e37286b288856e9f59f757c80f5b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.3.0.1
+    versionCode: 1010112
+    commit: 3754ab13d7e70cac20c808d9754bbf80a545792e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.3.1
+    versionCode: 1010113
+    commit: 0b62d93671a9231c79e2e2305891306c9ef63297
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.3.2
+    versionCode: 1010114
+    commit: aa6e0e19a9a0f76ebc62d399f1b45f52dcef6a41
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.3.3
+    versionCode: 1010116
+    commit: b773a07dcc39b64e3a322d86dcea4a19fdf9b3ee
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.3.3.1
+    versionCode: 1010117
+    commit: e43569f4e303bf06176a5c388ff06e46ca7fed5c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.3.4
+    versionCode: 1010118
+    commit: c0b8018eaf71330bcbd75effc5740d4f44ad2d84
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 1.3.5
+    versionCode: 1010119
+    commit: 4b9bda2ff639655c3b56214aa37c38459fa891c9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: '2.0'
+    versionCode: 1010120
+    commit: 7399c15f995bccb6205794b4d63c31283ac3c9fa
+    subdir: app
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 2.0.1
+    versionCode: 1010121
+    commit: 06656f8d13ee92995d76b36e9e1fe3d7b430d96e
+    subdir: app
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 2.0.2
+    versionCode: 1010122
+    commit: 6bbbb5671e51fad51f0fd8673bb8add1a7f4583d
+    subdir: app
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 2.0.3
+    versionCode: 1010123
+    commit: 398f4f9b98cafe783145cd7de0dc067605296877
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: '2.1'
+    versionCode: 1010124
+    commit: 7a2b44c81e991cd7f45f810dd78c040aeac02c9f
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 2.1.1
+    versionCode: 1010125
+    commit: 340b590d2edcdc58bc390d39f52a20cc980f2a0a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: '2.2'
+    versionCode: 1010126
+    commit: 2451caedfbc9b0b110371a62b6e33fd22d0333b5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: '2.3'
+    versionCode: 1010127
+    commit: d61cdb647ff5f7f60432f59777fcd7e88cd152e0
+    subdir: app
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: '2.4'
+    versionCode: 1010128
+    commit: 256d3875bd6ed29b90c2ff61694c1ee5bdb0c1f1
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk
+
+  - versionName: 2.4.1
+    versionCode: 1010129
+    commit: ba7c1575e7a68dd00bf101788bef0ec771173b9a
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e "s/include.*/include 'arm64-v8a'/" build.gradle
+
+  - versionName: 2.4.2
+    versionCode: 1010130
+    commit: 84dacae245630a2c79b8e9e973af7f525a6ca3ea
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e "s/include.*/include 'arm64-v8a'/" build.gradle
+
+  - versionName: 2.4.3
+    versionCode: 1010131
+    commit: 8d0fbbdf242b4257604668b05cd2055ba51d488b
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e "s/include.*/include 'arm64-v8a'/" build.gradle
+
+  - versionName: 2.4.4
+    versionCode: 1010132
+    commit: d481eb41f31a835f85927968f8cb0e4c132fc066
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e "s/include.*/include 'arm64-v8a'/" build.gradle
+      - sed -i -e 's/8.13.0/8.11.1/' ../build.gradle
+
+  - versionName: '2.5'
+    versionCode: 1010133
+    commit: 22af31aff7569053357cefb511b82d93ea09a6b4
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e "s/include.*/include 'arm64-v8a'/" build.gradle
+
+  - versionName: 2.5.1
+    versionCode: 1010134
+    commit: 8331c083038b8f9a2fee5437241974be55ae2e26
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e "s/include.*/include 'arm64-v8a'/" build.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.5.1
+CurrentVersionCode: 1010134

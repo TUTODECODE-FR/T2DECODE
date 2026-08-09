@@ -1,0 +1,678 @@
+Categories:
+  - Multimedia
+  - Online Media Player
+License: GPL-2.0-or-later
+AuthorName: Jellyfin
+AuthorEmail: apps@jellyfin.org
+AuthorWebSite: https://jellyfin.org/
+WebSite: https://jellyfin.org/
+SourceCode: https://github.com/jellyfin/jellyfin-androidtv
+IssueTracker: https://github.com/jellyfin/jellyfin-androidtv/issues
+Translation: https://translate.jellyfin.org/engage/jellyfin-android/
+Changelog: https://github.com/jellyfin/jellyfin-androidtv/releases
+OpenCollective: jellyfin
+
+AutoName: Jellyfin
+
+RepoType: git
+Repo: https://github.com/jellyfin/jellyfin-androidtv.git
+Binaries: 
+  https://repo.jellyfin.org/releases/client/androidtv/versions/v%v/jellyfin-androidtv-v%v-release.apk
+
+Builds:
+  - versionName: 0.15.5
+    versionCode: 150599
+    commit: v0.15.5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.15.6
+    versionCode: 150699
+    commit: v0.15.6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.15.7
+    versionCode: 150799
+    commit: v0.15.7
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.15.8
+    versionCode: 150899
+    commit: v0.15.8
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.15.9
+    versionCode: 150999
+    commit: v0.15.9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.15.10
+    versionCode: 151099
+    commit: v0.15.10
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.15.11
+    versionCode: 151199
+    commit: v0.15.11
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.15.12
+    versionCode: 151299
+    commit: v0.15.12
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.16.0
+    versionCode: 160099
+    commit: v0.16.0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.16.1
+    versionCode: 160199
+    commit: v0.16.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.16.2
+    versionCode: 160299
+    commit: v0.16.2
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.16.4
+    versionCode: 160499
+    commit: v0.16.4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.16.5
+    versionCode: 160599
+    commit: v0.16.5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.16.6
+    versionCode: 160699
+    commit: v0.16.6
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.16.7
+    versionCode: 160799
+    commit: v0.16.7
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.16.8
+    versionCode: 160899
+    commit: v0.16.8
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.16.9
+    versionCode: 160999
+    commit: v0.16.9
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.16.10
+    versionCode: 161099
+    commit: v0.16.10
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.16.11
+    versionCode: 161199
+    commit: v0.16.11
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.17.0
+    versionCode: 170099
+    commit: v0.17.0
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.17.1
+    versionCode: 170199
+    commit: v0.17.1
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.17.3
+    versionCode: 170399
+    commit: v0.17.3
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.17.4
+    versionCode: 170499
+    commit: v0.17.4
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.17.5
+    versionCode: 170599
+    commit: v0.17.5
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.17.6
+    versionCode: 170699
+    commit: v0.17.6
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.17.8
+    versionCode: 170899
+    commit: v0.17.8
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.17.9
+    versionCode: 170999
+    commit: v0.17.9
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.18.1
+    versionCode: 180199
+    commit: v0.18.1
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.18.2
+    versionCode: 180299
+    commit: v0.18.2
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.18.3
+    versionCode: 180399
+    commit: v0.18.3
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.18.4
+    versionCode: 180499
+    commit: v0.18.4
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.18.5
+    versionCode: 180599
+    commit: v0.18.5
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.18.6
+    versionCode: 180699
+    commit: v0.18.6
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.18.7
+    versionCode: 180799
+    commit: v0.18.7
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.18.8
+    versionCode: 180899
+    commit: v0.18.8
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.18.9
+    versionCode: 180999
+    commit: v0.18.9
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.18.10
+    versionCode: 181099
+    commit: v0.18.10
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.18.11
+    versionCode: 181199
+    commit: v0.18.11
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.19.2
+    versionCode: 190299
+    commit: v0.19.2
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.19.3
+    versionCode: 190399
+    commit: v0.19.3
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.19.4
+    versionCode: 190499
+    commit: v0.19.4
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.19.5
+    versionCode: 190599
+    commit: v0.19.5
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.19.6
+    versionCode: 190699
+    commit: 3a6fdfece92c990c0311fbe116c2ae92c8717a16
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.19.7
+    versionCode: 190799
+    commit: dc4af312852f01a6ea2f03c61407f93393934018
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.19.8
+    versionCode: 190899
+    commit: cbc249395be9f6e0e389dcc3e6c625c25bd9d204
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+  - versionName: 0.19.9
+    versionCode: 190999
+    commit: 14a5e160efbb33d471ef2efe7ed9073fc2206785
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e 's/s01.oss.sonatype.org.*"/maven.google.com"/' ../settings.gradle.kts
+      - echo 'rootProject.name="jellyfin-androidtv"' >> ../settings.gradle.kts
+      - echo 'jellyfin.version=$$VERSION$$' >> ../gradle.properties
+
+AllowedAPKSigningKeys: d881796ed2a67ff6ef9f676828723c6b1fa18e09388962cba4abc4a594a69131
+
+AutoUpdateMode: Version v%v
+UpdateCheckMode: HTTP
+UpdateCheckIgnore: (beta|rc)
+UpdateCheckData: 
+  https://repo.jellyfin.org/releases/client/androidtv/version.txt|^v.*?=(\d+)|.|^v(.*?)=\d+
+CurrentVersion: 0.19.9
+CurrentVersionCode: 190999

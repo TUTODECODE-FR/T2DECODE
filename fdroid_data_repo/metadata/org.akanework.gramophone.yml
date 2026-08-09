@@ -1,0 +1,200 @@
+Categories:
+  - Local Media Player
+  - Multimedia
+License: GPL-3.0-or-later
+AuthorName: nift4
+AuthorEmail: nift4@posteo.net
+SourceCode: https://github.com/FoedusProgramme/Gramophone
+IssueTracker: https://github.com/FoedusProgramme/Gramophone/issues
+Translation: https://hosted.weblate.org/engage/gramophone/
+Changelog: https://github.com/FoedusProgramme/Gramophone/releases
+
+AutoName: Gramophone
+
+RepoType: git
+Repo: https://github.com/FoedusProgramme/Gramophone.git
+Binaries: 
+  https://github.com/FoedusProgramme/Gramophone/releases/download/%v/Gramophone-%v-release.apk
+
+Builds:
+  - versionName: 1.0.4.1
+    versionCode: 6
+    commit: 1.0.4.1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    prebuild: echo 'releaseType=Release' > ../package.properties
+
+  - versionName: 1.0.5
+    versionCode: 7
+    commit: f3ad1ac4f6c4f16d64d41e0cc65e0964bdabac07
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo 'releaseType=Release' > ../package.properties
+
+  - versionName: 1.0.8
+    versionCode: 10
+    commit: 04a37ece89224e00ae064f82815f33fb83c5614c
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo 'releaseType=Release' > ../package.properties
+
+  - versionName: 1.0.9
+    versionCode: 11
+    commit: 951ed87bb5bb3928b9298141becaec76ef7b65c0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    prebuild: echo 'releaseType=Release' > ../package.properties
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'META-INF/services/*'
+
+  - versionName: 1.0.11
+    versionCode: 13
+    commit: 0fc89695d120cc257433d2af55a7e7db6d9ccbbc
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    prebuild: echo 'releaseType=Release' > ../package.properties
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'res/M7.json'
+
+  - versionName: 1.0.12
+    versionCode: 14
+    commit: 42ed78312dc7280bfb8c7b23822d44dcc699f86f
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    prebuild: echo 'releaseType=Release' > ../package.properties
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'res/M7.json'
+
+  - versionName: 1.0.13
+    versionCode: 15
+    commit: 47e4a6820240b631716e3872976583e2cc450cd0
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    prebuild: echo 'releaseType=Release' > ../package.properties
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'res/M7.json'
+
+  - versionName: 1.0.14
+    versionCode: 16
+    commit: 4589ac98657364aaf1c3c2bf35f5c9ff6d8abcc8
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    prebuild: echo 'releaseType=Release' > ../package.properties
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'res/M7.json'
+
+  - versionName: 1.0.15
+    versionCode: 17
+    commit: 64ab51dcd022e403f51dccb46d26bc8755663577
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.2.8
+    prebuild: echo 'releaseType=Release' > ../package.properties
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign fix-newlines $$OUT$$
+      'res/M7.json'
+
+  - versionName: 1.0.16.1
+    versionCode: 19
+    commit: 3fa245f24b684c1f56d9115a6d93da975c78fb8e
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild: echo 'releaseType=Release' > ../package.properties
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'res/M7.json'
+
+  - versionName: 1.0.17
+    versionCode: 20
+    commit: ea0e38cd64cd901495d17701d9405555baa30643
+    subdir: app
+    submodules: true
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild:
+      - echo 'releaseType=Release' > ../package.properties
+      - sed -i -e '/afterEvaluate {/,$d' ../media3/publish.gradle
+    scandelete:
+      - media3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'res/M7.json'
+
+  - versionName: 1.1.0
+    versionCode: 21
+    commit: d09fd8824064f0317d8c98ae2c93ce24690841ab
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild:
+      - echo 'releaseType=Release' > ../package.properties
+      - sed -i -e '/afterEvaluate {/,$d' ../media3/publish.gradle
+    scandelete:
+      - media3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'res/M7.json'
+
+  - versionName: 1.1.1
+    versionCode: 23
+    commit: 644291f7366aec86a1147a36d3bd735da1f70d37
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    srclibs:
+      - reproducible-apk-tools@v0.3.0
+    prebuild:
+      - echo 'releaseType=Release' > ../package.properties
+      - sed -i -e '/afterEvaluate {/,$d' ../media3/publish.gradle
+    scandelete:
+      - media3
+    postbuild: $$reproducible-apk-tools$$/inplace-fix.py --zipalign --page-size 16
+      fix-newlines $$OUT$$ 'res/M7.json'
+
+AllowedAPKSigningKeys: f451197ad7b80bd1bc981ba38a2c49d471856fb38bcc333676d6e8f8f3ce5d6e
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.1.1
+CurrentVersionCode: 23

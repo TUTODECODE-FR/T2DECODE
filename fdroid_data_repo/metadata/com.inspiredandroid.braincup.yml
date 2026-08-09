@@ -1,0 +1,200 @@
+Categories:
+  - Educational Game
+  - Science & Education
+License: Apache-2.0
+AuthorName: Simon Schubert
+AuthorEmail: simon@librem.one
+AuthorWebSite: https://schubert-simon.de/
+WebSite: https://simonschubert.github.io/Braincup/
+SourceCode: https://github.com/SimonSchubert/Braincup
+IssueTracker: https://github.com/SimonSchubert/Braincup/issues
+Changelog: https://github.com/SimonSchubert/Braincup/releases
+Donate: https://github.com/sponsors/SimonSchubert
+
+AutoName: Braincup
+
+RepoType: git
+Repo: https://github.com/SimonSchubert/Braincup
+Binaries: 
+  https://github.com/SimonSchubert/Braincup/releases/download/v%v/Braincup-%v-android.apk
+
+Builds:
+  - versionName: 2.15.2
+    versionCode: 133
+    commit: cf98035b6fee7a66254ca886806f91924815ef35
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.15.3
+    versionCode: 134
+    commit: da2cf65e68aac95bf527f6bdf33c0af5cd705a04
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.16.0
+    versionCode: 135
+    commit: 73244a451d1bacb5fb9e8a46a083be50d9a9d7dc
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.17.0
+    versionCode: 136
+    commit: ae9e4966e35ffcf87e0ac1e688600b45086e5bc2
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.18.0
+    versionCode: 137
+    commit: cc1b01ac2f16b8e033016cab5db423ecfc327b1a
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.19.0
+    versionCode: 138
+    commit: 2bf473aea4b39ba64b7c110b3170bad3384833a0
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.20.0
+    versionCode: 139
+    commit: f72f88f6a3ea87fbf2b16148e920ef5be03e8a97
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.21.0
+    versionCode: 140
+    commit: 118de79c12626275850e4b95ea21802ee7c34aeb
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.22.0
+    versionCode: 141
+    commit: af42b94e451c2a36ba029111d65cc02da4d49e88
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.23.0
+    versionCode: 142
+    commit: 5f18db18ce8510d8a4a359af745a426164656743
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.24.0
+    versionCode: 143
+    commit: 2ce88894681481b2874ea29e478fe676fa62519e
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.25.0
+    versionCode: 144
+    commit: e1229f05cd6a66e745c324b741a014d71e061817
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.26.0
+    versionCode: 145
+    commit: f4ac2b956678562c6e5943d82f267053bc6c8354
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.26.1
+    versionCode: 146
+    commit: 0990ae61797c5621711fecd840c26545b84dc061
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.27.0
+    versionCode: 147
+    commit: e5a231594a67ae20b79d811bc1e99acd09621a26
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.28.0
+    versionCode: 148
+    commit: 78da3ad01f00d48c5d8afe2331f5480de4380afb
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.29.0
+    versionCode: 149
+    commit: 4dbb7cf522bd7a41624c08993975f28eade9a935
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.30.0
+    versionCode: 150
+    commit: de70bbd2b0e516bab1bebdd3aadee78f8da7587e
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+  - versionName: 2.31.0
+    versionCode: 151
+    commit: bfc634c9fa600e3c5044adcf40508591c2ed3cf7
+    subdir: androidApp
+    gradle:
+      - foss
+    rm:
+      - iosApp
+
+AllowedAPKSigningKeys: 51db6caa954a13512f74405a631d7c51f4bfad7d81071a2d9fb2c8904951d989
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: gradle/libs.versions.toml|android-versionCode = "(\d+)"|.|appVersion
+  = "(.+)"
+CurrentVersion: 2.31.0
+CurrentVersionCode: 151

@@ -1,0 +1,144 @@
+Categories:
+  - Cast
+  - Writing
+License: MIT
+AuthorName: Averi Studios
+AuthorEmail: averistudios@gmail.com
+SourceCode: https://github.com/MarquisLP/World-Scribe
+IssueTracker: https://github.com/MarquisLP/World-Scribe/issues
+Changelog: https://github.com/MarquisLP/World-Scribe/releases
+
+AutoName: World Scribe
+Description: |-
+  Ever wanted to create a fictional setting — for your next novel, comic,
+  screenplay, or what-have-you — but find it difficult to keep everything
+  organized?
+
+  <i>World Scribe</i> eases the creation process by letting you keep track of every
+  important element in your world, including the ways in which they're connected.
+
+  Whether you're a novelist, hobby writer, or role-player, World Scribe is an
+  indispensable tool for making your settings more than just fiction. Bring your
+  world to life today!
+
+  <b>Features:</b>
+
+  * World elements — known as Articles — are organized into five categories for your convenience: People (your colorful cast of characters), groups (people united by blood, race, or a driving motivation), places (the varied locales and vistas your world has to offer), items (gadgets, important artifacts, and various belongings), concepts (definitions for world-specific ideas like magic systems, religions, and superpowers).
+  * Any Article can possess Connections to other Articles, complete with relationship descriptions. Each Connection also acts as a link to that Article's page. Need to find a characters siblings, or the ancient artifacts on their person? You can navigate to each of them straight from that character's page.
+  * Any Article can also possess Snippets, which are custom text entries unique to that Article. Want to write down an important letter or speech from one of your characters? How about a song or poem warning of a dangerous location in the world? The possibilities are endless!
+  * Everything you write is stored in simple text files, so feel free to export your worlds at any time and use them in other writing projects. You can find them in the "WorldScribe" folder on your phone's external storage.
+  * Have a Dropbox account? You can backup each of your worlds to your Dropbox account for easy exporting and added safety (in case the Dark Lord seizes your device). To backup, just select the "Backup to Dropbox" option from the overflow menu at any time.
+
+RepoType: git
+Repo: https://github.com/MarquisLP/World-Scribe
+
+Builds:
+  - versionName: 1.4.6
+    versionCode: 17
+    commit: 1.4.6
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+  - versionName: 1.4.7
+    versionCode: 18
+    commit: 1.4.7
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+  - versionName: 1.5.0
+    versionCode: 19
+    commit: 1.5.0
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+  - versionName: 1.5.1
+    versionCode: 20
+    commit: 1.5.1
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+  - versionName: 1.6.0
+    versionCode: 21
+    commit: 1.6.0
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+  - versionName: 1.6.1
+    versionCode: 22
+    commit: 1.6.1
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+  - versionName: 1.6.1.a
+    versionCode: 23
+    commit: 1.6.1.a
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+  - versionName: 1.6.2
+    versionCode: 24
+    commit: 1.6.2
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+  - versionName: 1.6.3
+    versionCode: 25
+    commit: 1.6.3
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+  - versionName: 1.7.0
+    versionCode: 26
+    commit: 1.7.0
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+  - versionName: 1.7.1
+    versionCode: 27
+    commit: 1.7.1
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+  - versionName: 1.8.1
+    versionCode: 29
+    commit: 1d3f82c0d4a7fdf90d555902c806e154265bb6a8
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+  - versionName: 1.9.0
+    versionCode: 30
+    disable: https://github.com/MarquisLP/World-Scribe/issues/75
+    commit: 2780e2b25560989d95ab40b30a72818f5e3a31d6
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/keystorePropertiesFile/d' build.gradle
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.9.0
+CurrentVersionCode: 30

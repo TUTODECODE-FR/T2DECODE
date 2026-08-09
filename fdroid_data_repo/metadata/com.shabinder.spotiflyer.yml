@@ -1,0 +1,345 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on non-libre services (Spotify, Youtube, Soundcloud etc).
+Categories:
+  - Multimedia
+License: GPL-3.0-or-later
+AuthorName: Shabinder Singh
+AuthorEmail: dev.shabinder@gmail.com
+AuthorWebSite: https://shabinder.github.io/
+WebSite: https://shabinder.github.io/SpotiFlyer/
+SourceCode: https://github.com/Shabinder/SpotiFlyer
+IssueTracker: https://github.com/Shabinder/SpotiFlyer/issues
+Changelog: https://github.com/Shabinder/SpotiFlyer/releases
+OpenCollective: spotiflyer
+
+AutoName: SpotiFlyer
+
+RepoType: git
+Repo: https://github.com/Shabinder/SpotiFlyer
+
+Builds:
+  - versionName: 3.1.0
+    versionCode: 20
+    commit: 3.1.0
+    subdir: android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - desktop
+      - web-app
+      - maintenance-tasks
+      - infra
+      - art
+      - spotiflyer-ios
+
+  - versionName: 3.2.1
+    versionCode: 22
+    commit: 116530cc3c6b5b89a58991aefeedd7d126bad776
+    subdir: android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    rm:
+      - desktop
+      - web-app
+      - maintenance-tasks
+      - infra
+      - art
+      - spotiflyer-ios
+
+  - versionName: 3.3.0
+    versionCode: 24
+    commit: 5cbe995ace4fa917959dd553e79caf2505b7c08f
+    subdir: android
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+      - apt-get install -y ninja-build dos2unix autoconf automake build-essential
+        libtool pkg-config yasm cmake meson nasm
+    gradle:
+      - yes
+    rm:
+      - ffmpeg/android-ffmpeg/src/main/jniLibs
+      - desktop
+      - web-app
+      - maintenance-tasks
+      - infra
+      - art
+      - spotiflyer-ios
+    build:
+      - export ANDROID_SDK_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec dos2unix {} \+
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec chmod u+x {} \+
+      - ./../ffmpeg/ffmpeg-android-maker/ffmpeg-android-maker.sh --android-api-level=21
+        -lame
+      - ./../ffmpeg/copy-ffmpeg-executables.sh
+    ndk: r21e
+
+  - versionName: 3.3.1
+    versionCode: 25
+    commit: 922e30917b1d75e3ce6a89e3361ef15ae1bbf7dd
+    subdir: android
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+      - apt-get install -y ninja-build dos2unix autoconf automake build-essential
+        libtool pkg-config yasm cmake meson nasm
+    gradle:
+      - yes
+    rm:
+      - ffmpeg/android-ffmpeg/src/main/jniLibs
+      - desktop
+      - web-app
+      - maintenance-tasks
+      - infra
+      - art
+      - spotiflyer-ios
+    build:
+      - export ANDROID_SDK_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec dos2unix {} \+
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec chmod u+x {} \+
+      - ./../ffmpeg/ffmpeg-android-maker/ffmpeg-android-maker.sh --android-api-level=21
+        -lame
+      - ./../ffmpeg/copy-ffmpeg-executables.sh
+    ndk: r21e
+
+  - versionName: 3.3.2
+    versionCode: 26
+    commit: eb7c6966d7803f62d770009f5c3b9423b5c328b4
+    subdir: android
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+      - apt-get install -y ninja-build dos2unix autoconf automake build-essential
+        libtool pkg-config yasm cmake meson nasm
+    gradle:
+      - yes
+    rm:
+      - ffmpeg/android-ffmpeg/src/main/jniLibs
+      - desktop
+      - web-app
+      - maintenance-tasks
+      - infra
+      - art
+      - spotiflyer-ios
+    build:
+      - export ANDROID_SDK_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec dos2unix {} \+
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec chmod u+x {} \+
+      - ./../ffmpeg/ffmpeg-android-maker/ffmpeg-android-maker.sh --android-api-level=21
+        -lame
+      - ./../ffmpeg/copy-ffmpeg-executables.sh
+    ndk: r21e
+
+  - versionName: 3.5.0
+    versionCode: 27
+    commit: cae4ab96f120918dde88782a35009c16da59ebba
+    subdir: android
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+      - apt-get install -y ninja-build dos2unix autoconf automake build-essential
+        libtool pkg-config yasm cmake meson nasm
+    gradle:
+      - yes
+    rm:
+      - ffmpeg/android-ffmpeg/src/main/jniLibs
+      - desktop
+      - web-app
+      - maintenance-tasks
+      - infra
+      - art
+      - spotiflyer-ios
+    build:
+      - export ANDROID_SDK_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec dos2unix {} \+
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec chmod u+x {} \+
+      - ./../ffmpeg/ffmpeg-android-maker/ffmpeg-android-maker.sh --android-api-level=21
+        -lame
+      - ./../ffmpeg/copy-ffmpeg-executables.sh
+    ndk: r21e
+
+  - versionName: 3.6.0
+    versionCode: 28
+    commit: 1b929b74493616dc6b93243f2446712a82bfb469
+    subdir: android
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+      - apt-get install -y ninja-build dos2unix autoconf automake build-essential
+        libtool pkg-config yasm cmake meson nasm
+    gradle:
+      - yes
+    rm:
+      - ffmpeg/android-ffmpeg/src/main/jniLibs
+      - desktop
+      - web-app
+      - maintenance-tasks
+      - infra
+      - art
+      - spotiflyer-ios
+    build:
+      - export ANDROID_SDK_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec dos2unix {} \+
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec chmod u+x {} \+
+      - ./../ffmpeg/ffmpeg-android-maker/ffmpeg-android-maker.sh --android-api-level=21
+        -lame
+      - ./../ffmpeg/copy-ffmpeg-executables.sh
+    ndk: r21e
+
+  - versionName: 3.6.1
+    versionCode: 29
+    commit: 04a8536241f5b47ae24b0e499ea5af1caffd0e20
+    subdir: android
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+      - apt-get install -y ninja-build dos2unix autoconf automake build-essential
+        libtool pkg-config yasm cmake meson nasm
+    gradle:
+      - yes
+    rm:
+      - ffmpeg/android-ffmpeg/src/main/jniLibs
+      - desktop
+      - web-app
+      - maintenance-tasks
+      - infra
+      - art
+      - spotiflyer-ios
+    build:
+      - export ANDROID_SDK_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec dos2unix {} \+
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec chmod u+x {} \+
+      - ./../ffmpeg/ffmpeg-android-maker/ffmpeg-android-maker.sh --android-api-level=21
+        -lame
+      - ./../ffmpeg/copy-ffmpeg-executables.sh
+    ndk: r21e
+
+  - versionName: 3.6.2
+    versionCode: 30
+    commit: 5723c6848c3f1c4665f79f1250ce3f84cad9a396
+    subdir: android
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build dos2unix autoconf automake build-essential
+        libtool pkg-config yasm cmake meson nasm
+    gradle:
+      - yes
+    rm:
+      - ffmpeg/android-ffmpeg/src/main/jniLibs
+      - desktop
+      - web-app
+      - maintenance-tasks
+      - infra
+      - art
+      - spotiflyer-ios
+    prebuild: sed -i -e '/googleapis/d' -e '/jetbrains.space/d' ../build.gradle.kts
+      ../buildSrc/build.gradle.kts
+    build:
+      - export ANDROID_SDK_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec dos2unix {} \+
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec chmod u+x {} \+
+      - ./../ffmpeg/ffmpeg-android-maker/ffmpeg-android-maker.sh --android-api-level=21
+        -lame
+      - ./../ffmpeg/copy-ffmpeg-executables.sh
+    ndk: r21e
+
+  - versionName: 3.6.3
+    versionCode: 31
+    commit: a118a4b97136f0ef69cf03e41e3e0fa65b50b4e4
+    subdir: android
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build dos2unix autoconf automake build-essential
+        libtool pkg-config yasm cmake meson nasm
+    gradle:
+      - yes
+    rm:
+      - ffmpeg/android-ffmpeg/src/main/jniLibs
+      - desktop
+      - web-app
+      - maintenance-tasks
+      - infra
+      - art
+      - spotiflyer-ios
+    prebuild: sed -i -e '/googleapis/d' -e '/jetbrains.space/d' ../build.gradle.kts
+      ../buildSrc/build.gradle.kts
+    build:
+      - export ANDROID_SDK_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec dos2unix {} \+
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec chmod u+x {} \+
+      - ./../ffmpeg/ffmpeg-android-maker/ffmpeg-android-maker.sh --android-api-level=21
+        -lame
+      - ./../ffmpeg/copy-ffmpeg-executables.sh
+    ndk: r21e
+
+  - versionName: 3.6.4
+    versionCode: 32
+    commit: e418d2ee2ca3d2838470407d748994d72008c312
+    subdir: android
+    submodules: true
+    sudo:
+      - apt-get update
+      - apt-get install -y ninja-build dos2unix autoconf automake build-essential
+        libtool pkg-config yasm cmake meson nasm
+    gradle:
+      - yes
+    rm:
+      - ffmpeg/android-ffmpeg/src/main/jniLibs
+      - desktop
+      - web-app
+      - maintenance-tasks
+      - infra
+      - art
+      - spotiflyer-ios
+    prebuild: sed -i -e '/googleapis/d' -e '/jetbrains.space/d' ../build.gradle.kts
+      ../buildSrc/build.gradle.kts
+    build:
+      - export ANDROID_SDK_HOME=$$SDK$$
+      - export ANDROID_NDK_HOME=$$NDK$$
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec dos2unix {} \+
+      - find ./../ffmpeg/ -type f -name "*.sh" -exec chmod u+x {} \+
+      - ./../ffmpeg/ffmpeg-android-maker/ffmpeg-android-maker.sh --android-api-level=21
+        -lame
+      - ./../ffmpeg/copy-ffmpeg-executables.sh
+    ndk: r21e
+
+MaintainerNotes: Contained Countly is configured opt-in
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+UpdateCheckData: 
+  buildSrc/buildSrc/src/main/kotlin/Versions.kt|versionCode\s=\s(\d+)|.|versionName\s=\s"([\d.]+)"
+CurrentVersion: 3.6.4
+CurrentVersionCode: 32

@@ -1,0 +1,182 @@
+Categories:
+  - Connectivity
+  - Multimedia
+  - System
+License: GPL-3.0-only
+AuthorName: Federico Dossena
+WebSite: https://fdossena.com/?p=openPods/index.frag
+SourceCode: https://github.com/adolfintel/OpenPods
+IssueTracker: https://github.com/adolfintel/OpenPods/issues
+Changelog: https://github.com/adolfintel/OpenPods/releases
+Donate: https://paypal.me/sineisochronic
+
+AutoName: OpenPods
+
+RepoType: git
+Repo: https://github.com/adolfintel/OpenPods.git
+
+Builds:
+  - versionName: '0.3'
+    versionCode: 3
+    commit: '0.3'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '0.4'
+    versionCode: 4
+    commit: '0.4'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '0.5'
+    versionCode: 5
+    commit: '0.5'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '0.6'
+    versionCode: 6
+    commit: '0.6'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '0.7'
+    versionCode: 7
+    commit: '0.7'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '0.8'
+    versionCode: 8
+    commit: '0.8'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '0.9'
+    versionCode: 9
+    commit: '0.9'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '0.10'
+    versionCode: 10
+    commit: '0.10'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '1.0'
+    versionCode: 11
+    commit: '1.0'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '1.2'
+    versionCode: 12
+    commit: 9450983100b361a0150df0f16565d9fdc6d3680e
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '1.3'
+    versionCode: 13
+    commit: '1.3'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '1.4'
+    versionCode: 14
+    commit: '1.4'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '1.5'
+    versionCode: 15
+    commit: '1.5'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: 1.5.1
+    versionCode: 16
+    commit: 1.5.1
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '1.6'
+    versionCode: 17
+    commit: '1.6'
+    subdir: OpenPods/app
+    gradle:
+      - yes
+
+  - versionName: '1.7'
+    versionCode: 18
+    commit: 4081e8a2e1315b8f607ca0483fda157459566fd6
+    subdir: OpenPods/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.8'
+    versionCode: 20
+    commit: feb2eac28707fbcac0c9ff93d77dee7c10854e04
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: '1.9'
+    versionCode: 21
+    commit: ee7e75b5e83f74996440cc491cbcb880da2e7dbe
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.9.1
+    versionCode: 22
+    commit: 888c6e7d0d72fb93de852c8f3d2d6818b3c4bf41
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.10'
+    versionCode: 23
+    commit: 6a00d8ce240dc38291e57423f502b1155bf7648e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.11'
+    versionCode: 24
+    commit: 9cd800875f594fa6eb7325dd33d9216c476a5782
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e 's/8.13.0/8.11.1/' ../gradle/libs.versions.toml
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.11'
+CurrentVersionCode: 24

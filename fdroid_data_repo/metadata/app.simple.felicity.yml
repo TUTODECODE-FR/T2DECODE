@@ -1,0 +1,71 @@
+Categories:
+  - Local Media Player
+License: AGPL-3.0-only
+AuthorName: Hamza Rizwan
+AuthorEmail: HamzaRizwan243@gmail.com
+SourceCode: https://github.com/Hamza417/Felicity
+IssueTracker: https://github.com/Hamza417/Felicity/issues
+Translation: https://crowdin.com/project/felicity
+Changelog: https://github.com/Hamza417/Felicity/releases
+
+RepoType: git
+Repo: https://github.com/Hamza417/Felicity.git
+Binaries: 
+  https://github.com/Hamza417/Felicity/releases/download/%v/felicity-foss-universal.apk
+
+Builds:
+  - versionName: 0.0.17_alpha
+    versionCode: 17
+    commit: eb67492b34867d2ede6a63c25a26b6c0174b2680
+    subdir: music
+    gradle:
+      - foss
+
+  - versionName: 0.0.18_alpha
+    versionCode: 18
+    commit: 988b8a854b7077da6bd0cbb68fa1ff727756bd02
+    subdir: music
+    gradle:
+      - foss
+
+  - versionName: 0.0.20_alpha
+    versionCode: 20
+    commit: 91cd07b0f7c5976c98980dc1785f78ae7bf566dd
+    subdir: music
+    gradle:
+      - foss
+
+  - versionName: 0.0.23_alpha
+    versionCode: 23
+    commit: 61582c89bafa9b2a4722fd5e06497eb8680a00f7
+    subdir: music
+    gradle:
+      - foss
+
+  - versionName: 0.0.24_alpha
+    versionCode: 24
+    commit: f851f2188ed85c11960494ed019da2dbccd0e20c
+    subdir: music
+    gradle:
+      - foss
+
+  - versionName: 0.0.25_alpha
+    versionCode: 25
+    commit: 06309b9dab51448ca929bbb0ce641af4f3bc3731
+    subdir: music
+    gradle:
+      - foss
+
+  - versionName: 0.0.26_alpha
+    versionCode: 26
+    commit: deb1e2cacfa32ab96bae248c89078f5f0053f5e6
+    subdir: music
+    gradle:
+      - foss
+
+AllowedAPKSigningKeys: 6e8ac882f40074a513ac14042425c31eb9c31cf253fc53e640fd06ec904469d9
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.0.26_alpha
+CurrentVersionCode: 26

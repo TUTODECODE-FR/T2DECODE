@@ -1,0 +1,224 @@
+Categories:
+  - Science & Education
+License: GPL-2.0-or-later
+AuthorName: Dennis Mantz
+AuthorEmail: rfanalyzerapp@gmail.com
+WebSite: https://demantz.github.io/RFAnalyzer/
+SourceCode: https://github.com/demantz/RFAnalyzer
+IssueTracker: https://github.com/demantz/RFAnalyzer/issues
+Changelog: https://github.com/demantz/RFAnalyzer/blob/HEAD/changelog.txt
+Donate: https://ko-fi.com/rfanalyzer
+Liberapay: DM4NTZ
+Bitcoin: bc1qnzuvkpxd08grw505aurw45y7rty60554kd2ja2
+
+AutoName: RF Analyzer
+
+RepoType: git
+Repo: https://github.com/demantz/RFAnalyzer
+
+Builds:
+  - versionName: '1.09'
+    versionCode: 9
+    commit: 8a3538039266312223ceaab50fd36d9beaaf546e
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - HackRF@a6e8dd3d0410dae181a00c74199970e53f21e637
+    rm:
+      - app/libs/*
+    extlibs:
+      - android/android-support-v4.jar
+    prebuild:
+      - cp libs/android-support-v4.jar $$HackRF$$/libs/
+      - pushd $$HackRF$$
+      - rm *.jar
+      - android update lib-project -p ./
+      - ant release
+      - popd
+      - cp $$HackRF$$/bin/classes.jar libs/hackrf_android.jar
+
+  - versionName: '1.10'
+    versionCode: 10
+    commit: 20e28f001fd77287ad62bb0b7b77489f2cd0d8cd
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - HackRF@0df0ddde7123cd20416e5a0978c12d0006e59e85
+    rm:
+      - app/libs/*
+    extlibs:
+      - android/android-support-v4.jar
+    prebuild:
+      - cp libs/android-support-v4.jar $$HackRF$$/libs/
+      - pushd $$HackRF$$
+      - rm *.jar
+      - android update lib-project -p ./
+      - ant release
+      - popd
+      - cp $$HackRF$$/bin/classes.jar libs/hackrf_android.jar
+
+  - versionName: '1.11'
+    versionCode: 11
+    commit: df12cdd460deac51e734ba966d8e3fa325c6487c
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - HackRF@0df0ddde7123cd20416e5a0978c12d0006e59e85
+    rm:
+      - app/libs/*
+    extlibs:
+      - android/android-support-v4.jar
+    prebuild:
+      - cp libs/android-support-v4.jar $$HackRF$$/libs/
+      - pushd $$HackRF$$
+      - rm *.jar
+      - android update lib-project -p ./
+      - ant release
+      - popd
+      - cp $$HackRF$$/bin/classes.jar libs/hackrf_android.jar
+
+  - versionName: '1.12'
+    versionCode: 12
+    commit: 7b4fa009e8015056cfbff16234c93bc0d9ff30b0
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - HackRF@1e6173137d710fc91410ca8b119f9f6200479063
+    rm:
+      - app/libs/*
+    extlibs:
+      - android/android-support-v4.jar
+    prebuild:
+      - cp libs/android-support-v4.jar $$HackRF$$/libs/
+      - pushd $$HackRF$$
+      - rm *.jar
+      - android update lib-project -p ./
+      - ant release
+      - popd
+      - cp $$HackRF$$/bin/classes.jar libs/hackrf_android.jar
+
+  - versionName: '1.13'
+    versionCode: 1303
+    commit: 8f67fb746b720f172f791c7b52d4e58412eeaf27
+    subdir: app
+    gradle:
+      - yes
+    srclibs:
+      - HackRF@8d08475da63765fcf71903b64f21d1eeafdb0017
+    prebuild: cp -fR $$HackRF$$/app ../hackrf_android
+
+  - versionName: 2.0.2
+    versionCode: 20014
+    commit: 23e9d349a5be4175ebf2ffcbe6c82cf07f3a1596
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install mkdocs mkdocs-material python3-pymdownx
+    gradle:
+      - yes
+    srclibs:
+      - HackRF@9d4fb78a4633d5a2b8022b4815515be627273739
+    prebuild:
+      - sed -i -e '/billing/d' build.gradle.kts
+      - cd src/main/java/com/mantz_it/rfanalyzer/database/
+      - sed -e '/BillingRepository(/,/^}/d' -e '/billingclient/d' BillingRepository.kt
+        > BillingRepositoryInterface.kt
+      - sed -e 's/MockedBillingRepository/BillingRepository/' MockedBillingRepository.kt
+        > BillingRepository.kt
+      - sdkmanager 'cmake;4.0.3'
+    scandelete:
+      - app/lib
+    build:
+      - pushd $$HackRF$$/app
+      - gradle assembleRelease
+      - popd
+      - mv $$HackRF$$/app/build/outputs/aar/*.aar lib/hackrf_android.aar
+
+  - versionName: 2.1.1-foss
+    versionCode: 20107
+    commit: b79e344f37a6b3dc4b006a65769ab34a0b8134d9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install mkdocs mkdocs-material python3-pymdownx
+    gradle:
+      - Foss
+    srclibs:
+      - HackRF@9d4fb78a4633d5a2b8022b4815515be627273739
+      - libusb@v1.0.29
+    prebuild:
+      - sdkmanager 'cmake;4.0.3'
+      - sed -i 's/agp = "8.13.0"/agp = "8.11.1"/' ../gradle/libs.versions.toml
+    scandelete:
+      - app/lib
+      - libusb/src/main/jniLibs
+    build:
+      - pushd $$HackRF$$/app
+      - gradle assembleRelease
+      - popd
+      - mv $$HackRF$$/app/build/outputs/aar/*.aar lib/hackrf_android.aar
+      - pushd $$libusb$$/android/jni
+      - $$NDK$$/ndk-build
+      - popd
+      - pushd ../libusb/src/main/jniLibs
+      - cp $$libusb$$/android/libs/x86/libusb1.0.so x86/
+      - cp $$libusb$$/android/libs/x86_64/libusb1.0.so x86_64/
+      - cp $$libusb$$/android/libs/arm64-v8a/libusb1.0.so arm64-v8a/
+      - cp $$libusb$$/android/libs/armeabi-v7a/libusb1.0.so armeabi-v7a/
+      - popd
+    ndk: r27
+
+  - versionName: '2.2'
+    versionCode: 20205
+    commit: 64da85182d323cb1deb08bf980901d3bf84d82d3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install mkdocs mkdocs-material python3-pymdownx
+    gradle:
+      - foss
+    srclibs:
+      - libusb@v1.0.29
+    rm:
+      - libusb/src/main/jniLibs/*
+    prebuild: sdkmanager 'cmake;4.0.3'
+    scanignore:
+      - app/src/main/assets/summits.csv.gz
+    build:
+      - pushd $$libusb$$/android/jni
+      - $$NDK$$/ndk-build
+      - popd
+      - cp -R $$libusb$$/android/libs/* ../libusb/src/main/jniLibs/
+    ndk: r27
+
+  - versionName: 2.2.1-foss
+    versionCode: 20208
+    commit: bf36c841ef7cc3ef3fbc4c5dcf4fd34a9008783c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install mkdocs mkdocs-material python3-pymdownx
+    gradle:
+      - foss
+    srclibs:
+      - libusb@v1.0.29
+    rm:
+      - libusb/src/main/jniLibs/*
+    prebuild: sdkmanager 'cmake;4.0.3'
+    scanignore:
+      - app/src/main/assets/summits.csv.gz
+    build:
+      - pushd $$libusb$$/android/jni
+      - $$NDK$$/ndk-build
+      - popd
+      - cp -R $$libusb$$/android/libs/* ../libusb/src/main/jniLibs/
+    ndk: r27
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.2.1-foss
+CurrentVersionCode: 20208

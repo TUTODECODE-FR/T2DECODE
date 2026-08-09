@@ -1,0 +1,225 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on openfoodfacts.org
+Categories:
+  - Diet
+  - Sports & Health
+License: Apache-2.0
+AuthorName: Open Food Facts
+AuthorEmail: mobile@openfoodfacts.org
+AuthorWebSite: https://world.openfoodfacts.org/
+WebSite: https://world.openpetfoodfacts.org/
+SourceCode: https://github.com/openfoodfacts/openfoodfacts-androidapp
+IssueTracker: https://github.com/openfoodfacts/openfoodfacts-androidapp/issues
+Translation: https://translate.openfoodfacts.org/
+Changelog: https://github.com/openfoodfacts/openfoodfacts-androidapp/releases
+
+Name: Open Pet Food Facts
+AutoName: Open PetFood Facts
+Description: |-
+  Scan pet food products or their barcode to obtain data on ingredients, additives
+  and nutrition facts.
+
+  The app allows to view the over 10.000 pet products already contained in the free
+  and open database Open Pet Food Facts, and also to add pictures and data for
+  missing products.
+
+  To discover the Open Pet Food Facts project, please visit
+  <a href="https://openpetfoodfacts.org">https://openpetfoodfacts.org</a>.
+
+  You will also be able to find (according to the indications present on the
+  products): - PetScore (nutritional score for our 2, 4 and 6 legged Friends),
+  nutritional info… - brands, allergens (catnip), labels (bio, fish free fish
+  food...)
+
+  Also, Open Pet Food Facts will soon replace Open Food Facts, with Dog, Cat, Bird
+  or Fish domination.
+
+  1 dog product uploaded as open data = 1 dog vote  Cats currently lead the game.
+
+RepoType: git
+Repo: https://github.com/openfoodfacts/openfoodfacts-androidapp
+
+Builds:
+  - versionName: 0.7.4
+    versionCode: 37
+    commit: f3ec64f9b0c29e46ec7cc73f537182640b5c4713
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 0.9.0.1
+    versionCode: 51
+    commit: 0.9.0.1
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 0.9.0.2
+    versionCode: 52
+    commit: 0.9.0.2
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 0.9.0.3
+    versionCode: 53
+    commit: 0.9.0.3
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 2.7.7
+    versionCode: 277
+    commit: 2.7.7
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 2.8.2
+    versionCode: 282
+    commit: 2.8.2
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 2.8.5
+    versionCode: 285
+    commit: 2.8.5
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 2.8.7
+    versionCode: 287
+    commit: 2.8.7
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 2.8.8
+    versionCode: 288
+    commit: 2.8.9
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 2.9.0
+    versionCode: 290
+    commit: 2.9.0
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 2.9.7
+    versionCode: 297
+    commit: 2.9.7
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 2.9.8
+    versionCode: 298
+    commit: 2.9.8
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 3.1.0
+    versionCode: 310
+    commit: 3.1.0
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 3.1.2
+    versionCode: 312
+    commit: 3.1.2
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 3.1.6
+    versionCode: 316
+    commit: 3.1.6
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 3.1.7
+    versionCode: 317
+    commit: 3.1.7
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 3.2.2
+    versionCode: 322
+    commit: 3.2.2
+    subdir: app
+    init: sed -i '/javaMaxHeapSize/d' build.gradle
+    gradle:
+      - opff
+
+  - versionName: 3.2.5
+    versionCode: 325
+    commit: 3.2.5
+    subdir: app
+    gradle:
+      - opff
+    prebuild:
+      - sed -i 's/\r$//' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i '/javaMaxHeapSize/d' build.gradle
+
+  - versionName: 3.2.8
+    versionCode: 328
+    commit: 3.2.8
+    subdir: app
+    gradle:
+      - opff
+    prebuild:
+      - sed -i 's/\r$//' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i '/javaMaxHeapSize/d' build.gradle
+
+  - versionName: 3.6.8
+    versionCode: 433
+    commit: 3.6.8
+    subdir: app
+    gradle:
+      - opff
+    prebuild:
+      - sed -i 's/\r$//' ../gradle/wrapper/gradle-wrapper.properties
+      - sed -i '/sentry-android-gradle-plugin/d' ../build.gradle.kts
+      - sed -i -e '/javaMaxHeapSize/d' -e '/io.sentry.android.gradle/d' build.gradle.kts
+    antifeatures:
+      - Tracking
+
+  - versionName: 3.9.0
+    versionCode: 582
+    commit: 2631e24482df81d512a7cf283f55a517f8b695ad
+    subdir: app
+    gradle:
+      - opffFdroid
+    prebuild: sed -i -e '/play:core/d' -e '/libs.barcode.scanning/d' build.gradle.kts
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: app/build.gradle.kts|versionCode = (\d+)|.|versionName = "(.*)"
+CurrentVersion: 3.9.0
+CurrentVersionCode: 582

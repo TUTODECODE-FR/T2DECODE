@@ -1,0 +1,45 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Depends on Reddit.
+Categories:
+  - Forum
+  - Internet
+License: Apache-2.0
+AuthorName: BM Software
+WebSite: https://github.com/btmura/rbb/wiki
+SourceCode: https://github.com/btmura/rbb
+IssueTracker: https://github.com/btmura/rbb/issues
+
+AutoName: falling for reddit
+Description: |-
+  Reddit by Brian (rbb) is a fast and simple Reddit client for Android.
+
+  * Browse and search with optimized layouts for all sizes whether 4", 7", or 10"
+  * Login with multiple accounts to post, comment, message, and vote
+  * Swipe horizontally to quickly switch between links and comments
+  * Touch comments to expand and collapse them
+  * Enjoy a clean Holo experience and switch between light and dark themes
+
+RepoType: git
+Repo: https://github.com/btmura/rbb.git
+
+Builds:
+  - versionName: '3.4'
+    versionCode: 11
+    commit: v3.4-foss
+    target: android-18
+
+  - versionName: '3.5'
+    versionCode: 12
+    commit: v3.5-foss
+    target: android-18
+
+MaintainerNotes: |-
+  There's a separate FOSS branch, which doesn't include the proprietary YouTube
+  API blob. (<a href="https://github.com/btmura/rbb/issues/286">related issue</a>)
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: '3.5'
+CurrentVersionCode: 12

@@ -1,0 +1,93 @@
+Categories:
+  - Cast
+  - Remote Controller
+License: GPL-3.0-only
+AuthorName: Lukas Scheerer
+AuthorEmail: lukasscheerer89@gmail.com
+SourceCode: https://github.com/scovillo/playondlna
+IssueTracker: https://github.com/scovillo/playondlna/issues
+Donate: https://paypal.me/muemmelmaus
+
+AutoName: PlayOnDlna
+
+RepoType: git
+Repo: https://github.com/scovillo/playondlna
+Binaries: https://github.com/scovillo/playondlna/releases/download/%v/play-on-dlna-%v.apk
+
+Builds:
+  - versionName: '1.1'
+    versionCode: 2
+    commit: 14eb19a428cbf482179a76506f6f711d0ace0882
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.2'
+    versionCode: 3
+    commit: 81a33cda1f569e45faa31eb00a270059c3dd126f
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.3'
+    versionCode: 4
+    commit: 69ac1d7d7127fc3dc459105a3fd96caf4766a27f
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.4'
+    versionCode: 5
+    commit: dbdb6cf3794013e7c9d993cae29bbf72b9640fbf
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.5'
+    versionCode: 6
+    commit: a408922a78240834400a4288943748ef48ad28ed
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.6'
+    versionCode: 7
+    commit: dc8a2f9bf7151c4a4e0d03d320e1a41468bfb8eb
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.8'
+    versionCode: 9
+    commit: bb5f389a073f60965651c084a6dc8878f13398aa
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.9'
+    versionCode: 10
+    commit: 9fb63f00aadc6d04723ff71b5eb63df1ae3c0625
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.10'
+    versionCode: 11
+    commit: b4c17b5a2ffa8abcf30552ffd983d5b5e3815a62
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.11'
+    versionCode: 12
+    commit: 4a154ce1c52fd189ff0c1c2d409973f5e702412e
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: 71252a30bddb0eb532f35afb07866083ded0c1a1880122331ddda42a8867ceb9
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.11'
+CurrentVersionCode: 12

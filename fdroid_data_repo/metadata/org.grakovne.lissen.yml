@@ -1,0 +1,1526 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Rely on https://acrarium.grakovne.org/
+  Tracking:
+    en-US: Sends Analytics to https://acrarium.grakovne.org/
+Categories:
+  - Multimedia
+License: MIT
+AuthorName: Max Grakov
+AuthorEmail: grakovne@gmail.com
+SourceCode: https://github.com/GrakovNe/lissen-android/
+IssueTracker: https://github.com/GrakovNe/lissen-android/issues
+Changelog: https://github.com/GrakovNe/lissen-android/releases
+
+AutoName: Lissen
+
+RepoType: git
+Repo: https://github.com/GrakovNe/lissen-android/
+
+Builds:
+  - versionName: 1.0.8
+    versionCode: 9
+    commit: 240eb64969ba86f16516b4b92bd4bf72ea6b5632
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.18
+    versionCode: 19
+    commit: c1b94513d507e7b37ef674c3eed84ff0ebfcf1ca
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.20
+    versionCode: 21
+    commit: 8a70bb2f22f7f54e6ece4769417528e981b5d0f9
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.21
+    versionCode: 22
+    commit: bea87f2a5258b3d123a73c207a278ccace4c9710
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.24
+    versionCode: 25
+    commit: aa81886c75823e47731d2dfba8e38e1947b0de4c
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.25
+    versionCode: 26
+    commit: 0301659dc599042e7cb17b040497849a1bad88b0
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.0.28
+    versionCode: 29
+    commit: 194c0ef09403467df07f00ed7086409f72308641
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.0
+    versionCode: 30
+    commit: 29db899271de4dba4aa2b42de479a018c10fb008
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.1
+    versionCode: 31
+    commit: 5b911835ecc64aaa08dfe9f5134643abf6497e27
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.3
+    versionCode: 33
+    commit: 89d533df413bc19d5678989e87f010ab9cead6dd
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.5
+    versionCode: 35
+    commit: 5aab0510ffbe0cd1578c63f57aface10866b2126
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.7
+    versionCode: 38
+    commit: 6e63a81ef8985cbeaedb38ea93f54fb7450e9c72
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.8
+    versionCode: 39
+    commit: ea9f33c11e0a2bac913d2e706a4d2ca13f75c1b5
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.9
+    versionCode: 40
+    commit: b7ceddd9135531c9f8a63e96591416bc707e258c
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.12
+    versionCode: 43
+    commit: c322b559646f3efb86178ecbadfd1d516289a1e3
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.13
+    versionCode: 44
+    commit: b63163ee004e17c4e7fc6458d224938261071516
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.17
+    versionCode: 48
+    commit: ace4b34397baf781015a93a0a6ff192d9f899de0
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.18
+    versionCode: 49
+    commit: 4f075849df4b3a3e747df6193a4c0a26055b7d87
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.19
+    versionCode: 50
+    commit: 80cd3949a4a406248097638b3563065c19ff9419
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.22
+    versionCode: 53
+    commit: 11de64f233151e5299c0710d9672bf1fe1b893ab
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.1.26
+    versionCode: 57
+    commit: 413108126df2c02251cca1e95e70d505c3035d62
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.0
+    versionCode: 61
+    commit: 82da1d54f6b7ceb06d9a9c54afe11f97f54ad8ab
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.1
+    versionCode: 62
+    commit: b94349d3886c3ba68560e39d07efeeab3432d2b5
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.2
+    versionCode: 63
+    commit: 2d071b4034aaaf51472428137dc8be096688b49c
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.3
+    versionCode: 64
+    commit: 42312d539e5ca73c0312960025615ef46a5ba7e5
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.5
+    versionCode: 66
+    commit: 68d8955c287fee25b71092ae418076b9056d9f8e
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.8
+    versionCode: 69
+    commit: bcc9774385d42d7b9ba9a1dc05a82ca0dfc178da
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.10
+    versionCode: 71
+    commit: 72570324da2b19492824739f1c7c99c7d200a2fc
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.12
+    versionCode: 73
+    commit: f38d9012eebc349447fb45b9f5344455273e007f
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.14
+    versionCode: 75
+    commit: ca73ef63a3905e8126c702447f50482fb0f8d9df
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.15
+    versionCode: 76
+    commit: f0077fba08399d7082d54bb02fe3041b97b42cc2
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.3.2
+    versionCode: 80
+    commit: eda4b7ee90c63f085ea6d7dc5c5a34ce297c5be8
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.3.3
+    versionCode: 81
+    commit: 986852f016cf4647683a0b10617ab38946e8951c
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.3.4
+    versionCode: 82
+    commit: a155889d627ed6480eac99e840f0fe6832df570c
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.3.8
+    versionCode: 86
+    commit: 62bc226f29909b2a33522c2a3845d3a1ad793084
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.3.13
+    versionCode: 91
+    commit: ce0e3d751a4073969472a33a745887a8492e2e85
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.3.19
+    versionCode: 97
+    commit: 649e7c71acef9284a5f6df339bdeee299b5f293e
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.3.25
+    versionCode: 103
+    commit: 855ca1307423d471617c1168ff6210dc0ddf8f93
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.12
+    versionCode: 10412
+    commit: 2422594d7ca1827f62b0d6c40df7a31c68f7a240
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.13
+    versionCode: 10413
+    commit: 91751fee40291470f4b5dcfaf72add68426e62ae
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.15
+    versionCode: 10415
+    commit: c393190d146acd68b7dea73ed459bd5422c624b9
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.18
+    versionCode: 10418
+    commit: 1a7fe4fb1db1c34c575d05d2c9ff53c2f944e7a5
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.21
+    versionCode: 10421
+    commit: 07527a67d8ba09ab4cf86d63005da9f94d3c5444
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.23
+    versionCode: 10423
+    commit: 480c451026bf2e64201864b418209666a6a99558
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.24
+    versionCode: 10424
+    commit: a6eb3f88e3e1291293783cfa895a61e20267e0dc
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.4.27
+    versionCode: 10427
+    commit: 74cc98104509b5acb621a653e21382e96c7400b9
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.5.0
+    versionCode: 10500
+    commit: 7eebd70fef1cf0dc693f048aa78d994fe332104b
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.5.1
+    versionCode: 10501
+    commit: e1191a72b7f6c88ea31e085aa9f6d4cd55d884e9
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.5.2
+    versionCode: 10502
+    commit: a6d9b45f16417631f10dcd74f1db9ea0560f1ea1
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.5.3
+    versionCode: 10503
+    commit: 4a8f652b34212ac4acb418fef7d5f6e1b9e7e51c
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.5.4
+    versionCode: 10504
+    commit: 7242ba6ddec7311c560b70788ec474d91d19fe7a
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.5.6
+    versionCode: 10506
+    commit: 251468b5f379e74a1eeb7f6c24e8e54c11a709d1
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.5.7
+    versionCode: 10507
+    commit: ae4111f20ae477933653ce1596d5093b74838cee
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 10600
+    commit: 219f736b21de060bb88e84893fc675576d566734
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.5
+    versionCode: 10605
+    commit: 44ade871701293bf4fae62092408d2d0706bc67d
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.6
+    versionCode: 10606
+    commit: dceb5e63fcb3ad2894aa63fab7e81fbfd45f89f0
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.8
+    versionCode: 10608
+    commit: 321ec91dd5e518dae83837c66c52e954e91a9c5f
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.12
+    versionCode: 10612
+    commit: a30011d9ea398279d77730e74e69921baa9cff37
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.14
+    versionCode: 10614
+    commit: 97967279cdd19d457c4147d3e5bbf492ef47b26d
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.16
+    versionCode: 10616
+    commit: 8b794ee096e2fba970f169cd7d1afe66ca031bcb
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.17
+    versionCode: 10617
+    commit: 1942e4f344ebc5fd4daf393e5f80147da25837b6
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.18
+    versionCode: 10618
+    commit: ce888037335e0f9bb6b73f1df572486fb14c1434
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.20
+    versionCode: 10620
+    commit: 7d1a2d9badb244f264b357c07cf90f91845cb7ef
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.21
+    versionCode: 10621
+    commit: d94d36006cfea95338b108facdbe5c9a10a2444a
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.22
+    versionCode: 10622
+    commit: 053ce46a5c40e54c8594661a35a69c17f0a0cf0e
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.23
+    versionCode: 10623
+    commit: c82b043b9cc074a913b15844a7cf9e1e7532f6d8
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.6.24
+    versionCode: 10624
+    commit: 089136e579761a89555b3d0b99204383ae050a4d
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.7.0
+    versionCode: 10700
+    commit: e8ab6731fa7f80c51f1312b6be05f5c522c40c3c
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.7.2
+    versionCode: 10702
+    commit: db5f6451b29dc100bc3cc515a9d8f9a598183ae6
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.7.3
+    versionCode: 10703
+    commit: 064f11fc3cb09cd3d259f541ea6659e2beb3e501
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.7.4
+    versionCode: 10704
+    commit: 9a117e497d5d52f3f13f8a09564ae562b00f33ea
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.7.5
+    versionCode: 10705
+    commit: 0ba4b04feac58f0c1b7a4948523587fff91516a5
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.7.9
+    versionCode: 10709
+    commit: 5c2dfbabdc20a03dc92005f4f38d28e2456154cf
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.7.10
+    versionCode: 10710
+    commit: 1e54e120a9f76b5a7b663d0321dfa91397539395
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.7.11
+    versionCode: 10711
+    commit: 94099e41b925f5dfa96aff676a6eb189195d78dc
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.7.12
+    versionCode: 10712
+    commit: fbac1ecfc71eec111235f7efbbc87f74ba071d94
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.7.13
+    versionCode: 10713
+    commit: 07361c1ef5627d6f0297181fb6226f618a541829
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.7.14
+    versionCode: 10714
+    commit: d7f9f6e9af79bcee7c0b5187b2074ed45aba0a21
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.8.0
+    versionCode: 10800
+    commit: 104bab71fad7a8902a7766386e97cc73d3432138
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.8.2
+    versionCode: 10802
+    commit: 27d78597afc54e744ac9b34abebe1e7d11bf46e6
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.8.3
+    versionCode: 10803
+    commit: 5c13f32bf0dc6bb7f4323fc2d2b37c2fa4c8e8ea
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.8.5
+    versionCode: 10805
+    commit: f296d368ca69ed3c95224934ebbe28117fdd8b47
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.8.6
+    versionCode: 10806
+    commit: a9dba66251e34c89262df88ed0169b8ec7ea07b6
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.8.8
+    versionCode: 10808
+    commit: 84ba30a28caa92259b992b365104db9c12143439
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.8.9
+    versionCode: 10809
+    commit: b3f4255291c63bf2d2f979ecc4cef6af61ee9520
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.8.10
+    versionCode: 10810
+    commit: c151e24796ea85be1229a93bfdefa2603e54681e
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+
+  - versionName: 1.8.11
+    versionCode: 10811
+    commit: ffdcdc0b40ebe4ca7d37d6ccab9eb77bfbe5a8dc
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.8.13
+    versionCode: 10813
+    commit: 5bcaabb5dd532cbf7aeb9b15fc4ef4366f50fd8d
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.8.14
+    versionCode: 10814
+    commit: 663d965f0e4c599f0c4dfc91309bbdf927e77670
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.8.15
+    versionCode: 10815
+    commit: caa49ff58ccf88790c547a1b6e3c4b4211b35da0
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.8.16
+    versionCode: 10816
+    commit: 0b985e7c5d27f763d3fdecaa44c292537da8031c
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.8.17
+    versionCode: 10817
+    commit: 936a53772662a21eb9749087950f28aedce97807
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.8.18
+    versionCode: 10818
+    commit: aa291f07858bc2c1db3137dc1c11290e47b0b24c
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.8.19
+    versionCode: 10819
+    commit: 6ce2c472901e03a395451ae10be14b49a0ddb32a
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.8.20
+    versionCode: 10820
+    commit: fdd3fd8874f97303536e21e2f8eca3bcebfd654d
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.0
+    versionCode: 10900
+    commit: 84e4bf81b99e429258d183aa828f9e4f53572657
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.1
+    versionCode: 10901
+    commit: 36bbc45afaa0b1d772903945cad9ba9527f217ad
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.2
+    versionCode: 10902
+    commit: b38a0f28307cb6755862eb2f07c92e49dde015a6
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.3
+    versionCode: 10903
+    commit: 84fa34d903562a959ab67c7404e6fd5d3edcba9c
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.4
+    versionCode: 10904
+    commit: f433a01fa3bb57940190596ad93d8f4d22cc3886
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.6
+    versionCode: 10906
+    commit: 27c2b6fc09e275831c9e7a4a22b0d5b5c6f74e50
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.7
+    versionCode: 10907
+    commit: de3a01bba0239c13919cb863791adf64c7383c59
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.8
+    versionCode: 10908
+    commit: 31c7e92700b717022a7f24320dc3d61e14456ed2
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.9
+    versionCode: 10909
+    commit: dcc21850b4f67ab4127d3c3fa9717df66d82c70e
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.10
+    versionCode: 10910
+    commit: 141abb2c6975d1841224c639dc9b2f83f3d15567
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.11
+    versionCode: 10911
+    commit: 2eaeeb812def80f26f100baf007edff2dae747b0
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.12
+    versionCode: 10912
+    commit: f4efa25a401a954b223679600d92270872239908
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.13
+    versionCode: 10913
+    commit: e655b2c9f3887710a1c4efbbc33d0a5b623f19bc
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.14
+    versionCode: 10914
+    commit: 96f14cab36ba3c661070dd30dc3e0e8960537802
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.15
+    versionCode: 10915
+    commit: 6e36f520ef1a60125c8f5a469b6d3f7de2b89d45
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.16
+    versionCode: 10916
+    commit: c5aca16ed1f983d48bb60c4f6fbc00d9205ebcf6
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.18
+    versionCode: 10918
+    commit: ded4af3c55903fe0e2719a620652c133293d31b8
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.9.21
+    versionCode: 10921
+    commit: da3729c9d711155cd5b8fd7c065f1fa0ff1f8e75
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.0
+    versionCode: 11000
+    commit: d0c33f5bb35dffdc738f00abac0e1915c419dd21
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.1
+    versionCode: 11001
+    commit: 0d6d3d0549868d8b4f4e3df18c13baee3a601e61
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.2
+    versionCode: 11002
+    commit: f98adedd26c44be1cdbcc93fd3ebcf9437a414ea
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.3
+    versionCode: 11003
+    commit: 74a793ba21531d4e8e848fe7cd1e8cb05dadea90
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.9
+    versionCode: 11009
+    commit: 23dc2560b1d86e0f1b4d6ad2b3fa11251acc0c24
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.10
+    versionCode: 11010
+    commit: c5991d7d7336c877639636402d86c6567857a152
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.11
+    versionCode: 11011
+    commit: 3a71db137c14dc39ec229f0293a5f20961c86233
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.14
+    versionCode: 11014
+    commit: e0819839d91d2489727e07ae4d7f7e46b26f746b
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.15
+    versionCode: 11015
+    commit: a16360b114719de82732bd0f8048cb4cde5d4c0f
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.16
+    versionCode: 11016
+    commit: 7625d19907d00a6d2ecfff2abd9c1a53092a1433
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.17
+    versionCode: 11017
+    commit: 248ed7d30a612d812ff265901483835118d14919
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.18
+    versionCode: 11018
+    commit: 45c559437d8a0c231cbd1a9319957aedd0ecc53b
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.22
+    versionCode: 11022
+    commit: d32d8a1971b778e9da69bf52de492ca03bc08580
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.10.25
+    versionCode: 11025
+    commit: 0ab9ff737843fc11c1b4bc98ff82657d71ed229e
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.11.1
+    versionCode: 11101
+    commit: ccbb08fd21a6c656ebf38676dfbb1aee0b8364e9
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.11.3
+    versionCode: 11103
+    commit: c022d13f5ae0a56bf5eb8673fedb7885b52665cb
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.11.4
+    versionCode: 11104
+    commit: 51100d93ba3fd0484d5f905bb3c892184fdfa48d
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.11.7
+    versionCode: 11107
+    commit: b9a432a2d00330fc951afece411120d8ee1808e2
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.11.8
+    versionCode: 11108
+    commit: c93d0c013f25422b4ebd1fa613a5b146703ec79f
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.11.10
+    versionCode: 11110
+    commit: 7ff1d210edb3946547facecc42b9a0bce65446aa
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 1.11.11
+    versionCode: 11111
+    commit: 32514676fb99a15831a652fc4fa9c0884edf10f2
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/versionName/s/-$commitHash//' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: app/build.gradle.kts|versionCode = (\d+)|.|versionName = "([\d.]+)-
+CurrentVersion: 1.11.11
+CurrentVersionCode: 11111

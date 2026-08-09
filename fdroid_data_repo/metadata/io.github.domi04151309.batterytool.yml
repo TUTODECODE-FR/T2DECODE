@@ -1,0 +1,58 @@
+Categories:
+  - System
+License: GPL-3.0-only
+AuthorName: Dominik
+AuthorWebSite: https://domi04151309.github.io/
+WebSite: https://domi04151309.github.io/Android/BatteryTool
+SourceCode: https://github.com/Domi04151309/BatteryTool
+IssueTracker: https://github.com/Domi04151309/BatteryTool/issues
+Changelog: https://github.com/Domi04151309/BatteryTool/releases
+
+AutoName: Battery Tool
+
+RequiresRoot: true
+
+RepoType: git
+Repo: https://github.com/Domi04151309/BatteryTool
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 100
+    commit: 1.0.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.0.1
+    versionCode: 101
+    commit: 53c979ef4125ff237fddc8e7ff6a9eac33db440b
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.1.1
+    versionCode: 111
+    commit: d59e1ee5dc35a715461d54c7e91ab57167dc5cbd
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 1.2.0
+    versionCode: 120
+    commit: 8402725bfa0324aedce1c8e319f7c8a210ca8695
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.2.0
+CurrentVersionCode: 120

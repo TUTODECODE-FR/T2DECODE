@@ -1,0 +1,68 @@
+Categories:
+  - Multimedia
+License: GPL-3.0-or-later
+AuthorName: SECUSO - Security Usability Society
+AuthorEmail: pfa@secuso.org
+AuthorWebSite: https://secuso.aifb.kit.edu/english/105.php
+WebSite: https://secuso.aifb.kit.edu/english/Tape_Measure_and_Ruler.php
+SourceCode: https://github.com/SecUSo/privacy-friendly-tape-measure
+IssueTracker: https://github.com/SecUSo/privacy-friendly-tape-measure/issues
+
+AutoName: Tape Measure
+
+RepoType: git
+Repo: https://github.com/SecUSo/privacy-friendly-tape-measure.git
+
+Builds:
+  - versionName: 1.0.2
+    versionCode: 2
+    commit: v1.0.2
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo 'buildscript { repositories { google() } }' >> ../build.gradle
+
+  - versionName: 1.0.3
+    versionCode: 3
+    commit: v1.0.3
+    subdir: app
+    gradle:
+      - yes
+    prebuild: echo 'buildscript { repositories { google() } }' >> ../build.gradle
+
+  - versionName: '1.1'
+    versionCode: 4
+    commit: d0206f4377730a2ac8960b4215f0fd010021f0c5
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 1.1.1
+    versionCode: 5
+    commit: f5ca8d244aac500a405d6be973d2ca9a5cf04530
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 1.1.2
+    versionCode: 6
+    commit: db5025e085c53f76b28411772fe50ae69844ba07
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+  - versionName: 1.1.3
+    versionCode: 100
+    commit: 8eb8cc2faf02ae8ccb3a3df0d7e5d5b9a5b2c871
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.1.3
+CurrentVersionCode: 100

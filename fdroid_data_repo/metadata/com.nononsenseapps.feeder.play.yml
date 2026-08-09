@@ -1,0 +1,156 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: Connects to news.nononsenseapps.com on start
+Categories:
+  - Internet
+  - News
+  - Reading
+License: GPL-3.0-only
+AuthorName: Space Cowboy
+WebSite: https://news.nononsenseapps.com/
+SourceCode: https://github.com/spacecowboy/Feeder
+IssueTracker: https://github.com/spacecowboy/Feeder/issues
+Translation: https://hosted.weblate.org/projects/feeder/
+Changelog: https://github.com/spacecowboy/Feeder/blob/HEAD/CHANGELOG.md
+Donate: https://ko-fi.com/spacecowboy
+Bitcoin: 1PdmeeGxB2iktvmtkGqwUNmYq7L9tnxjwE
+
+Name: Feeder (Play version)
+AutoName: Feeder
+
+RepoType: git
+Repo: https://github.com/spacecowboy/Feeder.git
+Binaries: https://github.com/spacecowboy/Feeder/releases/download/%v/app-play-release.apk
+
+Builds:
+  - versionName: 2.13.0
+    versionCode: 3764
+    commit: 16d45edd8e372879a124014fdc84f9e0db40be01
+    subdir: app
+    gradle:
+      - play
+    rm:
+      - graphics
+      - app/libs
+
+  - versionName: 2.15.0
+    versionCode: 3806
+    commit: 6860f3b23f62af12efa23c028dfe9f0ef0ae68fd
+    subdir: app
+    gradle:
+      - play
+    rm:
+      - graphics
+      - app/libs
+
+  - versionName: 2.15.1
+    versionCode: 3813
+    commit: 410034f83ce35125dbb008de390f922fb2a4ca5b
+    subdir: app
+    gradle:
+      - play
+    rm:
+      - graphics
+      - app/libs
+
+  - versionName: 2.16.0
+    versionCode: 3842
+    commit: 5c4e2c11e90d7ef8eb3177c0d76bffe1656bd2df
+    subdir: app
+    gradle:
+      - play
+    rm:
+      - graphics
+      - app/libs
+
+  - versionName: 2.16.1
+    versionCode: 3858
+    commit: 748fd57163d3aa17973b1f5926e7bb774ed39119
+    subdir: app
+    gradle:
+      - play
+    rm:
+      - graphics
+      - app/libs
+
+  - versionName: 2.17.0
+    versionCode: 3885
+    commit: 13edff5ff9ce2832d914c1a1bc6271aaa12e1850
+    subdir: app
+    gradle:
+      - play
+    rm:
+      - graphics
+      - app/libs
+
+  - versionName: 2.18.0
+    versionCode: 3922
+    commit: b3df49f680d6a3b14c22f14b798cbfc29d49a308
+    subdir: app
+    gradle:
+      - play
+    rm:
+      - graphics
+      - app/libs
+
+  - versionName: 2.19.0-2
+    versionCode: 3970
+    commit: 168873fdefbb26e50d72d77149b075746fab076c
+    subdir: app
+    gradle:
+      - play
+    rm:
+      - graphics
+      - app/libs
+    ndk: r28c
+
+  - versionName: 2.20.0
+    versionCode: 3978
+    commit: df146fa09d3dce799cbfb72f5080bffe6f4c2672
+    subdir: app
+    gradle:
+      - play
+    rm:
+      - graphics
+      - app/libs
+    ndk: r28c
+
+  - versionName: 2.21.0
+    versionCode: 4018
+    commit: b489a2759efd9375c25a0e2a417eba5941cb5084
+    subdir: app
+    gradle:
+      - play
+    rm:
+      - graphics
+      - app/libs
+    ndk: r28c
+
+  - versionName: 2.21.1
+    versionCode: 4025
+    commit: bd809cae85ac36e15fc7d1fdd076885077f3f3d5
+    subdir: app
+    gradle:
+      - play
+    rm:
+      - graphics
+      - app/libs
+    ndk: r28c
+
+  - versionName: 2.21.2
+    versionCode: 4040
+    commit: 091ca126272dfd6de4535bf508e4c73adec6e274
+    subdir: app
+    gradle:
+      - play
+    rm:
+      - graphics
+      - app/libs
+    ndk: r28c
+
+AllowedAPKSigningKeys: c5eeff22488135ffc2583c3a43b053a161ca869862961ab8534f44c75fd57d97
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 2.21.2
+CurrentVersionCode: 4040

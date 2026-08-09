@@ -1,0 +1,35 @@
+Categories:
+  - Security
+License: GPL-3.0-only
+WebSite: https://github.com/yolosec/routerkeygenAndroid/wiki
+SourceCode: https://github.com/yolosec/routerkeygenAndroid
+IssueTracker: https://github.com/yolosec/routerkeygenAndroid/issues
+
+Description: |-
+  This application scans all WiFi networks in the range for known vulnerabilities
+  in default WiFi password. For selected vulnerable network it computes several
+  possible passwords and enables to test them all.
+
+  Application enables to save computed passwords to a file or load configuration
+  files for some vulnerabilities (not related to UPC). For this app needs access
+  to storage.
+
+RepoType: git
+Repo: https://github.com/yolosec/routerkeygenAndroid.git
+
+Builds:
+  - versionName: 4.2.0
+    versionCode: 80
+    commit: 6d1e07f314f60b51891a91a79459a2ab16c3120f
+    subdir: android/routerKeygen
+    gradle:
+      - noGapps
+    prebuild: sed -i -e '/com.google.android.gms/,/})/d' build.gradle
+    scanignore:
+      - android/routerKeygen/src/main/res/raw/*.zip
+    ndk: r21e
+
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 4.2.0
+CurrentVersionCode: 80

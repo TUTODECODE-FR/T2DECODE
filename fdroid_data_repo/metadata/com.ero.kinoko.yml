@@ -1,0 +1,523 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: App relies on Github.
+Categories:
+  - Ebook Reader
+  - Graphics
+  - Reading
+License: MIT
+SourceCode: https://github.com/gsioteam/kinoko
+IssueTracker: https://github.com/gsioteam/kinoko/issues
+
+AutoName: Kinoko
+
+RepoType: git
+Repo: https://github.com/gsioteam/kinoko.git
+
+Builds:
+  - versionName: 2.0.2
+    versionCode: 44
+    commit: v2.0.2
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.0.5
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r21e
+
+  - versionName: 2.0.3
+    versionCode: 45
+    commit: 16d4e6e17b27f4d7a684998850a1b322d4ac1ded
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.0.5
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r21e
+
+  - versionName: 2.0.4
+    versionCode: 46
+    commit: cd0746643e82152214f1012172ec6a89f8498de6
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r21e
+
+  - versionName: 2.1.0
+    versionCode: 47
+    commit: 1687de956c3da646236700ab4580b719940eb59a
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r21e
+
+  - versionName: 3.0.0
+    versionCode: 52
+    commit: 344062dbc77bc2cfe1e31ceb36bba160e07113bf
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r21e
+
+  - versionName: 3.0.1
+    versionCode: 53
+    commit: 1c7696adad6c8d2aea54098d089594c2038b5cd6
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r21e
+
+  - versionName: 3.0.2
+    versionCode: 54
+    commit: f4c6362b2c8646175765c4474aa36fa4a9f0f6ee
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r21e
+
+  - versionName: 3.0.3
+    versionCode: 55
+    commit: ba9b4a0d25c4eeb6e225284f1b3301524dae76bf
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r21e
+
+  - versionName: 3.0.4
+    versionCode: 56
+    commit: fa7e90e49fb88f492570e77a13e77e8e7b34b32b
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r21e
+
+  - versionName: 3.0.5
+    versionCode: 57
+    commit: 540e83e09b9f0b889054bf50047ff7f7c59728de
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r21e
+
+  - versionName: 4.0.4
+    versionCode: 70
+    commit: a96c727f4a3e10e26fbc78368117df59a8c7c28e
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.0.5
+    versionCode: 71
+    commit: 8f9b40f5064d636bb5a23c50f51fd741dd55e100
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.0.6
+    versionCode: 72
+    commit: e71f51af2d716250c2b1808e17b5d9b796438291
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.0.7
+    versionCode: 73
+    commit: e116c1c1da467bf8546915085ed20f079acf66b0
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.1.0
+    versionCode: 75
+    commit: cd953759b6f5c1f0ecfcebcd82e5e691186664ca
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.1.1
+    versionCode: 77
+    commit: ad5f1e32e252b9def9915b8c37287e282cb6c5ee
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.1.2
+    versionCode: 78
+    commit: 5bc03a918cc21ae2d2e71de6847b83d4e8718630
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.1.3
+    versionCode: 79
+    commit: 99f971fa804213d562bacb266c5bb1f3979ff3ea
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.1.4
+    versionCode: 80
+    commit: 88b6e0d54de663eaa187272760d7cc7b017c79ca
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.1.6
+    versionCode: 82
+    commit: 1d4af2d4d5d1a71b612a4c2bd0f48ede01d51b51
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.2.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.2.1
+    versionCode: 85
+    commit: abb66d08f54e29de00e4d65280b6e76c9904cca9
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.1
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.2.2
+    versionCode: 86
+    commit: b5be2ba2e44a2e6a2d4713903182f8e03097c9a3
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.1
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.2.3
+    versionCode: 87
+    commit: d23f593cc84ef38e9b061775d7a69ff71861ccbb
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.1
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.2.5
+    versionCode: 89
+    commit: 52a7e90c059e042c39a3c96c24b74c6e8d238c4a
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.1
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.3.0
+    versionCode: 91
+    commit: 6728a804184c96c12711580b3a3e8068984755bb
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.1
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.3.1
+    versionCode: 92
+    commit: 14118c9e7e4b567feaff9e2f22d89ee438cddf1e
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.1
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.3.2
+    versionCode: 93
+    commit: bd8d3965ced75031f935d7b1c7fd3a0712135759
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@2.10.1
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.3.4
+    versionCode: 95
+    commit: 40e3b4f91c7665cf6d0a40ffc554c4ef065fe57f
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.3.6
+    versionCode: 97
+    commit: 6caa095860e5d5fba1149121124b54be0d77c97e
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.3.7
+    versionCode: 99
+    commit: 6b228fd63a9fb1af8911683daa774ee343f92be3
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.3.8
+    versionCode: 100
+    commit: 3e66b24029ab825cc21e5bbf4ed17e4993e3cd9f
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+  - versionName: 4.3.9
+    versionCode: 101
+    commit: 42468e8cecdb98fcc47af29b1eb9fb0d1ced0f82
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.0.3
+    rm:
+      - ios
+      - plugins/glib/ios
+      - plugins/glib/example/ios
+    prebuild:
+      - sed -i -e 's/4.1.2/4.0.2/' android/build.gradle
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk
+    ndk: r23
+
+MaintainerNotes: |-
+  This app was archived because it currently violates the "all ages"
+  part of the Inclusion Policy.  It can be re-enabled only if it is
+  updated to comply with the Inclusion Policy.  If time has past, and
+  it still has not been updated to comply with the Inclusion Policy,
+  it should be entirely removed.
+
+  https://gitlab.com/fdroid/fdroiddata/-/work_items/3867
+
+  For example, based on the Dutch system, content that references
+  alcohol, drugs and sex are rated 12+ and depictions of sex are rated
+  16+: https://www.kijkwijzer.nl/en/about-kijkwijzer/
+
+ArchivePolicy: 0
+AutoUpdateMode: None
+UpdateCheckMode: None
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 4.3.9
+CurrentVersionCode: 101

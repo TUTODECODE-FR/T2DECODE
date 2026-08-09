@@ -1,0 +1,123 @@
+Categories:
+  - Science & Education
+  - Sports & Health
+License: GPL-3.0-or-later
+AuthorName: Illiouchine, domi41, MieuxVoter
+WebSite: https://mieuxvoter.fr
+SourceCode: https://github.com/MieuxVoter/majority-judgment-offline-urn-android
+IssueTracker: https://github.com/MieuxVoter/majority-judgment-offline-urn-android/issues
+Translation: https://hosted.weblate.org/projects/majority-judgment-offline-urn-android/
+Changelog: https://github.com/MieuxVoter/majority-judgment-offline-urn-android/releases
+
+AutoName: Urn
+
+RepoType: git
+Repo: https://github.com/MieuxVoter/majority-judgment-offline-urn-android
+Binaries: 
+  https://github.com/MieuxVoter/majority-judgment-offline-urn-android/releases/download/v%v/app-release.apk
+
+Builds:
+  - versionName: 1.1.1
+    versionCode: 5
+    commit: v1.1.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.0
+    versionCode: 6
+    commit: b39250e3f8a0c68d626911db55af85a7c0c8aa96
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.1
+    versionCode: 7
+    commit: 326585b90675b015a9b5fa095ec905c935ffd547
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.3.0
+    versionCode: 8
+    commit: d2a12956362530f014d3fdf49ad06ec279d4629f
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.1
+    versionCode: 13
+    commit: acdef880fede5bfcf4dfc7b0f1e0fecce0d6ec8a
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.4.2
+    versionCode: 14
+    commit: 79b056c6ec29dab4ac02e7dd05aa2cd11178a892
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.0
+    versionCode: 15
+    commit: 65e19db4defb5650526532eef88a51cfe2ac3ccd
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.1
+    versionCode: 16
+    commit: 1deb44159635bdd1eba9ce40216e1100d43fe2c9
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.4
+    versionCode: 17
+    commit: f97391efed016b0462793d40f807c2e8bccb49fd
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.6
+    versionCode: 19
+    commit: bdb13edda32ea96ab4b93aa7f3ec6649b8fa59e3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.7
+    versionCode: 20
+    commit: 423db8f877fde6d8d1fe6dffc7267fd7f59b39f5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.8
+    versionCode: 21
+    commit: 9c96b708cb9935f4c134c7b45f3bc2008bf6c66c
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 22
+    commit: afd574acd1f57930654b5b60fa8e553443f54a61
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.1
+    versionCode: 23
+    commit: 857624ecacc42ea0a34ca23cbd82e8bee158576f
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: 75df18568589c964c95fa2131bb4e49f218d4bdd0e3fd9d735c028cab0d5523f
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v.*[0-9]$
+CurrentVersion: 1.6.1
+CurrentVersionCode: 23

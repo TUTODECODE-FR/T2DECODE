@@ -1,0 +1,496 @@
+Categories:
+  - Puzzle Game
+License: GPL-3.0-only
+AuthorName: Meik Piepmeyer
+AuthorEmail: meik.piepmeyer@gmail.com
+WebSite: https://gauguin.app
+SourceCode: https://github.com/meikpiep/gauguin
+IssueTracker: https://github.com/meikpiep/gauguin/issues
+Translation: https://hosted.weblate.org/engage/gauguin/
+Changelog: https://github.com/meikpiep/gauguin/releases
+
+AutoName: Gauguin
+
+RepoType: git
+Repo: https://github.com/meikpiep/gauguin
+Binaries: 
+  https://github.com/meikpiep/gauguin/releases/download/v%v/gauguin-app-release.apk
+
+Builds:
+  - versionName: 0.9.4
+    versionCode: 4
+    commit: 073ef98f1fc648d5b4de751e73ff1216362040a7
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.10.0
+    versionCode: 5
+    commit: 1393cc634d97c8b1724891393d81238fecceb0d6
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.10.1
+    versionCode: 6
+    commit: a04d00ccfc070bbe87bcbbeb26f07cf989afc138
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.12.1
+    versionCode: 9
+    commit: 93205e187f321042b8824a1548530dbfe3a1e293
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.13.0
+    versionCode: 10
+    commit: c71c3f1ea14589ee8daca11535123c4365dfc2ca
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.13.1
+    versionCode: 11
+    commit: 03b335bd06324c235b40a9238354c1b4428a08b7
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.14.0
+    versionCode: 12
+    commit: dead86d1c8c3ee74d89dbf346137f9f5ef247db1
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.15.0
+    versionCode: 13
+    commit: b4f8198dd19805be1ca3fe3a65bb552dccdaa164
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.15.1
+    versionCode: 14
+    commit: 9a057e8665d412f83f6fbd71454458eb7e38e9c3
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.16.1
+    versionCode: 16
+    commit: a89901345e01f7e06ea9599cd34311dd5fd8a213
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.17.0
+    versionCode: 17
+    commit: 2800bbbd7745da2c4a12e170afc2b6d3417dcf66
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.18.0
+    versionCode: 18
+    commit: be33b1ffedc098e60abfe5175b29c9adadcef191
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.19.0
+    versionCode: 19
+    commit: 60dfc3304c76342b8017406007666823b66e9f8a
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.19.1
+    versionCode: 20
+    commit: 8e3f1e8093e004d617fc130f853e16a2fae25ace
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.20.0
+    versionCode: 21
+    commit: 9aedb98863c693ba416c2205758e2196cae4a57c
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.21.0
+    versionCode: 22
+    commit: d0694714c9d76e6b877aa7f66660c8028c8a95fb
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.21.1
+    versionCode: 23
+    commit: 354c30e8fbd7f1f681570c8a4b0e52d76a1ef5c6
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.22.1
+    versionCode: 25
+    commit: bba9215495edd1ae9f030b87f0b118f92beb05e4
+    subdir: gauguin-app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.23.0
+    versionCode: 26
+    commit: cac6154413b5560191a6ff8cd7ba6a190935efe9
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.24.0
+    versionCode: 27
+    commit: 998aa8b5461f9da9422270ff0854794fd24cba1d
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.24.1
+    versionCode: 28
+    commit: c95dc7fbed5e2bd71e91f2afe84dc41a30232a10
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.24.2
+    versionCode: 29
+    commit: 84990bb9218e38745d3a14087cc0c93bb35e3759
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.25.0
+    versionCode: 30
+    commit: e041abdc60ed078614258144613ff87ac5f5f3ac
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.26.0
+    versionCode: 31
+    commit: 56874b0e79764b787247adc34f9e4c7b9f8f8018
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.27.0
+    versionCode: 32
+    commit: f2e04567cb03f816ffee1d66f1252da1c104901e
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.28.0
+    versionCode: 33
+    commit: ba28b99a23ce2c00d5a83c5bc1e0938a10f85be6
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.29.0
+    versionCode: 35
+    commit: 317a3860d16e587577dc9726106a2528a760af77
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.29.1
+    versionCode: 36
+    commit: 2988b14ec254462f63602c07c65e6fddc00e016b
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.30.3
+    versionCode: 40
+    commit: f95a0c9245eea23cbbd1ebd7c5d445bda41063c4
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.31.0
+    versionCode: 41
+    commit: 4de252a3e12e8d44548505e5fd7f9d9414eac002
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.31.2
+    versionCode: 43
+    commit: 7691a0c4b5ae1930b5084b5f54e4c85afa284f57
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.31.3
+    versionCode: 44
+    commit: 00f92749fa317e47e0b5a9dab14d2904a7d65484
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: git reset --soft HEAD~1
+
+  - versionName: 0.32.0
+    versionCode: 45
+    commit: 81910cf67acbbdcb7f1f6af570fe48fc6e397a75
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.33.0
+    versionCode: 46
+    commit: b329269702194f44f692c8cb04b1cebd7453587a
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.34.0
+    versionCode: 47
+    commit: 82f8dfe178823cfa47c220186148929c2121471c
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.34.1
+    versionCode: 48
+    commit: de04e4b6b55edb4da4a872353b156c8524b378f8
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.35.0
+    versionCode: 49
+    commit: d0ce870233617401cab2914e3d0d5475b1bd5604
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.36.0
+    versionCode: 50
+    commit: 73c75322a31c40912ae5ce99eef47ec32e1287a0
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.38.0
+    versionCode: 54
+    commit: 8079dde8e4f510e129f87c47784b536cc950adf2
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.39.1
+    versionCode: 56
+    commit: a04d8a53a5cef55ff98002b3aa5d32be23471a05
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.40.0
+    versionCode: 57
+    commit: c3a47620eab11218e84401fa776b54b595213fdc
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.41.0
+    versionCode: 58
+    commit: 159b5f0284540fb130fd8ff280b478e05178099f
+    subdir: gauguin-app
+    gradle:
+      - yes
+
+  - versionName: 0.42.0
+    versionCode: 59
+    commit: 11cc1eb04c155025326a99987fe47bf1e77a5a61
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 0.43.0
+    versionCode: 60
+    commit: 01395facb4d25e33be1536a73c7ba899fe3f11ae
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 0.43.1
+    versionCode: 61
+    commit: fd4822f47c2d7f218497ce392e069e0bbf333164
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 0.43.2
+    versionCode: 62
+    commit: 351c50ddfa0a9dc53b7b241a2660e368bf5d5dd6
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 0.44.0
+    versionCode: 63
+    commit: 2c7b93f5aa7be45cdc22c4ab5791634efcc09488
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 0.45.0
+    versionCode: 64
+    commit: 63756231fe221422840f1ec9ce7ea280b6ba901b
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 0.46.1
+    versionCode: 66
+    commit: 013ac56f892805e8bbc6811a591346a6e3a97f74
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 0.47.0
+    versionCode: 67
+    commit: 4f0bf6dde8bf0ecd017ae71aaa80dc0cb04fc627
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 0.48.3
+    versionCode: 71
+    commit: 87b4f8acc7f1c4cbc02e10958416398e9173cce3
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 0.49.0
+    versionCode: 72
+    commit: 99b0c8c91c32838a8c7c115f0e4984ebe2fa3eda
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 0.49.1
+    versionCode: 73
+    commit: aaa2418556be14c8b9e9207f9c181e0d17112179
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 0.50.0
+    versionCode: 74
+    commit: fa52319a1a2ca3d8f01cb13735794b74bd1d5398
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+  - versionName: 0.51.0
+    versionCode: 75
+    commit: 1141462be0ab22d7a93ed07f89b8b60cf6b370ae
+    subdir: gauguin-app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+AllowedAPKSigningKeys: e3b52addda7ef701e1a42e0bc3b8b4443a5eb29cbf62a47492b9ee697438da62
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags v.*[0-9]$
+CurrentVersion: 0.51.0
+CurrentVersionCode: 75

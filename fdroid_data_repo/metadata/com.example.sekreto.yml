@@ -1,0 +1,27 @@
+Categories:
+  - Security
+License: GPL-3.0-only
+SourceCode: https://git.disroot.org/1010/Sekreto_android
+IssueTracker: https://git.disroot.org/1010/Sekreto_android/issues
+
+AutoName: Sekreto
+
+RepoType: git
+Repo: https://git.disroot.org/1010/Sekreto_android.git
+Binaries: 
+  https://git.disroot.org/1010/Sekreto_android/releases/download/%v/app-release.apk
+
+Builds:
+  - versionName: 1.0.2
+    versionCode: 3
+    commit: eebde09279155f17f2c8edef33a28340f5845e3b
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: 66b6be1675b6b1131093e4bacd510187c75dd38bb134ae39fac438163d47c147
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.2
+CurrentVersionCode: 3

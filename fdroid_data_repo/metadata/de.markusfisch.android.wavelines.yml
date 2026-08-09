@@ -1,0 +1,191 @@
+Categories:
+  - Wallpaper
+License: MIT
+AuthorName: Markus Fisch
+WebSite: http://markusfisch.de
+SourceCode: https://github.com/markusfisch/WaveLinesWallpaper
+IssueTracker: https://github.com/markusfisch/WaveLinesWallpaper/issues
+Changelog: https://github.com/markusfisch/WaveLinesWallpaper/blob/HEAD/CHANGELOG.md
+Donate: https://www.buymeacoffee.com/markusfisch
+Liberapay: markusfisch
+Bitcoin: bc1q2guk2rpll587aymrfadkdtpq32448x5khk5j8z
+
+AutoName: Wave Lines Wallpaper
+Description: |-
+  A simple, unobstrusive live wallpaper showing slowly moving wave lines. You can
+  choose a color theme, build your own, change if the lines should grow and shrink
+  or if they should have a uniform width. The lines may swing in harmony or each
+  line independently. You may set the number of lines, the number of waves in a
+  line and the maximum amplitude.
+
+RepoType: git
+Repo: https://github.com/markusfisch/WaveLinesWallpaper.git
+
+Builds:
+  - versionName: 1.2.0
+    versionCode: 3
+    commit: v1.2.0
+    init: cat ant.properties >> project.properties
+
+  - versionName: 1.4.0
+    versionCode: 5
+    commit: 1.4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.0
+    versionCode: 6
+    commit: 1.5.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 7
+    commit: 1.6.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.7.0
+    versionCode: 8
+    commit: 1.7.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.8.0
+    versionCode: 9
+    commit: 1.8.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.9.0
+    versionCode: 10
+    commit: 1.9.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.9.1
+    versionCode: 11
+    commit: 1.9.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.10.1
+    versionCode: 13
+    commit: 1.10.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.11.0
+    versionCode: 14
+    commit: 1.11.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.11.1
+    versionCode: 15
+    commit: 1.11.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.11.2
+    versionCode: 16
+    commit: 1.11.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.11.3
+    versionCode: 17
+    commit: 1.11.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.12.0
+    versionCode: 18
+    commit: 1.12.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.12.1
+    versionCode: 19
+    commit: 1.12.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.13.0
+    versionCode: 20
+    commit: 1.13.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.13.1
+    versionCode: 21
+    commit: 1.13.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.13.2
+    versionCode: 22
+    commit: 779597ab7109deb86ecd4f75dc9e741241db17ce
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.13.3
+    versionCode: 23
+    commit: 5834c072c2b2ef135a8aed69ee97a0439ca46d9e
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 1.13.4
+    versionCode: 24
+    commit: e80e3716bdcfa9540df0c2b6758de27b6aeaf2c1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.13.5
+    versionCode: 25
+    commit: d24d45b81b650f850f6ecf537c0325173c875d9e
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.13.6
+    versionCode: 26
+    commit: 249e0ec38feffdb6d81f89eb7cf061ee95bd4512
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.13.7
+    versionCode: 27
+    commit: b65e2cdef3884aece57c5cb84963d38663693415
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.13.7
+CurrentVersionCode: 27

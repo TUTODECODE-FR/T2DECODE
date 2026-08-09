@@ -1,0 +1,222 @@
+Categories:
+  - Multimedia
+  - Remote Controller
+License: GPL-3.0-or-later
+AuthorName: deprec8
+AuthorEmail: deprec8@tutamail.com
+SourceCode: https://github.com/deprec8/enigmadroid
+IssueTracker: https://github.com/deprec8/enigmadroid/issues
+Translation: https://crowdin.com/project/enigmadroid
+Changelog: https://github.com/deprec8/enigmadroid/releases
+
+AutoName: EnigmaDroid
+
+RepoType: git
+Repo: https://github.com/deprec8/enigmadroid.git
+Binaries: https://github.com/deprec8/enigmadroid/releases/download/%v/app-release.apk
+
+Builds:
+  - versionName: 1.1.0
+    versionCode: 2
+    commit: 1.1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.2.1
+    versionCode: 4
+    commit: 3509e5cf17bf0c7d437ee211d45c4c47586ca1b3
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.3.0
+    versionCode: 5
+    commit: b550f787ef2c78cdf0664768392cd1d2c7315fe5
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.3.1
+    versionCode: 6
+    commit: d2606e3a26409cdbbe6764088a73f84477048aec
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.3.3
+    versionCode: 8
+    commit: 22f282154a5b156ac0b19798f8c4d1f3ef39df2d
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.4.0
+    versionCode: 9
+    commit: de757051909ca12b3eea1fe2e62c5992ff86878c
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.5.0
+    versionCode: 10
+    commit: 932e155c9a7dc72549ddc7160489ae624c13c260
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 11
+    commit: f853f5f34c03a99d689fee2c8a43d211a46fb30d
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.6.1
+    versionCode: 12
+    commit: 67f6cb43d7f1c7acdb95fae85a469b400890cacc
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+
+  - versionName: 1.7.0
+    versionCode: 13
+    commit: f63083e2be7b64db085f42c76250ec53ea64706f
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+    ndk: 28.2.13676358
+
+  - versionName: 1.7.1
+    versionCode: 14
+    commit: ca61ab8efcbc5d86e41cde14d9148043b465fb75
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+    ndk: 28.2.13676358
+
+  - versionName: 1.7.2
+    versionCode: 15
+    commit: 20dab494337e4f51bee31443c4ef0699d1047ba6
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+    ndk: 28.2.13676358
+
+  - versionName: 1.8.0
+    versionCode: 16
+    commit: 0b626e7a277dfaf533520ebacbd5ab7a83b6d201
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    ndk: 28.2.13676358
+
+  - versionName: 1.9.0
+    versionCode: 17
+    commit: 82f51b3a1d86ae5a0691ca6971cdab2a84f15224
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    ndk: 28.2.13676358
+
+  - versionName: 1.9.1
+    versionCode: 18
+    commit: 85a1c9bef989b09f8b585f4ca712368d6f88926a
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    ndk: 28.2.13676358
+
+  - versionName: 1.9.2
+    versionCode: 19
+    commit: 9ea8761d75f3ba3e2401d5c951f64742061b199e
+    subdir: app
+    sudo:
+      - export CPUS_MAX=16
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+    ndk: 28.2.13676358
+
+AllowedAPKSigningKeys: 7389e0f328335627de9e1141066bbd6fc9e64af538a42d9415fd5cac2caa5433
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.9.2
+CurrentVersionCode: 19

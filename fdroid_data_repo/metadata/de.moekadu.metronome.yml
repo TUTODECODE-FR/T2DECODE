@@ -1,0 +1,367 @@
+Categories:
+  - Music Practice Tool
+  - Science & Education
+License: GPL-3.0-or-later
+AuthorName: Michael Moessner
+SourceCode: https://github.com/thetwom/toc2
+IssueTracker: https://github.com/thetwom/toc2/issues
+Changelog: https://github.com/thetwom/toc2/releases
+
+AutoName: Metronome
+
+RepoType: git
+Repo: https://github.com/thetwom/toc2
+
+Builds:
+  - versionName: 1.4.0
+    versionCode: 11
+    commit: v1.4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.0
+    versionCode: 12
+    commit: v1.5.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.5.1
+    versionCode: 13
+    commit: v1.5.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.0
+    versionCode: 14
+    commit: v1.6.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.1
+    versionCode: 15
+    commit: v1.6.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.2
+    versionCode: 16
+    commit: v1.6.2
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.3
+    versionCode: 17
+    commit: v1.6.3
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.4
+    versionCode: 18
+    commit: v1.6.4
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.5
+    versionCode: 19
+    commit: v1.6.5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.6
+    versionCode: 20
+    commit: v1.6.6
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.7
+    versionCode: 22
+    commit: v1.6.7
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 1.6.8
+    versionCode: 23
+    commit: v1.6.8
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.2.0
+    versionCode: 26
+    commit: v2.2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.3.0
+    versionCode: 28
+    commit: v2.3.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 2.4.0
+    versionCode: 29
+    commit: v2.4.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 3.0.0
+    versionCode: 31
+    commit: v3.0.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 3.1.0
+    versionCode: 32
+    commit: v3.1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 3.2.0
+    versionCode: 33
+    commit: v3.2.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.0.0
+    versionCode: 35
+    commit: 6b7a2c22aa508673923cbaaaa0047e2e2aee9213
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.0.1
+    versionCode: 36
+    commit: d41f91b21601b1f41ca3e9c9c49394cb2e96add0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.1.0
+    versionCode: 37
+    commit: 1bb6f3aef39480cddd3adc8e76fc53edae6a53ad
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 4.1.2
+    versionCode: 39
+    commit: 9e42d0dde8dda11e8fa9aae89c1eaff0bb927cf5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 4.1.3
+    versionCode: 40
+    commit: fd5408d3b155b14cb09efca97119e42f3de8bd61
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 4.1.4
+    versionCode: 41
+    commit: 601ef2ffca6194606aa320ee849b2800db3e0a0a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 4.2.0
+    versionCode: 42
+    commit: f265d378532aad6ca3aebe58d4ec76a691618b88
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 4.3.0
+    versionCode: 44
+    commit: ee73837edc6ff170355e3f03d89807687d148dc5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 4.3.1
+    versionCode: 45
+    commit: 7b482f8dcea1edde2109a1dfd7a1ebeb2272bcc9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 4.3.2
+    versionCode: 46
+    commit: dc415442fa1e0a26c57a2e501db5e66f904fe0b4
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 4.4.0
+    versionCode: 47
+    commit: 0d27719eee0047d087e2c6e4a82c98606081b37d
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 4.5.0
+    versionCode: 48
+    commit: 4f99c734348bf5f4405da5e8c8d9862566999b0c
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 4.5.1
+    versionCode: 49
+    commit: 740fd0f5ac3233c3734c749b296e23def8902e86
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 4.6.0
+    versionCode: 51
+    commit: 9797e461f7b37f4dae41a31f21931c2fbacc67e5
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 4.6.1
+    versionCode: 52
+    commit: 10875497760babfaef4ffddf80978e4ca03825c5
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.7.0
+    versionCode: 53
+    commit: 2b296a455ecf8a6a2986f71e38de4dc2abcff161
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.8.0
+    versionCode: 54
+    commit: 2d6c916823238a964c06655abbaed25f18806f76
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.9.1
+    versionCode: 56
+    commit: 63e9e3454a98201bed0edc10b9440985bb92cf70
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 4.10.0
+    versionCode: 57
+    commit: 4e9e660576298a5c5e474509b553943762123d74
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 4.11.0
+    versionCode: 58
+    commit: 22d26e712d657e4f365935d3b80382a3e2ae4ce9
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 4.12.1
+    versionCode: 59
+    commit: c4e9cb0aa3577e830bbb227677393f1f504b1ccd
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.13.0
+    versionCode: 60
+    commit: b4a28abe69eae8207b1968f908c6b7b7f4521c91
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 4.14.0
+    versionCode: 62
+    commit: d0c84a941bfd77cbe10731eba2cc485c6bae931b
+    subdir: app
+    gradle:
+      - yes
+    prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9.]*$
+CurrentVersion: 4.14.0
+CurrentVersionCode: 62

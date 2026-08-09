@@ -1,0 +1,52 @@
+Categories:
+  - Keyboard & IME
+License: Apache-2.0
+AuthorName: Menny Even Danan
+AuthorEmail: ask@evendanan.net
+WebSite: https://anysoftkeyboard.github.io
+SourceCode: https://github.com/AnySoftKeyboard/AnySoftKeyboard
+IssueTracker: https://github.com/AnySoftKeyboard/AnySoftKeyboard/issues
+Donate: https://github.com/sponsors/menny
+
+RepoType: git
+Repo: https://github.com/AnySoftKeyboard/AnySoftKeyboard.git
+
+Builds:
+  - versionName: 4.0.1396
+    versionCode: 2908
+    commit: 1.10-r4
+    subdir: addons/languages/dutch
+    sudo:
+      - apt-get update
+      - apt-get install -t stretch-backports openjdk-11-jdk-headless openjdk-11-jre-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    output: ../../../outputs/apks/release/addons-languages-*-$$VERCODE$$.apk
+    prebuild:
+      - echo "//gradleVersion = '6.8.3'" | tee build.gradle
+      - sed -i -e '/Data\.versionCode/ c versionCode $$VERCODE$$' -e '/Data\.versionName/
+        c versionName "$$VERSION$$"' ../../../gradle/versioning_apk.gradle
+    scanignore:
+      - addons/languages/*/pack/dictionary/*.gz
+    ndk: r14b
+
+  - versionName: 5.1.6158
+    versionCode: 6158
+    commit: b10a79fcc1a61c1e737d7aac43aab0141f065185
+    subdir: addons/languages/dutch/apk
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/navigation-dynamic-features-fragment/d' ../../../../ime/app/build.gradle
+      - cp -R ../../../../gradle .
+    scanignore:
+      - addons/languages/*/pack/dictionary/*.gz
+    ndk: r27c
+    gradleprops:
+      - forceVersionBuildCount=8461
+
+AutoUpdateMode: None
+UpdateCheckMode: None
+CurrentVersion: 5.1.6158
+CurrentVersionCode: 6158

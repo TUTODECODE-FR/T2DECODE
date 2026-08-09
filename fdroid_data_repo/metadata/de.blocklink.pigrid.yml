@@ -1,0 +1,48 @@
+AntiFeatures:
+  NonFreeNet:
+    en-US: App requires a PiGrid device, which contains proprietary software.
+Categories:
+  - Remote Controller
+  - Science & Education
+License: MIT
+SourceCode: https://github.com/blocklink-it/pigrid-companion-app
+IssueTracker: https://github.com/blocklink-it/pigrid-companion-app/issues
+
+AutoName: PiGrid Companion
+Description: |-
+  The PiGrid Companion app allows you to find and control your PiGrid device/s easily and comfortably via your Smartphone or Tablet.
+
+  PiGrid is a platform for Gridcoin currently running on Raspberry Pi. Gridcoin is a cryptocurrency that incentivizes the donation of computational power to scientific projects through BOINC. Find more information at pigrid.com and gridcoin.io.
+
+  <b>AntiFeatures:</b>
+  * NonFreeNet - This app requires a PiGrid device, which contains proprietary software.
+
+RepoType: git
+Repo: https://github.com/blocklink-it/pigrid-companion-app
+
+Builds:
+  - versionName: '1.0'
+    versionCode: 1
+    commit: v1.0
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.1'
+    versionCode: 2
+    commit: v1.1
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.4'
+    versionCode: 5
+    commit: v1.4
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.4'
+CurrentVersionCode: 5

@@ -1,0 +1,265 @@
+Categories:
+  - Connectivity
+  - Multimedia
+License: Apache-2.0
+WebSite: https://github.com/mkckr0/audio-share
+SourceCode: https://github.com/mkckr0/audio-share
+IssueTracker: https://github.com/mkckr0/audio-share/issues
+Changelog: https://github.com/mkckr0/audio-share/releases
+
+AutoName: Audio Share
+
+RepoType: git
+Repo: https://github.com/mkckr0/audio-share
+Binaries: 
+  https://github.com/mkckr0/audio-share/releases/download/v%v/audio-share-app-%v-release.apk
+
+Builds:
+  - versionName: 0.0.8
+    versionCode: 5
+    commit: v0.0.8
+    subdir: audio-share-app/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 0.0.9
+    versionCode: 9
+    commit: 253fe8d776afbe0f026d5295dff2c0b456a9543b
+    subdir: audio-share-app/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 0.0.10
+    versionCode: 10
+    commit: v0.0.10
+    subdir: android-app/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 0.0.11
+    versionCode: 11
+    commit: 1c26296d0a38bbd432b1d79951a0361aaeae22ff
+    subdir: android-app/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 0.0.12
+    versionCode: 12
+    commit: a68639ef86b39c8687a431d1d6086382d6fd214c
+    subdir: android-app/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 0.0.13
+    versionCode: 13
+    commit: 01cb7bea01f6957816ab1c20a604625e22825094
+    subdir: android-app/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 0.0.14
+    versionCode: 14
+    commit: 913c414ff6f184a73546a51061e355be71e991e8
+    subdir: android-app/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 0.0.15
+    versionCode: 15
+    commit: 9b44c083587f5b0a80e3e3510db7a75ca54010ed
+    subdir: android-app/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 0.0.17
+    versionCode: 17
+    commit: cf3be477393ae902e6eba6b9a297e9a1dcf05f4d
+    subdir: android-app/app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+  - versionName: 0.1.0
+    versionCode: 1000
+    commit: 60c23312ea6de8ccf5d58df721e9f1f04af8085e
+    subdir: android-app/app
+    gradle:
+      - yes
+
+  - versionName: 0.2.0
+    versionCode: 2000
+    commit: 1bf2e5e83f9538fdd6561c7b52004536ae8760f1
+    subdir: android-app/app
+    gradle:
+      - yes
+
+  - versionName: 0.2.1
+    versionCode: 2001
+    commit: 016bf47a598725860fe88fd79f08acb1559a0ae9
+    subdir: android-app/app
+    gradle:
+      - yes
+
+  - versionName: 0.2.2
+    versionCode: 2002
+    commit: de92c93794bc955c61a2ad1361ed98d554a9b3ec
+    subdir: android-app/app
+    gradle:
+      - yes
+
+  - versionName: 0.3.0
+    versionCode: 3000
+    commit: 1c42f612a3fe206105095eec5c039e79b1c7aab7
+    subdir: android-app/app
+    sudo:
+      - export CPUS_MAX=6
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    output: build/outputs/apk/release/audio-share-app-*-release-unsigned.apk
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/mkckr0/audio-share/releases/download/v$$VERSION$$/audio-share-app-$$VERSION$$-release.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/audio-share-app-*-release-unsigned.apk;
+        export localhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1);
+        [[ $localhash == $upstreamhash ]] && break ; popd; rm -fr local; done
+
+  - versionName: 0.3.1
+    versionCode: 3001
+    commit: 9a5fca160e99934f0a783ad4aef2a927168c57e5
+    subdir: android-app/app
+    sudo:
+      - export CPUS_MAX=6
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    output: build/outputs/apk/release/audio-share-app-*-release-unsigned.apk
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/mkckr0/audio-share/releases/download/v$$VERSION$$/audio-share-app-$$VERSION$$-release.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/audio-share-app-*-release-unsigned.apk;
+        export localhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1);
+        [[ $localhash == $upstreamhash ]] && break ; popd; rm -fr local; done
+
+  - versionName: 0.3.2
+    versionCode: 3002
+    commit: d0ad608b6b53656760b6c0e00d47e25f45380df7
+    subdir: android-app/app
+    sudo:
+      - export CPUS_MAX=6
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    output: build/outputs/apk/release/audio-share-app-*-release-unsigned.apk
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/mkckr0/audio-share/releases/download/v$$VERSION$$/audio-share-app-$$VERSION$$-release.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/audio-share-app-*-release-unsigned.apk;
+        export localhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1);
+        [[ $localhash == $upstreamhash ]] && break ; popd; rm -fr local; done
+
+  - versionName: 0.3.3
+    versionCode: 3003
+    commit: 6fcf4aef3334b66fe7bc0a0185d3f205af070118
+    subdir: android-app/app
+    sudo:
+      - export CPUS_MAX=6
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    output: build/outputs/apk/release/audio-share-app-*-release-unsigned.apk
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/mkckr0/audio-share/releases/download/v$$VERSION$$/audio-share-app-$$VERSION$$-release.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/audio-share-app-*-release-unsigned.apk;
+        export localhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1);
+        [[ $localhash == $upstreamhash ]] && break ; popd; rm -fr local; done
+
+  - versionName: 0.3.4
+    versionCode: 3004
+    commit: 342751fe675367483170b002ec6054e243966dc0
+    subdir: android-app/app
+    sudo:
+      - export CPUS_MAX=6
+      - export CPUS=$(getconf _NPROCESSORS_ONLN)
+      - for (( c=$CPUS_MAX; c<$CPUS; c++ )) ; do echo 0 > /sys/devices/system/cpu/cpu$c/online
+        ; done
+    output: build/outputs/apk/release/audio-share-app-*-release-unsigned.apk
+    build:
+      - mkdir upstream
+      - pushd upstream
+      - curl -L -o upstream.apk 
+        https://github.com/mkckr0/audio-share/releases/download/v$$VERSION$$/audio-share-app-$$VERSION$$-release.apk
+      - unzip -q upstream.apk
+      - export upstreamhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1)
+      - popd
+      - for i in {1..10}; do gradle clean assembleRelease; mkdir local; pushd local;
+        unzip -q ../build/outputs/apk/release/audio-share-app-*-release-unsigned.apk;
+        export localhash=$(sha256sum assets/dexopt/baseline.prof|cut -d " " -f1);
+        [[ $localhash == $upstreamhash ]] && break ; popd; rm -fr local; done
+
+AllowedAPKSigningKeys: bdbf8e590127e380a28c328085231647912634b45ffaa20d9e70c96658cb7a40
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9.]*$
+CurrentVersion: 0.3.4
+CurrentVersionCode: 3004

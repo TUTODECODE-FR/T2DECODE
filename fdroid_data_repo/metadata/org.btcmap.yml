@@ -1,0 +1,515 @@
+Categories:
+  - Internet
+  - Navigation
+License: AGPL-3.0-or-later
+SourceCode: https://github.com/teambtcmap/btcmap-android
+IssueTracker: https://github.com/teambtcmap/btcmap-android/issues
+Translation: https://github.com/teambtcmap/btcmap-android#-help-with-translation
+Changelog: https://github.com/teambtcmap/btcmap-android/releases
+Donate: https://btcmap.org/support-us
+Bitcoin: bc1qng60mcufjnmz6330gze5yt4m6enzra7lywns2d
+
+AutoName: BTC Map
+
+RepoType: git
+Repo: https://github.com/teambtcmap/btcmap-android.git
+
+Builds:
+  - versionName: 0.1.0
+    versionCode: 1
+    commit: 95173acc99499dd96271acc8c1c7b049a069ff5b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+
+  - versionName: 0.2.0
+    versionCode: 2
+    commit: 5ab43506d3f5e1f06f832d3e04ecb70e83945dfe
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    preassemble:
+      - bundleData
+
+  - versionName: 0.3.2
+    versionCode: 5
+    commit: cad77091c8a955ed218aa9608b0e908d09f6e689
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    preassemble:
+      - bundleData
+
+  - versionName: 0.3.3
+    versionCode: 6
+    commit: 9f0b0b2215e6a32b4ce711c002caeb9511846e44
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    preassemble:
+      - bundleData
+
+  - versionName: 0.3.4
+    versionCode: 7
+    commit: 3b879d223b9193cb99d0531226e5b8d46b6b1ee0
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    preassemble:
+      - bundleData
+
+  - versionName: 0.3.5
+    versionCode: 8
+    commit: eea82815f9220744cf0058e10da32bc1cbee91a3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    preassemble:
+      - bundleData
+
+  - versionName: 0.3.7
+    versionCode: 10
+    commit: 6fe7cd1dd6d34d06ad702c1c54ad96f50d3d4457
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    preassemble:
+      - bundleData
+
+  - versionName: 0.3.9
+    versionCode: 12
+    commit: a55b4a32a459decdc2767096fc611009fca150c3
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    preassemble:
+      - bundleData
+
+  - versionName: 0.3.11
+    versionCode: 14
+    commit: 775b4aabe85a6c0b5ee57438f33cdd75184b2d29
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    preassemble:
+      - bundleData
+
+  - versionName: 0.4.0
+    versionCode: 15
+    commit: b1f473075085027e6cf041ba67100c93fba30e1b
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    preassemble:
+      - bundleData
+
+  - versionName: 0.4.1
+    versionCode: 16
+    commit: b0badc18047d0f06464530bcfb50cb29489a28a1
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-11-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    preassemble:
+      - bundleData
+
+  - versionName: 0.4.2
+    versionCode: 17
+    commit: be541debdd09a173014c18dfaa80941b5044ccf3
+    subdir: app
+    gradle:
+      - yes
+    preassemble:
+      - bundleData
+
+  - versionName: 0.4.7
+    versionCode: 22
+    commit: 764953bd0609069b59bbc64b1ed9b3715fe3533e
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.4.9
+    versionCode: 24
+    commit: c4e2f0f4ee041a908e668290a6c4f32d1d10cb8e
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.4.10
+    versionCode: 25
+    commit: a1522ecc55d51df66b02c1ecb9937b2f52d69b2d
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.4.11
+    versionCode: 26
+    commit: 2c10ef0545452b1a63b91f9b918644cd73c34dbe
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.4.12
+    versionCode: 27
+    commit: c8ec85b75a419432eb7e310e89c155804ec25007
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.4.13
+    versionCode: 28
+    commit: 919eeab5a2a4598f9bcc347aa048c1ef4e9ce527
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.5.0
+    versionCode: 29
+    commit: 75b8a439e4d3b5d6335dbfce7197d78363855458
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.5.1
+    versionCode: 30
+    commit: c6be661ad918ff796b822146edbbb92809d63be1
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.5.3
+    versionCode: 32
+    commit: 965012e6a74002cf26555b7638775594fc60bfd4
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.5.5
+    versionCode: 34
+    commit: 1a29854577a46982db487854bb5576a148b1b50c
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.5.6
+    versionCode: 35
+    commit: f4dc8b692d0a18d3d3d73650a9215b276e0a089a
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.5.7
+    versionCode: 36
+    commit: 2d0369835ec8d68bae9efb9ee9d1b3f3ac19eec3
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.5.9
+    versionCode: 38
+    commit: fbee8bc4e8b0bf455de7a112b6a0a0a5633c7626
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.5.10
+    versionCode: 39
+    commit: 06a0d46250085804adefef49538c5c77663524d9
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.6.0
+    versionCode: 40
+    commit: 1a71eee1fdd04806bba7d59246b43d96359f8190
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.6.1
+    versionCode: 41
+    commit: c2beaf26828b757c0b38d6aa1a154a77a9e564aa
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.6.2
+    versionCode: 42
+    commit: f9d6f3121df0ce4ddd4e8d630ac9197d87036832
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.6.4
+    versionCode: 44
+    commit: a7ab25b336962fb94589aaaf3debcf30c891ff58
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.6.5
+    versionCode: 45
+    commit: 5fc477192cb01f0260d00b35e4b46ba919e72ffd
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.6.6
+    versionCode: 46
+    commit: d58b245ce0a243964e46d95f1c460876e7ad388a
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.7.0
+    versionCode: 47
+    commit: 4446851c95645ab6935fd04441c2b2f5f4044feb
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.7.1
+    versionCode: 48
+    commit: a76927bfe30e1cac18a2d687a3db5eda981032d0
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.7.2
+    versionCode: 49
+    commit: c43711560ceaf2e0b25cd0b3dbb3535c8513bedb
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.7.3
+    versionCode: 50
+    commit: 1ef132b66bd49b4f72f293c1751dbb442b002956
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.8.0
+    versionCode: 51
+    commit: ca749e340a974f3a2900255b79beafa3c729f809
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.9.0
+    versionCode: 52
+    commit: 51af03b67f42c496aea61e596aa76ee869fe9f1d
+    subdir: app
+    gradle:
+      - fdroid
+      - selfSigned
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.9.1
+    versionCode: 53
+    commit: 32c2d35cfa99bb2810a2c69bf1f4878897202fff
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 0.9.2
+    versionCode: 54
+    commit: 85dab9d022fe024ce17189c565a389b0328e8d0e
+    subdir: app
+    gradle:
+      - fdroid
+    prebuild: sed -i -e '/signingConfig /d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 1.0.0
+    versionCode: 55
+    commit: 28805a42a77b4069f4f96efb1c9d8cc2e169f625
+    subdir: app
+    sudo:
+      - echo "deb https://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list
+      - apt-get update
+      - apt-get install -y -t trixie openjdk-21-jdk-headless
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: sed -i -e '/signingConfig /d' -e '/isEnable/d' build.gradle.kts
+    preassemble:
+      - bundleData
+
+  - versionName: 1.1.0
+    versionCode: 56
+    commit: 4e281cba2e62c030b6324abc940056fa8a3876e2
+    subdir: app
+    gradle:
+      - yes
+    prebuild:
+      - sed -i -e '/signingConfig /d' -e '/isEnable/d' build.gradle.kts
+      - sed -i -e '/foojay/d' ../settings.gradle.kts
+    build: gradle bundleData
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.1.0
+CurrentVersionCode: 56
