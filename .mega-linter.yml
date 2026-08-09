@@ -15,6 +15,7 @@ DISABLE_ERRORS: true
 DISABLE:
   - SPELL # Désactive le dictionnaire (jargon technique et français)
   - COPYPASTE # Désactive le détecteur de duplication (normal pour les cours et labs)
+  - SECRET # Désactive la détection de secrets (déjà gérée par trufflehog)
 
 DISABLE_LINTERS:
   - YAML_V8R
