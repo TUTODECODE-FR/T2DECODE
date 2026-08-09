@@ -153,15 +153,31 @@ jobs:
           name: artifacts-macos
           path: ./release_assets
 
-      - name: Generate SHA256SUMS.txt
+      - name: Prepare Assets & Generate SHA256SUMS.txt
         run: |
           cd release_assets
+          # Flatten nested files (e.g. build/app/outputs/flutter-apk/*.apk -> ./)
+          find . -type f ! -name "SHA256SUMS.txt" -exec cp -f {} . \;
+          # Remove subdirectories
+          find . -mindepth 1 -type d -exec rm -rf {} +
+          # Generate checksums for all regular files
           sha256sum * > SHA256SUMS.txt
 
       - name: Create GitHub Release with All OS Artifacts
         uses: softprops/action-gh-release@v2
         with:
           files: release_assets/*
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## 🛡️ T2DECODE — Release ${{ github.ref_name }}
+
+            Plateforme d'apprentissage technique et de cybersécurité 100% locale, sans cloud, sans tracking.
+
+            ### 📦 Binaires Multi-OS Inclus
+            - 🤖 **Android** : APK arm64-v8a, armeabi-v7a, x86_64
+            - 🐧 **Linux** : Archive 64-bit (`T2DECODE-Linux.tar.gz`)
+            - 🪟 **Windows** : Exécutable Desktop (`T2DECODE-Windows.zip`)
+            - 🍏 **macOS** : Image disque universelle (`T2DECODE-macOS.dmg`)
           generate_release_notes: true
           draft: false
           prerelease: false
