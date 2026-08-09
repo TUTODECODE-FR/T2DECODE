@@ -713,6 +713,7 @@ build_macos_signed:
 # === STAGE: RELEASE ===
 release_gitlab:
   stage: release
+  needs: []
   allow_failure: true
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   script:
