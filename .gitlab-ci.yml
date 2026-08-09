@@ -113,6 +113,8 @@ osv-scanner:
 # === STAGE: BUILD-TEST (Unsigned) ===
 build_android_unsigned:
   stage: build-test
+  needs:
+    - test_and_analyze
   script:
     - flutter pub get
     - flutter build apk --release
@@ -135,9 +137,15 @@ build_android_unsigned:
 
 build_linux_unsigned:
   stage: build-test
+  needs:
+    - test_and_analyze
   script:
-    - sudo apt-get update -y
-    - sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev
+    - |
+      if ! command -v clang >/dev/null 2>&1; then
+        echo "Linux build tools not pre-installed. Installing dependencies..."
+        sudo apt-get update -y
+        sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev
+      fi
     - flutter pub get
     - flutter build linux --release
   rules:
@@ -159,6 +167,8 @@ build_linux_unsigned:
 
 build_windows_unsigned:
   stage: build-test
+  needs:
+    - test_and_analyze
   tags:
     - saas-windows-medium-amd64
   allow_failure: true
@@ -197,6 +207,8 @@ build_windows_unsigned:
 
 build_macos_unsigned:
   stage: build-test
+  needs:
+    - test_and_analyze
   allow_failure: true
   image: macos-15-xcode-16
   tags:
@@ -306,10 +318,14 @@ build_linux_signed:
   stage: build-release
   allow_failure: true
   script:
-    - sudo apt-get update -y
-    - sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev gnupg ruby ruby-dev build-essential file
-    - sudo apt-get install -y libfuse2 || sudo apt-get install -y libfuse2t64
-    - sudo gem install --no-document fpm
+    - |
+      if ! command -v clang >/dev/null 2>&1; then
+        echo "Linux build tools not pre-installed. Installing dependencies..."
+        sudo apt-get update -y
+        sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev gnupg ruby ruby-dev build-essential file
+        sudo apt-get install -y libfuse2 || sudo apt-get install -y libfuse2t64
+        sudo gem install --no-document fpm
+      fi
     - flutter pub get
     - flutter build linux --release
     - tar -czvf T2DECODE-Linux.tar.gz -C build/linux/x64/release/bundle/ .
