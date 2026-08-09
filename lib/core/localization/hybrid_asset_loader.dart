@@ -26,19 +26,23 @@ class HybridAssetLoader extends AssetLoader {
     // 2. Tenter de charger la langue cible depuis le dossier local de l'utilisateur
     try {
       final docDir = await getApplicationDocumentsDirectory();
-      final targetFile = File('${docDir.path}/T2DECODE/translations/${locale.languageCode}.json');
-      
+      final targetFile = File(
+          '${docDir.path}/T2DECODE/translations/${locale.languageCode}.json');
+
       if (await targetFile.exists()) {
         final String localStr = await targetFile.readAsString();
-        final Map<String, dynamic> localTranslations = jsonDecode(localStr) as Map<String, dynamic>;
-        
+        final Map<String, dynamic> localTranslations =
+            jsonDecode(localStr) as Map<String, dynamic>;
+
         // 3. Fusionner : Les clés locales écrasent les clés de base (fr.json comble les trous)
-        final Map<String, dynamic> merged = Map<String, dynamic>.from(baseTranslations);
+        final Map<String, dynamic> merged =
+            Map<String, dynamic>.from(baseTranslations);
         _mergeDeep(merged, localTranslations);
         return merged;
       }
     } catch (e) {
-      debugPrint('[HybridAssetLoader] Erreur de chargement pour ${locale.languageCode}: $e');
+      debugPrint(
+          '[HybridAssetLoader] Erreur de chargement pour ${locale.languageCode}: $e');
     }
 
     // Si pas de traduction locale, retourner le Français par défaut
@@ -47,7 +51,8 @@ class HybridAssetLoader extends AssetLoader {
 
   void _mergeDeep(Map<String, dynamic> target, Map<String, dynamic> source) {
     source.forEach((key, value) {
-      if (value is Map<String, dynamic> && target[key] is Map<String, dynamic>) {
+      if (value is Map<String, dynamic> &&
+          target[key] is Map<String, dynamic>) {
         _mergeDeep(target[key] as Map<String, dynamic>, value);
       } else {
         target[key] = value;

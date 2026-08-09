@@ -35,7 +35,8 @@ class PlagiarismProtection {
         filePath: assetPath,
         isOriginal: checksumValid,
         plagiarismScore: checksumValid ? 0.0 : 1.0,
-        issues: checksumValid ? [] : ['Asset illisible ou corrompu: $assetPath'],
+        issues:
+            checksumValid ? [] : ['Asset illisible ou corrompu: $assetPath'],
         originalityScore: checksumValid ? 100.0 : 0.0,
       );
     } catch (_) {
@@ -63,8 +64,9 @@ class PlagiarismProtection {
         allIssues.addAll(analysis.issues);
       }
 
-      final averageOriginalityScore =
-          _kPlagiarismAssets.isEmpty ? 100.0 : totalOriginalityScore / _kPlagiarismAssets.length;
+      final averageOriginalityScore = _kPlagiarismAssets.isEmpty
+          ? 100.0
+          : totalOriginalityScore / _kPlagiarismAssets.length;
       final overallPlagiarismScore = (100.0 - averageOriginalityScore) / 100.0;
 
       // Vérifier l'intégrité complète via le système anti-tampering
@@ -113,7 +115,8 @@ class PlagiarismProtection {
   static Future<OriginalityCertificate> generateOriginalityCertificate() async {
     final analysis = await analyzeProject();
     final certHash = _generateCertificateHash(analysis);
-    final devId = officialDeveloper['developer_id'] as String? ?? 'TUTODECODE_OFFICIAL_DEV_001';
+    final devId = officialDeveloper['developer_id'] as String? ??
+        'TUTODECODE_OFFICIAL_DEV_001';
 
     return OriginalityCertificate(
       certificateId: 'ORIG_CERT_${DateTime.now().millisecondsSinceEpoch}',
@@ -132,9 +135,12 @@ class PlagiarismProtection {
 
   static PlagiarismRiskLevel _calculatePlagiarismRisk(
       double plagiarismScore, List<String> issues) {
-    if (plagiarismScore >= 0.7 || issues.length >= 5) return PlagiarismRiskLevel.critical;
-    if (plagiarismScore >= 0.4 || issues.length >= 3) return PlagiarismRiskLevel.high;
-    if (plagiarismScore >= 0.2 || issues.isNotEmpty) return PlagiarismRiskLevel.medium; // coverage:ignore-line
+    if (plagiarismScore >= 0.7 || issues.length >= 5)
+      return PlagiarismRiskLevel.critical;
+    if (plagiarismScore >= 0.4 || issues.length >= 3)
+      return PlagiarismRiskLevel.high;
+    if (plagiarismScore >= 0.2 || issues.isNotEmpty)
+      return PlagiarismRiskLevel.medium; // coverage:ignore-line
     return PlagiarismRiskLevel.low;
   }
 
@@ -148,7 +154,23 @@ class PlagiarismProtection {
     // Algorithme d'entropie interne agissant comme un filigrane structurel.
     // Même si les commentaires sont supprimés, cette matrice mathématique reste.
     // 0x54=T, 0x32=2, 0x44=D, 0x2D=-, 0x4D=M, 0x41=A, 0x58=X, 0x43=C
-    final matrix = [0x54, 0x32, 0x44, 0x2D, 0x4D, 0x41, 0x58, 0x2D, 0x4D, 0x43, 0x2D, 0x37, 0x37, 0x33, 0x34];
+    final matrix = [
+      0x54,
+      0x32,
+      0x44,
+      0x2D,
+      0x4D,
+      0x41,
+      0x58,
+      0x2D,
+      0x4D,
+      0x43,
+      0x2D,
+      0x37,
+      0x37,
+      0x33,
+      0x34
+    ];
     return String.fromCharCodes(matrix);
   }
 
@@ -327,7 +349,8 @@ class PlagiarismProtectionService {
 
   static Future<Map<String, dynamic>> generateProtectionReport() async {
     final analysis = await analyzeProject();
-    final certificate = await PlagiarismProtection.generateOriginalityCertificate();
+    final certificate =
+        await PlagiarismProtection.generateOriginalityCertificate();
     return {
       'analysis': analysis.toJson(),
       'certificate': certificate.toJson(),

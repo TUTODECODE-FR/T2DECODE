@@ -8,7 +8,8 @@ class SecurityDiagnosticScreen extends StatefulWidget {
   const SecurityDiagnosticScreen({super.key});
 
   @override
-  State<SecurityDiagnosticScreen> createState() => _SecurityDiagnosticScreenState();
+  State<SecurityDiagnosticScreen> createState() =>
+      _SecurityDiagnosticScreenState();
 }
 
 class _SecurityDiagnosticScreenState extends State<SecurityDiagnosticScreen> {
@@ -44,24 +45,30 @@ class _SecurityDiagnosticScreenState extends State<SecurityDiagnosticScreen> {
           ),
         ],
       ),
-      body: _loading 
-        ? const Center(child: CircularProgressIndicator())
-        : ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              _buildSummaryHeader(),
-              const SizedBox(height: 24),
-              const Text('JOURNAUX DE SÉCURITÉ (LOCAUX)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TdcColors.textMuted)),
-              const SizedBox(height: 12),
-              if (_logs.isEmpty)
-                const Center(child: Padding(
-                  padding: EdgeInsets.all(32.0),
-                  child: Text('Aucun événement suspect détecté.', style: TextStyle(color: TdcColors.success)),
-                ))
-              else
-                ..._logs.map((log) => _buildLogItem(log)),
-            ],
-          ),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                _buildSummaryHeader(),
+                const SizedBox(height: 24),
+                const Text('JOURNAUX DE SÉCURITÉ (LOCAUX)',
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: TdcColors.textMuted)),
+                const SizedBox(height: 12),
+                if (_logs.isEmpty)
+                  const Center(
+                      child: Padding(
+                    padding: EdgeInsets.all(32.0),
+                    child: Text('Aucun événement suspect détecté.',
+                        style: TextStyle(color: TdcColors.success)),
+                  ))
+                else
+                  ..._logs.map((log) => _buildLogItem(log)),
+              ],
+            ),
     );
   }
 
@@ -75,11 +82,14 @@ class _SecurityDiagnosticScreenState extends State<SecurityDiagnosticScreen> {
       ),
       child: Column(
         children: [
-          _buildStatRow('État du Réseau', 'Strict (HTTPS Only)', Icons.verified_user, TdcColors.success),
+          _buildStatRow('État du Réseau', 'Strict (HTTPS Only)',
+              Icons.verified_user, TdcColors.success),
           const Divider(height: 24),
-          _buildStatRow('Hôtes Autorisés', 'GitHub, Ollama (Local)', Icons.language, TdcColors.accent),
+          _buildStatRow('Hôtes Autorisés', 'GitHub, Ollama (Local)',
+              Icons.language, TdcColors.accent),
           const Divider(height: 24),
-          _buildStatRow('Validation Modules', 'Active (Structure + SHA)', Icons.security, TdcColors.success),
+          _buildStatRow('Validation Modules', 'Active (Structure + SHA)',
+              Icons.security, TdcColors.success),
         ],
       ),
     );
@@ -90,29 +100,35 @@ class _SecurityDiagnosticScreenState extends State<SecurityDiagnosticScreen> {
       children: [
         Icon(icon, color: color, size: 20),
         const SizedBox(width: 12),
-        Expanded(child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold))),
-        Text(value, style: const TextStyle(color: TdcColors.textMuted, fontSize: 13)),
+        Expanded(
+            child: Text(label,
+                style: const TextStyle(fontWeight: FontWeight.bold))),
+        Text(value,
+            style: const TextStyle(color: TdcColors.textMuted, fontSize: 13)),
       ],
     );
   }
 
   Widget _buildLogItem(String log) {
-    final isError = log.contains('Error') || log.contains('Rejet') || log.contains('Refus');
+    final isError =
+        log.contains('Error') || log.contains('Rejet') || log.contains('Refus');
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: TdcColors.surfaceAlt,
         borderRadius: TdcRadius.sm,
-        border: Border.all(color: isError ? TdcColors.danger.withValues(alpha: 0.3) : TdcColors.border),
+        border: Border.all(
+            color: isError
+                ? TdcColors.danger.withValues(alpha: 0.3)
+                : TdcColors.border),
       ),
       child: Text(
         log,
         style: TextStyle(
-          fontFamily: 'monospace', 
-          fontSize: 11, 
-          color: isError ? TdcColors.danger : TdcColors.textSecondary
-        ),
+            fontFamily: 'monospace',
+            fontSize: 11,
+            color: isError ? TdcColors.danger : TdcColors.textSecondary),
       ),
     );
   }

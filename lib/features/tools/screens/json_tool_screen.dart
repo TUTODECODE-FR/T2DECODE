@@ -25,14 +25,16 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
-        title: 'Formateur JSON',
-        showBackButton: true,
-      );
+            title: 'Formateur JSON',
+            showBackButton: true,
+          );
     });
   }
 
   void _format() {
-    setState(() { _error = ''; });
+    setState(() {
+      _error = '';
+    });
     final input = _inputCtrl.text.trim();
     if (input.isEmpty) return;
 
@@ -47,7 +49,9 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
   }
 
   void _minify() {
-    setState(() { _error = ''; });
+    setState(() {
+      _error = '';
+    });
     final input = _inputCtrl.text.trim();
     if (input.isEmpty) return;
 
@@ -61,7 +65,11 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
   }
 
   @override
-  void dispose() { _inputCtrl.dispose(); _outputCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _inputCtrl.dispose();
+    _outputCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,22 +88,43 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
   Widget _buildInputCard() {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(color: TdcColors.border)),
       child: Column(
         children: [
           TextField(
             controller: _inputCtrl,
             maxLines: 6,
-            style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 13),
-            decoration: const InputDecoration(labelText: 'Entrée JSON', filled: true, fillColor: TdcColors.surfaceAlt),
+            style: const TextStyle(
+                color: TdcColors.textPrimary,
+                fontFamily: 'monospace',
+                fontSize: 13),
+            decoration: const InputDecoration(
+                labelText: 'Entrée JSON',
+                filled: true,
+                fillColor: TdcColors.surfaceAlt),
           ),
           const SizedBox(height: 16),
           Row(
-             children: [
-               Expanded(child: ElevatedButton.icon(onPressed: _format, icon: const Icon(Icons.format_indent_increase, size: 16), label: const Text('FORMATTER'), style: ElevatedButton.styleFrom(backgroundColor: TdcColors.accent))),
-               const SizedBox(width: 8),
-               Expanded(child: ElevatedButton.icon(onPressed: _minify, icon: const Icon(Icons.compress, size: 16), label: const Text('MINIFIER'), style: ElevatedButton.styleFrom(backgroundColor: TdcColors.surfaceAlt))),
-             ],
+            children: [
+              Expanded(
+                  child: ElevatedButton.icon(
+                      onPressed: _format,
+                      icon: const Icon(Icons.format_indent_increase, size: 16),
+                      label: const Text('FORMATTER'),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: TdcColors.accent))),
+              const SizedBox(width: 8),
+              Expanded(
+                  child: ElevatedButton.icon(
+                      onPressed: _minify,
+                      icon: const Icon(Icons.compress, size: 16),
+                      label: const Text('MINIFIER'),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: TdcColors.surfaceAlt))),
+            ],
           ),
         ],
       ),
@@ -103,26 +132,41 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
   }
 
   Widget _buildError() => Container(
-    margin: const EdgeInsets.only(bottom: 16),
-    padding: const EdgeInsets.all(12),
-    width: double.infinity,
-    decoration: BoxDecoration(color: Colors.red.withValues(alpha: 0.1), borderRadius: TdcRadius.sm, border: Border.all(color: Colors.red)),
-    child: Text(_error, style: const TextStyle(color: Colors.red, fontSize: 12)),
-  );
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(12),
+        width: double.infinity,
+        decoration: BoxDecoration(
+            color: Colors.red.withValues(alpha: 0.1),
+            borderRadius: TdcRadius.sm,
+            border: Border.all(color: Colors.red)),
+        child: Text(_error,
+            style: const TextStyle(color: Colors.red, fontSize: 12)),
+      );
 
   Widget _buildOutputCard() {
     return Container(
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(color: TdcColors.border)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('RÉSULTAT', style: TextStyle(color: TdcColors.textMuted, fontSize: 10, fontWeight: FontWeight.bold)),
-              IconButton(icon: const Icon(Icons.copy, size: 16, color: TdcColors.accent), onPressed: () => Clipboard.setData(ClipboardData(text: _outputCtrl.text))),
+              const Text('RÉSULTAT',
+                  style: TextStyle(
+                      color: TdcColors.textMuted,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold)),
+              IconButton(
+                  icon:
+                      const Icon(Icons.copy, size: 16, color: TdcColors.accent),
+                  onPressed: () =>
+                      Clipboard.setData(ClipboardData(text: _outputCtrl.text))),
             ],
           ),
           const SizedBox(height: 8),
@@ -131,7 +175,10 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
               controller: _outputCtrl,
               readOnly: true,
               maxLines: null,
-              style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 13),
+              style: const TextStyle(
+                  color: TdcColors.textPrimary,
+                  fontFamily: 'monospace',
+                  fontSize: 13),
               decoration: const InputDecoration(border: InputBorder.none),
             ),
           ),

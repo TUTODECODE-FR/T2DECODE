@@ -35,7 +35,8 @@ class ThemePreview extends StatelessWidget {
               runSpacing: TdcSpacing.sm,
               children: [
                 ElevatedButton(onPressed: () {}, child: const Text('Action')),
-                OutlinedButton(onPressed: () {}, child: const Text('Secondaire')),
+                OutlinedButton(
+                    onPressed: () {}, child: const Text('Secondaire')),
                 TextButton(onPressed: () {}, child: const Text('Lien')),
               ],
             ),
@@ -66,7 +67,7 @@ class ThemePreview extends StatelessWidget {
 
 final bool kSkipGoldens =
     const bool.fromEnvironment('SKIP_GOLDENS', defaultValue: false) ||
-    (Platform.environment['CI'] == 'true');
+        (Platform.environment['CI'] == 'true');
 
 void main() {
   const surfaceSize = Size(1280, 800);

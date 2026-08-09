@@ -15,7 +15,8 @@ class IdentityVerificationScreen extends StatefulWidget {
   const IdentityVerificationScreen({super.key});
 
   @override
-  State<IdentityVerificationScreen> createState() => _IdentityVerificationScreenState();
+  State<IdentityVerificationScreen> createState() =>
+      _IdentityVerificationScreenState();
 }
 
 class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
@@ -31,7 +32,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
         title: 'Vérification d\'Identité',
@@ -39,7 +40,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
         actions: [],
       );
     });
-    
+
     _performVerification();
   }
 
@@ -51,12 +52,13 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
 
   Future<void> _performVerification() async {
     setState(() => _isVerifying = true);
-    
+
     try {
       final result = await IdentityVerificationService.verifyIdentity();
-      final certificate = await IdentityVerification.generateAuthenticityCertificate();
+      final certificate =
+          await IdentityVerification.generateAuthenticityCertificate();
       final seal = IdentityVerification.createAssociationSeal();
-      
+
       setState(() {
         _verificationResult = result;
         _certificate = certificate;
@@ -97,14 +99,15 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
               const Spacer(),
               if (_verificationResult != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _verificationResult!.isAuthentic 
+                    color: _verificationResult!.isAuthentic
                         ? Colors.green.withValues(alpha: 0.1)
                         : Colors.red.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: _verificationResult!.isAuthentic 
+                      color: _verificationResult!.isAuthentic
                           ? Colors.green.withValues(alpha: 0.3)
                           : Colors.red.withValues(alpha: 0.3),
                     ),
@@ -112,15 +115,23 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                   child: Row(
                     children: [
                       Icon(
-                        _verificationResult!.isAuthentic ? Icons.check_circle : Icons.warning,
-                        color: _verificationResult!.isAuthentic ? Colors.green : Colors.red,
+                        _verificationResult!.isAuthentic
+                            ? Icons.check_circle
+                            : Icons.warning,
+                        color: _verificationResult!.isAuthentic
+                            ? Colors.green
+                            : Colors.red,
                         size: 16,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        _verificationResult!.isAuthentic ? 'AUTHENTIQUE' : 'NON VÉRIFIÉ',
+                        _verificationResult!.isAuthentic
+                            ? 'AUTHENTIQUE'
+                            : 'NON VÉRIFIÉ',
                         style: TextStyle(
-                          color: _verificationResult!.isAuthentic ? Colors.green : Colors.red,
+                          color: _verificationResult!.isAuthentic
+                              ? Colors.green
+                              : Colors.red,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),
@@ -178,15 +189,15 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                           ),
                         ],
                       ),
-                )
-              : TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildAuthenticityTab(),
-                    _buildCertificateTab(),
-                    _buildSealTab(),
-                  ],
-                ),
+                    )
+                  : TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildAuthenticityTab(),
+                        _buildCertificateTab(),
+                        _buildSealTab(),
+                      ],
+                    ),
         ),
       ],
     );
@@ -194,7 +205,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
 
   Widget _buildAuthenticityTab() {
     final result = _verificationResult!;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -205,12 +216,12 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: result.isAuthentic 
+              color: result.isAuthentic
                   ? Colors.green.withValues(alpha: 0.1)
                   : Colors.red.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: result.isAuthentic 
+                color: result.isAuthentic
                     ? Colors.green.withValues(alpha: 0.3)
                     : Colors.red.withValues(alpha: 0.3),
               ),
@@ -224,7 +235,9 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  result.isAuthentic ? 'Application Authentifiée' : 'Application Non Authentifiée',
+                  result.isAuthentic
+                      ? 'Application Authentifiée'
+                      : 'Application Non Authentifiée',
                   style: TextStyle(
                     color: result.isAuthentic ? Colors.green : Colors.red,
                     fontSize: 24,
@@ -234,7 +247,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  result.isAuthentic 
+                  result.isAuthentic
                       ? 'Cette application est officiellement créée par l\'Association TUTODECODE'
                       : 'Cette application n\'est pas reconnue comme officielle',
                   style: const TextStyle(
@@ -246,19 +259,19 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Informations sur l'association
           _buildAssociationInfo(),
-          
+
           const SizedBox(height: 32),
-          
+
           // Résultats des vérifications
           _buildVerificationChecks(result),
-          
+
           const SizedBox(height: 32),
-          
+
           // Détails
           if (result.details != null) ...[
             Row(
@@ -298,9 +311,9 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                 ),
               ),
           ],
-          
+
           const SizedBox(height: 32),
-          
+
           // Actions
           Row(
             children: [
@@ -342,7 +355,8 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
           children: [
             Row(
               children: [
-                Icon(Icons.account_balance, color: Colors.blue.shade700, size: 24),
+                Icon(Icons.account_balance,
+                    color: Colors.blue.shade700, size: 24),
                 const SizedBox(width: 12),
                 const Text(
                   'Association TUTODECODE',
@@ -360,7 +374,8 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
             _buildInfoRow('Email', IdentityVerification.ASSOCIATION_EMAIL),
             _buildInfoRow('Site Web', IdentityVerification.ASSOCIATION_WEBSITE),
             _buildInfoRow('Pays', 'France'),
-            _buildInfoRow('Date de Vérification', _formatDate(_verificationResult!.verificationDate)),
+            _buildInfoRow('Date de Vérification',
+                _formatDate(_verificationResult!.verificationDate)),
           ],
         ),
       ),
@@ -427,7 +442,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
 
   Widget _buildCheckRow(String checkName, bool passed) {
     final checkInfo = _getCheckInfo(checkName);
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -485,7 +500,8 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
       case 'signature':
         return {
           'name': 'Signature de l\'Application',
-          'description': 'Vérifie que l\'application est signée par l\'association',
+          'description':
+              'Vérifie que l\'application est signée par l\'association',
         };
       case 'metadata':
         return {
@@ -517,7 +533,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
 
   Widget _buildCertificateTab() {
     final certificate = _certificate!;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -537,7 +553,8 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.blue.shade300.withValues(alpha: 0.3)),
+              border: Border.all(
+                  color: Colors.blue.shade300.withValues(alpha: 0.3)),
             ),
             child: Column(
               children: [
@@ -562,9 +579,9 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Informations du certificat
           Card(
             color: TdcColors.surface,
@@ -587,16 +604,19 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                   _buildCertRow('Version', certificate.version),
                   _buildCertRow('Association', certificate.associationName),
                   _buildCertRow('SIREN', certificate.associationSIREN),
-                  _buildCertRow('Date d\'Émission', _formatDate(certificate.issueDate)),
-                  _buildCertRow('Validité', certificate.isValid ? 'Valide' : 'Invalide'),
-                  _buildCertRow('Hash de Vérification', certificate.verificationHash),
+                  _buildCertRow(
+                      'Date d\'Émission', _formatDate(certificate.issueDate)),
+                  _buildCertRow(
+                      'Validité', certificate.isValid ? 'Valide' : 'Invalide'),
+                  _buildCertRow(
+                      'Hash de Vérification', certificate.verificationHash),
                 ],
               ),
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // QR Code
           Card(
             color: TdcColors.surface,
@@ -642,9 +662,9 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Actions
           Row(
             children: [
@@ -710,7 +730,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
 
   Widget _buildSealTab() {
     final seal = _digitalSeal!;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -730,7 +750,8 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.purple.shade300.withValues(alpha: 0.3)),
+              border: Border.all(
+                  color: Colors.purple.shade300.withValues(alpha: 0.3)),
             ),
             child: Column(
               children: [
@@ -790,9 +811,9 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Informations du sceau
           Card(
             color: TdcColors.surface,
@@ -820,9 +841,9 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Vérification du sceau
           const Card(
             color: TdcColors.surface,
@@ -943,7 +964,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
   String _generateTextReport() {
     final result = _verificationResult!;
     final certificate = _certificate!;
-    
+
     return '''
 RAPPORT DE VÉRIFICATION D'AUTHENTICITÉ
 ==========================================

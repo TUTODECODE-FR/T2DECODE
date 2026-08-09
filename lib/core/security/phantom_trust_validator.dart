@@ -4,30 +4,33 @@ import 'package:cryptography/cryptography.dart';
 
 class PhantomTrustValidator {
   /// Clé publique de l'association TUTODECODE (Exemple).
-  /// Dans un environnement de prod, cette clé devrait être hardcodée 
+  /// Dans un environnement de prod, cette clé devrait être hardcodée
   /// ou lue depuis un certificat embarqué sûr.
-  static const String rootPublicKeyHex = 'a1b2c3d4e5f6...'; // TODO: Remplacer par la vraie clé
-  
+  static const String rootPublicKeyHex =
+      'a1b2c3d4e5f6...'; // TODO: Remplacer par la vraie clé
+
   Map<String, String>? _merkleTreeCache;
   bool _isManifestValid = false;
 
   /// Valide le Manifeste de T2C-Phantom.
-  Future<bool> loadAndValidateManifest(String manifestJson, String signatureHex) async {
+  Future<bool> loadAndValidateManifest(
+      String manifestJson, String signatureHex) async {
     try {
       final ed25519 = Ed25519();
       final pubKey = SimplePublicKey(
-        _hexToBytes(rootPublicKeyHex), 
+        _hexToBytes(rootPublicKeyHex),
         type: KeyPairType.ed25519,
       );
-      
+
       final isValid = await ed25519.verify(
-        utf8.encode(manifestJson), 
+        utf8.encode(manifestJson),
         signature: Signature(_hexToBytes(signatureHex), publicKey: pubKey),
       );
-      
+
       if (isValid) {
         final decoded = json.decode(manifestJson) as Map<String, dynamic>;
-        _merkleTreeCache = Map<String, String>.from(decoded['merkle_tree'] ?? {});
+        _merkleTreeCache =
+            Map<String, String>.from(decoded['merkle_tree'] ?? {});
         _isManifestValid = true;
         return true;
       }

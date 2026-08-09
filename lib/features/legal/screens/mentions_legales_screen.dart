@@ -59,28 +59,33 @@ class _MentionsLegalesScreenState extends State<MentionsLegalesScreen> {
 
   // ── Data ─────────────────────────────────────────────────
   static const _identity = [
-    _IdItem(Icons.business_outlined,      'Nom Légal',  'Assoc. TUTODECODE',    null),
-    _IdItem(Icons.terminal,               'Logiciel',   'T2DECODE',             null),
-    _IdItem(Icons.gavel,                  'Statut',     'Loi 1901',             null),
-    _IdItem(Icons.fingerprint,            'SIREN',      '102 763 133',          '102 763 133'),
-    _IdItem(Icons.calendar_month_outlined,'Création',   'Mars 2026',            null),
-    _IdItem(Icons.location_on_outlined,   'Siège',      '13730 St-Victoret, FR','13730 St-Victoret, FR'),
-    _IdItem(Icons.person_outline,         'Fondateur',  'Maxime Martin Civet',  null),
-    _IdItem(Icons.alternate_email,        'Contact',    'contact@tutodecode.org','contact@tutodecode.org'),
+    _IdItem(Icons.business_outlined, 'Nom Légal', 'Assoc. TUTODECODE', null),
+    _IdItem(Icons.terminal, 'Logiciel', 'T2DECODE', null),
+    _IdItem(Icons.gavel, 'Statut', 'Loi 1901', null),
+    _IdItem(Icons.fingerprint, 'SIREN', '102 763 133', '102 763 133'),
+    _IdItem(Icons.calendar_month_outlined, 'Création', 'Mars 2026', null),
+    _IdItem(Icons.location_on_outlined, 'Siège', '13730 St-Victoret, FR',
+        '13730 St-Victoret, FR'),
+    _IdItem(Icons.person_outline, 'Fondateur', 'Maxime Martin Civet', null),
+    _IdItem(Icons.alternate_email, 'Contact', 'contact@tutodecode.org',
+        'contact@tutodecode.org'),
   ];
 
   static const _privacy = [
-    _PrivacyPill(Icons.wifi_off_outlined,      'Zéro Réseau',      'Aucune requête sortante'),
-    _PrivacyPill(Icons.visibility_off_outlined,'Zéro Télémétrie',  'Aucun traceur, aucun log distant'),
-    _PrivacyPill(Icons.lock_outline,           'Données Locales',  'Tout reste sur votre machine'),
-    _PrivacyPill(Icons.code_outlined,          'Code Ouvert',      'Auditable sous GPL-3.0'),
+    _PrivacyPill(
+        Icons.wifi_off_outlined, 'Zéro Réseau', 'Aucune requête sortante'),
+    _PrivacyPill(Icons.visibility_off_outlined, 'Zéro Télémétrie',
+        'Aucun traceur, aucun log distant'),
+    _PrivacyPill(
+        Icons.lock_outline, 'Données Locales', 'Tout reste sur votre machine'),
+    _PrivacyPill(Icons.code_outlined, 'Code Ouvert', 'Auditable sous GPL-3.0'),
   ];
 
   // ── Build ─────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     final isDesktop = TdcBreakpoints.isDesktop(context);
-    final isTablet  = TdcBreakpoints.isTablet(context);
+    final isTablet = TdcBreakpoints.isTablet(context);
 
     return SingleChildScrollView(
       child: Column(
@@ -91,7 +96,11 @@ class _MentionsLegalesScreenState extends State<MentionsLegalesScreen> {
           // ── Body ────────────────────────────────────────
           Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: isDesktop ? 48 : isTablet ? 32 : 20,
+              horizontal: isDesktop
+                  ? 48
+                  : isTablet
+                      ? 32
+                      : 20,
               vertical: 40,
             ),
             child: Center(
@@ -112,13 +121,16 @@ class _MentionsLegalesScreenState extends State<MentionsLegalesScreen> {
                     const SizedBox(height: 48),
 
                     // 2. Privacy by design
-                    const _SectionLabel(label: 'Confidentialité & Données', index: 1),
+                    const _SectionLabel(
+                        label: 'Confidentialité & Données', index: 1),
                     const SizedBox(height: 16),
-                    _PrivacyRow(pills: _privacy, isDesktop: isDesktop || isTablet),
+                    _PrivacyRow(
+                        pills: _privacy, isDesktop: isDesktop || isTablet),
                     const SizedBox(height: 48),
 
                     // 3. Legal declaration
-                    const _SectionLabel(label: 'Déclaration Officielle', index: 2),
+                    const _SectionLabel(
+                        label: 'Déclaration Officielle', index: 2),
                     const SizedBox(height: 16),
                     _LegalDeclarationCard(onCopy: _copy),
                     const SizedBox(height: 48),
@@ -193,7 +205,8 @@ class _HeroHeader extends StatelessWidget {
               children: [
                 // Badge "Loi 1901"
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: TdcColors.accent.withValues(alpha: 0.1),
                     border: Border.all(
@@ -216,10 +229,11 @@ class _HeroHeader extends StatelessWidget {
                       ),
                     ],
                   ),
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms)
-                    .slideX(begin: -0.08, end: 0, duration: 400.ms, curve: Curves.easeOutCubic),
+                ).animate().fadeIn(duration: 400.ms).slideX(
+                    begin: -0.08,
+                    end: 0,
+                    duration: 400.ms,
+                    curve: Curves.easeOutCubic),
                 const SizedBox(height: 20),
                 // Main title
                 const Text(
@@ -231,10 +245,12 @@ class _HeroHeader extends StatelessWidget {
                     height: 0.92,
                     letterSpacing: 0.4,
                   ),
-                )
-                    .animate()
-                    .fadeIn(duration: 500.ms, delay: 80.ms)
-                    .slideY(begin: 0.1, end: 0, duration: 480.ms, delay: 80.ms, curve: Curves.easeOutCubic),
+                ).animate().fadeIn(duration: 500.ms, delay: 80.ms).slideY(
+                    begin: 0.1,
+                    end: 0,
+                    duration: 480.ms,
+                    delay: 80.ms,
+                    curve: Curves.easeOutCubic),
                 const SizedBox(height: 18),
                 // Subtitle
                 const Text(
@@ -245,23 +261,23 @@ class _HeroHeader extends StatelessWidget {
                     height: 1.4,
                     letterSpacing: 0.2,
                   ),
-                )
-                    .animate()
-                    .fadeIn(duration: 500.ms, delay: 160.ms),
+                ).animate().fadeIn(duration: 500.ms, delay: 160.ms),
                 const SizedBox(height: 28),
                 // Stats row
                 const Wrap(
                   spacing: 12,
                   runSpacing: 10,
                   children: [
-                    _HeroChip(Icons.shield_outlined,  'Air-Gapped',      TdcColors.accent),
-                    _HeroChip(Icons.memory_outlined,   'IA Locale',       TdcColors.info),
-                    _HeroChip(Icons.wifi_off_outlined, 'Zéro Télémétrie', TdcColors.success),
-                    _HeroChip(Icons.code_outlined,     'GPL-3.0',         TdcColors.textSecondary),
+                    _HeroChip(
+                        Icons.shield_outlined, 'Air-Gapped', TdcColors.accent),
+                    _HeroChip(
+                        Icons.memory_outlined, 'IA Locale', TdcColors.info),
+                    _HeroChip(Icons.wifi_off_outlined, 'Zéro Télémétrie',
+                        TdcColors.success),
+                    _HeroChip(Icons.code_outlined, 'GPL-3.0',
+                        TdcColors.textSecondary),
                   ],
-                )
-                    .animate()
-                    .fadeIn(duration: 500.ms, delay: 240.ms),
+                ).animate().fadeIn(duration: 500.ms, delay: 240.ms),
               ],
             ),
           ),
@@ -317,10 +333,7 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
-            width: 3,
-            height: 18,
-            color: TdcColors.accent),
+        Container(width: 3, height: 18, color: TdcColors.accent),
         const SizedBox(width: 12),
         Text(
           label.toUpperCase(),
@@ -335,7 +348,8 @@ class _SectionLabel extends StatelessWidget {
     )
         .animate(delay: Duration(milliseconds: 60 + index * 80))
         .fadeIn(duration: 380.ms)
-        .slideX(begin: -0.05, end: 0, duration: 380.ms, curve: Curves.easeOutCubic);
+        .slideX(
+            begin: -0.05, end: 0, duration: 380.ms, curve: Curves.easeOutCubic);
   }
 }
 
@@ -357,7 +371,11 @@ class _IdentityGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cols = isDesktop ? 4 : isTablet ? 2 : 1;
+    final cols = isDesktop
+        ? 4
+        : isTablet
+            ? 2
+            : 1;
     final rows = <List<_IdItem>>[];
     for (var i = 0; i < items.length; i += cols) {
       rows.add(items.sublist(i, (i + cols).clamp(0, items.length)));
@@ -366,8 +384,8 @@ class _IdentityGrid extends StatelessWidget {
     return Column(
       children: rows.asMap().entries.map((rowEntry) {
         return Padding(
-          padding: EdgeInsets.only(
-              bottom: rowEntry.key < rows.length - 1 ? 1 : 0),
+          padding:
+              EdgeInsets.only(bottom: rowEntry.key < rows.length - 1 ? 1 : 0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: rowEntry.value.asMap().entries.map((cellEntry) {
@@ -415,12 +433,11 @@ class _IdentityTileState extends State<_IdentityTile> {
     return MouseRegion(
       cursor: copyable ? SystemMouseCursors.click : MouseCursor.defer,
       onEnter: (_) => setState(() => _hovered = true),
-      onExit:  (_) => setState(() => _hovered = false),
+      onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: copyable
             ? () => widget.onCopy(
-                widget.item.copyValue!,
-                '${widget.item.label} copié')
+                widget.item.copyValue!, '${widget.item.label} copié')
             : null,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
@@ -441,8 +458,7 @@ class _IdentityTileState extends State<_IdentityTile> {
               // Top row : icon + label + copy icon
               Row(
                 children: [
-                  Icon(widget.item.icon,
-                      size: 14, color: TdcColors.accent),
+                  Icon(widget.item.icon, size: 14, color: TdcColors.accent),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -462,9 +478,8 @@ class _IdentityTileState extends State<_IdentityTile> {
                       child: Icon(
                         Icons.copy_outlined,
                         size: 13,
-                        color: _hovered
-                            ? TdcColors.accent
-                            : TdcColors.textMuted,
+                        color:
+                            _hovered ? TdcColors.accent : TdcColors.textMuted,
                       ),
                     ),
                 ],
@@ -485,7 +500,11 @@ class _IdentityTileState extends State<_IdentityTile> {
         )
             .animate(delay: widget.animDelay)
             .fadeIn(duration: 380.ms, curve: Curves.easeOutCubic)
-            .slideY(begin: 0.06, end: 0, duration: 360.ms, curve: Curves.easeOutCubic),
+            .slideY(
+                begin: 0.06,
+                end: 0,
+                duration: 360.ms,
+                curve: Curves.easeOutCubic),
       ),
     );
   }
@@ -507,7 +526,8 @@ class _PrivacyRow extends StatelessWidget {
         children: pills.asMap().entries.map((e) {
           return Expanded(
             child: Padding(
-              padding: EdgeInsets.only(right: e.key < pills.length - 1 ? 12 : 0),
+              padding:
+                  EdgeInsets.only(right: e.key < pills.length - 1 ? 12 : 0),
               child: _PrivacyCard(pill: e.value, delay: e.key * 70),
             ),
           );
@@ -541,7 +561,7 @@ class _PrivacyCardState extends State<_PrivacyCard> {
   Widget build(BuildContext context) {
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
-      onExit:  (_) => setState(() => _hovered = false),
+      onExit: (_) => setState(() => _hovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 160),
         padding: const EdgeInsets.all(20),
@@ -557,11 +577,10 @@ class _PrivacyCardState extends State<_PrivacyCard> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: TdcColors.accent.withValues(alpha: 0.1),
-                border: Border.all(
-                    color: TdcColors.accent.withValues(alpha: 0.2)),
+                border:
+                    Border.all(color: TdcColors.accent.withValues(alpha: 0.2)),
               ),
-              child: Icon(widget.pill.icon,
-                  size: 16, color: TdcColors.accent),
+              child: Icon(widget.pill.icon, size: 16, color: TdcColors.accent),
             ),
             const SizedBox(height: 12),
             Text(
@@ -587,7 +606,11 @@ class _PrivacyCardState extends State<_PrivacyCard> {
       )
           .animate(delay: Duration(milliseconds: 200 + widget.delay))
           .fadeIn(duration: 380.ms)
-          .slideY(begin: 0.08, end: 0, duration: 360.ms, curve: Curves.easeOutCubic),
+          .slideY(
+              begin: 0.08,
+              end: 0,
+              duration: 360.ms,
+              curve: Curves.easeOutCubic),
     );
   }
 }
@@ -625,8 +648,8 @@ class _LegalDeclarationCard extends StatelessWidget {
                   border: Border.all(
                       color: TdcColors.accent.withValues(alpha: 0.2)),
                 ),
-                child: const Icon(Icons.gavel,
-                    size: 18, color: TdcColors.accent),
+                child:
+                    const Icon(Icons.gavel, size: 18, color: TdcColors.accent),
               ),
               const SizedBox(width: 14),
               const Expanded(
@@ -648,8 +671,7 @@ class _LegalDeclarationCard extends StatelessWidget {
               ),
               // Verified badge
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
                 decoration: BoxDecoration(
                   color: TdcColors.success.withValues(alpha: 0.08),
                   border: Border.all(
@@ -658,8 +680,7 @@ class _LegalDeclarationCard extends StatelessWidget {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.verified,
-                        size: 12, color: TdcColors.success),
+                    Icon(Icons.verified, size: 12, color: TdcColors.success),
                     SizedBox(width: 5),
                     Text('DÉCLARÉ',
                         style: TextStyle(
@@ -734,10 +755,8 @@ class _LegalDeclarationCard extends StatelessWidget {
           ),
         ],
       ),
-    )
-        .animate(delay: 280.ms)
-        .fadeIn(duration: 400.ms)
-        .slideY(begin: 0.06, end: 0, duration: 380.ms, curve: Curves.easeOutCubic);
+    ).animate(delay: 280.ms).fadeIn(duration: 400.ms).slideY(
+        begin: 0.06, end: 0, duration: 380.ms, curve: Curves.easeOutCubic);
   }
 }
 
@@ -760,8 +779,7 @@ class _RgpdCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
             decoration: const BoxDecoration(
-              border: Border(
-                  bottom: BorderSide(color: TdcColors.border)),
+              border: Border(bottom: BorderSide(color: TdcColors.border)),
             ),
             child: Row(
               children: [
@@ -787,11 +805,9 @@ class _RgpdCard extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                           )),
                       SizedBox(height: 2),
-                      Text(
-                          'Règlement Général sur la Protection des Données',
+                      Text('Règlement Général sur la Protection des Données',
                           style: TextStyle(
-                              color: TdcColors.textMuted,
-                              fontSize: 11)),
+                              color: TdcColors.textMuted, fontSize: 11)),
                     ],
                   ),
                 ),
@@ -829,13 +845,12 @@ class _RgpdCard extends StatelessWidget {
                 const SizedBox(height: 24),
                 // Highlight row
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: const BoxDecoration(
                     color: TdcColors.bg,
                     border: Border(
-                      left: BorderSide(
-                          color: TdcColors.accent, width: 3),
+                      left: BorderSide(color: TdcColors.accent, width: 3),
                     ),
                   ),
                   child: const Row(
@@ -862,9 +877,7 @@ class _RgpdCard extends StatelessWidget {
           ),
         ],
       ),
-    )
-        .animate(delay: 360.ms)
-        .fadeIn(duration: 400.ms)
-        .slideY(begin: 0.06, end: 0, duration: 380.ms, curve: Curves.easeOutCubic);
+    ).animate(delay: 360.ms).fadeIn(duration: 400.ms).slideY(
+        begin: 0.06, end: 0, duration: 380.ms, curve: Curves.easeOutCubic);
   }
 }

@@ -10,7 +10,8 @@ import 'package:tutodecode/utils/ip_helper.dart';
 
 class IPCalcScreen extends StatefulWidget {
   const IPCalcScreen({super.key});
-  @override State<IPCalcScreen> createState() => _IPCalcScreenState();
+  @override
+  State<IPCalcScreen> createState() => _IPCalcScreenState();
 }
 
 class _IPCalcScreenState extends State<IPCalcScreen> {
@@ -45,10 +46,11 @@ class _IPCalcScreenState extends State<IPCalcScreen> {
         }
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Format IP ou Masque invalide'), behavior: SnackBarBehavior.floating));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Format IP ou Masque invalide'),
+          behavior: SnackBarBehavior.floating));
     }
   }
-
 
   @override
   void initState() {
@@ -70,17 +72,35 @@ class _IPCalcScreenState extends State<IPCalcScreen> {
         children: [
           const TdcToolHeader(
             title: 'Calculateur IP',
-            description: 'Calculez vos sous-réseaux, masques et plages d\'adresses rapidement.',
-            howToUse: 'Saisissez une adresse IP et un masque de sous-réseau (CIDR) et cliquez sur Calculer. L\'outil générera l\'adresse de réseau, de broadcast, ainsi que la plage d\'hôtes valides. Vous pouvez copier ces informations en un clic.',
+            description:
+                'Calculez vos sous-réseaux, masques et plages d\'adresses rapidement.',
+            howToUse:
+                'Saisissez une adresse IP et un masque de sous-réseau (CIDR) et cliquez sur Calculer. L\'outil générera l\'adresse de réseau, de broadcast, ainsi que la plage d\'hôtes valides. Vous pouvez copier ces informations en un clic.',
           ),
           _buildCard('CONFIGURATION RÉSEAU', [
             Row(children: [
-              Expanded(flex: 3, child: TextField(controller: _ipController, decoration: const InputDecoration(labelText: 'IP', hintText: '192.168.1.1'))),
+              Expanded(
+                  flex: 3,
+                  child: TextField(
+                      controller: _ipController,
+                      decoration: const InputDecoration(
+                          labelText: 'IP', hintText: '192.168.1.1'))),
               const SizedBox(width: 12),
-              Expanded(flex: 1, child: TextField(controller: _maskController, decoration: const InputDecoration(labelText: 'CIDR', hintText: '24'))),
+              Expanded(
+                  flex: 1,
+                  child: TextField(
+                      controller: _maskController,
+                      decoration: const InputDecoration(
+                          labelText: 'CIDR', hintText: '24'))),
             ]),
             const SizedBox(height: 16),
-            SizedBox(width: double.infinity, child: ElevatedButton(onPressed: _calculate, style: ElevatedButton.styleFrom(backgroundColor: TdcColors.accent), child: const Text('CALCULER'))),
+            SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                    onPressed: _calculate,
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: TdcColors.accent),
+                    child: const Text('CALCULER'))),
           ]),
           const SizedBox(height: 24),
           _buildCard('RÉSULTATS', [
@@ -95,10 +115,13 @@ class _IPCalcScreenState extends State<IPCalcScreen> {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () => Clipboard.setData(ClipboardData(text: '${_ipController.text.trim()}/${_maskController.text.trim()} — Réseau: $_network | Masque: $_netmask | Premier: $_firstHost | Dernier: $_lastHost | Hôtes: $_numHosts')),
+                onPressed: () => Clipboard.setData(ClipboardData(
+                    text:
+                        '${_ipController.text.trim()}/${_maskController.text.trim()} — Réseau: $_network | Masque: $_netmask | Premier: $_firstHost | Dernier: $_lastHost | Hôtes: $_numHosts')),
                 icon: const Icon(Icons.copy, size: 14),
                 label: const Text('Copier les résultats'),
-                style: OutlinedButton.styleFrom(foregroundColor: TdcColors.accent),
+                style:
+                    OutlinedButton.styleFrom(foregroundColor: TdcColors.accent),
               ),
             ),
           ]),
@@ -106,23 +129,28 @@ class _IPCalcScreenState extends State<IPCalcScreen> {
             const SizedBox(height: 24),
             _buildCard('HISTORIQUE', [
               ..._history.skip(1).map((h) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: GestureDetector(
-                  onTap: () {
-                    final parts = h.split('/');
-                    if (parts.length >= 2) {
-                      _ipController.text = parts[0];
-                      _maskController.text = parts[1].split(' ').first;
-                      _calculate();
-                    }
-                  },
-                  child: Row(children: [
-                    const Icon(Icons.history, size: 12, color: TdcColors.textMuted),
-                    const SizedBox(width: 8),
-                    Text(h, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12, fontFamily: 'monospace')),
-                  ]),
-                ),
-              )),
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: GestureDetector(
+                      onTap: () {
+                        final parts = h.split('/');
+                        if (parts.length >= 2) {
+                          _ipController.text = parts[0];
+                          _maskController.text = parts[1].split(' ').first;
+                          _calculate();
+                        }
+                      },
+                      child: Row(children: [
+                        const Icon(Icons.history,
+                            size: 12, color: TdcColors.textMuted),
+                        const SizedBox(width: 8),
+                        Text(h,
+                            style: const TextStyle(
+                                color: TdcColors.textSecondary,
+                                fontSize: 12,
+                                fontFamily: 'monospace')),
+                      ]),
+                    ),
+                  )),
             ]),
           ],
         ],
@@ -133,9 +161,16 @@ class _IPCalcScreenState extends State<IPCalcScreen> {
   Widget _buildCard(String title, List<Widget> children) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: TdcColors.surface, borderRadius: TdcRadius.md, border: Border.all(color: TdcColors.border)),
+      decoration: BoxDecoration(
+          color: TdcColors.surface,
+          borderRadius: TdcRadius.md,
+          border: Border.all(color: TdcColors.border)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(title, style: const TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold)),
+        Text(title,
+            style: const TextStyle(
+                color: TdcColors.accent,
+                fontSize: 10,
+                fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
         ...children,
       ]),
@@ -143,9 +178,19 @@ class _IPCalcScreenState extends State<IPCalcScreen> {
   }
 
   Widget _row(String label, String value) {
-    return Padding(padding: const EdgeInsets.only(bottom: 12), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text(label, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 13)),
-      Text(value, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 14, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
-    ]));
+    return Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Text(label,
+              style: const TextStyle(
+                  color: TdcColors.textSecondary, fontSize: 13)),
+          Text(value,
+              style: const TextStyle(
+                  color: TdcColors.textPrimary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'monospace')),
+        ]));
   }
 }

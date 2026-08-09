@@ -65,8 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
       if (mismatched.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-                'Alerte intégrité: certains assets semblent modifiés.'),
+            content:
+                Text('Alerte intégrité: certains assets semblent modifiés.'),
             backgroundColor: TdcColors.danger,
           ),
         );
@@ -78,7 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final s = await OllamaService.checkStatus();
     if (mounted) setState(() => _aiStatus = s);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -329,14 +328,16 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 6),
         Text('Apprendre. Construire. Comprendre.',
             style: TextStyle(
-                color: TdcColors.textMuted, fontSize: TdcText.caption(context))),
+                color: TdcColors.textMuted,
+                fontSize: TdcText.caption(context))),
         SizedBox(height: TdcAdaptive.space(context, 16)),
         _buildSovereignArchitectureBanner(context, compact: true),
       ],
     );
   }
 
-  Widget _buildSovereignArchitectureBanner(BuildContext context, {bool compact = false}) {
+  Widget _buildSovereignArchitectureBanner(BuildContext context,
+      {bool compact = false}) {
     return Container(
       constraints: const BoxConstraints(maxWidth: 860),
       padding: EdgeInsets.all(TdcAdaptive.padding(context, compact ? 16 : 24)),
@@ -357,9 +358,10 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.shield_outlined, color: TdcColors.accent, size: compact ? 20 : 24)
-                .animate(onPlay: (c) => c.repeat(reverse: true))
-                .shimmer(duration: 2.seconds, color: Colors.white),
+              Icon(Icons.shield_outlined,
+                      color: TdcColors.accent, size: compact ? 20 : 24)
+                  .animate(onPlay: (c) => c.repeat(reverse: true))
+                  .shimmer(duration: 2.seconds, color: Colors.white),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -409,10 +411,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.96, 0.96), curve: Curves.easeOutCubic);
+    )
+        .animate()
+        .fadeIn(duration: 600.ms)
+        .scale(begin: const Offset(0.96, 0.96), curve: Curves.easeOutCubic);
   }
 
-  Widget _buildFeaturePill(BuildContext context, {required IconData icon, required String title, required String desc}) {
+  Widget _buildFeaturePill(BuildContext context,
+      {required IconData icon, required String title, required String desc}) {
     return Container(
       width: 200,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -483,8 +489,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: _aiStatus?.running == true
                     ? '${_aiStatus!.models.length} modeles IA'
                     : 'IA locale optionnelle',
-                tone:
-                    _aiStatus?.running == true ? TdcColors.info : TdcColors.textMuted,
+                tone: _aiStatus?.running == true
+                    ? TdcColors.info
+                    : TdcColors.textMuted,
               ),
               _buildInsightChip(
                 context,
@@ -527,16 +534,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: TdcRadius.sm,
                 ),
                 child: Icon(Icons.play_circle_fill,
-                    color: TdcColors.accent, size: TdcAdaptive.icon(context, 18)),
+                    color: TdcColors.accent,
+                    size: TdcAdaptive.icon(context, 18)),
               ),
               SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
               Expanded(
                 child: Text(
-                  course == null ? 'Pret a commencer' : 'Reprendre la progression',
+                  course == null
+                      ? 'Pret a commencer'
+                      : 'Reprendre la progression',
                   style: TextStyle(
                     color: TdcColors.textPrimary,
                     fontWeight: FontWeight.bold,
-                    fontSize: compact ? TdcText.body(context) : TdcText.h3(context),
+                    fontSize:
+                        compact ? TdcText.body(context) : TdcText.h3(context),
                   ),
                 ),
               ),
@@ -812,33 +823,26 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () => _openCourseSheet(context, course, prov),
       padding: EdgeInsets.all(TdcAdaptive.padding(context, TdcSpacing.md)),
       child: horizontal
-          ? _buildHorizontalCard(
-              context,
-              course,
-              icon,
-              iconColor,
-              color,
-              done,
-              total,
-              progress,
-              isImported)
-          : _buildVerticalCard(
-              context,
-              course,
-              icon,
-              iconColor,
-              color,
-              done,
-              total,
-              progress,
-              isImported),
+          ? _buildHorizontalCard(context, course, icon, iconColor, color, done,
+              total, progress, isImported)
+          : _buildVerticalCard(context, course, icon, iconColor, color, done,
+              total, progress, isImported),
     );
   }
 
-  Widget _buildVerticalCard(BuildContext context, Course course, IconData icon,
-      Color iconColor, Color color, int done, int total, double progress, bool isImported) {
+  Widget _buildVerticalCard(
+      BuildContext context,
+      Course course,
+      IconData icon,
+      Color iconColor,
+      Color color,
+      int done,
+      int total,
+      double progress,
+      bool isImported) {
     final sourceColor = isImported ? TdcColors.coral : TdcColors.info;
-    final sourceIcon = isImported ? Icons.file_upload_outlined : Icons.verified_outlined;
+    final sourceIcon =
+        isImported ? Icons.file_upload_outlined : Icons.verified_outlined;
     final sourceLabel = isImported ? 'Importé (local)' : 'Officiel';
     final sourceTooltip = isImported
         ? 'Cours importé depuis un fichier local. T2DECODE n’en revendique pas la paternité.'
@@ -944,7 +948,8 @@ class _HomeScreenState extends State<HomeScreen> {
       double progress,
       bool isImported) {
     final sourceColor = isImported ? TdcColors.coral : TdcColors.info;
-    final sourceIcon = isImported ? Icons.file_upload_outlined : Icons.verified_outlined;
+    final sourceIcon =
+        isImported ? Icons.file_upload_outlined : Icons.verified_outlined;
     final sourceTooltip = isImported
         ? 'Cours importé depuis un fichier local. T2DECODE n’en revendique pas la paternité.'
         : 'Cours fourni avec T2DECODE.';
@@ -1082,8 +1087,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ? 'Cours importé depuis un fichier local. T2DECODE n’en revendique pas la paternité.'
                     : 'Cours fourni avec T2DECODE.',
                 child: TdcStatusBadge(
-                  label: course.keywords.contains('EXTERNAL') ? 'Importé (local)' : 'Officiel',
-                  color: course.keywords.contains('EXTERNAL') ? TdcColors.coral : TdcColors.info,
+                  label: course.keywords.contains('EXTERNAL')
+                      ? 'Importé (local)'
+                      : 'Officiel',
+                  color: course.keywords.contains('EXTERNAL')
+                      ? TdcColors.coral
+                      : TdcColors.info,
                   icon: course.keywords.contains('EXTERNAL')
                       ? Icons.file_upload_outlined
                       : Icons.verified_outlined,
@@ -1297,7 +1306,8 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: TdcAdaptive.space(context, TdcSpacing.sm)),
               if (active) ...[
                 Row(children: [
-                  const Icon(Icons.people, size: 12, color: TdcColors.textMuted),
+                  const Icon(Icons.people,
+                      size: 12, color: TdcColors.textMuted),
                   const SizedBox(width: 6),
                   Text(
                     peers == 0
@@ -1602,7 +1612,9 @@ class _HomeScreenState extends State<HomeScreen> {
         title.contains('hack')) {
       return Icons.security;
     }
-    if (cat.contains('web') || title.contains('html') || title.contains('css')) {
+    if (cat.contains('web') ||
+        title.contains('html') ||
+        title.contains('css')) {
       return Icons.language;
     }
     if (cat.contains('python') || title.contains('python')) {
@@ -1648,7 +1660,9 @@ class _HomeScreenState extends State<HomeScreen> {
         title.contains('hack')) {
       return const Color(0xFF9A7C7A);
     }
-    if (cat.contains('web') || title.contains('html') || title.contains('css')) {
+    if (cat.contains('web') ||
+        title.contains('html') ||
+        title.contains('css')) {
       return const Color(0xFF9B8E81);
     }
     if (title.contains('javascript') || title.contains('react')) {

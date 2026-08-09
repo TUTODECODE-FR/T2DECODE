@@ -11,7 +11,7 @@ import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 
 class AiTutorProvider with ChangeNotifier {
   final StorageService _storage = StorageService();
-  
+
   bool _isConnected = false;
   bool _isLoading = false;
   bool _isStreaming = false;
@@ -24,7 +24,7 @@ class AiTutorProvider with ChangeNotifier {
   List<TutorSession> _sessions = [];
   TutorSession? _currentSession;
   List<TutorMessage> _currentMessages = [];
-  
+
   // Tutoring state
   bool _isTutoring = false;
   TutorMode _currentMode = TutorMode.explanation;
@@ -38,7 +38,8 @@ class AiTutorProvider with ChangeNotifier {
   static String _sanitizeTopic(String? raw) {
     if (raw == null || raw.trim().isEmpty) return 'Informatique générale';
     var clean = raw
-        .replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '') // contrôles ASCII (incl. \r, \n)
+        .replaceAll(
+            RegExp(r'[\x00-\x1F\x7F]'), '') // contrôles ASCII (incl. \r, \n)
         .replaceAll('`', '')
         .replaceAll('"', '')
         .replaceAll("'", '')
@@ -61,8 +62,9 @@ class AiTutorProvider with ChangeNotifier {
       return e.message;
     }
   }
+
   final Map<String, dynamic> _userProgress = {};
-  
+
   // Ollama connection
   String _ollamaUrl = 'http://localhost:11434'; // NOSONAR
   Timer? _connectionCheckTimer;
@@ -134,12 +136,14 @@ class AiTutorProvider with ChangeNotifier {
     // Ping léger pour détecter rapidement un arrêt/redémarrage d'Ollama.
     // - Quand Ollama est dispo: on veut un feedback rapide (UX).
     // - Quand il est indispo: on évite une charge inutile (timeouts courts + pas de /api/tags).
-    _connectionCheckTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    _connectionCheckTimer =
+        Timer.periodic(const Duration(seconds: 10), (timer) {
       checkOllamaConnection(silent: true, includeModels: false);
     });
   }
 
-  Future<void> checkOllamaConnection({bool silent = false, bool includeModels = true}) async {
+  Future<void> checkOllamaConnection(
+      {bool silent = false, bool includeModels = true}) async {
     if (_checkingOllama) return;
     _checkingOllama = true;
 
@@ -157,8 +161,10 @@ class AiTutorProvider with ChangeNotifier {
     try {
       final status = await OllamaService.checkStatus(
         includeModels: includeModels,
-        versionTimeout: silent ? const Duration(seconds: 3) : const Duration(seconds: 15),
-        tagsTimeout: silent ? const Duration(seconds: 5) : const Duration(seconds: 15),
+        versionTimeout:
+            silent ? const Duration(seconds: 3) : const Duration(seconds: 15),
+        tagsTimeout:
+            silent ? const Duration(seconds: 5) : const Duration(seconds: 15),
       );
 
       _hasCheckedOllama = true;
@@ -170,7 +176,8 @@ class AiTutorProvider with ChangeNotifier {
         _errorMessage = null;
         if (includeModels) {
           _availableModels = status.models;
-          if (_availableModels.isNotEmpty && !_availableModels.contains(_selectedModel)) {
+          if (_availableModels.isNotEmpty &&
+              !_availableModels.contains(_selectedModel)) {
             _selectedModel = _availableModels.first;
           }
         } else {
@@ -183,7 +190,8 @@ class AiTutorProvider with ChangeNotifier {
             );
             if (full.running) {
               _availableModels = full.models;
-              if (_availableModels.isNotEmpty && !_availableModels.contains(_selectedModel)) {
+              if (_availableModels.isNotEmpty &&
+                  !_availableModels.contains(_selectedModel)) {
                 _selectedModel = _availableModels.first;
               }
             }
@@ -204,7 +212,8 @@ class AiTutorProvider with ChangeNotifier {
         prevError != _errorMessage ||
         prevSelected != _selectedModel ||
         prevModels.length != _availableModels.length ||
-        !_availableModels.asMap().entries.every((e) => e.value == (prevModels.length > e.key ? prevModels[e.key] : null));
+        !_availableModels.asMap().entries.every((e) =>
+            e.value == (prevModels.length > e.key ? prevModels[e.key] : null));
 
     if (changed || !silent) notifyListeners();
   }
@@ -217,7 +226,8 @@ class AiTutorProvider with ChangeNotifier {
 
   Future<void> selectModel(String model) async {
     _selectedModel = model;
-    await _storage.saveAiSettings({'ollamaUrl': _ollamaUrl, 'selectedModel': model});
+    await _storage
+        .saveAiSettings({'ollamaUrl': _ollamaUrl, 'selectedModel': model});
     notifyListeners();
   }
 
@@ -231,7 +241,8 @@ class AiTutorProvider with ChangeNotifier {
     final normalized = OllamaHost.normalize(url);
     _ollamaUrl = normalized;
     await checkOllamaConnection();
-    await _storage.saveAiSettings({'ollamaUrl': normalized, 'selectedModel': _selectedModel});
+    await _storage.saveAiSettings(
+        {'ollamaUrl': normalized, 'selectedModel': _selectedModel});
     notifyListeners();
   }
 
@@ -255,18 +266,18 @@ class AiTutorProvider with ChangeNotifier {
         messages: [],
         mode: _currentMode,
       );
-      
+
       _sessions.insert(0, session);
       _currentSession = session;
       _currentMessages = [];
       _currentTopic = topic;
       _isTutoring = true;
-      
+
       await _storage.saveTutorSessions(_sessions);
-      
+
       // Envoyer le message de bienvenue
       await _sendWelcomeMessage();
-      
+
       notifyListeners();
     } catch (e) {
       _errorMessage = 'Erreur création session: $e';
@@ -353,7 +364,7 @@ Limite ta réponse à 120 mots maximum.''';
         isFromUser: true,
         timestamp: DateTime.now(),
       );
-      
+
       _currentMessages.add(userMsg);
 
       // Si non connecté, ajouter une réponse d'information
@@ -371,23 +382,24 @@ Il semble que je sois hors-ligne pour le moment car Ollama n'est pas détecté. 
         notifyListeners();
         return;
       }
-      
+
       // Mettre à jour la session
       final updatedSession = _currentSession!.copyWith(
         messages: _currentMessages,
         updatedAt: DateTime.now(),
       );
-      
-      final sessionIndex = _sessions.indexWhere((s) => s.id == _currentSession!.id);
+
+      final sessionIndex =
+          _sessions.indexWhere((s) => s.id == _currentSession!.id);
       if (sessionIndex != -1) {
         _sessions[sessionIndex] = updatedSession;
       }
-      
+
       await _storage.saveTutorSessions(_sessions);
-      
+
       // Générer la réponse IA
       await _generateAiResponse(userMessage);
-      
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -397,7 +409,8 @@ Il semble que je sois hors-ligne pour le moment car Ollama n'est pas détecté. 
     }
   }
 
-  Future<void> _generateAiResponse(String userMessage, {bool isWelcome = false}) async {
+  Future<void> _generateAiResponse(String userMessage,
+      {bool isWelcome = false}) async {
     // Préparer le message IA vide qui sera rempli token par token
     final aiMsg = TutorMessage(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -411,9 +424,10 @@ Il semble que je sois hors-ligne pour le moment car Ollama n'est pas détecté. 
 
     final contextMessages = _buildContextMessages(isWelcome);
     // Séparer system prompt et historique pour OllamaService
-    final systemPrompt = contextMessages.isNotEmpty && contextMessages.first['role'] == 'system'
-        ? contextMessages.first['content'] ?? ''
-        : '';
+    final systemPrompt =
+        contextMessages.isNotEmpty && contextMessages.first['role'] == 'system'
+            ? contextMessages.first['content'] ?? ''
+            : '';
     final history = contextMessages
         .where((m) => m['role'] != 'system')
         .toList(growable: false);
@@ -421,7 +435,9 @@ Il semble que je sois hors-ligne pour le moment car Ollama n'est pas détecté. 
     final buffer = StringBuffer();
 
     try {
-      _streamSub = OllamaService.stream(_selectedModel, history, system: systemPrompt).listen(
+      _streamSub =
+          OllamaService.stream(_selectedModel, history, system: systemPrompt)
+              .listen(
         (chunk) {
           if (!chunk.isThinking) {
             buffer.write(chunk.text);
@@ -445,7 +461,8 @@ Il semble que je sois hors-ligne pour le moment car Ollama n'est pas détecté. 
             messages: _currentMessages,
             updatedAt: DateTime.now(),
           );
-          final sessionIndex = _sessions.indexWhere((s) => s.id == _currentSession!.id);
+          final sessionIndex =
+              _sessions.indexWhere((s) => s.id == _currentSession!.id);
           if (sessionIndex != -1) _sessions[sessionIndex] = updatedSession;
           await _storage.saveTutorSessions(_sessions);
           notifyListeners();
@@ -491,11 +508,12 @@ Il semble que je sois hors-ligne pour le moment car Ollama n'est pas détecté. 
   }
 
   List<Map<String, String>> _buildContextMessages(bool isWelcome) {
-    final systemPrompt = isWelcome ? _generateWelcomePrompt() : _generateContextPrompt();
+    final systemPrompt =
+        isWelcome ? _generateWelcomePrompt() : _generateContextPrompt();
     final messages = <Map<String, String>>[
       {'role': 'system', 'content': systemPrompt},
     ];
-    
+
     // Limiter l'historique par nombre de caractères (~4000) pour éviter les erreurs Out-Of-Memory
     const maxChars = 4000;
     int currentChars = 0;
@@ -505,8 +523,9 @@ Il semble que je sois hors-ligne pour le moment car Ollama n'est pas détecté. 
     for (int i = _currentMessages.length - 1; i >= 0; i--) {
       final msg = _currentMessages[i];
       if (msg.content.isEmpty) continue;
-      
-      if (currentChars + msg.content.length > maxChars && recentMessages.isNotEmpty) {
+
+      if (currentChars + msg.content.length > maxChars &&
+          recentMessages.isNotEmpty) {
         break; // Dépassement de la limite, on s'arrête (sauf si on a 0 message)
       }
       currentChars += msg.content.length;
@@ -514,14 +533,18 @@ Il semble que je sois hors-ligne pour le moment car Ollama n'est pas détecté. 
     }
 
     for (final msg in recentMessages) {
-      messages.add({'role': msg.isFromUser ? 'user' : 'assistant', 'content': msg.content});
+      messages.add({
+        'role': msg.isFromUser ? 'user' : 'assistant',
+        'content': msg.content
+      });
     }
     return messages;
   }
 
   String _generateContextPrompt() {
     final topic = _sanitizeTopic(_currentTopic);
-    final basePrompt = '''Tu es un tuteur technique expert pour T2DECODE, une plateforme d'apprentissage IT 100% offline.
+    final basePrompt =
+        '''Tu es un tuteur technique expert pour T2DECODE, une plateforme d'apprentissage IT 100% offline.
 
 Règles importantes:
 - Sois clair, concis et pédagogique
@@ -539,31 +562,34 @@ Mode : ${_currentMode.name}''';
 
     // Ajouter le contexte des messages précédents
     if (_currentMessages.isNotEmpty) {
-      final lastMessages = _currentMessages.reversed.take(4).toList().reversed.toList();
-      final context = lastMessages.map((msg) => 
-          '${msg.isFromUser ? "Utilisateur" : "Tuteur"}: ${msg.content}'
-      ).join('\n');
-      
+      final lastMessages =
+          _currentMessages.reversed.take(4).toList().reversed.toList();
+      final context = lastMessages
+          .map((msg) =>
+              '${msg.isFromUser ? "Utilisateur" : "Tuteur"}: ${msg.content}')
+          .join('\n');
+
       return '''$basePrompt
 
 Contexte récent:
 $context''';
     }
-    
+
     return basePrompt;
   }
 
   void _updateUserProgress() {
     // Mettre à jour les statistiques d'apprentissage
     final topicKey = _currentTopic?.toLowerCase() ?? 'general';
-    final currentProgress = _userProgress[topicKey] ?? {'messages': 0, 'sessions': 0, 'lastActivity': null};
-    
+    final currentProgress = _userProgress[topicKey] ??
+        {'messages': 0, 'sessions': 0, 'lastActivity': null};
+
     _userProgress[topicKey] = {
       'messages': (currentProgress['messages'] as int? ?? 0) + 1,
       'sessions': (currentProgress['sessions'] as int? ?? 0),
       'lastActivity': DateTime.now().toIso8601String(),
     };
-    
+
     _storage.saveUserProgress(_userProgress);
   }
 
@@ -587,7 +613,8 @@ $context''';
     _currentMode = mode;
     if (_currentSession != null) {
       final updatedSession = _currentSession!.copyWith(mode: mode);
-      final sessionIndex = _sessions.indexWhere((s) => s.id == _currentSession!.id);
+      final sessionIndex =
+          _sessions.indexWhere((s) => s.id == _currentSession!.id);
       if (sessionIndex != -1) {
         _sessions[sessionIndex] = updatedSession;
         await _storage.saveTutorSessions(_sessions);
@@ -609,18 +636,19 @@ $context''';
 
     try {
       // Trouver le message et le précédent
-      final messageIndex = _currentMessages.indexWhere((m) => m.id == messageId);
+      final messageIndex =
+          _currentMessages.indexWhere((m) => m.id == messageId);
       if (messageIndex == -1 || messageIndex == 0) return;
 
       // Supprimer l'ancienne réponse IA
       _currentMessages.removeAt(messageIndex);
-      
+
       // Récupérer le message utilisateur précédent
       final userMessage = _currentMessages[messageIndex - 1];
-      
+
       // Régénérer la réponse
       await _generateAiResponse(userMessage.content);
-      
+
       notifyListeners();
     } catch (e) {
       _errorMessage = 'Erreur régénération: $e';
@@ -630,10 +658,12 @@ $context''';
 
   Map<String, dynamic> getStatistics() {
     final totalSessions = _sessions.length;
-    final totalMessages = _sessions.fold(0, (sum, session) => sum + session.messages.length);
+    final totalMessages =
+        _sessions.fold(0, (sum, session) => sum + session.messages.length);
     final topicsCovered = _sessions.map((s) => s.topic).toSet().length;
-    final averageMessagesPerSession = totalSessions > 0 ? totalMessages / totalSessions : 0.0;
-    
+    final averageMessagesPerSession =
+        totalSessions > 0 ? totalMessages / totalSessions : 0.0;
+
     return {
       'totalSessions': totalSessions,
       'totalMessages': totalMessages,
@@ -649,9 +679,9 @@ $context''';
     for (final session in _sessions) {
       modeCounts[session.mode] = (modeCounts[session.mode] ?? 0) + 1;
     }
-    
+
     if (modeCounts.isEmpty) return TutorMode.explanation;
-    
+
     return modeCounts.entries.reduce((a, b) => a.value > b.value ? a : b).key;
   }
 }
@@ -721,37 +751,53 @@ enum TutorMode {
 extension TutorModeExtension on TutorMode {
   String get displayName {
     switch (this) {
-      case TutorMode.explanation: return 'Explications';
-      case TutorMode.practice: return 'Pratique';
-      case TutorMode.troubleshooting: return 'Dépannage';
-      case TutorMode.quiz: return 'Quiz';
+      case TutorMode.explanation:
+        return 'Explications';
+      case TutorMode.practice:
+        return 'Pratique';
+      case TutorMode.troubleshooting:
+        return 'Dépannage';
+      case TutorMode.quiz:
+        return 'Quiz';
     }
   }
 
   String get description {
     switch (this) {
-      case TutorMode.explanation: return 'Apprendre les concepts théoriques';
-      case TutorMode.practice: return 'Exercices pratiques guidés';
-      case TutorMode.troubleshooting: return 'Résolution de problèmes';
-      case TutorMode.quiz: return 'Évaluer vos connaissances';
+      case TutorMode.explanation:
+        return 'Apprendre les concepts théoriques';
+      case TutorMode.practice:
+        return 'Exercices pratiques guidés';
+      case TutorMode.troubleshooting:
+        return 'Résolution de problèmes';
+      case TutorMode.quiz:
+        return 'Évaluer vos connaissances';
     }
   }
 
   IconData get icon {
     switch (this) {
-      case TutorMode.explanation: return Icons.school;
-      case TutorMode.practice: return Icons.build;
-      case TutorMode.troubleshooting: return Icons.build_circle;
-      case TutorMode.quiz: return Icons.quiz;
+      case TutorMode.explanation:
+        return Icons.school;
+      case TutorMode.practice:
+        return Icons.build;
+      case TutorMode.troubleshooting:
+        return Icons.build_circle;
+      case TutorMode.quiz:
+        return Icons.quiz;
     }
   }
 
   Color get color {
     switch (this) {
-      case TutorMode.explanation: return Colors.blue;
-      case TutorMode.practice: return Colors.green;
-      case TutorMode.troubleshooting: return Colors.orange;
-      case TutorMode.quiz: return Colors.purple;
+      case TutorMode.explanation:
+        return Colors.blue;
+      case TutorMode.practice:
+        return Colors.green;
+      case TutorMode.troubleshooting:
+        return Colors.orange;
+      case TutorMode.quiz:
+        return Colors.purple;
     }
   }
 }

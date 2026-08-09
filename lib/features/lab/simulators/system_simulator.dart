@@ -20,12 +20,12 @@ class _SystemSimulatorState extends State<SystemSimulator>
     with TickerProviderStateMixin {
   late TabController _tabController;
   late AnimationController _performanceController;
-  
+
   // Données système
   List<SystemProcess> _processes = [];
   List<DiskPartition> _partitions = [];
   List<SystemService> _services = [];
-  
+
   // Métriques simulées
   double _cpuUsage = 0.0;
   double _memoryUsage = 0.0;
@@ -41,7 +41,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
       vsync: this,
       duration: const Duration(seconds: 1),
     )..repeat();
-    
+
     _initializeSystemData();
     _startRealTimeMonitoring();
   }
@@ -84,7 +84,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
         startTime: DateTime.now().subtract(const Duration(hours: 6)),
       ),
     ];
-    
+
     _partitions = [
       DiskPartition(
         device: '/dev/sda1',
@@ -103,7 +103,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
         filesystem: 'ext4',
       ),
     ];
-    
+
     _services = [
       SystemService(
         name: 'nginx',
@@ -134,11 +134,16 @@ class _SystemSimulatorState extends State<SystemSimulator>
     Future.delayed(const Duration(seconds: 1), () {
       if (mounted) {
         setState(() {
-          _cpuUsage = (Random.secure().nextDouble() * 30 + 10).clamp(0.0, 100.0);
-          _memoryUsage = (Random.secure().nextDouble() * 20 + 60).clamp(0.0, 100.0);
-          _diskUsage = (Random.secure().nextDouble() * 5 + 45).clamp(0.0, 100.0);
-          _networkUsage = (Random.secure().nextDouble() * 100).clamp(0.0, 100.0);
-          _temperature = (Random.secure().nextDouble() * 20 + 40).clamp(30.0, 85.0);
+          _cpuUsage =
+              (Random.secure().nextDouble() * 30 + 10).clamp(0.0, 100.0);
+          _memoryUsage =
+              (Random.secure().nextDouble() * 20 + 60).clamp(0.0, 100.0);
+          _diskUsage =
+              (Random.secure().nextDouble() * 5 + 45).clamp(0.0, 100.0);
+          _networkUsage =
+              (Random.secure().nextDouble() * 100).clamp(0.0, 100.0);
+          _temperature =
+              (Random.secure().nextDouble() * 20 + 40).clamp(30.0, 85.0);
         });
         _startRealTimeMonitoring();
       }
@@ -170,11 +175,13 @@ class _SystemSimulatorState extends State<SystemSimulator>
                   ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: TdcColors.system.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: TdcColors.system.withValues(alpha: 0.3)),
+                      border: Border.all(
+                          color: TdcColors.system.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -218,7 +225,8 @@ class _SystemSimulatorState extends State<SystemSimulator>
                         title: 'CPU',
                         value: '${_cpuUsage.toStringAsFixed(1)}%',
                         icon: Icons.memory,
-                        color: _getMetricColor('${_cpuUsage.toStringAsFixed(1)}%'),
+                        color:
+                            _getMetricColor('${_cpuUsage.toStringAsFixed(1)}%'),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -228,7 +236,8 @@ class _SystemSimulatorState extends State<SystemSimulator>
                         title: 'RAM',
                         value: '${_memoryUsage.toStringAsFixed(1)}%',
                         icon: Icons.sd_storage,
-                        color: _getMetricColor('${_memoryUsage.toStringAsFixed(1)}%'),
+                        color: _getMetricColor(
+                            '${_memoryUsage.toStringAsFixed(1)}%'),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -238,7 +247,8 @@ class _SystemSimulatorState extends State<SystemSimulator>
                         title: 'Disque',
                         value: '${_diskUsage.toStringAsFixed(1)}%',
                         icon: Icons.storage,
-                        color: _getMetricColor('${_diskUsage.toStringAsFixed(1)}%'),
+                        color: _getMetricColor(
+                            '${_diskUsage.toStringAsFixed(1)}%'),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -258,7 +268,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
                         title: 'Temp',
                         value: '${_temperature.toStringAsFixed(1)}°C',
                         icon: Icons.thermostat,
-                        color: _temperature > 70 ? TdcColors.danger : TdcColors.warning,
+                        color: _temperature > 70
+                            ? TdcColors.danger
+                            : TdcColors.warning,
                       ),
                     ),
                   ],
@@ -267,7 +279,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
             ],
           ),
         ),
-        
+
         // Tabs
         Container(
           color: TdcColors.surfaceAlt.withValues(alpha: 0.3),
@@ -286,7 +298,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
             ],
           ),
         ),
-        
+
         // Content
         Expanded(
           child: TabBarView(
@@ -320,9 +332,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
     );
   }
 
-
   Color _getMetricColor(String value) {
-    final numericValue = double.tryParse(value.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
+    final numericValue =
+        double.tryParse(value.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
     if (numericValue > 80) return TdcColors.security;
     if (numericValue > 60) return TdcColors.crypto;
     return TdcColors.system;
@@ -362,9 +374,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Liste des processus
           Expanded(
             child: Card(
@@ -471,12 +483,12 @@ class _SystemSimulatorState extends State<SystemSimulator>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: process.status == 'Running' 
+                  color: process.status == 'Running'
                       ? TdcColors.system.withValues(alpha: 0.1)
                       : TdcColors.security.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.zero,
                   border: Border.all(
-                    color: process.status == 'Running' 
+                    color: process.status == 'Running'
                         ? TdcColors.system.withValues(alpha: 0.3)
                         : TdcColors.security.withValues(alpha: 0.3),
                   ),
@@ -484,7 +496,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
                 child: Text(
                   process.status,
                   style: TextStyle(
-                    color: process.status == 'Running' ? TdcColors.system : TdcColors.security,
+                    color: process.status == 'Running'
+                        ? TdcColors.system
+                        : TdcColors.security,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -496,15 +510,20 @@ class _SystemSimulatorState extends State<SystemSimulator>
           Row(
             children: [
               Expanded(
-                child: _buildProcessMetric('CPU', '${process.cpu.toStringAsFixed(1)}%'),
+                child: _buildProcessMetric(
+                    'CPU', '${process.cpu.toStringAsFixed(1)}%'),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: _buildProcessMetric('RAM', '${process.memory.toStringAsFixed(1)}%'),
+                child: _buildProcessMetric(
+                    'RAM', '${process.memory.toStringAsFixed(1)}%'),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: _buildProcessMetric('Durée', _formatDuration(DateTime.now().difference(process.startTime))),
+                child: _buildProcessMetric(
+                    'Durée',
+                    _formatDuration(
+                        DateTime.now().difference(process.startTime))),
               ),
             ],
           ),
@@ -577,9 +596,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Liste des services
           Expanded(
             child: Card(
@@ -634,12 +653,12 @@ class _SystemSimulatorState extends State<SystemSimulator>
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: service.status == 'Active' 
+        color: service.status == 'Active'
             ? TdcColors.system.withValues(alpha: 0.1)
             : TdcColors.security.withValues(alpha: 0.1),
         borderRadius: BorderRadius.zero,
         border: Border.all(
-          color: service.status == 'Active' 
+          color: service.status == 'Active'
               ? TdcColors.system.withValues(alpha: 0.3)
               : TdcColors.security.withValues(alpha: 0.3),
         ),
@@ -650,7 +669,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
             children: [
               Icon(
                 service.status == 'Active' ? Icons.check_circle : Icons.error,
-                color: service.status == 'Active' ? TdcColors.system : TdcColors.security,
+                color: service.status == 'Active'
+                    ? TdcColors.system
+                    : TdcColors.security,
                 size: 20,
               ),
               const SizedBox(width: 12),
@@ -679,14 +700,15 @@ class _SystemSimulatorState extends State<SystemSimulator>
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: service.status == 'Active' 
+                      color: service.status == 'Active'
                           ? TdcColors.system.withValues(alpha: 0.1)
                           : TdcColors.security.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.zero,
                       border: Border.all(
-                        color: service.status == 'Active' 
+                        color: service.status == 'Active'
                             ? TdcColors.system.withValues(alpha: 0.3)
                             : TdcColors.security.withValues(alpha: 0.3),
                       ),
@@ -694,7 +716,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
                     child: Text(
                       service.status,
                       style: TextStyle(
-                        color: service.status == 'Active' ? TdcColors.system : TdcColors.security,
+                        color: service.status == 'Active'
+                            ? TdcColors.system
+                            : TdcColors.security,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                       ),
@@ -716,7 +740,8 @@ class _SystemSimulatorState extends State<SystemSimulator>
           const SizedBox(height: 8),
           Row(
             children: [
-              const Icon(Icons.access_time, color: TdcColors.textTertiary, size: 16),
+              const Icon(Icons.access_time,
+                  color: TdcColors.textTertiary, size: 16),
               const SizedBox(width: 4),
               Text(
                 'Démarré: ${_formatDateTime(service.loadedAt)}',
@@ -769,9 +794,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Liste des partitions
           Expanded(
             child: Card(
@@ -821,7 +846,8 @@ class _SystemSimulatorState extends State<SystemSimulator>
         children: [
           const LabNotice(
             title: 'La 7ème Couche : L\'Application',
-            message: 'Visualisation de la hiérarchie informatique complète, du silicium à l\'utilisateur.',
+            message:
+                'Visualisation de la hiérarchie informatique complète, du silicium à l\'utilisateur.',
             icon: Icons.layers,
           ),
           const SizedBox(height: 32),
@@ -903,7 +929,8 @@ class _SystemSimulatorState extends State<SystemSimulator>
     );
   }
 
-  Widget _buildLayerCard(String title, String subtitle, String desc, Color color, IconData icon) {
+  Widget _buildLayerCard(
+      String title, String subtitle, String desc, Color color, IconData icon) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -928,15 +955,23 @@ class _SystemSimulatorState extends State<SystemSimulator>
               children: [
                 Text(
                   title,
-                  style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: 1.1),
+                  style: TextStyle(
+                      color: color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      letterSpacing: 1.1),
                 ),
                 Text(
                   subtitle,
-                  style: const TextStyle(color: TdcColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
                 Text(
                   desc,
-                  style: const TextStyle(color: TdcColors.textMuted, fontSize: 11),
+                  style:
+                      const TextStyle(color: TdcColors.textMuted, fontSize: 11),
                 ),
               ],
             ),
@@ -958,7 +993,7 @@ class _SystemSimulatorState extends State<SystemSimulator>
 
   Widget _buildPartitionCard(DiskPartition partition) {
     final usagePercentage = (partition.used / partition.size) * 100;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(16),
@@ -998,7 +1033,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
               Text(
                 '${usagePercentage.toStringAsFixed(1)}%',
                 style: TextStyle(
-                  color: usagePercentage > 80 ? TdcColors.security : TdcColors.system,
+                  color: usagePercentage > 80
+                      ? TdcColors.security
+                      : TdcColors.system,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1018,7 +1055,9 @@ class _SystemSimulatorState extends State<SystemSimulator>
               widthFactor: usagePercentage / 100,
               child: Container(
                 decoration: BoxDecoration(
-                  color: usagePercentage > 80 ? TdcColors.security : TdcColors.system,
+                  color: usagePercentage > 80
+                      ? TdcColors.security
+                      : TdcColors.system,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),

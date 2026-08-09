@@ -39,7 +39,6 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
   bool _isSigning = false;
   bool _isVerifying = false;
 
-
   String _hashResult = '';
   String _signatureResult = '';
   bool? _verificationResult;
@@ -91,27 +90,40 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
 
   // --- Info helpers ---
 
-  bool get _isRealCrypto => _selectedCipher == _aesGcm || _selectedCipher == 'ChaCha20';
+  bool get _isRealCrypto =>
+      _selectedCipher == _aesGcm || _selectedCipher == 'ChaCha20';
 
   String get _securityLevel {
     switch (_selectedCipher) {
-      case _aesGcm: return '256 bits';
-      case 'ChaCha20': return '256 bits';
-      case 'Caesar': return 'Aucune';
-      case 'Vigenere': return 'Faible';
-      case 'XOR': return 'Aucune';
-      default: return '-';
+      case _aesGcm:
+        return '256 bits';
+      case 'ChaCha20':
+        return '256 bits';
+      case 'Caesar':
+        return 'Aucune';
+      case 'Vigenere':
+        return 'Faible';
+      case 'XOR':
+        return 'Aucune';
+      default:
+        return '-';
     }
   }
 
   String get _cipherFamily {
     switch (_selectedCipher) {
-      case _aesGcm: return 'Symétrique';
-      case 'ChaCha20': return 'Symétrique';
-      case 'Caesar': return 'Substitution';
-      case 'Vigenere': return 'Substitution';
-      case 'XOR': return 'Flux';
-      default: return '-';
+      case _aesGcm:
+        return 'Symétrique';
+      case 'ChaCha20':
+        return 'Symétrique';
+      case 'Caesar':
+        return 'Substitution';
+      case 'Vigenere':
+        return 'Substitution';
+      case 'XOR':
+        return 'Flux';
+      default:
+        return '-';
     }
   }
 
@@ -225,12 +237,14 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildMetric('Algorithme', _selectedCipher, Icons.settings_suggest, TdcColors.crypto),
+                _buildMetric('Algorithme', _selectedCipher,
+                    Icons.settings_suggest, TdcColors.crypto),
                 const SizedBox(width: 12),
                 _buildMetric('Sécurité', _securityLevel, Icons.shield,
                     _isRealCrypto ? TdcColors.system : TdcColors.security),
                 const SizedBox(width: 12),
-                _buildMetric('Type', _cipherFamily, Icons.category, TdcColors.textSecondary),
+                _buildMetric('Type', _cipherFamily, Icons.category,
+                    TdcColors.textSecondary),
                 const SizedBox(width: 12),
                 _buildMetric(
                   'Entropie clé',
@@ -246,7 +260,6 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
     );
   }
 
-
   Widget _buildBadge(String text, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -258,9 +271,14 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+          Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
           const SizedBox(width: 6),
-          Text(text, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold)),
+          Text(text,
+              style: TextStyle(
+                  color: color, fontSize: 10, fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -269,7 +287,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
   Widget _buildMetric(String title, String value, IconData icon, Color color) {
     return SizedBox(
       width: 130,
-      child: LabMetricCard(title: title, value: value, icon: icon, color: color),
+      child:
+          LabMetricCard(title: title, value: value, icon: icon, color: color),
     );
   }
 
@@ -292,11 +311,22 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
             isExpanded: true,
             dropdownColor: TdcColors.surface,
             items: const [
-              DropdownMenuItem(value: _aesGcm, child: Text('$_aesGcm-GCM — chiffrement authentifié moderne')),
-              DropdownMenuItem(value: 'ChaCha20', child: Text('ChaCha20-Poly1305 — alternative mobile/IoT')),
-              DropdownMenuItem(value: 'Caesar', child: Text('César — substitution mono-alphabétique')),
-              DropdownMenuItem(value: 'Vigenere', child: Text('Vigenère — substitution poly-alphabétique')),
-              DropdownMenuItem(value: 'XOR', child: Text('XOR — opération bit à bit (démonstration)')),
+              DropdownMenuItem(
+                  value: _aesGcm,
+                  child:
+                      Text('$_aesGcm-GCM — chiffrement authentifié moderne')),
+              DropdownMenuItem(
+                  value: 'ChaCha20',
+                  child: Text('ChaCha20-Poly1305 — alternative mobile/IoT')),
+              DropdownMenuItem(
+                  value: 'Caesar',
+                  child: Text('César — substitution mono-alphabétique')),
+              DropdownMenuItem(
+                  value: 'Vigenere',
+                  child: Text('Vigenère — substitution poly-alphabétique')),
+              DropdownMenuItem(
+                  value: 'XOR',
+                  child: Text('XOR — opération bit à bit (démonstration)')),
             ],
             onChanged: (v) => setState(() {
               _selectedCipher = v!;
@@ -365,7 +395,10 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
               child: ElevatedButton.icon(
                 onPressed: _isEncrypting ? null : _encryptText,
                 icon: _isEncrypting
-                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2))
                     : const Icon(Icons.lock),
                 label: Text(_isEncrypting ? 'Chiffrement...' : 'Chiffrer'),
                 style: ElevatedButton.styleFrom(
@@ -379,7 +412,10 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
               child: ElevatedButton.icon(
                 onPressed: _isDecrypting ? null : _decryptText,
                 icon: _isDecrypting
-                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2))
                     : const Icon(Icons.lock_open),
                 label: Text(_isDecrypting ? 'Déchiffrement...' : 'Déchiffrer'),
                 style: ElevatedButton.styleFrom(
@@ -394,7 +430,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
 
         // Étapes pédagogiques
         if (_encryptSteps.isNotEmpty) ...[
-          _buildStepsPanel('Étapes du processus', _encryptSteps, TdcColors.crypto),
+          _buildStepsPanel(
+              'Étapes du processus', _encryptSteps, TdcColors.crypto),
           const SizedBox(height: 12),
         ],
 
@@ -413,7 +450,9 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                   ? 'Le résultat apparaîtra ici après chiffrement...'
                   : _cipherTextController.text,
               style: TextStyle(
-                color: _cipherTextController.text.isEmpty ? TdcColors.textMuted : TdcColors.system,
+                color: _cipherTextController.text.isEmpty
+                    ? TdcColors.textMuted
+                    : TdcColors.system,
                 fontSize: 13,
                 fontFamily: 'monospace',
               ),
@@ -444,11 +483,18 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
   Widget _buildCryptoDetail(String label, String value) {
     return Row(
       children: [
-        Text('$label : ', style: const TextStyle(color: TdcColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
+        Text('$label : ',
+            style: const TextStyle(
+                color: TdcColors.textMuted,
+                fontSize: 11,
+                fontWeight: FontWeight.bold)),
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(color: TdcColors.textSecondary, fontSize: 11, fontFamily: 'monospace'),
+            style: const TextStyle(
+                color: TdcColors.textSecondary,
+                fontSize: 11,
+                fontFamily: 'monospace'),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -498,18 +544,28 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
           color: TdcColors.crypto,
         ),
         const SizedBox(height: 12),
-
         _buildSection('Algorithme de hashage', Icons.fingerprint, [
           DropdownButton<String>(
             value: _selectedHash,
             isExpanded: true,
             dropdownColor: TdcColors.surface,
             items: const [
-              DropdownMenuItem(value: 'SHA-256', child: Text('SHA-256 — standard actuel (Bitcoin, TLS)')),
-              DropdownMenuItem(value: _sha512, child: Text('$_sha512 — version 512 bits')),
-              DropdownMenuItem(value: _sha1, child: Text('$_sha1 ⚠️ OBSOLÈTE — collisions trouvées en 2017')),
-              DropdownMenuItem(value: 'MD5', child: Text('MD5 ⚠️ CASSÉ — ne jamais utiliser pour la sécurité')),
-              DropdownMenuItem(value: 'PBKDF2', child: Text('PBKDF2-SHA256 — dérivation de mot de passe')),
+              DropdownMenuItem(
+                  value: 'SHA-256',
+                  child: Text('SHA-256 — standard actuel (Bitcoin, TLS)')),
+              DropdownMenuItem(
+                  value: _sha512, child: Text('$_sha512 — version 512 bits')),
+              DropdownMenuItem(
+                  value: _sha1,
+                  child:
+                      Text('$_sha1 ⚠️ OBSOLÈTE — collisions trouvées en 2017')),
+              DropdownMenuItem(
+                  value: 'MD5',
+                  child: Text(
+                      'MD5 ⚠️ CASSÉ — ne jamais utiliser pour la sécurité')),
+              DropdownMenuItem(
+                  value: 'PBKDF2',
+                  child: Text('PBKDF2-SHA256 — dérivation de mot de passe')),
             ],
             onChanged: (v) => setState(() {
               _selectedHash = v!;
@@ -519,7 +575,6 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
           ),
         ]),
         const SizedBox(height: 12),
-
         _buildSection('Données à hasher', Icons.input, [
           TextField(
             controller: _hashInputController,
@@ -536,9 +591,13 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
             child: ElevatedButton.icon(
               onPressed: _isHashing ? null : _hashData,
               icon: _isHashing
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2))
                   : const Icon(Icons.fingerprint),
-              label: Text(_isHashing ? 'Calcul en cours...' : 'Calculer le hash'),
+              label:
+                  Text(_isHashing ? 'Calcul en cours...' : 'Calculer le hash'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: TdcColors.crypto,
                 padding: const EdgeInsets.symmetric(vertical: 14),
@@ -546,12 +605,10 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
             ),
           ),
         ]),
-
         if (_hashSteps.isNotEmpty) ...[
           const SizedBox(height: 12),
           _buildStepsPanel('Étapes du hashage', _hashSteps, TdcColors.crypto),
         ],
-
         if (_hashResult.isNotEmpty) ...[
           const SizedBox(height: 12),
           _buildSection('Résultat', Icons.check_circle, [
@@ -565,7 +622,10 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
               ),
               child: SelectableText(
                 _hashResult,
-                style: const TextStyle(color: TdcColors.system, fontSize: 12, fontFamily: 'monospace'),
+                style: const TextStyle(
+                    color: TdcColors.system,
+                    fontSize: 12,
+                    fontFamily: 'monospace'),
               ),
             ),
             const SizedBox(height: 8),
@@ -586,7 +646,6 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
             ),
           ]),
         ],
-
         const SizedBox(height: 12),
         _buildHashDemo(),
       ],
@@ -616,20 +675,42 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
       children: [
         Row(
           children: [
-            Expanded(child: Text('"$a"', style: const TextStyle(color: TdcColors.crypto, fontSize: 11, fontFamily: 'monospace'))),
+            Expanded(
+                child: Text('"$a"',
+                    style: const TextStyle(
+                        color: TdcColors.crypto,
+                        fontSize: 11,
+                        fontFamily: 'monospace'))),
             const SizedBox(width: 4),
             const Text('→', style: TextStyle(color: TdcColors.textMuted)),
             const SizedBox(width: 4),
-            Expanded(flex: 3, child: Text('${hashA.substring(0, 20)}...', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontFamily: 'monospace'))),
+            Expanded(
+                flex: 3,
+                child: Text('${hashA.substring(0, 20)}...',
+                    style: const TextStyle(
+                        color: TdcColors.textSecondary,
+                        fontSize: 10,
+                        fontFamily: 'monospace'))),
           ],
         ),
         Row(
           children: [
-            Expanded(child: Text('"$b"', style: const TextStyle(color: TdcColors.network, fontSize: 11, fontFamily: 'monospace'))),
+            Expanded(
+                child: Text('"$b"',
+                    style: const TextStyle(
+                        color: TdcColors.network,
+                        fontSize: 11,
+                        fontFamily: 'monospace'))),
             const SizedBox(width: 4),
             const Text('→', style: TextStyle(color: TdcColors.textMuted)),
             const SizedBox(width: 4),
-            Expanded(flex: 3, child: Text('${hashB.substring(0, 20)}...', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontFamily: 'monospace'))),
+            Expanded(
+                flex: 3,
+                child: Text('${hashB.substring(0, 20)}...',
+                    style: const TextStyle(
+                        color: TdcColors.textSecondary,
+                        fontSize: 10,
+                        fontFamily: 'monospace'))),
           ],
         ),
         const Divider(height: 8),
@@ -672,12 +753,12 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
     return _buildExplainer(
       _selectedSignature == 'Ed25519'
           ? '🔐 Ed25519 utilise la courbe elliptique Curve25519 (conçue par Daniel Bernstein). '
-            'Signatures compactes (64 octets), clés courtes (32 octets), et vérification très rapide. '
-            'Utilisé par SSH, Signal, WireGuard, et la blockchain Solana. '
-            'La clé privée signe, la clé publique vérifie — personne d\'autre ne peut forger votre signature.'
+              'Signatures compactes (64 octets), clés courtes (32 octets), et vérification très rapide. '
+              'Utilisé par SSH, Signal, WireGuard, et la blockchain Solana. '
+              'La clé privée signe, la clé publique vérifie — personne d\'autre ne peut forger votre signature.'
           : '🔐 HMAC-SHA256 est un code d\'authentification basé sur le hashage. '
-            'Contrairement à Ed25519, la même clé secrète sert à signer ET vérifier. '
-            'Utilisé dans JWT, les API (AWS Signature V4), et les cookies signés.',
+              'Contrairement à Ed25519, la même clé secrète sert à signer ET vérifier. '
+              'Utilisé dans JWT, les API (AWS Signature V4), et les cookies signés.',
       color: TdcColors.crypto,
     );
   }
@@ -689,8 +770,14 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
         isExpanded: true,
         dropdownColor: TdcColors.surface,
         items: const [
-          DropdownMenuItem(value: 'Ed25519', child: Text('Ed25519 — signature asymétrique (clé privée/publique)')),
-          DropdownMenuItem(value: 'HMAC', child: Text('HMAC-SHA256 — authentification symétrique (clé partagée)')),
+          DropdownMenuItem(
+              value: 'Ed25519',
+              child: Text(
+                  'Ed25519 — signature asymétrique (clé privée/publique)')),
+          DropdownMenuItem(
+              value: 'HMAC',
+              child: Text(
+                  'HMAC-SHA256 — authentification symétrique (clé partagée)')),
         ],
         onChanged: (v) => setState(() {
           _selectedSignature = v!;
@@ -706,14 +793,18 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
     return _buildSection('Paire de clés Ed25519', Icons.vpn_key, [
       const Text(
         'Clé privée (secrète — ne jamais partager) :',
-        style: TextStyle(color: TdcColors.security, fontSize: 11, fontWeight: FontWeight.bold),
+        style: TextStyle(
+            color: TdcColors.security,
+            fontSize: 11,
+            fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 4),
       _buildKeyDisplay(_privateKeyController.text),
       const SizedBox(height: 12),
       const Text(
         'Clé publique (partageable librement) :',
-        style: TextStyle(color: TdcColors.system, fontSize: 11, fontWeight: FontWeight.bold),
+        style: TextStyle(
+            color: TdcColors.system, fontSize: 11, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 4),
       _buildKeyDisplay(_publicKeyController.text),
@@ -754,7 +845,10 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
             child: ElevatedButton.icon(
               onPressed: _isSigning ? null : _signMessage,
               icon: _isSigning
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2))
                   : const Icon(Icons.draw),
               label: Text(_isSigning ? 'Signature...' : 'Signer le message'),
               style: ElevatedButton.styleFrom(
@@ -766,9 +860,14 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
           const SizedBox(width: 12),
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: (_isVerifying || _signatureResult.isEmpty) ? null : _verifySignature,
+              onPressed: (_isVerifying || _signatureResult.isEmpty)
+                  ? null
+                  : _verifySignature,
               icon: _isVerifying
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2))
                   : const Icon(Icons.verified),
               label: Text(_isVerifying ? 'Vérification...' : 'Vérifier'),
               style: ElevatedButton.styleFrom(
@@ -794,7 +893,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
         ),
         child: SelectableText(
           _signatureResult,
-          style: const TextStyle(color: TdcColors.system, fontSize: 11, fontFamily: 'monospace'),
+          style: const TextStyle(
+              color: TdcColors.system, fontSize: 11, fontFamily: 'monospace'),
         ),
       ),
       const SizedBox(height: 4),
@@ -803,7 +903,10 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
         style: const TextStyle(color: TdcColors.textMuted, fontSize: 11),
       ),
       const SizedBox(height: 8),
-      TextButton.icon(onPressed: _copySignature, icon: const Icon(Icons.copy, size: 14), label: const Text('Copier')),
+      TextButton.icon(
+          onPressed: _copySignature,
+          icon: const Icon(Icons.copy, size: 14),
+          label: const Text('Copier')),
     ]);
   }
 
@@ -812,10 +915,12 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: (_verificationResult! ? TdcColors.system : TdcColors.security).withValues(alpha: 0.1),
+        color: (_verificationResult! ? TdcColors.system : TdcColors.security)
+            .withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: (_verificationResult! ? TdcColors.system : TdcColors.security).withValues(alpha: 0.3),
+          color: (_verificationResult! ? TdcColors.system : TdcColors.security)
+              .withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -831,9 +936,13 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _verificationResult! ? 'Signature VALIDE ✓' : 'Signature INVALIDE ✗',
+                  _verificationResult!
+                      ? 'Signature VALIDE ✓'
+                      : 'Signature INVALIDE ✗',
                   style: TextStyle(
-                    color: _verificationResult! ? TdcColors.system : TdcColors.security,
+                    color: _verificationResult!
+                        ? TdcColors.system
+                        : TdcColors.security,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -844,7 +953,10 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
                       ? 'Le message n\'a pas été altéré et provient bien du détenteur de la clé privée.'
                       : 'Le message a été modifié, ou la signature ne correspond pas à la clé publique.',
                   style: TextStyle(
-                    color: (_verificationResult! ? TdcColors.system : TdcColors.security).withValues(alpha: 0.8),
+                    color: (_verificationResult!
+                            ? TdcColors.system
+                            : TdcColors.security)
+                        .withValues(alpha: 0.8),
                     fontSize: 12,
                   ),
                 ),
@@ -896,7 +1008,10 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
       ),
       child: SelectableText(
         key.isEmpty ? '...' : key,
-        style: const TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontFamily: 'monospace'),
+        style: const TextStyle(
+            color: TdcColors.textSecondary,
+            fontSize: 10,
+            fontFamily: 'monospace'),
       ),
     );
   }
@@ -918,7 +1033,11 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
             children: [
               Icon(icon, color: TdcColors.crypto, size: 18),
               const SizedBox(width: 8),
-              Text(title, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 14, fontWeight: FontWeight.bold)),
+              Text(title,
+                  style: const TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: 12),
@@ -938,7 +1057,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
       ),
       child: Text(
         text,
-        style: TextStyle(color: color.withValues(alpha: 0.9), fontSize: 12, height: 1.5),
+        style: TextStyle(
+            color: color.withValues(alpha: 0.9), fontSize: 12, height: 1.5),
       ),
     );
   }
@@ -958,26 +1078,40 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
             children: [
               Icon(Icons.timeline, color: color, size: 16),
               const SizedBox(width: 8),
-              Text(title, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.bold)),
+              Text(title,
+                  style: TextStyle(
+                      color: color, fontSize: 13, fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: 10),
           ...steps.asMap().entries.map((e) => Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 20, height: 20,
-                  decoration: BoxDecoration(color: color.withValues(alpha: 0.15), shape: BoxShape.circle),
-                  alignment: Alignment.center,
-                  child: Text('${e.key + 1}', style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold)),
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                          color: color.withValues(alpha: 0.15),
+                          shape: BoxShape.circle),
+                      alignment: Alignment.center,
+                      child: Text('${e.key + 1}',
+                          style: TextStyle(
+                              color: color,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                        child: Text(e.value,
+                            style: const TextStyle(
+                                color: TdcColors.textSecondary,
+                                fontSize: 12,
+                                height: 1.4))),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Expanded(child: Text(e.value, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12, height: 1.4))),
-              ],
-            ),
-          )),
+              )),
         ],
       ),
     );
@@ -991,7 +1125,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: TdcColors.border),
       ),
-      child: Text(text, style: const TextStyle(color: TdcColors.textMuted, fontSize: 10)),
+      child: Text(text,
+          style: const TextStyle(color: TdcColors.textMuted, fontSize: 10)),
     );
   }
 
@@ -1011,38 +1146,51 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
       String result;
       switch (_selectedCipher) {
         case _aesGcm:
-          _addEncryptStep('Dérivation de la clé via PBKDF2 (100 000 itérations SHA-256 + sel)');
-          _addEncryptStep('Génération d\'un nonce aléatoire de 96 bits (unique par opération)');
+          _addEncryptStep(
+              'Dérivation de la clé via PBKDF2 (100 000 itérations SHA-256 + sel)');
+          _addEncryptStep(
+              'Génération d\'un nonce aléatoire de 96 bits (unique par opération)');
           _addEncryptStep('Chiffrement AES-256 en mode Galois/Counter Mode');
-          _addEncryptStep('Calcul du tag d\'authentification (MAC) sur le ciphertext');
-          final r = await CryptoEngine.aesGcmEncrypt(_plainTextController.text, _keyController.text);
+          _addEncryptStep(
+              'Calcul du tag d\'authentification (MAC) sur le ciphertext');
+          final r = await CryptoEngine.aesGcmEncrypt(
+              _plainTextController.text, _keyController.text);
           _lastEncryptResult = r;
           result = r.ciphertext;
-          _addEncryptStep('✓ Terminé — ${result.length} caractères base64 + nonce + MAC');
+          _addEncryptStep(
+              '✓ Terminé — ${result.length} caractères base64 + nonce + MAC');
           break;
         case 'ChaCha20':
-          _addEncryptStep('Dérivation de la clé via PBKDF2 (100 000 itérations)');
+          _addEncryptStep(
+              'Dérivation de la clé via PBKDF2 (100 000 itérations)');
           _addEncryptStep('Génération d\'un nonce aléatoire');
-          _addEncryptStep('Chiffrement par flux ChaCha20 (20 rounds de quarter-rounds)');
+          _addEncryptStep(
+              'Chiffrement par flux ChaCha20 (20 rounds de quarter-rounds)');
           _addEncryptStep('Authentification via Poly1305');
-          final r = await CryptoEngine.chacha20Encrypt(_plainTextController.text, _keyController.text);
+          final r = await CryptoEngine.chacha20Encrypt(
+              _plainTextController.text, _keyController.text);
           _lastEncryptResult = r;
           result = r.ciphertext;
           _addEncryptStep('✓ Terminé — ${result.length} caractères base64');
           break;
         case 'Caesar':
           final shift = _keyController.text.length % 26;
-          _addEncryptStep('Calcul du décalage : longueur("${_keyController.text}") mod 26 = $shift');
-          _addEncryptStep('Décalage de chaque lettre de $shift positions dans l\'alphabet');
-          _addEncryptStep('Exemple : A → ${String.fromCharCode(65 + shift)}, Z → ${String.fromCharCode(65 + (26 - shift) % 26)}');
+          _addEncryptStep(
+              'Calcul du décalage : longueur("${_keyController.text}") mod 26 = $shift');
+          _addEncryptStep(
+              'Décalage de chaque lettre de $shift positions dans l\'alphabet');
+          _addEncryptStep(
+              'Exemple : A → ${String.fromCharCode(65 + shift)}, Z → ${String.fromCharCode(65 + (26 - shift) % 26)}');
           result = CryptoEngine.caesarEncrypt(_plainTextController.text, shift);
           _lastEncryptResult = null;
           _addEncryptStep('✓ Résultat : "$result"');
           break;
         case 'Vigenere':
-          _addEncryptStep('Clé : "${_keyController.text}" (répétée sur toute la longueur du texte)');
+          _addEncryptStep(
+              'Clé : "${_keyController.text}" (répétée sur toute la longueur du texte)');
           _addEncryptStep('Pour chaque lettre : (lettre + clé[i]) mod 26');
-          result = CryptoEngine.vigenereEncrypt(_plainTextController.text, _keyController.text);
+          result = CryptoEngine.vigenereEncrypt(
+              _plainTextController.text, _keyController.text);
           _lastEncryptResult = null;
           _addEncryptStep('✓ Résultat : "$result"');
           break;
@@ -1050,7 +1198,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
           _addEncryptStep('Conversion du texte en octets UTF-8');
           _addEncryptStep('XOR de chaque octet avec la clé (cyclique)');
           _addEncryptStep('Encodage du résultat en base64');
-          result = CryptoEngine.xorEncrypt(_plainTextController.text, _keyController.text);
+          result = CryptoEngine.xorEncrypt(
+              _plainTextController.text, _keyController.text);
           _lastEncryptResult = null;
           _addEncryptStep('✓ Résultat : "$result"');
           break;
@@ -1085,14 +1234,19 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
       switch (_selectedCipher) {
         case _aesGcm:
           if (_lastEncryptResult == null) {
-            _showError('Chiffrez d\'abord un texte pour conserver le nonce et le MAC.');
+            _showError(
+                'Chiffrez d\'abord un texte pour conserver le nonce et le MAC.');
             return;
           }
           _addEncryptStep('Dérivation de la même clé via PBKDF2');
-          _addEncryptStep('Vérification du tag MAC (intégrité et authenticité)');
+          _addEncryptStep(
+              'Vérification du tag MAC (intégrité et authenticité)');
           _addEncryptStep('Déchiffrement AES-256-GCM avec le nonce original');
           result = await CryptoEngine.aesGcmDecrypt(
-            AesGcmResult(ciphertext: _cipherTextController.text, nonce: _lastEncryptResult!.nonce, mac: _lastEncryptResult!.mac),
+            AesGcmResult(
+                ciphertext: _cipherTextController.text,
+                nonce: _lastEncryptResult!.nonce,
+                mac: _lastEncryptResult!.mac),
             _keyController.text,
           );
           _addEncryptStep('✓ Message restauré avec succès');
@@ -1105,7 +1259,10 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
           _addEncryptStep('Dérivation de la clé + vérification Poly1305');
           _addEncryptStep('Déchiffrement ChaCha20');
           result = await CryptoEngine.chacha20Decrypt(
-            AesGcmResult(ciphertext: _cipherTextController.text, nonce: _lastEncryptResult!.nonce, mac: _lastEncryptResult!.mac),
+            AesGcmResult(
+                ciphertext: _cipherTextController.text,
+                nonce: _lastEncryptResult!.nonce,
+                mac: _lastEncryptResult!.mac),
             _keyController.text,
           );
           _addEncryptStep('✓ Message restauré');
@@ -1113,17 +1270,20 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
         case 'Caesar':
           final shift = _keyController.text.length % 26;
           _addEncryptStep('Décalage inverse de $shift positions');
-          result = CryptoEngine.caesarDecrypt(_cipherTextController.text, shift);
+          result =
+              CryptoEngine.caesarDecrypt(_cipherTextController.text, shift);
           _addEncryptStep('✓ Résultat : "$result"');
           break;
         case 'Vigenere':
           _addEncryptStep('Soustraction de la clé (inverse de l\'addition)');
-          result = CryptoEngine.vigenereDecrypt(_cipherTextController.text, _keyController.text);
+          result = CryptoEngine.vigenereDecrypt(
+              _cipherTextController.text, _keyController.text);
           _addEncryptStep('✓ Résultat : "$result"');
           break;
         case 'XOR':
           _addEncryptStep('XOR avec la même clé (XOR est son propre inverse)');
-          result = CryptoEngine.xorDecrypt(_cipherTextController.text, _keyController.text);
+          result = CryptoEngine.xorDecrypt(
+              _cipherTextController.text, _keyController.text);
           _addEncryptStep('✓ Résultat : "$result"');
           break;
         default:
@@ -1139,7 +1299,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
 
   String _hashSha256(String input) {
     _hashSteps.add('Padding du message à un multiple de 512 bits');
-    _hashSteps.add('64 rounds de compression avec constantes dérivées des nombres premiers');
+    _hashSteps.add(
+        '64 rounds de compression avec constantes dérivées des nombres premiers');
     final hash = CryptoEngine.hashSha256(input);
     _hashSteps.add('✓ Empreinte de 256 bits (32 octets)');
     return hash;
@@ -1154,7 +1315,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
   }
 
   String _hashSha1(String input) {
-    _hashSteps.add('⚠️ Algorithme obsolète — collisions démontrées (SHAttered, 2017)');
+    _hashSteps.add(
+        '⚠️ Algorithme obsolète — collisions démontrées (SHAttered, 2017)');
     final hash = CryptoEngine.hashSha1(input);
     _hashSteps.add('Empreinte de 160 bits — NE PAS utiliser en production');
     return hash;
@@ -1168,7 +1330,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
   }
 
   Future<String> _hashPbkdf2(String input) async {
-    _hashSteps.add('Sel fixe "t2decode" (en production, utilisez un sel aléatoire par utilisateur)');
+    _hashSteps.add(
+        'Sel fixe "t2decode" (en production, utilisez un sel aléatoire par utilisateur)');
     _hashSteps.add('100 000 itérations de HMAC-SHA256');
     _hashSteps.add('Chaque itération ralentit volontairement le brute-force');
     final hash = await CryptoEngine.hashPbkdf2(input);
@@ -1191,7 +1354,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
       final input = _hashInputController.text;
       final inputBytes = utf8.encode(input);
 
-      _hashSteps.add('Entrée : ${inputBytes.length} octets (${input.length} caractères)');
+      _hashSteps.add(
+          'Entrée : ${inputBytes.length} octets (${input.length} caractères)');
 
       switch (_selectedHash) {
         case 'SHA-256':
@@ -1240,17 +1404,22 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
       if (_selectedSignature == 'Ed25519') {
         _signKeyPair ??= await CryptoEngine.generateEd25519KeyPair();
         _signSteps.add('Hash du message (SHA-512 interne à Ed25519)');
-        _signSteps.add('Multiplication scalaire sur Curve25519 avec la clé privée');
+        _signSteps
+            .add('Multiplication scalaire sur Curve25519 avec la clé privée');
         _signSteps.add('Génération de la signature (r, s) — 64 octets');
-        signature = await CryptoEngine.ed25519Sign(_lastSignedMessage, _signKeyPair!.privateKey);
-        _signSteps.add('✓ Signature créée — vérifiable par quiconque possède la clé publique');
+        signature = await CryptoEngine.ed25519Sign(
+            _lastSignedMessage, _signKeyPair!.privateKey);
+        _signSteps.add(
+            '✓ Signature créée — vérifiable par quiconque possède la clé publique');
         _privateKeyController.text = _signKeyPair!.privateKey;
         _publicKeyController.text = _signKeyPair!.publicKey;
       } else {
         _signSteps.add('Combinaison de la clé secrète avec le message');
         _signSteps.add('Double passe de SHA-256 (inner hash + outer hash)');
-        signature = CryptoEngine.hmacSha256(_lastSignedMessage, _keyController.text);
-        _signSteps.add('✓ MAC créé — vérifiable uniquement par qui connaît la clé secrète');
+        signature =
+            CryptoEngine.hmacSha256(_lastSignedMessage, _keyController.text);
+        _signSteps.add(
+            '✓ MAC créé — vérifiable uniquement par qui connaît la clé secrète');
       }
       setState(() {
         _signatureResult = signature;
@@ -1270,10 +1439,13 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
       bool valid;
       if (_selectedSignature == 'Ed25519' && _signKeyPair != null) {
         valid = await CryptoEngine.ed25519Verify(
-          _lastSignedMessage, _signatureResult, _signKeyPair!.publicKey,
+          _lastSignedMessage,
+          _signatureResult,
+          _signKeyPair!.publicKey,
         );
       } else {
-        final expected = CryptoEngine.hmacSha256(_lastSignedMessage, _keyController.text);
+        final expected =
+            CryptoEngine.hmacSha256(_lastSignedMessage, _keyController.text);
         valid = expected == _signatureResult;
       }
       setState(() {
@@ -1296,7 +1468,8 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
 
   void _showSnackBar(String msg) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), behavior: SnackBarBehavior.floating));
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg), behavior: SnackBarBehavior.floating));
   }
 
   void _showError(String msg) => _showSnackBar(msg);
@@ -1316,4 +1489,3 @@ class _CryptographySimulatorState extends State<CryptographySimulator>
     _showSnackBar(_copiedMsg);
   }
 }
-

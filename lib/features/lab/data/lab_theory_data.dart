@@ -43,7 +43,6 @@ Ce modèle théorique divise la communication réseau en 7 couches distinctes. C
 - **Scan de Ports** : Découvre les services actifs sur une machine en testant l'ouverture des ports TCP/UDP.
 - **Sniffing (Wireshark/Tcpdump)** : Capture les paquets transitant sur une interface pour une analyse approfondie (débogage, sécurité).
 ''',
-
   'linux': '''
 # Le Cœur de Linux et l'Administration Système
 
@@ -84,7 +83,6 @@ La sécurité Linux repose sur le paradigme Utilisateur, Groupe, Autres (UGO) et
 - **X (Execute)** = 1
 - *Exemple : `chmod 755 fichier` donne RWX (7) au propriétaire, et RX (5) au groupe et aux autres.*
 ''',
-
   'algorithms': '''
 # Algorithmique Avancée & Complexité
 
@@ -116,7 +114,6 @@ Technique d'optimisation (généralement appliquée aux problèmes récursifs) q
 2. Stocker (Mémoïsation) le résultat de ces sous-problèmes pour ne pas les recalculer.
 *Résultat : Une complexité exponentielle O(2ⁿ) peut souvent être réduite à une complexité linéaire O(n).*
 ''',
-
   'system': '''
 # Architecture Système et Hardware
 
@@ -144,7 +141,6 @@ Le système d'exploitation gère la mémoire physique de manière sécurisée vi
 - Le CPU (via la MMU - Memory Management Unit) traduit les adresses virtuelles en adresses physiques (Paging).
 - Si la RAM est pleine, l'OS déplace des pages inactives sur le disque dur (**Swap**), ce qui ralentit considérablement le système.
 ''',
-
   'cloud': '''
 # Cloud Computing & DevOps
 
@@ -164,7 +160,6 @@ Le DevOps est une philosophie visant à unifier le développement (Dev) et l'adm
 - **Conteneurs (Docker)** : Encapsulation d'une application et de toutes ses dépendances dans un paquet léger, portable et isolé. Contrairement aux machines virtuelles, les conteneurs partagent le même noyau Linux, ce qui les rend ultra-rapides.
 - **Orchestration (Kubernetes)** : Gestion automatisée de centaines ou milliers de conteneurs (déploiement, scalabilité, tolérance aux pannes).
 ''',
-
   'crypto': '''
 # Cryptographie et Sécurité des Données
 
@@ -196,7 +191,6 @@ Le hachage (Hashing) transforme une donnée de taille arbitraire en une empreint
 - **Utilisations** : Stockage de mots de passe (avec ajout de sel/salt), vérification de l'intégrité de fichiers, signatures numériques, Blockchains.
 - **Standards** : SHA-256, SHA-3, Argon2 (pour les mots de passe).
 ''',
-
   'security': '''
 # Cybersécurité : Attaques et Défenses
 
@@ -215,7 +209,6 @@ La sécurité informatique est un jeu du chat et de la souris consistant à iden
 - **Bruteforce** : Tester toutes les combinaisons possibles. Seule l'augmentation de l'entropie (longueur du mot de passe) peut la contrer.
 - **Rainbow Tables** : Utiliser des tables précalculées de hachages pour retrouver un mot de passe instantanément. *Défense : Ajout d'un sel (Salt) unique à chaque mot de passe avant de le hacher.*
 ''',
-
   'internet': '''
 # L'Architecture de l'Internet
 

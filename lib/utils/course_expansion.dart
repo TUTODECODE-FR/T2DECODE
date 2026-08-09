@@ -92,7 +92,11 @@ class CourseExpansion {
     final lines = code
         .split('\n')
         .map((l) => l.trim())
-        .where((l) => l.isNotEmpty && !l.startsWith('#') && !l.startsWith('//') && !l.startsWith('--'))
+        .where((l) =>
+            l.isNotEmpty &&
+            !l.startsWith('#') &&
+            !l.startsWith('//') &&
+            !l.startsWith('--'))
         .take(8)
         .toList();
 
@@ -106,48 +110,63 @@ class CourseExpansion {
 
       if (hint != null) {
         explained.add('- **`$line`** : $hint');
-      } else if (RegExp(r'^(fn|function|def|func)\s+', caseSensitive: false).hasMatch(line)) {
+      } else if (RegExp(r'^(fn|function|def|func)\s+', caseSensitive: false)
+          .hasMatch(line)) {
         explained.add('- **`$line`** : définit une fonction');
-      } else if (RegExp(r'^(let|const|var|val|mut)\s+', caseSensitive: false).hasMatch(line)) {
+      } else if (RegExp(r'^(let|const|var|val|mut)\s+', caseSensitive: false)
+          .hasMatch(line)) {
         explained.add('- **`$line`** : déclare une variable');
-      } else if (RegExp(r'^if\s*[\({]|^if\s+', caseSensitive: false).hasMatch(line)) {
+      } else if (RegExp(r'^if\s*[\({]|^if\s+', caseSensitive: false)
+          .hasMatch(line)) {
         explained.add('- **`$line`** : condition');
-      } else if (RegExp(r'^(for|while|loop)\s*', caseSensitive: false).hasMatch(line)) {
+      } else if (RegExp(r'^(for|while|loop)\s*', caseSensitive: false)
+          .hasMatch(line)) {
         explained.add('- **`$line`** : boucle');
-      } else if (RegExp(r'^(return|yield)\s+', caseSensitive: false).hasMatch(line)) {
+      } else if (RegExp(r'^(return|yield)\s+', caseSensitive: false)
+          .hasMatch(line)) {
         explained.add('- **`$line`** : retourne un résultat');
-      } else if (RegExp(r'^(import|use|require|from)\s+', caseSensitive: false).hasMatch(line)) {
+      } else if (RegExp(r'^(import|use|require|from)\s+', caseSensitive: false)
+          .hasMatch(line)) {
         explained.add('- **`$line`** : importe une dépendance');
-      } else if (RegExp(r'^(class|struct|enum|interface|type)\s+', caseSensitive: false).hasMatch(line)) {
+      } else if (RegExp(r'^(class|struct|enum|interface|type)\s+',
+              caseSensitive: false)
+          .hasMatch(line)) {
         explained.add('- **`$line`** : définit une structure de données');
       }
     }
-    
+
     if (explained.isEmpty) return '';
     return explained.join('\n');
   }
 
   // ─── Génération de cheat sheet ───────────────────────────────────────────
-  static String _generateCheatSheet(String title, String codeLanguage, String code) {
+  static String _generateCheatSheet(
+      String title, String codeLanguage, String code) {
     if (code.isEmpty) return '';
 
     final commands = code
         .split('\n')
-        .where((l) => l.trim().isNotEmpty && !l.trim().startsWith('#') && !l.trim().startsWith('//'))
+        .where((l) =>
+            l.trim().isNotEmpty &&
+            !l.trim().startsWith('#') &&
+            !l.trim().startsWith('//'))
         .take(6)
         .map((l) => '- `${l.trim()}`')
         .join('\n');
 
     if (commands.isEmpty) return '';
-    
+
     return '''### Commandes clés
 $commands''';
   }
 
   // ─── Point d'entrée principal ────────────────────────────────────────────
-  static String expandChapterContent(Course course, CourseChapter chapter, int index) {
+  static String expandChapterContent(
+      Course course, CourseChapter chapter, int index) {
     final title = chapter.title;
-    final duration = chapter.duration.trim().isNotEmpty ? chapter.duration.trim() : 'durée libre';
+    final duration = chapter.duration.trim().isNotEmpty
+        ? chapter.duration.trim()
+        : 'durée libre';
     final rawContent = chapter.content.trim();
     final total = course.chapters.length;
 

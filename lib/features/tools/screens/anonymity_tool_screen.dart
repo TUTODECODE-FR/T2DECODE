@@ -235,7 +235,8 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFFEF4444).withValues(alpha: 0.09),
         borderRadius: TdcRadius.md,
-        border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.4)),
+        border:
+            Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,7 +276,8 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF3B82F6).withValues(alpha: 0.08),
         borderRadius: TdcRadius.md,
-        border: Border.all(color: const Color(0xFF3B82F6).withValues(alpha: 0.35)),
+        border:
+            Border.all(color: const Color(0xFF3B82F6).withValues(alpha: 0.35)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -796,7 +798,8 @@ class _AnonymityToolScreenState extends State<AnonymityToolScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF10B981).withValues(alpha: 0.07),
         borderRadius: TdcRadius.md,
-        border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.35)),
+        border:
+            Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.35)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

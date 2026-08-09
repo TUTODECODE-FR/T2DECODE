@@ -15,9 +15,12 @@ class _AiMessage {
   final String text;
   final bool isUser;
   final bool isStreaming;
-  const _AiMessage({required this.text, required this.isUser, this.isStreaming = false});
-  _AiMessage copyWith({String? text, bool? isStreaming}) =>
-      _AiMessage(text: text ?? this.text, isUser: isUser, isStreaming: isStreaming ?? this.isStreaming);
+  const _AiMessage(
+      {required this.text, required this.isUser, this.isStreaming = false});
+  _AiMessage copyWith({String? text, bool? isStreaming}) => _AiMessage(
+      text: text ?? this.text,
+      isUser: isUser,
+      isStreaming: isStreaming ?? this.isStreaming);
 }
 
 /// Widget IA intégrable dans n'importe quel simulateur du Lab.
@@ -77,7 +80,8 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
 
     setState(() {
       _messages.add(_AiMessage(text: text, isUser: true));
-      _messages.add(const _AiMessage(text: '', isUser: false, isStreaming: true));
+      _messages
+          .add(const _AiMessage(text: '', isUser: false, isStreaming: true));
       _loading = true;
     });
     _scrollToBottom();
@@ -85,11 +89,15 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
     final model = context.read<SettingsProvider>().ollamaModel;
     final history = _messages
         .where((m) => !m.isStreaming)
-        .map((m) => {'role': m.isUser ? 'user' : 'assistant', 'content': m.text})
+        .map(
+            (m) => {'role': m.isUser ? 'user' : 'assistant', 'content': m.text})
         .toList();
 
     // Ajoute la question courante (non encore dans history)
-    final msgs = [...history, {'role': 'user', 'content': text}];
+    final msgs = [
+      ...history,
+      {'role': 'user', 'content': text}
+    ];
 
     StringBuffer buffer = StringBuffer();
     try {
@@ -102,31 +110,31 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
           if (!chunk.isThinking) {
             buffer.write(chunk.text);
             setState(() {
-              _messages[_messages.length - 1] =
-                  _messages.last.copyWith(text: buffer.toString(), isStreaming: true);
+              _messages[_messages.length - 1] = _messages.last
+                  .copyWith(text: buffer.toString(), isStreaming: true);
             });
             _scrollToBottom();
           }
         },
         onDone: () {
           setState(() {
-            _messages[_messages.length - 1] =
-                _messages.last.copyWith(text: buffer.toString(), isStreaming: false);
+            _messages[_messages.length - 1] = _messages.last
+                .copyWith(text: buffer.toString(), isStreaming: false);
             _loading = false;
           });
         },
         onError: (e) {
           setState(() {
-            _messages[_messages.length - 1] =
-                _messages.last.copyWith(text: '⚠️ Erreur : $e', isStreaming: false);
+            _messages[_messages.length - 1] = _messages.last
+                .copyWith(text: '⚠️ Erreur : $e', isStreaming: false);
             _loading = false;
           });
         },
       );
     } catch (e) {
       setState(() {
-        _messages[_messages.length - 1] =
-            _messages.last.copyWith(text: '⚠️ Ollama indisponible : $e', isStreaming: false);
+        _messages[_messages.length - 1] = _messages.last
+            .copyWith(text: '⚠️ Ollama indisponible : $e', isStreaming: false);
         _loading = false;
       });
     }
@@ -141,7 +149,9 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
             color: widget.accentColor.withValues(alpha: 0.08),
-            border: Border(bottom: BorderSide(color: widget.accentColor.withValues(alpha: 0.2))),
+            border: Border(
+                bottom: BorderSide(
+                    color: widget.accentColor.withValues(alpha: 0.2))),
           ),
           child: Row(
             children: [
@@ -190,12 +200,15 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.smart_toy_outlined, color: widget.accentColor.withValues(alpha: 0.4), size: 56),
+          Icon(Icons.smart_toy_outlined,
+              color: widget.accentColor.withValues(alpha: 0.4), size: 56),
           const SizedBox(height: 12),
           Text(
             'Pose ta question sur\n${widget.topic}',
             textAlign: TextAlign.center,
-            style: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.4), fontSize: 14),
+            style: TextStyle(
+                color: TdcColors.textPrimary.withValues(alpha: 0.4),
+                fontSize: 14),
           ),
         ],
       ),
@@ -213,7 +226,8 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
           alignment: msg.isUser ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
             margin: const EdgeInsets.only(bottom: 8),
-            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.85),
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.85),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               color: msg.isUser
@@ -231,13 +245,16 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
                     width: 40,
                     child: LinearProgressIndicator(
                       color: widget.accentColor,
-                      backgroundColor: TdcColors.textPrimary.withValues(alpha: 0.1),
+                      backgroundColor:
+                          TdcColors.textPrimary.withValues(alpha: 0.1),
                     ),
                   )
                 : SelectableText(
                     msg.text,
                     style: TextStyle(
-                      color: msg.isUser ? TdcColors.textPrimary : TdcColors.textPrimary.withValues(alpha: 0.9),
+                      color: msg.isUser
+                          ? TdcColors.textPrimary
+                          : TdcColors.textPrimary.withValues(alpha: 0.9),
                       fontSize: 13,
                       height: 1.5,
                     ),
@@ -262,7 +279,8 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
               decoration: BoxDecoration(
                 color: widget.accentColor.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: widget.accentColor.withValues(alpha: 0.3)),
+                border: Border.all(
+                    color: widget.accentColor.withValues(alpha: 0.3)),
               ),
               child: Text(
                 q,
@@ -280,7 +298,9 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: TdcColors.surface,
-        border: Border(top: BorderSide(color: TdcColors.textPrimary.withValues(alpha: 0.06))),
+        border: Border(
+            top: BorderSide(
+                color: TdcColors.textPrimary.withValues(alpha: 0.06))),
       ),
       child: Row(
         children: [
@@ -288,13 +308,17 @@ class _SimulatorAIAssistantState extends State<SimulatorAIAssistant> {
             child: TextField(
               controller: _inputController,
               enabled: !_loading,
-              style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
+              style:
+                  const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
               decoration: InputDecoration(
                 hintText: 'Pose ta question…',
-                hintStyle: TextStyle(color: TdcColors.textPrimary.withValues(alpha: 0.3), fontSize: 13),
+                hintStyle: TextStyle(
+                    color: TdcColors.textPrimary.withValues(alpha: 0.3),
+                    fontSize: 13),
                 filled: true,
                 fillColor: TdcColors.textPrimary.withValues(alpha: 0.05),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,

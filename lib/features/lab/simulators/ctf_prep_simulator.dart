@@ -127,7 +127,10 @@ services:
             children: [
               Icon(Icons.stars, color: TdcColors.textPrimary),
               SizedBox(width: 8),
-              Text('Bravo ! Flag correct. +100 XP', style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold)),
+              Text('Bravo ! Flag correct. +100 XP',
+                  style: TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -140,7 +143,8 @@ services:
             children: [
               Icon(Icons.error_outline, color: TdcColors.textPrimary),
               SizedBox(width: 8),
-              Text('Flag incorrect. Essayez encore !', style: TextStyle(color: TdcColors.textPrimary)),
+              Text('Flag incorrect. Essayez encore !',
+                  style: TextStyle(color: TdcColors.textPrimary)),
             ],
           ),
         ),
@@ -155,7 +159,7 @@ services:
 
     setState(() {
       _terminalHistory.add('$_currentDir \$ $cmd');
-      
+
       final parts = cmd.split(' ');
       final commandName = parts[0].toLowerCase();
       final args = parts.sublist(1);
@@ -182,7 +186,8 @@ services:
           bool showAll = args.contains('-a');
           if (_currentDir == '/home/user') {
             if (showAll) {
-              _terminalHistory.addAll(['.', '..', '.env', 'readme.txt', 'welcome.sh']);
+              _terminalHistory
+                  .addAll(['.', '..', '.env', 'readme.txt', 'welcome.sh']);
             } else {
               _terminalHistory.addAll(['readme.txt', 'welcome.sh']);
             }
@@ -199,7 +204,8 @@ services:
             if (_currentDir == '/home/user/secrets') {
               _currentDir = '/home/user';
             } else {
-              _terminalHistory.add('cd: Permission non accordée pour remonter au-delà de /home/user');
+              _terminalHistory.add(
+                  'cd: Permission non accordée pour remonter au-delà de /home/user');
             }
           } else if (args[0] == 'secrets' || args[0] == './secrets') {
             if (_currentDir == '/home/user') {
@@ -239,7 +245,8 @@ services:
               }
             } else if (_currentDir == '/home/user/secrets') {
               if (file == 'config.json') {
-                _terminalHistory.add('{"api_url": "http://127.0.0.1:8080", "status": "active"}');
+                _terminalHistory.add(
+                    '{"api_url": "http://127.0.0.1:8080", "status": "active"}');
               } else {
                 _terminalHistory.add('cat: $file: Fichier introuvable');
               }
@@ -251,7 +258,7 @@ services:
         default:
           _terminalHistory.add('bash: $commandName: commande introuvable');
       }
-      
+
       _terminalHistory.add('');
       _terminalInputCtrl.clear();
     });
@@ -295,15 +302,18 @@ services:
                     ),
                     const Spacer(),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: TdcColors.accent.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
+                        border: Border.all(
+                            color: TdcColors.accent.withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.stars, color: TdcColors.accent, size: 14),
+                          const Icon(Icons.stars,
+                              color: TdcColors.accent, size: 14),
                           const SizedBox(width: 6),
                           Text(
                             '$_score XP / 300',
@@ -388,19 +398,23 @@ services:
         _buildChallengeCard(
           id: 1,
           title: 'Défi 1 : Cryptographie (Le Message Encodé)',
-          desc: 'Nous avons intercepté un message suspect envoyé par un serveur. Le protocole de transmission indique qu\'il s\'agit de données encodées en base64.\n'
+          desc:
+              'Nous avons intercepté un message suspect envoyé par un serveur. Le protocole de transmission indique qu\'il s\'agit de données encodées en base64.\n'
               'Décoder la chaîne suivante pour révéler le flag :\n'
               'VERDe0I0UzM2NF8xU19OMFRfQ1I3UFQwfQ==',
-          hint: 'Astuce : Utilisez le décodeur Base64 dans la section Outils de l\'application ou décodez-le manuellement.',
+          hint:
+              'Astuce : Utilisez le décodeur Base64 dans la section Outils de l\'application ou décodez-le manuellement.',
           points: 100,
         ),
         const SizedBox(height: 16),
         _buildChallengeCard(
           id: 2,
           title: 'Défi 2 : Système (Recherche dans le Sandbox)',
-          desc: 'Un administrateur système distrait a laissé une clé secrète dans un fichier de configuration caché du répertoire utilisateur.\n'
+          desc:
+              'Un administrateur système distrait a laissé une clé secrète dans un fichier de configuration caché du répertoire utilisateur.\n'
               'Explorez le terminal simulé ci-dessous pour trouver ce fichier caché et afficher son contenu.',
-          hint: 'Astuce : La commande "ls -a" permet de lister les fichiers cachés (qui commencent par un point).',
+          hint:
+              'Astuce : La commande "ls -a" permet de lister les fichiers cachés (qui commencent par un point).',
           points: 100,
           interactiveWidget: _buildTerminalSandbox(),
         ),
@@ -408,9 +422,11 @@ services:
         _buildChallengeCard(
           id: 3,
           title: 'Défi 3 : Analyse de logs d\'intrusion',
-          desc: 'Un de nos serveurs a subi une attaque par force brute. Analysez les logs ci-dessous pour identifier l\'adresse IP de l\'attaquant qui a réussi à se connecter.\n'
+          desc:
+              'Un de nos serveurs a subi une attaque par force brute. Analysez les logs ci-dessous pour identifier l\'adresse IP de l\'attaquant qui a réussi à se connecter.\n'
               'Soumettez le flag sous la forme TDC{adresse_ip} (ex: TDC{192.168.1.1}).',
-          hint: 'Astuce : Recherchez la ligne de connexion réussie ("Accepted password") et relevez l\'IP correspondante.',
+          hint:
+              'Astuce : Recherchez la ligne de connexion réussie ("Accepted password") et relevez l\'IP correspondante.',
           points: 100,
           interactiveWidget: _buildLogsDump(),
         ),
@@ -455,7 +471,8 @@ services:
               Text(
                 '$points pts',
                 style: TextStyle(
-                  color: completed ? TdcColors.success : TdcColors.textSecondary,
+                  color:
+                      completed ? TdcColors.success : TdcColors.textSecondary,
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                 ),
@@ -465,7 +482,8 @@ services:
           const SizedBox(height: 10),
           Text(
             desc,
-            style: const TextStyle(color: TdcColors.textSecondary, fontSize: 13, height: 1.4),
+            style: const TextStyle(
+                color: TdcColors.textSecondary, fontSize: 13, height: 1.4),
           ),
           if (interactiveWidget != null) ...[
             const SizedBox(height: 12),
@@ -474,7 +492,10 @@ services:
           const SizedBox(height: 12),
           Text(
             hint,
-            style: const TextStyle(color: TdcColors.textMuted, fontSize: 11, fontStyle: FontStyle.italic),
+            style: const TextStyle(
+                color: TdcColors.textMuted,
+                fontSize: 11,
+                fontStyle: FontStyle.italic),
           ),
           const SizedBox(height: 14),
           Row(
@@ -483,10 +504,18 @@ services:
                 child: TextField(
                   controller: _flagControllers[id],
                   enabled: !completed,
-                  style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13, fontFamily: 'monospace'),
+                  style: const TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontSize: 13,
+                      fontFamily: 'monospace'),
                   decoration: InputDecoration(
-                    labelText: completed ? 'DÉFI RÉUSSI !' : 'Soumettre le flag (TDC{...})',
-                    labelStyle: TextStyle(color: completed ? TdcColors.success : TdcColors.textMuted),
+                    labelText: completed
+                        ? 'DÉFI RÉUSSI !'
+                        : 'Soumettre le flag (TDC{...})',
+                    labelStyle: TextStyle(
+                        color: completed
+                            ? TdcColors.success
+                            : TdcColors.textMuted),
                     border: const OutlineInputBorder(),
                     prefixIcon: const Icon(Icons.outlined_flag),
                   ),
@@ -497,7 +526,8 @@ services:
                 onPressed: completed ? null : () => _validateFlag(id),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TdcColors.accent,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                 ),
                 child: const Text('Valider'),
               ),
@@ -532,12 +562,19 @@ services:
                 const SizedBox(width: 8),
                 const Text(
                   'TERMINAL LINUX SIMULÉ',
-                  style: TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.8),
+                  style: TextStyle(
+                      color: TdcColors.textSecondary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8),
                 ),
                 const Spacer(),
                 Text(
                   _currentDir,
-                  style: const TextStyle(color: TdcColors.textMuted, fontSize: 10, fontFamily: 'monospace'),
+                  style: const TextStyle(
+                      color: TdcColors.textMuted,
+                      fontSize: 10,
+                      fontFamily: 'monospace'),
                 ),
               ],
             ),
@@ -573,16 +610,24 @@ services:
             ),
             child: Row(
               children: [
-                const Text('\$ ', style: TextStyle(color: TdcColors.accent, fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+                const Text('\$ ',
+                    style: TextStyle(
+                        color: TdcColors.accent,
+                        fontFamily: 'monospace',
+                        fontWeight: FontWeight.bold)),
                 Expanded(
                   child: TextField(
                     controller: _terminalInputCtrl,
-                    style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 12),
+                    style: const TextStyle(
+                        color: TdcColors.textPrimary,
+                        fontFamily: 'monospace',
+                        fontSize: 12),
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       isDense: true,
                       hintText: 'Tapez une commande...',
-                      hintStyle: TextStyle(color: TdcColors.textMuted, fontSize: 12),
+                      hintStyle:
+                          TextStyle(color: TdcColors.textMuted, fontSize: 12),
                     ),
                     onSubmitted: _executeTerminalCommand,
                   ),
@@ -640,11 +685,15 @@ services:
             children: [
               const Row(
                 children: [
-                  Icon(Icons.router_outlined, color: TdcColors.network, size: 18),
+                  Icon(Icons.router_outlined,
+                      color: TdcColors.network, size: 18),
                   SizedBox(width: 8),
                   Text(
                     'Checklist réseau (recommandé)',
-                    style: TextStyle(color: TdcColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w800),
+                    style: TextStyle(
+                        color: TdcColors.textPrimary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800),
                   ),
                 ],
               ),
@@ -665,18 +714,23 @@ services:
             children: [
               const Row(
                 children: [
-                  Icon(Icons.info_outline, color: TdcColors.textMuted, size: 18),
+                  Icon(Icons.info_outline,
+                      color: TdcColors.textMuted, size: 18),
                   SizedBox(width: 8),
                   Text(
                     'Limites & compromis (offline-first)',
-                    style: TextStyle(color: TdcColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w800),
+                    style: TextStyle(
+                        color: TdcColors.textPrimary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800),
                   ),
                 ],
               ),
               const SizedBox(height: 10),
               Column(
                 children: _limitations
-                    .map((t) => _bulletRow(Icons.remove, TdcColors.textMuted, t))
+                    .map(
+                        (t) => _bulletRow(Icons.remove, TdcColors.textMuted, t))
                     .toList(),
               ),
             ],
@@ -701,7 +755,10 @@ services:
                   SizedBox(width: 8),
                   Text(
                     'Template docker-compose (air‑gapped friendly)',
-                    style: TextStyle(color: TdcColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w800),
+                    style: TextStyle(
+                        color: TdcColors.textPrimary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800),
                   ),
                 ],
               ),
@@ -709,7 +766,10 @@ services:
               Text(
                 'Utilise une image locale (pré‑téléchargée). '
                 'Le port est bindé sur 127.0.0.1 pour éviter toute exposition.',
-                style: TextStyle(color: TdcColors.textMuted.withValues(alpha: 0.95), fontSize: 12, height: 1.3),
+                style: TextStyle(
+                    color: TdcColors.textMuted.withValues(alpha: 0.95),
+                    fontSize: 12,
+                    height: 1.3),
               ),
               const SizedBox(height: 10),
               Container(
@@ -735,8 +795,10 @@ services:
                 alignment: Alignment.centerRight,
                 child: TextButton.icon(
                   onPressed: () => _copy(context, _dockerComposeTemplate),
-                  icon: const Icon(Icons.copy, size: 16, color: TdcColors.accent),
-                  label: const Text('Copier le template', style: TextStyle(color: TdcColors.accent)),
+                  icon:
+                      const Icon(Icons.copy, size: 16, color: TdcColors.accent),
+                  label: const Text('Copier le template',
+                      style: TextStyle(color: TdcColors.accent)),
                 ),
               ),
             ],

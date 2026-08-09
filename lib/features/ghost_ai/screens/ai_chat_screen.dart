@@ -11,7 +11,8 @@ import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 // ─── Prompt système ──────────────────────────────────────────────────────────
-const _kSystem = '''Tu es Ghost, assistant technique de T2DECODE. Regles strictes :
+const _kSystem =
+    '''Tu es Ghost, assistant technique de T2DECODE. Regles strictes :
 - Reponds en francais, TOUJOURS court et direct (3-5 lignes max pour une question simple)
 - PAS d'introduction, PAS de recapitulatif, PAS de "Bien sur !"
 - Va droit au but : reponds uniquement a ce qui est demande
@@ -24,16 +25,18 @@ const _kSystem = '''Tu es Ghost, assistant technique de T2DECODE. Regles stricte
 
 class AIChatScreen extends StatefulWidget {
   const AIChatScreen({super.key});
-  @override State<AIChatScreen> createState() => _AIChatScreenState();
+  @override
+  State<AIChatScreen> createState() => _AIChatScreenState();
 }
 
-class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMixin {
-  final _inputCtrl    = TextEditingController();
-  final _scrollCtrl   = ScrollController();
-  final _inputFocus   = FocusNode();
-  final List<_Msg>    _msgs    = [];
+class _AIChatScreenState extends State<AIChatScreen>
+    with TickerProviderStateMixin {
+  final _inputCtrl = TextEditingController();
+  final _scrollCtrl = ScrollController();
+  final _inputFocus = FocusNode();
+  final List<_Msg> _msgs = [];
 
-  bool          _streaming = false;
+  bool _streaming = false;
   StreamSubscription? _sub;
 
   late final AnimationController _pulseCtrl;
@@ -41,9 +44,10 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    _pulseCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900))
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 900))
       ..repeat(reverse: true);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final aiTutor = context.read<AiTutorProvider>();
       aiTutor.checkOllamaConnection();
@@ -73,7 +77,8 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
           _buildModelPicker(context, aiTutor),
         if (_msgs.isNotEmpty)
           IconButton(
-            icon: const Icon(Icons.delete_sweep_outlined, color: TdcColors.textMuted),
+            icon: const Icon(Icons.delete_sweep_outlined,
+                color: TdcColors.textMuted),
             onPressed: () => _clear(aiTutor),
             tooltip: 'Effacer la conversation',
           ),
@@ -138,9 +143,13 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   void _onStreamDone() {
     if (!mounted) return;
     final last = _msgs.isNotEmpty ? _msgs.last : null;
-    if (last != null && last.role == 'assistant' && last.text.isEmpty && last.thinking.isNotEmpty) {
+    if (last != null &&
+        last.role == 'assistant' &&
+        last.text.isEmpty &&
+        last.thinking.isNotEmpty) {
       setState(() {
-        _msgs[_msgs.length - 1] = _Msg(role: 'assistant', text: last.thinking, thinking: '');
+        _msgs[_msgs.length - 1] =
+            _Msg(role: 'assistant', text: last.thinking, thinking: '');
       });
     }
     setState(() => _streaming = false);
@@ -161,7 +170,8 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
     _updateShell(aiTutor);
   }
 
-  Future<void> _startOllamaStream(String text, String modelSelected, AiTutorProvider aiTutor) async {
+  Future<void> _startOllamaStream(
+      String text, String modelSelected, AiTutorProvider aiTutor) async {
     final history = _msgs
         .where((m) => m.role != 'error' && m.text.isNotEmpty)
         .map((m) => {'role': m.role, 'content': m.text})
@@ -169,11 +179,13 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
 
     try {
       final contextText = await RagService().findRelevantContext(text);
-      final finalSystemPrompt = contextText != null 
+      final finalSystemPrompt = contextText != null
           ? "$_kSystem\n\nCONTEXTE RELEVANT DES COURS :\n$contextText"
           : _kSystem;
 
-      _sub = OllamaService.stream(modelSelected, history, system: finalSystemPrompt).listen(
+      _sub = OllamaService.stream(modelSelected, history,
+              system: finalSystemPrompt)
+          .listen(
         _onStreamData,
         onDone: _onStreamDone,
         onError: (e) => _onStreamError(e, aiTutor),
@@ -240,17 +252,25 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       _updateShell(aiTutor);
     });
 
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final courseTitle = args?['title'] as String?;
 
     return Material(
       color: TdcColors.bg,
       child: SelectionArea(
         child: Column(children: [
-          if (aiTutor.isCheckingOllama) const LinearProgressIndicator(color: TdcColors.accent, backgroundColor: Colors.transparent, minHeight: 1),
+          if (aiTutor.isCheckingOllama)
+            const LinearProgressIndicator(
+                color: TdcColors.accent,
+                backgroundColor: Colors.transparent,
+                minHeight: 1),
           _buildStatusHeader(aiTutor),
           if (courseTitle != null) _buildContextBadge(context, courseTitle),
-          Expanded(child: _msgs.isEmpty ? _buildEmpty(aiTutor) : _buildMessages(context)),
+          Expanded(
+              child: _msgs.isEmpty
+                  ? _buildEmpty(aiTutor)
+                  : _buildMessages(context)),
           if (_streaming) _buildStreamingBar(context),
           _buildInput(context, aiTutor),
         ]),
@@ -264,11 +284,13 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: TdcColors.surface.withValues(alpha: 0.5),
-        border: Border(bottom: BorderSide(color: TdcColors.border.withValues(alpha: 0.3))),
+        border: Border(
+            bottom: BorderSide(color: TdcColors.border.withValues(alpha: 0.3))),
       ),
       child: Row(children: [
         Container(
-          width: 8, height: 8,
+          width: 8,
+          height: 8,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: running ? TdcColors.info : TdcColors.textMuted,
@@ -289,7 +311,8 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
             onPressed: _detect,
             icon: const Icon(Icons.refresh, size: 14),
             label: const Text('Réessayer', style: TextStyle(fontSize: 10)),
-            style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
+            style: TextButton.styleFrom(
+                padding: EdgeInsets.zero, minimumSize: Size.zero),
           ),
         ],
         if (!running && !aiTutor.isCheckingOllama) ...[
@@ -298,7 +321,8 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
             onPressed: () => Navigator.pushNamed(context, '/ai-config'),
             icon: const Icon(Icons.tune, size: 14),
             label: const Text('Configurer', style: TextStyle(fontSize: 10)),
-            style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
+            style: TextButton.styleFrom(
+                padding: EdgeInsets.zero, minimumSize: Size.zero),
           ),
         ],
       ]),
@@ -327,10 +351,14 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
             value: modelSelected,
-            items: aiTutor.availableModels.map((m) => DropdownMenuItem(
-              value: m,
-              child: Text(m.split(':').first, style: const TextStyle(color: Colors.white, fontSize: 12)),
-            )).toList(),
+            items: aiTutor.availableModels
+                .map((m) => DropdownMenuItem(
+                      value: m,
+                      child: Text(m.split(':').first,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 12)),
+                    ))
+                .toList(),
             onChanged: (v) {
               if (v != null) {
                 aiTutor.selectModel(v);
@@ -353,8 +381,16 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       child: Row(children: [
         const Icon(Icons.auto_stories, size: 14, color: TdcColors.accent),
         const SizedBox(width: 8),
-        const Text('FOCUS : ', style: TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold)),
-        Expanded(child: Text(title, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 10), overflow: TextOverflow.ellipsis)),
+        const Text('FOCUS : ',
+            style: TextStyle(
+                color: TdcColors.accent,
+                fontSize: 10,
+                fontWeight: FontWeight.bold)),
+        Expanded(
+            child: Text(title,
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7), fontSize: 10),
+                overflow: TextOverflow.ellipsis)),
       ]),
     );
   }
@@ -362,15 +398,22 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
   Widget _buildEmpty(AiTutorProvider aiTutor) {
     return Center(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.auto_awesome, color: TdcColors.accent, size: 64).animate(onPlay: (c) => c.repeat()).shimmer(duration: 3.seconds),
+        const Icon(Icons.auto_awesome, color: TdcColors.accent, size: 64)
+            .animate(onPlay: (c) => c.repeat())
+            .shimmer(duration: 3.seconds),
         const SizedBox(height: 24),
-        const Text('Ghost AI', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
+        const Text('Ghost AI',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 28,
+                fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Text(
           aiTutor.isConnected
               ? 'Prêt à vous aider (IA 100% locale).'
               : 'Ollama est optionnel. Sans lui, l’application reste 100% utilisable.',
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 14),
+          style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.4), fontSize: 14),
         ),
         if (!aiTutor.isConnected) ...[
           const SizedBox(height: 20),
@@ -382,22 +425,33 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: TdcColors.border),
             ),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const Row(children: [
                 Icon(Icons.info_outline, size: 16, color: TdcColors.info),
                 SizedBox(width: 8),
-                Text('IA locale (optionnelle)', style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
+                Text('IA locale (optionnelle)',
+                    style: TextStyle(
+                        color: TdcColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13)),
               ]),
               const SizedBox(height: 8),
               Text(
                 'Activez Ollama pour débloquer le chat IA. Sinon, ignorez cette section: rien n’est bloquant.',
-                style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 12, height: 1.4),
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.55),
+                    fontSize: 12,
+                    height: 1.4),
               ),
               if ((aiTutor.errorMessage ?? '').isNotEmpty) ...[
                 const SizedBox(height: 10),
                 Text(
                   'Détail: ${aiTutor.errorMessage}',
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11, height: 1.3),
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.35),
+                      fontSize: 11,
+                      height: 1.3),
                 ),
               ],
               const SizedBox(height: 12),
@@ -447,22 +501,39 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
         decoration: BoxDecoration(
-          color: isUser ? TdcColors.accent.withValues(alpha: 0.1) : TdcColors.surface,
+          color: isUser
+              ? TdcColors.accent.withValues(alpha: 0.1)
+              : TdcColors.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: isUser ? TdcColors.accent.withValues(alpha: 0.3) : TdcColors.border),
+          border: Border.all(
+              color: isUser
+                  ? TdcColors.accent.withValues(alpha: 0.3)
+                  : TdcColors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (msg.thinking.isNotEmpty) ...[
-              Text('Réflexion...', style: TextStyle(color: TdcColors.accent.withValues(alpha: 0.5), fontSize: 10, fontStyle: FontStyle.italic)),
+              Text('Réflexion...',
+                  style: TextStyle(
+                      color: TdcColors.accent.withValues(alpha: 0.5),
+                      fontSize: 10,
+                      fontStyle: FontStyle.italic)),
               const SizedBox(height: 4),
-              Text(msg.thinking, style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 12)),
+              Text(msg.thinking,
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.3),
+                      fontSize: 12)),
               const Divider(height: 16),
             ],
-            Text(msg.text, style: TextStyle(color: isError ? TdcColors.info : Colors.white, fontSize: 14, height: 1.5)),
+            Text(msg.text,
+                style: TextStyle(
+                    color: isError ? TdcColors.info : Colors.white,
+                    fontSize: 14,
+                    height: 1.5)),
           ],
         ),
       ),
@@ -474,9 +545,13 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: TdcColors.surface,
       child: Row(children: [
-        const Text('Ghost AI génère...', style: TextStyle(color: TdcColors.textMuted, fontSize: 12)),
+        const Text('Ghost AI génère...',
+            style: TextStyle(color: TdcColors.textMuted, fontSize: 12)),
         const Spacer(),
-        TextButton(onPressed: _stop, child: const Text('Arrêter', style: TextStyle(color: TdcColors.danger, fontSize: 12))),
+        TextButton(
+            onPressed: _stop,
+            child: const Text('Arrêter',
+                style: TextStyle(color: TdcColors.danger, fontSize: 12))),
       ]),
     );
   }
@@ -504,7 +579,8 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
               cursorColor: TdcColors.accent,
               decoration: InputDecoration(
                 hintText: 'Posez une question...',
-                hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                hintStyle:
+                    TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: const EdgeInsets.symmetric(vertical: 8),
@@ -514,7 +590,8 @@ class _AIChatScreenState extends State<AIChatScreen> with TickerProviderStateMix
         ),
         IconButton(
           onPressed: _streaming ? null : () => _send(aiTutor),
-          icon: Icon(Icons.send, color: _streaming ? TdcColors.textMuted : TdcColors.accent),
+          icon: Icon(Icons.send,
+              color: _streaming ? TdcColors.textMuted : TdcColors.accent),
         ),
       ]),
     );

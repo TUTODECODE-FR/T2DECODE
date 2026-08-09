@@ -58,6 +58,8 @@ test_and_analyze:
   script:
     - flutter pub get
     - python3 scripts/verify_checksums.py
+    - dart format --output=none --set-exit-if-changed lib test
+    - python3 -c "import glob, json; [json.load(open(f, 'r', encoding='utf-8')) for f in glob.glob('assets/**/*.json', recursive=True)]; print('✅ All asset JSON files valid!')"
     - flutter pub outdated || true
     - flutter analyze --no-fatal-infos --no-fatal-warnings || true
     - flutter test --dart-define=SKIP_GOLDENS=true

@@ -46,12 +46,15 @@ class _DataConverterScreenState extends State<DataConverterScreen> {
     final fromVal = _units[_fromUnit]!;
     final toVal = _units[_toUnit]!;
     final res = (input * fromVal) / toVal;
-    
+
     setState(() {
       if (res == res.toInt()) {
         _result = res.toInt().toString();
       } else {
-        _result = res.toStringAsFixed(4).replaceAll(RegExp(r'0+$'), '').replaceAll(RegExp(r'\.$'), '');
+        _result = res
+            .toStringAsFixed(4)
+            .replaceAll(RegExp(r'0+$'), '')
+            .replaceAll(RegExp(r'\.$'), '');
       }
     });
   }
@@ -80,7 +83,11 @@ class _DataConverterScreenState extends State<DataConverterScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('CONVERSION UNITAIRE', style: TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold)),
+          const Text('CONVERSION UNITAIRE',
+              style: TextStyle(
+                  color: TdcColors.accent,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 24),
           Row(
             children: [
@@ -90,7 +97,10 @@ class _DataConverterScreenState extends State<DataConverterScreen> {
                   controller: _controller,
                   keyboardType: TextInputType.number,
                   onChanged: (v) => _calculate(),
-                  style: const TextStyle(color: TdcColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
                   decoration: const InputDecoration(
                     labelText: 'Valeur',
                     filled: true,
@@ -100,13 +110,20 @@ class _DataConverterScreenState extends State<DataConverterScreen> {
               const SizedBox(width: 12),
               Expanded(
                 flex: 1,
-                child: _buildUnitDropdown(_fromUnit, (v) => setState(() { _fromUnit = v!; _calculate(); })),
+                child: _buildUnitDropdown(
+                    _fromUnit,
+                    (v) => setState(() {
+                          _fromUnit = v!;
+                          _calculate();
+                        })),
               ),
             ],
           ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
-            child: Center(child: Icon(Icons.swap_vert, color: TdcColors.accent, size: 32)),
+            child: Center(
+                child:
+                    Icon(Icons.swap_vert, color: TdcColors.accent, size: 32)),
           ),
           Row(
             children: [
@@ -133,7 +150,12 @@ class _DataConverterScreenState extends State<DataConverterScreen> {
               const SizedBox(width: 12),
               Expanded(
                 flex: 1,
-                child: _buildUnitDropdown(_toUnit, (v) => setState(() { _toUnit = v!; _calculate(); })),
+                child: _buildUnitDropdown(
+                    _toUnit,
+                    (v) => setState(() {
+                          _toUnit = v!;
+                          _calculate();
+                        })),
               ),
             ],
           ),
@@ -158,7 +180,8 @@ class _DataConverterScreenState extends State<DataConverterScreen> {
           items: _units.keys.map((String unit) {
             return DropdownMenuItem<String>(
               value: unit,
-              child: Text(unit, style: const TextStyle(color: TdcColors.textPrimary)),
+              child: Text(unit,
+                  style: const TextStyle(color: TdcColors.textPrimary)),
             );
           }).toList(),
           onChanged: onChanged,
@@ -178,7 +201,11 @@ class _DataConverterScreenState extends State<DataConverterScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('RÉFÉRENCE RAPIDE (BASE 1024)', style: TextStyle(color: TdcColors.textSecondary, fontSize: 10, fontWeight: FontWeight.bold)),
+          const Text('RÉFÉRENCE RAPIDE (BASE 1024)',
+              style: TextStyle(
+                  color: TdcColors.textSecondary,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           _refRow('1 KB', '1,024 Bytes'),
           _refRow('1 MB', '1,024 KB'),
@@ -196,8 +223,11 @@ class _DataConverterScreenState extends State<DataConverterScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(unit, style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold)),
-          Text(value, style: const TextStyle(color: TdcColors.textMuted, fontSize: 13)),
+          Text(unit,
+              style: const TextStyle(
+                  color: TdcColors.textPrimary, fontWeight: FontWeight.bold)),
+          Text(value,
+              style: const TextStyle(color: TdcColors.textMuted, fontSize: 13)),
         ],
       ),
     );

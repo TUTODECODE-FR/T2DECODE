@@ -15,18 +15,19 @@ class GamificationDashboardScreen extends StatefulWidget {
   const GamificationDashboardScreen({super.key});
 
   @override
-  State<GamificationDashboardScreen> createState() => _GamificationDashboardScreenState();
+  State<GamificationDashboardScreen> createState() =>
+      _GamificationDashboardScreenState();
 }
 
-class _GamificationDashboardScreenState extends State<GamificationDashboardScreen>
-    with TickerProviderStateMixin {
+class _GamificationDashboardScreenState
+    extends State<GamificationDashboardScreen> with TickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
         title: 'Progression',
@@ -73,7 +74,8 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
     );
   }
 
-  Widget _buildProfileHeader(UserProfile profile, GamificationProvider provider) {
+  Widget _buildProfileHeader(
+      UserProfile profile, GamificationProvider provider) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -100,7 +102,9 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
                 radius: 32,
                 backgroundColor: TdcColors.accent,
                 child: Text(
-                  profile.username.isNotEmpty ? profile.username[0].toUpperCase() : 'U',
+                  profile.username.isNotEmpty
+                      ? profile.username[0].toUpperCase()
+                      : 'U',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -237,9 +241,11 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
       children: [
         _buildStatItem('🔥', '${profile.streakDays}', 'Jours consécutifs'),
         const SizedBox(width: 16),
-        _buildStatItem('📚', '${profile.completedChapters.length}', 'Chapitres'),
+        _buildStatItem(
+            '📚', '${profile.completedChapters.length}', 'Chapitres'),
         const SizedBox(width: 16),
-        _buildStatItem('🏆', '${provider.unlockedAchievements.length}', 'Achievements'),
+        _buildStatItem(
+            '🏆', '${provider.unlockedAchievements.length}', 'Achievements'),
       ],
     );
   }
@@ -354,7 +360,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
 
   Widget _buildProgressByCategory(GamificationProvider provider) {
     final progress = provider.getProgressByCategory();
-    
+
     return Card(
       color: TdcColors.surface,
       child: Padding(
@@ -385,7 +391,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
 
   Widget _buildCategoryProgress(String category, double progress) {
     final categoryData = _getCategoryData(category);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -499,7 +505,8 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
               ],
             ),
           ),
-          const Icon(Icons.arrow_forward_ios, color: TdcColors.textMuted, size: 16),
+          const Icon(Icons.arrow_forward_ios,
+              color: TdcColors.textMuted, size: 16),
         ],
       ),
     );
@@ -554,7 +561,8 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
               const Spacer(),
               if (path.isCompleted)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: TdcColors.success,
                     borderRadius: BorderRadius.circular(8),
@@ -675,12 +683,12 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: achievement.isUnlocked 
+        color: achievement.isUnlocked
             ? achievement.color.withValues(alpha: 0.1)
             : TdcColors.surfaceAlt.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: achievement.isUnlocked 
+          color: achievement.isUnlocked
               ? achievement.color.withValues(alpha: 0.3)
               : TdcColors.border,
         ),
@@ -690,14 +698,16 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: achievement.isUnlocked 
+              color: achievement.isUnlocked
                   ? achievement.color.withValues(alpha: 0.2)
                   : TdcColors.surfaceAlt,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               achievement.icon,
-              color: achievement.isUnlocked ? achievement.color : TdcColors.textMuted,
+              color: achievement.isUnlocked
+                  ? achievement.color
+                  : TdcColors.textMuted,
               size: 24,
             ),
           ),
@@ -709,7 +719,9 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
                 Text(
                   achievement.title,
                   style: TextStyle(
-                    color: achievement.isUnlocked ? TdcColors.textPrimary : TdcColors.textSecondary,
+                    color: achievement.isUnlocked
+                        ? TdcColors.textPrimary
+                        : TdcColors.textSecondary,
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
@@ -750,13 +762,16 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
               Text(
                 '+${achievement.points}',
                 style: TextStyle(
-                  color: achievement.isUnlocked ? achievement.color : TdcColors.textMuted,
+                  color: achievement.isUnlocked
+                      ? achievement.color
+                      : TdcColors.textMuted,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               if (achievement.isUnlocked)
-                const Icon(Icons.check_circle, color: TdcColors.success, size: 16),
+                const Icon(Icons.check_circle,
+                    color: TdcColors.success, size: 16),
             ],
           ),
         ],
@@ -766,7 +781,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
 
   Widget _buildChallengesTab(GamificationProvider provider) {
     final activeChallenges = provider.getActiveChallenges();
-    
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: activeChallenges.length,
@@ -778,7 +793,7 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
 
   Widget _buildChallengeCard(Challenge challenge) {
     final hoursLeft = challenge.deadline.difference(DateTime.now()).inHours;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -854,21 +869,22 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
           ),
           const SizedBox(height: 8),
           ...challenge.requiredChapters.map((chapter) => Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Row(
-              children: [
-                const Icon(Icons.radio_button_unchecked, color: TdcColors.textMuted, size: 12),
-                const SizedBox(width: 8),
-                Text(
-                  chapter,
-                  style: const TextStyle(
-                    color: TdcColors.textMuted,
-                    fontSize: 12,
-                  ),
+                padding: const EdgeInsets.only(top: 4),
+                child: Row(
+                  children: [
+                    const Icon(Icons.radio_button_unchecked,
+                        color: TdcColors.textMuted, size: 12),
+                    const SizedBox(width: 8),
+                    Text(
+                      chapter,
+                      style: const TextStyle(
+                        color: TdcColors.textMuted,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          )),
+              )),
         ],
       ),
     );
@@ -899,7 +915,13 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: rank == 1 ? Colors.amber : rank == 2 ? Colors.blueGrey : rank == 3 ? Colors.brown : Colors.grey,
+              color: rank == 1
+                  ? Colors.amber
+                  : rank == 2
+                      ? Colors.blueGrey
+                      : rank == 3
+                          ? Colors.brown
+                          : Colors.grey,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Center(
@@ -968,13 +990,25 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
   Map<String, dynamic> _getCategoryData(String category) {
     switch (category) {
       case 'linux':
-        return {'title': 'Linux', 'icon': Icons.computer, 'color': Colors.green};
+        return {
+          'title': 'Linux',
+          'icon': Icons.computer,
+          'color': Colors.green
+        };
       case 'network':
         return {'title': 'Réseau', 'icon': Icons.router, 'color': Colors.blue};
       case 'security':
-        return {'title': 'Sécurité', 'icon': Icons.security, 'color': Colors.red};
+        return {
+          'title': 'Sécurité',
+          'icon': Icons.security,
+          'color': Colors.red
+        };
       case 'development':
-        return {'title': 'Développement', 'icon': Icons.code, 'color': Colors.purple};
+        return {
+          'title': 'Développement',
+          'icon': Icons.code,
+          'color': Colors.purple
+        };
       default:
         return {'title': category, 'icon': Icons.help, 'color': Colors.grey};
     }
@@ -982,31 +1016,46 @@ class _GamificationDashboardScreenState extends State<GamificationDashboardScree
 
   Color _getRankColor(String rank) {
     switch (rank) {
-      case 'Légende': return Colors.purple;
-      case 'Master': return Colors.red;
-      case 'Expert': return Colors.orange;
-      case 'Apprenti': return Colors.blue;
-      default: return Colors.grey;
+      case 'Légende':
+        return Colors.purple;
+      case 'Master':
+        return Colors.red;
+      case 'Expert':
+        return Colors.orange;
+      case 'Apprenti':
+        return Colors.blue;
+      default:
+        return Colors.grey;
     }
   }
 
   Color _getDifficultyColor(int difficulty) {
     switch (difficulty) {
-      case 1: return Colors.green;
-      case 2: return Colors.blue;
-      case 3: return Colors.orange;
-      case 4: return Colors.red;
-      case 5: return Colors.purple;
-      default: return Colors.grey;
+      case 1:
+        return Colors.green;
+      case 2:
+        return Colors.blue;
+      case 3:
+        return Colors.orange;
+      case 4:
+        return Colors.red;
+      case 5:
+        return Colors.purple;
+      default:
+        return Colors.grey;
     }
   }
 
   String _getRankEmoji(int rank) {
     switch (rank) {
-      case 1: return '🥇';
-      case 2: return '🥈';
-      case 3: return '🥉';
-      default: return '$rank';
+      case 1:
+        return '🥇';
+      case 2:
+        return '🥈';
+      case 3:
+        return '🥉';
+      default:
+        return '$rank';
     }
   }
 }

@@ -7,11 +7,13 @@ class MiniSqlInjectionSandbox extends StatefulWidget {
   const MiniSqlInjectionSandbox({super.key});
 
   @override
-  State<MiniSqlInjectionSandbox> createState() => _MiniSqlInjectionSandboxState();
+  State<MiniSqlInjectionSandbox> createState() =>
+      _MiniSqlInjectionSandboxState();
 }
 
 class _MiniSqlInjectionSandboxState extends State<MiniSqlInjectionSandbox> {
-  final TextEditingController _input = TextEditingController(text: "admin' OR '1'='1");
+  final TextEditingController _input =
+      TextEditingController(text: "admin' OR '1'='1");
   bool _useParam = false;
 
   @override
@@ -40,8 +42,9 @@ class _MiniSqlInjectionSandboxState extends State<MiniSqlInjectionSandbox> {
     final badgeColor = _useParam
         ? TdcColors.success
         : (_looksLikeInjection ? TdcColors.danger : TdcColors.warning);
-    final badgeText =
-        _useParam ? 'Requête paramétrée' : (_looksLikeInjection ? 'Risque injection' : 'Concaténation fragile');
+    final badgeText = _useParam
+        ? 'Requête paramétrée'
+        : (_looksLikeInjection ? 'Risque injection' : 'Concaténation fragile');
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -54,12 +57,16 @@ class _MiniSqlInjectionSandboxState extends State<MiniSqlInjectionSandbox> {
         children: [
           Row(
             children: [
-              const Icon(Icons.bug_report_outlined, size: 16, color: TdcColors.textMuted),
+              const Icon(Icons.bug_report_outlined,
+                  size: 16, color: TdcColors.textMuted),
               const SizedBox(width: 8),
               const Expanded(
                 child: Text(
                   'Mini‑sandbox (simulation locale)',
-                  style: TextStyle(color: TdcColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w800),
+                  style: TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800),
                 ),
               ),
               Container(
@@ -70,7 +77,10 @@ class _MiniSqlInjectionSandboxState extends State<MiniSqlInjectionSandbox> {
                 ),
                 child: Text(
                   badgeText,
-                  style: TextStyle(color: badgeColor, fontSize: 11, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: badgeColor,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -78,12 +88,17 @@ class _MiniSqlInjectionSandboxState extends State<MiniSqlInjectionSandbox> {
           const SizedBox(height: 10),
           TextField(
             controller: _input,
-            style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 12),
+            style: const TextStyle(
+                color: TdcColors.textPrimary,
+                fontFamily: 'monospace',
+                fontSize: 12),
             decoration: const InputDecoration(
               labelText: 'Entrée utilisateur',
               labelStyle: TextStyle(color: TdcColors.textMuted),
-              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: TdcColors.border)),
-              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: TdcColors.accent)),
+              enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: TdcColors.border)),
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: TdcColors.accent)),
             ),
             onChanged: (_) => setState(() {}),
           ),
@@ -92,15 +107,22 @@ class _MiniSqlInjectionSandboxState extends State<MiniSqlInjectionSandbox> {
             value: _useParam,
             onChanged: (v) => setState(() => _useParam = v),
             title: const Text('Utiliser une requête paramétrée',
-                style: TextStyle(color: TdcColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w700)),
-            subtitle: const Text('Réduit le risque lié à la concaténation de chaînes.',
+                style: TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700)),
+            subtitle: const Text(
+                'Réduit le risque lié à la concaténation de chaînes.',
                 style: TextStyle(color: TdcColors.textMuted, fontSize: 12)),
             contentPadding: EdgeInsets.zero,
             activeThumbColor: TdcColors.accent,
           ),
           const SizedBox(height: 8),
           const Text('Requête générée (simulation):',
-              style: TextStyle(color: TdcColors.textMuted, fontSize: 11, fontWeight: FontWeight.w700)),
+              style: TextStyle(
+                  color: TdcColors.textMuted,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700)),
           const SizedBox(height: 6),
           Container(
             width: double.infinity,
@@ -111,13 +133,18 @@ class _MiniSqlInjectionSandboxState extends State<MiniSqlInjectionSandbox> {
             ),
             child: SelectableText(
               query,
-              style: const TextStyle(color: TdcColors.textPrimary, fontFamily: 'monospace', fontSize: 11, height: 1.35),
+              style: const TextStyle(
+                  color: TdcColors.textPrimary,
+                  fontFamily: 'monospace',
+                  fontSize: 11,
+                  height: 1.35),
             ),
           ),
           const SizedBox(height: 8),
           const Text(
             'But pédagogique : comprendre le mécanisme. Aucune base de données, aucune attaque réelle.',
-            style: TextStyle(color: TdcColors.textMuted, fontSize: 11, height: 1.3),
+            style: TextStyle(
+                color: TdcColors.textMuted, fontSize: 11, height: 1.3),
           ),
         ],
       ),

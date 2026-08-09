@@ -24,13 +24,19 @@ class IpHelper {
 
   static SubnetResult calculateSubnet(String ipStr, int mask) {
     final ipParts = ipStr.split('.').map(int.parse).toList();
-    if (ipParts.length != 4) throw const FormatException('Invalid IP address format');
+    if (ipParts.length != 4)
+      throw const FormatException('Invalid IP address format');
     for (final part in ipParts) {
-      if (part < 0 || part > 255) throw const FormatException('IP segments must be between 0 and 255');
+      if (part < 0 || part > 255)
+        throw const FormatException('IP segments must be between 0 and 255');
     }
-    if (mask < 0 || mask > 32) throw const FormatException('CIDR mask must be between 0 and 32');
+    if (mask < 0 || mask > 32)
+      throw const FormatException('CIDR mask must be between 0 and 32');
 
-    int ipNum = (ipParts[0] << 24) | (ipParts[1] << 16) | (ipParts[2] << 8) | ipParts[3];
+    int ipNum = (ipParts[0] << 24) |
+        (ipParts[1] << 16) |
+        (ipParts[2] << 8) |
+        ipParts[3];
     int maskNum = mask == 0 ? 0 : (0xFFFFFFFF << (32 - mask)) & 0xFFFFFFFF;
     int networkNum = ipNum & maskNum;
     int broadcastNum = networkNum | (~maskNum & 0xFFFFFFFF);

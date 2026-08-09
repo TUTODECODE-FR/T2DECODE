@@ -7,6 +7,7 @@ const String _pts0 = 'pts/0';
 extension _IterableFirstOrNull<T> on Iterable<T> {
   T? get firstOrNull => isEmpty ? null : first;
 }
+
 class VirtualFileSystem {
   late _FSNode _root;
 
@@ -42,38 +43,82 @@ class VirtualFileSystem {
     _mkdirp('/opt');
 
     _writeFile('/etc/hostname', 't2decode');
-    _writeFile('/etc/passwd',
+    _writeFile(
+        '/etc/passwd',
         'root:x:0:0:root:/root:/bin/bash\n'
-        'admin:x:1000:1000:admin:/home/admin:/bin/bash\n'
-        'nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin');
-    _writeFile('/etc/shadow', 'root:!:19000:0:99999:7:::\nadmin:\$6\$rounds=...:19000:0:99999:7:::');
+            'admin:x:1000:1000:admin:/home/admin:/bin/bash\n'
+            'nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin');
+    _writeFile('/etc/shadow',
+        'root:!:19000:0:99999:7:::\nadmin:\$6\$rounds=...:19000:0:99999:7:::');
     _writeFile('/etc/group', 'root:x:0:\nadmin:x:1000:admin\nsudo:x:27:admin');
     _writeFile('/etc/os-release',
         'NAME="T2DECODE Linux"\nVERSION="1.0"\nID=t2decode\nPRETTY_NAME="T2DECODE Linux 1.0"');
     _writeFile('/etc/resolv.conf', 'nameserver 8.8.8.8\nnameserver 1.1.1.1');
-    _writeFile('/etc/hosts', '127.0.0.1\tlocalhost\n127.0.1.1\tt2decode\n::1\tlocalhost');
-    _writeFile('/etc/fstab', '/dev/sda1  /     ext4  defaults  0 1\n/dev/sda2  /home ext4  defaults  0 2');
-    _writeFile('/etc/crontab', '# m h dom mon dow user command\n*/5 * * * * root /usr/bin/apt-get update');
+    _writeFile('/etc/hosts',
+        '127.0.0.1\tlocalhost\n127.0.1.1\tt2decode\n::1\tlocalhost');
+    _writeFile('/etc/fstab',
+        '/dev/sda1  /     ext4  defaults  0 1\n/dev/sda2  /home ext4  defaults  0 2');
+    _writeFile('/etc/crontab',
+        '# m h dom mon dow user command\n*/5 * * * * root /usr/bin/apt-get update');
     _writeFile('/home/admin/.bashrc',
         '# ~/.bashrc\nexport PATH="/usr/local/bin:/usr/bin:/bin"\nexport EDITOR=nano\nalias ll="ls -la"');
     _writeFile('/home/admin/.ssh/authorized_keys', '# Aucune clé configurée');
-    _writeFile('/home/admin/Documents/notes.txt', 'Bienvenue dans T2DECODE.\nCe fichier est un exemple.');
-    _writeFile('/home/admin/Documents/readme.md', '# T2DECODE\nPlateforme pédagogique offline.');
-    _writeFile('/var/log/syslog',
+    _writeFile('/home/admin/Documents/notes.txt',
+        'Bienvenue dans T2DECODE.\nCe fichier est un exemple.');
+    _writeFile('/home/admin/Documents/readme.md',
+        '# T2DECODE\nPlateforme pédagogique offline.');
+    _writeFile(
+        '/var/log/syslog',
         'Jun 12 08:00:01 t2decode CRON[1234]: (root) CMD (apt-get update)\n'
-        'Jun 12 08:01:12 t2decode sshd[5678]: Accepted publickey for admin\n'
-        'Jun 12 08:05:33 t2decode kernel: [UFW BLOCK] IN=eth0 OUT= SRC=10.0.0.5 DST=192.168.1.10');
-    _writeFile('/var/log/auth.log',
+            'Jun 12 08:01:12 t2decode sshd[5678]: Accepted publickey for admin\n'
+            'Jun 12 08:05:33 t2decode kernel: [UFW BLOCK] IN=eth0 OUT= SRC=10.0.0.5 DST=192.168.1.10');
+    _writeFile(
+        '/var/log/auth.log',
         'Jun 12 07:55:00 t2decode sshd[4321]: Failed password for root from 10.0.0.99\n'
-        'Jun 12 08:01:12 t2decode sshd[5678]: Accepted publickey for admin from 192.168.1.5');
-    _writeFile('/proc/cpuinfo', 'processor\t: 0\nmodel name\t: T2C vCPU @ 2.4GHz\ncpu cores\t: 4');
-    _writeFile('/proc/meminfo', 'MemTotal:       8192000 kB\nMemFree:        4096000 kB\nMemAvailable:   5120000 kB');
-    _writeFile('/proc/version', 'Linux version 6.1.0-t2c (gcc 12.2) #1 SMP PREEMPT_DYNAMIC');
+            'Jun 12 08:01:12 t2decode sshd[5678]: Accepted publickey for admin from 192.168.1.5');
+    _writeFile('/proc/cpuinfo',
+        'processor\t: 0\nmodel name\t: T2C vCPU @ 2.4GHz\ncpu cores\t: 4');
+    _writeFile('/proc/meminfo',
+        'MemTotal:       8192000 kB\nMemFree:        4096000 kB\nMemAvailable:   5120000 kB');
+    _writeFile('/proc/version',
+        'Linux version 6.1.0-t2c (gcc 12.2) #1 SMP PREEMPT_DYNAMIC');
 
-    for (final cmd in ['bash', 'ls', 'cat', 'cp', 'mv', 'rm', 'grep', 'find',
-        'chmod', 'chown', 'mkdir', 'touch', 'echo', 'ps', 'kill', 'ping',
-        'ip', 'ss', 'curl', 'wget', 'ssh', 'scp', 'tar', 'gzip', 'nano',
-        'vim', 'head', 'tail', 'wc', 'sort', 'uniq', 'cut', 'awk', 'sed']) {
+    for (final cmd in [
+      'bash',
+      'ls',
+      'cat',
+      'cp',
+      'mv',
+      'rm',
+      'grep',
+      'find',
+      'chmod',
+      'chown',
+      'mkdir',
+      'touch',
+      'echo',
+      'ps',
+      'kill',
+      'ping',
+      'ip',
+      'ss',
+      'curl',
+      'wget',
+      'ssh',
+      'scp',
+      'tar',
+      'gzip',
+      'nano',
+      'vim',
+      'head',
+      'tail',
+      'wc',
+      'sort',
+      'uniq',
+      'cut',
+      'awk',
+      'sed'
+    ]) {
       _writeFile('/usr/bin/$cmd', 'ELF binary');
     }
   }
@@ -152,10 +197,10 @@ class VirtualFileSystem {
     if (fromNode == null || fromNode == _root) return;
 
     final fromParent = fromNode.parent!;
-    
+
     final toParts = to.split('/').where((p) => p.isNotEmpty).toList();
     final toName = toParts.removeLast();
-    
+
     _FSNode toParent = _root;
     for (final part in toParts) {
       if (!toParent.children!.containsKey(part)) {
@@ -163,7 +208,7 @@ class VirtualFileSystem {
       }
       toParent = toParent.children![part]!;
     }
-    
+
     fromParent.children!.remove(fromNode.name);
     fromNode.name = toName;
     fromNode.parent = toParent;
@@ -176,7 +221,8 @@ class VirtualFileSystem {
     return node.children!.keys.toList()..sort();
   }
 
-  void _addFindResultIfMatches(_FSNode node, String? name, List<String> results) {
+  void _addFindResultIfMatches(
+      _FSNode node, String? name, List<String> results) {
     if (node == _root) return;
     if (name != null) {
       if (_globMatch(name, node.name)) results.add(node.fullPath);
@@ -198,17 +244,19 @@ class VirtualFileSystem {
     final results = <String>[];
     final startNode = _getNode(startPath);
     if (startNode == null) return results;
-    
+
     _traverseFind(startNode, name, results);
     return results..sort();
   }
 
   bool _globMatch(String pattern, String text) {
-    final regex = RegExp('^${pattern.replaceAll('.', r'\.').replaceAll('*', '.*')}\$');
+    final regex =
+        RegExp('^${pattern.replaceAll('.', r'\.').replaceAll('*', '.*')}\$');
     return regex.hasMatch(text);
   }
 
-  void _collectGrepTargets(_FSNode node, bool recursive, List<_FSNode> targets) {
+  void _collectGrepTargets(
+      _FSNode node, bool recursive, List<_FSNode> targets) {
     if (node.isFile) {
       targets.add(node);
     } else if (node.isDirectory && recursive) {
@@ -218,13 +266,16 @@ class VirtualFileSystem {
     }
   }
 
-  void _searchInTargets(List<_FSNode> targets, RegExp regex, bool recursive, List<String> results) {
+  void _searchInTargets(List<_FSNode> targets, RegExp regex, bool recursive,
+      List<String> results) {
     for (final t in targets) {
       final content = t.content ?? '';
       final lines = content.split('\n');
       for (int i = 0; i < lines.length; i++) {
         if (regex.hasMatch(lines[i])) {
-          results.add(recursive ? '${t.fullPath}:${i + 1}:${lines[i]}' : '${i + 1}:${lines[i]}');
+          results.add(recursive
+              ? '${t.fullPath}:${i + 1}:${lines[i]}'
+              : '${i + 1}:${lines[i]}');
         }
       }
     }
@@ -258,8 +309,14 @@ class _FSNode {
   Map<String, _FSNode>? children;
   _FSNode? parent;
 
-  _FSNode.file(this.name, this.content) : permissions = 0x1A4, isDirectory = false, children = null;
-  _FSNode.directory(this.name) : permissions = 0x1ED, isDirectory = true, children = {};
+  _FSNode.file(this.name, this.content)
+      : permissions = 0x1A4,
+        isDirectory = false,
+        children = null;
+  _FSNode.directory(this.name)
+      : permissions = 0x1ED,
+        isDirectory = true,
+        children = {};
 
   bool get isFile => !isDirectory;
 
@@ -293,7 +350,8 @@ class VirtualShell {
 
   String _displayPath(String path) {
     if (path == '/home/$_user') return '~';
-    if (path.startsWith('/home/$_user/')) return '~${path.substring('/home/$_user'.length)}';
+    if (path.startsWith('/home/$_user/'))
+      return '~${path.substring('/home/$_user'.length)}';
     return path;
   }
 
@@ -322,14 +380,16 @@ class VirtualShell {
 
     if (trimmed == ':(){ :|:& };:') {
       while (_processes.length <= maxSimultaneousProcesses) {
-        _processes.add(_VirtualProcess(_rng.nextInt(30000) + 2000, _user, 'bash', 99.9, 0.1, 10000, 2000, '?', 'R'));
+        _processes.add(_VirtualProcess(_rng.nextInt(30000) + 2000, _user,
+            'bash', 99.9, 0.1, 10000, 2000, '?', 'R'));
       }
       return ['bash: fork: retry: Resource temporarily unavailable.'];
     }
 
     _commandHistory.add(trimmed);
 
-    final proc = _VirtualProcess(_rng.nextInt(30000) + 2000, _user, trimmed, 0.0, 0.1, 10000, 2000, _pts0, 'R');
+    final proc = _VirtualProcess(_rng.nextInt(30000) + 2000, _user, trimmed,
+        0.0, 0.1, 10000, 2000, _pts0, 'R');
     _processes.add(proc);
 
     List<String> result;
@@ -352,7 +412,7 @@ class VirtualShell {
     if (parts.length < 2 || parts.any((p) => p.isEmpty)) {
       return ['bash: syntax error near unexpected token \'|\''];
     }
-    
+
     var prevOutput = _executeSingle(parts.first);
     for (int i = 1; i < parts.length; i++) {
       prevOutput = _executeSingleWithInput(parts[i], prevOutput);
@@ -365,7 +425,7 @@ class VirtualShell {
     if (parts.length < 2 || parts[1].trim().isEmpty) {
       return ['bash: syntax error near unexpected token \'newline\''];
     }
-    
+
     final output = _executeSingle(parts[0].trim());
     final target = _resolvePath(parts[1].trim());
     fs.write(target, output.join('\n'));
@@ -373,7 +433,6 @@ class VirtualShell {
   }
 
   List<String> _pipeGrep(List<String> args, List<String> stdinLines) {
-
     if (args.length < 2) return stdinLines;
     try {
       final pattern = RegExp(args[1]);
@@ -384,18 +443,25 @@ class VirtualShell {
   }
 
   List<String> _pipeHead(List<String> args, List<String> stdinLines) {
-    final n = args.length > 2 && args[1] == '-n' ? int.tryParse(args[2]) ?? 10 : 10;
+    final n =
+        args.length > 2 && args[1] == '-n' ? int.tryParse(args[2]) ?? 10 : 10;
     return stdinLines.take(n).toList();
   }
 
   List<String> _pipeTail(List<String> args, List<String> stdinLines) {
-    final n = args.length > 2 && args[1] == '-n' ? int.tryParse(args[2]) ?? 10 : 10;
-    return stdinLines.length > n ? stdinLines.sublist(stdinLines.length - n) : stdinLines;
+    final n =
+        args.length > 2 && args[1] == '-n' ? int.tryParse(args[2]) ?? 10 : 10;
+    return stdinLines.length > n
+        ? stdinLines.sublist(stdinLines.length - n)
+        : stdinLines;
   }
 
   List<String> _pipeWc(List<String> args, List<String> stdinLines) {
     if (args.contains('-l')) return ['${stdinLines.length}'];
-    final words = stdinLines.expand((l) => l.split(RegExp(r'\s+'))).where((w) => w.isNotEmpty).length;
+    final words = stdinLines
+        .expand((l) => l.split(RegExp(r'\s+')))
+        .where((w) => w.isNotEmpty)
+        .length;
     final chars = stdinLines.fold<int>(0, (s, l) => s + l.length + 1);
     return ['  ${stdinLines.length}  $words  $chars'];
   }
@@ -421,8 +487,11 @@ class VirtualShell {
   List<String> _pipeCut(List<String> args, List<String> stdinLines) {
     final dIdx = args.indexOf('-d');
     final fIdx = args.indexOf('-f');
-    final delimiter = dIdx >= 0 && dIdx + 1 < args.length ? args[dIdx + 1] : '\t';
-    final field = fIdx >= 0 && fIdx + 1 < args.length ? int.tryParse(args[fIdx + 1]) ?? 1 : 1;
+    final delimiter =
+        dIdx >= 0 && dIdx + 1 < args.length ? args[dIdx + 1] : '\t';
+    final field = fIdx >= 0 && fIdx + 1 < args.length
+        ? int.tryParse(args[fIdx + 1]) ?? 1
+        : 1;
     return stdinLines.map((l) {
       final parts = l.split(delimiter);
       return field <= parts.length ? parts[field - 1] : '';
@@ -434,17 +503,24 @@ class VirtualShell {
     if (args.isEmpty) return stdinLines;
     final base = args[0];
     switch (base) {
-      case 'grep': return _pipeGrep(args, stdinLines);
-      case 'head': return _pipeHead(args, stdinLines);
-      case 'tail': return _pipeTail(args, stdinLines);
-      case 'wc': return _pipeWc(args, stdinLines);
-      case 'sort': return _pipeSort(args, stdinLines);
-      case 'uniq': return _pipeUniq(stdinLines);
-      case 'cut': return _pipeCut(args, stdinLines);
-      default: return stdinLines;
+      case 'grep':
+        return _pipeGrep(args, stdinLines);
+      case 'head':
+        return _pipeHead(args, stdinLines);
+      case 'tail':
+        return _pipeTail(args, stdinLines);
+      case 'wc':
+        return _pipeWc(args, stdinLines);
+      case 'sort':
+        return _pipeSort(args, stdinLines);
+      case 'uniq':
+        return _pipeUniq(stdinLines);
+      case 'cut':
+        return _pipeCut(args, stdinLines);
+      default:
+        return stdinLines;
     }
   }
-
 
   List<String> _parseArgs(String cmd) {
     final args = <String>[];
@@ -526,33 +602,59 @@ class VirtualShell {
     }
 
     switch (base) {
-      case 'pwd': return [_cwd];
-      case 'echo': return [rest.join(' ')];
-      case 'whoami': return [_user];
-      case 'hostname': return [_hostname];
-      case 'id': return ['uid=1000($_user) gid=1000($_user) groups=1000($_user),27(sudo)'];
-      case 'uptime': return ['08:12:33 up 2 days, 4:21, 1 user, load average: 0.15, 0.10, 0.05'];
-      case 'date': return [_date()];
-      case 'cal': return _cal();
-      case 'df': return _df();
-      case 'free': return _free();
-      case 'top': return _top();
-      case 'ifconfig': return _ifconfig();
-      case 'netstat': return ['(obsolète — utilisez ss)'];
-      case 'env': return _env();
-      case 'history': return _history();
-      case 'clear': return ['__CLEAR__'];
-      case 'exit': return ['logout'];
-      case 'help': return _help();
-      case 'scp': return ['scp: simulation — transfert non disponible'];
-      default: return ['bash: $base: command not found'];
+      case 'pwd':
+        return [_cwd];
+      case 'echo':
+        return [rest.join(' ')];
+      case 'whoami':
+        return [_user];
+      case 'hostname':
+        return [_hostname];
+      case 'id':
+        return [
+          'uid=1000($_user) gid=1000($_user) groups=1000($_user),27(sudo)'
+        ];
+      case 'uptime':
+        return [
+          '08:12:33 up 2 days, 4:21, 1 user, load average: 0.15, 0.10, 0.05'
+        ];
+      case 'date':
+        return [_date()];
+      case 'cal':
+        return _cal();
+      case 'df':
+        return _df();
+      case 'free':
+        return _free();
+      case 'top':
+        return _top();
+      case 'ifconfig':
+        return _ifconfig();
+      case 'netstat':
+        return ['(obsolète — utilisez ss)'];
+      case 'env':
+        return _env();
+      case 'history':
+        return _history();
+      case 'clear':
+        return ['__CLEAR__'];
+      case 'exit':
+        return ['logout'];
+      case 'help':
+        return _help();
+      case 'scp':
+        return ['scp: simulation — transfert non disponible'];
+      default:
+        return ['bash: $base: command not found'];
     }
   }
 
   List<String> _lsFile(String path, bool longFormat) {
     if (longFormat) {
       final size = (fs.readFile(path) ?? '').length;
-      return ['-rw-r--r-- 1 $_user $_user $size Jun 12 08:00 ${path.split('/').last}'];
+      return [
+        '-rw-r--r-- 1 $_user $_user $size Jun 12 08:00 ${path.split('/').last}'
+      ];
     }
     return [path.split('/').last];
   }
@@ -568,18 +670,22 @@ class VirtualShell {
       final isDir = fs.isDir(fullPath);
       final size = isDir ? 4096 : (fs.readFile(fullPath) ?? '').length;
       final perm = isDir ? 'drwxr-xr-x' : '-rw-r--r--';
-      lines.add('$perm  1 $_user $_user ${size.toString().padLeft(5)} Jun 12 08:00 $e${isDir ? '/' : ''}');
+      lines.add(
+          '$perm  1 $_user $_user ${size.toString().padLeft(5)} Jun 12 08:00 $e${isDir ? '/' : ''}');
     }
     return lines;
   }
 
   List<String> _ls(List<String> args) {
-    final showAll = args.contains('-a') || args.contains('-la') || args.contains('-al');
-    final longFormat = args.contains('-l') || args.contains('-la') || args.contains('-al');
+    final showAll =
+        args.contains('-a') || args.contains('-la') || args.contains('-al');
+    final longFormat =
+        args.contains('-l') || args.contains('-la') || args.contains('-al');
     final target = args.where((a) => !a.startsWith('-')).firstOrNull;
     final path = target != null ? _resolvePath(target) : _cwd;
 
-    if (!fs.exists(path)) return ['ls: cannot access \'$target\': No such file or directory'];
+    if (!fs.exists(path))
+      return ['ls: cannot access \'$target\': No such file or directory'];
     if (fs.isFile(path)) {
       return _lsFile(path, longFormat);
     }
@@ -595,14 +701,14 @@ class VirtualShell {
     return entries.isEmpty ? [] : [entries.join('  ')];
   }
 
-
   List<String> _cd(List<String> args) {
     if (args.isEmpty) {
       _cwd = '/home/$_user';
       return [];
     }
     final target = _resolvePath(args[0]);
-    if (!fs.exists(target)) return ['bash: cd: ${args[0]}: No such file or directory'];
+    if (!fs.exists(target))
+      return ['bash: cd: ${args[0]}: No such file or directory'];
     if (!fs.isDir(target)) return ['bash: cd: ${args[0]}: Not a directory'];
     _cwd = target;
     return [];
@@ -627,7 +733,8 @@ class VirtualShell {
   List<String> _mkdir(List<String> args) {
     for (final arg in args.where((a) => !a.startsWith('-'))) {
       final path = _resolvePath(arg);
-      if (fs.exists(path)) return ['mkdir: cannot create directory \'$arg\': File exists'];
+      if (fs.exists(path))
+        return ['mkdir: cannot create directory \'$arg\': File exists'];
       fs.mkdir(path);
     }
     return [];
@@ -642,11 +749,14 @@ class VirtualShell {
   }
 
   List<String> _rm(List<String> args) {
-    final recursive = args.contains('-r') || args.contains('-rf') || args.contains('-fr');
+    final recursive =
+        args.contains('-r') || args.contains('-rf') || args.contains('-fr');
     for (final arg in args.where((a) => !a.startsWith('-'))) {
       final path = _resolvePath(arg);
-      if (!fs.exists(path)) return ['rm: cannot remove \'$arg\': No such file or directory'];
-      if (fs.isDir(path) && !recursive) return ['rm: cannot remove \'$arg\': Is a directory'];
+      if (!fs.exists(path))
+        return ['rm: cannot remove \'$arg\': No such file or directory'];
+      if (fs.isDir(path) && !recursive)
+        return ['rm: cannot remove \'$arg\': Is a directory'];
       fs.delete(path);
     }
     return [];
@@ -657,7 +767,8 @@ class VirtualShell {
     if (files.length < 2) return ['cp: missing destination operand'];
     final src = _resolvePath(files[0]);
     final dst = _resolvePath(files[1]);
-    if (!fs.exists(src)) return ['cp: cannot stat \'${files[0]}\': No such file or directory'];
+    if (!fs.exists(src))
+      return ['cp: cannot stat \'${files[0]}\': No such file or directory'];
     final content = fs.readFile(src);
     if (content != null) {
       final finalDst = fs.isDir(dst) ? '$dst/${src.split('/').last}' : dst;
@@ -671,7 +782,8 @@ class VirtualShell {
     if (files.length < 2) return ['mv: missing destination operand'];
     final src = _resolvePath(files[0]);
     final dst = _resolvePath(files[1]);
-    if (!fs.exists(src)) return ['mv: cannot stat \'${files[0]}\': No such file or directory'];
+    if (!fs.exists(src))
+      return ['mv: cannot stat \'${files[0]}\': No such file or directory'];
     final finalDst = fs.isDir(dst) ? '$dst/${src.split('/').last}' : dst;
     fs.rename(src, finalDst);
     return [];
@@ -690,7 +802,8 @@ class VirtualShell {
     if (file == null) return ['head: missing operand'];
     final path = _resolvePath(file);
     final content = fs.readFile(path);
-    if (content == null) return ['head: cannot open \'$file\': No such file or directory'];
+    if (content == null)
+      return ['head: cannot open \'$file\': No such file or directory'];
     return content.split('\n').take(n).toList();
   }
 
@@ -707,7 +820,8 @@ class VirtualShell {
     if (file == null) return ['tail: missing operand'];
     final path = _resolvePath(file);
     final content = fs.readFile(path);
-    if (content == null) return ['tail: cannot open \'$file\': No such file or directory'];
+    if (content == null)
+      return ['tail: cannot open \'$file\': No such file or directory'];
     final lines = content.split('\n');
     return lines.length > n ? lines.sublist(lines.length - n) : lines;
   }
@@ -719,7 +833,8 @@ class VirtualShell {
     final content = fs.readFile(path);
     if (content == null) return ['wc: $file: No such file or directory'];
     final lines = content.split('\n').length;
-    final words = content.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
+    final words =
+        content.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
     final bytes = content.length;
     if (args.contains('-l')) return ['$lines $file'];
     if (args.contains('-w')) return ['$words $file'];
@@ -761,14 +876,16 @@ class VirtualShell {
     }
   }
 
-
   List<String> _chmod(List<String> args) {
     if (args.length < 2) return ['chmod: missing operand'];
     return [];
   }
 
   List<String> _uname(List<String> args) {
-    if (args.contains('-a')) return ['Linux t2decode 6.1.0-t2c #1 SMP PREEMPT_DYNAMIC x86_64 GNU/Linux'];
+    if (args.contains('-a'))
+      return [
+        'Linux t2decode 6.1.0-t2c #1 SMP PREEMPT_DYNAMIC x86_64 GNU/Linux'
+      ];
     if (args.contains('-r')) return ['6.1.0-t2c'];
     if (args.contains('-m')) return ['x86_64'];
     return ['Linux'];
@@ -777,21 +894,21 @@ class VirtualShell {
   String _date() => 'Thu Jun 12 08:12:33 UTC 2025';
 
   List<String> _cal() => [
-    '      June 2025',
-    'Su Mo Tu We Th Fr Sa',
-    ' 1  2  3  4  5  6  7',
-    ' 8  9 10 11 12 13 14',
-    '15 16 17 18 19 20 21',
-    '22 23 24 25 26 27 28',
-    '29 30',
-  ];
+        '      June 2025',
+        'Su Mo Tu We Th Fr Sa',
+        ' 1  2  3  4  5  6  7',
+        ' 8  9 10 11 12 13 14',
+        '15 16 17 18 19 20 21',
+        '22 23 24 25 26 27 28',
+        '29 30',
+      ];
 
   List<String> _df() => [
-    'Filesystem     1K-blocks    Used Available Use% Mounted on',
-    '/dev/sda1       20480000 8192000  12288000  40% /',
-    '/dev/sda2       10240000 2048000   8192000  20% /home',
-    'tmpfs            4096000       0   4096000   0% /tmp',
-  ];
+        'Filesystem     1K-blocks    Used Available Use% Mounted on',
+        '/dev/sda1       20480000 8192000  12288000  40% /',
+        '/dev/sda2       10240000 2048000   8192000  20% /home',
+        'tmpfs            4096000       0   4096000   0% /tmp',
+      ];
 
   List<String> _du(List<String> args) {
     final target = args.where((a) => !a.startsWith('-')).firstOrNull ?? '.';
@@ -800,24 +917,28 @@ class VirtualShell {
     final lines = <String>[];
     for (final e in entries) {
       final fullPath = path == '/' ? '/$e' : '$path/$e';
-      final size = fs.isDir(fullPath) ? 4096 : (fs.readFile(fullPath) ?? '').length;
+      final size =
+          fs.isDir(fullPath) ? 4096 : (fs.readFile(fullPath) ?? '').length;
       lines.add('${(size / 1024).ceil()}K\t./$e');
     }
     return lines;
   }
 
   List<String> _free() => [
-    '              total        used        free      shared  buff/cache   available',
-    'Mem:        8192000     2048000     4096000       32000     2048000     5120000',
-    'Swap:       2048000           0     2048000',
-  ];
+        '              total        used        free      shared  buff/cache   available',
+        'Mem:        8192000     2048000     4096000       32000     2048000     5120000',
+        'Swap:       2048000           0     2048000',
+      ];
 
   List<String> _ps(List<String> args) {
     final full = args.contains('aux') || args.contains('-ef');
     if (full) {
-      final lines = <String>['USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND'];
+      final lines = <String>[
+        'USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND'
+      ];
       for (final p in _processes) {
-        lines.add('${p.user.padRight(8)} ${p.pid.toString().padLeft(5)} ${p.cpu.toStringAsFixed(1).padLeft(4)} '
+        lines.add(
+            '${p.user.padRight(8)} ${p.pid.toString().padLeft(5)} ${p.cpu.toStringAsFixed(1).padLeft(4)} '
             '${p.mem.toStringAsFixed(1).padLeft(4)}  ${p.vsz.toString().padLeft(6)} ${p.rss.toString().padLeft(5)} '
             '${p.tty.padRight(8)} ${p.stat.padRight(4)} 08:00   0:${(p.pid % 30).toString().padLeft(2, '0')} ${p.command}');
       }
@@ -840,7 +961,8 @@ class VirtualShell {
       '  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND',
     ];
     for (final p in _processes.take(10)) {
-      lines.add('${p.pid.toString().padLeft(5)} ${p.user.padRight(8)}  20   0 ${p.vsz.toString().padLeft(7)} '
+      lines.add(
+          '${p.pid.toString().padLeft(5)} ${p.user.padRight(8)}  20   0 ${p.vsz.toString().padLeft(7)} '
           '${p.rss.toString().padLeft(6)}  ${(p.rss ~/ 2).toString().padLeft(5)} ${p.stat.padRight(1)} '
           '${p.cpu.toStringAsFixed(1).padLeft(5)} ${p.mem.toStringAsFixed(1).padLeft(5)}   0:${(p.pid % 30).toString().padLeft(2, '0')} ${p.command}');
     }
@@ -851,7 +973,8 @@ class VirtualShell {
     final pid = args.where((a) => !a.startsWith('-')).firstOrNull;
     if (pid == null) return ['kill: usage: kill [-s sigspec] pid'];
     final pidNum = int.tryParse(pid);
-    if (pidNum == null) return ['bash: kill: $pid: arguments must be process IDs'];
+    if (pidNum == null)
+      return ['bash: kill: $pid: arguments must be process IDs'];
     final idx = _processes.indexWhere((p) => p.pid == pidNum);
     if (idx < 0) return ['bash: kill: ($pid) - No such process'];
     _processes.removeAt(idx);
@@ -860,12 +983,14 @@ class VirtualShell {
 
   List<String> _ping(List<String> args) {
     final target = args.where((a) => !a.startsWith('-')).firstOrNull;
-    if (target == null) return ['ping: usage error: Destination address required'];
+    if (target == null)
+      return ['ping: usage error: Destination address required'];
     final ip = _resolveHost(target);
     final lines = <String>['PING $target ($ip) 56(84) bytes of data.'];
     for (int i = 1; i <= 4; i++) {
       final time = 0.5 + _rng.nextDouble() * 50;
-      lines.add('64 bytes from $ip: icmp_seq=$i ttl=64 time=${time.toStringAsFixed(3)} ms');
+      lines.add(
+          '64 bytes from $ip: icmp_seq=$i ttl=64 time=${time.toStringAsFixed(3)} ms');
     }
     lines.add('');
     lines.add('--- $target ping statistics ---');
@@ -875,17 +1000,21 @@ class VirtualShell {
 
   String _resolveHost(String host) {
     // Nettoyer l'entrée utilisateur pour éviter les injections de commandes
-    final sanitizedHost = RegExp(r'^[a-zA-Z0-9.-]+$').hasMatch(host)
-        ? host.trim()
-        : 'localhost';
+    final sanitizedHost =
+        RegExp(r'^[a-zA-Z0-9.-]+$').hasMatch(host) ? host.trim() : 'localhost';
 
-    if (RegExp(r'^\d+\.\d+\.\d+\.\d+$').hasMatch(sanitizedHost)) return sanitizedHost;
+    if (RegExp(r'^\d+\.\d+\.\d+\.\d+$').hasMatch(sanitizedHost))
+      return sanitizedHost;
 
     switch (sanitizedHost) {
-      case 'localhost': return '127.0.0.1';
-      case 'google.com': return '142.250.74.46';
-      case 'github.com': return '140.82.121.4';
-      case 'cloudflare.com': return '104.16.132.229';
+      case 'localhost':
+        return '127.0.0.1';
+      case 'google.com':
+        return '142.250.74.46';
+      case 'github.com':
+        return '140.82.121.4';
+      case 'cloudflare.com':
+        return '104.16.132.229';
       default:
         final hash = sanitizedHost.hashCode.abs();
         return '${(hash >> 24) & 0xFF}.${(hash >> 16) & 0xFF}.${(hash >> 8) & 0xFF}.${hash & 0xFF}';
@@ -921,27 +1050,31 @@ class VirtualShell {
   }
 
   List<String> _ss(List<String> args) {
-    final lines = <String>['State    Recv-Q  Send-Q  Local Address:Port   Peer Address:Port'];
+    final lines = <String>[
+      'State    Recv-Q  Send-Q  Local Address:Port   Peer Address:Port'
+    ];
     lines.add('LISTEN   0       128     0.0.0.0:22            0.0.0.0:*');
     lines.add('LISTEN   0       128     0.0.0.0:80            0.0.0.0:*');
     lines.add('LISTEN   0       128     127.0.0.1:3306        0.0.0.0:*');
-    lines.add('ESTAB    0       0       192.168.1.10:45678    142.250.74.46:443');
-    lines.add('ESTAB    0       0       192.168.1.10:52341    140.82.121.4:443');
+    lines.add(
+        'ESTAB    0       0       192.168.1.10:45678    142.250.74.46:443');
+    lines
+        .add('ESTAB    0       0       192.168.1.10:52341    140.82.121.4:443');
     return lines;
   }
 
   List<String> _ifconfig() => [
-    'eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500',
-    '        inet 192.168.1.10  netmask 255.255.255.0  broadcast 192.168.1.255',
-    '        inet6 fe80::a00:27ff:fe4e:66a1  prefixlen 64  scopeid 0x20<link>',
-    '        ether 08:00:27:4e:66:a1  txqueuelen 1000  (Ethernet)',
-    '        RX packets 12345  bytes 8765432 (8.3 MiB)',
-    '        TX packets 9876  bytes 5432100 (5.1 MiB)',
-    '',
-    'lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536',
-    '        inet 127.0.0.1  netmask 255.0.0.0',
-    '        loop  txqueuelen 1000  (Local Loopback)',
-  ];
+        'eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500',
+        '        inet 192.168.1.10  netmask 255.255.255.0  broadcast 192.168.1.255',
+        '        inet6 fe80::a00:27ff:fe4e:66a1  prefixlen 64  scopeid 0x20<link>',
+        '        ether 08:00:27:4e:66:a1  txqueuelen 1000  (Ethernet)',
+        '        RX packets 12345  bytes 8765432 (8.3 MiB)',
+        '        TX packets 9876  bytes 5432100 (5.1 MiB)',
+        '',
+        'lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536',
+        '        inet 127.0.0.1  netmask 255.0.0.0',
+        '        loop  txqueuelen 1000  (Local Loopback)',
+      ];
 
   List<String> _curl(List<String> args) {
     final url = args.where((a) => !a.startsWith('-')).firstOrNull;
@@ -956,8 +1089,10 @@ class VirtualShell {
   List<String> _wget(List<String> args) {
     final url = args.where((a) => !a.startsWith('-')).firstOrNull;
     if (url == null) return ['wget: missing URL'];
-    final filename = url.split('/').last.isEmpty ? 'index.html' : url.split('/').last;
-    fs.write('$_cwd/$filename', '<html><body>Simulated content for $url</body></html>');
+    final filename =
+        url.split('/').last.isEmpty ? 'index.html' : url.split('/').last;
+    fs.write('$_cwd/$filename',
+        '<html><body>Simulated content for $url</body></html>');
     return [
       '--2025-06-12 08:12:33--  $url',
       'Resolving... done.',
@@ -970,7 +1105,10 @@ class VirtualShell {
   }
 
   List<String> _dig(List<String> args) {
-    final domain = args.where((a) => !a.startsWith('-') && !a.startsWith('@')).firstOrNull ?? 'example.com';
+    final domain = args
+            .where((a) => !a.startsWith('-') && !a.startsWith('@'))
+            .firstOrNull ??
+        'example.com';
     final ip = _resolveHost(domain);
     return [
       '; <<>> DiG 9.18 <<>> $domain',
@@ -1019,7 +1157,10 @@ class VirtualShell {
       'TERM': 'xterm-256color',
       'HOSTNAME': _hostname,
     };
-    return {...defaults, ...env}.entries.map((e) => '${e.key}=${e.value}').toList();
+    return {...defaults, ...env}
+        .entries
+        .map((e) => '${e.key}=${e.value}')
+        .toList();
   }
 
   List<String> _export(List<String> args) {
@@ -1037,7 +1178,11 @@ class VirtualShell {
     return [];
   }
 
-  List<String> _history() => _commandHistory.asMap().entries.map((e) => '  ${e.key + 1}  ${e.value}').toList();
+  List<String> _history() => _commandHistory
+      .asMap()
+      .entries
+      .map((e) => '  ${e.key + 1}  ${e.value}')
+      .toList();
 
   List<String> _which(List<String> args) {
     if (args.isEmpty) return [];
@@ -1049,19 +1194,24 @@ class VirtualShell {
   List<String> _file(List<String> args) {
     if (args.isEmpty) return ['file: missing operand'];
     final path = _resolvePath(args[0]);
-    if (!fs.exists(path)) return ['${args[0]}: cannot open (No such file or directory)'];
+    if (!fs.exists(path))
+      return ['${args[0]}: cannot open (No such file or directory)'];
     if (fs.isDir(path)) return ['${args[0]}: directory'];
     final content = fs.readFile(path) ?? '';
-    if (content.startsWith('ELF')) return ['${args[0]}: ELF 64-bit LSB executable, x86-64'];
-    if (content.startsWith('#!')) return ['${args[0]}: Bourne-Again shell script, ASCII text executable'];
-    if (content.startsWith('-----BEGIN')) return ['${args[0]}: PEM certificate'];
+    if (content.startsWith('ELF'))
+      return ['${args[0]}: ELF 64-bit LSB executable, x86-64'];
+    if (content.startsWith('#!'))
+      return ['${args[0]}: Bourne-Again shell script, ASCII text executable'];
+    if (content.startsWith('-----BEGIN'))
+      return ['${args[0]}: PEM certificate'];
     return ['${args[0]}: ASCII text'];
   }
 
   List<String> _stat(List<String> args) {
     if (args.isEmpty) return ['stat: missing operand'];
     final path = _resolvePath(args[0]);
-    if (!fs.exists(path)) return ['stat: cannot stat \'${args[0]}\': No such file or directory'];
+    if (!fs.exists(path))
+      return ['stat: cannot stat \'${args[0]}\': No such file or directory'];
     final isDir = fs.isDir(path);
     final size = isDir ? 4096 : (fs.readFile(path) ?? '').length;
     return [
@@ -1077,7 +1227,8 @@ class VirtualShell {
     if (file == null) return ['sort: missing operand'];
     final path = _resolvePath(file);
     final content = fs.readFile(path);
-    if (content == null) return ['sort: cannot read: $file: No such file or directory'];
+    if (content == null)
+      return ['sort: cannot read: $file: No such file or directory'];
     final lines = content.split('\n');
     if (args.contains('-r')) {
       lines.sort((a, b) => b.compareTo(a));
@@ -1105,31 +1256,93 @@ class VirtualShell {
     if (args.isEmpty) return ['What manual page do you want?'];
     final cmd = args[0];
     final manPages = <String, List<String>>{
-      'ls': ['LS(1)', '', 'NAME', '       ls - list directory contents', '', 'SYNOPSIS', '       ls [OPTION]... [FILE]...', '', 'OPTIONS', '       -a  do not ignore entries starting with .', '       -l  use a long listing format'],
-      'grep': ['GREP(1)', '', 'NAME', '       grep - print lines matching a pattern', '', 'SYNOPSIS', '       grep [OPTIONS] PATTERN [FILE...]', '', 'OPTIONS', '       -r  recursive search', '       -n  print line numbers'],
-      'chmod': ['CHMOD(1)', '', 'NAME', '       chmod - change file mode bits', '', 'SYNOPSIS', '       chmod [OPTION]... MODE[,MODE]... FILE...'],
-      'find': ['FIND(1)', '', 'NAME', '       find - search for files', '', 'SYNOPSIS', '       find [path] [expression]', '', 'OPTIONS', '       -name pattern  match filename'],
-      'ps': ['PS(1)', '', 'NAME', '       ps - report a snapshot of current processes', '', 'SYNOPSIS', '       ps [options]', '', 'OPTIONS', '       aux  show all processes with details'],
-      'ip': ['IP(8)', '', 'NAME', '       ip - show / manipulate routing, network devices', '', 'SYNOPSIS', '       ip [ addr | route | link ]'],
+      'ls': [
+        'LS(1)',
+        '',
+        'NAME',
+        '       ls - list directory contents',
+        '',
+        'SYNOPSIS',
+        '       ls [OPTION]... [FILE]...',
+        '',
+        'OPTIONS',
+        '       -a  do not ignore entries starting with .',
+        '       -l  use a long listing format'
+      ],
+      'grep': [
+        'GREP(1)',
+        '',
+        'NAME',
+        '       grep - print lines matching a pattern',
+        '',
+        'SYNOPSIS',
+        '       grep [OPTIONS] PATTERN [FILE...]',
+        '',
+        'OPTIONS',
+        '       -r  recursive search',
+        '       -n  print line numbers'
+      ],
+      'chmod': [
+        'CHMOD(1)',
+        '',
+        'NAME',
+        '       chmod - change file mode bits',
+        '',
+        'SYNOPSIS',
+        '       chmod [OPTION]... MODE[,MODE]... FILE...'
+      ],
+      'find': [
+        'FIND(1)',
+        '',
+        'NAME',
+        '       find - search for files',
+        '',
+        'SYNOPSIS',
+        '       find [path] [expression]',
+        '',
+        'OPTIONS',
+        '       -name pattern  match filename'
+      ],
+      'ps': [
+        'PS(1)',
+        '',
+        'NAME',
+        '       ps - report a snapshot of current processes',
+        '',
+        'SYNOPSIS',
+        '       ps [options]',
+        '',
+        'OPTIONS',
+        '       aux  show all processes with details'
+      ],
+      'ip': [
+        'IP(8)',
+        '',
+        'NAME',
+        '       ip - show / manipulate routing, network devices',
+        '',
+        'SYNOPSIS',
+        '       ip [ addr | route | link ]'
+      ],
     };
     return manPages[cmd] ?? ['No manual entry for $cmd'];
   }
 
   List<String> _help() => [
-    'T2DECODE Virtual Shell — Commandes disponibles :',
-    '',
-    ' Fichiers     : ls, cd, pwd, cat, cp, mv, rm, mkdir, touch, find, chmod',
-    '                head, tail, wc, sort, uniq, file, stat, tar',
-    ' Texte        : echo, grep, cut (via pipe)',
-    ' Système      : ps, top, kill, df, du, free, uname, uptime, date, cal',
-    '                whoami, hostname, id, env, export, history, which, man',
-    ' Réseau       : ping, traceroute, ip, ss, ifconfig, dig, nslookup',
-    '                curl, wget, ssh, scp',
-    ' Contrôle     : sudo, su, clear, exit',
-    ' Pipes        : cmd1 | cmd2    Redirection : cmd > fichier',
-    '',
-    'Tapez man <commande> pour plus de détails.',
-  ];
+        'T2DECODE Virtual Shell — Commandes disponibles :',
+        '',
+        ' Fichiers     : ls, cd, pwd, cat, cp, mv, rm, mkdir, touch, find, chmod',
+        '                head, tail, wc, sort, uniq, file, stat, tar',
+        ' Texte        : echo, grep, cut (via pipe)',
+        ' Système      : ps, top, kill, df, du, free, uname, uptime, date, cal',
+        '                whoami, hostname, id, env, export, history, which, man',
+        ' Réseau       : ping, traceroute, ip, ss, ifconfig, dig, nslookup',
+        '                curl, wget, ssh, scp',
+        ' Contrôle     : sudo, su, clear, exit',
+        ' Pipes        : cmd1 | cmd2    Redirection : cmd > fichier',
+        '',
+        'Tapez man <commande> pour plus de détails.',
+      ];
 
   List<String> _tar(List<String> args) {
     if (args.contains('-czf') && args.length >= 3) {
@@ -1151,19 +1364,30 @@ class VirtualShell {
   }
 
   static List<_VirtualProcess> _defaultProcesses() => [
-    _VirtualProcess(1, 'root', 'systemd', 0.0, 0.3, 168832, 12400, '?', 'Ss'),
-    _VirtualProcess(2, 'root', '[kthreadd]', 0.0, 0.0, 0, 0, '?', 'S'),
-    _VirtualProcess(287, 'root', '/usr/sbin/sshd -D', 0.0, 0.1, 15832, 6800, '?', 'Ss'),
-    _VirtualProcess(312, 'root', '/usr/sbin/cron -f', 0.0, 0.1, 8536, 3300, '?', 'Ss'),
-    _VirtualProcess(401, 'root', '/usr/sbin/rsyslogd -n', 0.0, 0.2, 224400, 5200, '?', 'Ssl'),
-    _VirtualProcess(455, 'mysql', '/usr/sbin/mysqld', 0.3, 2.1, 1823456, 172000, '?', 'Ssl'),
-    _VirtualProcess(512, 'www-data', 'nginx: worker process', 0.1, 0.4, 46892, 8200, '?', 'S'),
-    _VirtualProcess(513, 'www-data', 'nginx: worker process', 0.1, 0.4, 46900, 8300, '?', 'S'),
-    _VirtualProcess(712, 'admin', '-bash', 0.0, 0.1, 23456, 5600, _pts0, 'Ss'),
-    _VirtualProcess(1024, 'admin', 'python3 app.py', 1.2, 1.5, 345600, 42000, _pts0, 'S+'),
-    _VirtualProcess(1100, 'root', '/usr/lib/ufw/ufw-init', 0.0, 0.0, 4280, 1200, '?', 'S'),
-    _VirtualProcess(1150, 'admin', 'node server.js', 0.8, 1.8, 890000, 65000, 'pts/1', 'Sl'),
-  ];
+        _VirtualProcess(
+            1, 'root', 'systemd', 0.0, 0.3, 168832, 12400, '?', 'Ss'),
+        _VirtualProcess(2, 'root', '[kthreadd]', 0.0, 0.0, 0, 0, '?', 'S'),
+        _VirtualProcess(
+            287, 'root', '/usr/sbin/sshd -D', 0.0, 0.1, 15832, 6800, '?', 'Ss'),
+        _VirtualProcess(
+            312, 'root', '/usr/sbin/cron -f', 0.0, 0.1, 8536, 3300, '?', 'Ss'),
+        _VirtualProcess(401, 'root', '/usr/sbin/rsyslogd -n', 0.0, 0.2, 224400,
+            5200, '?', 'Ssl'),
+        _VirtualProcess(455, 'mysql', '/usr/sbin/mysqld', 0.3, 2.1, 1823456,
+            172000, '?', 'Ssl'),
+        _VirtualProcess(512, 'www-data', 'nginx: worker process', 0.1, 0.4,
+            46892, 8200, '?', 'S'),
+        _VirtualProcess(513, 'www-data', 'nginx: worker process', 0.1, 0.4,
+            46900, 8300, '?', 'S'),
+        _VirtualProcess(
+            712, 'admin', '-bash', 0.0, 0.1, 23456, 5600, _pts0, 'Ss'),
+        _VirtualProcess(1024, 'admin', 'python3 app.py', 1.2, 1.5, 345600,
+            42000, _pts0, 'S+'),
+        _VirtualProcess(1100, 'root', '/usr/lib/ufw/ufw-init', 0.0, 0.0, 4280,
+            1200, '?', 'S'),
+        _VirtualProcess(1150, 'admin', 'node server.js', 0.8, 1.8, 890000,
+            65000, 'pts/1', 'Sl'),
+      ];
 }
 
 class _VirtualProcess {
@@ -1177,5 +1401,6 @@ class _VirtualProcess {
   final String tty;
   final String stat;
 
-  _VirtualProcess(this.pid, this.user, this.command, this.cpu, this.mem, this.vsz, this.rss, this.tty, this.stat);
+  _VirtualProcess(this.pid, this.user, this.command, this.cpu, this.mem,
+      this.vsz, this.rss, this.tty, this.stat);
 }

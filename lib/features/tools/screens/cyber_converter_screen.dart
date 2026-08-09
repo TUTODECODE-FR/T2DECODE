@@ -16,13 +16,13 @@ class CyberConverterScreen extends StatefulWidget {
 
 class _CyberConverterScreenState extends State<CyberConverterScreen> {
   final _inputController = TextEditingController();
-  
+
   String _asciiOutput = '';
   String _hexOutput = '';
   String _binOutput = '';
   String _base64Output = '';
   String _urlOutput = '';
-  
+
   String _currentFormat = 'ASCII';
   final List<String> _formats = ['ASCII', 'HEX', 'BINAIRE', 'BASE64', 'URL'];
 
@@ -82,8 +82,10 @@ class _CyberConverterScreenState extends State<CyberConverterScreen> {
       // Encode bytes to all formats
       setState(() {
         _asciiOutput = utf8.decode(bytes, allowMalformed: true);
-        _hexOutput = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ');
-        _binOutput = bytes.map((b) => b.toRadixString(2).padLeft(8, '0')).join(' ');
+        _hexOutput =
+            bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ');
+        _binOutput =
+            bytes.map((b) => b.toRadixString(2).padLeft(8, '0')).join(' ');
         _base64Output = base64.encode(bytes);
         _urlOutput = Uri.encodeComponent(_asciiOutput);
       });
@@ -105,8 +107,10 @@ class _CyberConverterScreenState extends State<CyberConverterScreen> {
         children: [
           const TdcToolHeader(
             title: 'Cyber Convertisseur',
-            description: 'Convertissez instantanément vos données entre ASCII, Hex, Base64, Binaire et URL.',
-            howToUse: 'Sélectionnez le format de votre donnée d\'entrée via les boutons "FORMAT D\'ENTRÉE". Saisissez ensuite vos données dans le champ texte. Le convertisseur traduira automatiquement et en temps réel cette donnée dans tous les autres formats (Hexadécimal, Binaire, Base64, URL). Cliquez sur l\'icône de copie pour récupérer le résultat.',
+            description:
+                'Convertissez instantanément vos données entre ASCII, Hex, Base64, Binaire et URL.',
+            howToUse:
+                'Sélectionnez le format de votre donnée d\'entrée via les boutons "FORMAT D\'ENTRÉE". Saisissez ensuite vos données dans le champ texte. Le convertisseur traduira automatiquement et en temps réel cette donnée dans tous les autres formats (Hexadécimal, Binaire, Base64, URL). Cliquez sur l\'icône de copie pour récupérer le résultat.',
           ),
           _buildInputSection(),
           const SizedBox(height: 24),
@@ -138,7 +142,11 @@ class _CyberConverterScreenState extends State<CyberConverterScreen> {
         children: [
           Row(
             children: [
-              const Text("FORMAT D'ENTRÉE", style: TextStyle(color: TdcColors.accent, fontSize: 10, fontWeight: FontWeight.bold)),
+              const Text("FORMAT D'ENTRÉE",
+                  style: TextStyle(
+                      color: TdcColors.accent,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold)),
               const Spacer(),
               _buildFormatSelector(),
             ],
@@ -148,12 +156,16 @@ class _CyberConverterScreenState extends State<CyberConverterScreen> {
             controller: _inputController,
             onChanged: (_) => _convert(),
             maxLines: 4,
-            style: const TextStyle(color: TdcColors.textPrimary, fontSize: 16, fontFamily: 'monospace'),
+            style: const TextStyle(
+                color: TdcColors.textPrimary,
+                fontSize: 16,
+                fontFamily: 'monospace'),
             decoration: const InputDecoration(
               hintText: 'Collez vos données ici...',
               filled: true,
               fillColor: TdcColors.bg,
-              border: OutlineInputBorder(borderRadius: TdcRadius.sm, borderSide: BorderSide.none),
+              border: OutlineInputBorder(
+                  borderRadius: TdcRadius.sm, borderSide: BorderSide.none),
             ),
           ),
         ],
@@ -176,7 +188,11 @@ class _CyberConverterScreenState extends State<CyberConverterScreen> {
           items: _formats.map((String format) {
             return DropdownMenuItem<String>(
               value: format,
-              child: Text(format, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 12, fontWeight: FontWeight.bold)),
+              child: Text(format,
+                  style: const TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold)),
             );
           }).toList(),
           onChanged: (v) {
@@ -204,9 +220,14 @@ class _CyberConverterScreenState extends State<CyberConverterScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
+              Text(title,
+                  style: const TextStyle(
+                      color: TdcColors.textSecondary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold)),
               IconButton(
-                icon: const Icon(Icons.copy, size: 16, color: TdcColors.textMuted),
+                icon: const Icon(Icons.copy,
+                    size: 16, color: TdcColors.textMuted),
                 onPressed: () {
                   // Copier dans le presse-papier
                 },
@@ -218,7 +239,9 @@ class _CyberConverterScreenState extends State<CyberConverterScreen> {
           SelectableText(
             value,
             style: TextStyle(
-              color: value == 'Erreur de décodage' ? TdcColors.danger : TdcColors.textPrimary,
+              color: value == 'Erreur de décodage'
+                  ? TdcColors.danger
+                  : TdcColors.textPrimary,
               fontSize: 14,
               fontFamily: 'monospace',
             ),

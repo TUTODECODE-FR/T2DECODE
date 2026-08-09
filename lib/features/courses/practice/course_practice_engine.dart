@@ -30,7 +30,8 @@ class CoursePracticeLink {
 }
 
 class CoursePracticeEngine {
-  static List<CoursePracticeLink> recommend(Course course, CourseChapter chapter) {
+  static List<CoursePracticeLink> recommend(
+      Course course, CourseChapter chapter) {
     switch (course.category) {
       case 'network':
         return [
@@ -42,9 +43,16 @@ class CoursePracticeEngine {
             labArgs: {'sim': 'network'},
             toolRoute: '/tools/dns',
             flow: [
-              PracticeNode(icon: Icons.laptop_mac, label: 'Client', color: TdcColors.network),
-              PracticeNode(icon: Icons.dns, label: 'DNS', color: TdcColors.info),
-              PracticeNode(icon: Icons.public, label: 'Serveur', color: TdcColors.network),
+              PracticeNode(
+                  icon: Icons.laptop_mac,
+                  label: 'Client',
+                  color: TdcColors.network),
+              PracticeNode(
+                  icon: Icons.dns, label: 'DNS', color: TdcColors.info),
+              PracticeNode(
+                  icon: Icons.public,
+                  label: 'Serveur',
+                  color: TdcColors.network),
             ],
             embeddedSandbox: MiniDnsSandbox(),
           ),
@@ -59,9 +67,16 @@ class CoursePracticeEngine {
             tint: TdcColors.security,
             labArgs: {'sim': 'security'},
             flow: [
-              PracticeNode(icon: Icons.person, label: 'Attaquant', color: TdcColors.security),
-              PracticeNode(icon: Icons.web, label: 'Web app', color: TdcColors.warning),
-              PracticeNode(icon: Icons.storage, label: 'Base', color: TdcColors.security),
+              PracticeNode(
+                  icon: Icons.person,
+                  label: 'Attaquant',
+                  color: TdcColors.security),
+              PracticeNode(
+                  icon: Icons.web, label: 'Web app', color: TdcColors.warning),
+              PracticeNode(
+                  icon: Icons.storage,
+                  label: 'Base',
+                  color: TdcColors.security),
             ],
             embeddedSandbox: MiniSqlInjectionSandbox(),
           ),
@@ -72,9 +87,18 @@ class CoursePracticeEngine {
             tint: TdcColors.warning,
             labArgs: {'sim': 'ctf_prep'},
             flow: [
-              PracticeNode(icon: Icons.computer, label: 'VM Attaque', color: TdcColors.warning),
-              PracticeNode(icon: Icons.router, label: 'Réseau isolé', color: TdcColors.info),
-              PracticeNode(icon: Icons.shield, label: 'VM Logs', color: TdcColors.security),
+              PracticeNode(
+                  icon: Icons.computer,
+                  label: 'VM Attaque',
+                  color: TdcColors.warning),
+              PracticeNode(
+                  icon: Icons.router,
+                  label: 'Réseau isolé',
+                  color: TdcColors.info),
+              PracticeNode(
+                  icon: Icons.shield,
+                  label: 'VM Logs',
+                  color: TdcColors.security),
             ],
           ),
         ];
@@ -89,9 +113,16 @@ class CoursePracticeEngine {
             labArgs: {'sim': 'linux'},
             toolRoute: '/tools/chmod',
             flow: [
-              PracticeNode(icon: Icons.person, label: 'Utilisateur', color: TdcColors.system),
-              PracticeNode(icon: Icons.folder, label: 'Fichiers', color: TdcColors.info),
-              PracticeNode(icon: Icons.lock_outline, label: 'Permissions', color: TdcColors.system),
+              PracticeNode(
+                  icon: Icons.person,
+                  label: 'Utilisateur',
+                  color: TdcColors.system),
+              PracticeNode(
+                  icon: Icons.folder, label: 'Fichiers', color: TdcColors.info),
+              PracticeNode(
+                  icon: Icons.lock_outline,
+                  label: 'Permissions',
+                  color: TdcColors.system),
             ],
           ),
         ];
@@ -105,9 +136,14 @@ class CoursePracticeEngine {
             tint: TdcColors.warning,
             labArgs: {'sim': 'security'},
             flow: [
-              PracticeNode(icon: Icons.code, label: 'Entrée', color: TdcColors.warning),
-              PracticeNode(icon: Icons.storage, label: 'SQL', color: TdcColors.security),
-              PracticeNode(icon: Icons.receipt_long, label: 'Résultat', color: TdcColors.info),
+              PracticeNode(
+                  icon: Icons.code, label: 'Entrée', color: TdcColors.warning),
+              PracticeNode(
+                  icon: Icons.storage, label: 'SQL', color: TdcColors.security),
+              PracticeNode(
+                  icon: Icons.receipt_long,
+                  label: 'Résultat',
+                  color: TdcColors.info),
             ],
           ),
         ];
@@ -121,9 +157,16 @@ class CoursePracticeEngine {
             tint: TdcColors.cloud,
             labArgs: {'sim': 'cloud'},
             flow: [
-              PracticeNode(icon: Icons.build, label: 'Build', color: TdcColors.cloud),
-              PracticeNode(icon: Icons.inventory_2, label: 'Artefact', color: TdcColors.info),
-              PracticeNode(icon: Icons.rocket_launch, label: 'Déploiement', color: TdcColors.cloud),
+              PracticeNode(
+                  icon: Icons.build, label: 'Build', color: TdcColors.cloud),
+              PracticeNode(
+                  icon: Icons.inventory_2,
+                  label: 'Artefact',
+                  color: TdcColors.info),
+              PracticeNode(
+                  icon: Icons.rocket_launch,
+                  label: 'Déploiement',
+                  color: TdcColors.cloud),
             ],
           ),
         ];
@@ -139,9 +182,14 @@ class CoursePracticeEngine {
             toolRoute: '/tools/http-status',
             labArgs: {'sim': 'theory'},
             flow: [
-              PracticeNode(icon: Icons.phone_iphone, label: 'Client', color: TdcColors.info),
-              PracticeNode(icon: Icons.http, label: 'HTTP', color: TdcColors.warning),
-              PracticeNode(icon: Icons.dns, label: 'DNS', color: TdcColors.info),
+              PracticeNode(
+                  icon: Icons.phone_iphone,
+                  label: 'Client',
+                  color: TdcColors.info),
+              PracticeNode(
+                  icon: Icons.http, label: 'HTTP', color: TdcColors.warning),
+              PracticeNode(
+                  icon: Icons.dns, label: 'DNS', color: TdcColors.info),
             ],
           ),
         ];
@@ -157,9 +205,16 @@ class CoursePracticeEngine {
             tint: TdcColors.accent,
             labArgs: {'sim': 'algorithms'},
             flow: [
-              PracticeNode(icon: Icons.account_tree, label: 'Algorithme', color: TdcColors.accent),
-              PracticeNode(icon: Icons.memory, label: 'États', color: TdcColors.info),
-              PracticeNode(icon: Icons.check_circle_outline, label: 'Résultat', color: TdcColors.success),
+              PracticeNode(
+                  icon: Icons.account_tree,
+                  label: 'Algorithme',
+                  color: TdcColors.accent),
+              PracticeNode(
+                  icon: Icons.memory, label: 'États', color: TdcColors.info),
+              PracticeNode(
+                  icon: Icons.check_circle_outline,
+                  label: 'Résultat',
+                  color: TdcColors.success),
             ],
           ),
         ];

@@ -17,14 +17,19 @@ class EducationScreen extends StatefulWidget {
   State<EducationScreen> createState() => _EducationScreenState();
 }
 
-class _EducationScreenState extends State<EducationScreen> with SingleTickerProviderStateMixin {
+class _EducationScreenState extends State<EducationScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  final TextEditingController _topicController = TextEditingController(text: 'Securite des reseaux Wi-Fi & WPA3');
+  final TextEditingController _topicController =
+      TextEditingController(text: 'Securite des reseaux Wi-Fi & WPA3');
   final TextEditingController _teacherIpController = TextEditingController();
-  final TextEditingController _studentNameController = TextEditingController(text: 'Eleve_01');
-  final TextEditingController _studentScoreController = TextEditingController(text: '8');
-  final TextEditingController _studentTotalController = TextEditingController(text: '10');
+  final TextEditingController _studentNameController =
+      TextEditingController(text: 'Eleve_01');
+  final TextEditingController _studentScoreController =
+      TextEditingController(text: '8');
+  final TextEditingController _studentTotalController =
+      TextEditingController(text: '10');
 
   String _selectedLevel = 'Intermédiaire';
   String _studentStatusMessage = '';
@@ -125,9 +130,15 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
         labelColor: TdcColors.accent,
         unselectedLabelColor: TdcColors.textMuted,
         tabs: const [
-          Tab(icon: Icon(Icons.smart_toy, size: 18), text: 'Ghost AI Prof (Générateur)'),
-          Tab(icon: Icon(Icons.dashboard_customize, size: 18), text: 'Tableau de Bord Prof (Notes LAN)'),
-          Tab(icon: Icon(Icons.school, size: 18), text: 'Mode Étudiant (Envoyer Note)'),
+          Tab(
+              icon: Icon(Icons.smart_toy, size: 18),
+              text: 'Ghost AI Prof (Générateur)'),
+          Tab(
+              icon: Icon(Icons.dashboard_customize, size: 18),
+              text: 'Tableau de Bord Prof (Notes LAN)'),
+          Tab(
+              icon: Icon(Icons.school, size: 18),
+              text: 'Mode Étudiant (Envoyer Note)'),
         ],
       ),
     );
@@ -145,7 +156,10 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
               children: [
                 const Text(
                   'Générer un cours et un QCM personnalisés',
-                  style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
+                  style: TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -153,7 +167,8 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                   style: const TextStyle(color: TdcColors.textPrimary),
                   decoration: const InputDecoration(
                     labelText: 'Sujet du cours à créer par Ghost AI',
-                    hintText: 'ex: Cryptographie RSA, Configuration des VLANs, Sockets POSIX...',
+                    hintText:
+                        'ex: Cryptographie RSA, Configuration des VLANs, Sockets POSIX...',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -170,9 +185,11 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                           border: OutlineInputBorder(),
                         ),
                         items: ['Débutant', 'Intermédiaire', 'Avancé']
-                            .map((l) => DropdownMenuItem(value: l, child: Text(l)))
+                            .map((l) =>
+                                DropdownMenuItem(value: l, child: Text(l)))
                             .toList(),
-                        onChanged: (v) => setState(() => _selectedLevel = v ?? 'Intermédiaire'),
+                        onChanged: (v) => setState(
+                            () => _selectedLevel = v ?? 'Intermédiaire'),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -185,8 +202,15 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                           labelText: 'Modèle IA (Ollama)',
                           border: OutlineInputBorder(),
                         ),
-                        items: ['phi3', 'llama3.2', 'qwen3:4b', 'mistral', 'codellama']
-                            .map((m) => DropdownMenuItem(value: m, child: Text(m)))
+                        items: [
+                          'phi3',
+                          'llama3.2',
+                          'qwen3:4b',
+                          'mistral',
+                          'codellama'
+                        ]
+                            .map((m) =>
+                                DropdownMenuItem(value: m, child: Text(m)))
                             .toList(),
                         onChanged: (v) {
                           if (v != null) edu.setSelectedModel(v);
@@ -209,9 +233,14 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                             );
                           },
                     icon: edu.isGenerating
-                        ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2))
                         : const Icon(Icons.auto_awesome),
-                    label: Text(edu.isGenerating ? 'Génération en cours avec Ghost AI...' : 'Générer le cours & le QCM avec Ghost AI'),
+                    label: Text(edu.isGenerating
+                        ? 'Génération en cours avec Ghost AI...'
+                        : 'Générer le cours & le QCM avec Ghost AI'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
@@ -222,7 +251,9 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                   Text(
                     edu.generationStatus,
                     style: TextStyle(
-                      color: edu.generationStatus.startsWith('Erreur') ? TdcColors.danger : TdcColors.info,
+                      color: edu.generationStatus.startsWith('Erreur')
+                          ? TdcColors.danger
+                          : TdcColors.info,
                       fontSize: 12,
                     ),
                   ),
@@ -234,7 +265,10 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
           if (edu.lastGeneratedCourse != null) ...[
             const Text(
               'Aperçu du cours généré pour la classe :',
-              style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(
+                  color: TdcColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16),
             ),
             const SizedBox(height: 12),
             TdcCard(
@@ -245,11 +279,17 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        edu.lastGeneratedCourse!['title']?.toString() ?? 'Cours',
-                        style: const TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 18),
+                        edu.lastGeneratedCourse!['title']?.toString() ??
+                            'Cours',
+                        style: const TextStyle(
+                            color: TdcColors.accent,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
                       ),
                       const Chip(
-                        label: Text('Publié sur le LAN Prof', style: TextStyle(fontSize: 11, color: Colors.white)),
+                        label: Text('Publié sur le LAN Prof',
+                            style:
+                                TextStyle(fontSize: 11, color: Colors.white)),
                         backgroundColor: TdcColors.success,
                       ),
                     ],
@@ -257,12 +297,14 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                   const SizedBox(height: 8),
                   Text(
                     edu.lastGeneratedCourse!['description']?.toString() ?? '',
-                    style: const TextStyle(color: TdcColors.textSecondary, fontSize: 13),
+                    style: const TextStyle(
+                        color: TdcColors.textSecondary, fontSize: 13),
                   ),
                   const Divider(height: 24, color: TdcColors.border),
                   Text(
                     edu.lastGeneratedCourse!['content']?.toString() ?? '',
-                    style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
+                    style: const TextStyle(
+                        color: TdcColors.textPrimary, fontSize: 13),
                   ),
                 ],
               ),
@@ -272,7 +314,10 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
           if (edu.lastGeneratedQuiz.isNotEmpty) ...[
             const Text(
               'QCM d\'évaluation associé :',
-              style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(
+                  color: TdcColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16),
             ),
             const SizedBox(height: 12),
             ...edu.lastGeneratedQuiz.asMap().entries.map((e) {
@@ -289,14 +334,18 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Question ${e.key + 1}: ${q.question}',
-                        style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold)),
+                        style: const TextStyle(
+                            color: TdcColors.textPrimary,
+                            fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     ...q.choices.asMap().entries.map((c) => Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2),
                           child: Text(
                             '  ${c.key == q.correctIndex ? "✅" : "⚪"} ${c.value}',
                             style: TextStyle(
-                              color: c.key == q.correctIndex ? TdcColors.success : TdcColors.textSecondary,
+                              color: c.key == q.correctIndex
+                                  ? TdcColors.success
+                                  : TdcColors.textSecondary,
                             ),
                           ),
                         )),
@@ -328,14 +377,18 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                       children: [
                         const Text(
                           'Serveur de Classe LAN (Collecte des notes)',
-                          style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(
+                              color: TdcColors.textPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           edu.isServerRunning
                               ? 'Le serveur écoute les soumissions d\'élèves sur le réseau local.'
                               : 'Serveur actuellement arrêté.',
-                          style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12),
+                          style: const TextStyle(
+                              color: TdcColors.textSecondary, fontSize: 12),
                         ),
                       ],
                     ),
@@ -350,7 +403,10 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                   const Divider(height: 24, color: TdcColors.border),
                   const Text(
                     'Adresses IP à transmettre à vos élèves :',
-                    style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13),
+                    style: TextStyle(
+                        color: TdcColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13),
                   ),
                   const SizedBox(height: 8),
                   Wrap(
@@ -366,7 +422,8 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                           );
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             color: TdcColors.accent.withValues(alpha: 0.1),
                             borderRadius: TdcRadius.sm,
@@ -375,11 +432,17 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.wifi, size: 14, color: TdcColors.accent),
+                              const Icon(Icons.wifi,
+                                  size: 14, color: TdcColors.accent),
                               const SizedBox(width: 6),
-                              Text(url, style: const TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 12)),
+                              Text(url,
+                                  style: const TextStyle(
+                                      color: TdcColors.accent,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12)),
                               const SizedBox(width: 6),
-                              const Icon(Icons.copy, size: 12, color: TdcColors.textMuted),
+                              const Icon(Icons.copy,
+                                  size: 12, color: TdcColors.textMuted),
                             ],
                           ),
                         ),
@@ -396,7 +459,10 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
             children: [
               Text(
                 'Notes des élèves (${edu.submissions.length})',
-                style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 18),
+                style: const TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
               ),
               Row(
                 children: [
@@ -407,7 +473,9 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                             final csv = edu.exportSubmissionsCsv();
                             Clipboard.setData(ClipboardData(text: csv));
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Notes exportées au format CSV (copiées dans le presse-papier)')),
+                              const SnackBar(
+                                  content: Text(
+                                      'Notes exportées au format CSV (copiées dans le presse-papier)')),
                             );
                           },
                     icon: const Icon(Icons.download, size: 16),
@@ -415,9 +483,13 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                   ),
                   const SizedBox(width: 8),
                   TextButton.icon(
-                    onPressed: edu.submissions.isEmpty ? null : () => edu.clearSubmissions(),
-                    icon: const Icon(Icons.delete_outline, size: 16, color: TdcColors.danger),
-                    label: const Text('Réinitialiser', style: TextStyle(color: TdcColors.danger)),
+                    onPressed: edu.submissions.isEmpty
+                        ? null
+                        : () => edu.clearSubmissions(),
+                    icon: const Icon(Icons.delete_outline,
+                        size: 16, color: TdcColors.danger),
+                    label: const Text('Réinitialiser',
+                        style: TextStyle(color: TdcColors.danger)),
                   ),
                 ],
               ),
@@ -455,16 +527,22 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                   decoration: BoxDecoration(
                     color: TdcColors.surface,
                     borderRadius: TdcRadius.md,
-                    border: Border.all(color: passed ? TdcColors.success.withValues(alpha: 0.3) : TdcColors.danger.withValues(alpha: 0.3)),
+                    border: Border.all(
+                        color: passed
+                            ? TdcColors.success.withValues(alpha: 0.3)
+                            : TdcColors.danger.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [
                       CircleAvatar(
-                        backgroundColor: passed ? TdcColors.success.withValues(alpha: 0.2) : TdcColors.danger.withValues(alpha: 0.2),
+                        backgroundColor: passed
+                            ? TdcColors.success.withValues(alpha: 0.2)
+                            : TdcColors.danger.withValues(alpha: 0.2),
                         child: Text(
                           '$pct%',
                           style: TextStyle(
-                            color: passed ? TdcColors.success : TdcColors.danger,
+                            color:
+                                passed ? TdcColors.success : TdcColors.danger,
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                           ),
@@ -475,14 +553,23 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(s.studentName, style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold)),
-                            Text('IP: ${s.studentIp} — Cours: ${s.courseTitle}', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12)),
+                            Text(s.studentName,
+                                style: const TextStyle(
+                                    color: TdcColors.textPrimary,
+                                    fontWeight: FontWeight.bold)),
+                            Text('IP: ${s.studentIp} — Cours: ${s.courseTitle}',
+                                style: const TextStyle(
+                                    color: TdcColors.textSecondary,
+                                    fontSize: 12)),
                           ],
                         ),
                       ),
                       Text(
                         '${s.score} / ${s.total}',
-                        style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(
+                            color: TdcColors.textPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
                       ),
                     ],
                   ),
@@ -510,12 +597,16 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
               children: [
                 const Text(
                   'Transmettre mes résultats au Professeur',
-                  style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
+                  style: TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'Renseignez l\'adresse IP affichée sur l\'écran de votre Professeur pour lui envoyer votre note en direct sur le réseau local.',
-                  style: TextStyle(color: TdcColors.textSecondary, fontSize: 13),
+                  style:
+                      TextStyle(color: TdcColors.textSecondary, fontSize: 13),
                 ),
                 const SizedBox(height: 20),
                 TextField(
@@ -571,14 +662,20 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                     onPressed: () async {
                       final teacherIp = _teacherIpController.text.trim();
                       final studentName = _studentNameController.text.trim();
-                      final score = int.tryParse(_studentScoreController.text.trim()) ?? 0;
-                      final total = int.tryParse(_studentTotalController.text.trim()) ?? 10;
+                      final score =
+                          int.tryParse(_studentScoreController.text.trim()) ??
+                              0;
+                      final total =
+                          int.tryParse(_studentTotalController.text.trim()) ??
+                              10;
 
                       if (teacherIp.isEmpty || studentName.isEmpty) return;
 
-                      setState(() => _studentStatusMessage = 'Envoi au serveur du professeur...');
+                      setState(() => _studentStatusMessage =
+                          'Envoi au serveur du professeur...');
 
-                      final res = await EducationServerService.sendScoreToTeacher(
+                      final res =
+                          await EducationServerService.sendScoreToTeacher(
                         teacherIp: teacherIp,
                         studentName: studentName,
                         courseTitle: _topicController.text.trim(),
@@ -588,7 +685,8 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
 
                       setState(() {
                         if (res['success'] == true) {
-                          _studentStatusMessage = '✅ Note transmise avec succès au Professeur !';
+                          _studentStatusMessage =
+                              '✅ Note transmise avec succès au Professeur !';
                         } else {
                           _studentStatusMessage = '❌ ${res['error']}';
                         }
@@ -606,7 +704,9 @@ class _EducationScreenState extends State<EducationScreen> with SingleTickerProv
                   Text(
                     _studentStatusMessage,
                     style: TextStyle(
-                      color: _studentStatusMessage.startsWith('✅') ? TdcColors.success : TdcColors.danger,
+                      color: _studentStatusMessage.startsWith('✅')
+                          ? TdcColors.success
+                          : TdcColors.danger,
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                     ),
