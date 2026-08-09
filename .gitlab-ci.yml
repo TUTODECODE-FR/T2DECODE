@@ -154,6 +154,56 @@ yamllint:
         - "**/*.yaml"
       when: on_success
 
+backdoor_and_anti_malware_scan:
+  stage: validate
+  script:
+    - echo "🔍 Scanning codebase for backdoor patterns, reverse shells, and malicious execution..."
+    - |
+      FOUND_MALWARE=0
+      # 1. Reverse shells & socket callouts
+      if grep -rE "(/dev/tcp/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+|nc\s+-e\s+/bin|ncat\s+-e\s+/bin|python.*socket.*connect\(|perl.*Socket.*connect\(|ruby.*TCPSocket\.new\()" . \
+        --exclude-dir=".git" --exclude-dir="fdroid_data_repo" --exclude-dir="build" --exclude-dir="assets" --exclude-dir="dist" --exclude=".gitlab-ci.yml" --binary-files=without-match; then
+        echo "❌ Error: Potential reverse shell or malicious socket connection pattern detected!"
+        FOUND_MALWARE=1
+      fi
+      # 2. Obfuscated payload execution
+      if grep -rE "(eval\s*\(\s*base64_decode|base64\s+(-d|--decode)\s*\|\s*(sh|bash|zsh)|curl\s+.*\|\s*(sh|bash)|wget\s+.*\|\s*(sh|bash))" . \
+        --exclude-dir=".git" --exclude-dir="fdroid_data_repo" --exclude-dir="build" --exclude-dir="assets" --exclude-dir="dist" --exclude=".gitlab-ci.yml" --binary-files=without-match; then
+        echo "❌ Error: Obfuscated script execution or unverified remote execution pattern detected!"
+        FOUND_MALWARE=1
+      fi
+      if [ $FOUND_MALWARE -eq 1 ]; then
+        exit 1
+      else
+        echo "✅ Anti-malware and backdoor pattern scan passed cleanly."
+      fi
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+semgrep_sast:
+  stage: validate
+  image: returntocorp/semgrep:latest
+  script:
+    - semgrep scan --config auto --exclude="fdroid_data_repo" --exclude="build" --error
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+clamav_antivirus:
+  stage: validate
+  image: clamav/clamav:latest
+  script:
+    - freshclam || true
+    - clamscan -r --exclude-dir="fdroid_data_repo" --exclude-dir="build" --exclude-dir=".git" .
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
 # === STAGE: BUILD-TEST (Unsigned) ===
 build_android_unsigned:
   stage: build-test
