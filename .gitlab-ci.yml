@@ -733,16 +733,15 @@ release_gitlab:
       release-cli create --name "Release $CI_COMMIT_TAG" \
         --tag-name "$CI_COMMIT_TAG" \
         --description "$RELEASE_DESC" \
-        --assets-link "{\"name\":\"T2DECODE-Android-armeabi-v7a.apk\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk\"}" \
-        --assets-link "{\"name\":\"T2DECODE-Android-arm64-v8a.apk\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk\"}" \
-        --assets-link "{\"name\":\"T2DECODE-Android-x86_64.apk\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/app/outputs/flutter-apk/app-x86_64-release.apk\"}" \
-        --assets-link "{\"name\":\"T2DECODE-Linux.tar.gz\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/T2DECODE-Linux.tar.gz\"}" \
-        --assets-link "{\"name\":\"T2DECODE-Windows.zip\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/T2DECODE-Windows.zip\"}" \
-        --assets-link "{\"name\":\"T2DECODE-Windows-Setup.exe\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/T2DECODE-Setup.exe\"}" \
-        --assets-link "{\"name\":\"T2DECODE-macOS.dmg\",\"url\":\"${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/T2DECODE-macOS.dmg\"}" || true
+        --assets-link "{\"name\":\"T2DECODE-Android-armeabi-v7a.apk\",\"url\":\"https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${CI_COMMIT_TAG}/app-armeabi-v7a-release.apk\"}" \
+        --assets-link "{\"name\":\"T2DECODE-Android-arm64-v8a.apk\",\"url\":\"https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${CI_COMMIT_TAG}/app-arm64-v8a-release.apk\"}" \
+        --assets-link "{\"name\":\"T2DECODE-Android-x86_64.apk\",\"url\":\"https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${CI_COMMIT_TAG}/app-x86_64-release.apk\"}" \
+        --assets-link "{\"name\":\"T2DECODE-Linux.tar.gz\",\"url\":\"https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${CI_COMMIT_TAG}/T2DECODE-Linux.tar.gz\"}" \
+        --assets-link "{\"name\":\"T2DECODE-Windows.zip\",\"url\":\"https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${CI_COMMIT_TAG}/T2DECODE-Windows.zip\"}" \
+        --assets-link "{\"name\":\"T2DECODE-macOS.dmg\",\"url\":\"https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${CI_COMMIT_TAG}/T2DECODE-macOS.dmg\"}" \
+        --assets-link "{\"name\":\"SHA256SUMS.txt\",\"url\":\"https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${CI_COMMIT_TAG}/SHA256SUMS.txt\"}" || true
   rules:
     - if: $CI_COMMIT_TAG
-      when: manual
 
 publish_sourceforge:
   stage: release
