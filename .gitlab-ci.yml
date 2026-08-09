@@ -120,7 +120,18 @@ build_android_unsigned:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
       when: manual
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - lib/**/*
+        - pubspec.yaml
+        - pubspec.lock
+        - android/**/*
+        - linux/**/*
+        - windows/**/*
+        - macos/**/*
+        - ios/**/*
       when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
 
 build_linux_unsigned:
   stage: build-test
@@ -133,7 +144,18 @@ build_linux_unsigned:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
       when: manual
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - lib/**/*
+        - pubspec.yaml
+        - pubspec.lock
+        - android/**/*
+        - linux/**/*
+        - windows/**/*
+        - macos/**/*
+        - ios/**/*
       when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
 
 build_windows_unsigned:
   stage: build-test
@@ -159,7 +181,18 @@ build_windows_unsigned:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
       when: manual
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - lib/**/*
+        - pubspec.yaml
+        - pubspec.lock
+        - android/**/*
+        - linux/**/*
+        - windows/**/*
+        - macos/**/*
+        - ios/**/*
       when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
   allow_failure: true
 
 build_macos_unsigned:
@@ -178,7 +211,18 @@ build_macos_unsigned:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
       when: manual
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - lib/**/*
+        - pubspec.yaml
+        - pubspec.lock
+        - android/**/*
+        - linux/**/*
+        - windows/**/*
+        - macos/**/*
+        - ios/**/*
       when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
   allow_failure: true
 
 # === STAGE: AUTO-TAG ===
