@@ -183,3 +183,16 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to SourceForge
+        if: env.SF_PRIVATE_KEY != ''
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SF_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/sf_key
+          chmod 600 ~/.ssh/sf_key
+          ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts 2>/dev/null
+          rsync -e "ssh -i ~/.ssh/sf_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" -avP release_assets/ winancher@frs.sourceforge.net:/home/frs/project/t2decode/${{ github.ref_name }}/ || true
+        env:
+          SF_PRIVATE_KEY: ${{ secrets.SF_PRIVATE_KEY }}
+
