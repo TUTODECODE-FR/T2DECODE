@@ -191,7 +191,7 @@ backdoor_and_anti_malware_scan:
         FOUND_MALWARE=1
       fi
       # 2. Obfuscated payload execution
-      if grep -rE "(eval\s*\(\s*base64_decode|base64\s+(-d|--decode)\s*\|\s*(sh|bash|zsh)|curl\s+.*\|\s*(sh|bash)|wget\s+.*\|\s*(sh|bash))" . \
+      if grep -rE "(eval\s*\(\s*base64_decode|base64\s+(-d|--decode)\s*\|\s*\b(sh|bash|zsh)\b|curl\s+.*\|\s*\b(sh|bash)\b|wget\s+.*\|\s*\b(sh|bash)\b)" . \
         --exclude-dir=".git" --exclude-dir="fdroid_data_repo" --exclude-dir="build" --exclude-dir="assets" --exclude-dir="dist" --exclude=".gitlab-ci.yml" --exclude="ai_config_screen.dart" --binary-files=without-match; then
         echo "❌ Error: Obfuscated script execution or unverified remote execution pattern detected!"
         FOUND_MALWARE=1
