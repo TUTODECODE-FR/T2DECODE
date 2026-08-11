@@ -2,15 +2,19 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
+    - avoid_print
     - close_sinks
     - cancel_subscriptions
     - throw_in_finally
     - unrelated_type_equality_checks
     - avoid_empty_else
     - avoid_relative_lib_imports
+    - avoid_web_libraries_in_flutter
     - control_flow_in_finally
     - empty_statements
     - no_duplicate_case_values
     - valid_regexps
     - prefer_const_constructors
     - prefer_const_literals_to_create_immutables
+    - unnecessary_statements
+    - prefer_void_to_null

@@ -62,6 +62,7 @@ test_and_analyze:
     - flutter analyze --no-fatal-infos --no-fatal-warnings || true
     - flutter test --coverage --dart-define=SKIP_GOLDENS=true
     - python3 scripts/verify_coverage.py coverage/lcov.info || true
+    - python3 scripts/check_dependency_confusion.py
     - |
       # Enhanced Secrets & Private Key Scan
       if grep -rE "(AKIA[0-9A-Z]{16}|GH[A-Za-z0-9_]{36,40}|SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}|sk_live_[0-9a-zA-Z]{24}|AIza[0-9A-Za-z-_]{35}|xox[baprs]-[0-9a-zA-Z]{10,48}|-----BEGIN [A-Z ]*PRIVATE KEY-----)" . \
