@@ -31,10 +31,26 @@ class _QcmWidgetState extends State<QcmWidget> {
   bool _isLoadingOllama = true;
   List<QuizQuestion> _activeQuestions = [];
 
+  List<QuizQuestion> _prepareShuffledQuestions(List<QuizQuestion> input) {
+    final list = List<QuizQuestion>.from(input)..shuffle();
+    return list.map((q) {
+      if (q.choices.isEmpty) return q;
+      final correctChoice = q.correctIndex < q.choices.length ? q.choices[q.correctIndex] : q.choices.first;
+      final shuffledChoices = List<String>.from(q.choices)..shuffle();
+      final newCorrectIndex = shuffledChoices.indexOf(correctChoice);
+      return QuizQuestion(
+        question: q.question,
+        choices: shuffledChoices,
+        correctIndex: newCorrectIndex >= 0 ? newCorrectIndex : 0,
+        explanation: q.explanation,
+      );
+    }).toList();
+  }
+
   @override
   void initState() {
     super.initState();
-    _activeQuestions = widget.questions;
+    _activeQuestions = _prepareShuffledQuestions(widget.questions);
     _initOllama();
   }
 
@@ -51,7 +67,7 @@ class _QcmWidgetState extends State<QcmWidget> {
           await OllamaService.generateQcm(model, widget.chapterContent!);
       if (newQ != null && newQ.isNotEmpty && mounted) {
         setState(() {
-          _activeQuestions = newQ;
+          _activeQuestions = _prepareShuffledQuestions(newQ);
           _isLoadingOllama = false;
         });
         return;

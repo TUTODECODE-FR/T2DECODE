@@ -1,13 +1,12 @@
-// ignore_for_file: unused_element
+// ignore_for_file: unused_element, deprecated_member_use
 // SPDX-License-Identifier: GPL-3.0-only
-// Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
+// Copyright (C) 2024-2026 TUTODECODE Association <contact@tutodecode.org>
 // ============================================================
-// Network Simulator - Simulation réseau ultra-professionnelle
+// Network Simulator - Interface Épurée & Minimaliste
 // ============================================================
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
-import '../widgets/lab_widgets.dart';
 import '../widgets/simulator_ai_assistant.dart';
 
 class NetworkSimulator extends StatefulWidget {
@@ -20,149 +19,101 @@ class NetworkSimulator extends StatefulWidget {
 class _NetworkSimulatorState extends State<NetworkSimulator>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  final TextEditingController _ipController = TextEditingController();
-  final TextEditingController _portController = TextEditingController();
-  final TextEditingController _domainController = TextEditingController();
+  final TextEditingController _ipController = TextEditingController(text: '192.168.1.100');
 
-  // États des simulations
   bool _isScanning = false;
   bool _isPinging = false;
-  bool _isTracing = false;
-  bool _isSniffing = false;
+  String _selectedDeviceIp = '192.168.1.1';
 
-  // Données de simulation
   List<NetworkDevice> _discoveredDevices = [];
   final List<PingResult> _pingResults = [];
-  final List<TraceHop> _traceHops = [];
   final List<CapturedPacket> _capturedPackets = [];
+  CapturedPacket? _selectedPacket;
 
-  // Métriques réseau
-
-  late AnimationController _scanController;
-  late AnimationController _packetController;
+  late AnimationController _pulseController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 6, vsync: this);
-    _scanController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
-    _packetController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
+    _tabController = TabController(length: 3, vsync: this);
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
 
-    _initializeNetworkData();
+    _initializeData();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _scanController.dispose();
-    _packetController.dispose();
+    _pulseController.dispose();
     _ipController.dispose();
-    _portController.dispose();
-    _domainController.dispose();
     super.dispose();
   }
 
-  void _initializeNetworkData() {
-    // Initialiser avec des données d'exemple
+  void _initializeData() {
     _discoveredDevices = [
-      NetworkDevice(
-        ip: '192.168.1.1',
-        mac: 'AA:BB:CC:DD:EE:FF',
-        hostname: 'router.local',
-        type: 'Router',
-        os: 'OpenWrt 19.07',
-        openPorts: [22, 80, 443],
-        responseTime: 2,
-      ),
-      NetworkDevice(
-        ip: '192.168.1.100',
-        mac: '11:22:33:44:55:66',
-        hostname: 'server-01',
-        type: 'Server',
-        os: 'Ubuntu 22.04 LTS',
-        openPorts: [22, 80, 443, 3306, 5432],
-        responseTime: 5,
-      ),
+      NetworkDevice(ip: '192.168.1.1', hostname: 'gateway.router', type: 'Passerelle', os: 'OpenWrt', openPorts: [22, 80, 443]),
+      NetworkDevice(ip: '192.168.1.10', hostname: 'firewall-shield', type: 'Pare-feu', os: 'pfSense', openPorts: [22, 443]),
+      NetworkDevice(ip: '192.168.1.100', hostname: 'web-server-prod', type: 'Serveur Web', os: 'Ubuntu', openPorts: [80, 443]),
+      NetworkDevice(ip: '192.168.1.105', hostname: 'db-master-sec', type: 'Base de Données', os: 'Debian', openPorts: [5432]),
+      NetworkDevice(ip: '192.168.1.210', hostname: 'workstation-dev', type: 'Poste Client', os: 'Linux', openPorts: [22]),
     ];
+
+    _capturedPackets.addAll([
+      CapturedPacket(id: 1, time: '0.0012', source: '192.168.1.210', destination: '192.168.1.1', protocol: 'DNS', info: 'Query A tutodecode.org', payload: '0000  00 0c 29 aa bb cc 52 54  00 12 34 56  ..)...RT..4V'),
+      CapturedPacket(id: 2, time: '0.0035', source: '192.168.1.1', destination: '192.168.1.210', protocol: 'DNS', info: 'Response A 192.168.1.100', payload: '0000  52 54 00 12 34 56 00 0c  29 aa bb cc  RT..4V..)...'),
+      CapturedPacket(id: 3, time: '0.0080', source: '192.168.1.210', destination: '192.168.1.100', protocol: 'TCP', info: '54322 → 80 [SYN]', payload: '0000  52 54 00 12 34 56 00 0c  29 aa bb cc  RT..4V..)...'),
+      CapturedPacket(id: 4, time: '0.0125', source: '192.168.1.100', destination: '192.168.1.210', protocol: 'HTTP', info: 'POST /api/login HTTP/1.1', payload: 'POST /api/login HTTP/1.1\r\nHost: tutodecode.org\r\n{"user":"admin","pass":"S3cur3!"}'),
+    ]);
+    _selectedPacket = _capturedPackets[3];
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.transparent,
-      ),
+      color: TdcColors.bg,
       child: Column(
         children: [
-          // Header avec métriques simulées
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                LabNotice(
-                  title: 'Simulation pédagogique',
-                  message:
-                      'Données synthétiques. Aucun scan réseau réel ni capture de paquets.',
-                  icon: Icons.info_outline,
-                ),
-              ],
-            ),
-          ),
-          // Custom TabBar inside Lab
+          // En-tête épuré
+          _buildCleanHeader(),
+
+          // Topologie minimaliste
+          _buildMinimalTopology(),
+
+          // Onglets simples (3 onglets)
           Container(
-            height: 45,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            height: 40,
+            color: TdcColors.surface,
             child: TabBar(
               controller: _tabController,
-              indicatorColor: TdcColors.network,
-              labelColor: TdcColors.network,
+              indicatorColor: TdcColors.accent,
+              labelColor: TdcColors.accent,
               unselectedLabelColor: TdcColors.textMuted,
-              isScrollable: true,
-              labelStyle: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 11,
-                  letterSpacing: 1.1),
-              indicatorSize: TabBarIndicatorSize.label,
+              labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1.0),
               tabs: const [
-                Tab(text: 'SCAN RÉSEAU'),
-                Tab(text: 'PING'),
-                Tab(text: 'TRACEROUTE'),
-                Tab(text: 'SNIFFER'),
-                Tab(text: 'GUIDE'),
-                Tab(text: '🤖 IA'),
+                Tab(text: 'CARTE RÉSEAU & SCAN'),
+                Tab(text: 'INSPECTEUR PAQUETS'),
+                Tab(text: 'ASSISTANT IA'),
               ],
             ),
           ),
 
-          const Divider(height: 1, color: TdcColors.border),
-
-          // Content
+          // Contenu
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildNetworkScanTab(),
-                _buildPingTab(),
-                _buildTracerouteTab(),
-                _buildSnifferTab(),
-                _buildGuideTab(),
+                _buildNetworkScanView(),
+                _buildSnifferView(),
                 const SimulatorAIAssistant(
-                  topic: 'Réseau & Architecture',
+                  topic: 'Réseau épuré',
                   accentColor: TdcColors.network,
-                  systemPrompt:
-                      'Tu es Ghost, l\'expert réseau de T2DECODE. Ta mission est d\'aider à comprendre les paquets et les câbles. '
-                      'Sois ultra-sympa, utilise des métaphores (comme comparer un paquet à une lettre), et ne sois pas sec. '
-                      'Tu maîtrises les 7 couches de l\'informatique (Hardware > Kernel > Drivers > OS > Libs > Software > App) '
-                      'ainsi que le modèle OSI (7 couches aussi). '
-                      'Expertise : TCP/IP, UDP, ICMP (Ping), DNS, Scans SYN/ACK, reniflage (sniffing) et sécurité réseau.',
+                  systemPrompt: 'Tu es Ghost. Réponds en 2 phrases max, ultra clair et concis.',
                   suggestedQuestions: [
-                    'Explique-moi les 7 couches de l\'informatique ?',
-                    'Un mémo pour retenir les couches informatiques ?',
-                    'Différence entre TCP et UDP ?',
-                    'C\'est quoi exactement le Kernel ?',
-                    'À quoi sert le TTL dans un paquet ?',
+                    'Comment marche le réseau en 1 phrase ?',
+                    'Différence entre IP et MAC ?',
                   ],
                 ),
               ],
@@ -173,405 +124,31 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
     );
   }
 
-  Widget _buildGuideTab() {
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        _buildGuideSection(
-          'Scan Réseau',
-          'Le scan réseau permet de découvrir les hôtes actifs et les services ouverts sur un segment. '
-              'Il utilise des techniques comme le SYN Scan (half-open) pour rester discret ou le TCP Connect pour confirmer l\'ouverture d\'un port.',
-          Icons.search,
-        ),
-        const SizedBox(height: 24),
-        _buildGuideSection(
-          'ICMP & Ping',
-          'Le protocole ICMP (Internet Control Message Protocol) est utilisé par la commande ping pour vérifier la connectivité. '
-              'Il mesure le temps aller-retour (RTT) et rapporte d\'éventuelles pertes de paquets.',
-          Icons.send,
-        ),
-        const SizedBox(height: 24),
-        _buildGuideSection(
-          'Traceroute',
-          'Traceroute identifie chaque saut (hop) entre vous et une destination en incrémentant le TTL (Time To Live) de chaque paquet. '
-              'Chaque routeur sur le chemin renvoie un message ICMP Time Exceeded, révélant son identité.',
-          Icons.route,
-        ),
-        const SizedBox(height: 24),
-        _buildGuideSection(
-          'Packet Sniffing',
-          'Le "sniffing" consiste à capturer les paquets bruts circulant sur une interface. '
-              'Cela permet d\'analyser les flux, de déboguer des applications ou d\'identifier des trafics suspects.',
-          Icons.compare_arrows,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildGuideSection(String title, String description, IconData icon) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: TdcColors.network, size: 20),
-            const SizedBox(width: 12),
-            Text(
-              title,
-              style: const TextStyle(
-                color: TdcColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Text(
-          description,
-          style: const TextStyle(
-            color: TdcColors.textSecondary,
-            fontSize: 14,
-            height: 1.5,
-          ),
-        ),
-        const SizedBox(height: 16),
-        const Divider(color: TdcColors.border),
-      ],
-    );
-  }
-
-  Widget _buildNetworkScanTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          // Contrôles de scan
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: TdcColors.surfaceAlt,
-              border: Border.all(color: TdcColors.border),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Configuration du Scan',
-                  style: TextStyle(
-                    color: TdcColors.textPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _ipController,
-                        style: const TextStyle(
-                            color: TdcColors.textPrimary, fontSize: 13),
-                        decoration: const InputDecoration(
-                          labelText: 'Plage IP (ex: 192.168.1.0/24)',
-                          prefixIcon: Icon(Icons.lan, size: 18),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    ElevatedButton.icon(
-                      onPressed: _isScanning ? null : _performNetworkScan,
-                      icon: _isScanning
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.black),
-                            )
-                          : const Icon(Icons.search, size: 18),
-                      label: Text(_isScanning ? 'Scan...' : 'Scanner'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: TdcColors.network,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 15),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Résultats du scan
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: TdcColors.bg,
-                border: Border.all(color: TdcColors.border),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: TdcColors.border)),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.devices,
-                            color: TdcColors.network, size: 20),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Appareils Découverts',
-                          style: TextStyle(
-                            color: TdcColors.textPrimary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          '${_discoveredDevices.length} appareils',
-                          style: const TextStyle(
-                            color: TdcColors.textMuted,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _discoveredDevices.length,
-                      itemBuilder: (context, index) {
-                        final device = _discoveredDevices[index];
-                        return _buildDeviceCard(device);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDeviceCard(NetworkDevice device) {
+  Widget _buildCleanHeader() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: TdcColors.surfaceAlt,
-        border: Border.all(color: TdcColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                _getDeviceIcon(device.type),
-                color: TdcColors.network,
-                size: 20,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      device.hostname,
-                      style: const TextStyle(
-                        color: TdcColors.textPrimary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '${device.ip} • ${device.mac}',
-                      style: const TextStyle(
-                        color: TdcColors.textSecondary,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: TdcColors.network.withValues(alpha: 0.3)),
-                ),
-                child: Text(
-                  '${device.responseTime}ms',
-                  style: const TextStyle(
-                    color: TdcColors.network,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Text(
-                device.os,
-                style: const TextStyle(
-                  color: TdcColors.textMuted,
-                  fontSize: 11,
-                ),
-              ),
-              const Spacer(),
-              ...device.openPorts.map((port) => Padding(
-                    padding: const EdgeInsets.only(left: 6),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: TdcColors.network.withValues(alpha: 0.1),
-                        border: Border.all(
-                            color: TdcColors.network.withValues(alpha: 0.2)),
-                      ),
-                      child: Text(
-                        '$port',
-                        style: const TextStyle(
-                          color: TdcColors.network,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  )),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPingTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          // Contrôles Ping
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: TdcColors.surfaceAlt,
-              border: Border.all(color: TdcColors.border),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _ipController,
-                    style: const TextStyle(
-                        color: TdcColors.textPrimary, fontSize: 13),
-                    decoration: const InputDecoration(
-                      labelText: 'Adresse IP ou domaine',
-                      prefixIcon: Icon(Icons.lan, size: 18),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                ElevatedButton.icon(
-                  onPressed: _isPinging ? null : _performPing,
-                  icon: _isPinging
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.black),
-                        )
-                      : const Icon(Icons.send, size: 18),
-                  label: Text(_isPinging ? 'Ping...' : 'Ping'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: TdcColors.network,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Résultats Ping
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: TdcColors.bg,
-                border: Border.all(color: TdcColors.border),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: TdcColors.border)),
-                    ),
-                    child: const Text(
-                      'RÉPONSES ICMP',
-                      style: TextStyle(
-                        color: TdcColors.textPrimary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _pingResults.length,
-                      itemBuilder: (context, index) {
-                        final result = _pingResults[index];
-                        return _buildPingResultCard(result);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPingResultCard(PingResult result) {
-    final statusColor = result.success ? TdcColors.success : TdcColors.danger;
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: TdcColors.surfaceAlt,
-        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: const BoxDecoration(
+        color: TdcColors.surface,
+        border: Border(bottom: BorderSide(color: TdcColors.border)),
       ),
       child: Row(
         children: [
-          Icon(
-            result.success ? Icons.check_circle_outline : Icons.error_outline,
-            color: statusColor,
-            size: 16,
+          const Icon(Icons.hub_outlined, color: TdcColors.accent, size: 20),
+          const SizedBox(width: 10),
+          const Text(
+            'NETKIT — TOPOLOGIE & ANLYSE',
+            style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: 1.0),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              '${result.bytes} bytes from ${result.target}: icmp_seq=${result.sequence} ttl=${result.ttl} time=${result.time}ms',
-              style: const TextStyle(
-                color: TdcColors.textSecondary,
-                fontSize: 12,
-                fontFamily: 'monospace',
-              ),
+          const Spacer(),
+          ElevatedButton.icon(
+            onPressed: _isScanning ? null : _runScan,
+            icon: _isScanning
+                ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
+                : const Icon(Icons.radar, size: 16, color: Colors.black),
+            label: Text(_isScanning ? 'SCAN...' : 'LANCER SCAN', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: TdcColors.accent,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             ),
           ),
         ],
@@ -579,583 +156,185 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
     );
   }
 
-  Widget _buildTracerouteTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          // Contrôles Traceroute
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: TdcColors.surfaceAlt,
-              border: Border.all(color: TdcColors.border),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _domainController,
-                    style: const TextStyle(
-                        color: TdcColors.textPrimary, fontSize: 13),
-                    decoration: const InputDecoration(
-                      labelText: 'Domaine ou IP',
-                      prefixIcon: Icon(Icons.language, size: 18),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                ElevatedButton.icon(
-                  onPressed: _isTracing ? null : _performTraceroute,
-                  icon: _isTracing
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.black),
-                        )
-                      : const Icon(Icons.route, size: 18),
-                  label: Text(_isTracing ? 'Trace...' : 'Traceroute'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: TdcColors.network,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Résultats Traceroute
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: TdcColors.bg,
-                border: Border.all(color: TdcColors.border),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: TdcColors.border)),
-                    ),
-                    child: const Text(
-                      'PARCOURS RÉSEAU',
-                      style: TextStyle(
-                        color: TdcColors.textPrimary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _traceHops.length,
-                      itemBuilder: (context, index) {
-                        final hop = _traceHops[index];
-                        return _buildHopCard(hop, index);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHopCard(TraceHop hop, int index) {
+  Widget _buildMinimalTopology() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: TdcColors.surfaceAlt,
-        border: Border.all(color: TdcColors.border),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              border: Border.all(color: TdcColors.network),
-            ),
-            child: Center(
-              child: Text(
-                '${hop.hop}',
-                style: const TextStyle(
-                  color: TdcColors.network,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  hop.hostname,
-                  style: const TextStyle(
-                    color: TdcColors.textPrimary,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
+      height: 120,
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      color: const Color(0xFF07070A),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: Row(
+          children: _discoveredDevices.map((device) {
+            final isSelected = device.ip == _selectedDeviceIp;
+            return Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: GestureDetector(
+                onTap: () => setState(() => _selectedDeviceIp = device.ip),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isSelected ? TdcColors.accent.withOpacity(0.12) : TdcColors.surface,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: isSelected ? TdcColors.accent : TdcColors.border),
                   ),
-                ),
-                Text(
-                  hop.ip,
-                  style: const TextStyle(
-                    color: TdcColors.textMuted,
-                    fontSize: 11,
-                    fontFamily: 'monospace',
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ...hop.times.map((time) => Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: Text(
-                  '${time}ms',
-                  style: TextStyle(
-                    color: time < 50 ? TdcColors.success : TdcColors.warning,
-                    fontSize: 10,
-                    fontFamily: 'monospace',
-                  ),
-                ),
-              )),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSnifferTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          // Contrôles Sniffer
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: TdcColors.surfaceAlt,
-              border: Border.all(color: TdcColors.border),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: 'eth0',
-                          isExpanded: true,
-                          dropdownColor: TdcColors.surfaceAlt,
-                          style: const TextStyle(
-                              color: TdcColors.textPrimary, fontSize: 13),
-                          items: const [
-                            DropdownMenuItem(
-                                value: 'eth0', child: Text('Interface eth0')),
-                            DropdownMenuItem(
-                                value: 'wlan0', child: Text('Interface wlan0')),
-                            DropdownMenuItem(
-                                value: 'lo', child: Text('Interface lo')),
-                          ],
-                          onChanged: (value) {},
-                        ),
+                  child: Row(
+                    children: [
+                      Icon(_getDeviceIcon(device.type), color: isSelected ? TdcColors.accent : TdcColors.textMuted, size: 20),
+                      const SizedBox(width: 10),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(device.hostname, style: TextStyle(color: isSelected ? TdcColors.textPrimary : TdcColors.textMuted, fontWeight: FontWeight.bold, fontSize: 12)),
+                          Text(device.ip, style: const TextStyle(fontFamily: 'monospace', fontSize: 10, color: TdcColors.textMuted)),
+                        ],
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    ElevatedButton.icon(
-                      onPressed: _isSniffing ? _stopSniffing : _startSniffing,
-                      icon: Icon(_isSniffing ? Icons.stop : Icons.play_arrow,
-                          size: 18),
-                      label: Text(_isSniffing ? 'Arrêter' : 'Démarrer'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _isSniffing ? TdcColors.danger : TdcColors.network,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 15),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Paquets capturés
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: TdcColors.bg,
-                border: Border.all(color: TdcColors.border),
               ),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: TdcColors.border)),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.history,
-                            color: TdcColors.network, size: 20),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'FLUX DE PAQUETS',
-                          style: TextStyle(
-                            color: TdcColors.textPrimary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                        const Spacer(),
-                        if (_isSniffing)
-                          const Text(
-                            'CAPTURE ACTIVE',
-                            style: TextStyle(
-                              color: TdcColors.success,
-                              fontSize: 9,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                              .animate(onPlay: (c) => c.repeat())
-                              .fadeIn()
-                              .fadeOut(),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _capturedPackets.length,
-                      itemBuilder: (context, index) {
-                        final packet = _capturedPackets[index];
-                        return _buildPacketCard(packet);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+            );
+          }).toList(),
+        ),
       ),
     );
   }
-
-  Widget _buildPacketCard(CapturedPacket packet) {
-    final protoColor = _getProtocolColor(packet.protocol);
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: TdcColors.surfaceAlt.withValues(alpha: 0.5),
-        border: Border(left: BorderSide(color: protoColor, width: 2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                packet.protocol.toUpperCase(),
-                style: TextStyle(
-                  color: protoColor,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  '${packet.sourceIp}:${packet.sourcePort} → ${packet.destIp}:${packet.destPort}',
-                  style: const TextStyle(
-                    color: TdcColors.textPrimary,
-                    fontSize: 11,
-                    fontFamily: 'monospace',
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Text(
-                '${packet.size}b',
-                style:
-                    const TextStyle(color: TdcColors.textMuted, fontSize: 10),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '${packet.timestamp.substring(11, 19)} | ${packet.info}',
-            style: const TextStyle(
-              color: TdcColors.textSecondary,
-              fontSize: 10,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Méthodes de simulation améliorées
-  Future<void> _performNetworkScan() async {
-    if (_isScanning) return;
-    setState(() {
-      _isScanning = true;
-      _discoveredDevices.clear();
-    });
-
-    await Future.delayed(const Duration(seconds: 2));
-
-    final scanResults = [
-      NetworkDevice(
-        ip: '192.168.1.1',
-        mac: '00:11:22:33:44:55',
-        hostname: 'Gateway',
-        type: 'Router',
-        os: 'Tdc-OS/Core',
-        openPorts: [80, 443, 53],
-        responseTime: 1,
-      ),
-      NetworkDevice(
-        ip: '192.168.1.12',
-        mac: 'AA:BB:CC:DD:EE:FF',
-        hostname: 'Dev-Station',
-        type: 'Desktop',
-        os: 'Linux 6.x',
-        openPorts: [22, 3000, 8080],
-        responseTime: 4,
-      ),
-      NetworkDevice(
-        ip: '192.168.1.25',
-        mac: 'FF:EE:DD:CC:BB:AA',
-        hostname: 'Main-Server',
-        type: 'Server',
-        os: 'Ubuntu 22.04',
-        openPorts: [22, 443, 3306],
-        responseTime: 2,
-      ),
-    ];
-
-    for (var device in scanResults) {
-      await Future.delayed(const Duration(milliseconds: 500));
-      if (!mounted) return;
-      setState(() {
-        _discoveredDevices.add(device);
-      });
-    }
-
-    setState(() => _isScanning = false);
-  }
-
-  Future<void> _performPing() async {
-    if (_isPinging) return;
-    setState(() {
-      _isPinging = true;
-      _pingResults.clear();
-    });
-
-    final target =
-        _ipController.text.isEmpty ? '127.0.0.1' : _ipController.text;
-
-    for (int i = 0; i < 4; i++) {
-      await Future.delayed(const Duration(milliseconds: 600));
-      if (!mounted) return;
-
-      final result = PingResult(
-        sequence: i + 1,
-        target: target,
-        bytes: 64,
-        time: 5 + (i * 2) + (i % 2 == 0 ? 1 : 0),
-        ttl: 64,
-        success: true,
-      );
-
-      setState(() {
-        _pingResults.add(result);
-      });
-    }
-
-    setState(() => _isPinging = false);
-  }
-
-  Future<void> _performTraceroute() async {
-    if (_isTracing) return;
-    setState(() {
-      _isTracing = true;
-      _traceHops.clear();
-    });
-
-    final hops = [
-      TraceHop(
-          hop: 1, hostname: 'gateway', ip: '192.168.1.1', times: [1, 1, 2]),
-      TraceHop(
-          hop: 2, hostname: 'isp-gw', ip: '10.20.30.1', times: [12, 14, 11]),
-      TraceHop(
-          hop: 3,
-          hostname: 'backbone-core',
-          ip: '80.50.60.2',
-          times: [22, 25, 21]),
-      TraceHop(
-          hop: 4, hostname: 'target-node', ip: '1.2.3.4', times: [35, 38, 34]),
-    ];
-
-    for (var hop in hops) {
-      await Future.delayed(const Duration(milliseconds: 1000));
-      if (!mounted) return;
-      setState(() {
-        _traceHops.add(hop);
-      });
-    }
-
-    setState(() => _isTracing = false);
-  }
-
-  Future<void> _startSniffing() async {
-    if (_isSniffing) return;
-    setState(() => _isSniffing = true);
-
-    while (_isSniffing) {
-      await Future.delayed(const Duration(milliseconds: 400));
-      if (!mounted) break;
-
-      final protocols = ['tcp', 'udp', 'icmp'];
-      final proto = protocols[DateTime.now().millisecond % 3];
-
-      final packet = CapturedPacket(
-        timestamp: DateTime.now().toIso8601String(),
-        sourceIp: '192.168.1.${10 + (DateTime.now().second % 20)}',
-        sourcePort: 1024 + (DateTime.now().millisecond % 5000),
-        destIp: '1.1.1.1',
-        destPort: proto == 'udp' ? 53 : 443,
-        protocol: proto,
-        size: 40 + (DateTime.now().millisecond % 1000),
-        info: proto == 'icmp'
-            ? 'Echo Request'
-            : (proto == 'udp' ? 'DNS Query' : 'TLS Handshake'),
-      );
-
-      setState(() {
-        _capturedPackets.insert(0, packet);
-        if (_capturedPackets.length > 50) _capturedPackets.removeLast();
-      });
-    }
-  }
-
-  void _stopSniffing() => setState(() => _isSniffing = false);
-  void _clearPackets() => setState(() => _capturedPackets.clear());
 
   IconData _getDeviceIcon(String type) {
     switch (type) {
-      case 'Router':
-        return Icons.router;
-      case 'Server':
-        return Icons.dns;
-      case 'Desktop':
-        return Icons.computer;
-      default:
-        return Icons.device_hub;
+      case 'Passerelle': return Icons.router_outlined;
+      case 'Pare-feu': return Icons.shield_outlined;
+      case 'Serveur Web': return Icons.dns_outlined;
+      case 'Base de Données': return Icons.storage_outlined;
+      default: return Icons.computer_outlined;
     }
   }
 
-  Color _getProtocolColor(String protocol) {
-    switch (protocol) {
-      case 'tcp':
-        return TdcColors.network;
-      case 'udp':
-        return TdcColors.system;
-      case 'icmp':
-        return TdcColors.crypto;
-      default:
-        return TdcColors.textMuted;
-    }
+  Widget _buildNetworkScanView() {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('ÉQUIPEMENTS RÉSEAU (${_discoveredDevices.length})', style: const TextStyle(color: TdcColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
+            Text('IP Locale : 192.168.1.210', style: const TextStyle(fontFamily: 'monospace', color: TdcColors.accent, fontSize: 11)),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ..._discoveredDevices.map((d) => _buildSimpleDeviceRow(d)),
+      ],
+    );
+  }
+
+  Widget _buildSimpleDeviceRow(NetworkDevice device) {
+    final isSelected = device.ip == _selectedDeviceIp;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: TdcColors.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: isSelected ? TdcColors.accent.withOpacity(0.5) : TdcColors.border),
+      ),
+      child: Row(
+        children: [
+          Icon(_getDeviceIcon(device.type), color: TdcColors.accent, size: 18),
+          const SizedBox(width: 12),
+          Text(device.hostname, style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 12)),
+          const SizedBox(width: 8),
+          Text(device.ip, style: const TextStyle(fontFamily: 'monospace', color: TdcColors.textMuted, fontSize: 11)),
+          const Spacer(),
+          Wrap(
+            spacing: 4,
+            children: device.openPorts.map((p) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(4)),
+              child: Text(':$p', style: const TextStyle(fontFamily: 'monospace', fontSize: 10, color: TdcColors.accent)),
+            )).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _runScan() async {
+    setState(() => _isScanning = true);
+    await Future.delayed(const Duration(milliseconds: 1200));
+    setState(() => _isScanning = false);
+  }
+
+  Widget _buildSnifferView() {
+    return Column(
+      children: [
+        Expanded(
+          flex: 5,
+          child: ListView.builder(
+            itemCount: _capturedPackets.length,
+            itemBuilder: (context, i) {
+              final p = _capturedPackets[i];
+              final isSel = _selectedPacket?.id == p.id;
+              return GestureDetector(
+                onTap: () => setState(() => _selectedPacket = p),
+                child: Container(
+                  color: isSel ? TdcColors.accent.withOpacity(0.1) : (i.isEven ? const Color(0xFF09090D) : Colors.black),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Row(
+                    children: [
+                      SizedBox(width: 40, child: Text(p.protocol, style: TextStyle(color: p.protocol == 'HTTP' ? Colors.redAccent : TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 11))),
+                      SizedBox(width: 100, child: Text(p.source, style: const TextStyle(fontFamily: 'monospace', color: TdcColors.textMuted, fontSize: 11))),
+                      const Icon(Icons.arrow_right_alt, color: TdcColors.textMuted, size: 14),
+                      SizedBox(width: 100, child: Text(p.destination, style: const TextStyle(fontFamily: 'monospace', color: TdcColors.textMuted, fontSize: 11))),
+                      const SizedBox(width: 12),
+                      Expanded(child: Text(p.info, style: const TextStyle(fontFamily: 'monospace', color: TdcColors.textPrimary, fontSize: 11), overflow: TextOverflow.ellipsis)),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        if (_selectedPacket != null)
+          Container(
+            height: 120,
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            color: const Color(0xFF050508),
+            child: SingleChildScrollView(
+              child: Text(_selectedPacket!.payload, style: const TextStyle(fontFamily: 'monospace', color: Colors.greenAccent, fontSize: 11)),
+            ),
+          ),
+      ],
+    );
   }
 }
 
-// Modèles de données
 class NetworkDevice {
   final String ip;
-  final String mac;
   final String hostname;
   final String type;
   final String os;
   final List<int> openPorts;
-  final int responseTime;
 
-  NetworkDevice({
-    required this.ip,
-    required this.mac,
-    required this.hostname,
-    required this.type,
-    required this.os,
-    required this.openPorts,
-    required this.responseTime,
-  });
+  NetworkDevice({required this.ip, required this.hostname, required this.type, required this.os, required this.openPorts});
 }
 
 class PingResult {
-  final int sequence;
-  final String target;
-  final int bytes;
-  final int time;
-  final int ttl;
-  final bool success;
-
-  PingResult({
-    required this.sequence,
-    required this.target,
-    required this.bytes,
-    required this.time,
-    required this.ttl,
-    required this.success,
-  });
-}
-
-class TraceHop {
-  final int hop;
-  final String hostname;
-  final String ip;
-  final List<int> times;
-
-  TraceHop({
-    required this.hop,
-    required this.hostname,
-    required this.ip,
-    required this.times,
-  });
+  final String message;
+  PingResult({required this.message});
 }
 
 class CapturedPacket {
-  final String timestamp;
-  final String sourceIp;
-  final int sourcePort;
-  final String destIp;
-  final int destPort;
+  final int id;
+  final String time;
+  final String source;
+  final String destination;
   final String protocol;
-  final int size;
   final String info;
+  final String payload;
 
-  CapturedPacket({
-    required this.timestamp,
-    required this.sourceIp,
-    required this.sourcePort,
-    required this.destIp,
-    required this.destPort,
-    required this.protocol,
-    required this.size,
-    required this.info,
-  });
+  CapturedPacket({required this.id, required this.time, required this.source, required this.destination, required this.protocol, required this.info, required this.payload});
 }

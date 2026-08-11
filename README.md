@@ -5,12 +5,19 @@
   <p>
     <strong>🇫🇷 Français</strong> | <a href="README_EN.md">🇬🇧 English</a>
   </p>
-  <a href="https://gitlab.com/tutodecode-org/T2DECODE">
+  <a href="https://tutodecode.org">
     <img src="https://gitlab.com/tutodecode-org/T2DECODE/-/raw/main/assets/TDC.png" width="160" height="160" alt="T2C Logo">
   </a>
 
   <h1>T2DECODE</h1>
-  <p><strong>Plateforme pédagogique autonome et souveraine pour les réseaux, la cybersécurité et l'administration système.</strong></p>
+  <p><strong>Plateforme pédagogique souveraine, 100% hors-ligne & laboratoire d'ingénierie réseaux & cybersécurité.</strong></p>
+
+  <p>
+    <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/blob/main/LICENSE"><img src="https://img.shields.io/badge/Licence-GPLv3-blue.svg" alt="Licence GPLv3"></a>
+    <a href="https://tutodecode.org"><img src="https://img.shields.io/badge/Hors--Ligne-100%25-success.svg" alt="100% Hors Ligne"></a>
+    <a href="https://snapcraft.io/t2decode"><img src="https://img.shields.io/badge/Plateformes-Linux%20%7C%20macOS%20%7C%20Android%20%7C%20Windows-F5EBDA.svg" alt="Multiplateforme"></a>
+    <a href="https://tutodecode.org"><img src="https://img.shields.io/badge/Z%C3%A9ro--Cloud-Souverain-black.svg" alt="Zéro Cloud"></a>
+  </p>
 
   <p>
     <a href="#-téléchargement--installation-utilisateurs">Téléchargement</a> · 

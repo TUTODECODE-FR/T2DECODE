@@ -22,6 +22,7 @@ class ChapterScreen extends StatefulWidget {
 
 class _ChapterScreenState extends State<ChapterScreen> {
   final ScrollController _scroll = ScrollController();
+  bool _quizPassed = false;
 
   @override
   void initState() {
@@ -63,40 +64,237 @@ class _ChapterScreenState extends State<ChapterScreen> {
 
     return Column(
       children: [
-        Expanded(
-          child: ListView(
-            controller: _scroll,
-            padding: const EdgeInsets.all(24),
+        // Barre d'engagement & XP
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+            color: TdcColors.surfaceAlt,
+            border: Border(bottom: BorderSide(color: TdcColors.border)),
+          ),
+          child: Row(
             children: [
-              Text(course.title,
-                  style: const TextStyle(
-                      color: TdcColors.accent,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Text(chapter.title,
-                  style: const TextStyle(
-                      color: TdcColors.textPrimary,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 24),
-              _markdown(chapter.content),
-              const SizedBox(height: 28),
-              _practiceSection(course, chapter),
-              if (chapter.quiz != null) ...[
-                const SizedBox(height: 32),
-                const TdcSectionTitle('QUIZ'),
-                const SizedBox(height: 16),
-                QcmWidget(
-                  questions: chapter.quiz!,
-                  chapterContent: chapter.content,
-                  onComplete: (ok) {
-                    if (ok) prov.toggleCompleted(course.id, chapter.id);
-                  },
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: TdcColors.accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
                 ),
-              ],
-              const SizedBox(height: 48),
+                child: Row(
+                  children: [
+                    const Icon(Icons.star, size: 14, color: TdcColors.accent),
+                    const SizedBox(width: 4),
+                    Text(
+                      '+50 XP',
+                      style: const TextStyle(
+                        color: TdcColors.accent,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Row(
+                children: [
+                  const Icon(Icons.timer_outlined, size: 14, color: TdcColors.textMuted),
+                  const SizedBox(width: 4),
+                  Text(
+                    chapter.duration.isNotEmpty ? chapter.duration : '15 min',
+                    style: const TextStyle(color: TdcColors.textMuted, fontSize: 11),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/ghost_ai');
+                },
+                icon: const Icon(Icons.smart_toy_outlined, size: 14, color: Colors.black),
+                label: const Text('POSER UNE QUESTION À GHOST AI', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TdcColors.accent,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
             ],
+          ),
+        ),
+
+        Expanded(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 820),
+              child: ListView(
+                controller: _scroll,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                children: [
+                  // Bannière Hero de Chapitre (Design 2026)
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF14141E), Color(0xFF09090D)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: TdcColors.accent.withValues(alpha: 0.25)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.6),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: TdcColors.accent.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: TdcColors.accent.withValues(alpha: 0.4)),
+                              ),
+                              child: Text(
+                                course.category.toUpperCase(),
+                                style: const TextStyle(
+                                  color: TdcColors.accent,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.greenAccent.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.3)),
+                              ),
+                              child: const Text(
+                                '🔥 MODE INCIDENT REEL',
+                                style: TextStyle(
+                                  color: Colors.greenAccent,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const Spacer(),
+                            Row(
+                              children: [
+                                const Icon(Icons.star, color: TdcColors.accent, size: 14),
+                                const SizedBox(width: 4),
+                                const Text('+50 XP', style: TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 12)),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          chapter.title,
+                          style: const TextStyle(
+                            color: TdcColors.textPrimary,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Module : ${course.title} • Durée estimée : ${chapter.duration.isNotEmpty ? chapter.duration : "15 min"}',
+                          style: const TextStyle(color: TdcColors.textMuted, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+
+                  // Contenu Markdown du chapitre
+                  _markdown(chapter.content),
+                  const SizedBox(height: 36),
+
+                  // Carte Résumé "À Retenir Absolument"
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F0F16),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: TdcColors.accent.withValues(alpha: 0.05),
+                          blurRadius: 12,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: const [
+                            Icon(Icons.workspace_premium, color: TdcColors.accent, size: 22),
+                            SizedBox(width: 10),
+                            Text(
+                              '💡 FICHE RÉFLEXE : À RETENIR ABSOLUMENT',
+                              style: TextStyle(
+                                color: TdcColors.accent,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 13,
+                                letterSpacing: 1.1,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        const Text(
+                          '• La pratique vaut 100x la théorie : testez immédiatement les commandes dans la VM Bac à Sable.\n'
+                          '• En cas de doute ou de question technique, interrogez Ghost AI (assistant local) en 1 clic.\n'
+                          '• Validez le défi QCM ci-dessous pour valider vos 50 XP et faire progresser votre niveau !',
+                          style: TextStyle(color: TdcColors.textPrimary, fontSize: 13, height: 1.7),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 36),
+
+                  _practiceSection(course, chapter),
+                  if (chapter.quiz != null) ...[
+                    const SizedBox(height: 36),
+                    const TdcSectionTitle('QUIZ & DÉFI XP'),
+                    const SizedBox(height: 16),
+                    QcmWidget(
+                      questions: chapter.quiz!,
+                      chapterContent: chapter.content,
+                      onComplete: (ok) {
+                        if (ok) {
+                          prov.toggleCompleted(course.id, chapter.id);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              backgroundColor: TdcColors.accent,
+                              content: Text('🎉 Bravo ! Chapitre validé +50 XP remportés !', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                  const SizedBox(height: 48),
+                ],
+              ),
+            ),
           ),
         ),
         _nav(course, chapter, prov),
@@ -258,23 +456,32 @@ class _ChapterScreenState extends State<ChapterScreen> {
       },
       styleSheet: MarkdownStyleSheet(
         p: const TextStyle(
-            color: TdcColors.textSecondary, fontSize: 15, height: 1.6),
+            color: TdcColors.textPrimary, fontSize: 15, height: 1.7),
         h1: const TextStyle(
-            color: TdcColors.textPrimary,
-            fontSize: 20,
-            fontWeight: FontWeight.bold),
+            color: TdcColors.accent,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            height: 1.4),
         h2: const TextStyle(
             color: TdcColors.textPrimary,
             fontSize: 18,
-            fontWeight: FontWeight.w600),
+            fontWeight: FontWeight.bold,
+            height: 1.4),
         h3: const TextStyle(
-            color: TdcColors.textPrimary,
-            fontSize: 16,
+            color: TdcColors.accent,
+            fontSize: 15,
             fontWeight: FontWeight.w600),
         code: const TextStyle(
-            color: TdcColors.warning,
-            backgroundColor: TdcColors.surfaceAlt,
-            fontFamily: 'monospace'),
+            color: TdcColors.accent,
+            backgroundColor: Color(0xFF14141E),
+            fontFamily: 'monospace',
+            fontSize: 13),
+        codeblockDecoration: BoxDecoration(
+          color: const Color(0xFF06060A),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: TdcColors.border),
+        ),
+        codeblockPadding: const EdgeInsets.all(16),
         a: const TextStyle(
             color: TdcColors.accent, decoration: TextDecoration.underline),
         strong: const TextStyle(
@@ -282,10 +489,17 @@ class _ChapterScreenState extends State<ChapterScreen> {
         em: const TextStyle(
             color: TdcColors.textSecondary, fontStyle: FontStyle.italic),
         blockquote: const TextStyle(
-            color: TdcColors.textMuted, fontStyle: FontStyle.italic),
+            color: TdcColors.accent, fontStyle: FontStyle.italic, fontSize: 14, height: 1.5),
+        blockquoteDecoration: BoxDecoration(
+          color: const Color(0xFF0F0F16),
+          borderRadius: BorderRadius.circular(8),
+          border: const Border(left: BorderSide(color: TdcColors.accent, width: 3)),
+        ),
+        blockquotePadding: const EdgeInsets.all(16),
         tableHead: const TextStyle(
-            color: TdcColors.textPrimary, fontWeight: FontWeight.bold),
-        tableBody: const TextStyle(color: TdcColors.textSecondary),
+            color: TdcColors.accent, fontWeight: FontWeight.bold),
+        tableBody: const TextStyle(color: TdcColors.textPrimary),
+        tableBorder: TableBorder.all(color: TdcColors.border),
       ),
     );
   }
@@ -293,6 +507,9 @@ class _ChapterScreenState extends State<ChapterScreen> {
   Widget _nav(course, chapter, prov) {
     final idx = course.chapters.indexOf(chapter);
     final hasNext = idx < course.chapters.length - 1;
+    final isCompleted = prov.completed.contains('${course.id}:${chapter.id}');
+    final isLocked = chapter.quiz != null && !_quizPassed && !isCompleted;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
@@ -305,6 +522,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
             Expanded(
               child: TextButton.icon(
                 onPressed: () {
+                  setState(() => _quizPassed = false);
                   prov.selectChapter(course.id, course.chapters[idx - 1].id);
                   _scroll.jumpTo(0);
                 },
@@ -317,18 +535,28 @@ class _ChapterScreenState extends State<ChapterScreen> {
           const SizedBox(width: 16),
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: () {
-                if (hasNext) {
-                  prov.selectChapter(course.id, course.chapters[idx + 1].id);
-                  _scroll.jumpTo(0);
-                } else {
-                  Navigator.pop(context);
-                }
-              },
-              icon: Icon(hasNext ? Icons.chevron_right : Icons.check, size: 18),
-              label: Text(hasNext ? 'Suivant' : 'Terminer'),
+              onPressed: isLocked
+                  ? () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: TdcColors.warning,
+                          content: Text('🔒 Vous devez réussir le Quiz à la fin du chapitre pour débloquer la suite !', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                        ),
+                      );
+                    }
+                  : () {
+                      setState(() => _quizPassed = false);
+                      if (hasNext) {
+                        prov.selectChapter(course.id, course.chapters[idx + 1].id);
+                        _scroll.jumpTo(0);
+                      } else {
+                        Navigator.pop(context);
+                      }
+                    },
+              icon: Icon(isLocked ? Icons.lock : (hasNext ? Icons.chevron_right : Icons.check), size: 18),
+              label: Text(isLocked ? 'Quiz Obligatoire' : (hasNext ? 'Suivant' : 'Terminer')),
               style: ElevatedButton.styleFrom(
-                backgroundColor: hasNext ? TdcColors.accent : TdcColors.success,
+                backgroundColor: isLocked ? TdcColors.surfaceAlt : (hasNext ? TdcColors.accent : TdcColors.success),
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
             ),
