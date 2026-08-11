@@ -39,7 +39,32 @@ Les binaires compilés et authentifiés sont distribués via les canaux officiel
 | **Linux** | [Snap Store](https://snapcraft.io/t2decode) / [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Snap / AppImage / DEB | `sudo snap install t2decode` |
 | **macOS** | [App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12) / **Homebrew** / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | PKG / DMG / Cask | `brew install --cask t2decode` |
 | **Android** | [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | APK / AAB | *Via F-Droid Client* |
-| **Windows** | [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Installateur EXE / ZIP | *Téléchargement direct* |
+| **Windows** | [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) / [SourceForge](https://sourceforge.net/projects/t2decode/) | Installateur EXE / ZIP | *Téléchargement direct* |
+
+> 🌐 **Miroir indépendant d'audit & distribution** : Retrouvez l'ensemble des exécutables, archives et fichiers de checksums sur notre [dépôt officiel SourceForge](https://sourceforge.net/projects/t2decode/).
+
+---
+
+### 🛡️ Vérification d'Intégrité des Binaires (Zero Trust)
+
+On n'est jamais trop prudent : contrôlez l'empreinte numérique SHA-256 de vos fichiers téléchargés par rapport aux sommes de contrôle officielles publiées sur [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) et [SourceForge](https://sourceforge.net/projects/t2decode/).
+
+#### 🐧 Linux & 🍏 macOS (Terminal)
+```bash
+# Vérifier l'empreinte SHA-256 sous Linux
+sha256sum T2DECODE-Linux.tar.gz
+
+# Vérifier l'empreinte SHA-256 sous macOS
+shasum -a 256 T2DECODE-macOS.dmg
+
+# Verification automatique par fichier d'empreintes officiel :
+curl -sL https://sourceforge.net/projects/t2decode/files/latest/download | sha256sum -c -
+```
+
+#### 🪟 Windows (PowerShell)
+```powershell
+Get-FileHash .\T2DECODE-Windows.zip -Algorithm SHA256
+```
 
 ---
 

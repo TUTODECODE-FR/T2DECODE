@@ -32,7 +32,29 @@ Pre-compiled and signed binaries are distributed through official channels:
 | **Linux** | [Snap Store](https://snapcraft.io/t2decode) / [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Snap / AppImage / DEB | `sudo snap install t2decode` |
 | **macOS** | [App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12) / **Homebrew** / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | PKG / DMG / Cask | `brew install --cask t2decode` |
 | **Android** | [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | APK / AAB | *Via F-Droid Client* |
-| **Windows** | [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | EXE Installer / ZIP | *Direct Download* |
+| **Windows** | [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) / [SourceForge](https://sourceforge.net/projects/t2decode/) | EXE Installer / ZIP | *Direct Download* |
+
+> 🌐 **Independent Audit & Distribution Mirror**: Find all release binaries, archives, and checksum files on our [official SourceForge repository](https://sourceforge.net/projects/t2decode/).
+
+---
+
+### 🛡️ Binary Integrity Verification (Zero Trust)
+
+You can never be too safe: verify the SHA-256 checksum of your downloaded binary against official hashes published on [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) and [SourceForge](https://sourceforge.net/projects/t2decode/).
+
+#### 🐧 Linux & 🍏 macOS (Terminal)
+```bash
+# Verify SHA-256 hash on Linux
+sha256sum T2DECODE-Linux.tar.gz
+
+# Verify SHA-256 hash on macOS
+shasum -a 256 T2DECODE-macOS.dmg
+```
+
+#### 🪟 Windows (PowerShell)
+```powershell
+Get-FileHash .\T2DECODE-Windows.zip -Algorithm SHA256
+```
 
 ---
 
