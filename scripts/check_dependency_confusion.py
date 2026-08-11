@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-only
 # Copyright (C) 2024-2026 TUTODECODE Association <contact@tutodecode.org>
-# Script: Dependency Confusion and Supply Chain Auditor
+# Script: Dependency Confusion and Supply Chain Auditor (Zero Third-Party Dependencies)
 
 import sys
-import yaml
+import re
 import os
 
 def audit_pubspec(pubspec_path):
@@ -12,27 +12,17 @@ def audit_pubspec(pubspec_path):
         print(f"⚠️ Warning: pubspec.yaml not found at {pubspec_path}")
         sys.exit(0)
 
-    with open(pubspec_path, "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f)
-
-    deps = data.get("dependencies", {})
-    dev_deps = data.get("dev_dependencies", {})
-    all_deps = {**deps, **dev_deps}
-
     issues = 0
 
-    for name, spec in all_deps.items():
-        if isinstance(spec, dict):
-            git_spec = spec.get("git")
-            if git_spec:
-                if isinstance(git_spec, dict):
-                    url = git_spec.get("url", "")
-                else:
-                    url = str(git_spec)
+    with open(pubspec_path, "r", encoding="utf-8") as f:
+        content = f.read()
 
-                if url.startswith("http://"):
-                    print(f"❌ Error: Dependency '{name}' uses insecure HTTP git source: {url}")
-                    issues += 1
+    # Search for insecure http:// git urls or unverified dependency sources
+    http_matches = re.findall(r'url:\s*["\']?(http://[^"\'\s]+)', content, re.IGNORECASE)
+
+    for match in http_matches:
+        print(f"❌ Error: Insecure HTTP dependency source detected in pubspec: {match}")
+        issues += 1
 
     if issues > 0:
         print(f"❌ Found {issues} supply chain security issues in {pubspec_path}.")
