@@ -196,3 +196,12 @@ jobs:
         env:
           SF_PRIVATE_KEY: ${{ secrets.SF_PRIVATE_KEY }}
 
+      - name: Publish Snap package to Snap Store (latest/stable)
+        if: env.SNAPCRAFT_STORE_CREDENTIALS != ''
+        uses: canonical/snapcraft-action@v2
+        with:
+          snapcraft-token: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+
+

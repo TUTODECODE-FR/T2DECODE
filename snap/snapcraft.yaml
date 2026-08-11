@@ -1,12 +1,16 @@
 name: t2decode
-version: '1.0.2.21'
-summary: Simulateur et boite a outils hors-ligne pour les reseaux et la cybersecurite
+adopt-info: t2decode
+summary: Boite a outils et cours hors-ligne pour la cybersecurite et les reseaux
 description: |
-  T2DECODE est une plateforme d'apprentissage hors-ligne pour la cybersecurite et les reseaux.
+  T2DECODE est une plateforme d'apprentissage hors-ligne et souveraine pour la cybersecurite, les reseaux et l'administration systeme.
 
 confinement: strict
 base: core22
 grade: stable
+
+architectures:
+  - build-on: amd64
+  - build-on: arm64
 
 apps:
   t2decode:
@@ -51,4 +55,8 @@ parts:
       flutter pub get
       flutter build linux --release
       mkdir -p $CRAFT_PART_INSTALL
-      cp -r build/linux/x64/release/bundle/* $CRAFT_PART_INSTALL/
+      cp -r build/linux/*/release/bundle/* $CRAFT_PART_INSTALL/
+      
+      # Extraction automatique de la version depuis pubspec.yaml
+      VERSION=$(grep '^version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1)
+      craftctl set version="$VERSION"
