@@ -469,16 +469,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: TdcColors.textSecondary, fontSize: 13, height: 1.4),
         ),
         const SizedBox(height: 16),
-        Row(
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
           children: [
             OutlinedButton(
               onPressed: () =>
                   Navigator.pushNamed(context, '/mentions-legales'),
               child: const Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.badge_outlined, size: 14, color: TdcColors.accent),
                   SizedBox(width: 8),
                   Text('Fiche d\'Identité & Mentions Légales'),
+                ],
+              ),
+            ),
+            OutlinedButton(
+              onPressed: _showBugReportDialog,
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.bug_report_outlined, size: 14, color: TdcColors.warning),
+                  SizedBox(width: 8),
+                  Text('Signaler un bug / problème'),
                 ],
               ),
             ),
@@ -613,6 +627,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ) ??
         false;
+  }
+
+  void _showBugReportDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: TdcColors.surface,
+        title: const Row(
+          children: [
+            Icon(Icons.bug_report, color: TdcColors.warning),
+            SizedBox(width: 10),
+            Text('Signaler un Problème', style: TextStyle(fontSize: 16)),
+          ],
+        ),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Pour garantir l\'anonymat et le respect de la vie privée (Zero Tracking), le signalement de bugs s\'effectue via nos canaux officiels :',
+              style: TextStyle(fontSize: 13, height: 1.4, color: TdcColors.textSecondary),
+            ),
+            SizedBox(height: 16),
+            SelectableText(
+              '• Dépôt GitLab Officiel :\n  https://gitlab.com/tutodecode-org/T2DECODE/-/issues/new\n\n'
+              '• Miroir GitHub :\n  https://github.com/TUTODECODE-FR/T2DECODE/issues/new\n\n'
+              '• Support direct Association :\n  contact@tutodecode.org',
+              style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: TdcColors.accent),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Fermer'),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildSecurityDiagnosticLink() {
