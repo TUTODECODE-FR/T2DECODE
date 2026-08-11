@@ -56,7 +56,7 @@ parts:
       flutter build linux --release
       mkdir -p $CRAFT_PART_INSTALL
       cp -r build/linux/*/release/bundle/* $CRAFT_PART_INSTALL/
-      
+
       # Extraction automatique de la version depuis pubspec.yaml
       VERSION=$(grep '^version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1)
       craftctl set version="$VERSION"
