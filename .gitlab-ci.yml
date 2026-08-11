@@ -391,7 +391,9 @@ build_macos_test:
     - git clone https://github.com/flutter/flutter.git -b stable $HOME/flutter
     - export PATH="$PATH:$HOME/flutter/bin"
     - flutter config --no-enable-swift-package-manager
+    - sudo gem install cocoapods || true
     - flutter pub get
+    - (cd macos && pod install || true)
     - flutter build macos --release
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
