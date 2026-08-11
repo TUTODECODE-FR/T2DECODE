@@ -87,6 +87,12 @@ brew tap tutodecode-org/homebrew-tap
 brew install --cask t2decode
 ```
 
+> 💡 **Première ouverture sur macOS (Gatekeeper)** : Si un message "Développeur non vérifié" apparaît au premier lancement du binaire `.dmg` : faites un **Clic Droit sur T2DECODE.app → Ouvrir**, ou exécutez `xattr -cr /Applications/T2DECODE.app` dans le Terminal.
+
+### 🪟 Lancement Windows (SmartScreen)
+> 💡 **Première ouverture sur Windows (SmartScreen)** : Si la fenêtre de protection bleue Windows s'affiche au premier lancement de l'exécutable `.exe` : cliquez sur **"Informations complémentaires"** puis sur le bouton **"Exécuter quand même"**. L'application `Association TUTODECODE` sera mémorisée pour les lancements suivants.
+
+
 <img src="assets/separator.svg" width="100%" height="4">
 
 ## 🛡️ 3. Vérification d'Intégrité & Sécurité (Zero Trust)

@@ -87,6 +87,12 @@ brew tap tutodecode-org/homebrew-tap
 brew install --cask t2decode
 ```
 
+> 💡 **First Launch on macOS (Gatekeeper)**: If an "Unverified Developer" warning appears on first `.dmg` launch: perform a **Right-Click on T2DECODE.app → Open**, or execute `xattr -cr /Applications/T2DECODE.app` in your Terminal.
+
+### 🪟 Windows First Launch (SmartScreen)
+> 💡 **First Launch on Windows (SmartScreen)**: If the blue Windows protection dialog pops up on first `.exe` launch: click **"More info"** and then press **"Run anyway"**. Windows will remember `Association TUTODECODE` for subsequent launches.
+
+
 <img src="assets/separator.svg" width="100%" height="4">
 
 ## 🛡️ 3. Binary Integrity & Zero Trust Security
