@@ -31,7 +31,6 @@ void main() {
     // Attendre que les animations initiales se terminent (flutter_animate)
     // On utilise pump(duration) pour avancer le temps si pumpAndSettle échoue sur des animations infinies
     await tester.pump(const Duration(seconds: 1));
-    await tester.pumpAndSettle();
 
     expect(find.byType(NetworkSimulator), findsOneWidget);
   });
