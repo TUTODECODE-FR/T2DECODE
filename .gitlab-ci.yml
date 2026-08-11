@@ -274,8 +274,8 @@ military_hardening_audit:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: on_success
 
-# === STAGE: BUILD-TEST (Unsigned) ===
-build_android_unsigned:
+# === STAGE: BUILD-TEST ===
+build_android_test:
   stage: build-test
   needs:
     - test_and_analyze
@@ -299,7 +299,7 @@ build_android_unsigned:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
 
-build_linux_unsigned:
+build_linux_test:
   stage: build-test
   needs:
     - test_and_analyze
@@ -329,7 +329,7 @@ build_linux_unsigned:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
 
-build_windows_unsigned:
+build_windows_test:
   stage: build-test
   needs:
     - test_and_analyze
@@ -368,7 +368,7 @@ build_windows_unsigned:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
 
-build_macos_unsigned:
+build_macos_test:
   stage: build-test
   needs:
     - test_and_analyze
