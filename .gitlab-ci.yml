@@ -5,7 +5,7 @@ variables:
   DS_EXCLUDED_PATHS: "android/**,ios/**,macos/**,windows/**,linux/**"
 
 default:
-  interruptible: true
+  interruptible: false
 
 stages:
   - validate
