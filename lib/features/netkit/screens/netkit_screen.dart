@@ -52,6 +52,9 @@ class _NetKitScreenState extends State<NetKitScreen>
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+    final isOffline = settings.offlineMode || settings.zeroNetworkMode;
+
     return Column(
       children: [
         // ── Bandeau pédagogique ───────────────────────────────
@@ -63,11 +66,13 @@ class _NetKitScreenState extends State<NetKitScreen>
           ),
           child: Row(
             children: [
-              const Icon(Icons.cable, color: TdcColors.info, size: 16),
+              Icon(isOffline ? Icons.wifi_off : Icons.cable, color: TdcColors.info, size: 16),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Outils de diagnostic réseau réels — les commandes s\'exécutent sur votre machine. Aucune donnée n\'est envoyée à l\'extérieur.',
+                  isOffline
+                      ? 'Mode 100% Hors-ligne actif — Aucun paquet réseau sortant n\'est transmis à l\'extérieur.'
+                      : 'Outils de diagnostic réseau réels — les commandes s\'exécutent localement. Diagnostic réseau optionnel.',
                   style: TextStyle(
                       color: TdcColors.info.withValues(alpha: 0.85),
                       fontSize: 11),
