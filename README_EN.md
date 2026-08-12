@@ -150,7 +150,7 @@ T2DECODE relies on a rigorous, automated DevSecOps engineering process:
 The **TUTODECODE Association** welcomes contributors and developers passionate about networking and cybersecurity!
 
 - 📖 **Contribution Guide**: Read [`CONTRIBUTING.md`](CONTRIBUTING.md) for details.
-- 👥 **Maintainer Recruitment**: Check opportunities in [`MAINTAINER_WANTED.md`](MAINTAINER_WANTED.md).
+- 👥 **Maintainer Recruitment**: Check opportunities in [`MAINTAINERS.md`](MAINTAINERS.md).
 - 💬 **Support & Inquiries**: Reach out at `contact@tutodecode.org`.
 
 <img src="assets/separator.svg" width="100%" height="4">
@@ -233,7 +233,7 @@ T2DECODE is distributed under the free software **GNU General Public License v3.
 - [🔒 Security Policy](SECURITY.md)
 - [🛡️ OWASP MASVS Mapping](docs/masvs-mapping.md)
 - [🤝 Contributing Guide](CONTRIBUTING.md)
-- [👥 Maintainer Recruitment](MAINTAINER_WANTED.md)
+- [👥 Maintainer Recruitment](MAINTAINERS.md)
 - [📄 GPLv3 License](LICENSE)
 
 <img src="assets/separator.svg" width="100%" height="4">
