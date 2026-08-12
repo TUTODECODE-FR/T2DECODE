@@ -661,13 +661,13 @@ release_gitlab:
     - echo "Creating GitLab Release for $CI_COMMIT_TAG"
     - apk add --no-cache git curl
     - |
-      echo "⏳ Waiting for GitHub Actions multi-OS build to finish..."
-      for i in $(seq 1 36); do
-        if curl -sI --fail "https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${CI_COMMIT_TAG}/SHA256SUMS.txt" >/dev/null 2>&1; then
-          echo "✅ GitHub Release binaries are fully compiled and published!"
+      echo "⏳ Waiting for GitHub Actions multi-OS binaries to be published..."
+      for i in $(seq 1 60); do
+        if curl -sL -I "https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${CI_COMMIT_TAG}/T2DECODE-macOS.dmg" | grep -E "HTTP/[12] (200|302)" >/dev/null 2>&1; then
+          echo "✅ GitHub Release binaries are fully compiled and live!"
           break
         fi
-        echo "Binaries still compiling on GitHub Actions. Waiting 10s ($i/36)..."
+        echo "Binaries still compiling on GitHub Actions. Waiting 10s ($i/60)..."
         sleep 10
       done
     - |
