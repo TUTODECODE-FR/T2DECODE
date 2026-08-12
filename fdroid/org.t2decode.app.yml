@@ -1,40 +1,125 @@
 Categories:
-  - Education
+  - Science & Education
   - Security
-  - System
-License: MIT
-AuthorName: T2DECODE
-WebSite: https://tutodecode.org/
+License: GPL-3.0-only
+AuthorName: Association TUTODECODE
+AuthorWebSite: https://tutodecode.org
+WebSite: https://tutodecode.org
 SourceCode: https://gitlab.com/tutodecode-org/T2DECODE
 IssueTracker: https://gitlab.com/tutodecode-org/T2DECODE/-/issues
 Changelog: https://gitlab.com/tutodecode-org/T2DECODE/-/releases
 
 AutoName: T2DECODE
-Summary: Local learning platform
-Description: |-
-    T2DECODE is a fully offline, air-gapped learning platform designed for IT enthusiasts, cybersecurity students, and network administrators.
 
-    Features:
-    * Completely offline: No internet connection required, no analytics, no tracking.
-    * Interactive Labs: Network, System, Cloud, and Cryptography simulators.
-    * Local AI Assistant: Integrate with your local Ollama models (Phi-3, Llama 3) for an air-gapped AI tutor.
-    * P2P Communication: GhostLink feature allows local LAN encrypted communication without servers.
-    * Offline Tools: Built-in utilities (Subnet calculators, Hash generators, CRON helpers, and more).
-    * Comprehensive Courses: Learn at your own pace with markdown-based courses and quizzes.
+RepoType: git
+Repo: https://gitlab.com/tutodecode-org/T2DECODE.git
 
 Builds:
-  - versionName: 1.0.2
-    versionCode: 19
-    commit: v1.0.2
-    sudo:
-      - sysupdate
+  - versionName: 1.0.3
+    versionCode: 351
+    commit: v1.0.3
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - web
+      - windows
+    prebuild:
+      - flutterVersion="$(cat .flutter-version)"
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
     build:
-      - flutter config --no-analytics
-      - flutter pub get
-      - flutter build apk --release
-    output: build/app/outputs/flutter-apk/app-release.apk
+      - FLUTTER_ABS=$(realpath $$flutter$$)
+      - mkdir -p /builds/tutodecode-org/
+      - cd ..
+      - export repo=/builds/tutodecode-org/T2DECODE/
+      - mv org.t2decode.app $repo
+      - pushd $repo
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $FLUTTER_ABS/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+      - popd
+      - mv $repo org.t2decode.app
 
-AutoUpdateMode: Version v%v
-UpdateCheckMode: Tags
-CurrentVersion: 1.0.2
-CurrentVersionCode: 19
+  - versionName: 1.0.3
+    versionCode: 352
+    commit: v1.0.3
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - web
+      - windows
+    prebuild:
+      - flutterVersion="$(cat .flutter-version)"
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - FLUTTER_ABS=$(realpath $$flutter$$)
+      - mkdir -p /builds/tutodecode-org/
+      - cd ..
+      - export repo=/builds/tutodecode-org/T2DECODE/
+      - mv org.t2decode.app $repo
+      - pushd $repo
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $FLUTTER_ABS/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+      - popd
+      - mv $repo org.t2decode.app
+
+  - versionName: 1.0.3
+    versionCode: 353
+    commit: v1.0.3
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - web
+      - windows
+    prebuild:
+      - flutterVersion="$(cat .flutter-version)"
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+    scandelete:
+      - .pub-cache
+    build:
+      - FLUTTER_ABS=$(realpath $$flutter$$)
+      - mkdir -p /builds/tutodecode-org/
+      - cd ..
+      - export repo=/builds/tutodecode-org/T2DECODE/
+      - mv org.t2decode.app $repo
+      - pushd $repo
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $FLUTTER_ABS/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
+      - popd
+      - mv $repo org.t2decode.app
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9.]+$
+VercodeOperation:
+  - '%c * 10 + 1'
+  - '%c * 10 + 2'
+  - '%c * 10 + 3'
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.0.3
+CurrentVersionCode: 353

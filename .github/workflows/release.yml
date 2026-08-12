@@ -207,8 +207,9 @@ jobs:
 
       - name: Publish Snap package to Snap Store (latest/stable)
         if: env.SNAPCRAFT_STORE_CREDENTIALS != ''
-        uses: canonical/snapcraft-action@v2
+        uses: snapcore/action-publish@v1
         with:
           snapcraft-token: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        continue-on-error: true
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
