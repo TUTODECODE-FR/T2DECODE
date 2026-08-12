@@ -161,7 +161,7 @@ jobs:
           # Remove subdirectories
           find . -mindepth 1 -type d -exec rm -rf {} +
           # Generate checksums for all regular files
-          sha256sum * > SHA256SUMS.txt
+          sha256sum $(ls -1 | grep -v SHA256SUMS.txt) > SHA256SUMS.txt
 
       - name: Create GitHub Release with All OS Artifacts
         uses: softprops/action-gh-release@v2
