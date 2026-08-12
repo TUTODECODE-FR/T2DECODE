@@ -340,50 +340,6 @@ build_linux_test:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
 
-build_windows_test:
-  stage: build-test
-  needs:
-    - test_and_analyze
-  tags:
-    - saas-windows-medium-amd64
-  allow_failure: true
-  script:
-    - $ProductId = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property productId
-    - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property installationPath
-    - 'echo "Product ID: $ProductId"'
-    - 'echo "Install Path: $InstallPath"'
-    - 'if ($ProductId -eq "Microsoft.VisualStudio.Product.Community") { $url = "https://aka.ms/vs/17/release/vs_community.exe" } elseif ($ProductId -eq "Microsoft.VisualStudio.Product.Professional") { $url = "https://aka.ms/vs/17/release/vs_professional.exe" } elseif ($ProductId -eq "Microsoft.VisualStudio.Product.Enterprise") { $url = "https://aka.ms/vs/17/release/vs_enterprise.exe" } else { $url = "https://aka.ms/vs/17/release/vs_buildtools.exe" }'
-    - echo "Downloading bootstrapper from $url"
-    - Invoke-WebRequest -Uri $url -OutFile vs_bootstrapper.exe
-    - echo "Running bootstrapper..."
-    - Start-Process -FilePath ".\vs_bootstrapper.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --passive --norestart --wait" -Wait -PassThru
-    - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
-    - $env:Path += ";C:/flutter/bin"
-    - flutter config --no-enable-swift-package-manager
-    - flutter pub get
-    - flutter build windows --release
-  rules:
-    - when: manual
-
-build_macos_test:
-  stage: build-test
-  needs:
-    - test_and_analyze
-  allow_failure: true
-  image: macos-15-xcode-16
-  tags:
-    - saas-macos-large-m2pro
-  script:
-    - git clone https://github.com/flutter/flutter.git -b stable $HOME/flutter
-    - export PATH="$PATH:$HOME/flutter/bin"
-    - flutter config --no-enable-swift-package-manager
-    - sudo gem install cocoapods || true
-    - flutter pub get
-    - (cd macos && pod install || true)
-    - flutter build macos --release
-  rules:
-    - when: manual
-
 # === STAGE: AUTO-TAG ===
 auto_tag:
   stage: auto-tag
