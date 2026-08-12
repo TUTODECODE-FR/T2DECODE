@@ -2,6 +2,7 @@
 
 # Configuration
 APP_NAME="T2DECODE"
+# shellcheck disable=SC2034
 MIN_FLUTTER_VERSION="3.0.0"
 
 echo "--------------------------------------------------"
