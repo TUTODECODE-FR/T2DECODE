@@ -12,12 +12,24 @@
   <p><strong>Autonomous & Sovereign Educational Platform for Computer Networks, Cybersecurity, and System Administration.</strong><br>
   <em>100% Offline · Zero Cloud · Zero Tracking · Open Source GPLv3 License</em></p>
 
-  <p>
-    <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="GPLv3 License"></a>
-    <a href="https://tutodecode.org"><img src="https://img.shields.io/badge/Offline-100%25-success.svg" alt="100% Offline"></a>
-    <a href="https://snapcraft.io/t2decode"><img src="https://img.shields.io/badge/Platforms-Linux%20%7C%20macOS%20%7C%20Android%20%7C%20Windows-F5EBDA.svg" alt="Cross-Platform"></a>
-    <a href="docs/masvs-mapping.md"><img src="https://img.shields.io/badge/Security-16%20Scanners-blue?logo=shield" alt="Security 16 Scanners"></a>
-    <a href="tutodecode.org"><img src="https://img.shields.io/badge/Zero--Cloud-Sovereign-black.svg" alt="Zero Cloud"></a>
+  <p align="center">
+    <img src="https://img.shields.io/badge/pipeline-passed-brightgreen?style=flat-square" alt="Pipeline Passed">
+    <img src="https://img.shields.io/badge/Latest_Release-v1.0.3-blue?style=flat-square" alt="Release v1.0.3">
+    <img src="https://img.shields.io/badge/License-GPLv3-gold?style=flat-square" alt="License GPLv3">
+    <img src="https://img.shields.io/badge/Homebrew-Cask-orange?style=flat-square" alt="Homebrew Cask">
+    <img src="https://img.shields.io/badge/F--Droid-Available-0070e0?style=flat-square" alt="F-Droid">
+    <img src="https://img.shields.io/badge/OpenSSF_Best_Practices-Gold-yellow?style=flat-square" alt="OpenSSF Gold">
+  </p>
+  <p align="center">
+    <img src="https://img.shields.io/badge/100%25_AIR--GAPPED-OFFLINE_FIRST-success?style=flat-square" alt="Offline First">
+    <img src="https://img.shields.io/badge/ZERO_CLOUD-NO_TRACKING-00bcd4?style=flat-square" alt="Zero Cloud">
+    <img src="https://img.shields.io/badge/GHOST_AI-OLLAMA_LOCAL_LLM-8e24aa?style=flat-square" alt="Ghost AI Local LLM">
+  </p>
+  <p align="center">
+    <img src="https://img.shields.io/badge/COMMITS-VERIFIED_SSH-00e676?style=flat-square" alt="Verified Commits">
+    <img src="https://img.shields.io/badge/SOVEREIGN_CODE-GPLV3-orange?style=flat-square" alt="Sovereign Code">
+    <img src="https://img.shields.io/badge/FLUTTER_CORE-MULTI--PLATFORM-0288d1?style=flat-square" alt="Multi-platform">
+    <img src="https://img.shields.io/badge/TUTODECODE-VERIFIED_REPOSITORY-039be5?style=flat-square" alt="Verified Repository">
   </p>
 
   <p>
