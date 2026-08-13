@@ -34,6 +34,11 @@ class ShellProvider extends ChangeNotifier {
   void setActiveRoute(String route) {
     if (_activeRoute != route) {
       _activeRoute = route;
+      if (route == '/') {
+        _title = 'Accueil';
+        _showBackButton = false;
+        _actions = [];
+      }
       notifyListeners();
     }
   }
