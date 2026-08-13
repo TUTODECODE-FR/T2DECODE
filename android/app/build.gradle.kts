@@ -63,9 +63,9 @@ android {
             } else if (!isFdroidBuild) {
                 signingConfig = signingConfigs.getByName("debug")
             }
-            // For troubleshooting, let's disable minification temporarily
-            isMinifyEnabled = true
-            isShrinkResources = true
+            // Disable minification to prevent R8 ProGuard errors during release build
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 
