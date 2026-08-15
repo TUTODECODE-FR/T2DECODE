@@ -1,0 +1,43 @@
+{
+  "name": "vscode-tdc-language",
+  "displayName": "TUTODECODE Script (.tdc) Language Support",
+  "description": "Syntax highlighting, autocompletion, and snippets for TUTODECODE Script (.tdc) course language.",
+  "version": "1.0.0",
+  "publisher": "tutodecode",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "icon": "icon.png",
+  "contributes": {
+    "languages": [
+      {
+        "id": "tdc",
+        "aliases": [
+          "TUTODECODE Script",
+          "tdc"
+        ],
+        "extensions": [
+          ".tdc"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "tdc",
+        "scopeName": "source.tdc",
+        "path": "./syntaxes/tdc.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "tdc",
+        "path": "./snippets/tdc.code-snippets"
+      }
+    ]
+  }
+}

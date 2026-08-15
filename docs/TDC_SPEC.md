@@ -164,3 +164,25 @@ course "network-subnetting-101" {
   }
 }
 ```
+
+---
+
+## 6. Outillage Externe & Éditeurs de Code
+
+Si vous préférez créer vos cours dans un éditeur externe (VS Code, Neovim, Sublime Text, Notepad++) plutôt que dans le Studio de l'application, T2DECODE fournit les outils suivants :
+
+### 💻 Extension VS Code (`tools/vscode-tdc/`)
+- Coloration syntaxique complète pour `.tdc`.
+- Autocomplétion et snippets (`course`, `module`, `question`).
+- Fermeture automatique des blocs et guillemets triple `"""`.
+
+### 🛠️ CLI Linter & Convertisseur (`tools/tdc_cli.py`)
+- **Valider un fichier `.tdc`** :
+  ```bash
+  python3 tools/tdc_cli.py check cours.tdc
+  ```
+- **Convertir un ancien JSON en `.tdc`** :
+  ```bash
+  python3 tools/tdc_cli.py json2tdc courses.json -o courses.tdc
+  ```
+
