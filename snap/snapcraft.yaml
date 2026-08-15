@@ -51,9 +51,10 @@ parts:
       - libepoxy0
       - liblzma5
     override-build: |
-      git clone https://github.com/flutter/flutter.git -b stable /tmp/flutter
+      git clone https://github.com/flutter/flutter.git -b stable /tmp/flutter || true
+      git config --global --add safe.directory '*' || true
       export PATH="/tmp/flutter/bin:$PATH"
-      flutter config --no-enable-swift-package-manager
+      flutter config --no-analytics || true
       flutter pub get
       flutter build linux --release
       mkdir -p $CRAFT_PART_INSTALL
