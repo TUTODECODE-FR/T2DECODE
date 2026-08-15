@@ -1461,7 +1461,6 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
     );
   }
 
-  void _showSettingsDialog() {
   void _showSettingsModal() {
     showDialog(
       context: context,
