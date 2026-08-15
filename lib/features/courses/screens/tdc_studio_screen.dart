@@ -21,38 +21,20 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
   late TabController _tabController;
   final TextEditingController _rawCodeController = TextEditingController();
 
-  // Core Course Model State
-  String _courseId = 'linux-sysadmin';
-  String _courseTitle = 'Administration Système Linux';
-  String _courseDesc = 'Maîtrisez les commandes de base, les permissions et la gestion des processus.';
+  // Core Course Model State (100% Blank Slate)
+  String _courseId = '';
+  String _courseTitle = '';
+  String _courseDesc = '';
   String _category = 'linux';
   String _level = 'beginner';
-  String _duration = '2h';
+  String _duration = '';
   String _icon = 'Terminal';
-  List<String> _keywords = ['linux', 'sysadmin', 'bash', 'terminal'];
+  List<String> _keywords = [];
 
-  List<Map<String, dynamic>> _modules = [
-    {
-      'id': 'audit-processus',
-      'title': 'Chapitre 1 : Audit des Processus & Mémoire',
-      'duration': '20min',
-      'content': '# 📊 Audit de la RAM et du CPU\n\nLorsque le serveur ralentit, utilisez les outils système natifs.',
-      'codeBlocks': [
-        {'language': 'bash', 'title': 'Affichage des processus', 'code': 'ps aux --sort=-%mem | head -n 10\nfree -h'}
-      ],
-      'quiz': [
-        {
-          'question': 'Quelle commande affiche la mémoire disponible ?',
-          'choices': ['free -h', 'ls -la', 'cat /etc/passwd'],
-          'correctIndex': 0,
-          'explanation': 'free -h affiche la mémoire physique et le SWAP en format lisible (GB/MB).'
-        }
-      ]
-    }
-  ];
+  List<Map<String, dynamic>> _modules = [];
 
   // Accordion state
-  final List<bool> _expandedModules = [true];
+  final List<bool> _expandedModules = [];
 
   // Live QCM Interactive State (Apprenant mode in Preview)
   final Map<String, int> _userQuizAnswers = {};
@@ -161,47 +143,24 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
     }
   }
 
-  void _createNewDefaultCourse() {
+  void _createNewBlankCourse() {
     _confirmActionIfUnsaved('Créer un nouveau cours', () {
       setState(() {
-        _courseId = 'nouveau-cours-tdc';
-        _courseTitle = 'Nouveau Cours Technique';
-        _courseDesc = 'Description pédagogique et objectifs de ce cours rédigé en .tdc.';
+        _courseId = '';
+        _courseTitle = '';
+        _courseDesc = '';
         _category = 'linux';
         _level = 'beginner';
-        _duration = '1h';
+        _duration = '';
         _icon = 'Terminal';
-        _keywords = ['tutodecode', 'tdc', 'cours'];
-        _modules = [
-          {
-            'id': 'chapitre-1',
-            'title': 'Chapitre 1 : Premier Pas & Terminal',
-            'duration': '15min',
-            'content': '# 🚀 Introduction au cours\n\nRédigez ici votre explication en **Markdown**.\n\n- Point clé 1\n- Point clé 2',
-            'codeBlocks': [
-              {
-                'language': 'bash',
-                'title': 'Commande d\'exemple',
-                'code': 'echo "Bienvenue dans TDC Studio IDE !"'
-              }
-            ],
-            'quiz': [
-              {
-                'question': 'Quelle est la première étape du cours ?',
-                'choices': ['Lire le premier chapitre', 'Ignorer la théorie', 'Fermer le terminal'],
-                'correctIndex': 0,
-                'explanation': 'La lecture attentive permet d\'assimiler les notions.'
-              }
-            ]
-          }
-        ];
+        _keywords = [];
+        _modules = [];
         _expandedModules.clear();
-        _expandedModules.add(true);
         _showWelcomeScreen = false;
         _hasUnsavedChanges = false;
       });
       _syncFormToRawCode();
-      _showFloatingToast('Nouveau projet créé !');
+      _showFloatingToast('Nouveau cours vierge créé !');
     });
   }
 
@@ -1709,10 +1668,10 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                             const SizedBox(height: 16),
                             _buildWelcomeActionButton(
                               icon: Icons.add_circle_outline,
-                              title: 'Nouveau Cours .TDC',
-                              subtitle: 'Créer un cours avec exemple pré-rempli',
+                              title: 'Nouveau Cours Vierge .TDC',
+                              subtitle: 'Créer un projet 100% vierge sans aucun exemple',
                               color: const Color(0xFFF5EBDA),
-                              onTap: _createNewDefaultCourse,
+                              onTap: _createNewBlankCourse,
                             ),
                             const SizedBox(height: 12),
                             _buildWelcomeActionButton(
