@@ -149,7 +149,7 @@ ai_safety_guard_test:
   stage: validate
   script:
     - flutter pub get
-    - flutter test test/unit/ai_safety_guard_test.dart || flutter test --name="AISafetyGuard"
+    - flutter test test/unit/ai_safety_guard_test.dart
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: on_success
@@ -158,7 +158,7 @@ constant_time_crypto_test:
   stage: validate
   script:
     - flutter pub get
-    - flutter test test/unit/constant_time_security_test.dart || flutter test --name="ConstantTime"
+    - flutter test test/unit/constant_time_security_test.dart
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: on_success
