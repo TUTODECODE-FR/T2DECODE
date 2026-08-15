@@ -9,6 +9,7 @@ default:
 
 stages:
   - validate
+  - test
   - build-test
   - auto-tag
   - sync-os-builds
