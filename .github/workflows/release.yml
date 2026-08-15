@@ -237,11 +237,11 @@ jobs:
           path: ${{ steps.snapbuild.outputs.snap }}
 
       - name: Publish Snap to Snap Store (${{ matrix.architecture }})
-        if: env.SNAPCRAFT_STORE_CREDENTIALS != ''
+        if: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS != '' }}
         uses: snapcore/action-publish@v1
         with:
           snapcraft-token: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
-          store-clearing-link: ${{ steps.snapbuild.outputs.snap }}
+          snap: ${{ steps.snapbuild.outputs.snap }}
         continue-on-error: true
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
