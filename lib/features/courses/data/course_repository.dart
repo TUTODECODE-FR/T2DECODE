@@ -48,6 +48,10 @@ class CourseChapter {
   });
 }
 
+enum CourseOrigin { official, signed, community }
+
+enum KeyTrustStatus { trusted, recognized, conflict, untrusted }
+
 class Course {
   final String id;
   final String title;
@@ -58,6 +62,14 @@ class Course {
   final List<String> keywords;
   final List<CourseChapter> chapters;
 
+  final CourseOrigin origin;
+  final String author;
+  final String? authorKeyFingerprint;
+  final KeyTrustStatus trustStatus;
+  final String? sourcePath;
+  final bool isCustomCategory;
+  final String? rawSource;
+
   Course({
     required this.id,
     required this.title,
@@ -67,37 +79,119 @@ class Course {
     required this.category,
     required this.keywords,
     required this.chapters,
+    this.origin = CourseOrigin.official,
+    this.author = 'TUTODECODE',
+    this.authorKeyFingerprint,
+    this.trustStatus = KeyTrustStatus.trusted,
+    this.sourcePath,
+    this.isCustomCategory = false,
+    this.rawSource,
   });
 
-  factory Course.fromMap(Map<String, dynamic> m) {
+  static const List<String> standardCategories = [
+    'linux',
+    'network',
+    'security',
+    'cloud',
+    'crypto',
+    'development',
+    'réseau',
+    'sécurité',
+    'développement',
+  ];
+
+  factory Course.fromMap(Map<String, dynamic> m, {String? sourcePath, String? rawSource}) {
+    final keywords = List<String>.from(m['keywords'] ?? []);
+    final category = (m['category'] ?? '').toString().trim();
+    final isCustomCat = category.isNotEmpty &&
+        !standardCategories.contains(category.toLowerCase());
+
+    final bool isExternal = keywords.contains('EXTERNAL') ||
+        m['isExternal'] == true ||
+        sourcePath != null;
+
+    CourseOrigin origin = CourseOrigin.official;
+    String author = 'TUTODECODE';
+    String? fingerprint = m['authorKeyFingerprint'] ?? m['authorKey'];
+    KeyTrustStatus trustStatus = KeyTrustStatus.trusted;
+
+    if (isExternal) {
+      final sigMatch = m['signature'] != null ||
+          (rawSource != null && rawSource.contains('signature:'));
+      final authorMatch = m['author'] ??
+          (rawSource != null
+              ? RegExp(r'author:\s*["' "'" r']([^"' "'" r']+)["' "'" r']')
+                  .firstMatch(rawSource)
+                  ?.group(1)
+              : null);
+
+      if (sigMatch || authorMatch != null) {
+        origin = CourseOrigin.signed;
+        author = authorMatch?.toString() ?? 'Auteur Tiers';
+        if (fingerprint == null && rawSource != null) {
+          final fpMatch = RegExp(
+                  r'author-key:\s*["' "'" r']([^"' "'" r']+)["' "'" r']')
+              .firstMatch(rawSource);
+          fingerprint = fpMatch?.group(1);
+        }
+        final statusStr = m['trustStatus']?.toString() ?? '';
+        if (statusStr == 'conflict') {
+          trustStatus = KeyTrustStatus.conflict;
+        } else if (statusStr == 'recognized') {
+          trustStatus = KeyTrustStatus.recognized;
+        } else if (statusStr == 'untrusted') {
+          trustStatus = KeyTrustStatus.untrusted;
+        } else {
+          trustStatus = KeyTrustStatus.recognized;
+        }
+      } else {
+        origin = CourseOrigin.community;
+        author = m['author']?.toString() ?? 'Communauté';
+        trustStatus = KeyTrustStatus.untrusted;
+      }
+    }
+
     final course = Course(
-      id: m['id'],
-      title: m['title'],
+      id: m['id'] ?? 'cours-inconnu',
+      title: m['title'] ?? 'Sans titre',
       description: m['description'] ?? '',
       level: m['level'] ?? '',
       duration: m['duration'] ?? '',
-      category: m['category'] ?? '',
-      keywords: List<String>.from(m['keywords'] ?? []),
+      category: category,
+      keywords: keywords,
       chapters: [],
+      origin: origin,
+      author: author,
+      authorKeyFingerprint: fingerprint,
+      trustStatus: trustStatus,
+      sourcePath: sourcePath,
+      isCustomCategory: isCustomCat,
+      rawSource: rawSource,
     );
 
-    final rawChapters = (m['content'] ?? []) as List<dynamic>;
+    final rawChapters = (m['content'] is List) ? (m['content'] as List<dynamic>) : [];
     for (int i = 0; i < rawChapters.length; i++) {
       final c = rawChapters[i];
-      final codeBlocks = c['codeBlocks'] != null
-          ? List<Map<String, dynamic>>.from(c['codeBlocks'])
+      if (c is! Map) continue;
+      final mapC = Map<String, dynamic>.from(c);
+
+      final rawBlocks = mapC['codeBlocks'];
+      final List<Map<String, dynamic>>? codeBlocks = rawBlocks is List
+          ? rawBlocks
+              .map((b) => Map<String, dynamic>.from(b as Map))
+              .toList()
           : null;
 
-      final quizData = c['quiz'] as List<dynamic>?;
+      final quizData = mapC['quiz'] as List<dynamic>?;
       final quiz = quizData
-          ?.map((q) => QuizQuestion.fromMap(q as Map<String, dynamic>))
+          ?.map((q) => QuizQuestion.fromMap(Map<String, dynamic>.from(q as Map)))
           .toList();
 
       final tempChapter = CourseChapter(
-        id: c['id'],
-        title: c['title'],
-        content: c['content'] ?? '',
-        duration: c['duration'] ?? '',
+        id: mapC['id']?.toString() ?? 'module-$i',
+        title: mapC['title']?.toString() ?? 'Chapitre $i',
+        content: mapC['content']?.toString() ?? '',
+        duration: mapC['duration']?.toString() ?? '',
         codeBlocks: codeBlocks,
         quiz: quiz,
       );
@@ -106,10 +200,10 @@ class Course {
           CourseExpansion.expandChapterContent(course, tempChapter, i);
 
       course.chapters.add(CourseChapter(
-        id: c['id'],
-        title: c['title'],
+        id: tempChapter.id,
+        title: tempChapter.title,
         content: expanded,
-        duration: c['duration'] ?? '',
+        duration: tempChapter.duration,
         codeBlocks: codeBlocks,
         quiz: quiz,
       ));

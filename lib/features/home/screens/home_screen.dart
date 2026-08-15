@@ -21,7 +21,8 @@ import 'package:tutodecode/core/providers/settings_provider.dart';
 import 'package:tutodecode/core/services/snapshot_service.dart';
 import 'package:tutodecode/core/providers/search_provider.dart';
 import 'package:tutodecode/core/services/asset_integrity_service.dart';
-import 'package:tutodecode/core/navigation/nav_keys.dart';
+import '../../courses/widgets/course_import_dialog.dart';
+import '../../courses/widgets/course_authenticity_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -750,6 +751,19 @@ class _HomeScreenState extends State<HomeScreen> {
             tooltip: 'Actualiser les modules externes',
             onPressed: () => prov.reload(),
           ),
+          const SizedBox(width: 8),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFF5EBDA),
+              foregroundColor: Colors.black,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+            ),
+            icon: const Icon(Icons.file_open_outlined, size: 14),
+            label: const Text('Importer un cours (.TDC)',
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+            onPressed: () => CourseImportDialog.show(context),
+          ),
         ]),
         Row(children: [
           SizedBox(
@@ -830,6 +844,69 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildOriginBadge(BuildContext context, Course course) {
+    String label;
+    Color bg;
+    Color text;
+    IconData icon;
+
+    switch (course.origin) {
+      case CourseOrigin.official:
+        label = '★ Officiel • Asso';
+        bg = const Color(0xFF1E1B18);
+        text = const Color(0xFFF5EBDA);
+        icon = Icons.star_rounded;
+        break;
+
+      case CourseOrigin.signed:
+        if (course.trustStatus == KeyTrustStatus.conflict) {
+          label = '⚠️ Conflit de clé';
+          bg = const Color(0xFF451A03);
+          text = const Color(0xFFFBBF24);
+          icon = Icons.warning_amber_rounded;
+        } else {
+          final authorName = course.author.isNotEmpty ? course.author : 'Auteur';
+          label = '✓ Auteur : $authorName';
+          bg = const Color(0xFF064E3B);
+          text = const Color(0xFF34D399);
+          icon = Icons.verified_user_outlined;
+        }
+        break;
+
+      case CourseOrigin.community:
+      default:
+        label = '🌐 Communauté';
+        bg = const Color(0xFF27272A);
+        text = const Color(0xFFA1A1AA);
+        icon = Icons.public;
+        break;
+    }
+
+    return InkWell(
+      onTap: () => CourseAuthenticityDialog.show(context, course),
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: text.withOpacity(0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 11, color: text),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(color: text, fontSize: 10, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildVerticalCard(
       BuildContext context,
       Course course,
@@ -840,14 +917,6 @@ class _HomeScreenState extends State<HomeScreen> {
       int total,
       double progress,
       bool isImported) {
-    final sourceColor = isImported ? TdcColors.coral : TdcColors.info;
-    final sourceIcon =
-        isImported ? Icons.file_upload_outlined : Icons.verified_outlined;
-    final sourceLabel = isImported ? 'Importé (local)' : 'Officiel';
-    final sourceTooltip = isImported
-        ? 'Cours importé depuis un fichier local. T2DECODE n’en revendique pas la paternité.'
-        : 'Cours fourni avec T2DECODE.';
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -872,14 +941,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icons.check_circle),
                   const SizedBox(width: 8),
                 ],
-                Tooltip(
-                  message: sourceTooltip,
-                  child: TdcStatusBadge(
-                    label: sourceLabel,
-                    color: sourceColor,
-                    icon: sourceIcon,
-                  ),
-                ),
+                _buildOriginBadge(context, course),
               ],
             ),
           ],
@@ -1013,11 +1075,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.w600)),
           ),
           SizedBox(height: TdcAdaptive.space(context, 6)),
-          Tooltip(
-            message: sourceTooltip,
-            child: Icon(sourceIcon,
-                size: TdcAdaptive.icon(context, 16), color: sourceColor),
-          ),
+          _buildOriginBadge(context, course),
           SizedBox(height: TdcAdaptive.space(context, 6)),
           Icon(Icons.chevron_right,
               color: TdcColors.textMuted, size: TdcAdaptive.icon(context, 18)),

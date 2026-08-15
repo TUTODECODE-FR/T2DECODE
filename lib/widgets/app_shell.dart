@@ -21,6 +21,7 @@ import '../core/navigation/nav_keys.dart';
 import '../core/providers/search_provider.dart';
 import '../core/providers/settings_provider.dart';
 import '../features/tools/tool_catalog.dart';
+import '../features/courses/widgets/course_import_dialog.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key, required this.child});
@@ -910,6 +911,18 @@ class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    if (_query.isEmpty) ...[
+                      _sectionHeader('ACTIONS RAPIDES'),
+                      _buildResultRow(
+                        icon: Icons.file_open_outlined,
+                        title: 'Importer un cours (.TDC)',
+                        subtitle: 'Charger et valider un fichier .tdc ou .json souverain',
+                        onTap: () {
+                          AppNavigator.pop();
+                          CourseImportDialog.show(context);
+                        },
+                      ),
+                    ],
                     if (_query.isEmpty && search.favorites.isNotEmpty) ...[
                       _sectionHeader('FAVORIS'),
                       ...search.favorites.take(8).map((id) {

@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:tutodecode/features/courses/data/course_repository.dart';
+import 'package:tutodecode/core/parser/tdc_parser.dart';
+import 'package:tutodecode/core/services/tdc_signature_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cryptography/cryptography.dart';
 
@@ -34,7 +36,7 @@ class ModuleService {
     return dir;
   }
 
-  /// Scans the modules directory for .json files and loads them as Courses.
+  /// Scans the modules directory for .json and .tdc files and loads them as Courses.
   Future<List<Course>> loadExternalModules() async {
     final List<Course> externalCourses = [];
     try {
@@ -44,18 +46,22 @@ class ModuleService {
       final List<FileSystemEntity> files = dir.listSync();
 
       for (final file in files) {
-        if (file is File && file.path.endsWith(_jsonExtension)) {
+        if (file is File &&
+            (file.path.endsWith('.json') || file.path.endsWith('.tdc'))) {
           try {
             final len = await file.length();
-            if (len > _maxModuleBytes) {
-              if (kDebugMode) {
-                debugPrint(
-                    'Skipping module (too large: $len bytes): ${file.path}');
-              }
-              continue;
-            }
+            if (len > _maxModuleBytes) continue;
+
             final content = await file.readAsString();
-            final Map<String, dynamic> data = json.decode(content);
+            Map<String, dynamic> data;
+            String? rawTdcSource;
+
+            if (file.path.endsWith('.tdc')) {
+              rawTdcSource = content;
+              data = TDCParser.parseCourse(content);
+            } else {
+              data = json.decode(content);
+            }
 
             final fileName = file.path.split(Platform.pathSeparator).last;
             final meta = await getSavedMeta(fileName);
@@ -71,16 +77,32 @@ class ModuleService {
               }
             }
 
-            // Étape de validation stricte avant parsing complet
             final validationError = _validateModuleMap(data);
-            if (validationError != null) {
-              if (kDebugMode) {
-                debugPrint('Rejet du module ($validationError): ${file.path}');
-              }
-              continue;
+            if (validationError != null) continue;
+
+            final sigResult =
+                await TDCSignatureService.verifyCourse(rawTdcSource ?? content);
+            if (sigResult.authorName.isNotEmpty) {
+              data['author'] = sigResult.authorName;
+            }
+            data['authorKeyFingerprint'] = sigResult.authorKeyFingerprint;
+
+            if (sigResult.status == TDCSignatureStatus.conflictUsurpation) {
+              data['trustStatus'] = 'conflict';
+            } else if (sigResult.status == TDCSignatureStatus.validTrusted) {
+              data['trustStatus'] = 'trusted';
+            } else if (sigResult.status == TDCSignatureStatus.validNewKey) {
+              data['trustStatus'] = 'recognized';
+            } else {
+              data['trustStatus'] = 'untrusted';
             }
 
-            final course = Course.fromMap(data);
+            final course = Course.fromMap(
+              data,
+              sourcePath: file.path,
+              rawSource: rawTdcSource ?? content,
+            );
+
             if (!course.keywords.contains('EXTERNAL')) {
               course.keywords.add('EXTERNAL');
             }
@@ -99,6 +121,43 @@ class ModuleService {
       }
     }
     return externalCourses;
+  }
+
+  /// Saves an imported course content (.tdc or .json) into the local modules folder.
+  Future<Course?> saveImportedCourse(String fileName, String rawContent) async {
+    final safeFileName = fileName.split('/').last.split(r'\').last;
+    final dir = await getModulesDirectory();
+    final file = File('${dir.path}/$safeFileName');
+    await file.writeAsString(rawContent);
+
+    Map<String, dynamic> data;
+    if (safeFileName.endsWith('.tdc')) {
+      data = TDCParser.parseCourse(rawContent);
+    } else {
+      data = json.decode(rawContent);
+    }
+
+    final sigResult = await TDCSignatureService.verifyCourse(rawContent);
+    if (sigResult.authorName.isNotEmpty) {
+      data['author'] = sigResult.authorName;
+    }
+    data['authorKeyFingerprint'] = sigResult.authorKeyFingerprint;
+
+    if (sigResult.status == TDCSignatureStatus.conflictUsurpation) {
+      data['trustStatus'] = 'conflict';
+    } else if (sigResult.status == TDCSignatureStatus.validTrusted) {
+      data['trustStatus'] = 'trusted';
+    } else if (sigResult.status == TDCSignatureStatus.validNewKey) {
+      data['trustStatus'] = 'recognized';
+    } else {
+      data['trustStatus'] = 'untrusted';
+    }
+
+    final course = Course.fromMap(data, sourcePath: file.path, rawSource: rawContent);
+    if (!course.keywords.contains('EXTERNAL')) {
+      course.keywords.add('EXTERNAL');
+    }
+    return course;
   }
 
   /// Scans the modules directory for .json files and loads them as lightweight Courses (without full chapter content).

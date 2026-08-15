@@ -1,3 +1,7 @@
+import 'package:tutodecode/core/services/tdc_category_registry.dart';
+import 'package:tutodecode/core/services/tdc_icon_registry.dart';
+import 'package:tutodecode/core/services/tdc_signature_service.dart';
+import 'package:tutodecode/core/services/tdc_community_service.dart';
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2026 TUTODECODE Association <contact@tutodecode.org>
 
@@ -139,6 +143,11 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
   String _courseId = '';
   String _courseTitle = '';
   String _courseDesc = '';
+  bool _signOnExport = true;
+  String _authorName = 'Auteur Souverain';
+  String _authorKeyFingerprint = '';
+  String _selectedAccent = 'creme';
+
   String _category = 'linux';
   String _level = 'beginner';
   String _duration = '';
@@ -158,6 +167,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
   bool _hasUnsavedChanges = false;
   bool _isNewUnsavedProject = true;
   final List<String> _undoHistory = [];
+  final List<String> _redoHistory = [];
   bool _isUndoAction = false;
 
   // Parser Feedback
@@ -193,6 +203,54 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
     'advanced': 'Avancé',
   };
 
+  IconData _getIconData(String iconName) {
+    switch (iconName) {
+      case 'Terminal':
+        return Icons.terminal;
+      case 'Dns':
+        return Icons.dns;
+      case 'Memory':
+        return Icons.memory;
+      case 'Settings':
+        return Icons.settings;
+      case 'Router':
+        return Icons.router;
+      case 'Lan':
+        return Icons.lan;
+      case 'Wifi':
+        return Icons.wifi;
+      case 'Security':
+        return Icons.security;
+      case 'Shield':
+        return Icons.shield_outlined;
+      case 'Lock':
+        return Icons.lock_outline;
+      case 'VpnKey':
+        return Icons.vpn_key_outlined;
+      case 'Cloud':
+        return Icons.cloud_outlined;
+      case 'Storage':
+        return Icons.storage;
+      case 'Public':
+        return Icons.public;
+      case 'Code':
+        return Icons.code;
+      case 'DataObject':
+        return Icons.data_object;
+      case 'BugReport':
+        return Icons.bug_report_outlined;
+      case 'School':
+        return Icons.school_outlined;
+      case 'WorkspacePremium':
+        return Icons.workspace_premium_outlined;
+      case 'Psychology':
+        return Icons.psychology_outlined;
+      case 'BookOpen':
+      default:
+        return Icons.menu_book;
+    }
+  }
+
   Color _getCategoryColor(String cat) {
     return _categoryColors[cat.toLowerCase()] ?? const Color(0xFFD7CDBF);
   }
@@ -214,6 +272,9 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
     });
     _syncFormToRawCode();
     _loadRecentProjectsFromPrefs();
+    _loadSignatureProfile();
+    TDCCategoryRegistry.loadFromPrefs();
+    TDCIconRegistry.loadRecents();
   }
 
   @override
@@ -278,11 +339,22 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
 
   void _performUndo() {
     if (_undoHistory.length > 1) {
-      _undoHistory.removeLast(); // current
+      final current = _undoHistory.removeLast();
+      _redoHistory.add(current);
       final prev = _undoHistory.last;
       _restoreHistorySnapshot(prev);
     } else {
       _showFloatingToast('Aucune action à annuler');
+    }
+  }
+
+  void _performRedo() {
+    if (_redoHistory.isNotEmpty) {
+      final next = _redoHistory.removeLast();
+      _undoHistory.add(next);
+      _restoreHistorySnapshot(next);
+    } else {
+      _showFloatingToast('Aucune action à rétablir');
     }
   }
 
@@ -336,6 +408,141 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
     } catch (e) {
       debugPrint('Erreur sauvegarde projets récents: $e');
     }
+  }
+
+  void _showIconPickerModal() {
+    final iconsList = <Map<String, dynamic>>[
+      {'name': 'BookOpen', 'icon': Icons.menu_book, 'cat': 'Général'},
+      {'name': 'Terminal', 'icon': Icons.terminal, 'cat': 'Système'},
+      {'name': 'Dns', 'icon': Icons.dns, 'cat': 'Système'},
+      {'name': 'Memory', 'icon': Icons.memory, 'cat': 'Système'},
+      {'name': 'Settings', 'icon': Icons.settings, 'cat': 'Système'},
+      {'name': 'Router', 'icon': Icons.router, 'cat': 'Réseau'},
+      {'name': 'Lan', 'icon': Icons.lan, 'cat': 'Réseau'},
+      {'name': 'Wifi', 'icon': Icons.wifi, 'cat': 'Réseau'},
+      {'name': 'Security', 'icon': Icons.security, 'cat': 'Sécurité'},
+      {'name': 'Shield', 'icon': Icons.shield_outlined, 'cat': 'Sécurité'},
+      {'name': 'Lock', 'icon': Icons.lock_outline, 'cat': 'Sécurité'},
+      {'name': 'VpnKey', 'icon': Icons.vpn_key_outlined, 'cat': 'Sécurité'},
+      {'name': 'Cloud', 'icon': Icons.cloud_outlined, 'cat': 'Cloud'},
+      {'name': 'Storage', 'icon': Icons.storage, 'cat': 'Cloud'},
+      {'name': 'Public', 'icon': Icons.public, 'cat': 'Cloud'},
+      {'name': 'Code', 'icon': Icons.code, 'cat': 'Dev'},
+      {'name': 'DataObject', 'icon': Icons.data_object, 'cat': 'Dev'},
+      {'name': 'BugReport', 'icon': Icons.bug_report_outlined, 'cat': 'Dev'},
+      {'name': 'School', 'icon': Icons.school_outlined, 'cat': 'Général'},
+      {'name': 'WorkspacePremium', 'icon': Icons.workspace_premium_outlined, 'cat': 'Général'},
+      {'name': 'Psychology', 'icon': Icons.psychology_outlined, 'cat': 'Général'},
+    ];
+
+    String searchQuery = '';
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final filtered = iconsList.where((item) {
+              final n = item['name'].toString().toLowerCase();
+              final c = item['cat'].toString().toLowerCase();
+              final q = searchQuery.toLowerCase();
+              return n.contains(q) || c.contains(q);
+            }).toList();
+
+            return AlertDialog(
+              backgroundColor: const Color(0xFF161616),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: const BorderSide(color: Color(0xFF2A2A2A)),
+              ),
+              title: Row(
+                children: [
+                  const Icon(Icons.category_outlined, color: Color(0xFFF5EBDA), size: 20),
+                  const SizedBox(width: 10),
+                  const Text("Sélecteur d'icône du cours", style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 16)),
+                ],
+              ),
+              content: SizedBox(
+                width: 520,
+                height: 400,
+                child: Column(
+                  children: [
+                    TextField(
+                      autofocus: true,
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      decoration: InputDecoration(
+                        hintText: 'Rechercher une icône (ex: Terminal, Security, Cloud, Dev)...',
+                        hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                        prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 18),
+                        filled: true,
+                        fillColor: const Color(0xFF0F0F0F),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF333333))),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF333333))),
+                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFF5EBDA))),
+                      ),
+                      onChanged: (q) => setModalState(() => searchQuery = q),
+                    ),
+                    const SizedBox(height: 16),
+                    Expanded(
+                      child: GridView.builder(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 1.1),
+                        itemCount: filtered.length,
+                        itemBuilder: (context, idx) {
+                          final item = filtered[idx];
+                          final isSelected = _icon == item['name'];
+                          return InkWell(
+                            onTap: () {
+                              setState(() {
+                                _icon = item['name'];
+                              });
+                              _markModified();
+                              _syncFormToRawCode();
+                              Navigator.of(context).pop();
+                              _showFloatingToast('Icône définie : ${_icon}');
+                            },
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: isSelected ? const Color(0xFFF5EBDA).withOpacity(0.15) : const Color(0xFF1E1E1E),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: isSelected ? const Color(0xFFF5EBDA) : const Color(0xFF2E2E2E)),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(item['icon'] as IconData, color: isSelected ? const Color(0xFFF5EBDA) : const Color(0xFFD4D4D4), size: 24),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    item['name'] as String,
+                                    style: TextStyle(
+                                      color: isSelected ? const Color(0xFFF5EBDA) : const Color(0xFFAAAAAA),
+                                      fontSize: 10,
+                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Fermer', style: TextStyle(color: Colors.grey)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   void _syncFormToRawCode() {
@@ -764,14 +971,22 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
   void _loadTemplate(String type) {
     final Map<String, dynamic> templateData = _getTemplateData(type);
 
-    if (!_showWelcomeScreen && _modules.isNotEmpty) {
-      // User is already inside editor and has started work: import modules only
-      final newModules = (templateData['content'] as List?)?.map((m) => Map<String, dynamic>.from(m as Map)).toList() ?? [];
+    if (!_showWelcomeScreen) {
+      // User is inside the editor: import the template's modules into current project
+      final newModules = (templateData['content'] as List?)
+              ?.map((m) => Map<String, dynamic>.from(m as Map))
+              .toList() ??
+          [];
       setState(() {
         _modules.addAll(newModules);
         while (_expandedModules.length < _modules.length) {
           _expandedModules.add(true);
         }
+        if (_courseDesc.isEmpty) {
+          _courseDesc = templateData['description'] ?? '';
+        }
+        _category = templateData['category'] ?? _category;
+        _hasUnsavedChanges = true;
       });
       _markModified();
       _syncFormToRawCode();
@@ -779,7 +994,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
       return;
     }
 
-    // Otherwise load full template
+    // Otherwise (from Welcome screen): load full template project
     final tdcStr = TDCParser.serializeToTdc(templateData);
     _loadRawCodeIntoEditor(tdcStr, isNewDoc: true);
     _showFloatingToast('Modèle ${templateData['title']} chargé avec succès !');
@@ -2150,6 +2365,21 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                 _openNativeFilePicker();
               } else if (val == 'template') {
                 _showTemplatesDialog();
+              } else if (val == 'duplicate_course') {
+                _syncFormToRawCode();
+                final newId = '${_courseId}-copie';
+                final newTitle = '${_courseTitle} (Copie)';
+                _recentProjects.insert(0, {
+                  'id': newId,
+                  'title': newTitle,
+                  'category': _category,
+                  'level': _level,
+                  'date': "Modifié à l'instant",
+                  'path': 'workspace/$newId.tdc',
+                  'rawCode': _rawCodeController.text.replaceFirst('course "$_courseId"', 'course "$newId"').replaceFirst('title: "$_courseTitle"', 'title: "$newTitle"'),
+                });
+                _saveRecentProjectsToPrefs();
+                _showFloatingToast('Copie du cours enregistrée dans l\'historique');
               } else if (val == 'copy') {
                 Clipboard.setData(ClipboardData(text: _rawCodeController.text));
                 _showFloatingToast('Code .TDC copié dans le presse-papier !');
@@ -2234,7 +2464,12 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
               const SizedBox(width: 12),
               Expanded(
                 child: _buildTextField('Titre du Cours', _courseTitle, (val) {
-                  setState(() => _courseTitle = val);
+                  setState(() {
+                    _courseTitle = val;
+                    if (_courseId == 'nouveau-cours' || _courseId.isEmpty) {
+                      _courseId = val.toLowerCase().trim().replaceAll(RegExp(r'[^a-z0-9]+'), '-');
+                    }
+                  });
                   _markModified();
                   _syncFormToRawCode();
                 }),
@@ -2258,15 +2493,44 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                   style: const TextStyle(color: Colors.white),
                   decoration: _inputDecoration('Catégorie'),
                   items: [
-                    _buildCategoryItem('linux', 'Linux', const Color(0xFFD7CDBF)),
-                    _buildCategoryItem('network', 'Réseau', const Color(0xFF8B5CF6)),
-                    _buildCategoryItem('security', 'Sécurité', const Color(0xFF10B981)),
-                    _buildCategoryItem('cloud', 'Cloud', const Color(0xFF3B82F6)),
-                    _buildCategoryItem('crypto', 'Crypto', const Color(0xFFE11D48)),
-                    _buildCategoryItem('development', 'Développement', const Color(0xFFF59E0B)),
+                    // Catégories Intégrées
+                    ...TDCCategoryRegistry.builtinCategories.map((c) => DropdownMenuItem(
+                      value: c.id,
+                      child: Row(
+                        children: [
+                          Container(width: 8, height: 8, decoration: BoxDecoration(color: TDCColorTokens.getColor(c.colorToken), shape: BoxShape.circle)),
+                          const SizedBox(width: 8),
+                          Text(c.label, style: const TextStyle(color: Colors.white, fontSize: 13)),
+                        ],
+                      ),
+                    )),
+                    // Catégories Personnelles
+                    ...TDCCategoryRegistry.customCategories.map((c) => DropdownMenuItem(
+                      value: c.id,
+                      child: Row(
+                        children: [
+                          Container(width: 8, height: 8, decoration: BoxDecoration(color: TDCColorTokens.getColor(c.colorToken), shape: BoxShape.circle)),
+                          const SizedBox(width: 8),
+                          Text('${c.label} (Custom)', style: const TextStyle(color: Color(0xFF10B981), fontSize: 13)),
+                        ],
+                      ),
+                    )),
+                    // Entrée Créer
+                    const DropdownMenuItem(
+                      value: '__create_new__',
+                      child: Row(
+                        children: [
+                          Icon(Icons.add, color: Color(0xFFF5EBDA), size: 14),
+                          SizedBox(width: 8),
+                          Text('+ Créer une catégorie...', style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 12, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
                   ],
                   onChanged: (val) {
-                    if (val != null) {
+                    if (val == '__create_new__') {
+                      _showCreateCategoryModal();
+                    } else if (val != null) {
                       setState(() => _category = val);
                       _markModified();
                       _syncFormToRawCode();
@@ -2302,6 +2566,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
           Row(
             children: [
               Expanded(
+                flex: 3,
                 child: _buildTextField('Durée estimée (ex: 2h30)', _duration, (val) {
                   setState(() => _duration = val);
                   _markModified();
@@ -2310,6 +2575,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
               ),
               const SizedBox(width: 12),
               Expanded(
+                flex: 4,
                 child: _buildTextField('Mots-clés (séparés par des virgules)', _keywords.join(', '), (val) {
                   setState(() {
                     _keywords = val.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
@@ -2318,9 +2584,85 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                   _syncFormToRawCode();
                 }),
               ),
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 3,
+                child: InkWell(
+                  onTap: _showIconPickerModal,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    height: 48,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF141414),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: const Color(0xFF333333)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.palette_outlined, color: Color(0xFFF5EBDA), size: 16),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Icône : $_icon',
+                            style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const Icon(Icons.arrow_drop_down, color: Colors.grey, size: 18),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 14),
+
+          // Bannière Signature Cryptographique & Profil Auteur
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: const Color(0xFF161616),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFF262626)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.verified_user_outlined, color: Color(0xFF10B981), size: 18),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Text('Signature Ed25519 : ', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                          Text(
+                            _authorKeyFingerprint.isEmpty ? 'Aucune clé générée' : 'Signé par $_authorName ($_authorKeyFingerprint)',
+                            style: TextStyle(color: _authorKeyFingerprint.isEmpty ? const Color(0xFF888888) : const Color(0xFF10B981), fontSize: 11),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      const Text('Certifie l\'auteur et garantit que le cours n\'a pas été altéré.', style: TextStyle(color: Color(0xFF777777), fontSize: 10)),
+                    ],
+                  ),
+                ),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFFF5EBDA),
+                    side: const BorderSide(color: Color(0xFF333333)),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  icon: const Icon(Icons.vpn_key_outlined, size: 14),
+                  label: Text(_authorKeyFingerprint.isEmpty ? 'Générer mes clés' : 'Gérer mon profil', style: const TextStyle(fontSize: 11)),
+                  onPressed: _showSettingsProfileModal,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
 
           // Modules Section
           Row(
@@ -2852,19 +3194,26 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                 },
               ),
               const SizedBox(width: 8),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFF5EBDA),
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+              Tooltip(
+                message: _parseError.isNotEmpty
+                    ? 'Corrigez les erreurs de syntaxe avant d\'appliquer au formulaire'
+                    : 'Appliquer les modifications du code au formulaire interactif',
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _parseError.isNotEmpty ? const Color(0xFF333333) : const Color(0xFFF5EBDA),
+                    foregroundColor: _parseError.isNotEmpty ? Colors.grey : Colors.black,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                  ),
+                  icon: const Icon(Icons.input_rounded, size: 13),
+                  label: const Text('Appliquer au formulaire', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                  onPressed: _parseError.isNotEmpty
+                      ? null
+                      : () {
+                          _parseRawCode(_rawCodeController.text, updateForm: true);
+                          _showFloatingToast('Formulaire synchronisé depuis le code');
+                        },
                 ),
-                icon: const Icon(Icons.sync, size: 13),
-                label: const Text('Synchroniser', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                onPressed: () {
-                  _parseRawCode(_rawCodeController.text, updateForm: true);
-                  _showFloatingToast('Formulaire synchronisé depuis le code');
-                },
               ),
             ],
           ),
@@ -2948,353 +3297,1308 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
     );
   }
 
+  int _previewActiveChapterIndex = 0;
+  bool _previewIsInsideCourse = false;
+  int? _previewSelectedChoice;
+  bool _previewQuizAnswered = false;
+
+
+  Future<void> _loadSignatureProfile() async {
+    final name = await TDCSignatureService.getAuthorName();
+    final fp = await TDCSignatureService.getPublicKeyFingerprint();
+    if (mounted) {
+      setState(() {
+        _authorName = name;
+        _authorKeyFingerprint = fp ?? '';
+      });
+    }
+  }
+
+  void _showSettingsProfileModal() {
+    final nameCtrl = TextEditingController(text: _authorName);
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) {
+          return AlertDialog(
+            backgroundColor: const Color(0xFF141414),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: Color(0xFF2C2C2C)),
+            ),
+            title: const Row(
+              children: [
+                Icon(Icons.vpn_key_outlined, color: Color(0xFFF5EBDA), size: 20),
+                SizedBox(width: 10),
+                Text('Profil & Signature Cryptographique', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            ),
+            content: SizedBox(
+              width: 480,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Identité d'Auteur (Serverless)",
+                      style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      "Votre nom ou pseudo apparaîtra sur les cours signés. Aucune donnée n'est envoyée sur un serveur.",
+                      style: TextStyle(color: Color(0xFF888888), fontSize: 11),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: nameCtrl,
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      decoration: InputDecoration(
+                        labelText: "Nom ou Pseudo d'auteur",
+                        labelStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                        filled: true,
+                        fillColor: const Color(0xFF1B1B1B),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF333333))),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF333333))),
+                      ),
+                      onChanged: (val) {
+                        _authorName = val;
+                        TDCSignatureService.setAuthorName(val);
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    const Divider(color: Color(0xFF262626)),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Clé Cryptographique Ed25519',
+                      style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    if (_authorKeyFingerprint.isEmpty) ...[
+                      const Text(
+                        "Vous n'avez pas encore généré de paire de clés sur cette machine.",
+                        style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 11),
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFF5EBDA),
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        ),
+                        icon: const Icon(Icons.security, size: 16),
+                        label: const Text('Générer mes clés Ed25519'),
+                        onPressed: () async {
+                          final fp = await TDCSignatureService.generateKeys();
+                          setModalState(() {
+                            _authorKeyFingerprint = fp;
+                          });
+                          setState(() {
+                            _authorKeyFingerprint = fp;
+                          });
+                        },
+                      ),
+                    ] else ...[
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1A1A1A),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.check_circle_outline, color: Color(0xFF10B981), size: 18),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Clé privée active en Keychain local', style: TextStyle(color: Color(0xFF10B981), fontSize: 11, fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 2),
+                                  Text('Empreinte : $_authorKeyFingerprint', style: const TextStyle(color: Colors.white, fontSize: 12, fontFamily: 'monospace')),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextButton.icon(
+                        icon: const Icon(Icons.refresh, size: 14, color: Colors.grey),
+                        label: const Text('Régénérer une clé', style: TextStyle(color: Colors.grey, fontSize: 11)),
+                        onPressed: () async {
+                          final fp = await TDCSignatureService.generateKeys();
+                          setModalState(() {
+                            _authorKeyFingerprint = fp;
+                          });
+                          setState(() {
+                            _authorKeyFingerprint = fp;
+                          });
+                        },
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Fermer', style: TextStyle(color: Color(0xFFF5EBDA))),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _showCreateCategoryModal() {
+    final labelCtrl = TextEditingController();
+    final idCtrl = TextEditingController();
+    String selectedColor = 'mint';
+    String selectedIcon = 'Rocket';
+    bool idDirty = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) {
+          return AlertDialog(
+            backgroundColor: const Color(0xFF141414),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: Color(0xFF2C2C2C)),
+            ),
+            title: const Row(
+              children: [
+                Icon(Icons.category_outlined, color: Color(0xFFF5EBDA), size: 20),
+                SizedBox(width: 10),
+                Text('Créer une Catégorie Personnalisée', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            ),
+            content: SizedBox(
+              width: 440,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: labelCtrl,
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      decoration: InputDecoration(
+                        labelText: 'Nom de la catégorie (ex: DevOps & CI/CD)',
+                        labelStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                        filled: true,
+                        fillColor: const Color(0xFF1B1B1B),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF333333))),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF333333))),
+                      ),
+                      onChanged: (val) {
+                        if (!idDirty) {
+                          final slug = val.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-').replaceAll(RegExp(r'^-+|-+$'), '');
+                          idCtrl.text = slug;
+                          setModalState(() {});
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: idCtrl,
+                      style: const TextStyle(color: Colors.white, fontSize: 13, fontFamily: 'monospace'),
+                      decoration: InputDecoration(
+                        labelText: 'Identifiant slug unique (ex: devops)',
+                        labelStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                        filled: true,
+                        fillColor: const Color(0xFF1B1B1B),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF333333))),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF333333))),
+                      ),
+                      onChanged: (val) {
+                        idDirty = true;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('Token de couleur curaté :', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: TDCColorTokens.availableTokens.map((tok) {
+                        final col = TDCColorTokens.getColor(tok);
+                        final isSel = selectedColor == tok;
+                        return InkWell(
+                          onTap: () => setModalState(() => selectedColor = tok),
+                          borderRadius: BorderRadius.circular(6),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: isSel ? col.withValues(alpha: 0.25) : const Color(0xFF1C1C1C),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: isSel ? col : const Color(0xFF333333), width: isSel ? 1.5 : 1),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(width: 10, height: 10, decoration: BoxDecoration(color: col, shape: BoxShape.circle)),
+                                const SizedBox(width: 6),
+                                Text(tok, style: TextStyle(color: isSel ? Colors.white : const Color(0xFFAAAAAA), fontSize: 11)),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler', style: TextStyle(color: Colors.grey))),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFF5EBDA), foregroundColor: Colors.black),
+                onPressed: () {
+                  final id = idCtrl.text.trim().toLowerCase();
+                  final label = labelCtrl.text.trim();
+                  if (id.isEmpty || label.isEmpty) return;
+                  if (TDCCategoryRegistry.isBuiltin(id)) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Collision : cet identifiant existe déjà comme catégorie intégrée.'), backgroundColor: Colors.red));
+                    return;
+                  }
+                  final newCat = TDCCategory(id: id, label: label, colorToken: selectedColor, iconToken: selectedIcon, isCustom: true);
+                  TDCCategoryRegistry.registerCustomCategory(newCat);
+                  setState(() {
+                    _category = id;
+                  });
+                  _syncFormToRawCode();
+                  Navigator.pop(ctx);
+                },
+                child: const Text('Créer et Utiliser'),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _showCommunityExplorerModal() async {
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) {
+          return AlertDialog(
+            backgroundColor: const Color(0xFF141414),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: Color(0xFF2C2C2C)),
+            ),
+            title: const Row(
+              children: [
+                Icon(Icons.explore_outlined, color: Color(0xFFF5EBDA), size: 20),
+                SizedBox(width: 10),
+                Text('Explorateur de Cours Communautaires', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            ),
+            content: SizedBox(
+              width: 600,
+              height: 400,
+              child: FutureBuilder<List<TDCCommunityEntry>>(
+                future: TDCCommunityService.fetchManifest(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator(color: Color(0xFFF5EBDA)));
+                  }
+                  final list = snapshot.data ?? [];
+                  if (list.isEmpty) {
+                    return const Center(child: Text('Aucun cours communautaire disponible hors-ligne.', style: TextStyle(color: Colors.grey)));
+                  }
+                  return ListView.builder(
+                    itemCount: list.length,
+                    itemBuilder: (context, idx) {
+                      final item = list[idx];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1C1C1C),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFF2C2C2C)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(color: const Color(0xFF262626), borderRadius: BorderRadius.circular(6)),
+                              child: const Icon(Icons.menu_book, color: Color(0xFFF5EBDA), size: 18),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(item.title, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 4),
+                                  Text('Par ${item.author} (${item.authorKey}) • ${item.category.toUpperCase()} • ${item.level}', style: const TextStyle(color: Color(0xFF888888), fontSize: 11)),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFF5EBDA), foregroundColor: Colors.black),
+                              icon: const Icon(Icons.download, size: 14),
+                              label: const Text('Importer'),
+                              onPressed: () {
+                                _loadCourseFromTdcString(item.tdcContent);
+                                Navigator.pop(ctx);
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Cours "${item.title}" importé avec succès !'), backgroundColor: const Color(0xFF10B981)));
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Fermer', style: TextStyle(color: Color(0xFFF5EBDA))),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildLivePreviewView() {
     final modules = _modules;
+    final title = _courseTitle.isEmpty ? 'Nouveau Cours' : _courseTitle;
+    final catColor = _getCategoryColor(_category);
 
+    final officialCourses = [
+      {
+        'title': 'Linux : Le Pouvoir du Terminal',
+        'category': 'LINUX',
+        'chapters': '2 chapitres',
+        'level': 'Débutant',
+        'duration': '6h',
+        'icon': Icons.terminal,
+        'color': const Color(0xFFD7CDBF),
+      },
+      {
+        'title': 'Docker : Déployer Sans Friction',
+        'category': 'DEVOPS',
+        'chapters': '1 chapitres',
+        'level': 'Intermédiaire',
+        'duration': '4h',
+        'icon': Icons.layers_outlined,
+        'color': const Color(0xFF3B82F6),
+      },
+      {
+        'title': 'Git & GitHub : Maîtriser le Temps',
+        'category': 'DEVOPS',
+        'chapters': '1 chapitres',
+        'level': 'Débutant',
+        'duration': '3h',
+        'icon': Icons.merge_type,
+        'color': const Color(0xFFF59E0B),
+      },
+      {
+        'title': 'SQL : Parler aux Bases de Données',
+        'category': 'SQL',
+        'chapters': '1 chapitres',
+        'level': 'Débutant',
+        'duration': '4h',
+        'icon': Icons.table_chart_outlined,
+        'color': const Color(0xFF8B5CF6),
+      },
+      {
+        'title': 'Python : Le Couteau Suisse du Code',
+        'category': 'PYTHON',
+        'chapters': '1 chapitres',
+        'level': 'Débutant',
+        'duration': '5h',
+        'icon': Icons.code,
+        'color': const Color(0xFF10B981),
+      },
+      {
+        'title': 'Cybersécurité : Pense Comme un Hacker',
+        'category': 'SECURITY',
+        'chapters': '2 chapitres',
+        'level': 'Débutant',
+        'duration': '5h',
+        'icon': Icons.security,
+        'color': const Color(0xFFE11D48),
+      },
+    ];
+
+    return Container(
+      color: const Color(0xFF0A0A0A),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // ── GAUCHE : Sidebar Navigation T2DECODE ──
+          Container(
+            width: 220,
+            decoration: const BoxDecoration(
+              color: Color(0xFF0F0F0F),
+              border: Border(right: BorderSide(color: Color(0xFF1F1F1F))),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header Sidebar T2DECODE
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 18, 16, 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: Image.asset('assets/logo_128.png', width: 24, height: 24, fit: BoxFit.contain),
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'T2DECODE',
+                            style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 0.8),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF171717),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: const Color(0xFF282828)),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.shield_outlined, color: Color(0xFF10B981), size: 11),
+                            SizedBox(width: 4),
+                            Text('SOUVERAIN & AIR-GAPPED', style: TextStyle(color: Color(0xFFB0B0B0), fontSize: 9, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text('PROGRESSION', style: TextStyle(color: Color(0xFF666666), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.8)),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('0 sur 19 chapitres', style: TextStyle(color: Color(0xFF888888), fontSize: 11)),
+                          const Text('0%', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(2),
+                        child: const LinearProgressIndicator(value: 0.0, minHeight: 4, backgroundColor: Color(0xFF222222), valueColor: AlwaysStoppedAnimation(Color(0xFF10B981))),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(color: Color(0xFF1C1C1C), height: 1),
+
+                // Menu items
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    children: [
+                      _buildT2NavButton(Icons.home_outlined, 'ACCUEIL', isSelected: !_previewIsInsideCourse, onTap: () {
+                        setState(() => _previewIsInsideCourse = false);
+                      }),
+                      _buildT2NavButton(Icons.build_outlined, 'OUTILS'),
+                      _buildT2NavButton(Icons.description_outlined, 'CHEAT SHEETS'),
+                      _buildT2NavButton(Icons.wifi, 'NETKIT'),
+                      _buildT2NavButton(Icons.smart_toy_outlined, 'CHAT IA'),
+                      _buildT2NavButton(Icons.settings_outlined, 'PARAMÈTRES'),
+                      _buildT2NavButton(Icons.map_outlined, 'ROADMAP'),
+                      _buildT2NavButton(Icons.sports_esports_outlined, 'SIMULATIONS'),
+                      _buildT2NavButton(Icons.leak_add_outlined, 'GHOST LINK'),
+                    ],
+                  ),
+                ),
+
+                // Bottom IA status
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF141414),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFF222222)),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.memory, color: Color(0xFF888888), size: 16),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('IA locale optionnelle', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                            Text('Cliquer pour configurer', style: TextStyle(color: Color(0xFF777777), fontSize: 10)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ── CENTRE : Contenu Principal (Grille ou Lecteur de Cours) ──
+          Expanded(
+            child: Column(
+              children: [
+                // TopBar T2DECODE
+                Container(
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF0F0F0F),
+                    border: Border(bottom: BorderSide(color: Color(0xFF1F1F1F))),
+                  ),
+                  child: Row(
+                    children: [
+                      if (_previewIsInsideCourse) ...[
+                        InkWell(
+                          onTap: () => setState(() => _previewIsInsideCourse = false),
+                          borderRadius: BorderRadius.circular(4),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.arrow_back, color: Color(0xFFF5EBDA), size: 16),
+                              SizedBox(width: 6),
+                              Text('Tous les cours', style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 13, fontWeight: FontWeight.w600)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text('›', style: TextStyle(color: Colors.grey, fontSize: 14)),
+                        const SizedBox(width: 12),
+                      ],
+                      Text(
+                        _previewIsInsideCourse ? title : 'Accueil',
+                        style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      Container(
+                        width: 260,
+                        height: 30,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF171717),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: const Color(0xFF2C2C2C)),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.search, color: Color(0xFF777777), size: 14),
+                            SizedBox(width: 8),
+                            Text('Rechercher...', style: TextStyle(color: Color(0xFF777777), fontSize: 11)),
+                            Spacer(),
+                            Text('⌘K', style: TextStyle(color: Color(0xFF555555), fontSize: 10, fontFamily: 'monospace')),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Workspace
+                Expanded(
+                  child: _previewIsInsideCourse
+                      ? _buildT2CourseReader(modules, title, catColor)
+                      : _buildT2CourseGrid(modules, title, catColor, officialCourses),
+                ),
+              ],
+            ),
+          ),
+
+          // ── DROITE : Panneau Outils & Services ──
+          if (!_previewIsInsideCourse)
+            Container(
+              width: 260,
+              decoration: const BoxDecoration(
+                color: Color(0xFF0F0F0F),
+                border: Border(left: BorderSide(color: Color(0xFF1F1F1F))),
+              ),
+              padding: const EdgeInsets.all(16),
+              child: ListView(
+                children: [
+                  // Statut Progression
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF141414),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFF242424)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('0%', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                        const Text('0 sur 19 chapitres', style: TextStyle(color: Color(0xFF888888), fontSize: 11)),
+                        const SizedBox(height: 8),
+                        const Text('Commencez votre premier cours !', style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 11)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('✦ Outils & Services', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+                  _buildT2ServiceItem(Icons.map_outlined, 'Roadmap', 'Parcours & objectifs'),
+                  _buildT2ServiceItem(Icons.build_outlined, 'Outils', 'Diagnostic & Réseau'),
+                  _buildT2ServiceItem(Icons.wifi, 'NetKit', 'Outils Réseau Avancé'),
+                  _buildT2ServiceItem(Icons.description_outlined, 'Cheat Sheets', 'Mémos & commandes'),
+                  _buildT2ServiceItem(Icons.smart_toy_outlined, 'Chat IA', 'Posez vos questions'),
+                  _buildT2ServiceItem(Icons.speed_outlined, 'Diagnostic', 'État du système local'),
+                  _buildT2ServiceItem(Icons.settings_outlined, 'Config IA', 'Gérer Ollama'),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildT2NavButton(IconData icon, String label, {bool isSelected = false, VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        margin: const EdgeInsets.only(bottom: 2),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF222222) : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: isSelected ? const Color(0xFFF5EBDA) : const Color(0xFF888888), size: 16),
+            const SizedBox(width: 10),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : const Color(0xFF999999),
+                fontSize: 11.5,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                letterSpacing: 0.4,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildT2ServiceItem(IconData icon, String title, String subtitle) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF141414),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFF222222)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(color: const Color(0xFF1F1F1F), borderRadius: BorderRadius.circular(6)),
+            child: Icon(icon, color: const Color(0xFFD4D4D4), size: 16),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                Text(subtitle, style: const TextStyle(color: Color(0xFF777777), fontSize: 10)),
+              ],
+            ),
+          ),
+          const Icon(Icons.chevron_right, color: Color(0xFF555555), size: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildT2CourseGrid(List<Map<String, dynamic>> modules, String title, Color catColor, List<Map<String, dynamic>> officialCourses) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Bannière de statut d'aperçu live
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            margin: const EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              color: const Color(0xFF161616),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFF2A2A2A)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.remove_red_eye_outlined, color: Color(0xFF10B981), size: 18),
+                const SizedBox(width: 10),
+                const Expanded(
+                  child: Text(
+                    'Aperçu Apprenant T2DECODE : Cliquez sur votre cours ci-dessous pour tester son rendu et jouer ses QCM en conditions réelles.',
+                    style: TextStyle(color: Color(0xFFD4D4D4), fontSize: 12),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(color: const Color(0xFF10B981).withOpacity(0.15), borderRadius: BorderRadius.circular(4)),
+                  child: const Text('LIVE SYNC', style: TextStyle(color: Color(0xFF10B981), fontSize: 10, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          ),
+
+          // Grille 3 colonnes
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final crossAxisCount = constraints.maxWidth > 800 ? 3 : (constraints.maxWidth > 500 ? 2 : 1);
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1.25,
+                ),
+                itemCount: 1 + officialCourses.length,
+                itemBuilder: (context, idx) {
+                  if (idx == 0) {
+                    // Carte du cours en cours d'édition (mis en avant)
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          _previewIsInsideCourse = true;
+                          _previewActiveChapterIndex = 0;
+                          _previewSelectedChoice = null;
+                          _previewQuizAnswered = false;
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF141414),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: const Color(0xFFF5EBDA).withOpacity(0.4), width: 1.5),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: catColor.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(color: catColor.withOpacity(0.3)),
+                                  ),
+                                  child: Icon(_getIconData(_icon), color: catColor, size: 20),
+                                ),
+                                const Spacer(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF5EBDA).withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: const Text('★ Votre cours', style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 10, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            Text(
+                              title,
+                              style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${_category.toUpperCase()} • ${modules.length} ${modules.length == 1 ? "chapitre" : "chapitres"}',
+                              style: const TextStyle(color: Color(0xFF888888), fontSize: 11),
+                            ),
+                            const Spacer(),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(color: const Color(0xFF222222), borderRadius: BorderRadius.circular(4)),
+                                  child: Text(_level == 'beginner' ? 'Débutant' : (_level == 'intermediate' ? 'Intermédiaire' : 'Avancé'), style: const TextStyle(color: Colors.white70, fontSize: 10)),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(_duration.isEmpty ? '1h' : _duration, style: const TextStyle(color: Color(0xFF777777), fontSize: 11)),
+                                const Spacer(),
+                                const Icon(Icons.arrow_forward, color: Color(0xFFF5EBDA), size: 14),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  final c = officialCourses[idx - 1];
+                  final col = c['color'] as Color;
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF141414),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFF222222)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(color: col.withOpacity(0.12), borderRadius: BorderRadius.circular(6)),
+                              child: Icon(c['icon'] as IconData, color: col, size: 20),
+                            ),
+                            const Spacer(),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(color: const Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(4)),
+                              child: const Text('✓ Officiel', style: TextStyle(color: Color(0xFF999999), fontSize: 10)),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Text(
+                          c['title'] as String,
+                          style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text('${c['category']} • ${c['chapters']}', style: const TextStyle(color: Color(0xFF888888), fontSize: 11)),
+                        const Spacer(),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(color: const Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(4)),
+                              child: Text(c['level'] as String, style: const TextStyle(color: Colors.white70, fontSize: 10)),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(c['duration'] as String, style: const TextStyle(color: Color(0xFF777777), fontSize: 11)),
+                            const Spacer(),
+                            const Icon(Icons.arrow_forward_ios, color: Color(0xFF444444), size: 12),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildT2CourseReader(List<Map<String, dynamic>> modules, String title, Color catColor) {
     if (modules.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.play_circle_outline, color: Colors.grey, size: 48),
+            const Icon(Icons.menu_book_outlined, color: Colors.grey, size: 48),
             const SizedBox(height: 12),
-            const Text('Aucun chapitre à prévisualiser', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 6),
-            const Text('Ajoutez des chapitres dans le formulaire pour voir le rendu apprenant.', style: TextStyle(color: Colors.grey, fontSize: 13)),
+            const Text('Ce cours ne contient aucun chapitre pour le moment.', style: TextStyle(color: Colors.white70, fontSize: 14)),
             const SizedBox(height: 16),
-            ElevatedButton(
+            ElevatedButton.icon(
               style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFF5EBDA), foregroundColor: Colors.black),
-              onPressed: () => _tabController.animateTo(0),
-              child: const Text('Aller au formulaire'),
+              icon: const Icon(Icons.add, size: 16),
+              label: const Text('Ajouter un premier chapitre'),
+              onPressed: () {
+                setState(() {
+                  _modules.add({
+                    'id': 'module-1',
+                    'title': 'Introduction',
+                    'duration': '15min',
+                    'markdown': '# Bienvenue dans ce cours\n\nRédigez votre contenu ici...',
+                    'quiz': [],
+                  });
+                  _expandedModules.add(true);
+                  _hasUnsavedChanges = true;
+                });
+                _markModified();
+                _syncFormToRawCode();
+              },
             ),
           ],
         ),
       );
     }
 
-    final catColor = _getCategoryColor(_category);
+    final activeIdx = _previewActiveChapterIndex.clamp(0, modules.length - 1);
+    final mod = modules[activeIdx];
+    final modTitle = mod['title'] as String? ?? 'Chapitre ${activeIdx + 1}';
+    final modMarkdown = (mod['markdown'] ?? mod['content'] ?? '').toString();
+    final quiz = (mod['quiz'] as List?)?.cast<Map<String, dynamic>>() ?? [];
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 900),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Sidebar des chapitres du cours
+        Container(
+          width: 240,
+          decoration: const BoxDecoration(
+            color: Color(0xFF0F0F0F),
+            border: Border(right: BorderSide(color: Color(0xFF1F1F1F))),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Course Header Badge Card
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF141414),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFF262626)),
-                ),
+              Padding(
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: catColor.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: catColor.withOpacity(0.4)),
-                          ),
-                          child: Text(_category.toUpperCase(), style: TextStyle(color: catColor, fontWeight: FontWeight.bold, fontSize: 11)),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF222222),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(width: 6, height: 6, decoration: BoxDecoration(color: _getLevelColor(_level), shape: BoxShape.circle)),
-                              const SizedBox(width: 6),
-                              Text(_levelLabels[_level] ?? _level, style: const TextStyle(color: Colors.white70, fontSize: 11)),
-                            ],
-                          ),
-                        ),
-                        if (_duration.isNotEmpty) ...[
-                          const SizedBox(width: 8),
-                          Text('• $_duration', style: const TextStyle(color: Colors.grey, fontSize: 12)),
-                        ],
-                        const Spacer(),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1E1E1E),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: const Color(0xFF333333)),
-                          ),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.bolt, color: Colors.amber, size: 14),
-                              SizedBox(width: 4),
-                              Text('+150 XP', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    Text(
-                      _courseTitle.isEmpty ? 'Titre du cours' : _courseTitle,
-                      style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                    if (_courseDesc.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Text(_courseDesc, style: const TextStyle(color: Color(0xFFA3A3A3), fontSize: 13, height: 1.4)),
-                    ],
+                    Text(title, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold), maxLines: 2),
+                    const SizedBox(height: 6),
+                    Text('${modules.length} ${modules.length == 1 ? "chapitre" : "chapitres"}', style: const TextStyle(color: Color(0xFF888888), fontSize: 11)),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 24),
-
-              // Modules List with Markdown & Interactive QCM
-              ...modules.asMap().entries.map((entry) {
-                final modIdx = entry.key;
-                final mod = entry.value;
-                final quizList = (mod['quiz'] as List?)?.cast<Map<String, dynamic>>() ?? [];
-
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 24),
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF121212),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFF222222)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(color: const Color(0xFFF5EBDA).withOpacity(0.15), borderRadius: BorderRadius.circular(4)),
-                            child: Text('CHAPITRE ${modIdx + 1}', style: const TextStyle(color: Color(0xFFF5EBDA), fontWeight: FontWeight.bold, fontSize: 10)),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              mod['title']?.toString() ?? 'Chapitre ${modIdx + 1}',
-                              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              const Divider(color: Color(0xFF1C1C1C), height: 1),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  itemCount: modules.length,
+                  itemBuilder: (context, idx) {
+                    final m = modules[idx];
+                    final isCur = idx == activeIdx;
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          _previewActiveChapterIndex = idx;
+                          _previewSelectedChoice = null;
+                          _previewQuizAnswered = false;
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        color: isCur ? const Color(0xFF1A1A1A) : Colors.transparent,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: isCur ? catColor : const Color(0xFF262626),
+                                shape: BoxShape.circle,
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                '${idx + 1}',
+                                style: TextStyle(color: isCur ? Colors.black : Colors.grey, fontSize: 10, fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      const Divider(color: Color(0xFF222222)),
-                      const SizedBox(height: 16),
-
-                      // Markdown Rendered Body
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF171717),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: const Color(0xFF282828)),
-                        ),
-                        child: MarkdownBody(
-                          data: mod['markdown']?.toString() ?? '',
-                          styleSheet: MarkdownStyleSheet(
-                            p: const TextStyle(color: Color(0xFFD4D4D4), fontSize: 14, height: 1.5),
-                            h1: const TextStyle(color: Color(0xFFF5EBDA), fontSize: 20, fontWeight: FontWeight.bold),
-                            h2: const TextStyle(color: Color(0xFFF5EBDA), fontSize: 17, fontWeight: FontWeight.bold),
-                            h3: const TextStyle(color: Color(0xFFF5EBDA), fontSize: 15, fontWeight: FontWeight.bold),
-                            code: const TextStyle(color: Color(0xFF38BDF8), backgroundColor: Color(0xFF0F0F0F), fontFamily: 'monospace', fontSize: 13),
-                            codeblockDecoration: BoxDecoration(
-                              color: const Color(0xFF0A0A0A),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFF222222)),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                m['title'] as String? ?? 'Chapitre ${idx + 1}',
+                                style: TextStyle(color: isCur ? Colors.white : const Color(0xFFAAAAAA), fontSize: 12, fontWeight: isCur ? FontWeight.bold : FontWeight.normal),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
-
-                      if (quizList.isNotEmpty) ...[
-                        const SizedBox(height: 24),
-                        Text(
-                          'ÉVALUATION DE CONNAISSANCES (${quizList.length} ${quizList.length == 1 ? "QUESTION" : "QUESTIONS"})',
-                          style: const TextStyle(color: Color(0xFFF5EBDA), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.1),
-                        ),
-                        const SizedBox(height: 12),
-                        ...quizList.asMap().entries.map((qEntry) {
-                          final qIdx = qEntry.key;
-                          final q = qEntry.value;
-                          final quizKey = '${modIdx}_$qIdx';
-                          final options = (q['options'] as List?)?.cast<String>() ?? [];
-                          final answer = (q['answer'] as int?) ?? 0;
-                          final explanation = (q['explanation'] as String?) ?? '';
-
-                          final userAns = _userQuizAnswers[quizKey];
-                          final isValidated = _quizValidationResults[quizKey] != null;
-                          final isCorrect = _quizValidationResults[quizKey] == true;
-
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 14),
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF161616),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: isValidated ? (isCorrect ? const Color(0xFF10B981) : const Color(0xFFE11D48)) : const Color(0xFF2A2A2A)),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                      decoration: BoxDecoration(color: const Color(0xFF222222), borderRadius: BorderRadius.circular(4)),
-                                      child: Text('Q${qIdx + 1}', style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold)),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        q['question']?.toString() ?? '',
-                                        style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    if (isValidated)
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                        decoration: BoxDecoration(
-                                          color: isCorrect ? const Color(0xFF10B981).withOpacity(0.2) : const Color(0xFFE11D48).withOpacity(0.2),
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child: Text(
-                                          isCorrect ? '✓ Correct (+20 XP)' : '✗ Incorrect',
-                                          style: TextStyle(color: isCorrect ? const Color(0xFF10B981) : const Color(0xFFE11D48), fontSize: 11, fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                ...options.asMap().entries.map((oEntry) {
-                                  final oIdx = oEntry.key;
-                                  final oText = oEntry.value;
-                                  final isSelected = userAns == oIdx;
-                                  final isAnswerOption = answer == oIdx;
-
-                                  Color optBg = const Color(0xFF1E1E1E);
-                                  Color optBorder = const Color(0xFF333333);
-
-                                  if (isValidated) {
-                                    if (isAnswerOption) {
-                                      optBg = const Color(0xFF10B981).withOpacity(0.15);
-                                      optBorder = const Color(0xFF10B981);
-                                    } else if (isSelected && !isCorrect) {
-                                      optBg = const Color(0xFFE11D48).withOpacity(0.15);
-                                      optBorder = const Color(0xFFE11D48);
-                                    }
-                                  } else if (isSelected) {
-                                    optBg = const Color(0xFFF5EBDA).withOpacity(0.15);
-                                    optBorder = const Color(0xFFF5EBDA);
-                                  }
-
-                                  return InkWell(
-                                    onTap: isValidated
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              _userQuizAnswers[quizKey] = oIdx;
-                                            });
-                                          },
-                                    borderRadius: BorderRadius.circular(6),
-                                    child: Container(
-                                      margin: const EdgeInsets.only(bottom: 6),
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                      decoration: BoxDecoration(
-                                        color: optBg,
-                                        borderRadius: BorderRadius.circular(6),
-                                        border: Border.all(color: optBorder),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                                            size: 16,
-                                            color: isSelected ? const Color(0xFFF5EBDA) : Colors.grey,
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(child: Text(oText, style: const TextStyle(color: Colors.white, fontSize: 13))),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }),
-
-                                const SizedBox(height: 10),
-                                if (!isValidated)
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFF5EBDA),
-                                      foregroundColor: Colors.black,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                                    ),
-                                    onPressed: userAns == null
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              _quizValidationResults[quizKey] = (userAns == answer);
-                                            });
-                                          },
-                                    child: const Text('Valider la réponse', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                                  )
-                                else ...[
-                                  Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: isCorrect ? const Color(0xFF10B981).withOpacity(0.1) : const Color(0xFFE11D48).withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(6),
-                                      border: Border.all(color: isCorrect ? const Color(0xFF10B981).withOpacity(0.3) : const Color(0xFFE11D48).withOpacity(0.3)),
-                                    ),
-                                    child: Text(
-                                      isCorrect
-                                          ? 'Explication : $explanation'
-                                          : 'Bonne réponse : ${options[answer]}. $explanation',
-                                      style: TextStyle(color: isCorrect ? const Color(0xFF10B981) : const Color(0xFFFCA5A5), fontSize: 12),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  TextButton.icon(
-                                    icon: const Icon(Icons.refresh, size: 14, color: Colors.grey),
-                                    label: const Text('Rejouer la question', style: TextStyle(color: Colors.grey, fontSize: 11)),
-                                    onPressed: () {
-                                      setState(() {
-                                        _userQuizAnswers.remove(quizKey);
-                                        _quizValidationResults.remove(quizKey);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ],
-                            ),
-                          );
-                        }),
-                      ],
-                    ],
-                  ),
-                );
-              }),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),
-      ),
+
+        // Zone de lecture et QCM interactif
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(32),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Chapitre Header
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(color: catColor.withOpacity(0.15), borderRadius: BorderRadius.circular(4)),
+                        child: Text('CHAPITRE ${activeIdx + 1}', style: TextStyle(color: catColor, fontSize: 11, fontWeight: FontWeight.bold)),
+                      ),
+                      const SizedBox(width: 10),
+                      Text('${mod['duration'] ?? "15min"}', style: const TextStyle(color: Color(0xFF777777), fontSize: 12)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(modTitle, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 20),
+
+                  // Contenu Markdown
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF141414),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFF222222)),
+                    ),
+                    child: modMarkdown.isEmpty
+                        ? const Text('Aucun contenu rédigé pour ce chapitre.', style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic))
+                        : Text(
+                            modMarkdown,
+                            style: const TextStyle(color: Color(0xFFD4D4D4), fontSize: 14, height: 1.6),
+                          ),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // QCM Pédagogique Interactif
+                  const Text('✦ Quiz & Évaluation', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+
+                  if (quiz.isEmpty)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF121212),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFF222222)),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.info_outline, color: Color(0xFF777777), size: 18),
+                          SizedBox(width: 10),
+                          Text('Aucun QCM dans ce chapitre (contenu purement théorique).', style: TextStyle(color: Color(0xFF888888), fontSize: 12)),
+                        ],
+                      ),
+                    )
+                  else
+                    ...quiz.asMap().entries.map((entry) {
+                      final qIdx = entry.key;
+                      final q = entry.value;
+                      final qText = q['question'] as String? ?? 'Question';
+                      final options = (q['options'] as List?)?.cast<String>() ?? [];
+                      final correct = q['correctAnswer'] as int? ?? 0;
+                      final explanation = q['explanation'] as String? ?? '';
+                      final isAnswered = _previewQuizAnswered;
+                      final selected = _previewSelectedChoice;
+                      final isCorrect = selected == correct;
+
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF141414),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: const Color(0xFF262626)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text('Question ${qIdx + 1} : $qText', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+                                const Spacer(),
+                                if (isAnswered)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: isCorrect ? const Color(0xFF10B981).withOpacity(0.15) : const Color(0xFFE11D48).withOpacity(0.15),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      isCorrect ? '✓ Correct (+20 XP)' : '✗ Incorrect (0 XP)',
+                                      style: TextStyle(color: isCorrect ? const Color(0xFF10B981) : const Color(0xFFE11D48), fontSize: 11, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            ...options.asMap().entries.map((optEntry) {
+                              final optIdx = optEntry.key;
+                              final optText = optEntry.value;
+                              final isChosen = selected == optIdx;
+
+                              Color itemBorder = const Color(0xFF2A2A2A);
+                              Color itemBg = const Color(0xFF181818);
+                              if (isAnswered) {
+                                if (optIdx == correct) {
+                                  itemBorder = const Color(0xFF10B981);
+                                  itemBg = const Color(0xFF10B981).withOpacity(0.1);
+                                } else if (isChosen && !isCorrect) {
+                                  itemBorder = const Color(0xFFE11D48);
+                                  itemBg = const Color(0xFFE11D48).withOpacity(0.1);
+                                }
+                              } else if (isChosen) {
+                                itemBorder = const Color(0xFFF5EBDA);
+                                itemBg = const Color(0xFF222222);
+                              }
+
+                              return InkWell(
+                                onTap: isAnswered
+                                    ? null
+                                    : () {
+                                        setState(() {
+                                          _previewSelectedChoice = optIdx;
+                                          _previewQuizAnswered = true;
+                                        });
+                                      },
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                  decoration: BoxDecoration(
+                                    color: itemBg,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: itemBorder),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 18,
+                                        height: 18,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: isChosen ? const Color(0xFFF5EBDA) : Colors.grey),
+                                          color: isChosen ? const Color(0xFFF5EBDA) : Colors.transparent,
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: isChosen ? const Icon(Icons.circle, size: 8, color: Colors.black) : null,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(child: Text(optText, style: const TextStyle(color: Colors.white, fontSize: 13))),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+
+                            if (isAnswered && explanation.isNotEmpty) ...[
+                              const SizedBox(height: 10),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF1A1A1A),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border(left: BorderSide(color: isCorrect ? const Color(0xFF10B981) : const Color(0xFFF59E0B), width: 3)),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      isCorrect ? 'Explication :' : 'Pourquoi c\'est incorrect :',
+                                      style: TextStyle(color: isCorrect ? const Color(0xFF10B981) : const Color(0xFFF59E0B), fontSize: 11, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(explanation, style: const TextStyle(color: Color(0xFFCCCCCC), fontSize: 12, height: 1.4)),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton.icon(
+                                  icon: const Icon(Icons.refresh, size: 14, color: Colors.grey),
+                                  label: const Text('Rejouer la question', style: TextStyle(color: Colors.grey, fontSize: 11)),
+                                  onPressed: () {
+                                    setState(() {
+                                      _previewSelectedChoice = null;
+                                      _previewQuizAnswered = false;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      );
+                    }),
+
+                  const SizedBox(height: 24),
+
+                  // Boutons Navigation Chapitres
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (activeIdx > 0)
+                        OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xFFF5EBDA),
+                            side: const BorderSide(color: Color(0xFF333333)),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          ),
+                          icon: const Icon(Icons.arrow_back, size: 14),
+                          label: const Text('Chapitre précédent'),
+                          onPressed: () {
+                            setState(() {
+                              _previewActiveChapterIndex = activeIdx - 1;
+                              _previewSelectedChoice = null;
+                              _previewQuizAnswered = false;
+                            });
+                          },
+                        )
+                      else
+                        const SizedBox.shrink(),
+                      if (activeIdx < modules.length - 1)
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF5EBDA),
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          ),
+                          icon: const Icon(Icons.arrow_forward, size: 14),
+                          label: const Text('Chapitre suivant', style: TextStyle(fontWeight: FontWeight.bold)),
+                          onPressed: () {
+                            setState(() {
+                              _previewActiveChapterIndex = activeIdx + 1;
+                              _previewSelectedChoice = null;
+                              _previewQuizAnswered = false;
+                            });
+                          },
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
-
   Widget _buildSectionHeader(String title, IconData icon) {
     return Row(
       children: [
