@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2026 TUTODECODE Association <contact@tutodecode.org>
 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:tutodecode/core/parser/tdc_parser.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -20,34 +22,30 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
   final TextEditingController _rawCodeController = TextEditingController();
 
   // Form State
-  String _courseId = 'nouveau-cours';
-  String _courseTitle = 'Nouveau Cours Technique';
-  String _courseDesc = 'Description du cours et objectifs pédagogiques.';
+  String _courseId = 'linux-sysadmin';
+  String _courseTitle = 'Administration Système Linux';
+  String _courseDesc = 'Maîtrisez les commandes de base, les permissions et la gestion des processus.';
   String _category = 'linux';
   String _level = 'beginner';
-  String _duration = '1h';
+  String _duration = '2h';
   String _icon = 'Terminal';
-  List<String> _keywords = ['linux', 'terminal', 'tdc'];
+  List<String> _keywords = ['linux', 'sysadmin', 'bash', 'terminal'];
 
   List<Map<String, dynamic>> _modules = [
     {
-      'id': 'module-1',
-      'title': 'Chapitre 1 : Introduction',
-      'duration': '15min',
-      'content': '# Premier Chapitre\n\nBienvenue dans votre cours rédigé en **.tdc** !',
+      'id': 'audit-processus',
+      'title': 'Chapitre 1 : Audit des Processus & Mémoire',
+      'duration': '20min',
+      'content': '# 📊 Audit de la RAM et du CPU\n\nLorsque le serveur ralentit, utilisez les outils système natifs.',
       'codeBlocks': [
-        {
-          'language': 'bash',
-          'title': 'Exemple de commande',
-          'code': 'echo "Hello TUTODECODE!"',
-        }
+        {'language': 'bash', 'title': 'Affichage des processus', 'code': 'ps aux --sort=-%mem | head -n 10\nfree -h'}
       ],
       'quiz': [
         {
-          'question': 'Quelle est la première commande de diagnostic ?',
-          'choices': ['whoami', 'pwd', 'ls'],
+          'question': 'Quelle commande affiche la mémoire disponible ?',
+          'choices': ['free -h', 'ls -la', 'cat /etc/passwd'],
           'correctIndex': 0,
-          'explanation': 'whoami indique votre nom d\'utilisateur.',
+          'explanation': 'free -h affiche la mémoire physique et le SWAP en format lisible (GB/MB).'
         }
       ]
     }
@@ -119,6 +117,220 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
     }
   }
 
+  /// Opens the native OS file explorer to pick any .tdc or .json course file.
+  Future<void> _openNativeFilePicker() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['tdc', 'json', 'txt'],
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final filePath = result.files.single.path!;
+        final fileContent = await File(filePath).readAsString();
+        final parsed = TDCParser.parseCourse(fileContent);
+
+        setState(() {
+          _courseId = parsed['id'] ?? 'cours-importe';
+          _courseTitle = parsed['title'] ?? _courseId;
+          _courseDesc = parsed['description'] ?? '';
+          _category = parsed['category'] ?? 'linux';
+          _level = parsed['level'] ?? 'beginner';
+          _duration = parsed['duration'] ?? '1h';
+          _icon = parsed['icon'] ?? 'BookOpen';
+          _keywords = (parsed['keywords'] as List?)?.cast<String>() ?? ['tdc'];
+          _modules = (parsed['content'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+          _showWelcomeScreen = false;
+        });
+
+        _syncFormToRawCode();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Fichier importé avec succès : ${result.files.single.name}'),
+            backgroundColor: const Color(0xFFF5EBDA),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur d\'ouverture du fichier : $e'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
+  }
+
+  /// Displays an inspiring, ultra-pro modal with 6 rich category templates.
+  void _showTemplateSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: const Color(0xFF121212),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFF2A2A2A)),
+          ),
+          child: Container(
+            maxWidth: 850,
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: const [
+                        Icon(Icons.flash_on, color: Color(0xFFF5EBDA), size: 24),
+                        SizedBox(width: 10),
+                        Text(
+                          'Choisir un Modèle de Cours Professionnel',
+                          style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.grey),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Sélectionnez une trame complète prête à l\'emploi pour démarrer la création de votre cours en .tdc',
+                  style: TextStyle(color: Colors.grey[400], fontSize: 13),
+                ),
+                const SizedBox(height: 20),
+                Flexible(
+                  child: GridView.count(
+                    shrinkWrap: true,
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 2.2,
+                    children: [
+                      _buildTemplateCard(
+                        id: 'linux',
+                        icon: Icons.terminal,
+                        category: 'LINUX',
+                        title: 'Administration Linux & Bash',
+                        desc: 'Audit système, processus CPU/RAM, permissions CHMOD et commandes SSH.',
+                        level: 'Débutant • 2h',
+                        color: const Color(0xFFF5EBDA),
+                      ),
+                      _buildTemplateCard(
+                        id: 'network',
+                        icon: Icons.network_check,
+                        category: 'RÉSEAU',
+                        title: 'Subnetting IPv4 & CIDR',
+                        desc: 'Calcul des masques de sous-réseau, adresses hôtes et plages CIDR.',
+                        level: 'Intermédiaire • 3h',
+                        color: const Color(0xFF8B5CF6),
+                      ),
+                      _buildTemplateCard(
+                        id: 'security',
+                        icon: Icons.security,
+                        category: 'SÉCURITÉ',
+                        title: 'Hardening & Pare-Feu UFW',
+                        desc: 'Sécurisation serveur, règles d\'accès SSH et filtrage réseau.',
+                        level: 'Avancé • 4h',
+                        color: const Color(0xFF10B981),
+                      ),
+                      _buildTemplateCard(
+                        id: 'crypto',
+                        icon: Icons.lock,
+                        category: 'CRYPTO',
+                        title: 'Cryptographie & Hashes',
+                        desc: 'Algorithmes SHA-256, salage PBKDF2 et paires de clés RSA.',
+                        level: 'Intermédiaire • 2h',
+                        color: const Color(0xFFE11D48),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTemplateCard({
+    required String id,
+    required IconData icon,
+    required String category,
+    required String title,
+    required String desc,
+    required String level,
+    required Color color,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).pop();
+          _loadPresetTemplate(id);
+          setState(() => _showWelcomeScreen = false);
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A1A1A),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: color.withOpacity(0.3)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      category,
+                      style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 11),
+                    ),
+                  ),
+                  Icon(icon, color: color, size: 20),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                title,
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                desc,
+                style: TextStyle(color: Colors.grey[400], fontSize: 11),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                level,
+                style: TextStyle(color: Colors.grey[500], fontSize: 11),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _loadPresetTemplate(String type) {
     if (type == 'linux') {
       _courseId = 'linux-sysadmin';
@@ -176,6 +388,34 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
           ]
         }
       ];
+    } else if (type == 'security') {
+      _courseId = 'security-hardening';
+      _courseTitle = 'Hardening & Sécurisation Serveur';
+      _courseDesc = 'Sécurisation de l\'accès SSH, règles de filtrage pare-feu UFW et surveillance d\'intégrité.';
+      _category = 'security';
+      _level = 'advanced';
+      _duration = '4h';
+      _icon = 'Shield';
+      _keywords = ['security', 'hardening', 'ssh', 'ufw'];
+      _modules = [
+        {
+          'id': 'ssh-hardening',
+          'title': 'Securiser le Service SSH',
+          'duration': '40min',
+          'content': '# 🔒 Hardening SSH\n\nDésactiver la connexion par mot de passe et forcer les clés RSA/Ed25519.',
+          'codeBlocks': [
+            {'language': 'bash', 'title': 'Fichier de configuration SSH', 'code': 'nano /etc/ssh/sshd_config\nPasswordAuthentication no\nPermitRootLogin no'}
+          ],
+          'quiz': [
+            {
+              'question': 'Quelle directive désactive la connexion root directe en SSH ?',
+              'choices': ['PermitRootLogin no', 'PasswordAuthentication no', 'AllowUsers none'],
+              'correctIndex': 0,
+              'explanation': 'PermitRootLogin no interdit la connexion en tant que superutilisateur root.'
+            }
+          ]
+        }
+      ];
     }
     _syncFormToRawCode();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -228,6 +468,11 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
         ),
         actions: [
           IconButton(
+            icon: const Icon(Icons.folder_open, color: Color(0xFFF5EBDA)),
+            tooltip: 'Importer un fichier .TDC',
+            onPressed: _openNativeFilePicker,
+          ),
+          IconButton(
             icon: const Icon(Icons.copy, color: Color(0xFFF5EBDA)),
             tooltip: 'Copier le code .TDC',
             onPressed: () {
@@ -237,14 +482,10 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
               );
             },
           ),
-          PopupMenuButton<String>(
+          IconButton(
             icon: const Icon(Icons.flash_on, color: Color(0xFFF5EBDA)),
-            tooltip: 'Charger un modèle de cours',
-            onSelected: _loadPresetTemplate,
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 'linux', child: Text('🐧 Modèle Linux Sysadmin')),
-              const PopupMenuItem(value: 'network', child: Text('🌐 Modèle Réseau & CIDR')),
-            ],
+            tooltip: 'Choisir un modèle de cours',
+            onPressed: _showTemplateSelectionDialog,
           ),
         ],
         bottom: TabBar(
@@ -306,7 +547,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
               Expanded(
                 child: DropdownButtonFormField<String>(
                   value: _category,
-                  dropdownColor: Colors.grey[900],
+                  dropdownColor: const Color(0xFF1A1A1A),
                   style: const TextStyle(color: Colors.white),
                   decoration: _inputDecoration('Catégorie'),
                   items: const [
@@ -329,7 +570,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
               Expanded(
                 child: DropdownButtonFormField<String>(
                   value: _level,
-                  dropdownColor: Colors.grey[900],
+                  dropdownColor: const Color(0xFF1A1A1A),
                   style: const TextStyle(color: Colors.white),
                   decoration: _inputDecoration('Niveau'),
                   items: const [
@@ -356,6 +597,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFF5EBDA),
                   foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 icon: const Icon(Icons.add),
                 label: const Text('Ajouter un Chapitre'),
@@ -387,8 +629,10 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
   }
 
   Widget _buildModuleCard(int index, Map<String, dynamic> mod) {
+    final quizList = (mod['quiz'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+
     return Card(
-      color: Colors.grey[900],
+      color: const Color(0xFF121212),
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -427,29 +671,139 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
               setState(() => mod['content'] = val);
               _syncFormToRawCode();
             }, maxLines: 4),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('QCM du Chapitre', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-                TextButton.icon(
-                  icon: const Icon(Icons.quiz, color: Color(0xFFF5EBDA)),
-                  label: const Text('Ajouter une Question', style: TextStyle(color: Color(0xFFF5EBDA))),
+                Text('QCM du Chapitre (${quizList.length} question(s))', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF5EBDA).withOpacity(0.15),
+                    foregroundColor: const Color(0xFFF5EBDA),
+                    elevation: 0,
+                  ),
+                  icon: const Icon(Icons.quiz, size: 18),
+                  label: const Text('Ajouter une Question'),
                   onPressed: () {
                     setState(() {
-                      final quizList = (mod['quiz'] as List);
                       quizList.add({
-                        'question': 'Nouvelle Question ?',
-                        'choices': ['Option A', 'Option B'],
+                        'question': 'Nouvelle Question QCM ?',
+                        'choices': ['Réponse correcte', 'Mauvaise réponse A', 'Mauvaise réponse B'],
                         'correctIndex': 0,
-                        'explanation': 'Explication.'
+                        'explanation': 'Explication pédagogique de la réponse.'
                       });
+                      mod['quiz'] = quizList;
                     });
                     _syncFormToRawCode();
                   },
                 ),
               ],
             ),
+            const SizedBox(height: 10),
+            ...quizList.asMap().entries.map((qEntry) {
+              final qIdx = qEntry.key;
+              final q = qEntry.value;
+              final choices = (q['choices'] as List?)?.cast<String>() ?? [];
+              final correctIdx = q['correctIndex'] as int? ?? 0;
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E1E1E),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey[800]!),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Question #${qIdx + 1}', style: const TextStyle(color: Color(0xFFF5EBDA), fontWeight: FontWeight.bold)),
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 18),
+                          onPressed: () {
+                            setState(() {
+                              quizList.removeAt(qIdx);
+                              mod['quiz'] = quizList;
+                            });
+                            _syncFormToRawCode();
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    _buildTextField('Question', q['question'] ?? '', (val) {
+                      setState(() => q['question'] = val);
+                      _syncFormToRawCode();
+                    }),
+                    const SizedBox(height: 8),
+                    const Text('Choix de réponses (+ = Correcte) :', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                    const SizedBox(height: 6),
+                    ...choices.asMap().entries.map((cEntry) {
+                      final cIdx = cEntry.key;
+                      final isCorrect = (cIdx == correctIdx);
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                isCorrect ? Icons.check_circle : Icons.radio_button_unchecked,
+                                color: isCorrect ? Colors.greenAccent : Colors.grey,
+                              ),
+                              tooltip: isCorrect ? 'Réponse Correcte (+)' : 'Définir comme réponse correcte',
+                              onPressed: () {
+                                setState(() {
+                                  q['correctIndex'] = cIdx;
+                                });
+                                _syncFormToRawCode();
+                              },
+                            ),
+                            Expanded(
+                              child: _buildTextField('Choix ${cIdx + 1}', choices[cIdx], (val) {
+                                setState(() => choices[cIdx] = val);
+                                _syncFormToRawCode();
+                              }),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.close, color: Colors.grey, size: 16),
+                              onPressed: () {
+                                if (choices.length > 2) {
+                                  setState(() {
+                                    choices.removeAt(cIdx);
+                                    if (q['correctIndex'] >= choices.length) {
+                                      q['correctIndex'] = 0;
+                                    }
+                                  });
+                                  _syncFormToRawCode();
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    TextButton.icon(
+                      icon: const Icon(Icons.add, size: 16, color: Color(0xFFF5EBDA)),
+                      label: const Text('Ajouter un choix', style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 12)),
+                      onPressed: () {
+                        setState(() {
+                          choices.add('Nouveau Choix');
+                        });
+                        _syncFormToRawCode();
+                      },
+                    ),
+                    const SizedBox(height: 6),
+                    _buildTextField('Explication Pédagogique', q['explanation'] ?? '', (val) {
+                      setState(() => q['explanation'] = val);
+                      _syncFormToRawCode();
+                    }),
+                  ],
+                ),
+              );
+            }).toList(),
           ],
         ),
       ),
@@ -523,7 +877,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey[900],
+              color: const Color(0xFF161616),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: const Color(0xFFF5EBDA).withOpacity(0.3)),
             ),
@@ -584,46 +938,6 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
             );
           }).toList(),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title, IconData icon) {
-    return Row(
-      children: [
-        Icon(icon, color: const Color(0xFFF5EBDA), size: 20),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: const TextStyle(color: Color(0xFFF5EBDA), fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTextField(String label, String value, Function(String) onChanged, {int maxLines = 1}) {
-    return TextFormField(
-      initialValue: value,
-      maxLines: maxLines,
-      style: const TextStyle(color: Colors.white),
-      decoration: _inputDecoration(label),
-      onChanged: onChanged,
-    );
-  }
-
-  InputDecoration _inputDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      labelStyle: const TextStyle(color: Colors.grey),
-      filled: true,
-      fillColor: Colors.grey[900],
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.grey[800]!),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Color(0xFFF5EBDA)),
       ),
     );
   }
@@ -705,24 +1019,18 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                             const SizedBox(height: 12),
                             _buildWelcomeActionButton(
                               icon: Icons.folder_open_outlined,
-                              title: 'Ouvrir un Fichier .TDC',
-                              subtitle: 'Ouvrir un cours .tdc ou .json existant sur votre disque',
+                              title: 'Ouvrir un Fichier (Explorateur OS)',
+                              subtitle: 'Parcourir votre disque pour ouvrir un cours .tdc ou .json',
                               color: const Color(0xFF8B5CF6),
-                              onTap: () {
-                                _loadPresetTemplate('linux');
-                                setState(() => _showWelcomeScreen = false);
-                              },
+                              onTap: _openNativeFilePicker,
                             ),
                             const SizedBox(height: 12),
                             _buildWelcomeActionButton(
                               icon: Icons.flash_on_outlined,
                               title: 'Nouveau depuis un Modèle',
-                              subtitle: 'Charger un modèle prêt à l\'emploi (Linux, Réseau, CIDR)',
+                              subtitle: 'Explorer nos 6 modèles professionnels (Linux, Réseau, Sécurité)',
                               color: const Color(0xFF10B981),
-                              onTap: () {
-                                _loadPresetTemplate('network');
-                                setState(() => _showWelcomeScreen = false);
-                              },
+                              onTap: _showTemplateSelectionDialog,
                             ),
                           ],
                         ),
@@ -861,6 +1169,52 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: const Color(0xFFF5EBDA), size: 20),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: const TextStyle(color: Color(0xFFF5EBDA), fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextField(String label, String value, Function(String) onChanged, {int maxLines = 1}) {
+    return TextFormField(
+      initialValue: value,
+      maxLines: maxLines,
+      style: const TextStyle(color: Colors.white, fontSize: 14),
+      decoration: _inputDecoration(label),
+      onChanged: onChanged,
+    );
+  }
+
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Color(0xFFB1A89E), fontSize: 13),
+      floatingLabelStyle: const TextStyle(color: Color(0xFFF5EBDA), fontSize: 14, fontWeight: FontWeight.bold),
+      filled: true,
+      fillColor: const Color(0xFF141414),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFFF5EBDA), width: 1.5),
       ),
     );
   }
