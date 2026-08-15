@@ -22,30 +22,34 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
   final TextEditingController _rawCodeController = TextEditingController();
 
   // Form State
-  String _courseId = 'linux-sysadmin';
-  String _courseTitle = 'Administration Système Linux';
-  String _courseDesc = 'Maîtrisez les commandes de base, les permissions et la gestion des processus.';
+  String _courseId = 'nouveau-cours-technique';
+  String _courseTitle = 'Titre de Votre Nouveau Cours';
+  String _courseDesc = 'Description pédagogique et objectifs de votre cours en langage .tdc.';
   String _category = 'linux';
   String _level = 'beginner';
-  String _duration = '2h';
+  String _duration = '1h';
   String _icon = 'Terminal';
-  List<String> _keywords = ['linux', 'sysadmin', 'bash', 'terminal'];
+  List<String> _keywords = ['tutodecode', 'tdc', 'cours'];
 
   List<Map<String, dynamic>> _modules = [
     {
-      'id': 'audit-processus',
-      'title': 'Chapitre 1 : Audit des Processus & Mémoire',
-      'duration': '20min',
-      'content': '# 📊 Audit de la RAM et du CPU\n\nLorsque le serveur ralentit, utilisez les outils système natifs.',
+      'id': 'chapitre-1',
+      'title': 'Chapitre 1 : Introduction & Concepts',
+      'duration': '15min',
+      'content': '# 🚀 Bienvenue dans votre cours\n\nRédigez ici le contenu en **Markdown** (explications, schémas, astuces).',
       'codeBlocks': [
-        {'language': 'bash', 'title': 'Affichage des processus', 'code': 'ps aux --sort=-%mem | head -n 10\nfree -h'}
+        {
+          'language': 'bash',
+          'title': 'Exemple de commande',
+          'code': 'echo "Bienvenue dans T2DECODE Studio !"'
+        }
       ],
       'quiz': [
         {
-          'question': 'Quelle commande affiche la mémoire disponible ?',
-          'choices': ['free -h', 'ls -la', 'cat /etc/passwd'],
+          'question': 'Quelle est la première étape du cours ?',
+          'choices': ['Lire le premier chapitre', 'Ignorer la théorie', 'Fermer le terminal'],
           'correctIndex': 0,
-          'explanation': 'free -h affiche la mémoire physique et le SWAP en format lisible (GB/MB).'
+          'explanation': 'Lire attentivement le chapitre permet d\'assimiler les notions.'
         }
       ]
     }
@@ -84,6 +88,44 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
     _tabController.dispose();
     _rawCodeController.dispose();
     super.dispose();
+  }
+
+  void _createNewDefaultCourse() {
+    setState(() {
+      _courseId = 'mon-nouveau-cours';
+      _courseTitle = 'Nouveau Cours Technique';
+      _courseDesc = 'Description globale et objectifs pédagogiques de ce cours.';
+      _category = 'linux';
+      _level = 'beginner';
+      _duration = '1h';
+      _icon = 'Terminal';
+      _keywords = ['tutodecode', 'tdc', 'cours'];
+      _modules = [
+        {
+          'id': 'chapitre-1',
+          'title': 'Chapitre 1 : Introduction',
+          'duration': '15min',
+          'content': '# 📌 Introduction\n\nContenu rédigé en **Markdown**.',
+          'codeBlocks': [
+            {
+              'language': 'bash',
+              'title': 'Exemple bash',
+              'code': 'echo "Hello TDC Studio"'
+            }
+          ],
+          'quiz': [
+            {
+              'question': 'Quelle est la commande pour afficher du texte ?',
+              'choices': ['echo', 'cat', 'ls'],
+              'correctIndex': 0,
+              'explanation': 'echo affiche la chaîne de caractères transmise.'
+            }
+          ]
+        }
+      ];
+      _showWelcomeScreen = false;
+    });
+    _syncFormToRawCode();
   }
 
   void _syncFormToRawCode() {
@@ -139,7 +181,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
           _duration = parsed['duration'] ?? '1h';
           _icon = parsed['icon'] ?? 'BookOpen';
           _keywords = (parsed['keywords'] as List?)?.cast<String>() ?? ['tdc'];
-          _modules = (parsed['content'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+          _modules = (parsed['content'] as List?)?.map((m) => Map<String, dynamic>.from(m as Map)).toList() ?? [];
           _showWelcomeScreen = false;
         });
 
@@ -162,7 +204,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
     }
   }
 
-  /// Displays an inspiring, ultra-pro modal with 6 rich category templates.
+  /// Displays an inspiring, ultra-pro modal with rich category templates.
   void _showTemplateSelectionDialog() {
     showDialog(
       context: context,
@@ -629,7 +671,13 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
   }
 
   Widget _buildModuleCard(int index, Map<String, dynamic> mod) {
-    final quizList = (mod['quiz'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+    if (mod['quiz'] == null || mod['quiz'] is! List) {
+      mod['quiz'] = <Map<String, dynamic>>[];
+    }
+    final List<Map<String, dynamic>> quizList = (mod['quiz'] as List)
+        .map((item) => Map<String, dynamic>.from(item as Map))
+        .toList();
+    mod['quiz'] = quizList;
 
     return Card(
       color: const Color(0xFF121212),
@@ -662,12 +710,12 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
               ],
             ),
             const SizedBox(height: 8),
-            _buildTextField('Titre du Chapitre', mod['title'], (val) {
+            _buildTextField('Titre du Chapitre', mod['title'] ?? '', (val) {
               setState(() => mod['title'] = val);
               _syncFormToRawCode();
             }),
             const SizedBox(height: 8),
-            _buildTextField('Contenu Markdown (Triple """ en .tdc)', mod['content'], (val) {
+            _buildTextField('Contenu Markdown (Triple """ en .tdc)', mod['content'] ?? '', (val) {
               setState(() => mod['content'] = val);
               _syncFormToRawCode();
             }, maxLines: 4),
@@ -688,11 +736,11 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                     setState(() {
                       quizList.add({
                         'question': 'Nouvelle Question QCM ?',
-                        'choices': ['Réponse correcte', 'Mauvaise réponse A', 'Mauvaise réponse B'],
+                        'choices': ['Réponse correcte (+)', 'Mauvaise réponse A', 'Mauvaise réponse B'],
                         'correctIndex': 0,
                         'explanation': 'Explication pédagogique de la réponse.'
                       });
-                      mod['quiz'] = quizList;
+                      mod['quiz'] = List<Map<String, dynamic>>.from(quizList);
                     });
                     _syncFormToRawCode();
                   },
@@ -707,6 +755,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
               final correctIdx = q['correctIndex'] as int? ?? 0;
 
               return Container(
+                key: ValueKey('quiz_${index}_$qIdx'),
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -726,7 +775,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                           onPressed: () {
                             setState(() {
                               quizList.removeAt(qIdx);
-                              mod['quiz'] = quizList;
+                              mod['quiz'] = List<Map<String, dynamic>>.from(quizList);
                             });
                             _syncFormToRawCode();
                           },
@@ -1010,11 +1059,9 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                             _buildWelcomeActionButton(
                               icon: Icons.add_circle_outline,
                               title: 'Nouveau Cours .TDC',
-                              subtitle: 'Créer un cours vierge avec formulaire et code',
+                              subtitle: 'Créer un cours avec structure et exemple pré-rempli',
                               color: const Color(0xFFF5EBDA),
-                              onTap: () {
-                                setState(() => _showWelcomeScreen = false);
-                              },
+                              onTap: _createNewDefaultCourse,
                             ),
                             const SizedBox(height: 12),
                             _buildWelcomeActionButton(
@@ -1190,6 +1237,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
 
   Widget _buildTextField(String label, String value, Function(String) onChanged, {int maxLines = 1}) {
     return TextFormField(
+      key: ValueKey('${label}_$value'),
       initialValue: value,
       maxLines: maxLines,
       style: const TextStyle(color: Colors.white, fontSize: 14),
@@ -1202,10 +1250,10 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
     return InputDecoration(
       labelText: label,
       labelStyle: const TextStyle(color: Color(0xFFB1A89E), fontSize: 13),
-      floatingLabelStyle: const TextStyle(color: Color(0xFFF5EBDA), fontSize: 14, fontWeight: FontWeight.bold),
+      floatingLabelBehavior: FloatingLabelBehavior.always,
       filled: true,
       fillColor: const Color(0xFF141414),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
