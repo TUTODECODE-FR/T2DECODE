@@ -139,6 +139,11 @@ class OllamaService {
     await _ensureAllowed();
     final msgs = <Map<String, String>>[];
     String fullSystem = system;
+    if (fullSystem.isEmpty) {
+      fullSystem = "Tu es Ghost AI, l'assistant tuteur de T2DECODE. Si l'utilisateur demande de créer ou générer un cours ou un QCM, utilise exclusivement le format officiel TUTODECODE Script (.tdc) : `course \"id\" { title: \"...\" category: linux level: beginner module \"id\" { content \"\"\"...\"\"\" quiz { question \"...\" { + \"bonne réponse\" - \"mauvaise réponse\" } } } }`.";
+    } else {
+      fullSystem += "\nNote : Si tu génères du contenu de cours ou QCM, utilise le format officiel TUTODECODE Script (.tdc).";
+    }
     if (context != null && context.isNotEmpty) {
       fullSystem += """
 
