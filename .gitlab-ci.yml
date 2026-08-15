@@ -487,16 +487,7 @@ publish_sourceforge:
   allow_failure: true
   image: alpine:3.16
   needs:
-    - job: build_android_signed
-      artifacts: true
-      optional: true
-    - job: build_linux_signed
-      artifacts: true
-      optional: true
-    - job: build_windows_signed
-      artifacts: true
-      optional: true
-    - job: build_macos_signed
+    - job: sync_github_multi_os_builds
       artifacts: true
       optional: true
   script:
