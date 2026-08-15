@@ -64,24 +64,24 @@ def scan_files(root_dir):
                 filepath = os.path.join(dirpath, fname)
                 checked_files += 1
 
-            try:
-                with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
-                    content = f.read()
+                try:
+                    with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                        content = f.read()
 
-                for pattern, desc in FORBIDDEN_PATTERNS:
-                    matches = re.finditer(pattern, content, re.IGNORECASE)
-                    for m in matches:
-                        matched_str = m.group(0)
-                        # Check exemptions for HTTP
-                        if "http://" in matched_str.lower():
-                            if any(exempt in matched_str.lower() for exempt in ALLOWED_HTTP_EXEMPTIONS):
-                                continue
-                        
-                        rel_path = os.path.relpath(filepath, root_dir)
-                        line_num = content[:m.start()].count('\n') + 1
-                        violations.append(f"{rel_path}:{line_num} -> {desc} ({matched_str})")
-            except Exception as e:
-                print(f"⚠️ Warning: Could not read {filepath}: {e}")
+                    for pattern, desc in FORBIDDEN_PATTERNS:
+                        matches = re.finditer(pattern, content, re.IGNORECASE)
+                        for m in matches:
+                            matched_str = m.group(0)
+                            # Check exemptions for HTTP
+                            if "http://" in matched_str.lower():
+                                if any(exempt in matched_str.lower() for exempt in ALLOWED_HTTP_EXEMPTIONS):
+                                    continue
+                            
+                            rel_path = os.path.relpath(filepath, root_dir)
+                            line_num = content[:m.start()].count('\n') + 1
+                            violations.append(f"{rel_path}:{line_num} -> {desc} ({matched_str})")
+                except Exception as e:
+                    print(f"⚠️ Warning: Could not read {filepath}: {e}")
 
     return violations, checked_files
 
