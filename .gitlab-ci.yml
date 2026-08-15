@@ -535,6 +535,8 @@ build_snap_signed:
   rules:
     - if: $CI_COMMIT_TAG && $SNAPCRAFT_STORE_CREDENTIALS
       when: on_success
+    - when: manual
+      allow_failure: true
 
 build_windows_signed:
   stage: build-release
