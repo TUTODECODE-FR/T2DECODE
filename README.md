@@ -227,6 +227,66 @@ T2DECODE est diffusé sous licence libre **GNU General Public License v3.0 (GPLv
 
 <img src="assets/separator.svg" width="100%" height="4">
 
+## 📜 Langage de Cours TUTODECODE Script (`.tdc`)
+
+T2DECODE intègre un **langage dédié souverain et lisible par un humain (`.tdc`)** pour concevoir des cours, des ateliers pratiques et des QCM interactifs sans la verbosité du JSON.
+
+### 🌟 Avantages du format `.tdc` :
+- **Lisibilité optimale** : Aucun guillemet inutile sur les clés de configuration.
+- **Blocs Markdown natifs** : Délimités par `"""` pour rédiger du contenu riche sans échapper les sauts de ligne.
+- **QCM Express** : Marqueur `+` pour la bonne réponse, `-` pour les leurres.
+- **Parser embarqué** : Compilé en objets Dart natifs via `TDCParser` ([`lib/core/parser/tdc_parser.dart`](lib/core/parser/tdc_parser.dart)).
+
+---
+
+### 📝 Structure d'un fichier `.tdc` :
+
+```tdc
+course "linux-basics" {
+  title: "Linux : Le Pouvoir du Terminal"
+  description: "Maîtrisez le système qui fait tourner 96% des serveurs."
+  category: linux
+  level: beginner
+  duration: 6h
+  icon: Terminal
+  keywords: [linux, bash, terminal, sysadmin]
+
+  module "intro" {
+    title: "Architecture et Commandes Essentielles"
+    duration: 15min
+
+    content """
+    # 🚨 Incident de Prod #01 : Diagnostic d'Urgence à 3h du Matin
+
+    Vous êtes connecté en SSH sur un serveur de production qui ne répond plus.
+    Utilisez les commandes de base pour auditer la machine en moins de 60s.
+    """
+
+    codeblock "bash" {
+      title: "Kit d'audit immédiat"
+      code """
+      whoami       # Quel utilisateur suis-je ?
+      pwd          # Où suis-je ?
+      uptime       # Charge processeur
+      """
+    }
+
+    quiz {
+      question "Quelle commande affiche la charge du processeur ?" {
+        - "whoami"
+        + "uptime"
+        - "pwd"
+        explanation "uptime donne le load average à 1, 5 et 15 minutes."
+      }
+    }
+  }
+}
+```
+
+---
+
+<img src="assets/separator.svg" width="100%" height="4">
+
 ## 📚 Documentation Complète
 
 - [🏗️ Architecture technique](docs/architecture.md)

@@ -44,6 +44,7 @@ make build-dmg       # Créer l'installateur DMG (macOS)
 **Services principaux** :
 - `StorageService` (`lib/core/services/`) — enveloppe `shared_preferences`
 - `OllamaService` (`lib/features/ghost_ai/service/`) — client de streaming HTTP pour le LLM local
+- `TDCParser` (`lib/core/parser/tdc_parser.dart`) — Parser & Sérialiseur natif pour le langage de cours souverain TUTODECODE Script (`.tdc`).
 - `ModuleService` / `GithubService` (`lib/core/services/`) — chargement de modules de cours personnalisés et vérifications de mise à jour
 - `AssetIntegrityService` (`lib/core/services/`) — vérifie `assets/asset_checksums.json` au démarrage
 

@@ -1,0 +1,62 @@
+course "intro-tdc-language" {
+  title: "TUTODECODE Script (.tdc) - Le Langage Pédagogique"
+  description: "Apprenez à rédiger des cours et des labs interactifs avec le langage souverain TDC."
+  category: development
+  level: beginner
+  duration: 30min
+  icon: Code
+  keywords: [tdc, dsl, tutodecode, cours, langage]
+
+  module "tdc-syntax-101" {
+    title: "Syntaxe de Base et Structure d'un Cours"
+    duration: 15min
+
+    content """
+    # 🚀 Bienvenue dans le langage TUTODECODE Script (.tdc)
+
+    Le langage **TDC** est un langage de description de cours souverain, lisible par un humain et directement exécuté par T2DECODE.
+
+    ## 💡 Pourquoi .tdc plutôt que .json ?
+    - **Aucun guillemet inutile** sur les clés.
+    - **Blocs multi-lignes `"""`** natifs pour le Markdown et les blocs de code.
+    - **Syntaxe de QCM express** avec `+` pour la bonne réponse et `-` pour les erreurs.
+    """
+
+    codeblock "tdc" {
+      title: "Exemple de structure d'un cours .tdc"
+      code """
+      course "mon-premier-cours" {
+        title: "Mon Premier Cours TDC"
+        category: linux
+        level: beginner
+
+        module "mod-1" {
+          title: "Introduction"
+          content \"\"\"
+          # Bienvenue !
+          Ceci est mon premier cours rédigé en .tdc.
+          \"\"\"
+
+          quiz {
+            question "Quel est le port par défaut de SSH ?" {
+              - "80"
+              + "22"
+              - "443"
+              explanation "SSH utilise le port TCP 22."
+            }
+          }
+        }
+      }
+      """
+    }
+
+    quiz {
+      question "Quel symbole désigne la réponse correcte dans un QCM .tdc ?" {
+        - "Le symbole -"
+        + "Le symbole +"
+        - "Le symbole *"
+        explanation "Le préfixe + signale la réponse correcte au parser TDC."
+      }
+    }
+  }
+}

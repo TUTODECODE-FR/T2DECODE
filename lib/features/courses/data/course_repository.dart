@@ -4,6 +4,7 @@
 // Loads and owns the Course/Chapter data model.
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+import '../../../core/parser/tdc_parser.dart';
 import '../../../utils/course_expansion.dart';
 
 class QuizQuestion {
@@ -120,17 +121,17 @@ class Course {
     String filename = 'assets/courses/courses_$locale.json';
     try {
       final data = await rootBundle.loadString(filename);
-      final list = json.decode(data) as List<dynamic>;
+      final list = TDCParser.parseMultiCourse(data);
       return list
-          .map((m) => Course.fromMap(m as Map<String, dynamic>))
+          .map((m) => Course.fromMap(m))
           .toList();
     } catch (e) {
       // Fallback
       final fallback =
           await rootBundle.loadString('assets/courses/courses_en.json');
-      final list = json.decode(fallback) as List<dynamic>;
+      final list = TDCParser.parseMultiCourse(fallback);
       return list
-          .map((m) => Course.fromMap(m as Map<String, dynamic>))
+          .map((m) => Course.fromMap(m))
           .toList();
     }
   }
