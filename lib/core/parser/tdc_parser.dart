@@ -427,18 +427,30 @@ class TDCParser {
         optionsList.addAll(opts);
       }
 
-      final dashMatches = RegExp(r'^\s*-\s*(?:"([^"]+)"|' "'" r'([^' "'" r']+)' "'" r'|([^\n]+))', multiLine: true).allMatches(qBody);
-      for (final dm in dashMatches) {
-        final val = (dm.group(1) ?? dm.group(2) ?? dm.group(3) ?? '').trim();
-        if (val.isNotEmpty && !optionsList.contains(val)) {
-          optionsList.add(val);
-        }
-      }
-
       int correctAnswer = 0;
       final correctMatch = RegExp(r'correctAnswer:\s*(\d+)').firstMatch(qBody);
       if (correctMatch != null) {
         correctAnswer = int.tryParse(correctMatch.group(1)!) ?? 0;
+      }
+
+      for (final line in qBody.split('\n')) {
+        final trimmed = line.trim();
+        if (trimmed.startsWith('- ') || trimmed.startsWith('+ ')) {
+          final isCorrect = trimmed.startsWith('+ ');
+          var val = trimmed.substring(2).trim();
+          if ((val.startsWith('"') && val.endsWith('"')) ||
+              (val.startsWith("'") && val.endsWith("'"))) {
+            if (val.length >= 2) {
+              val = val.substring(1, val.length - 1);
+            }
+          }
+          if (val.isNotEmpty && !optionsList.contains(val)) {
+            if (isCorrect) {
+              correctAnswer = optionsList.length;
+            }
+            optionsList.add(val);
+          }
+        }
       }
 
       final explanation = _extractQuotedValue(qBody, 'explanation') ?? '';

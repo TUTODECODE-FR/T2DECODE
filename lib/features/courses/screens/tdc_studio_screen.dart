@@ -3584,6 +3584,12 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
     );
   }
 
+  void _loadCourseFromTdcString(String tdcCode) {
+    _rawCodeController.text = tdcCode;
+    _parseRawCode(tdcCode, updateForm: true);
+    _hasUnsavedChanges = false;
+  }
+
   void _showCommunityExplorerModal() async {
     showDialog(
       context: context,

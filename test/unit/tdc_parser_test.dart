@@ -76,7 +76,7 @@ course "linux-basics" {
       final q = quiz.first as Map<String, dynamic>;
       expect(q['question'], contains('racine'));
       expect(q['choices'], contains('/'));
-      expect(q['correctIndex'], equals(0));
+      expect(q['correctIndex'], equals(1));
       expect(q['explanation'], contains('racine /'));
     });
 
