@@ -1312,15 +1312,18 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                 width: 45,
                 color: const Color(0xFF0A0A0A),
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Column(
-                  children: List.generate(
-                    lines.length,
-                    (i) => SizedBox(
-                      height: 20,
-                      child: Text(
-                        '${i + 1}',
-                        style: TextStyle(color: Colors.grey[600], fontSize: 12, fontFamily: 'monospace'),
-                        textAlign: TextAlign.center,
+                child: SingleChildScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  child: Column(
+                    children: List.generate(
+                      lines.length,
+                      (i) => SizedBox(
+                        height: 20,
+                        child: Text(
+                          '${i + 1}',
+                          style: TextStyle(color: Colors.grey[600], fontSize: 12, fontFamily: 'monospace'),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),
