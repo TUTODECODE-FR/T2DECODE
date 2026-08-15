@@ -174,7 +174,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
             side: const BorderSide(color: Color(0xFF2A2A2A)),
           ),
           child: Container(
-            maxWidth: 850,
+            constraints: const BoxConstraints(maxWidth: 850),
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -1068,8 +1068,10 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: Material(
                                   color: const Color(0xFF0F0F0F),
-                                  borderRadius: BorderRadius.circular(10),
-                                  side: BorderSide(color: Colors.grey[800]!),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    side: BorderSide(color: Colors.grey[800]!),
+                                  ),
                                   clipBehavior: Clip.antiAlias,
                                   child: ListTile(
                                     leading: Container(
