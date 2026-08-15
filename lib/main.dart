@@ -13,6 +13,7 @@ import 'features/home/screens/home_screen.dart';
 import 'features/courses/screens/chapter_screen.dart';
 import 'features/courses/screens/cheat_sheet_screen.dart';
 import 'features/courses/screens/cheat_sheet_detail_screen.dart';
+import 'features/courses/screens/tdc_studio_screen.dart';
 import 'features/tools/screens/toolbox_screen.dart';
 import 'features/tools/screens/ip_calc_screen.dart';
 import 'features/tools/screens/script_generator_screen.dart';
@@ -200,6 +201,8 @@ class TutoDeCodeApp extends StatelessWidget {
                   case '/cheat-sheets/details':
                     final entry = settings.arguments as CheatSheetEntry;
                     return CheatSheetDetailScreen(entry: entry);
+                  case '/tdc-studio':
+                    return const TDCStudioScreen();
                   case '/tools':
                     return const ToolboxScreen();
                   case '/tools/safe-tools':

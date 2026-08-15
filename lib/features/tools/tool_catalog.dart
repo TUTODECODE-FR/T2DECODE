@@ -33,6 +33,16 @@ const String catReference = 'Référence';
 const List<ToolCatalogEntry> toolCatalog = [
   // ── Réseau & IP ──────────────────────────────────────────────
   ToolCatalogEntry(
+    title: 'TDC Studio (.tdc)',
+    description:
+        'Créateur & IDE interactif pour créer, éditer et tester des cours et QCM au format .tdc.',
+    icon: Icons.code,
+    color: Color(0xFFF5EBDA),
+    route: '/tdc-studio',
+    breadcrumb: 'TDC Studio',
+    category: catDev,
+  ),
+  ToolCatalogEntry(
     title: 'Calculateur IP / CIDR',
     description:
         'Calculez vos sous-réseaux, masques et plages d\'adresses IPv4 rapidement.',
