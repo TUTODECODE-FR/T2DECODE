@@ -144,7 +144,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
                           border: Border.all(color: const Color(0xFF333333)),
                         ),
                         child: Text(
-                          'CHAPITRE ${course.content.indexOf(chapter) + 1}',
+                          'CHAPITRE ${course.chapters.indexOf(chapter) + 1}',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 10,
