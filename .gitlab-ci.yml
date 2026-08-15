@@ -731,20 +731,18 @@ publish_sourceforge:
     - |
       if [ -z "$(ls -A sf_assets 2>/dev/null)" ]; then
         TAG="${CI_COMMIT_TAG:-${DEPLOY_TAG}}"
-        if [ -n "$TAG" ]; then
-          echo "No local artifacts. Downloading from GitHub Releases for $TAG..."
-          BASE="https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${TAG}"
-          for F in "T2DECODE-${TAG}-release.apk" "T2DECODE-macOS.dmg" "T2DECODE-Linux.AppImage" "T2DECODE-Linux.tar.gz" "T2DECODE-Windows.zip"; do
-            curl -fsSL "$BASE/$F" -o "sf_assets/$F" && echo "Downloaded $F" || echo "Not found: $F"
-          done
-        else
-          echo "No tag and no artifacts. Skipping."
-          exit 0
+        if [ -z "$TAG" ]; then
+          TAG="v$(grep '^version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1)"
         fi
+        echo "No local artifacts. Downloading from GitHub Releases for $TAG..."
+        BASE="https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${TAG}"
+        for F in "T2DECODE-${TAG}-release.apk" "T2DECODE-macOS.dmg" "T2DECODE-Linux.AppImage" "T2DECODE-Linux.tar.gz" "T2DECODE-Windows.zip"; do
+          curl -fsSL "$BASE/$F" -o "sf_assets/$F" && echo "Downloaded $F" || echo "Not found: $F"
+        done
       fi
     - ls -la sf_assets/
     - |
-      DEST="${CI_COMMIT_TAG:-${DEPLOY_TAG}}"
+      DEST="${CI_COMMIT_TAG:-${DEPLOY_TAG:-v$(grep '^version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1)}}"
       rsync -e "ssh -i ~/.ssh/sf_key -o StrictHostKeyChecking=yes" -avP sf_assets/ $SF_USER@frs.sourceforge.net:/home/frs/project/$SF_PROJECT/${DEST}/ || true
   rules:
     - if: $CI_COMMIT_TAG && $SF_PRIVATE_KEY && $SF_USER
