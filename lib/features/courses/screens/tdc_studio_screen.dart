@@ -196,7 +196,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
             const SizedBox(width: 10),
             const Text(
               'Studio de Création de Cours',
-              style: TextStyle(color: Colors.white, fontSize: 18, FontWeight: FontWeight.w600),
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -527,7 +527,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                 const SizedBox(height: 8),
                 Text(
                   c['title'] ?? '',
-                  style: const TextStyle(color: Colors.white, fontSize: 22, FontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -544,12 +544,12 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
               children: [
                 Text(
                   m['title'] ?? '',
-                  style: const TextStyle(color: Color(0xFFF5EBDA), fontSize: 18, FontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Color(0xFFF5EBDA), fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 MarkdownBody(
                   data: m['content'] ?? '',
-                  styleSheet: MarkdownStyleSheet.darkThemeStyleSheet().copyWith(
+                  styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
                     p: const TextStyle(color: Colors.white, fontSize: 14, height: 1.4),
                   ),
                 ),
