@@ -90,6 +90,9 @@ class CoursesProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  bool isChapterCompleted(String courseId, String chapterId) =>
+      _completed.contains('$courseId:$chapterId');
+
   void toggleCompleted(String courseId, String chapterId) {
     final key = '$courseId:$chapterId';
     if (_completed.contains(key)) {

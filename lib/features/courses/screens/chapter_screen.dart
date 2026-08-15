@@ -217,7 +217,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               onTap: () {
-                                prov.selectChapter(ch);
+                                prov.selectChapter(course.id, ch.id);
                               },
                             ),
                           );
