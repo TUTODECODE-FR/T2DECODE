@@ -21,7 +21,7 @@ class TDCStudioDesktopApp extends StatelessWidget {
     return MaterialApp(
       title: 'TDC Studio IDE — Environnement de Création .TDC',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
+      theme: buildAppTheme(),
       home: const TDCStudioScreen(),
     );
   }
