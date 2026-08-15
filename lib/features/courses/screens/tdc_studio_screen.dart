@@ -4831,7 +4831,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                         ),
                       ),
 
-                      // Right Content Viewer & Interactive Quiz
+                      // Right Content Viewer
                       Expanded(
                         child: Container(
                           color: const Color(0xFF0F0F0F),
@@ -4840,51 +4840,67 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Chapter Title Header
+                                // Breadcrumb
+                                Row(
+                                  children: [
+                                    const Icon(Icons.arrow_back, color: Colors.grey, size: 14),
+                                    const SizedBox(width: 6),
+                                    const Text('Tous les cours', style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
+                                    const SizedBox(width: 6),
+                                    const Icon(Icons.chevron_right, color: Colors.grey, size: 14),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      (course['title'] ?? 'Nouveau Cours').toString(),
+                                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+
+                                // Chapter Title Header & Pill
                                 Row(
                                   children: [
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFF5EBDA).withOpacity(0.15),
-                                        borderRadius: BorderRadius.circular(4),
+                                        color: const Color(0xFF222222),
+                                        borderRadius: BorderRadius.circular(6),
+                                        border: Border.all(color: const Color(0xFF333333)),
                                       ),
                                       child: Text(
                                         'CHAPITRE ${selectedChapterIdx + 1}',
-                                        style: const TextStyle(color: Color(0xFFF5EBDA), fontWeight: FontWeight.bold, fontSize: 11),
+                                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 0.8),
                                       ),
                                     ),
                                     const SizedBox(width: 10),
                                     Text(
-                                      (course['category'] ?? 'LINUX').toString().toUpperCase(),
-                                      style: const TextStyle(color: Colors.grey, fontSize: 11, fontWeight: FontWeight.bold),
+                                      (activeMod['duration'] ?? '15min').toString(),
+                                      style: const TextStyle(color: Colors.grey, fontSize: 11),
                                     ),
                                   ],
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  (activeMod['title'] ?? 'Titre du chapitre').toString(),
-                                  style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold),
+                                  (activeMod['title'] ?? 'Introduction').toString(),
+                                  style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold, letterSpacing: -0.5),
                                 ),
                                 const SizedBox(height: 20),
-                                const Divider(color: Color(0xFF222222)),
-                                const SizedBox(height: 20),
 
-                                // Markdown Content Render
+                                // Markdown Content Render Card
                                 Container(
                                   width: double.infinity,
-                                  padding: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.all(24),
                                   decoration: BoxDecoration(
                                     color: const Color(0xFF141414),
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(12),
                                     border: Border.all(color: const Color(0xFF242424)),
                                   ),
                                   child: MarkdownBody(
-                                    data: (activeMod['markdown'] ?? 'Contenu du chapitre en cours de rédaction...').toString(),
+                                    data: (activeMod['markdown'] ?? activeMod['content'] ?? 'Rédigez votre contenu ici...').toString(),
                                     styleSheet: MarkdownStyleSheet(
                                       p: const TextStyle(color: Color(0xFFD4D4D4), fontSize: 14, height: 1.6),
-                                      h1: const TextStyle(color: Color(0xFFF5EBDA), fontSize: 20, fontWeight: FontWeight.bold),
-                                      h2: const TextStyle(color: Color(0xFFF5EBDA), fontSize: 17, fontWeight: FontWeight.bold),
+                                      h1: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                      h2: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold),
                                       code: const TextStyle(color: Color(0xFF38BDF8), backgroundColor: Color(0xFF0F0F0F), fontFamily: 'monospace', fontSize: 13),
                                       codeblockDecoration: BoxDecoration(
                                         color: const Color(0xFF0A0A0A),
@@ -4897,13 +4913,42 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
 
                                 const SizedBox(height: 28),
 
-                                // QCM Quiz Interactive Component
-                                if (quizList.isNotEmpty) ...[
-                                  Text(
-                                    'VALIDEZ VOS CONNAISSANCES (${quizList.length} ${quizList.length == 1 ? "QUESTION" : "QUESTIONS"})',
-                                    style: const TextStyle(color: Color(0xFFF5EBDA), fontWeight: FontWeight.bold, fontSize: 12, letterSpacing: 1.1),
-                                  ),
-                                  const SizedBox(height: 12),
+                                // Quiz & Évaluation Section Header
+                                Row(
+                                  children: const [
+                                    Text('✦', style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 16, fontWeight: FontWeight.bold)),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Quiz & Évaluation',
+                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 14),
+
+                                if (quizList.isEmpty)
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF141414),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: const Color(0xFF242424)),
+                                    ),
+                                    child: Row(
+                                      children: const [
+                                        Icon(Icons.info_outline, size: 16, color: Colors.grey),
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            'Aucun QCM dans ce chapitre (contenu purement théorique).',
+                                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                else ...[
                                   ...quizList.asMap().entries.map((qEntry) {
                                     final qIdx = qEntry.key;
                                     final q = qEntry.value;

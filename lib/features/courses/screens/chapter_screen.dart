@@ -133,148 +133,97 @@ class _ChapterScreenState extends State<ChapterScreen> {
                 controller: _scroll,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                 children: [
-                  // Bannière Hero de Chapitre (Design 2026)
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF14141E), Color(0xFF09090D)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: TdcColors.accent.withValues(alpha: 0.25)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.6),
-                          blurRadius: 16,
-                          offset: const Offset(0, 6),
+                  // Chapter Header & Pill
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF222222),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: const Color(0xFF333333)),
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: TdcColors.accent.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: TdcColors.accent.withValues(alpha: 0.4)),
-                              ),
-                              child: Text(
-                                course.category.toUpperCase(),
-                                style: const TextStyle(
-                                  color: TdcColors.accent,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.2,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.greenAccent.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.3)),
-                              ),
-                              child: const Text(
-                                '🔥 MODE INCIDENT REEL',
-                                style: TextStyle(
-                                  color: Colors.greenAccent,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const Spacer(),
-                            Row(
-                              children: [
-                                const Icon(Icons.star, color: TdcColors.accent, size: 14),
-                                const SizedBox(width: 4),
-                                const Text('+50 XP', style: TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 12)),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          chapter.title,
+                        child: Text(
+                          'CHAPITRE ${course.content.indexOf(chapter) + 1}',
                           style: const TextStyle(
-                            color: TdcColors.textPrimary,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -0.5,
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.8,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Module : ${course.title} • Durée estimée : ${chapter.duration.isNotEmpty ? chapter.duration : "15 min"}',
-                          style: const TextStyle(color: TdcColors.textMuted, fontSize: 12),
-                        ),
-                      ],
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        chapter.duration.isNotEmpty ? chapter.duration : '15min',
+                        style: const TextStyle(color: Colors.grey, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    chapter.title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 20),
 
-                  // Contenu Markdown du chapitre
-                  _markdown(chapter.content),
-                  const SizedBox(height: 36),
-
-                  // Carte Résumé "À Retenir Absolument"
+                  // Contenu Markdown du chapitre dans une carte stylisée
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0F0F16),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: TdcColors.accent.withValues(alpha: 0.05),
-                          blurRadius: 12,
-                          spreadRadius: 1,
-                        ),
-                      ],
+                      color: const Color(0xFF141414),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFF242424)),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: const [
-                            Icon(Icons.workspace_premium, color: TdcColors.accent, size: 22),
-                            SizedBox(width: 10),
-                            Text(
-                              '💡 FICHE RÉFLEXE : À RETENIR ABSOLUMENT',
-                              style: TextStyle(
-                                color: TdcColors.accent,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 13,
-                                letterSpacing: 1.1,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        const Text(
-                          '• La pratique vaut 100x la théorie : testez immédiatement les commandes dans la VM Bac à Sable.\n'
-                          '• En cas de doute ou de question technique, interrogez Ghost AI (assistant local) en 1 clic.\n'
-                          '• Validez le défi QCM ci-dessous pour valider vos 50 XP et faire progresser votre niveau !',
-                          style: TextStyle(color: TdcColors.textPrimary, fontSize: 13, height: 1.7),
-                        ),
-                      ],
-                    ),
+                    child: _markdown(chapter.content),
                   ),
                   const SizedBox(height: 36),
 
                   _practiceSection(course, chapter),
-                  if (chapter.quiz != null) ...[
-                    const SizedBox(height: 36),
-                    const TdcSectionTitle('QUIZ & DÉFI XP'),
-                    const SizedBox(height: 16),
+                  const SizedBox(height: 28),
+
+                  // Section Quiz & Évaluation
+                  Row(
+                    children: const [
+                      Text('✦', style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 16, fontWeight: FontWeight.bold)),
+                      SizedBox(width: 8),
+                      Text(
+                        'Quiz & Évaluation',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+
+                  if (chapter.quiz == null || chapter.quiz!.isEmpty)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF141414),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFF242424)),
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(Icons.info_outline, size: 16, color: Colors.grey),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              'Aucun QCM dans ce chapitre (contenu purement théorique).',
+                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
                     QcmWidget(
                       questions: chapter.quiz!,
                       chapterContent: chapter.content,
@@ -290,7 +239,6 @@ class _ChapterScreenState extends State<ChapterScreen> {
                         }
                       },
                     ),
-                  ],
                   const SizedBox(height: 48),
                 ],
               ),
