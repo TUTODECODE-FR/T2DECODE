@@ -23,4 +23,5 @@ DISABLE_LINTERS:
   - MARKDOWN_MARKDOWN_LINK_CHECK
 
 # Ignorer certains dossiers (par exemple fdroid_data_repo qui contient beaucoup de fichiers générés/externes)
-FILTER_REGEX_EXCLUDE: (fdroid_data_repo/.*)
+FILTER_REGEX_EXCLUDE: (fdroid_data_repo/.*|landing_page/.*|scripts/translate_.*)
+

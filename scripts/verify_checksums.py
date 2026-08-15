@@ -22,9 +22,9 @@ if not isinstance(checksums, dict):
     print(f"Error: {CHECKSUM_FILE} content is not a JSON object (dict)", file=sys.stderr)
     sys.exit(1)
 
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 
-errors: List[Tuple[str, str, Optional[str]]] = []
+errors: List[Tuple[str, str, str]] = []
 for rel_path, expected in checksums.items():
     p = ROOT / rel_path
     if not p.exists():
