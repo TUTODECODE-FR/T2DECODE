@@ -9,6 +9,7 @@ import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 import 'package:tutodecode/features/lab/lab_catalog.dart';
 import 'package:tutodecode/features/tools/tool_catalog.dart';
+import 'package:tutodecode/features/courses/widgets/course_import_dialog.dart';
 
 class ToolboxScreen extends StatefulWidget {
   const ToolboxScreen({super.key});
@@ -453,7 +454,16 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
     return TdcFadeSlide(
       delay: Duration(milliseconds: 40 * index),
       child: _HoverCard(
-        onTap: () => Navigator.pushNamed(context, tool.route),
+        onTap: () {
+          if (tool.route == '/import-course') {
+            showDialog(
+              context: context,
+              builder: (ctx) => const CourseImportDialog(),
+            );
+          } else {
+            Navigator.pushNamed(context, tool.route);
+          }
+        },
         child: Row(
           children: [
             Container(

@@ -33,13 +33,13 @@ const String catReference = 'Référence';
 const List<ToolCatalogEntry> toolCatalog = [
   // ── Réseau & IP ──────────────────────────────────────────────
   ToolCatalogEntry(
-    title: 'TDC Studio (.tdc)',
+    title: 'Importer un cours (.TDC)',
     description:
-        'Créateur & IDE interactif pour créer, éditer et tester des cours et QCM au format .tdc.',
-    icon: Icons.code,
+        'Importer et vérifier l\'authenticité d\'un fichier de cours .tdc ou .json.',
+    icon: Icons.file_upload_outlined,
     color: Color(0xFFF5EBDA),
-    route: '/tdc-studio',
-    breadcrumb: 'TDC Studio',
+    route: '/import-course',
+    breadcrumb: 'Importation',
     category: catDev,
   ),
   ToolCatalogEntry(

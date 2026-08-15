@@ -1462,6 +1462,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
   }
 
   void _showSettingsDialog() {
+  void _showSettingsModal() {
     showDialog(
       context: context,
       builder: (context) {
@@ -1471,23 +1472,93 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
             borderRadius: BorderRadius.circular(14),
             side: const BorderSide(color: Color(0xFF2E2E2E)),
           ),
-          title: const Text('Paramètres de l\'IDE', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          title: const Row(
             children: [
-              Text('TDC Studio IDE v1.7 • Mode Développeur', style: TextStyle(color: Color(0xFFF5EBDA), fontWeight: FontWeight.bold, fontSize: 13)),
-              SizedBox(height: 8),
-              Text('• Encodage par défaut : UTF-8', style: TextStyle(color: Colors.grey, fontSize: 12)),
-              Text('• Auto-sauvegarde : Activée (Temps réel)', style: TextStyle(color: Colors.grey, fontSize: 12)),
-              Text('• Parseur : Grammaire TDC Lexer v2', style: TextStyle(color: Colors.grey, fontSize: 12)),
+              Icon(Icons.settings_outlined, color: Color(0xFFF5EBDA), size: 20),
+              SizedBox(width: 10),
+              Text('Paramètres TDC Studio', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
             ],
+          ),
+          content: SizedBox(
+            width: 440,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1A1A1A),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFF282828)),
+                  ),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: Image.asset('assets/logo_128.png', width: 28, height: 28, fit: BoxFit.contain),
+                      ),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('TDC Studio IDE — Édition Souveraine', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                            SizedBox(height: 2),
+                            Text('Grammaire .TDC v2 • Encodage UTF-8 • Air-gapped', style: TextStyle(color: Color(0xFF888888), fontSize: 11)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.vpn_key_outlined, color: Color(0xFF10B981), size: 20),
+                  title: const Text('Profil & Signature Ed25519', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+                  subtitle: const Text('Gérer votre nom d\'auteur et vos clés cryptographiques', style: TextStyle(color: Colors.grey, fontSize: 11)),
+                  trailing: const Icon(Icons.chevron_right, color: Colors.grey, size: 16),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showSettingsProfileModal();
+                  },
+                ),
+                const Divider(color: Color(0xFF222222)),
+                ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.category_outlined, color: Color(0xFF8B5CF6), size: 20),
+                  title: const Text('Catégories Personnalisées', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+                  subtitle: const Text('Créer et organiser vos propres thèmes de cours', style: TextStyle(color: Colors.grey, fontSize: 11)),
+                  trailing: const Icon(Icons.chevron_right, color: Colors.grey, size: 16),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showCreateCategoryModal();
+                  },
+                ),
+                const Divider(color: Color(0xFF222222)),
+                ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.explore_outlined, color: Color(0xFF38BDF8), size: 20),
+                  title: const Text('Explorer la Communauté', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+                  subtitle: const Text('Découvrir les cours partagés sur le dépôt GitLab', style: TextStyle(color: Colors.grey, fontSize: 11)),
+                  trailing: const Icon(Icons.chevron_right, color: Colors.grey, size: 16),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showCommunityExplorerModal();
+                  },
+                ),
+              ],
+            ),
           ),
           actions: [
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFF5EBDA), foregroundColor: Colors.black),
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
+              child: const Text('Fermer'),
             ),
           ],
         );
