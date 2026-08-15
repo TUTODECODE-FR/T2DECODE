@@ -79,6 +79,15 @@ build-windows: $(PUBSTAMP)
 build-linux: $(PUBSTAMP)
 	$(FLUTTER) build linux --release $(DART_DEFINES) --no-pub
 
+build-studio-macos: $(PUBSTAMP)
+	$(FLUTTER) build macos --release -t lib/tdc_studio_main.dart $(DART_DEFINES) --no-pub
+
+build-studio-linux: $(PUBSTAMP)
+	$(FLUTTER) build linux --release -t lib/tdc_studio_main.dart $(DART_DEFINES) --no-pub
+
+build-studio-windows: $(PUBSTAMP)
+	$(FLUTTER) build windows --release -t lib/tdc_studio_main.dart $(DART_DEFINES) --no-pub
+
 build-all: build-android build-macos build-linux
 
 clean:
