@@ -1791,7 +1791,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
           IconButton(
             icon: const Icon(Icons.settings_outlined, color: Color(0xFFD4D4D4), size: 18),
             tooltip: 'Paramètres',
-            onPressed: _showSettingsDialog,
+            onPressed: _showSettingsModal,
           ),
         ],
       ),
