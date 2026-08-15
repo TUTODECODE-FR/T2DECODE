@@ -11,11 +11,12 @@ SHOW_ELAPSED_TIME: true
 # This prevents pre-existing errors from blocking PRs.
 DISABLE_ERRORS: true
 
-# Désactiver les linters générant des faux positifs fréquents
+# Désactiver les linters générant des faux positifs fréquents ou de longues analyses réseau
 DISABLE:
   - SPELL # Désactive le dictionnaire (jargon technique et français)
   - COPYPASTE # Désactive le détecteur de duplication (normal pour les cours et labs)
-  - SECRET # Désactive la détection de secrets (déjà gérée par trufflehog)
+  - SECRET # Désactive la détection de secrets
+  - REPOSITORY # Désactive Checkov, Kics, Trivy, Trufflehog qui scannent tout le repo en arrière-plan
 
 DISABLE_LINTERS:
   - YAML_V8R
