@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tutodecode/core/security/constant_time_security.dart';
 
@@ -9,7 +10,7 @@ void main() {
     });
 
     test('zeroize memory wiping', () {
-      final buffer = [1, 2, 3, 4, 5];
+      final buffer = Uint8List.fromList([1, 2, 3, 4, 5]);
       ConstantTimeSecurity.zeroize(buffer);
       expect(buffer, equals([0, 0, 0, 0, 0]));
     });
