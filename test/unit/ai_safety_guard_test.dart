@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:t2decode/features/ghost_ai/security/ai_safety_guard.dart';
+import 'package:tutodecode/features/ghost_ai/security/ai_safety_guard.dart';
 
 void main() {
   group('AISafetyGuard Security Shield', () {

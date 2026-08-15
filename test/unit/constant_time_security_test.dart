@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:t2decode/core/security/constant_time_security.dart';
+import 'package:tutodecode/core/security/constant_time_security.dart';
 
 void main() {
   group('ConstantTimeSecurity Shield', () {
