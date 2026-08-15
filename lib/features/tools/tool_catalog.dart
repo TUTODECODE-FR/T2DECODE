@@ -218,16 +218,7 @@ const List<ToolCatalogEntry> toolCatalog = [
   ),
 
   // ── Dev & Code ───────────────────────────────────────────────
-  ToolCatalogEntry(
-    title: 'Formateur JSON',
-    description:
-        'Validez, formatez et minifiez votre code JSON. Détection d\'erreurs de syntaxe.',
-    icon: Icons.settings_overscan,
-    color: Color(0xFFFACC15),
-    route: '/tools/json',
-    breadcrumb: 'JSON',
-    category: catDev,
-  ),
+
   ToolCatalogEntry(
     title: 'Testeur Regex',
     description:

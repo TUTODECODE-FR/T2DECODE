@@ -106,20 +106,6 @@ class _ChapterScreenState extends State<ChapterScreen> {
                   ),
                 ],
               ),
-              const Spacer(),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/ghost_ai');
-                },
-                icon: const Icon(Icons.smart_toy_outlined, size: 14, color: Colors.black),
-                label: const Text('POSER UNE QUESTION À GHOST AI', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TdcColors.accent,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-              ),
             ],
           ),
         ),

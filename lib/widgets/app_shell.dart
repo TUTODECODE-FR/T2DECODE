@@ -92,20 +92,20 @@ class _AppShellState extends State<AppShell> {
   }
 
   Widget _phantomDot(PhantomProvider phantom) {
-    if (!phantom.hasChecked) {
-      return const SizedBox(
-        width: 8,
-        height: 8,
-        child: CircularProgressIndicator(
-            strokeWidth: 1.5, color: TdcColors.textMuted),
-      );
-    }
     return Container(
-      width: 8,
-      height: 8,
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: phantom.isRunning ? Colors.green : TdcColors.textMuted,
+        color: const Color(0xFFF5EBDA).withOpacity(0.12),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFF5EBDA).withOpacity(0.3)),
+      ),
+      child: const Text(
+        'Bientôt',
+        style: TextStyle(
+          color: Color(0xFFF5EBDA),
+          fontSize: 9,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
