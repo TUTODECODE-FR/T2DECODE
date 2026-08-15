@@ -9,10 +9,8 @@ default:
 
 stages:
   - validate
-  - test
-  - build-test
   - auto-tag
-  - build-release
+  - sync-os-builds
   - release
 
 cache:
@@ -387,23 +385,28 @@ auto_tag:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE != "schedule"
 
 # === STAGE: BUILD-RELEASE (Offloaded to GitHub Actions + Local fetch) ===
-fetch_github_multi_os_assets:
-  stage: build-release
+# === STAGE: SYNC-OS-BUILDS (Unified multi-OS recovery from GitHub Actions) ===
+sync_github_multi_os_builds:
+  stage: sync-os-builds
   image: alpine:latest
   allow_failure: true
   script:
     - apk add --no-cache curl bash
     - TAG="${CI_COMMIT_TAG:-v$(grep '^version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1)}"
-    - echo "Waiting and fetching GitHub Actions multi-OS builds for tag $TAG..."
+    - echo "=========================================================="
+    - echo "🔄 Récupération et vérification des builds multi-OS depuis GitHub"
+    - echo "🎯 Version ciblée: $TAG"
+    - echo "=========================================================="
     - mkdir -p github_assets
     - BASE="https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${TAG}"
     - |
+      echo "⏳ En attente de la fin de compilation multi-OS sur GitHub Actions..."
       for i in $(seq 1 60); do
         if curl -fsSL -I "$BASE/T2DECODE-macOS.dmg" >/dev/null 2>&1; then
-          echo "GitHub Release assets are ready!"
+          echo "✅ Les binaires multi-OS sont prêts et publiés sur GitHub !"
           break
         fi
-        echo "Waiting for GitHub Actions builds ($i/60)..."
+        echo "Compilation en cours sur GitHub (Android, macOS, Windows, Linux, Snap)... Attente ($i/60)..."
         sleep 10
       done
     - |
@@ -418,10 +421,11 @@ fetch_github_multi_os_assets:
         "sbom-cyclonedx.json" \
         "sbom-spdx.json" \
         "SHA256SUMS.txt"; do
-        echo "Downloading $F from GitHub..."
-        curl -fsSL "$BASE/$F" -o "github_assets/$F" || echo "Asset $F not available yet"
+        echo "⬇️ Téléchargement $F..."
+        curl -fsSL "$BASE/$F" -o "github_assets/$F" && echo "✅ $F récupéré" || echo "⚠️ $F pas encore disponible"
       done
-    - ls -la github_assets/
+    - echo "📦 Inventaire complet des binaires rapatriés :"
+    - ls -lh github_assets/
   artifacts:
     paths:
       - github_assets/
@@ -432,284 +436,6 @@ fetch_github_multi_os_assets:
     - when: manual
       allow_failure: true
 
-build_android_signed:
-  stage: build-release
-  script:
-    - flutter pub get
-    - |
-      if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
-        echo "Error: ANDROID_KEYSTORE_BASE64 is not set or empty."
-        exit 1
-      fi
-      if [ -f "$ANDROID_KEYSTORE_BASE64" ]; then
-        echo "ANDROID_KEYSTORE_BASE64 is a file path. Copying directly..."
-        cp "$ANDROID_KEYSTORE_BASE64" android/app/release-keystore.jks
-      else
-        echo "Decoding ANDROID_KEYSTORE_BASE64 string..."
-        printf "%s" "$ANDROID_KEYSTORE_BASE64" | tr -d '\n\r ' | base64 -d > android/app/release-keystore.jks
-      fi
-    - |
-      cat > android/key.properties <<EOF
-      storeFile=release-keystore.jks
-      storePassword=$ANDROID_KEYSTORE_PASSWORD
-      keyAlias=$ANDROID_KEY_ALIAS
-      keyPassword=$ANDROID_KEY_PASSWORD
-      EOF
-    - flutter build apk --release --split-per-abi
-    - flutter build appbundle --release
-  artifacts:
-    paths:
-      - build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
-      - build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
-      - build/app/outputs/flutter-apk/app-x86_64-release.apk
-      - build/app/outputs/bundle/release/app-release.aab
-    expire_in: 1 day
-  rules:
-    - if: $CI_COMMIT_TAG
-      when: on_success
-    - when: manual
-      allow_failure: true
-
-build_linux_signed:
-  stage: build-release
-  allow_failure: true
-  script:
-    - |
-      if ! command -v clang >/dev/null 2>&1; then
-        echo "Linux build tools not pre-installed. Installing dependencies..."
-        sudo apt-get update -y
-        sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev gnupg ruby ruby-dev build-essential file
-        sudo apt-get install -y libfuse2 || sudo apt-get install -y libfuse2t64
-        sudo gem install --no-document fpm
-      fi
-    - flutter pub get
-    - flutter build linux --release
-    - tar -czvf T2DECODE-Linux.tar.gz -C build/linux/x64/release/bundle/ .
-    - VERSION_RAW="${CI_COMMIT_TAG#v}"
-    - VERSION="${VERSION_RAW//-/_}"
-    - STAGE="/tmp/linuxpkg"
-    - mkdir -p "$STAGE/opt/t2decode" "$STAGE/usr/share/applications" "$STAGE/usr/bin"
-    - cp -R build/linux/x64/release/bundle/* "$STAGE/opt/t2decode/"
-    - |
-      cat > "$STAGE/usr/share/applications/org.tutodecode.T2DECODE.desktop" <<EOF
-      [Desktop Entry]
-      Name=T2DECODE
-      Comment=T2DECODE learning platform
-      Exec=/opt/t2decode/T2DECODE
-      Icon=/opt/t2decode/data/flutter_assets/assets/logo.png
-      Terminal=false
-      Type=Application
-      Categories=Education;Development;
-      EOF
-    - |
-      cat > "$STAGE/usr/bin/t2decode" <<EOF
-      #!/usr/bin/env bash
-      exec /opt/t2decode/T2DECODE "\$@"
-      EOF
-    - chmod +x "$STAGE/usr/bin/t2decode"
-    - fpm -s dir -t deb -n t2decode -v "$VERSION" --architecture amd64 --description "T2DECODE learning platform" --maintainer "T2DECODE <contact@tutodecode.org>" -C "$STAGE" -p T2DECODE-Linux.deb .
-    - curl -L -o appimagetool-x86_64.AppImage https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-    - chmod +x appimagetool-x86_64.AppImage
-    - STAGE_APPIMAGE="/tmp/AppDir"
-    - mkdir -p "$STAGE_APPIMAGE"
-    - cp -R build/linux/x64/release/bundle/* "$STAGE_APPIMAGE/"
-    - |
-      cat > "$STAGE_APPIMAGE/org.tutodecode.T2DECODE.desktop" <<EOF
-      [Desktop Entry]
-      Name=T2DECODE
-      Comment=T2DECODE learning platform
-      Exec=AppRun
-      Icon=org.tutodecode.T2DECODE
-      Terminal=false
-      Type=Application
-      Categories=Education;Development;
-      EOF
-    - cp "assets/logo.png" "$STAGE_APPIMAGE/org.tutodecode.T2DECODE.png"
-    - ln -s T2DECODE "$STAGE_APPIMAGE/AppRun"
-    - APPIMAGETOOL=./appimagetool-x86_64.AppImage
-    - if ! $APPIMAGETOOL --version >/dev/null 2>&1; then $APPIMAGETOOL --appimage-extract && APPIMAGETOOL=./squashfs-root/AppRun; fi
-    - ARCH=x86_64 $APPIMAGETOOL "$STAGE_APPIMAGE" T2DECODE-Linux.AppImage
-    - export GNUPGHOME="/tmp/gnupg"
-    - mkdir -p "$GNUPGHOME" && chmod 700 "$GNUPGHOME"
-    - |
-      if [ -z "$LINUX_GPG_PRIVATE_KEY_BASE64" ]; then
-        echo "Warning: LINUX_GPG_PRIVATE_KEY_BASE64 is not set. Skipping signature."
-        touch T2DECODE-Linux.tar.gz.sig T2DECODE-Linux.deb.sig
-      else
-        if [ -f "$LINUX_GPG_PRIVATE_KEY_BASE64" ]; then
-          cp "$LINUX_GPG_PRIVATE_KEY_BASE64" "/tmp/linux.key"
-        else
-          printf "%s" "$LINUX_GPG_PRIVATE_KEY_BASE64" | tr -d '\n\r ' | base64 --decode > "/tmp/linux.key"
-        fi
-        gpg --batch --import "/tmp/linux.key"
-        printf '%s' "$LINUX_GPG_PASSPHRASE" > "/tmp/gpg.pass"
-        gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.tar.gz.sig --detach-sign T2DECODE-Linux.tar.gz
-        gpg --batch --yes --pinentry-mode loopback --passphrase-file "/tmp/gpg.pass" --local-user "$LINUX_GPG_KEY_ID" --output T2DECODE-Linux.deb.sig --detach-sign T2DECODE-Linux.deb
-      fi
-  artifacts:
-    paths:
-      - T2DECODE-Linux.tar.gz
-      - T2DECODE-Linux.deb
-      - T2DECODE-Linux.AppImage
-      - T2DECODE-Linux.tar.gz.sig
-      - T2DECODE-Linux.deb.sig
-    expire_in: 1 day
-  rules:
-    - if: $CI_COMMIT_TAG
-      when: on_success
-    - when: manual
-      allow_failure: true
-
-build_snap_signed:
-  stage: build-release
-  allow_failure: true
-  image:
-    name: ghcr.io/canonical/snapcraft:8_core22
-    entrypoint: [""]
-  script:
-    - apt-get update -y
-    - |
-      if [ -n "$CI_COMMIT_TAG" ]; then
-        VERSION="${CI_COMMIT_TAG#v}"
-        echo "Updating snapcraft.yaml version to $VERSION"
-        sed -i "s/^version: .*/version: '$VERSION'/" snap/snapcraft.yaml
-      fi
-    - snapcraft pack --destructive-mode
-    - |
-      if [ -n "$SNAPCRAFT_STORE_CREDENTIALS" ]; then
-        echo "Uploading to Snap Store..."
-        snapcraft upload --release=stable *.snap
-      else
-        echo "SNAPCRAFT_STORE_CREDENTIALS not set. Skipping Snap Store upload."
-      fi
-  artifacts:
-    paths:
-      - "*.snap"
-    expire_in: 1 day
-  rules:
-    - if: $CI_COMMIT_TAG && $SNAPCRAFT_STORE_CREDENTIALS
-      when: on_success
-    - when: manual
-      allow_failure: true
-
-build_windows_signed:
-  stage: build-release
-  tags:
-    - saas-windows-medium-amd64
-  allow_failure: true
-  script:
-    - $ProductId = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property productId
-    - $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property installationPath
-    - 'echo "Product ID: $ProductId"'
-    - 'echo "Install Path: $InstallPath"'
-    - 'if ($ProductId -eq "Microsoft.VisualStudio.Product.Community") { $url = "https://aka.ms/vs/17/release/vs_community.exe" } elseif ($ProductId -eq "Microsoft.VisualStudio.Product.Professional") { $url = "https://aka.ms/vs/17/release/vs_professional.exe" } elseif ($ProductId -eq "Microsoft.VisualStudio.Product.Enterprise") { $url = "https://aka.ms/vs/17/release/vs_enterprise.exe" } else { $url = "https://aka.ms/vs/17/release/vs_buildtools.exe" }'
-    - echo "Downloading bootstrapper from $url"
-    - Invoke-WebRequest -Uri $url -OutFile vs_bootstrapper.exe
-    - echo "Running bootstrapper..."
-    - Start-Process -FilePath ".\vs_bootstrapper.exe" -ArgumentList "modify --installPath `"$InstallPath`" --add Microsoft.VisualStudio.Component.VC.ATL --passive --norestart --wait" -Wait -PassThru
-    - choco install innosetup --no-progress -y
-    - git clone https://github.com/flutter/flutter.git -b stable C:/flutter
-    - $env:Path += ";C:/flutter/bin"
-    - flutter config --no-enable-swift-package-manager
-    - flutter pub get
-    - flutter build windows --release
-    - $iscc = "C:/Program Files (x86)/Inno Setup 6/ISCC.exe"
-    - $ver = $env:CI_COMMIT_TAG.TrimStart("v")
-    - $iss = "windows/installer/tutodecode.iss"
-    - |
-      if (Test-Path $iss) {
-        $txt = Get-Content -Raw $iss
-        if ($txt -match '#define\s+MyAppVersion\s+\"' -and $txt -notmatch '#ifndef\s+MyAppVersion') {
-          $replacement = "#ifndef MyAppVersion`n  #define MyAppVersion ""0.0.0""`n#endif"
-          $txt = $txt -replace '#define\s+MyAppVersion\s+\"[^\"]*\"', $replacement
-          Set-Content -NoNewline -Encoding UTF8 $iss $txt
-        }
-      }
-    - '& $iscc /DMyAppVersion=$ver windows/installer/tutodecode.iss'
-    - Copy-Item -Force "windows/installer/T2DECODE-Setup.exe" "T2DECODE-Setup.exe"
-    - Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath T2DECODE-Windows.zip
-    - |
-      if ($env:WINDOWS_PFX_BASE64 -and $env:WINDOWS_PFX_PASSWORD) {
-        $pfxPath = "$env:TEMP/codesign.pfx"
-        [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String("$env:WINDOWS_PFX_BASE64"))
-        $signtool = Get-ChildItem "C:/Program Files (x86)/Windows Kits/10/bin" -Recurse -Filter "signtool.exe" -ErrorAction SilentlyContinue | Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1 -ExpandProperty FullName
-        $exePath = "build/windows/x64/runner/Release/T2DECODE.exe"
-        & $signtool sign /f $pfxPath /p "$env:WINDOWS_PFX_PASSWORD" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v $exePath
-        & $signtool sign /f $pfxPath /p "$env:WINDOWS_PFX_PASSWORD" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v T2DECODE-Setup.exe
-      } else {
-        echo "WINDOWS_PFX_BASE64 not configured. Skipping Windows code signing."
-      }
-  artifacts:
-    paths:
-      - T2DECODE-Windows.zip
-      - T2DECODE-Setup.exe
-    expire_in: 1 day
-  rules:
-    - if: $CI_COMMIT_TAG
-      when: on_success
-    - when: manual
-      allow_failure: true
-
-build_macos_signed:
-  stage: build-release
-  allow_failure: true
-  image: macos-15-xcode-16
-  tags:
-    - saas-macos-large-m2pro
-  script:
-    - git clone https://github.com/flutter/flutter.git -b stable $HOME/flutter
-    - export PATH="$PATH:$HOME/flutter/bin"
-    - flutter config --no-enable-swift-package-manager
-    - flutter pub get
-    - flutter build macos --release
-    - APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
-    - chmod +x scripts/build_dmg.sh
-    - ./scripts/build_dmg.sh
-    - cp -f build/macos/Build/Products/Release/T2DECODE-macOS.dmg T2DECODE-macOS.dmg
-    - chmod +x scripts/build_pkg.sh
-    - APP_VERSION="${CI_COMMIT_TAG#v}" ./scripts/build_pkg.sh
-    - mv build/macos/Build/Products/Release/T2DECODE_Installer.pkg T2DECODE-macOS-Installer.pkg
-    - cp -f T2DECODE-macOS-Installer.pkg T2DECODE-macOS.pkg
-    - ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
-    - |
-      if [ -z "$MACOS_CERT_P12_BASE64" ]; then
-        echo "Warning: MACOS_CERT_P12_BASE64 is not set. Skipping macOS signing."
-      else
-        KEYCHAIN_PATH="/tmp/build.keychain-db"
-        CERT_PATH="/tmp/macos_cert.p12"
-        if [ -f "$MACOS_CERT_P12_BASE64" ]; then
-          cp "$MACOS_CERT_P12_BASE64" "$CERT_PATH"
-        else
-          printf "%s" "$MACOS_CERT_P12_BASE64" | tr -d '\n\r ' | base64 --decode > "$CERT_PATH"
-        fi
-        security create-keychain -p "build" "$KEYCHAIN_PATH"
-        security default-keychain -s "$KEYCHAIN_PATH"
-        security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-        security unlock-keychain -p "build" "$KEYCHAIN_PATH"
-        security list-keychains -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
-        security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$MACOS_CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security -T /usr/bin/productsign
-        security set-key-partition-list -S apple-tool:,apple:,codesign:,productsign: -s -k "build" "$KEYCHAIN_PATH"
-        codesign --force --deep --options runtime --timestamp --sign "$MACOS_CERT_IDENTITY" "$APP_PATH"
-        rm -f T2DECODE-macOS.zip
-        ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
-        xcrun notarytool submit T2DECODE-macOS.zip --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
-        xcrun stapler staple "$APP_PATH"
-        xcrun stapler staple T2DECODE-macOS.dmg
-        productsign --sign "$MACOS_CERT_IDENTITY" T2DECODE-macOS-Installer.pkg T2DECODE-macOS.pkg
-        xcrun notarytool submit T2DECODE-macOS.pkg --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
-        xcrun stapler staple T2DECODE-macOS.pkg
-      fi
-  artifacts:
-    paths:
-      - T2DECODE-macOS.zip
-      - T2DECODE-macOS.dmg
-      - T2DECODE-macOS.pkg
-    expire_in: 1 day
-  rules:
-    - if: $CI_COMMIT_TAG
-      when: on_success
-    - when: manual
-      allow_failure: true
 
 # === STAGE: RELEASE ===
 release_gitlab:
