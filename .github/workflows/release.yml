@@ -222,6 +222,8 @@ jobs:
             runner: ubuntu-latest
           - architecture: arm64
             runner: ubuntu-24.04-arm
+    env:
+      SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -237,11 +239,9 @@ jobs:
           path: ${{ steps.snapbuild.outputs.snap }}
 
       - name: Publish Snap to Snap Store (${{ matrix.architecture }})
-        if: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS != '' }}
+        if: env.SNAPCRAFT_STORE_CREDENTIALS != ''
         uses: snapcore/action-publish@v1
         with:
           snapcraft-token: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
           snap: ${{ steps.snapbuild.outputs.snap }}
         continue-on-error: true
-        env:
-          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
