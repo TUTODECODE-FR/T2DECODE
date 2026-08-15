@@ -59,6 +59,7 @@ test_and_analyze:
     - flutter pub get
     - python3 scripts/verify_checksums.py
     - python3 scripts/audit_airgap_leak.py
+    - python3 scripts/audit_binary_hardening.py
     - python3 scripts/generate_sbom.py
     - flutter pub outdated || true
     - flutter analyze --no-fatal-infos --no-fatal-warnings || true
