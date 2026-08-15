@@ -11,7 +11,7 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 /// TDC Studio IDE — Environnement Développeur & Créateur de Cours souverain (.tdc).
 class TDCStudioScreen extends StatefulWidget {
-  const TDCStudioScreen({Key? key}) : super(Key: key);
+  const TDCStudioScreen({super.key});
 
   @override
   State<TDCStudioScreen> createState() => _TDCStudioScreenState();
