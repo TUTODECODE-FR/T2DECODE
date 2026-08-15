@@ -22,9 +22,9 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
   final TextEditingController _rawCodeController = TextEditingController();
 
   // Form State
-  String _courseId = 'nouveau-cours-technique';
-  String _courseTitle = 'Titre de Votre Nouveau Cours';
-  String _courseDesc = 'Description pédagogique et objectifs de votre cours en langage .tdc.';
+  String _courseId = 'nouveau-cours-tdc';
+  String _courseTitle = 'Nouveau Cours Technique';
+  String _courseDesc = 'Description pédagogique et objectifs de ce cours rédigé en .tdc.';
   String _category = 'linux';
   String _level = 'beginner';
   String _duration = '1h';
@@ -34,14 +34,14 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
   List<Map<String, dynamic>> _modules = [
     {
       'id': 'chapitre-1',
-      'title': 'Chapitre 1 : Introduction & Concepts',
+      'title': 'Chapitre 1 : Premier Pas & Terminal',
       'duration': '15min',
-      'content': '# 🚀 Bienvenue dans votre cours\n\nRédigez ici le contenu en **Markdown** (explications, schémas, astuces).',
+      'content': '# 🚀 Introduction au cours\n\nRédigez ici votre explication en **Markdown**.\n\n- Point clé 1\n- Point clé 2',
       'codeBlocks': [
         {
           'language': 'bash',
-          'title': 'Exemple de commande',
-          'code': 'echo "Bienvenue dans T2DECODE Studio !"'
+          'title': 'Commande d\'exemple',
+          'code': 'echo "Bienvenue dans votre nouveau cours TDC !"'
         }
       ],
       'quiz': [
@@ -49,7 +49,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
           'question': 'Quelle est la première étape du cours ?',
           'choices': ['Lire le premier chapitre', 'Ignorer la théorie', 'Fermer le terminal'],
           'correctIndex': 0,
-          'explanation': 'Lire attentivement le chapitre permet d\'assimiler les notions.'
+          'explanation': 'La lecture attentive permet d\'assimiler les notions.'
         }
       ]
     }
@@ -92,9 +92,9 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
 
   void _createNewDefaultCourse() {
     setState(() {
-      _courseId = 'mon-nouveau-cours';
+      _courseId = 'nouveau-cours-tdc';
       _courseTitle = 'Nouveau Cours Technique';
-      _courseDesc = 'Description globale et objectifs pédagogiques de ce cours.';
+      _courseDesc = 'Description pédagogique et objectifs de ce cours rédigé en .tdc.';
       _category = 'linux';
       _level = 'beginner';
       _duration = '1h';
@@ -103,22 +103,22 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
       _modules = [
         {
           'id': 'chapitre-1',
-          'title': 'Chapitre 1 : Introduction',
+          'title': 'Chapitre 1 : Premier Pas & Terminal',
           'duration': '15min',
-          'content': '# 📌 Introduction\n\nContenu rédigé en **Markdown**.',
+          'content': '# 🚀 Introduction au cours\n\nRédigez ici votre explication en **Markdown**.\n\n- Point clé 1\n- Point clé 2',
           'codeBlocks': [
             {
               'language': 'bash',
-              'title': 'Exemple bash',
-              'code': 'echo "Hello TDC Studio"'
+              'title': 'Commande d\'exemple',
+              'code': 'echo "Bienvenue dans votre nouveau cours TDC !"'
             }
           ],
           'quiz': [
             {
-              'question': 'Quelle est la commande pour afficher du texte ?',
-              'choices': ['echo', 'cat', 'ls'],
+              'question': 'Quelle est la première étape du cours ?',
+              'choices': ['Lire le premier chapitre', 'Ignorer la théorie', 'Fermer le terminal'],
               'correctIndex': 0,
-              'explanation': 'echo affiche la chaîne de caractères transmise.'
+              'explanation': 'La lecture attentive permet d\'assimiler les notions.'
             }
           ]
         }
@@ -588,6 +588,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
+                  key: ValueKey('category_select_$_category'),
                   value: _category,
                   dropdownColor: const Color(0xFF1A1A1A),
                   style: const TextStyle(color: Colors.white),
@@ -611,6 +612,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
               const SizedBox(width: 12),
               Expanded(
                 child: DropdownButtonFormField<String>(
+                  key: ValueKey('level_select_$_level'),
                   value: _level,
                   dropdownColor: const Color(0xFF1A1A1A),
                   style: const TextStyle(color: Colors.white),
@@ -680,6 +682,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
     mod['quiz'] = quizList;
 
     return Card(
+      key: ValueKey('module_card_${index}_${mod['id']}'),
       color: const Color(0xFF121212),
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
@@ -755,7 +758,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
               final correctIdx = q['correctIndex'] as int? ?? 0;
 
               return Container(
-                key: ValueKey('quiz_${index}_$qIdx'),
+                key: ValueKey('quiz_${index}_${qIdx}_${q['question'].hashCode}'),
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -1237,7 +1240,7 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
 
   Widget _buildTextField(String label, String value, Function(String) onChanged, {int maxLines = 1}) {
     return TextFormField(
-      key: ValueKey('${label}_$value'),
+      key: ValueKey('input_${label}_${value.hashCode}'),
       initialValue: value,
       maxLines: maxLines,
       style: const TextStyle(color: Colors.white, fontSize: 14),
