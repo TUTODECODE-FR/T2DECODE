@@ -153,6 +153,12 @@ jobs:
           name: artifacts-macos
           path: ./release_assets
 
+      - name: Generate CycloneDX & SPDX SBOMs
+        run: |
+          python3 scripts/generate_sbom.py
+          cp -f sbom-cyclonedx.json release_assets/
+          cp -f sbom-spdx.json release_assets/
+
       - name: Prepare Assets & Generate SHA256SUMS.txt
         run: |
           cd release_assets
