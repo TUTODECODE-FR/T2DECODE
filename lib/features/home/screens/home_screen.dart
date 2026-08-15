@@ -21,7 +21,7 @@ import 'package:tutodecode/core/providers/settings_provider.dart';
 import 'package:tutodecode/core/services/snapshot_service.dart';
 import 'package:tutodecode/core/providers/search_provider.dart';
 import 'package:tutodecode/core/services/asset_integrity_service.dart';
-import 'package:tutodecode/core/navigation/app_navigator.dart';
+import 'package:tutodecode/core/navigation/nav_keys.dart';
 import '../../courses/widgets/course_import_dialog.dart';
 import '../../courses/widgets/course_authenticity_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
