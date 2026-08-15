@@ -22,6 +22,15 @@ DISABLE_LINTERS:
   - REPOSITORY_DEVSKIM
   - MARKDOWN_MARKDOWN_LINK_CHECK
 
-# Ignorer certains dossiers (par exemple fdroid_data_repo qui contient beaucoup de fichiers générés/externes)
+# Ignorer les dossiers lourds et scanner uniquement les fichiers modifiés (MR) pour une exécution ultra-rapide (<10s)
+EXCLUDED_DIRECTORIES:
+  - fdroid_data_repo
+  - landing_page
+  - build
+  - .dart_tool
+
+VALIDATE_ALL_CODEBASE: false
+
 FILTER_REGEX_EXCLUDE: (fdroid_data_repo/.*|landing_page/.*|scripts/translate_.*)
+
 

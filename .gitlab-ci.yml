@@ -217,6 +217,8 @@ megalinter:
   image: oxsecurity/megalinter:v8
   variables:
     DEFAULT_WORKSPACE: $CI_PROJECT_DIR
+    VALIDATE_ALL_CODEBASE: "false"
+    EXCLUDED_DIRECTORIES: "fdroid_data_repo,landing_page,build,.dart_tool"
   script:
     - "true"
   artifacts:
