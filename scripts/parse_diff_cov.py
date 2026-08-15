@@ -1,22 +1,9 @@
-import sys, re
-added_lines = {}
-current_file = None
-with open("diff_lines.txt", "r") as f:
-    for line in f:
-        line = line.strip()
-        if line.startswith("+++ b/"):
-            current_file = line[6:]
-            added_lines[current_file] = set()
-        elif line.startswith("@@"):
-            m = re.search(r'\+([0-9]+)(?:,([0-9]+))?', line)
-            if m and current_file:
-                start = int(m.group(1))
-                count = int(m.group(2)) if m.group(2) else 1
-                for i in range(start, start + count):
-                    added_lines[current_file].add(i)
+from typing import Dict, Set, Optional
 
-coverage = {}
-current_lcov_file = None
+added_lines: Dict[str, Set[int]] = {}
+current_file: Optional[str] = None
+coverage: Dict[str, Dict[str, int]] = {}
+current_lcov_file: Optional[str] = None
 with open("coverage/lcov.info", "r") as f:
     for line in f:
         line = line.strip()

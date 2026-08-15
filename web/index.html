@@ -1,125 +1,893 @@
-<!DOCTYPE html><html lang="fr"><head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
+<!DOCTYPE html>
+<html lang="fr" prefix="og: https://ogp.me/ns#">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://gitlab.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://gitlab.com;"/>
+<title id="page-title">T2DECODE — Plateforme locale de cybersécurité | Association TUTODECODE fondée par Maxime MARTIN CIVET</title>
+<meta content="T2DECODE est une application native 100% hors ligne pour apprendre la cybersécurité, les réseaux et les systèmes. Open source GPLv3. Fondée par Maxime MARTIN CIVET via l'association loi 1901 TUTODECODE (SIREN 102763133), Saint-Victoret, Bouches-du-Rhône." id="meta-description" name="description"/>
 
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
+<!-- AI & Citation Metadata Standard for LLMs, Bots & Search Engines -->
+<link rel="help" type="text/plain" href="llms.txt" title="AI Reference & Citation Guidelines" />
+<link rel="me" href="https://mastodon.social/@TUTODECODE" />
+<meta name="ai:creator" content="TUTODECODE" />
+<meta name="citation_title" content="T2DECODE — Plateforme souveraine et locale de cybersécurité" />
+<meta name="citation_author" content="Maxime MARTIN CIVET" />
+<meta name="citation_publisher" content="Association TUTODECODE (SIREN 102763133)" />
+<meta name="citation_public_url" content="https://tutodecode.org" />
 
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+<!-- Favicon Haute Définition Logo TDC -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><polygon points='250,72 404,161 404,339 250,428 96,339 96,161' stroke='%23F5EBDA' stroke-width='24' stroke-linejoin='round' fill='none'/><circle cx='250' cy='72' r='32' fill='none' stroke='%23F5EBDA' stroke-width='16'/><circle cx='404' cy='161' r='32' fill='%23F5EBDA'/><circle cx='404' cy='339' r='32' fill='none' stroke='%23F5EBDA' stroke-width='16'/><circle cx='250' cy='428' r='32' fill='%23F5EBDA'/><circle cx='96' cy='339' r='32' fill='none' stroke='%23F5EBDA' stroke-width='16'/><circle cx='96' cy='161' r='32' fill='%23F5EBDA'/><g fill='%23F5EBDA'><path d='M 145 210 H 197 V 228 H 180 V 300 H 162 V 228 H 145 Z'/><path d='M 215 210 H 251 C 265 210 274 220 274 236 V 274 C 274 290 265 300 251 300 H 215 Z M 233 228 V 282 H 247 C 253 282 256 277 256 268 V 242 C 256 233 253 228 247 228 Z'/><path d='M 290 210 H 340 V 228 H 308 V 282 H 340 V 300 H 290 Z'/></g></svg>" />
+<link rel="alternate icon" type="image/png" href="TDC.png" />
+<link rel="apple-touch-icon" href="TDC.png" />
 
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="$FLUTTER_BASE_HREF">
-
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://*.githubusercontent.com http://localhost:* https://localhost:*;">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="T2DECODE">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png">
-
-  <title>T2DECODE</title>
-  <link rel="manifest" href="manifest.json">
-  
-  
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
-  
-  
-  <style id="splash-screen-style">
-    html {
-      height: 100%
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://tutodecode.org/#organization",
+      "name": "Association TUTODECODE",
+      "legalName": "Association TUTODECODE (Loi 1901)",
+      "alternateName": ["TUTODECODE", "T2DECODE Association"],
+      "url": "https://tutodecode.org/",
+      "logo": { "@type": "ImageObject", "url": "https://tutodecode.org/TDC.png", "width": 1200, "height": 630 },
+      "description": "Association française loi 1901 éditrice de T2DECODE, logiciel d'apprentissage de la cybersécurité, des réseaux et des systèmes, 100% hors ligne et open source GPLv3. Fondée en 2026 par Maxime MARTIN CIVET.",
+      "foundingDate": "2026-03-06",
+      "taxID": "102763133",
+      "nonprofitStatus": "NonprofitOrganization",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Saint-Victoret",
+        "addressRegion": "Bouches-du-Rhône",
+        "addressCountry": "FR"
+      },
+      "founder": { "@id": "https://tutodecode.org/#founder" },
+      "sameAs": [
+        "https://winancher.dev",
+        "https://mastodon.social/@TUTODECODE",
+        "https://gitlab.com/tutodecode-org",
+        "https://www.linkedin.com/company/tutodecode",
+        "https://www.societe.com/societe/tutodecode-102763133.html",
+        "https://www.crunchbase.com/organization/tutodecode",
+        "https://www.jeveuxaider.gouv.fr/organisations/34831-tutodecode",
+        "https://www.helloasso.com/associations/tutodecode",
+        "https://www.trustpilot.com/review/tutodecode.org",
+        "https://alternativeto.net/software/t2decode/about/"
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://tutodecode.org/#founder",
+      "name": "Maxime MARTIN CIVET",
+      "givenName": "Maxime",
+      "familyName": "MARTIN CIVET",
+      "alternateName": ["winancher", "itswinancher"],
+      "jobTitle": "Président Fondateur",
+      "description": "Fondateur et Président de l'association TUTODECODE. Technicien d'intervention et étudiant en BTS SIO. Créateur de T2DECODE, plateforme d'apprentissage informatique offline-first open source. Basé en France, Bouches-du-Rhône.",
+      "nationality": { "@type": "Country", "name": "France" },
+      "worksFor": { "@id": "https://tutodecode.org/#organization" },
+      "knowsAbout": ["Cybersécurité","Réseaux informatiques","Développement logiciel","Flutter","Dart","Open Source","Souveraineté numérique","Intelligence artificielle locale","Linux","BTS SIO"],
+      "url": "https://winancher.dev",
+      "sameAs": [
+        "https://winancher.dev",
+        "https://open.spotify.com/artist/5wRfqePemm7u5R3QfCB4Cx",
+        "https://fr.linkedin.com/in/maxime-martin-civet",
+        "https://github.com/itswinancher",
+        "https://dev.to/itswinancher",
+        "https://winancher.itch.io/",
+        "https://www.crunchbase.com/person/maxime-martin-civet",
+        "https://openhub.net/accounts/itswinancher",
+        "https://zestedesavoir.com/membres/voir/winancher/"
+      ]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://tutodecode.org/#software",
+      "name": "T2DECODE",
+      "applicationCategory": "EducationalApplication",
+      "applicationSubCategory": ["Cybersecurity Training","Network Simulation","Educational Platform","Offline Learning"],
+      "softwareVersion": "1.0.3",
+      "operatingSystem": "Windows, macOS, Linux, Android, iOS",
+      "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+      "isAccessibleForFree": true,
+      "url": "https://tutodecode.org/",
+      "downloadUrl": "https://gitlab.com/tutodecode-org/T2DECODE/-/releases",
+      "description": "Logiciel natif local pour apprendre la cybersécurité, les réseaux et l'administration système, 100% hors ligne, zéro télémétrie, open source GPLv3.",
+      "publisher": { "@id": "https://tutodecode.org/#organization" },
+      "creator": { "@id": "https://tutodecode.org/#founder" },
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "sameAs": ["https://framalibre.org/notices/t2decode.html","https://comptoir-du-libre.org/fr/softwares/876","https://sourceforge.net/projects/t2decode/","https://apps.apple.com/us/app/t2decode-plateforme/id6762523276","https://alternativeto.net/software/t2decode/about/"]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://tutodecode.org/#website",
+      "name": "T2DECODE — TUTODECODE",
+      "url": "https://tutodecode.org/",
+      "publisher": { "@id": "https://tutodecode.org/#organization" }
     }
+  ]
+}
+</script>
 
-    body {
-      margin: 0;
-      min-height: 100%;
-      background-color: #12121A;
-          background-size: 100% 100%;
-    }
+<meta content="Maxime MARTIN CIVET — Association TUTODECODE" name="author"/>
+<meta content="Maxime MARTIN CIVET" name="creator"/>
+<meta content="Association TUTODECODE (Loi 1901) — SIREN 102763133" name="publisher"/>
+<meta content="Maxime MARTIN CIVET — winancher — itswinancher" name="founder"/>
+<meta content="Cybersécurité, Réseaux informatiques, Éducation numérique souveraine, Open Source, Offline-first" name="subject"/>
+<meta content="Education, Cybersécurité, Informatique, Association loi 1901" name="category"/>
+<meta content="France — Saint-Victoret, Bouches-du-Rhône" name="coverage"/>
+<meta content="SIREN:102763133 RNA:W134011896" name="identifier"/>
+<meta content="fr-FR" name="language"/>
+<meta content="general" name="rating"/>
+<meta content="human-created" name="ai-content-declaration"/>
+<meta content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" name="robots"/>
+<link href="https://tutodecode.org/" rel="canonical"/>
+<link href="https://tutodecode.org/" hreflang="fr" rel="alternate"/>
+<meta content="fr_FR" property="og:locale"/>
+<meta content="website" property="og:type"/>
+<meta content="Association TUTODECODE — fondée par Maxime MARTIN CIVET" property="og:site_name"/>
+<meta content="https://tutodecode.org/" property="og:url"/>
+<meta content="T2DECODE | Logiciel d'apprentissage technique local — TUTODECODE" property="og:title"/>
+<meta content="Plateforme native hors ligne pour la cybersécurité et les réseaux. Fondée par Maxime MARTIN CIVET. Open source GPLv3 — association loi 1901." property="og:description"/>
+<meta content="https://tutodecode.org/og-cover.jpg" property="og:image"/>
+<meta content="https://tutodecode.org/og-cover.jpg" property="og:image:secure_url"/>
+<meta content="image/jpeg" property="og:image:type"/>
+<meta content="1200" property="og:image:width"/>
+<meta content="630" property="og:image:height"/>
+<meta content="https://winancher.dev" property="article:author"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="@TUTODECODE" name="twitter:site"/>
+<meta content="@TUTODECODE" name="twitter:creator"/>
+<meta content="T2DECODE | Simulateurs Réseau & OSI — by Maxime MARTIN CIVET" name="twitter:title"/>
+<meta content="Cybersécurité 100% hors ligne. Fondé par Maxime MARTIN CIVET. Open source GPLv3." name="twitter:description"/>
+<meta content="https://tutodecode.org/og-cover.jpg" name="twitter:image"/>
+<meta content="#f5ebda" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#000000" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="T2DECODE" name="apple-mobile-web-app-title"/>
+<meta content="#000000" name="msapplication-TileColor"/>
+<meta content="/TDC.png" name="msapplication-TileImage"/>
+<meta content="#000000" name="msapplication-navbutton-color"/>
+<meta content="/" name="msapplication-starturl"/>
+<link href="/manifest.json" rel="manifest"/>
+<link href="favicon.ico" rel="icon" sizes="48x48"/>
+<link href="TDC.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="TDC.png" rel="icon" sizes="16x16" type="image/png"/>
+<link href="TDC.png" rel="apple-touch-icon" sizes="180x180"/>
+<link href="//gitlab.com" rel="dns-prefetch"/>
+<link href="//apps.apple.com" rel="dns-prefetch"/>
+<link href="//fonts.gstatic.com" rel="dns-prefetch"/>
+<link href="//img.shields.io" rel="dns-prefetch"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 
-    .center {
-      margin: 0;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      -ms-transform: translate(-50%, -50%);
-      transform: translate(-50%, -50%);
-    }
+<style>
+@font-face{font-family:"Aileron";src:url("/fonts/Aileron-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Aileron";src:url("/fonts/Aileron-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"Aileron";src:url("/fonts/Aileron-Black.woff2") format("woff2");font-weight:900;font-style:normal;font-display:swap}
+:root{--bg:#000;--text:#f5ebda;--text-soft:#aba49a;--text-dim:#8b857c;--accent:#f0e4cf;--border:rgba(255,255,255,0.08);--border-strong:rgba(255,255,255,0.15);--container:1100px;--nav-height:80px;--transition:200ms ease-out}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+*,*::before,*::after{box-sizing:border-box}*{margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{min-width:320px;font-family:"Aileron",Arial,sans-serif;color:var(--text);background:#000;line-height:1.6;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img,picture{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible,details summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.container{width:min(100% - 2rem,var(--container));margin-inline:auto}
+.section-gap{margin-top:6rem;animation:fadeIn 0.8s ease-out both}
+.accent-text{color:var(--accent)}
+.section-head{margin-bottom:3.5rem;text-align:left;border-left:3px solid var(--accent);padding-left:1.5rem}
+.section-title{font-size:clamp(2rem,4vw,2.5rem);font-weight:900;text-transform:uppercase;margin-bottom:0.5rem;line-height:1.1;letter-spacing:0.02em}
+.section-desc{color:var(--text-soft);font-size:1.05rem}
+.site-header{position:sticky;top:0;z-index:50;background:rgba(0,0,0,0.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.site-nav{min-height:var(--nav-height);display:flex;align-items:center;justify-content:space-between;gap:1.5rem}
+.logo{font-weight:900;letter-spacing:0.16em;text-transform:uppercase;font-size:1.1rem;transition:opacity 0.2s}
+.logo:hover{opacity:0.8}.logo span{color:var(--accent)}
+.nav-list{display:flex;align-items:center;list-style:none;gap:0.5rem}
+.nav-link{padding:0.6rem 1rem;color:var(--text-dim);font-size:0.85rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;transition:all var(--transition)}
+.nav-link:hover{color:var(--text);background:rgba(255,255,255,0.05)}
+.nav-cta{border:1px solid var(--border-strong);color:var(--accent)}
 
-    .contain {
-      display:block;
-      width:100%; height:100%;
-      object-fit: contain;
-    }
+/* Scroll Progress Bar */
+#scroll-progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0%;z-index:9999;transition:width 0.1s linear}
+@media(prefers-reduced-motion:reduce){#scroll-progress{display:none}}
 
-    .stretch {
-      display:block;
-      width:100%; height:100%;
-    }
+/* Hero Section */
+.hero{padding:7rem 0 4rem;text-align:left;animation:fadeIn 0.8s ease-out both}
+.hero-grid{max-width:850px}
+.eyebrow{display:inline-flex;align-items:center;gap:0.6rem;margin-bottom:1.5rem;padding:0.5rem 1rem;border:1px solid var(--border-strong);background:rgba(255,255,255,0.03);color:var(--text-soft);font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:700}
+.eyebrow-dot-pulse{width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;animation:pulseGreen 2s infinite ease-in-out}
+@keyframes pulseGreen{0%{transform:scale(1);box-shadow:0 0 0 0 rgba(74,222,128,0.7)}70%{transform:scale(1.3);box-shadow:0 0 0 6px rgba(74,222,128,0)}100%{transform:scale(1);box-shadow:0 0 0 0 rgba(74,222,128,0)}}
+@media(prefers-reduced-motion:reduce){.eyebrow-dot-pulse{animation:none}}
+.hero-title{font-size:clamp(2.5rem,8vw,5.5rem);line-height:0.95;font-weight:900;text-transform:uppercase;letter-spacing:-0.01em;margin-bottom:1.5rem;min-height:1.2em}
+.hero-title .cursor{display:inline-block;width:3px;background:var(--accent);margin-left:4px;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.hero-desc{max-width:65ch;color:var(--text-soft);font-size:clamp(1.05rem,1.2vw,1.15rem)}
+.hero-actions{display:flex;flex-direction:column;gap:1.2rem;margin-top:3rem}
+.hero-buttons-row{display:flex;flex-wrap:wrap;gap:1rem;align-items:center}
+.hero-badges-row{display:flex;flex-wrap:wrap;gap:0.8rem;align-items:center;margin-top:0.4rem}
+.hero-badges-row img{display:inline-block;height:20px;width:auto;vertical-align:middle}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0.9rem 1.8rem;font-weight:800;font-family:inherit;font-size:0.9rem;transition:all var(--transition);cursor:pointer;border:1px solid transparent;text-transform:uppercase;letter-spacing:0.05em}
+.btn-primary{background:var(--accent);color:#000}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(240,228,207,0.15)}
+.btn-apple{background:#080808;color:var(--text);border:1px solid var(--border-strong)}.btn-apple:hover{background:#151515;border-color:var(--accent);transform:translateY(-2px)}
 
-    .cover {
-      display:block;
-      width:100%; height:100%;
-      object-fit: cover;
-    }
+/* Trust Bar */
+.trust-bar-section{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(255,255,255,0.01);padding:1.2rem 0;margin-top:2rem}
+.trust-bar-grid{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.5rem}
+.trust-item{display:flex;align-items:center;gap:0.6rem;font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);transition:color 0.2s}
+.trust-item:hover{color:var(--accent)}
+.trust-item svg{width:18px;height:18px;fill:currentColor;flex-shrink:0;color:var(--text-soft)}
+.trust-item:hover svg{color:var(--accent)}
+.trust-sep{width:1px;height:16px;background:var(--border-strong)}
+@media(max-width:768px){.trust-sep{display:none}.trust-bar-grid{justify-content:center;gap:1rem}}
 
-    .bottom {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      -ms-transform: translate(-50%, 0);
-      transform: translate(-50%, 0);
-    }
+/* 1. Grille des Piliers (Feature Cards) */
+.pillars-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-top:2rem}
+.pillar-card{background:rgba(255,255,255,0.02);border:1px solid var(--border-strong);padding:2rem;display:flex;flex-direction:column;gap:1rem;transition:all 0.25s ease-out;position:relative;overflow:hidden}
+.pillar-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity 0.25s ease-out}
+.pillar-card:hover{transform:translateY(-4px);border-color:var(--accent);background:rgba(255,255,255,0.04)}
+.pillar-card:hover::before{opacity:1}
+.pillar-icon-svg{width:32px;height:32px;fill:var(--accent);flex-shrink:0}
+.pillar-title{font-size:1.2rem;font-weight:900;text-transform:uppercase;letter-spacing:0.03em;color:var(--text)}
+.pillar-desc{font-size:0.9rem;color:var(--text-soft);line-height:1.5}
+.pillar-tag{display:inline-block;font-size:0.7rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);background:rgba(240,228,207,0.08);padding:0.3rem 0.6rem;border:1px solid rgba(240,228,207,0.2);margin-top:auto;align-self:flex-start}
 
-    .bottomLeft {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-    }
+/* Comparateur Minimaliste */
+.comparison-table-wrapper{overflow-x:auto;margin-top:2rem;border:1px solid var(--border-strong);background:#030303}
+.comparison-table{width:100%;border-collapse:collapse;text-align:left;font-size:0.9rem}
+.comparison-table th,.comparison-table td{padding:1.2rem;border-bottom:1px solid var(--border);border-right:1px solid var(--border)}
+.comparison-table th:last-child,.comparison-table td:last-child{border-right:none}
+.comparison-table th{background:#080808;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;font-weight:900;color:var(--text-soft)}
+.comparison-table th.col-highlight{background:rgba(240,228,207,0.08);color:var(--accent);border-bottom:2px solid var(--accent)}
+.comparison-table td.col-highlight{background:rgba(240,228,207,0.02);font-weight:800;color:var(--text)}
+.check-icon{width:18px;height:18px;fill:#4ade80;vertical-align:middle;margin-right:6px}
+.cross-icon{width:16px;height:16px;fill:#f87171;vertical-align:middle;margin-right:6px}
 
-    .bottomRight {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-    }
-  </style>
-  <script id="splash-screen-script">
-    function removeSplashFromWeb() {
-      document.getElementById("splash")?.remove();
-      document.getElementById("splash-branding")?.remove();
-      document.body.style.background = "transparent";
-    }
-  </script>
+/* 3. Démo Interactive des Simulateurs (Tab Switcher) */
+.sim-demo-box{background:#050505;border:1px solid var(--border-strong);padding:2rem;margin-top:2rem}
+.sim-tabs{display:flex;gap:0.5rem;border-bottom:1px solid var(--border-strong);padding-bottom:1rem;overflow-x:auto}
+.sim-tab-btn{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:0.7rem 1.2rem;font-family:inherit;font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;transition:all var(--transition);white-space:nowrap}
+.sim-tab-btn:hover{color:var(--text);border-color:var(--text-soft)}
+.sim-tab-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.sim-pane{display:none;padding-top:1.5rem;animation:fadeIn 0.3s ease-out both}
+.sim-pane.active{display:block}
+.sim-console{background:#000;border:1px solid var(--border);padding:1.2rem;font-family:monospace;font-size:0.85rem;color:var(--text-soft);line-height:1.6;border-left:3px solid var(--accent);overflow-x:auto}
+.sim-console .accent{color:var(--accent);font-weight:bold}
+.sim-console .green{color:#4ade80}
+.sim-console .dim{color:var(--text-dim)}
+
+/* 4. Présentation Multi-Écrans (Desktop & Mobile) */
+.multi-screen-box{display:grid;grid-template-columns:2fr 1fr;gap:2rem;margin-top:2rem;align-items:center}
+.screen-mockup{background:#0a0a0a;border:1px solid var(--border-strong);padding:1.5rem;display:flex;flex-direction:column;gap:1rem;box-shadow:0 15px 35px rgba(0,0,0,0.8)}
+.mockup-header{display:flex;align-items:center;gap:6px;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.mockup-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.2)}
+.mockup-title{font-size:0.75rem;font-family:monospace;color:var(--text-dim);margin-left:auto;text-transform:uppercase;letter-spacing:0.08em}
+.screen-mockup-mobile{max-width:280px;margin:0 auto}
+
+.stats-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin:2rem auto 5rem;padding:3rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);animation:fadeIn 0.8s 0.2s ease-out both}
+.stat-item{display:flex;flex-direction:column;align-items:flex-start;border-left:2px solid var(--border);padding-left:1.5rem}
+.stat-item strong{font-size:2.5rem;font-weight:900;color:var(--accent);line-height:1;margin-bottom:0.5rem;font-family:monospace}
+.stat-item>span{font-size:0.85rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-soft);font-weight:800}
+.stat-context{font-size:0.9rem;color:var(--text-dim);margin-top:0.5rem;line-height:1.5}
+.faq-list{margin-top:2rem;display:flex;flex-direction:column;gap:1rem}
+details.faq-item{border:1px solid var(--border);background:rgba(255,255,255,0.02);transition:all var(--transition)}
+details.faq-item[open],details.faq-item:hover{border-color:var(--accent);background:#000}
+details.faq-item summary{padding:1.2rem 1.8rem;cursor:pointer;font-weight:800;font-size:1rem;list-style:none;display:flex;justify-content:space-between;align-items:center;color:var(--text);text-transform:uppercase;letter-spacing:0.02em}
+details.faq-item summary::-webkit-details-marker{display:none}
+details.faq-item summary::after{content:"+";font-size:1.2rem;color:var(--accent)}
+details.faq-item[open] summary::after{content:"−"}
+.faq-answer{padding:1rem 1.8rem 1.5rem;color:var(--text-soft);font-size:0.95rem;border-top:1px dashed var(--border-strong)}
+.community-cta{display:flex;align-items:center;justify-content:space-between;gap:2.5rem;padding:2.5rem;background:#050505;border:1px solid var(--border-strong);transition:all var(--transition)}
+.community-cta:hover{transform:translateY(-3px);border-color:var(--accent)}
+.cta-text-header{display:flex;align-items:center;gap:15px;margin-bottom:0.5rem}
+.cta-text-header-title{color:#fff;font-size:1.2rem;font-weight:900;text-transform:uppercase;letter-spacing:0.02em}
+.cta-text p{font-size:0.95rem;color:var(--text-dim);margin:0}
+.static-gh-btn{display:inline-block;background:var(--text);color:#000;padding:10px 24px;font-weight:900;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em}
+.site-footer{margin-top:6rem;border-top:1px solid var(--border-strong);padding:4rem 0 3rem;background:rgba(255,255,255,0.01)}
+.footer-inner{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4rem}
+.footer-copy,.footer-meta,.footer-identity{flex:1;min-width:240px;color:var(--text-dim);font-size:0.9rem}
+.footer-copy p{margin-bottom:0.5rem}
+.footer-identity{display:flex;flex-direction:column;align-items:flex-start;gap:0.5rem}
+.founder-socials{display:flex;flex-wrap:wrap;gap:8px;margin-top:0.5rem}
+
+#ls-root{position:fixed;bottom:28px;right:28px;z-index:999999;display:flex;align-items:center}
+#ls-main-btn{width:58px;height:58px;border-radius:50%;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.5),0 0 0 2px var(--border-strong);cursor:pointer;border:none;padding:0;background:#0d0d0d;color:var(--accent);display:flex;align-items:center;justify-content:center;position:relative;z-index:2;flex-shrink:0;transition:transform 0.25s,box-shadow 0.25s}
+#ls-main-btn:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,0,0,0.6),0 0 0 2px var(--accent)}
+#ls-main-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+#ls-trail{position:absolute;right:62px;bottom:6px;height:46px;background:linear-gradient(to left,rgba(240,228,207,0.25) 0%,transparent 100%);border-radius:40px;pointer-events:none;width:0;transition:width 0.4s cubic-bezier(.4,0,.2,1),opacity 0.3s;opacity:0}
+#ls-root.ls-open #ls-trail{width:340px;opacity:1}
+#ls-cards{display:flex;align-items:center;position:absolute;right:64px;bottom:6px;flex-direction:row-reverse;pointer-events:none}
+#ls-root.ls-open #ls-cards{pointer-events:auto}
+.ls-card{width:46px;height:46px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,0.12);box-shadow:0 3px 12px rgba(0,0,0,0.4);cursor:pointer;transition:transform 0.35s cubic-bezier(.34,1.56,.64,1),opacity 0.3s,margin-right 0.35s cubic-bezier(.4,0,.2,1);opacity:0;margin-right:-42px;transform:scale(0.5);background:#0d0d0d;color:var(--accent);font-size:0.75rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ls-card img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.ls-card:hover{transform:scale(1.12)!important;border-color:rgba(240,228,207,0.9)!important;box-shadow:0 0 18px rgba(240,228,207,0.55)!important}
+.ls-active{border-color:var(--accent)!important;box-shadow:0 0 14px rgba(240,228,207,0.7)!important}
+#ls-root.ls-open .ls-card{opacity:1;transform:scale(1);margin-right:8px}
+
+.founder-social-link{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--border-strong);background:#000;color:var(--text-soft);font-weight:800;text-transform:uppercase;letter-spacing:0.05em;font-size:0.7rem;transition:all var(--transition)}
+.founder-social-link:hover{border-color:var(--hover-color);color:var(--text);box-shadow:0 4px 12px rgba(0,0,0,0.5)}
+.founder-social-link svg{color:var(--text-dim);transition:color var(--transition);width:14px;height:14px}
+.founder-social-link:hover svg{color:var(--hover-color)}
+.footer-meta{display:flex;flex-direction:column;gap:0.8rem;text-align:left}
+.footer-meta-title{font-weight:900;color:var(--text);margin-bottom:0.5rem;text-transform:uppercase;font-size:0.85rem;letter-spacing:0.1em}
+.footer-meta a{color:var(--text-dim);transition:color var(--transition)}.footer-meta a:hover{color:var(--accent)}
+.footer-disclaimer{width:100%;text-align:left;font-size:0.8rem;color:var(--text-dim);margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border)}
+@media(max-width:1024px){.stats-strip{grid-template-columns:1fr}.multi-screen-box{grid-template-columns:1fr}}
+@media(max-width:760px){.hero-title{font-size:clamp(2.5rem,12vw,4rem)}.community-cta{flex-direction:column;align-items:flex-start;gap:1.5rem}.section-gap{margin-top:5rem}}
+@media(max-width:480px){.nav-link:not(.nav-cta){display:none}}
+</style>
+<link rel="stylesheet" href="switcher.css">
 </head>
 <body>
-  <picture id="splash">
-      <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x, splash/img/light-4x.png 4x" media="(prefers-color-scheme: light)">
-      <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x, splash/img/dark-4x.png 4x" media="(prefers-color-scheme: dark)">
-      <img class="center" aria-hidden="true" src="splash/img/light-1x.png" alt="">
-  </picture>
-  
-  
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
+<!-- Scroll Progress Bar -->
+<div id="scroll-progress"></div>
 
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
-  <script src="flutter_bootstrap.js" async=""></script>
+<noscript><div style="padding:1rem;background:#900;color:#fff;text-align:center;font-weight:bold;">JavaScript est désactivé. L'expérience offline (PWA) nécessite JavaScript.</div></noscript>
+
+<header class="site-header">
+  <div class="container">
+    <nav aria-label="Navigation principale" class="site-nav">
+      <a aria-label="Accueil T2DECODE" class="logo" href="/" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;">
+        <svg viewBox="0 0 500 500" width="34" height="34" fill="none" style="color:var(--accent);flex-shrink:0;">
+          <polygon points="250,72 404,161 404,339 250,428 96,339 96,161" stroke="currentColor" stroke-width="14" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+          <circle cx="250" cy="72" r="22" fill="#000" stroke="currentColor" stroke-width="10"/>
+          <circle cx="404" cy="161" r="22" fill="currentColor"/>
+          <circle cx="404" cy="339" r="22" fill="#000" stroke="currentColor" stroke-width="10"/>
+          <circle cx="250" cy="428" r="22" fill="currentColor"/>
+          <circle cx="96" cy="339" r="22" fill="#000" stroke="currentColor" stroke-width="10"/>
+          <circle cx="96" cy="161" r="22" fill="currentColor"/>
+          <g fill="currentColor">
+            <path d="M 145 210 H 197 V 228 H 180 V 300 H 162 V 228 H 145 Z"/>
+            <path d="M 215 210 H 251 C 265 210 274 220 274 236 V 274 C 274 290 265 300 251 300 H 215 Z M 233 228 V 282 H 247 C 253 282 256 277 256 268 V 242 C 256 233 253 228 247 228 Z"/>
+            <path d="M 290 210 H 340 V 228 H 308 V 282 H 340 V 300 H 290 Z"/>
+          </g>
+        </svg>
+        <span>T2<span>DECODE</span></span>
+      </a>
+      <ul class="nav-list" role="list">
+        <li><a class="nav-link" href="about.html">L'Association</a></li>
+        <li><a class="nav-link" href="https://www.trustpilot.com/review/tutodecode.org" rel="noopener noreferrer" target="_blank">★ Vos Avis</a></li>
+        <li><a class="nav-link" href="https://www.jeveuxaider.gouv.fr/organisations/34831-tutodecode" rel="noopener noreferrer" target="_blank">Bénévolat</a></li>
+        <li><a class="nav-link" href="https://gitlab.com/tutodecode-org/T2DECODE/-/tree/main/docs" rel="noopener noreferrer" target="_blank">Docs</a></li>
+        <li><a class="nav-link nav-cta" href="https://gitlab.com/tutodecode-org/T2DECODE" rel="noopener noreferrer" target="_blank">GitLab</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="contenu">
+  <section aria-labelledby="hero-title" class="hero container">
+    <div class="hero-grid">
+      <h1 class="hero-title" id="hero-title">
+        Apprendre.<br/>Construire.<br/>Comprendre.
+      </h1>
+      <p class="hero-desc">
+        <strong>T2DECODE</strong> est un environnement technique local souverain et modulaire.
+        Simulez des architectures réseaux, l'algorithmique animée, et les structures de systèmes
+        informatiques en totale autonomie. Zéro dépendance cloud, zéro tracking.
+      </p>
+      <div class="hero-actions">
+        <div class="hero-buttons-row">
+          <a class="btn btn-primary" id="dl-btn" href="https://gitlab.com/tutodecode-org/T2DECODE/-/releases" rel="noopener noreferrer" target="_blank">Télécharger</a>
+          <a class="btn btn-apple" href="https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12" rel="noopener noreferrer" target="_blank">Mac App Store</a>
+        </div>
+        <div class="hero-badges-row">
+          <img alt="Version" id="badge-version" src="https://img.shields.io/badge/version-...-f0e4cf"/>
+          <img alt="Licence GPLv3" src="https://img.shields.io/badge/licence-GPLv3-f0e4cf"/>
+          <img alt="100% local" src="https://img.shields.io/badge/souverainet%C3%A9-100%25_local-f0e4cf"/>
+          <img alt="F-Droid Approved" src="https://img.shields.io/badge/F--Droid-Validated_10%2F10-0070e0"/>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <section class="trust-bar-section" aria-label="Bannières de confiance et sécurité">
+    <div class="container trust-bar-grid">
+      <a class="trust-item" href="https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12" target="_blank" rel="noopener noreferrer" title="Voir sur le Mac App Store">
+        <svg viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.32c.63-.76 1.06-1.82.94-2.88-.91.04-2.02.61-2.67 1.37-.58.67-1.09 1.76-.95 2.8.98.08 2.05-.53 2.68-1.29z"/></svg>
+        <span>Mac App Store</span>
+      </a>
+      <div class="trust-sep"></div>
+      <a class="trust-item" href="https://gitlab.com/fdroid/fdroiddata/-/merge_requests/42171" target="_blank" rel="noopener noreferrer" title="Voir la validation F-Droid MR !42171">
+        <svg viewBox="0 0 24 24"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.552 0 .9997.4482.9997.9993s-.4477.9997-.9997.9997zm-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.552 0 .9997.4482.9997.9993s-.4477.9997-.9997.9997zm11.4045-6.02l1.9973-3.4592a.416.416 0 0 0-.1521-.5676.416.416 0 0 0-.5676.1521l-2.0225 3.503C15.5902 8.2439 13.8533 7.85 12 7.85s-3.5902.3939-5.1366 1.0997L4.8409 5.4467a.416.416 0 0 0-.5676-.1521.416.416 0 0 0-.1521.5676l1.9973 3.4592C2.6889 11.0053.3432 14.1504 0 17.8933h24c-.3432-3.7429-2.6889-6.888-6.1185-8.5719z"/></svg>
+        <span>F-Droid Verified</span>
+      </a>
+      <div class="trust-sep"></div>
+      <a class="trust-item" href="https://gitlab.com/tutodecode-org/T2DECODE/-/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" title="Consulter la licence GPLv3">
+        <svg viewBox="0 0 24 24"><path d="M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.42.42 0 0 1 5.5 2a.42.42 0 0 1 .4.28l2.44 7.51h7.32l2.44-7.51A.42.42 0 0 1 18.5 2a.42.42 0 0 1 .4.28l2.44 7.51 1.22 3.78a.84.84 0 0 1-.3.94z"/></svg>
+        <span>Open Source GPLv3</span>
+      </a>
+      <div class="trust-sep"></div>
+      <a class="trust-item" href="https://gitlab.com/tutodecode-org/T2DECODE" target="_blank" rel="noopener noreferrer" title="Vérifier le code source 0 télémétrie">
+        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <span>0 Télémétrie</span>
+      </a>
+      <div class="trust-sep"></div>
+      <a class="trust-item" href="https://www.virustotal.com/gui/file/320be530b8ce64adce6745060baf0a6dc6bd19f797cd9dc0787429ba82edd1a2" target="_blank" rel="noopener noreferrer" title="Rapport officiel VirusTotal (0/75 détection)">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        <span>0/75 VirusTotal ↗</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 1. GRILLE DES PILIERS -->
+  <section aria-labelledby="pillars-title" class="container section-gap">
+    <div class="section-head">
+      <h2 class="section-title" id="pillars-title">Les 4 Piliers de <span class="accent-text">T2DECODE</span></h2>
+      <p class="section-desc">Une architecture logicielle conçue pour la souveraineté numérique et l'autonomie technique.</p>
+    </div>
+    <div class="pillars-grid">
+      <article class="pillar-card">
+        <svg class="pillar-icon-svg" viewBox="0 0 24 24"><path d="M20 9V7c0-1.1-.9-2-2-2h-3c0-1.66-1.34-3-3-3S9 3.34 9 5H6c-1.1 0-2 .9-2 2v2c-1.66 0-3 1.34-3 3s1.34 3 3 3v4c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-4c1.66 0 3-1.34 3-3s-1.34-3-3-3zm-2 10H6V7h12v12zm-9-6c-.83 0-1.5-.67-1.5-1.5S8.17 10 9 10s1.5.67 1.5 1.5S9.83 13 9 13zm6 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm-6 3h6v2H9v-2z"/></svg>
+        <h3 class="pillar-title">Ghost AI Local</h3>
+        <p class="pillar-desc">Un tuteur IA privé fonctionnant 100% en local via Ollama (Phi-3, Llama 3.2, Qwen). Aucune requête ne quitte votre machine.</p>
+        <span class="pillar-tag">100% Privé</span>
+      </article>
+      <article class="pillar-card">
+        <svg class="pillar-icon-svg" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/></svg>
+        <h3 class="pillar-title">Lab & 9 Simulateurs</h3>
+        <p class="pillar-desc">Simulateur réseau 7 couches OSI, algorithmique animée (Big-O), cryptographie, bac à sable Linux et préparation CTF.</p>
+        <span class="pillar-tag">Interactif</span>
+      </article>
+      <article class="pillar-card">
+        <svg class="pillar-icon-svg" viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
+        <h3 class="pillar-title">15+ Outils NetKit</h3>
+        <p class="pillar-desc">Calculateurs CIDR, formateur JSON, générateurs de Hash et CRON, scanner de ports et utilitaires réseau hors ligne.</p>
+        <span class="pillar-tag">Hors Ligne</span>
+      </article>
+      <article class="pillar-card">
+        <svg class="pillar-icon-svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        <h3 class="pillar-title">Ghost Link LAN</h3>
+        <p class="pillar-desc">Messagerie P2P chiffrée sur réseau local avec découverte automatique par diffusion UDP. Sans serveur ni Internet.</p>
+        <span class="pillar-tag">P2P Réseau</span>
+      </article>
+    </div>
+  </section>
+
+  <!-- COMPARATEUR MINIMALISTE -->
+  <section aria-labelledby="comp-title" class="container section-gap">
+    <div class="section-head">
+      <h2 class="section-title" id="comp-title">Pourquoi <span class="accent-text">T2DECODE</span> ?</h2>
+      <p class="section-desc">Comparatif direct des caractéristiques techniques et éthiques.</p>
+    </div>
+    <div class="comparison-table-wrapper">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Critères</th>
+            <th class="col-highlight">T2DECODE</th>
+            <th>Plateformes Cloud</th>
+            <th>Formations Payantes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Tarif</strong></td>
+            <td class="col-highlight"><svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>100% Gratuit (GPLv3)</td>
+            <td>Freemium / Abonnement</td>
+            <td>200€ à 2000€</td>
+          </tr>
+          <tr>
+            <td><strong>Connexion Internet</strong></td>
+            <td class="col-highlight"><svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Non requise (Air-Gapped)</td>
+            <td><svg class="cross-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>Obligatoire</td>
+            <td>Variable</td>
+          </tr>
+          <tr>
+            <td><strong>Données &amp; Vie Privée</strong></td>
+            <td class="col-highlight"><svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Zéro collecte (0% tracking)</td>
+            <td><svg class="cross-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>Tracking &amp; télémétrie</td>
+            <td>Variable</td>
+          </tr>
+          <tr>
+            <td><strong>Code Source</strong></td>
+            <td class="col-highlight"><svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>100% Auditable (GitLab)</td>
+            <td>Propriétaire / Fermé</td>
+            <td>Propriétaire</td>
+          </tr>
+          <tr>
+            <td><strong>Tuteur IA</strong></td>
+            <td class="col-highlight"><svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Local (Ollama / Phi-3)</td>
+            <td>API Cloud distante</td>
+            <td>Humain uniquement</td>
+          </tr>
+          <tr>
+            <td><strong>Support Multi-Écrans</strong></td>
+            <td class="col-highlight"><svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Win/Mac/Linux/Android/iOS</td>
+            <td>Navigateur Web seul</td>
+            <td>Variable</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 3. DEMO INTERACTIVE DES SIMULATEURS -->
+  <section aria-labelledby="sim-title" class="container section-gap">
+    <div class="section-head">
+      <h2 class="section-title" id="sim-title">Aperçu Interactif des <span class="accent-text">Simulateurs</span></h2>
+      <p class="section-desc">Testez la logique des modules de simulation directement sur votre navigateur.</p>
+    </div>
+    <div class="sim-demo-box">
+      <div class="sim-tabs" role="tablist">
+        <button class="sim-tab-btn active" role="tab" aria-selected="true" data-sim-index="0">1. Réseau OSI (7 Couches)</button>
+        <button class="sim-tab-btn" role="tab" aria-selected="false" data-sim-index="1">2. Calculateur CIDR</button>
+        <button class="sim-tab-btn" role="tab" aria-selected="false" data-sim-index="2">3. Ghost AI (Streaming Local)</button>
+      </div>
+      
+      <!-- Pane 1: OSI -->
+      <div class="sim-pane active" id="sim-pane-0" role="tabpanel">
+        <div class="sim-console">
+          <span class="accent">[SIMULATEUR OSI]</span> Envoi d'un paquet HTTP de Client_A (192.168.1.10) vers Serveur_B (192.168.1.50)<br/>
+          <span class="green">✔ Couche 7 (Application)</span> : Requête HTTP GET /index.html générée<br/>
+          <span class="green">✔ Couche 4 (Transport)</span> : Encapsulation TCP (Port Source: 49152 ➔ Port Dest: 80, SYN)<br/>
+          <span class="green">✔ Couche 3 (Réseau)</span> : Encapsulation IP (Src: 192.168.1.10 ➔ Dest: 192.168.1.50)<br/>
+          <span class="green">✔ Couche 2 (Liaison)</span> : Trame Ethernet (MAC: 00:1A:2B:3C:4D:5E ➔ Switch_Core)<br/>
+          <span class="dim">➔ Paquet transmis avec succès en 0.42 ms (0 perte de paquets).</span>
+        </div>
+      </div>
+      
+      <!-- Pane 2: CIDR -->
+      <div class="sim-pane" id="sim-pane-1" role="tabpanel">
+        <div class="sim-console">
+          <span class="accent">[NETKIT CIDR]</span> Calcul de sous-réseau pour 192.168.1.0/24<br/>
+          • Masque de sous-réseau : <span class="green">255.255.255.0</span><br/>
+          • Adresse Réseau : <span class="green">192.168.1.0</span><br/>
+          • Adresse Broadcast : <span class="green">192.168.1.255</span><br/>
+          • Hôtes utilisables : <span class="green">192.168.1.1 ➔ 192.168.1.254 (254 hôtes)</span><br/>
+          <span class="dim">➔ Mode hors-ligne : calcul instantané en 0 ms sans serveur distant.</span>
+        </div>
+      </div>
+      
+      <!-- Pane 3: Ghost AI -->
+      <div class="sim-pane" id="sim-pane-2" role="tabpanel">
+        <div class="sim-console">
+          <span class="accent">[GHOST AI]</span> LLM Local Ollama (Phi-3 / Llama 3.2)<br/>
+          <span class="dim">User ➔</span> Comment fonctionne la commande ping en réseau ?<br/>
+          <span class="green">Ghost AI ➔</span> La commande ping utilise le protocole ICMP (Internet Control Message Protocol) en envoyant un paquet ICMP Echo Request (type 8) à l'hôte cible. L'hôte répond avec un paquet ICMP Echo Reply (type 0), ce qui permet de mesurer la latence aller-retour (RTT).<br/>
+          <span class="dim">➔ Traitement 100% local à 45 tokens/sec (Zéro réseau externe).</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. PRESENTATION MULTI-ECRANS -->
+  <section aria-labelledby="multi-title" class="container section-gap">
+    <div class="section-head">
+      <h2 class="section-title" id="multi-title">Multiplateforme <span class="accent-text">Native</span></h2>
+      <p class="section-desc">Une seule expérience fluide et réactive sur Bureau et Téléphone.</p>
+    </div>
+    <div class="multi-screen-box">
+      <!-- Desktop Screen Mockup -->
+      <div class="screen-mockup">
+        <div class="mockup-header">
+          <div class="mockup-dot"></div>
+          <div class="mockup-dot"></div>
+          <div class="mockup-dot"></div>
+          <span class="mockup-title">T2DECODE — Desktop (Windows / macOS / Linux)</span>
+        </div>
+        <div style="background:#000;border:1px solid var(--border);padding:1.5rem;min-height:220px;display:flex;flex-direction:column;justify-content:center;gap:1rem;">
+          <div style="font-weight:900;font-size:1.1rem;color:var(--accent);">🖥️ COQUILLE RESPONSIVE PERSISTANTE</div>
+          <p style="font-size:0.85rem;color:var(--text-soft);">
+            Sidebar fixe à gauche avec accès instantané aux 9 simulateurs, la boîte à outils NetKit, les cours interactifs et Ghost AI.
+          </p>
+          <div style="display:flex;gap:10px;">
+            <span style="font-size:0.7rem;background:rgba(255,255,255,0.05);padding:4px 8px;border:1px solid var(--border);color:var(--text-dim);">Raccourci ⌘K / Ctrl+K</span>
+            <span style="font-size:0.7rem;background:rgba(255,255,255,0.05);padding:4px 8px;border:1px solid var(--border);color:var(--text-dim);">60 FPS Flutter Core</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Screen Mockup -->
+      <div class="screen-mockup screen-mockup-mobile">
+        <div class="mockup-header">
+          <div class="mockup-dot"></div>
+          <span class="mockup-title">Android / iOS</span>
+        </div>
+        <div style="background:#000;border:1px solid var(--border);padding:1.2rem;min-height:220px;display:flex;flex-direction:column;justify-content:center;gap:0.8rem;text-align:center;">
+          <div style="font-weight:900;font-size:1rem;color:var(--accent);">📱 MOBILE OPTIMISÉ</div>
+          <p style="font-size:0.8rem;color:var(--text-soft);">
+            Barre de navigation inférieure ergonomique et tiroir rétractable (Drawer).
+          </p>
+          <span style="font-size:0.7rem;color:var(--accent);border:1px solid var(--border-strong);padding:3px;margin-top:0.5rem;">F-Droid Verified (10/10)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div aria-label="Chiffres clés" class="stats-strip container" role="region">
+    <div class="stat-item">
+      <strong>0</strong>
+      <span>Télémétrie Logicielle</span>
+      <p class="stat-context">Aucune donnée d'utilisation ne quitte votre machine physique — auditable sur GitLab.</p>
+    </div>
+    <div class="stat-item">
+      <strong id="stat-version">...</strong>
+      <span id="stat-release-name">Dernière Release</span>
+      <p class="stat-context">Simulateur système (7 couches OSI), algorithmique animée (Big-O) et réseau pro hors ligne.</p>
+    </div>
+    <div class="stat-item">
+      <strong>100%</strong>
+      <span>Souveraineté (GPLv3)</span>
+      <p class="stat-context">Zéro dépendance cloud, zéro télémétrie. Validé par F-Droid et Apple Mac App Store.</p>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <section aria-labelledby="faq-title" class="container section-gap">
+    <div class="section-head">
+      <h2 class="section-title" id="faq-title">Questions <span class="accent-text">Fréquentes</span></h2>
+      <p class="section-desc">Informations techniques sur le projet.</p>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Qui a créé T2DECODE ?</summary>
+        <div class="faq-answer">
+          T2DECODE a été créé par <strong>Maxime MARTIN CIVET</strong> (alias winancher / itswinancher),
+          fondateur et président de l'association TUTODECODE. Technicien d'intervention et étudiant en BTS SIO,
+          basé dans les Bouches-du-Rhône, France. Retrouvez son site personnel sur
+          <a href="https://winancher.dev" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:underline;font-weight:700;">winancher.dev</a>.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>T2DECODE fonctionne-t-il vraiment sans internet ?</summary>
+        <div class="faq-answer">
+          Oui. T2DECODE est une application native autonome qui s'exécute directement sur votre machine.
+          Aucun serveur distant, aucune API en ligne, aucune connexion réseau requise.
+          L'option IA (via Ollama) est également 100% locale.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>Quels systèmes d'exploitation sont supportés ?</summary>
+        <div class="faq-answer">
+          Windows (.exe), macOS (App Store / .dmg), Linux (.AppImage / .deb), Android (F-Droid / .apk / .aab) et iOS.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>T2DECODE collecte-t-il des données personnelles ?</summary>
+        <div class="faq-answer">
+          Non. Politique de zéro télémétrie absolue. Aucune donnée ne quitte votre machine.
+          Le code source est auditable sur GitLab sous licence GPLv3.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>T2DECODE est-il gratuit ?</summary>
+        <div class="faq-answer">
+          Oui, entièrement gratuit et open source sous licence GPLv3.
+          Édité par l'association loi 1901 TUTODECODE, sans but lucratif.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- CTA GITLAB -->
+  <section aria-label="Dépôt open source" class="container section-gap">
+    <a class="community-cta" href="https://gitlab.com/tutodecode-org/T2DECODE" rel="noopener noreferrer" target="_blank">
+      <div class="cta-text">
+        <div class="cta-text-header">
+          <svg aria-hidden="true" fill="currentColor" height="28" viewBox="0 0 24 24" width="28"><path d="M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.42.42 0 0 1 5.5 2a.42.42 0 0 1 .4.28l2.44 7.51h7.32l2.44-7.51A.42.42 0 0 1 18.5 2a.42.42 0 0 1 .4.28l2.44 7.51 1.22 3.78a.84.84 0 0 1-.3.94z"/></svg>
+          <span class="cta-text-header-title">Rejoignez l'open source</span>
+        </div>
+        <p>Signalez des bugs, proposez des simulateurs ou laissez une étoile sur GitLab.</p>
+      </div>
+      <span class="static-gh-btn">GitLab</span>
+    </a>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-copy">
+      <p><strong id="footer-version">T2DECODE</strong> — Éducation technique locale</p>
+      <p>Association TUTODECODE (Loi 1901)</p>
+      <p>SIREN : 102 763 133 · RNA : W134011896</p>
+      <p>Contact : <a href="mailto:contact@tutodecode.org" style="color:var(--text-soft);text-decoration:underline;">contact@tutodecode.org</a></p>
+      <p style="margin-top:1.5rem;">
+        <a href="https://www.trustpilot.com/review/tutodecode.org" rel="noopener noreferrer external" style="color:var(--accent);font-weight:900;text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid var(--accent);padding-bottom:2px;" target="_blank">★ Laisser un avis Trustpilot</a>
+      </p>
+    </div>
+    <div class="footer-meta">
+      <span class="footer-meta-title">Réseau &amp; Référencement</span>
+      <a href="https://www.trustpilot.com/review/tutodecode.org" rel="me noopener noreferrer external" target="_blank">Trustpilot</a>
+      <a href="https://framalibre.org/notices/t2decode.html" rel="me noopener noreferrer external" target="_blank">Framalibre</a>
+      <a href="https://comptoir-du-libre.org/fr/softwares/876" rel="me noopener noreferrer external" target="_blank">Comptoir du Libre</a>
+      <a href="https://sourceforge.net/projects/t2decode/" rel="me noopener noreferrer external" target="_blank">SourceForge</a>
+      <a href="https://www.jeveuxaider.gouv.fr/organisations/34831-tutodecode" rel="me noopener noreferrer external" target="_blank">JeVeuxAider.gouv.fr</a>
+      <a href="https://www.societe.com/societe/tutodecode-102763133.html" rel="me noopener noreferrer external" target="_blank">Societe.com</a>
+      <a href="https://www.crunchbase.com/organization/tutodecode" rel="me noopener noreferrer external" target="_blank">Crunchbase</a>
+      <a href="https://alternativeto.net/software/t2decode/about/" rel="me noopener noreferrer external" target="_blank">AlternativeTo</a>
+      <a rel="me" href="https://mastodon.social/@TUTODECODE" target="_blank">Mastodon</a>
+    </div>
+    <div class="footer-meta">
+      <span class="footer-meta-title">Légal &amp; Ressources</span>
+      <a href="about.html">L'Association &amp; Presse</a>
+      <a href="https://winancher.dev" rel="me noopener noreferrer" target="_blank" style="color:var(--accent);font-weight:700;">Site de Maxime (winancher.dev)</a>
+      <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/blob/main/LICENSE" rel="noopener noreferrer" target="_blank">Licence (GPLv3)</a>
+      <a href="https://gitlab.com/tutodecode-org/T2DECODE/-/tree/main/docs" rel="noopener noreferrer" target="_blank">Documentation</a>
+      <a href="https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12" rel="noopener noreferrer external" target="_blank">Mac App Store</a>
+      <a href="https://gitlab.com/tutodecode-org/T2DECODE" rel="me noopener noreferrer external" target="_blank">Code Source</a>
+      <a href="mentions-legales.html">Mentions Légales &amp; Confidentialité</a>
+    </div>
+    <div class="footer-identity" style="flex:1 1 100%;margin-top:2rem;">
+      <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--text-dim);font-weight:700;margin-bottom:0.5rem;">Fondateur Officiel : Maxime MARTIN CIVET</p>
+      <div class="founder-socials">
+        <a aria-label="Site personnel de Maxime MARTIN CIVET" class="founder-social-link" href="https://winancher.dev" rel="me noopener noreferrer" style="--hover-color:#f5ebda;border-color:var(--accent);color:var(--accent);" target="_blank">
+          <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          Site Perso (winancher.dev)
+        </a>
+        <a aria-label="LinkedIn de Maxime MARTIN CIVET" class="founder-social-link" href="https://fr.linkedin.com/in/maxime-martin-civet" rel="me noopener noreferrer" style="--hover-color:#0a66c2;" target="_blank">
+          <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          LinkedIn
+        </a>
+        <a aria-label="GitHub de Maxime MARTIN CIVET" class="founder-social-link" href="https://github.com/itswinancher" rel="me noopener noreferrer" style="--hover-color:#ffffff;" target="_blank">
+          <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.164 22 16.418 22 12c0-5.523-4.477-10-10-10z" fill-rule="evenodd"/></svg>
+          GitHub
+        </a>
+        <a aria-label="Dev.to de Maxime MARTIN CIVET" class="founder-social-link" href="https://dev.to/itswinancher" rel="me noopener noreferrer" style="--hover-color:#ffffff;" target="_blank">
+          <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 4.94v14.12h24V4.94H0zM8.56 15.3c-.44.58-1.06.77-2.53.77H4.71V8.53h1.4c1.67 0 2.16.18 2.6.9.27.43.29.6.32 2.57.05 2.23-.02 2.73-.47 3.3zm5.09-5.47h-2.47v1.77h1.52v1.28l-1.52.02v1.74h2.55v1.28H8.58V8.53h5.07v1.3zm6.34 5.4c-.64 1.14-1.64 1.4-3.5 1.05l-.33-.06V8.53h1.28l.02 4.41c0 3.23.03 3.33.32 3.52.27.18.53.11.75-.18.17-.22.18-.32.22-3.4l.03-3.21h1.3l.03 2.87c.02 2.47 0 2.92-.42 3.68z"/></svg>
+          Dev.to
+        </a>
+        <a aria-label="YouTube TUTODECODE" class="founder-social-link" href="https://www.youtube.com/@winancher" rel="me noopener noreferrer" style="--hover-color:#FF0000;" target="_blank">
+          <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          YouTube
+        </a>
+        <a aria-label="Reddit de Maxime MARTIN CIVET" class="founder-social-link" href="https://www.reddit.com/user/winancher/" rel="me noopener noreferrer" style="--hover-color:#FF4500;" target="_blank">
+          <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-2.467 3.928c-1.115 0-2.05.426-2.09.447a.35.35 0 0 0-.156.467.35.35 0 0 0 .466.155c.018-.008.802-.369 1.78-.369.962 0 1.73.35 1.749.359a.351.351 0 0 0 .47-.144.35.35 0 0 0-.145-.467c-.04-.02-1.002-.448-2.074-.448z"/></svg>
+          Reddit
+        </a>
+        <a aria-label="Itch.io de Maxime MARTIN CIVET" class="founder-social-link" href="https://winancher.itch.io/" rel="me noopener noreferrer" style="--hover-color:#FA5C5C;" target="_blank">
+          <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M11.97 0C9.645 0 4.103 2.5 1.34 2.5c0 6.643-1.077 15.01 2.378 18.064C7.16 23.618 10.74 24 11.97 24c1.23 0 4.81-.383 8.25-3.436 3.456-3.055 2.38-11.422 2.38-18.065-2.763 0-8.305-2.5-10.63-2.5zM7.55 9.07c1.378 0 2.502 1.135 2.502 2.528 0 1.393-1.124 2.528-2.503 2.528-1.378 0-2.502-1.135-2.502-2.528 0-1.393 1.124-2.528 2.502-2.528zm8.9 0c1.378 0 2.502 1.135 2.502 2.528 0 1.393-1.124 2.528-2.502 2.528-1.38 0-2.504-1.135-2.504-2.528 0-1.393 1.125-2.528 2.503-2.528z"/></svg>
+          Itch.io
+        </a>
+        <a aria-label="Crunchbase de Maxime MARTIN CIVET" class="founder-social-link" href="https://www.crunchbase.com/person/maxime-martin-civet" rel="me noopener noreferrer" style="--hover-color:#0288D1;" target="_blank">
+          <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12C24 5.373 18.627 0 12 0S0 5.373 0 12s5.373 12 12 12 12-5.373 12-12zm-12.727 6.444c-3.177 0-5.753-2.576-5.753-5.753s2.576-5.753 5.753-5.753c1.516 0 2.879.585 3.899 1.545l-1.929 2.07c-.505-.484-1.181-.787-1.93-.787-1.605 0-2.908 1.303-2.908 2.908s1.303 2.908 2.908 2.908c.767 0 1.454-.303 1.959-.808l1.919 2.05c-1.02 1.01-2.404 1.62-3.918 1.62zm10.585-5.272c0 2.908-2.353 5.272-5.272 5.272h-3.484V6.98h3.484c2.919 0 5.272 2.363 5.272 5.272zm-2.888 0c0-1.323-1.07-2.404-2.404-2.404h-1.08v4.808h1.08c1.333 0 2.404-1.08 2.404-2.404z"/></svg>
+          Crunchbase
+        </a>
+        <a aria-label="SourceForge de Maxime MARTIN CIVET" class="founder-social-link" href="https://sourceforge.net/u/winancher/profile" rel="me noopener noreferrer" style="--hover-color:#ee5b24;" target="_blank">
+          <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.12 14.77H8.64v-2.31h2.24v2.31zm0-3.32H8.64V8.54h2.24v4.91zm4.48 3.32h-2.24v-4.91h2.24v4.91zm0-5.93h-2.24V8.54h2.24v2.31z"/></svg>
+          SourceForge
+        </a>
+        <a aria-label="Spotify Créateur de Maxime MARTIN CIVET" class="founder-social-link" href="https://open.spotify.com/artist/5wRfqePemm7u5R3QfCB4Cx" rel="me noopener noreferrer" style="--hover-color:#1DB954;color:#1DB954;border-color:#1DB954;" target="_blank">
+          <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.376 0 0 5.376 0 12s5.376 12 12 12 12-5.376 12-12S18.624 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141 C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.18-1.2-.18-1.38-.72-.18-.6.18-1.2.72-1.38 4.26-1.26 11.28-1.02 15.72 1.62.54.3.72 1.02.42 1.56-.3.42-1.02.6-1.56.3z"/></svg>
+          Spotify
+        </a>
+        <a aria-label="Mastodon TUTODECODE" class="founder-social-link" href="https://mastodon.social/@TUTODECODE" rel="me noopener noreferrer" style="--hover-color:#6364ff;" target="_blank">
+          <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M23.193 7.88c0-5.207-3.411-6.733-3.411-6.733C18.062.357 15.108.025 12.041 0h-.076c-3.069.025-6.02.357-7.74 1.147 0 0-3.412 1.526-3.412 6.732 0 1.193-.023 2.619.015 4.13.124 5.092.934 10.11 5.641 11.355 2.17.574 4.034.695 5.536.612 2.722-.15 4.25-.972 4.25-.972l-.09-1.975s-2.07.49-3.763.456c-1.396-.027-2.618-.179-2.903-1.697-.07-.373-.086-.777-.086-1.22 0-1.895.034-3.864.034-3.864l2.946-.026c2.812-.027 4.156-1.272 4.156-3.865zm-3.045 4.398h-2.313V7.203c0-1.077-.456-1.621-1.368-1.621-1.006 0-1.51.654-1.51 1.956v3.313H12.64V7.538c0-1.302-.504-1.956-1.51-1.956-.912 0-1.368.544-1.368 1.621v5.075H7.45V7.203c0-1.077-.456-1.621-1.368-1.621-1.006 0-1.51.654-1.51 1.956v4.079H2.261V5.522c0-1.288.66-2.046.66-2.046c.456-.505 1.052-.764 1.793-.764c.856 0 1.504.328 1.933.983L8 4.39l.417-.695c.429-.655 1.077-.983 1.934-.983c.74 0 1.336.259 1.791.764c.662.757.661 2.046.661 2.046z" fill-rule="evenodd"/></svg>
+          Mastodon
+        </a>
+      </div>
+    </div>
+    <div class="footer-disclaimer">
+      * T2DECODE garantit un logiciel local sans tracking.
+      Les liens vers des plateformes tierces sont soumis à leurs propres politiques.<br/>
+      Site hébergé de manière souveraine.<br/><br/>
+      Association TUTODECODE · SIREN 102 763 133 · Fondée en <time datetime="2026">2026</time>
+      · Fondateur : Maxime MARTIN CIVET ·
+      <a href="https://winancher.dev" rel="me noopener noreferrer" target="_blank" style="color:var(--accent);">winancher.dev</a>
+    </div>
+  </div>
+</footer>
+
+<!-- SCRIPT SCROLL PROGRESS BAR -->
+<script>
+window.addEventListener('scroll', () => {
+  const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrolled = (winScroll / height) * 100;
+  const pb = document.getElementById('scroll-progress');
+  if(pb) pb.style.width = scrolled + '%';
+});
+</script>
 
 
+<!-- SCRIPT DEMO INTERACTIVE DES SIMULATEURS -->
+<script>
+function switchSimTab(index) {
+  const btns = document.querySelectorAll('.sim-tab-btn');
+  const panes = document.querySelectorAll('.sim-pane');
+  btns.forEach((btn, i) => {
+    btn.classList.toggle('active', i === index);
+    btn.setAttribute('aria-selected', i === index ? 'true' : 'false');
+  });
+  panes.forEach((pane, i) => {
+    pane.classList.toggle('active', i === index);
+  });
+}
+</script>
 
+<script>
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(err => console.warn(err));
+    });
+  }
+</script>
 
-</body></html>
+<!-- AUTO-VERSION depuis GitLab Releases -->
+<script>
+(async function () {
+  const API = 'https://gitlab.com/api/v4/projects/tutodecode-org%2FT2DECODE/releases?per_page=1';
+  try {
+    const res = await fetch(API);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const [release] = await res.json();
+    if (!release) throw new Error('Aucune release');
+    const tag  = release.tag_name;
+    const name = release.name || tag;
+    const url  = 'https://gitlab.com/tutodecode-org/T2DECODE/-/releases/' + tag;
+    const ev = document.getElementById('eyebrow-version');
+    if (ev) ev.textContent = tag;
+    const sv = document.getElementById('stat-version');
+    if (sv) sv.textContent = tag;
+    const sn = document.getElementById('stat-release-name');
+    if (sn) sn.textContent = name;
+    const btn = document.getElementById('dl-btn');
+    if (btn) { btn.href = url; btn.textContent = '⬇ Télécharger ' + tag; }
+    const badge = document.getElementById('badge-version');
+    if (badge) { badge.src = 'https://img.shields.io/badge/version-' + tag.replace(/-/g,'--') + '-f0e4cf'; badge.alt = 'Version ' + tag; }
+    document.title = 'T2DECODE ' + tag + ' — Plateforme locale de cybersécurité | TUTODECODE';
+    const md = document.getElementById('meta-description');
+    if (md) md.setAttribute('content', 'T2DECODE ' + tag + ' — Application native 100% hors ligne pour apprendre la cybersécurité. Open source GPLv3. Fondée par Maxime MARTIN CIVET, association loi 1901 TUTODECODE (SIREN 102763133).');
+    const fv = document.getElementById('footer-version');
+    if (fv) fv.textContent = 'T2DECODE ' + tag;
+    console.info('[T2DECODE] ' + tag + ' — ' + name);
+  } catch (e) {
+    const ev = document.getElementById('eyebrow-version');
+    if (ev) ev.textContent = 'v1.0.3';
+    const sv = document.getElementById('stat-version');
+    if (sv) sv.textContent = 'v1.0.3';
+    const btn = document.getElementById('dl-btn');
+    if (btn) btn.textContent = '⬇ Télécharger';
+    console.warn('[T2DECODE] GitLab indisponible :', e.message);
+  }
+})();
+</script>
+
+<!-- Sélecteur de langue -->
+<div id="ls-root">
+  <div id="ls-trail"></div>
+  <div id="ls-cards">
+    <button class="ls-card" data-lang="zh-CN" title="中文">
+      <img src="flags/zh-CN.png" alt="" style="width:100%;height:100%;object-fit:cover;">
+      <span style="display:none;">ZH</span>
+    </button>
+    <button class="ls-card" data-lang="ar" title="العربية">
+      <img src="flags/ar.png" alt="" style="width:100%;height:100%;object-fit:cover;">
+      <span style="display:none;">AR</span>
+    </button>
+    <button class="ls-card" data-lang="de" title="Deutsch">
+      <img src="flags/de.png" alt="" style="width:100%;height:100%;object-fit:cover;">
+      <span style="display:none;">DE</span>
+    </button>
+    <button class="ls-card" data-lang="es" title="Español">
+      <img src="flags/es.png" alt="" style="width:100%;height:100%;object-fit:cover;">
+      <span style="display:none;">ES</span>
+    </button>
+    <button class="ls-card" data-lang="en" title="English">
+      <img src="flags/en.png" alt="" style="width:100%;height:100%;object-fit:cover;">
+      <span style="display:none;">EN</span>
+    </button>
+    <button class="ls-card ls-active" data-lang="fr" title="Français">
+      <img src="flags/fr.png" alt="" style="width:100%;height:100%;object-fit:cover;">
+      <span style="display:none;">FR</span>
+    </button>
+  </div>
+  <button id="ls-main-btn" aria-label="Choisir la langue">
+    <img id="ls-flag" src="flags/fr.png" alt="" style="width:100%;height:100%;object-fit:cover;">
+    <svg id="ls-globe-icon" style="display:none;width:24px;height:24px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10z"/><path d="M2 12h20"/></svg>
+  </button>
+</div>
+
+<!-- Externalized CSP-Compliant Scripts -->
+<script src="site.js" defer></script>
+<script src="switcher.js" defer></script>
+</body>
+</html>

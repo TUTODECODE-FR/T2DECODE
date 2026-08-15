@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:tutodecode/core/services/storage_service.dart';
 import 'package:tutodecode/features/courses/data/course_repository.dart';
+import 'package:tutodecode/features/ghost_ai/security/ai_safety_guard.dart';
 
 const List<Map<String, String>> kRecommendedModels = [
   {
@@ -147,9 +148,15 @@ $context
 L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de manière précise et personnalisée.""";
     }
 
-    if (fullSystem.isNotEmpty)
+    if (fullSystem.isNotEmpty) {
       msgs.add({'role': 'system', 'content': fullSystem});
-    msgs.addAll(messages);
+    }
+    for (final m in messages) {
+      final role = m['role'] ?? 'user';
+      final content = m['content'] ?? '';
+      final sanitizedContent = role == 'user' ? AISafetyGuard.sanitizePrompt(content) : content;
+      msgs.add({'role': role, 'content': sanitizedContent});
+    }
 
     final body = jsonEncode({
       'model': model,

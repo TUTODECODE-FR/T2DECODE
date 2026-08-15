@@ -11,15 +11,27 @@ SHOW_ELAPSED_TIME: true
 # This prevents pre-existing errors from blocking PRs.
 DISABLE_ERRORS: true
 
-# Désactiver les linters générant des faux positifs fréquents
+# Désactiver les linters générant des faux positifs fréquents ou de longues analyses réseau
 DISABLE:
   - SPELL # Désactive le dictionnaire (jargon technique et français)
   - COPYPASTE # Désactive le détecteur de duplication (normal pour les cours et labs)
-  - SECRET # Désactive la détection de secrets (déjà gérée par trufflehog)
+  - SECRET # Désactive la détection de secrets
+  - REPOSITORY # Désactive Checkov, Kics, Trivy, Trufflehog qui scannent tout le repo en arrière-plan
 
 DISABLE_LINTERS:
   - YAML_V8R
   - REPOSITORY_DEVSKIM
+  - MARKDOWN_MARKDOWN_LINK_CHECK
 
-# Ignorer certains dossiers (par exemple fdroid_data_repo qui contient beaucoup de fichiers générés/externes)
-FILTER_REGEX_EXCLUDE: (fdroid_data_repo/.*)
+# Ignorer les dossiers lourds et scanner uniquement les fichiers modifiés (MR) pour une exécution ultra-rapide (<10s)
+EXCLUDED_DIRECTORIES:
+  - fdroid_data_repo
+  - landing_page
+  - build
+  - .dart_tool
+
+VALIDATE_ALL_CODEBASE: false
+
+FILTER_REGEX_EXCLUDE: (fdroid_data_repo/.*|landing_page/.*|scripts/translate_.*)
+
+

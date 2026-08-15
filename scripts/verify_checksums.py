@@ -22,15 +22,17 @@ if not isinstance(checksums, dict):
     print(f"Error: {CHECKSUM_FILE} content is not a JSON object (dict)", file=sys.stderr)
     sys.exit(1)
 
-errors = []
+from typing import List, Tuple
+
+errors: List[Tuple[str, str, str]] = []
 for rel_path, expected in checksums.items():
     p = ROOT / rel_path
     if not p.exists():
-        errors.append((rel_path, 'MISSING', None))
+        errors.append((rel_path, 'MISSING', 'NONE'))
         continue
     actual = hashlib.sha256(p.read_bytes()).hexdigest()
     if actual != expected:
-        errors.append((rel_path, expected, actual))
+        errors.append((rel_path, str(expected), str(actual)))
 
 if not errors:
     print('All checksums match')
