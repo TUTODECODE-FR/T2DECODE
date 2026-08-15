@@ -386,7 +386,52 @@ auto_tag:
   rules:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE != "schedule"
 
-# === STAGE: BUILD-RELEASE (Signed builds triggered by tags) ===
+# === STAGE: BUILD-RELEASE (Offloaded to GitHub Actions + Local fetch) ===
+fetch_github_multi_os_assets:
+  stage: build-release
+  image: alpine:latest
+  allow_failure: true
+  script:
+    - apk add --no-cache curl bash
+    - TAG="${CI_COMMIT_TAG:-v$(grep '^version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1)}"
+    - echo "Waiting and fetching GitHub Actions multi-OS builds for tag $TAG..."
+    - mkdir -p github_assets
+    - BASE="https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${TAG}"
+    - |
+      for i in $(seq 1 60); do
+        if curl -fsSL -I "$BASE/T2DECODE-macOS.dmg" >/dev/null 2>&1; then
+          echo "GitHub Release assets are ready!"
+          break
+        fi
+        echo "Waiting for GitHub Actions builds ($i/60)..."
+        sleep 10
+      done
+    - |
+      for F in \
+        "app-arm64-v8a-release.apk" \
+        "app-armeabi-v7a-release.apk" \
+        "app-x86_64-release.apk" \
+        "T2DECODE-Linux.tar.gz" \
+        "T2DECODE-Windows.zip" \
+        "T2DECODE-macOS.dmg" \
+        "T2DECODE-macOS.zip" \
+        "sbom-cyclonedx.json" \
+        "sbom-spdx.json" \
+        "SHA256SUMS.txt"; do
+        echo "Downloading $F from GitHub..."
+        curl -fsSL "$BASE/$F" -o "github_assets/$F" || echo "Asset $F not available yet"
+      done
+    - ls -la github_assets/
+  artifacts:
+    paths:
+      - github_assets/
+    expire_in: 7 days
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: on_success
+    - when: manual
+      allow_failure: true
+
 build_android_signed:
   stage: build-release
   script:
