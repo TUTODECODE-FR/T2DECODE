@@ -738,8 +738,18 @@ publish_sourceforge:
         fi
         echo "No local artifacts. Downloading from GitHub Releases for $TAG..."
         BASE="https://github.com/TUTODECODE-FR/T2DECODE/releases/download/${TAG}"
-        for F in "T2DECODE-${TAG}-release.apk" "T2DECODE-macOS.dmg" "T2DECODE-Linux.AppImage" "T2DECODE-Linux.tar.gz" "T2DECODE-Windows.zip"; do
-          curl -fsSL "$BASE/$F" -o "sf_assets/$F" && echo "Downloaded $F" || echo "Not found: $F"
+        for F in \
+          "app-arm64-v8a-release.apk" \
+          "app-armeabi-v7a-release.apk" \
+          "app-x86_64-release.apk" \
+          "T2DECODE-${TAG}-release.apk" \
+          "T2DECODE-macOS.dmg" \
+          "T2DECODE-macOS.zip" \
+          "T2DECODE-Windows.zip" \
+          "T2DECODE-Linux.tar.gz" \
+          "T2DECODE-Linux.AppImage" \
+          "SHA256SUMS.txt"; do
+          curl -fsSL "$BASE/$F" -o "sf_assets/$F" && echo "Downloaded $F" || true
         done
       fi
     - ls -la sf_assets/
