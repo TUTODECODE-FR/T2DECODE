@@ -125,124 +125,240 @@ class _ChapterScreenState extends State<ChapterScreen> {
         ),
 
         Expanded(
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 820),
-              child: ListView(
-                controller: _scroll,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-                children: [
-                  // Chapter Header & Pill
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF222222),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: const Color(0xFF333333)),
-                        ),
-                        child: Text(
-                          'CHAPITRE ${course.chapters.indexOf(chapter) + 1}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.8,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        chapter.duration.isNotEmpty ? chapter.duration : '15min',
-                        style: const TextStyle(color: Colors.grey, fontSize: 11),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    chapter.title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Contenu Markdown du chapitre dans une carte stylisée
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF141414),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFF242424)),
-                    ),
-                    child: _markdown(chapter.content),
-                  ),
-                  const SizedBox(height: 36),
-
-                  _practiceSection(course, chapter),
-                  const SizedBox(height: 28),
-
-                  // Section Quiz & Évaluation
-                  Row(
-                    children: const [
-                      Text('✦', style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 16, fontWeight: FontWeight.bold)),
-                      SizedBox(width: 8),
-                      Text(
-                        'Quiz & Évaluation',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-
-                  if (chapter.quiz == null || chapter.quiz!.isEmpty)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF141414),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: const Color(0xFF242424)),
-                      ),
-                      child: Row(
-                        children: const [
-                          Icon(Icons.info_outline, size: 16, color: Colors.grey),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              'Aucun QCM dans ce chapitre (contenu purement théorique).',
-                              style: TextStyle(color: Colors.grey, fontSize: 12),
+          child: Row(
+            children: [
+              // Sidebar Navigation des Chapitres du Cours (Split View 2026)
+              Container(
+                width: 260,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF121212),
+                  border: Border(right: BorderSide(color: Color(0xFF222222))),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          InkWell(
+                            onTap: () => Navigator.pushNamed(context, '/home'),
+                            child: Row(
+                              children: const [
+                                Icon(Icons.arrow_back, color: Colors.grey, size: 13),
+                                SizedBox(width: 6),
+                                Text(
+                                  'Tous les cours',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            course.title,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${course.chapters.length} ${course.chapters.length == 1 ? "chapitre" : "chapitres"}',
+                            style: const TextStyle(color: Colors.grey, fontSize: 11),
                           ),
                         ],
                       ),
-                    )
-                  else
-                    QcmWidget(
-                      questions: chapter.quiz!,
-                      chapterContent: chapter.content,
-                      onComplete: (ok) {
-                        if (ok) {
-                          prov.toggleCompleted(course.id, chapter.id);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              backgroundColor: TdcColors.accent,
-                              content: Text('🎉 Bravo ! Chapitre validé +50 XP remportés !', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    ),
+                    const Divider(color: Color(0xFF222222), height: 1),
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                        itemCount: course.chapters.length,
+                        itemBuilder: (context, idx) {
+                          final ch = course.chapters[idx];
+                          final isSelected = ch.id == chapter.id;
+                          final isCompleted = prov.isChapterCompleted(course.id, ch.id);
+
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 4),
+                            decoration: BoxDecoration(
+                              color: isSelected ? const Color(0xFF222222) : Colors.transparent,
+                              borderRadius: BorderRadius.circular(8),
+                              border: isSelected ? Border.all(color: const Color(0xFF333333)) : null,
+                            ),
+                            child: ListTile(
+                              dense: true,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                              leading: Container(
+                                width: 22,
+                                height: 22,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isCompleted
+                                      ? const Color(0xFF10B981)
+                                      : (isSelected ? const Color(0xFFF5EBDA) : const Color(0xFF333333)),
+                                ),
+                                child: Center(
+                                  child: isCompleted
+                                      ? const Icon(Icons.check, size: 12, color: Colors.black)
+                                      : Text(
+                                          '${idx + 1}',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.bold,
+                                            color: isSelected ? Colors.black : Colors.white,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                              title: Text(
+                                ch.title,
+                                style: TextStyle(
+                                  color: isSelected ? Colors.white : Colors.grey[400],
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  fontSize: 12,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              onTap: () {
+                                prov.selectChapter(ch);
+                              },
                             ),
                           );
-                        }
-                      },
+                        },
+                      ),
                     ),
-                  const SizedBox(height: 48),
-                ],
+                  ],
+                ),
               ),
-            ),
+
+              // Panneau Principal du Chapitre & Exercices
+              Expanded(
+                child: ListView(
+                  controller: _scroll,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+                  children: [
+                    // Chapter Header & Pill
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF222222),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: const Color(0xFF333333)),
+                          ),
+                          child: Text(
+                            'CHAPITRE ${course.chapters.indexOf(chapter) + 1}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          chapter.duration.isNotEmpty ? chapter.duration : '15min',
+                          style: const TextStyle(color: Colors.grey, fontSize: 11),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      chapter.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Contenu Markdown du chapitre dans une carte stylisée
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF141414),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFF242424)),
+                      ),
+                      child: _markdown(chapter.content),
+                    ),
+                    const SizedBox(height: 36),
+
+                    _practiceSection(course, chapter),
+                    const SizedBox(height: 28),
+
+                    // Section Quiz & Évaluation
+                    Row(
+                      children: const [
+                        Text('✦', style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 16, fontWeight: FontWeight.bold)),
+                        SizedBox(width: 8),
+                        Text(
+                          'Quiz & Évaluation',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+
+                    if (chapter.quiz == null || chapter.quiz!.isEmpty)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF141414),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: const Color(0xFF242424)),
+                        ),
+                        child: Row(
+                          children: const [
+                            Icon(Icons.info_outline, size: 16, color: Colors.grey),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'Aucun QCM dans ce chapitre (contenu purement théorique).',
+                                style: TextStyle(color: Colors.grey, fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      QcmWidget(
+                        questions: chapter.quiz!,
+                        chapterContent: chapter.content,
+                        onComplete: (ok) {
+                          if (ok) {
+                            prov.toggleCompleted(course.id, chapter.id);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                backgroundColor: TdcColors.accent,
+                                content: Text('🎉 Bravo ! Chapitre validé +50 XP remportés !', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    const SizedBox(height: 48),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
         _nav(course, chapter, prov),
