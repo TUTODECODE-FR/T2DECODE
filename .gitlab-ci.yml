@@ -95,8 +95,53 @@ test_and_analyze:
         echo "✅ Android permissions security check passed."
       fi
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
-      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+airgap_leak_canary:
+  stage: validate
+  script:
+    - python3 scripts/audit_airgap_leak.py
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+binary_hardening_audit:
+  stage: validate
+  script:
+    - python3 scripts/audit_binary_hardening.py
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+sbom_generator:
+  stage: validate
+  script:
+    - python3 scripts/generate_sbom.py
+  artifacts:
+    paths:
+      - sbom-cyclonedx.json
+      - sbom-spdx.json
+    expire_in: 7 days
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+fuzz_testing_suite:
+  stage: validate
+  script:
+    - flutter pub get
+    - flutter test test/unit/fuzz_test.dart
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+deep_health_recesses_test:
+  stage: validate
+  script:
+    - flutter pub get
+    - flutter test test/unit/deep_app_recesses_test.dart
+  rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: on_success
 
