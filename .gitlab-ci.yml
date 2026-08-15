@@ -421,7 +421,9 @@ build_android_signed:
     expire_in: 1 day
   rules:
     - if: $CI_COMMIT_TAG
-      when: manual
+      when: on_success
+    - when: manual
+      allow_failure: true
 
 build_linux_signed:
   stage: build-release
@@ -509,7 +511,9 @@ build_linux_signed:
     expire_in: 1 day
   rules:
     - if: $CI_COMMIT_TAG
-      when: manual
+      when: on_success
+    - when: manual
+      allow_failure: true
 
 build_snap_signed:
   stage: build-release
@@ -597,7 +601,9 @@ build_windows_signed:
     expire_in: 1 day
   rules:
     - if: $CI_COMMIT_TAG
-      when: manual
+      when: on_success
+    - when: manual
+      allow_failure: true
 
 build_macos_signed:
   stage: build-release
@@ -656,7 +662,9 @@ build_macos_signed:
     expire_in: 1 day
   rules:
     - if: $CI_COMMIT_TAG
-      when: manual
+      when: on_success
+    - when: manual
+      allow_failure: true
 
 # === STAGE: RELEASE ===
 release_gitlab:
