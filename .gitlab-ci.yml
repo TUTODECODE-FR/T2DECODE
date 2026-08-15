@@ -145,6 +145,73 @@ deep_health_recesses_test:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: on_success
 
+ai_safety_guard_test:
+  stage: validate
+  script:
+    - flutter pub get
+    - flutter test test/unit/ai_safety_guard_test.dart || flutter test --name="AISafetyGuard"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+constant_time_crypto_test:
+  stage: validate
+  script:
+    - flutter pub get
+    - flutter test test/unit/constant_time_security_test.dart || flutter test --name="ConstantTime"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+strict_type_compilation_check:
+  stage: validate
+  script:
+    - flutter pub get
+    - flutter analyze --no-fatal-infos
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+dependency_confusion_shield:
+  stage: validate
+  script:
+    - python3 scripts/check_dependency_confusion.py
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+secrets_and_private_keys_scan:
+  stage: validate
+  script:
+    - |
+      if grep -rE "(AKIA[0-9A-Z]{16}|GH[A-Za-z0-9_]{36,40}|SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}|sk_live_[0-9a-zA-Z]{24}|AIza[0-9A-Za-z-_]{35}|xox[baprs]-[0-9a-zA-Z]{10,48}|-----BEGIN [A-Z ]*PRIVATE KEY-----)" . \
+        --exclude-dir=".git" --exclude-dir=".dart_tool" --exclude-dir="build" \
+        --exclude-dir=".github/workflows" --exclude-dir="fdroid_data_repo" \
+        --exclude=".gitlab-ci.yml" --exclude="payload.json" \
+        --binary-files=without-match; then
+        echo "❌ Error: Hardcoded secrets or private keys found!"
+        exit 1
+      else
+        echo "✅ Enhanced secrets scan passed."
+      fi
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+android_dangerous_permissions_audit:
+  stage: validate
+  script:
+    - |
+      if grep -qE "(RECEIVE_SMS|READ_SMS|SEND_SMS|CALL_PHONE|PROCESS_OUTGOING_CALLS|SYSTEM_ALERT_WINDOW|BIND_ACCESSIBILITY_SERVICE)" android/app/src/main/AndroidManifest.xml 2>/dev/null; then
+        echo "❌ Error: High-risk/dangerous permission detected in AndroidManifest.xml!"
+        exit 1
+      else
+        echo "✅ Android permissions security check passed."
+      fi
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
 megalinter:
   stage: validate
   image: oxsecurity/megalinter:v8
