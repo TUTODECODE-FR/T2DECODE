@@ -152,7 +152,9 @@ shellcheck:
 
 yamllint:
   stage: validate
-  image: cytopia/yamllint:latest
+  image:
+    name: cytopia/yamllint:latest
+    entrypoint: [""]
   script:
     - yamllint -c .yamllint.yml .gitlab-ci.yml pubspec.yaml snap/snapcraft.yaml
   allow_failure: true
