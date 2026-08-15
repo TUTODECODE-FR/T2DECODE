@@ -756,43 +756,44 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
                             ),
                             const SizedBox(height: 16),
                             ..._recentProjects.map((p) {
-                              return Container(
-                                margin: const EdgeInsets.only(bottom: 10),
-                                decoration: BoxDecoration(
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Material(
                                   color: const Color(0xFF0F0F0F),
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: Colors.grey[800]!),
-                                ),
-                                child: ListTile(
-                                  leading: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFF5EBDA).withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(6),
+                                  side: BorderSide(color: Colors.grey[800]!),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: ListTile(
+                                    leading: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFF5EBDA).withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Icon(
+                                        p['category'] == 'linux' ? Icons.terminal : Icons.network_check,
+                                        color: const Color(0xFFF5EBDA),
+                                        size: 20,
+                                      ),
                                     ),
-                                    child: Icon(
-                                      p['category'] == 'linux' ? Icons.terminal : Icons.network_check,
-                                      color: const Color(0xFFF5EBDA),
-                                      size: 20,
+                                    title: Text(
+                                      p['title']!,
+                                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                                     ),
+                                    subtitle: Text(
+                                      '${p['id']} • ${p['date']}',
+                                      style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                                    ),
+                                    trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 14),
+                                    onTap: () {
+                                      if (p['category'] == 'network') {
+                                        _loadPresetTemplate('network');
+                                      } else {
+                                        _loadPresetTemplate('linux');
+                                      }
+                                      setState(() => _showWelcomeScreen = false);
+                                    },
                                   ),
-                                  title: Text(
-                                    p['title']!,
-                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                                  ),
-                                  subtitle: Text(
-                                    '${p['id']} • ${p['date']}',
-                                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
-                                  ),
-                                  trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 14),
-                                  onTap: () {
-                                    if (p['category'] == 'network') {
-                                      _loadPresetTemplate('network');
-                                    } else {
-                                      _loadPresetTemplate('linux');
-                                    }
-                                    setState(() => _showWelcomeScreen = false);
-                                  },
                                 ),
                               );
                             }).toList(),
