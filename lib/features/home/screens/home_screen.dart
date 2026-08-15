@@ -731,51 +731,54 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSectionHeader(BuildContext context, CoursesProvider prov) {
-    return Wrap(
-      alignment: WrapAlignment.spaceBetween,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 12,
-      runSpacing: 10,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.menu_book,
-                color: TdcColors.textPrimary,
-                size: TdcAdaptive.icon(context, 20)),
-            SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
-            Text('Parcours informatiques',
-                style: TextStyle(
-                    color: TdcColors.textPrimary,
-                    fontSize: TdcText.h2(context),
-                    fontWeight: FontWeight.bold)),
-            SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
-            IconButton(
-              icon: Icon(Icons.refresh,
-                  size: TdcAdaptive.icon(context, 18),
-                  color: TdcColors.textSecondary),
-              tooltip: 'Actualiser les modules externes',
-              onPressed: () => prov.reload(),
-            ),
-            const SizedBox(width: 6),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF5EBDA),
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        Expanded(
+          child: Row(
+            children: [
+              Icon(Icons.menu_book,
+                  color: TdcColors.textPrimary,
+                  size: TdcAdaptive.icon(context, 20)),
+              SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
+              Flexible(
+                child: Text(
+                  'Parcours informatiques',
+                  style: TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontSize: TdcText.h2(context),
+                      fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              icon: const Icon(Icons.file_open_outlined, size: 14),
-              label: const Text('Importer un cours (.TDC)',
-                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) => const CourseImportDialog(),
-                );
-              },
-            ),
-          ],
+              SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
+              IconButton(
+                icon: Icon(Icons.refresh,
+                    size: TdcAdaptive.icon(context, 18),
+                    color: TdcColors.textSecondary),
+                tooltip: 'Actualiser les modules externes',
+                onPressed: () => prov.reload(),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFF5EBDA),
+            foregroundColor: Colors.black,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+          ),
+          icon: const Icon(Icons.file_open_outlined, size: 14),
+          label: const Text('Importer un cours (.TDC)',
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (ctx) => const CourseImportDialog(),
+            );
+          },
         ),
       ],
     );
