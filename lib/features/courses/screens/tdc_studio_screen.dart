@@ -56,6 +56,24 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
   Map<String, dynamic>? _parsedCourse;
   String _parseError = '';
 
+  bool _showWelcomeScreen = true;
+  final List<Map<String, String>> _recentProjects = [
+    {
+      'id': 'linux-sysadmin',
+      'title': 'Administration Système Linux',
+      'category': 'linux',
+      'date': 'Modifié aujourd\'hui à 18:05',
+      'path': 'assets/courses/sample_course.tdc',
+    },
+    {
+      'id': 'network-subnetting',
+      'title': 'Subnetting IPv4 & Masques CIDR',
+      'category': 'network',
+      'date': 'Modifié hier',
+      'path': 'assets/courses/courses_fr.json',
+    },
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -170,11 +188,19 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
+    if (_showWelcomeScreen) {
+      return _buildWelcomeScreen();
+    }
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
+        leading: IconButton(
+          icon: const Icon(Icons.home_outlined, color: Color(0xFFF5EBDA)),
+          tooltip: 'Accueil Studio',
+          onPressed: () => setState(() => _showWelcomeScreen = true),
+        ),
         title: Row(
           children: [
             Container(
@@ -598,6 +624,242 @@ class _TDCStudioScreenState extends State<TDCStudioScreen> with SingleTickerProv
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: Color(0xFFF5EBDA)),
+      ),
+    );
+  }
+
+  Widget _buildWelcomeScreen() {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0A0A0A),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Logo & Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF5EBDA).withOpacity(0.1),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFFF5EBDA).withOpacity(0.4)),
+                    ),
+                    child: const Icon(Icons.code_rounded, color: Color(0xFFF5EBDA), size: 36),
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'TDC Studio IDE',
+                        style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 0.8),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Environnement de création & IDE spécialisé pour le langage TUTODECODE Script (.tdc)',
+                        style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
+
+              // Two columns: Left Actions, Right Recent Projects
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1000),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Left Column: Quick Actions
+                    Expanded(
+                      flex: 5,
+                      child: Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF141414),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFF2A2A2A)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Démarrer un Projet',
+                              style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 16),
+                            _buildWelcomeActionButton(
+                              icon: Icons.add_circle_outline,
+                              title: 'Nouveau Cours .TDC',
+                              subtitle: 'Créer un cours vierge avec formulaire et code',
+                              color: const Color(0xFFF5EBDA),
+                              onTap: () {
+                                setState(() => _showWelcomeScreen = false);
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                            _buildWelcomeActionButton(
+                              icon: Icons.folder_open_outlined,
+                              title: 'Ouvrir un Fichier .TDC',
+                              subtitle: 'Ouvrir un cours .tdc ou .json existant sur votre disque',
+                              color: const Color(0xFF8B5CF6),
+                              onTap: () {
+                                _loadPresetTemplate('linux');
+                                setState(() => _showWelcomeScreen = false);
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                            _buildWelcomeActionButton(
+                              icon: Icons.flash_on_outlined,
+                              title: 'Nouveau depuis un Modèle',
+                              subtitle: 'Charger un modèle prêt à l\'emploi (Linux, Réseau, CIDR)',
+                              color: const Color(0xFF10B981),
+                              onTap: () {
+                                _loadPresetTemplate('network');
+                                setState(() => _showWelcomeScreen = false);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 24),
+
+                    // Right Column: Recent Projects
+                    Expanded(
+                      flex: 6,
+                      child: Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF141414),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFF2A2A2A)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: const [
+                                Text(
+                                  'Projets & Cours Récents',
+                                  style: TextStyle(color: Color(0xFFF5EBDA), fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                                Icon(Icons.history, color: Colors.grey, size: 20),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            ..._recentProjects.map((p) {
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF0F0F0F),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.grey[800]!),
+                                ),
+                                child: ListTile(
+                                  leading: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF5EBDA).withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Icon(
+                                      p['category'] == 'linux' ? Icons.terminal : Icons.network_check,
+                                      color: const Color(0xFFF5EBDA),
+                                      size: 20,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    p['title']!,
+                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                                  ),
+                                  subtitle: Text(
+                                    '${p['id']} • ${p['date']}',
+                                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                                  ),
+                                  trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 14),
+                                  onTap: () {
+                                    if (p['category'] == 'network') {
+                                      _loadPresetTemplate('network');
+                                    } else {
+                                      _loadPresetTemplate('linux');
+                                    }
+                                    setState(() => _showWelcomeScreen = false);
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWelcomeActionButton({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0F0F0F),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: color.withOpacity(0.25)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: color, size: 22),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: Colors.grey[600]),
+            ],
+          ),
+        ),
       ),
     );
   }
