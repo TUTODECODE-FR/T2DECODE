@@ -39,20 +39,15 @@ Builds:
       - find .pub-cache -name "*.zip" -delete || true
       - find .pub-cache -name "*.gz" -delete || true
       - find .pub-cache -name "*.wasm" -delete || true
+      - find .pub-cache -name "*.exe" -delete || true
     scanignore:
       - .pub-cache
-      - fdroid_data_repo
+    scandelete:
+      - .pub-cache
     build:
-      - FLUTTER_ABS=$(realpath $$flutter$$)
-      - mkdir -p /builds/tutodecode-org/
-      - cd ..
-      - export repo=/builds/tutodecode-org/T2DECODE/
-      - mv org.t2decode.app $repo
-      - pushd $repo
       - export PUB_CACHE=$(pwd)/.pub-cache
-      - $FLUTTER_ABS/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
-      - popd
-      - mv $repo org.t2decode.app
+      - export FDROID_BUILD=true
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
 
   - versionName: 1.0.3
     versionCode: 352
@@ -78,20 +73,15 @@ Builds:
       - find .pub-cache -name "*.zip" -delete || true
       - find .pub-cache -name "*.gz" -delete || true
       - find .pub-cache -name "*.wasm" -delete || true
+      - find .pub-cache -name "*.exe" -delete || true
     scanignore:
       - .pub-cache
-      - fdroid_data_repo
+    scandelete:
+      - .pub-cache
     build:
-      - FLUTTER_ABS=$(realpath $$flutter$$)
-      - mkdir -p /builds/tutodecode-org/
-      - cd ..
-      - export repo=/builds/tutodecode-org/T2DECODE/
-      - mv org.t2decode.app $repo
-      - pushd $repo
       - export PUB_CACHE=$(pwd)/.pub-cache
-      - $FLUTTER_ABS/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
-      - popd
-      - mv $repo org.t2decode.app
+      - export FDROID_BUILD=true
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
 
   - versionName: 1.0.3
     versionCode: 353
@@ -117,20 +107,15 @@ Builds:
       - find .pub-cache -name "*.zip" -delete || true
       - find .pub-cache -name "*.gz" -delete || true
       - find .pub-cache -name "*.wasm" -delete || true
+      - find .pub-cache -name "*.exe" -delete || true
     scanignore:
       - .pub-cache
-      - fdroid_data_repo
+    scandelete:
+      - .pub-cache
     build:
-      - FLUTTER_ABS=$(realpath $$flutter$$)
-      - mkdir -p /builds/tutodecode-org/
-      - cd ..
-      - export repo=/builds/tutodecode-org/T2DECODE/
-      - mv org.t2decode.app $repo
-      - pushd $repo
       - export PUB_CACHE=$(pwd)/.pub-cache
-      - $FLUTTER_ABS/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
-      - popd
-      - mv $repo org.t2decode.app
+      - export FDROID_BUILD=true
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags ^v[0-9.]+$
