@@ -466,6 +466,12 @@ class _AppShellState extends State<AppShell> {
                 onTap: () {
                   if (activeRoute != item.route) {
                     if (item.route == '/') {
+                      context.read<ShellProvider>().updateShell(
+                            title: 'Accueil',
+                            showBackButton: false,
+                            actions: [],
+                            activeRoute: '/',
+                          );
                       AppNavigator.state?.popUntil((route) => route.isFirst);
                     } else {
                       AppNavigator.state?.pushNamedAndRemoveUntil(

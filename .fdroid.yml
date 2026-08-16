@@ -1,23 +1,24 @@
 Categories:
-  - Education
+  - Science & Education
   - Security
-License: GPL-3.0-or-later
+License: GPL-3.0-only
 AuthorName: Association TUTODECODE
 AuthorWebSite: https://tutodecode.org
 WebSite: https://tutodecode.org
-SourceCode: https://github.com/TUTODECODE-FR/TUTODECODE
-IssueTracker: https://github.com/TUTODECODE-FR/TUTODECODE/issues
-Changelog: https://github.com/TUTODECODE-FR/TUTODECODE/releases
-AutoName: TUTODECODE
+SourceCode: https://gitlab.com/tutodecode-org/T2DECODE
+IssueTracker: https://gitlab.com/tutodecode-org/T2DECODE/-/issues
+Changelog: https://gitlab.com/tutodecode-org/T2DECODE/-/releases
+
+AutoName: T2DECODE
+
 RepoType: git
-Repo: https://github.com/TUTODECODE-FR/TUTODECODE.git
+Repo: https://gitlab.com/tutodecode-org/T2DECODE.git
+
 Builds:
-  - versionName: 1.0.2
-    versionCode: 19
-    commit: v1.0.2
-    sudo:
-      - apt-get update || apt-get update
-      - apt-get install -y openjdk-17-jdk
+  - versionName: 1.0.3
+    versionCode: 351
+    commit: a324b17fd93797f7971b2096562b18787211111f
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
     srclibs:
       - flutter@stable
     rm:
@@ -27,24 +28,101 @@ Builds:
       - web
       - windows
     prebuild:
-      - flutterVersion=$(cat .flutter-version)
+      - flutterVersion="$(cat .flutter-version)"
       - '[[ $flutterVersion ]]'
       - git -C $$flutter$$ checkout -f $flutterVersion
       - export PUB_CACHE=$(pwd)/.pub-cache
       - $$flutter$$/bin/flutter config --no-analytics
-      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - find .pub-cache -type d -name "_out" -exec rm -rf {} + || true
+      - find .pub-cache -name "*.bin" -delete || true
+      - find .pub-cache -name "*.zip" -delete || true
+      - find .pub-cache -name "*.gz" -delete || true
+      - find .pub-cache -name "*.wasm" -delete || true
+      - find .pub-cache -name "*.exe" -delete || true
     scanignore:
-      - $$flutter$$/bin/cache
+      - .pub-cache
     scandelete:
       - .pub-cache
     build:
       - export PUB_CACHE=$(pwd)/.pub-cache
       - export FDROID_BUILD=true
-      - $$flutter$$/bin/flutter build apk --release --no-tree-shake-icons
-    output: build/app/outputs/flutter-apk/app-release.apk
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm"
+
+  - versionName: 1.0.3
+    versionCode: 352
+    commit: a324b17fd93797f7971b2096562b18787211111f
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - web
+      - windows
+    prebuild:
+      - flutterVersion="$(cat .flutter-version)"
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - find .pub-cache -type d -name "_out" -exec rm -rf {} + || true
+      - find .pub-cache -name "*.bin" -delete || true
+      - find .pub-cache -name "*.zip" -delete || true
+      - find .pub-cache -name "*.gz" -delete || true
+      - find .pub-cache -name "*.wasm" -delete || true
+      - find .pub-cache -name "*.exe" -delete || true
+    scanignore:
+      - .pub-cache
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export FDROID_BUILD=true
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64"
+
+  - versionName: 1.0.3
+    versionCode: 353
+    commit: a324b17fd93797f7971b2096562b18787211111f
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+      - linux
+      - macos
+      - web
+      - windows
+    prebuild:
+      - flutterVersion="$(cat .flutter-version)"
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - find .pub-cache -type d -name "_out" -exec rm -rf {} + || true
+      - find .pub-cache -name "*.bin" -delete || true
+      - find .pub-cache -name "*.zip" -delete || true
+      - find .pub-cache -name "*.gz" -delete || true
+      - find .pub-cache -name "*.wasm" -delete || true
+      - find .pub-cache -name "*.exe" -delete || true
+    scanignore:
+      - .pub-cache
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export FDROID_BUILD=true
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64"
 
 AutoUpdateMode: Version
-UpdateCheckMode: Tags ^v[0-9]+\.[0-9]+\.[0-9]+$
+UpdateCheckMode: Tags ^v[0-9.]+$
+VercodeOperation:
+  - '%c * 10 + 1'
+  - '%c * 10 + 2'
+  - '%c * 10 + 3'
 UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
-CurrentVersion: 1.0.2
-CurrentVersionCode: 19
+CurrentVersion: 1.0.3
+CurrentVersionCode: 353
