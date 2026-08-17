@@ -55,7 +55,8 @@ class _ChapterScreenState extends State<ChapterScreen> {
     final chapter = prov.currentChapter;
 
     if (course == null || chapter == null) {
-      return const Center(child: Text('Aucun chapitre', style: TextStyle(color: TdcColors.textMuted)));
+      //return const Center(child: Text('Aucun chapitre', style: TextStyle(color: TdcColors.textMuted)));
+      return const TdcEmptyState(icon: Icons.menu_book_outlined, title: "Aucun chapitre sélectionné",subtitle: "Reviens à l'accueil pour ouvrir un parcours");
     }
 
     return Column(
@@ -80,6 +81,15 @@ class _ChapterScreenState extends State<ChapterScreen> {
                   questions: chapter.quiz!,
                   chapterContent: chapter.content,
                   onComplete: (ok) { if (ok) prov.toggleCompleted(course.id, chapter.id); },
+                ),
+              ] else ...[
+                const SizedBox(height: 32),
+                const TdcSectionTitle('QUIZ'),
+                const SizedBox(height: 16),
+                const TdcEmptyState(
+                    icon: Icons.construction,
+                    title: "Ce quiz est en cours de préparation !",
+                    subtitle: "Le contenu du chapitre est disponible, le QCM arrive bientôt."
                 ),
               ],
               const SizedBox(height: 48),
