@@ -3,6 +3,9 @@ allprojects { // NOSONAR
         google()
         mavenCentral()
     }
+    configurations.all {
+        exclude(group = "com.google.android.play")
+    }
 }
 
 val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()
