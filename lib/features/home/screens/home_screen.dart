@@ -1280,7 +1280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () {
                   prov.selectChapter(course.id, ch.id);
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, '/chapter');
+                  AppNavigator.pushNamed('/chapter');
                 },
               );
             }),

@@ -68,12 +68,12 @@ class _AppShellState extends State<AppShell> {
         _NavItem(Icons.science, 'menu.lab'.tr(), '/lab',
             subtitle: 'Simulateurs & Sandbox'),
         _NavItem(Icons.wifi_tethering, 'menu.ghost_link'.tr(), '/ghost-link',
-            subtitle: 'Transfert P2P LAN'),
+            subtitle: 'Chat & Messagerie P2P LAN'),
         _NavItem(
           Icons.terminal,
           'T2C-Phantom',
           '/phantom',
-          subtitle: 'Terminal sécurisé local',
+          subtitle: 'Mises à jour de cours auto',
           trailing: Consumer<PhantomProvider>(
             builder: (context, phantom, _) => _phantomDot(phantom),
           ),
