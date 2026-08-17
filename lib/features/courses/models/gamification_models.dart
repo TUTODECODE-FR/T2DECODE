@@ -227,7 +227,7 @@ class UserProfile {
     this.totalPoints = 0,
     this.currentLevel = 1,
     this.experiencePoints = 0,
-    this.rank = 'Novice',
+    this.rank = 'Recrue',
     this.unlockedAchievements = const [],
     this.completedChapters = const [],
     this.skillProgress = const {},

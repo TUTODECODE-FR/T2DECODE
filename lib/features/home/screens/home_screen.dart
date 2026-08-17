@@ -35,6 +35,9 @@ class _HomeScreenState extends State<HomeScreen> {
   OllamaStatus? _aiStatus;
   final SnapshotService _snapshots = SnapshotService();
   bool _integrityChecked = false;
+  String _selectedCategory = 'TOUS';
+
+  String _formatChapters(int n) => '$n chapitre${n > 1 ? "s" : ""}';
 
   bool get isSmall => MediaQuery.of(context).size.width < 360;
 
@@ -480,7 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildInsightChip(
                 context,
                 icon: Icons.check_circle_outline,
-                label: '${prov.completedCount} chapitres terminés',
+                label: '${prov.completedCount} ${_formatChapters(prov.completedCount)} terminé${prov.completedCount > 1 ? "s" : ""}',
                 tone: TdcColors.success,
               ),
               _buildInsightChip(
@@ -508,6 +511,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildContinueLearningCard(BuildContext context, CoursesProvider prov,
       {bool compact = false}) {
+    final isNewUser = prov.completedCount == 0;
     final course = _preferredCourse(prov);
     final chapter = _preferredChapter(prov, course);
     final done = course == null ? 0 : prov.courseCompletedCount(course.id);
@@ -520,7 +524,21 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: TdcColors.surface,
         borderRadius: TdcRadius.lg,
-        border: Border.all(color: TdcColors.border),
+        border: Border.all(
+          color: isNewUser
+              ? TdcColors.accent.withValues(alpha: 0.5)
+              : TdcColors.border,
+          width: isNewUser ? 1.5 : 1,
+        ),
+        boxShadow: isNewUser
+            ? [
+                BoxShadow(
+                  color: TdcColors.accent.withValues(alpha: 0.08),
+                  blurRadius: 16,
+                  spreadRadius: 1,
+                )
+              ]
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -533,22 +551,46 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: TdcColors.accent.withValues(alpha: 0.1),
                   borderRadius: TdcRadius.sm,
                 ),
-                child: Icon(Icons.play_circle_fill,
+                child: Icon(
+                    isNewUser ? Icons.rocket_launch : Icons.play_circle_fill,
                     color: TdcColors.accent,
                     size: TdcAdaptive.icon(context, 18)),
               ),
               SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
               Expanded(
-                child: Text(
-                  course == null
-                      ? 'Pret a commencer'
-                      : 'Reprendre la progression',
-                  style: TextStyle(
-                    color: TdcColors.textPrimary,
-                    fontWeight: FontWeight.bold,
-                    fontSize:
-                        compact ? TdcText.body(context) : TdcText.h3(context),
-                  ),
+                child: Row(
+                  children: [
+                    Text(
+                      isNewUser ? 'COMMENCEZ ICI' : 'REPRENDRE LA PROGRESSION',
+                      style: TextStyle(
+                        color: TdcColors.accent,
+                        fontWeight: FontWeight.w900,
+                        fontSize: compact
+                            ? TdcText.body(context)
+                            : TdcText.h3(context),
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                    if (isNewUser) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: TdcColors.accent.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          '⭐ Recommandé',
+                          style: TextStyle(
+                            color: TdcColors.accent,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ],
@@ -556,7 +598,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: TdcAdaptive.space(context, TdcSpacing.sm)),
           Text(
             course == null
-                ? 'Choisis un parcours et commence directement depuis l accueil.'
+                ? 'Choisissez un parcours pour commencer.'
                 : course.title,
             style: TextStyle(
               color: TdcColors.textPrimary,
@@ -568,9 +610,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: TdcAdaptive.space(context, 6)),
           Text(
-            chapter == null
-                ? 'Accede a tes outils, cours et simulations en quelques secondes.'
-                : 'Prochain chapitre : ${chapter.title}',
+            isNewUser
+                ? 'Prenez en main l\'environnement et remportez vos premiers +50 XP vers le rang Sysadmin.'
+                : (chapter == null
+                    ? 'Accédez à vos outils, cours et simulations en quelques secondes.'
+                    : 'Étape suivante : ${chapter.title} (+50 XP)'),
             style: TextStyle(
               color: TdcColors.textMuted,
               fontSize: TdcText.bodySmall(context),
@@ -593,17 +637,22 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: Text(
                   course == null
-                      ? '0 parcours demarre'
-                      : '$done sur $total chapitres',
+                      ? '0 parcours démarré'
+                      : '$done sur $total ${_formatChapters(total)}',
                   style: TextStyle(
                     color: TdcColors.textSecondary,
                     fontSize: TdcText.caption(context),
                   ),
                 ),
               ),
-              ElevatedButton(
+              ElevatedButton.icon(
                 onPressed: () => _resumeCourse(context, prov, course, chapter),
-                child: Text(course == null ? 'Explorer' : 'Continuer'),
+                icon: Icon(
+                    isNewUser
+                        ? Icons.play_arrow
+                        : Icons.arrow_forward,
+                    size: 16),
+                label: Text(isNewUser ? 'Commencer →' : 'Reprendre →'),
               ),
             ],
           ),
@@ -719,7 +768,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: TdcAdaptive.space(context, 6)),
           Text(
-              '${prov.completedCount} sur ${prov.totalChaptersCount} chapitres',
+              '${prov.completedCount} sur ${prov.totalChaptersCount} ${_formatChapters(prov.totalChaptersCount)}',
               style: TextStyle(
                   color: TdcColors.textMuted,
                   fontSize: TdcText.caption(context))),
@@ -729,59 +778,127 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSectionHeader(BuildContext context, CoursesProvider prov) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final categories = [
+      'TOUS',
+      '🔥 MODE INCIDENT',
+      'LINUX',
+      'RÉSEAU',
+      'SÉCURITÉ',
+      'SYSTÈME',
+      'CLOUD',
+      'CRYPTO',
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
-          Icon(Icons.menu_book,
-              color: TdcColors.textPrimary,
-              size: TdcAdaptive.icon(context, 20)),
-          SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
-          Text('Parcours informatiques',
-              style: TextStyle(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(children: [
+              Icon(Icons.menu_book,
                   color: TdcColors.textPrimary,
-                  fontSize: TdcText.h2(context),
-                  fontWeight: FontWeight.bold)),
-          SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
-          IconButton(
-            icon: Icon(Icons.refresh,
-                size: TdcAdaptive.icon(context, 18),
-                color: TdcColors.textSecondary),
-            tooltip: 'Actualiser les modules externes',
-            onPressed: () => prov.reload(),
-          ),
-        ]),
-        Row(children: [
-          SizedBox(
-            width: TdcAdaptive.space(context, 120),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(3),
-              child: LinearProgressIndicator(
-                value: prov.totalChaptersCount > 0
-                    ? prov.completedCount / prov.totalChaptersCount
-                    : 0.0,
-                minHeight: TdcAdaptive.space(context, 5),
-                backgroundColor: TdcColors.surfaceAlt,
-                valueColor: const AlwaysStoppedAnimation(TdcColors.accent),
+                  size: TdcAdaptive.icon(context, 20)),
+              SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
+              Text('Parcours informatiques',
+                  style: TextStyle(
+                      color: TdcColors.textPrimary,
+                      fontSize: TdcText.h2(context),
+                      fontWeight: FontWeight.bold)),
+              SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
+              IconButton(
+                icon: Icon(Icons.refresh,
+                    size: TdcAdaptive.icon(context, 18),
+                    color: TdcColors.textSecondary),
+                tooltip: 'Actualiser les modules externes',
+                onPressed: () => prov.reload(),
               ),
-            ),
+            ]),
+          ],
+        ),
+        const SizedBox(height: 12),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: categories.map((cat) {
+              final isSel = _selectedCategory == cat;
+              final isIncident = cat.contains('INCIDENT');
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: ChoiceChip(
+                  label: Text(
+                    cat,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: isSel ? FontWeight.bold : FontWeight.w600,
+                      color: isSel
+                          ? (isIncident ? Colors.black : Colors.black)
+                          : (isIncident ? Colors.greenAccent : TdcColors.textSecondary),
+                    ),
+                  ),
+                  selected: isSel,
+                  selectedColor: isIncident ? Colors.greenAccent : TdcColors.accent,
+                  backgroundColor: isIncident
+                      ? Colors.greenAccent.withValues(alpha: 0.1)
+                      : TdcColors.surface,
+                  side: BorderSide(
+                    color: isSel
+                        ? (isIncident ? Colors.greenAccent : TdcColors.accent)
+                        : (isIncident
+                            ? Colors.greenAccent.withValues(alpha: 0.3)
+                            : TdcColors.border),
+                  ),
+                  onSelected: (selected) {
+                    if (selected) {
+                      setState(() => _selectedCategory = cat);
+                    }
+                  },
+                ),
+              );
+            }).toList(),
           ),
-          SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
-          Text('${prov.completedCount}/${prov.totalChaptersCount}',
-              style: TextStyle(
-                  color: TdcColors.textSecondary,
-                  fontSize: TdcText.label(context))),
-        ]),
+        ),
       ],
     );
   }
 
   Widget _buildCourseGrid(BuildContext context, CoursesProvider prov,
       {required int crossAxisCount}) {
-    final courses = prov.courses;
+    final allCourses = prov.courses;
+    final courses = _selectedCategory == 'TOUS'
+        ? allCourses
+        : (_selectedCategory == '🔥 MODE INCIDENT'
+            ? allCourses
+                .where((c) =>
+                    c.keywords.any((k) => k.toLowerCase().contains('incident')) ||
+                    c.id.toLowerCase().contains('incident') ||
+                    c.title.toLowerCase().contains('incident'))
+                .toList()
+            : allCourses
+                .where((c) =>
+                    c.category.toUpperCase() == _selectedCategory.toUpperCase())
+                .toList());
+
     final double itemHeight = crossAxisCount == 1
         ? TdcAdaptive.space(context, 100)
         : TdcAdaptive.space(context, 195);
+
+    if (courses.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(32),
+        alignment: Alignment.center,
+        child: Column(
+          children: [
+            const Icon(Icons.search_off, size: 40, color: TdcColors.textMuted),
+            const SizedBox(height: 12),
+            Text(
+              'Aucun parcours dans la catégorie $_selectedCategory',
+              style: const TextStyle(color: TdcColors.textMuted, fontSize: 13),
+            ),
+          ],
+        ),
+      );
+    }
 
     return GridView.builder(
       shrinkWrap: true,
@@ -893,7 +1010,7 @@ class _HomeScreenState extends State<HomeScreen> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis),
         SizedBox(height: TdcAdaptive.space(context, 5)),
-        Text('${course.category.toUpperCase()} · $total chapitres',
+        Text('${course.category.toUpperCase()} · ${_formatChapters(total)}',
             style: TextStyle(
                 color: TdcColors.textMuted,
                 fontSize: TdcText.caption(context),
@@ -979,7 +1096,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis),
               SizedBox(height: TdcAdaptive.space(context, 4)),
-              Text('${course.category.toUpperCase()} · $total chapitres',
+              Text('${course.category.toUpperCase()} · ${_formatChapters(total)}',
                   style: TextStyle(
                       color: TdcColors.textMuted,
                       fontSize: TdcText.caption(context))),
@@ -1541,10 +1658,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: TdcColors.textPrimary,
                 fontSize: TdcText.scale(context, 48),
                 fontWeight: FontWeight.bold)),
-        Text('${prov.completedCount} sur ${prov.totalChaptersCount} chapitres',
-            style: TextStyle(
-                color: TdcColors.textSecondary,
-                fontSize: TdcText.caption(context))),
+        Text('${prov.completedCount} sur ${prov.totalChaptersCount} ${_formatChapters(prov.totalChaptersCount)}',
+            style: const TextStyle(color: TdcColors.textMuted, fontSize: 10)),
         SizedBox(height: TdcAdaptive.space(context, TdcSpacing.md)),
         ClipRRect(
           borderRadius: BorderRadius.circular(4),

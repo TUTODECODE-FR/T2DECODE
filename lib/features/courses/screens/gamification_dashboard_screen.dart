@@ -1016,16 +1016,20 @@ class _GamificationDashboardScreenState
 
   Color _getRankColor(String rank) {
     switch (rank) {
+      case 'Fantôme':
       case 'Légende':
-        return Colors.purple;
+        return Colors.purpleAccent;
+      case 'Root':
       case 'Master':
-        return Colors.red;
+        return Colors.redAccent;
+      case 'Sysadmin':
       case 'Expert':
-        return Colors.orange;
+        return Colors.blueAccent;
+      case 'Opérateur':
       case 'Apprenti':
-        return Colors.blue;
+        return Colors.greenAccent;
       default:
-        return Colors.grey;
+        return TdcColors.accent;
     }
   }
 

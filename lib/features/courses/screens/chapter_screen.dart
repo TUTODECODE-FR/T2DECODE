@@ -9,9 +9,6 @@ import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 import '../widgets/qcm_widget.dart';
-import 'package:tutodecode/features/courses/practice/course_practice_engine.dart';
-import 'package:tutodecode/features/courses/data/course_repository.dart';
-import 'package:tutodecode/features/courses/practice/widgets/practice_flow.dart';
 import 'package:tutodecode/utils/markdown_sanitizer.dart';
 
 class ChapterScreen extends StatefulWidget {
@@ -107,17 +104,21 @@ class _ChapterScreenState extends State<ChapterScreen> {
                 ],
               ),
               const Spacer(),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/ghost_ai');
-                },
-                icon: const Icon(Icons.smart_toy_outlined, size: 14, color: Colors.black),
-                label: const Text('POSER UNE QUESTION À GHOST AI', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TdcColors.accent,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              Flexible(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/ghost_ai');
+                  },
+                  icon: const Icon(Icons.smart_toy_outlined, size: 14, color: Colors.black),
+                  label: const Text('Poser une question à Ghost AI',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TdcColors.accent,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                    elevation: 0,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
                 ),
               ),
             ],
@@ -155,7 +156,10 @@ class _ChapterScreenState extends State<ChapterScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 8,
+                          runSpacing: 8,
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -174,29 +178,30 @@ class _ChapterScreenState extends State<ChapterScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.greenAccent.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.3)),
-                              ),
-                              child: const Text(
-                                '🔥 MODE INCIDENT REEL',
-                                style: TextStyle(
-                                  color: Colors.greenAccent,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
+                            if (course.keywords.any((k) => k.toLowerCase().contains('incident')) ||
+                                course.id.toLowerCase().contains('incident'))
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.greenAccent.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.3)),
+                                ),
+                                child: const Text(
+                                  '🔥 MODE INCIDENT RÉEL',
+                                  style: TextStyle(
+                                    color: Colors.greenAccent,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const Spacer(),
                             Row(
-                              children: [
-                                const Icon(Icons.star, color: TdcColors.accent, size: 14),
-                                const SizedBox(width: 4),
-                                const Text('+50 XP', style: TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 12)),
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Icons.star, color: TdcColors.accent, size: 14),
+                                SizedBox(width: 4),
+                                Text('+50 XP', style: TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 12)),
                               ],
                             ),
                           ],
@@ -295,14 +300,9 @@ class _ChapterScreenState extends State<ChapterScreen> {
     );
   }
 
-  void _openLab(Map<String, dynamic> args) {
-    Navigator.pushNamed(context, '/lab', arguments: args);
-  }
-
   Widget _markdown(String content) {
     return MarkdownBody(
       data: MarkdownSanitizer.sanitize(content),
-      // Sécurité : Désactiver les images distantes et les liens non-contrôlés
       imageBuilder: (uri, title, alt) => Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -320,32 +320,6 @@ class _ChapterScreenState extends State<ChapterScreen> {
           ],
         ),
       ),
-      onTapLink: (text, href, title) {
-        if (href != null) {
-          final uri = Uri.tryParse(href);
-          if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
-            showDialog(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: const Text('Lien externe'),
-                content: Text('Voulez-vous ouvrir ce lien externe ?\n\n$href'),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Annuler')),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        // On pourrait utiliser launchUrl ici si on veut autoriser
-                      },
-                      child: const Text('Ouvrir',
-                          style: TextStyle(color: TdcColors.danger))),
-                ],
-              ),
-            );
-          }
-        }
-      },
       styleSheet: MarkdownStyleSheet(
         p: const TextStyle(
             color: TdcColors.textPrimary, fontSize: 15, height: 1.7),
@@ -392,6 +366,14 @@ class _ChapterScreenState extends State<ChapterScreen> {
             color: TdcColors.accent, fontWeight: FontWeight.bold),
         tableBody: const TextStyle(color: TdcColors.textPrimary),
         tableBorder: TableBorder.all(color: TdcColors.border),
+        horizontalRuleDecoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: TdcColors.accent.withValues(alpha: 0.2),
+              width: 1,
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -44,26 +44,36 @@ class _AppShellState extends State<AppShell> {
   // ── Items de navigation ───────────────────────────────────
   // Note: Icônes harmonisées (smart_toy pour IA partout)
   List<_NavItem> get _navItems => [
-        _NavItem(Icons.home_filled, _menuHome.tr(), '/'),
-        _NavItem(Icons.build, 'menu.tools'.tr(), '/tools'),
-        _NavItem(Icons.description, 'menu.cheat_sheets'.tr(), '/cheat-sheets'),
-        _NavItem(Icons.network_check, 'menu.netkit'.tr(), '/netkit'),
+        _NavItem(Icons.home_filled, _menuHome.tr(), '/',
+            subtitle: 'Accueil & Parcours'),
+        _NavItem(Icons.build, 'menu.tools'.tr(), '/tools',
+            subtitle: 'Utilitaires & Réseau'),
+        _NavItem(Icons.description, 'menu.cheat_sheets'.tr(), '/cheat-sheets',
+            subtitle: 'Fiches mémo synthétiques'),
+        _NavItem(Icons.network_check, 'menu.netkit'.tr(), '/netkit',
+            subtitle: 'Calculs IP & CIDR'),
         _NavItem(
           Icons.smart_toy,
           'menu.ai_chat'.tr(),
           '/ai',
+          subtitle: 'Tuteur local (Ollama)',
           trailing: Consumer<AiTutorProvider>(
             builder: (context, ai, _) => _aiDot(ai),
           ),
         ),
-        _NavItem(Icons.settings, 'menu.settings'.tr(), '/settings'),
-        _NavItem(Icons.map, 'menu.roadmap'.tr(), '/roadmap'),
-        _NavItem(Icons.science, 'menu.lab'.tr(), '/lab'),
-        _NavItem(Icons.wifi_tethering, 'menu.ghost_link'.tr(), '/ghost-link'),
+        _NavItem(Icons.settings, 'menu.settings'.tr(), '/settings',
+            subtitle: 'Préférences & Modules'),
+        _NavItem(Icons.map, 'menu.roadmap'.tr(), '/roadmap',
+            subtitle: 'Arborescence du cursus'),
+        _NavItem(Icons.science, 'menu.lab'.tr(), '/lab',
+            subtitle: 'Simulateurs & Sandbox'),
+        _NavItem(Icons.wifi_tethering, 'menu.ghost_link'.tr(), '/ghost-link',
+            subtitle: 'Transfert P2P LAN'),
         _NavItem(
           Icons.terminal,
           'T2C-Phantom',
           '/phantom',
+          subtitle: 'Terminal sécurisé local',
           trailing: Consumer<PhantomProvider>(
             builder: (context, phantom, _) => _phantomDot(phantom),
           ),
@@ -80,12 +90,17 @@ class _AppShellState extends State<AppShell> {
             strokeWidth: 1.5, color: TdcColors.textMuted),
       );
     }
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: ai.isConnected ? TdcColors.info : TdcColors.textMuted,
+    return Tooltip(
+      message: ai.isConnected
+          ? 'Ghost AI : Connecté à Ollama local'
+          : 'Ghost AI : Hors-ligne (T2DECODE fonctionne 100% sans IA)',
+      child: Container(
+        width: 8,
+        height: 8,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: ai.isConnected ? TdcColors.info : TdcColors.textMuted,
+        ),
       ),
     );
   }
@@ -99,12 +114,17 @@ class _AppShellState extends State<AppShell> {
             strokeWidth: 1.5, color: TdcColors.textMuted),
       );
     }
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: phantom.isRunning ? Colors.green : TdcColors.textMuted,
+    return Tooltip(
+      message: phantom.isRunning
+          ? 'T2C-Phantom : Terminal actif'
+          : 'T2C-Phantom : Terminal local prêt',
+      child: Container(
+        width: 8,
+        height: 8,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: phantom.isRunning ? Colors.green : TdcColors.textMuted,
+        ),
       ),
     );
   }
@@ -624,7 +644,7 @@ class _AppShellState extends State<AppShell> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                  '${prov.completedCount} sur ${prov.totalChaptersCount} chapitres',
+                                  '${prov.completedCount} sur ${prov.totalChaptersCount} chapitre${prov.totalChaptersCount > 1 ? "s" : ""}',
                                   style: const TextStyle(
                                       color: TdcColors.textMuted,
                                       fontSize: 10)),
@@ -742,8 +762,10 @@ class _NavItem {
   final IconData icon;
   final String label;
   final String route;
+  final String? subtitle;
   final Widget? trailing;
-  const _NavItem(this.icon, this.label, this.route, {this.trailing});
+  const _NavItem(this.icon, this.label, this.route,
+      {this.subtitle, this.trailing});
 }
 
 class _HoverNavItem extends StatefulWidget {
@@ -769,7 +791,9 @@ class _HoverNavItemState extends State<_HoverNavItem> {
   Widget build(BuildContext context) {
     final isActive = widget.isActive;
     return Tooltip(
-      message: widget.item.label,
+      message: widget.item.subtitle != null
+          ? '${widget.item.label} — ${widget.item.subtitle}'
+          : widget.item.label,
       waitDuration: const Duration(milliseconds: 800),
       child: Padding(
         padding:
@@ -810,19 +834,40 @@ class _HoverNavItemState extends State<_HoverNavItem> {
                   ),
                   const SizedBox(width: TdcSpacing.sm),
                   Expanded(
-                    child: Text(
-                      widget.item.label.toUpperCase(),
-                      style: TextStyle(
-                        color: isActive
-                            ? TdcColors.accent
-                            : _hovered
-                                ? TdcColors.textPrimary
-                                : TdcColors.textSecondary,
-                        fontSize: 12,
-                        letterSpacing: 1.2,
-                        fontWeight:
-                            isActive ? FontWeight.w700 : FontWeight.w500,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          widget.item.label.toUpperCase(),
+                          style: TextStyle(
+                            color: isActive
+                                ? TdcColors.accent
+                                : _hovered
+                                    ? TdcColors.textPrimary
+                                    : TdcColors.textSecondary,
+                            fontSize: 11,
+                            fontWeight:
+                                isActive ? FontWeight.bold : FontWeight.w600,
+                            letterSpacing: 0.6,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (widget.item.subtitle != null) ...[
+                          const SizedBox(height: 1),
+                          Text(
+                            widget.item.subtitle!,
+                            style: const TextStyle(
+                              color: TdcColors.textMuted,
+                              fontSize: 9,
+                              height: 1.1,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                   if (widget.item.trailing != null) widget.item.trailing!,
