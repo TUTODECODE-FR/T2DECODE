@@ -19,8 +19,10 @@ class ModuleService {
 
   bool _isModuleFile(FileSystemEntity f) {
     if (f is! File) return false;
-    final path = f.path.toLowerCase();
-    return path.endsWith(_jsonExtension) || path.endsWith(_tdcExtension);
+    final name = f.path.split(Platform.pathSeparator).last;
+    if (name.startsWith('.')) return false;
+    final lower = name.toLowerCase();
+    return lower.endsWith(_jsonExtension) || lower.endsWith(_tdcExtension);
   }
 
   Map<String, dynamic>? _parseModuleData(String content) {

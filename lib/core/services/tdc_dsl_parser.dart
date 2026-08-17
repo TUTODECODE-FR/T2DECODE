@@ -221,6 +221,8 @@ class _DslParser {
     String level = 'beginner';
     String duration = '1h';
     String icon = 'BookOpen';
+    String? author;
+    String? signedBy;
     List<String> keywords = ['EXTERNAL'];
     final chapters = <Map<String, dynamic>>[];
 
@@ -239,6 +241,17 @@ class _DslParser {
         _consume();
         _optionalColon();
         category = _parseValueAsString();
+      } else if (_match(_TokenType.identifier, 'author') ||
+          _match(_TokenType.identifier, 'creator')) {
+        _consume();
+        _optionalColon();
+        author = _parseValueAsString();
+      } else if (_match(_TokenType.identifier, 'signedBy') ||
+          _match(_TokenType.identifier, 'signed_by') ||
+          _match(_TokenType.identifier, 'signature')) {
+        _consume();
+        _optionalColon();
+        signedBy = _parseValueAsString();
       } else if (_match(_TokenType.identifier, 'level')) {
         _consume();
         _optionalColon();
@@ -278,6 +291,8 @@ class _DslParser {
       'level': level,
       'duration': duration,
       'icon': icon,
+      if (author != null) 'author': author,
+      if (signedBy != null) 'signedBy': signedBy,
       'keywords': keywords,
       'content': chapters,
     };

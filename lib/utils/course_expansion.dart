@@ -163,51 +163,13 @@ $commands''';
   // ─── Point d'entrée principal ────────────────────────────────────────────
   static String expandChapterContent(
       Course course, CourseChapter chapter, int index) {
-    final title = chapter.title;
-    final duration = chapter.duration.trim().isNotEmpty
-        ? chapter.duration.trim()
-        : 'durée libre';
     final rawContent = chapter.content.trim();
-    final total = course.chapters.length;
-
-    // Extraction du premier bloc de code
-    String code = '';
-    String codeLanguage = 'bash';
-    if (chapter.codeBlocks?.isNotEmpty == true) {
-      code = chapter.codeBlocks![0]['code']?.toString().trim() ?? '';
-      codeLanguage = chapter.codeBlocks![0]['language']?.toString() ?? 'bash';
+    if (rawContent.isEmpty) {
+      return '# ${chapter.title}\n\nContenu du chapitre en cours de rédaction.';
     }
-
-    // Contenu brut
-    final courseContent = rawContent;
-
-    // Analyse du code
-    final explainedCode = _explainCodeLines(code);
-    final codeSection = explainedCode.isNotEmpty
-        ? '''### Analyse du Code\n$explainedCode'''
-        : '';
-
-    // Cheat sheet
-    final cheatSheet = _generateCheatSheet(title, codeLanguage, code);
-
-    // Assemblage final, propre et professionnel
-    return [
-      '# $title',
-      '**Durée estimée :** $duration | **Chapitre ${index + 1} / $total**',
-      '',
-      courseContent,
-      if (codeSection.isNotEmpty) ...[
-        '',
-        '---',
-        '',
-        codeSection,
-      ],
-      if (cheatSheet.isNotEmpty) ...[
-        '',
-        '---',
-        '',
-        cheatSheet,
-      ],
-    ].join('\n');
+    if (!rawContent.startsWith('#')) {
+      return '# ${chapter.title}\n\n$rawContent';
+    }
+    return rawContent;
   }
 }

@@ -54,6 +54,8 @@ class Course {
   final String level;
   final String duration;
   final String category;
+  final String? author;
+  final String? signedBy;
   final List<String> keywords;
   final List<CourseChapter> chapters;
 
@@ -64,11 +66,21 @@ class Course {
     required this.level,
     required this.duration,
     required this.category,
+    this.author,
+    this.signedBy,
     required this.keywords,
     required this.chapters,
   });
 
   factory Course.fromMap(Map<String, dynamic> m) {
+    final keywords = List<String>.from(m['keywords'] ?? []);
+    final isExternal = keywords.contains('EXTERNAL');
+    final author = m['author']?.toString() ??
+        (isExternal ? 'Auteur tiers' : 'Association TUTODECODE');
+    final signedBy = m['signedBy']?.toString() ??
+        m['signed_by']?.toString() ??
+        (isExternal ? null : 'Association TUTODECODE (RNA W134011400)');
+
     final course = Course(
       id: m['id'],
       title: m['title'],
@@ -76,7 +88,9 @@ class Course {
       level: m['level'] ?? '',
       duration: m['duration'] ?? '',
       category: m['category'] ?? '',
-      keywords: List<String>.from(m['keywords'] ?? []),
+      author: author,
+      signedBy: signedBy,
+      keywords: keywords,
       chapters: [],
     );
 
