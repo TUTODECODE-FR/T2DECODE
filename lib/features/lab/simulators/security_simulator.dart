@@ -265,7 +265,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
   }
 
   Widget _buildVulnerabilityScanTab() {
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -494,7 +494,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
   }
 
   Widget _buildPentestTab() {
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
@@ -679,7 +679,7 @@ class _SecuritySimulatorState extends State<SecuritySimulator>
   }
 
   Widget _buildIdsIpsTab() {
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
