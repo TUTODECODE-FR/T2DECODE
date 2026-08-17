@@ -63,9 +63,12 @@ android {
             } else if (!isFdroidBuild) {
                 signingConfig = signingConfigs.getByName("debug")
             }
-            // Disable minification to prevent R8 ProGuard errors during release build
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -79,6 +82,15 @@ android {
             }
         }
     }
+}
+
+configurations.all {
+    exclude(group = "com.google.android.play")
+    exclude(group = "com.google.android.play", module = "core")
+    exclude(group = "com.google.android.play", module = "core-common")
+    exclude(group = "com.google.android.play", module = "feature-delivery")
+    exclude(group = "com.google.android.play", module = "app-update")
+    exclude(group = "com.google.android.play", module = "review")
 }
 
 flutter {
