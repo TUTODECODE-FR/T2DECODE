@@ -6,14 +6,50 @@ import 'package:path_provider/path_provider.dart';
 import 'package:tutodecode/features/courses/data/course_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cryptography/cryptography.dart';
+import 'tdc_dsl_parser.dart';
 
 class ModuleService {
   static const String _moduleFolder = 'TUTODECODE_Modules';
   static const String _backupFolder = 'TUTODECODE_ModuleBackups';
   static const String _shaFile = '.module_shas.json';
   static const String _jsonExtension = '.json';
+  static const String _tdcExtension = '.tdc';
   static const int _maxModuleBytes = 5 * 1024 * 1024; // 5 MB
   static const int _maxBackupsPerModule = 5;
+
+  bool _isModuleFile(FileSystemEntity f) {
+    if (f is! File) return false;
+    final path = f.path.toLowerCase();
+    return path.endsWith(_jsonExtension) || path.endsWith(_tdcExtension);
+  }
+
+  Map<String, dynamic>? _parseModuleData(String content) {
+    if (TdcDslParser.isTdcDsl(content)) {
+      return TdcDslParser.parse(content);
+    }
+    try {
+      final decoded = json.decode(content);
+      if (decoded is Map<String, dynamic>) return decoded;
+      if (decoded is Map) return Map<String, dynamic>.from(decoded);
+    } catch (_) {}
+    return null;
+  }
+
+  /// Imports a .tdc DSL or .json course string and saves it as an active external module.
+  Future<Course> importModuleContent(String rawContent, {String? customFileName}) async {
+    final data = _parseModuleData(rawContent);
+    if (data == null) {
+      throw Exception('Format de module invalide (ni TDC DSL ni JSON valide)');
+    }
+    final validationError = _validateModuleMap(data);
+    if (validationError != null) {
+      throw Exception(validationError);
+    }
+    final course = Course.fromMap(data);
+    final targetName = customFileName ?? '${course.id}.json';
+    await saveModule(targetName, json.encode(data), '');
+    return course;
+  }
 
   /// Returns the directory where external modules should be placed.
   Future<Directory> getModulesDirectory() async {
@@ -44,9 +80,9 @@ class ModuleService {
       final List<FileSystemEntity> files = dir.listSync();
 
       for (final file in files) {
-        if (file is File && file.path.endsWith(_jsonExtension)) {
+        if (_isModuleFile(file)) {
           try {
-            final len = await file.length();
+            final len = await (file as File).length();
             if (len > _maxModuleBytes) {
               if (kDebugMode) {
                 debugPrint(
@@ -55,7 +91,8 @@ class ModuleService {
               continue;
             }
             final content = await file.readAsString();
-            final Map<String, dynamic> data = json.decode(content);
+            final data = _parseModuleData(content);
+            if (data == null) continue;
 
             final fileName = file.path.split(Platform.pathSeparator).last;
             final meta = await getSavedMeta(fileName);
@@ -139,7 +176,8 @@ class ModuleService {
       if (!await _verifyChecksum(file, fileName)) return null;
 
       final content = await file.readAsString();
-      final Map<String, dynamic> data = json.decode(content);
+      final data = _parseModuleData(content);
+      if (data == null) return null;
 
       final validationError = _validateModuleMap(data);
       if (validationError != null) {
@@ -163,7 +201,7 @@ class ModuleService {
     }
   }
 
-  /// Scans the modules directory for .json files and loads them as lightweight Courses (without full chapter content).
+  /// Scans the modules directory for .json and .tdc files and loads them as lightweight Courses.
   Future<List<Course>> loadExternalModulesLight() async {
     final List<Course> externalCourses = [];
     try {
@@ -173,8 +211,8 @@ class ModuleService {
       final List<FileSystemEntity> files = dir.listSync();
 
       for (final file in files) {
-        if (file is File && file.path.endsWith(_jsonExtension)) {
-          final course = await _processExternalModuleLight(file);
+        if (_isModuleFile(file)) {
+          final course = await _processExternalModuleLight(file as File);
           if (course != null) {
             externalCourses.add(course);
           }
@@ -190,7 +228,8 @@ class ModuleService {
   Future<Course?> _processFullCourseFile(File file, String courseId) async {
     try {
       final content = await file.readAsString();
-      final Map<String, dynamic> data = json.decode(content);
+      final data = _parseModuleData(content);
+      if (data == null) return null;
 
       if (data['id'] == courseId) {
         final validationError = _validateModuleMap(data);
@@ -215,8 +254,8 @@ class ModuleService {
       final List<FileSystemEntity> files = dir.listSync();
 
       for (final file in files) {
-        if (file is File && file.path.endsWith(_jsonExtension)) {
-          final course = await _processFullCourseFile(file, courseId);
+        if (_isModuleFile(file)) {
+          final course = await _processFullCourseFile(file as File, courseId);
           if (course != null) return course;
         }
       }
