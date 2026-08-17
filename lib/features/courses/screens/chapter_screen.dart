@@ -225,12 +225,12 @@ class _ChapterScreenState extends State<ChapterScreen> {
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.person_outline, size: 13, color: TdcColors.accentBeige),
+                                  const Icon(Icons.person_outline, size: 13, color: TdcColors.accent),
                                   const SizedBox(width: 5),
                                   Text(
                                     'Auteur : ${course.author}',
                                     style: const TextStyle(
-                                      color: TdcColors.accentBeige,
+                                      color: TdcColors.accent,
                                       fontSize: 11,
                                       fontWeight: FontWeight.w600,
                                     ),
