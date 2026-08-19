@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:tutodecode/features/courses/data/course_repository.dart';
+import 'package:tutodecode/core/services/tdc_parser.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cryptography/cryptography.dart';
 
@@ -34,7 +35,7 @@ class ModuleService {
     return dir;
   }
 
-  /// Scans the modules directory for .json files and loads them as Courses.
+  /// Scans the modules directory for .tdc and .json files and loads them as Courses.
   Future<List<Course>> loadExternalModules() async {
     final List<Course> externalCourses = [];
     try {
@@ -44,34 +45,49 @@ class ModuleService {
       final List<FileSystemEntity> files = dir.listSync();
 
       for (final file in files) {
-        if (file is File && file.path.endsWith(_jsonExtension)) {
-          try {
-            final len = await file.length();
-            if (len > _maxModuleBytes) {
+        if (file is! File) continue;
+        final isTdc = file.path.endsWith('.tdc');
+        final isJson = file.path.endsWith('.json');
+        if (!isTdc && !isJson) continue;
+        try {
+          final len = await file.length();
+          if (len > _maxModuleBytes) {
+            if (kDebugMode) {
+              debugPrint('Skipping module (too large: $len bytes): ${file.path}');
+            }
+            continue;
+          }
+          final content = await file.readAsString();
+
+          final fileName = file.path.split(Platform.pathSeparator).last;
+          final meta = await getSavedMeta(fileName);
+          if (meta != null && meta.sha256B64 != null) {
+            final bytes = await file.readAsBytes();
+            final actualB64 = await _sha256B64(bytes);
+            if (actualB64 != meta.sha256B64) {
               if (kDebugMode) {
-                debugPrint(
-                    'Skipping module (too large: $len bytes): ${file.path}');
+                debugPrint('Skipping module (checksum mismatch): ${file.path}');
               }
               continue;
             }
-            final content = await file.readAsString();
-            final Map<String, dynamic> data = json.decode(content);
+          }
 
-            final fileName = file.path.split(Platform.pathSeparator).last;
-            final meta = await getSavedMeta(fileName);
-            if (meta != null && meta.sha256B64 != null) {
-              final bytes = await file.readAsBytes();
-              final actualB64 = await _sha256B64(bytes);
-              if (actualB64 != meta.sha256B64) {
-                if (kDebugMode) {
-                  debugPrint(
-                      'Skipping module (checksum mismatch): ${file.path}');
-                }
-                continue;
-              }
+          List<Map<String, dynamic>> maps;
+          if (isTdc) {
+            maps = parseTdcSafe(content);
+            if (maps.isEmpty) {
+              if (kDebugMode) debugPrint('TDC module parsed 0 courses: ${file.path}');
+              continue;
             }
+          } else {
+            final decoded = json.decode(content);
+            // Support single object or array
+            maps = decoded is List
+                ? decoded.cast<Map<String, dynamic>>()
+                : [decoded as Map<String, dynamic>];
+          }
 
-            // Étape de validation stricte avant parsing complet
+          for (final data in maps) {
             final validationError = _validateModuleMap(data);
             if (validationError != null) {
               if (kDebugMode) {
@@ -84,12 +100,15 @@ class ModuleService {
             if (!course.keywords.contains('EXTERNAL')) {
               course.keywords.add('EXTERNAL');
             }
+<<<<<<< HEAD
 
+=======
+>>>>>>> c7c7ed1d (feat(courses): add .tdc DSL parser and loader with JSON fallback)
             externalCourses.add(course);
-          } catch (e) {
-            if (kDebugMode) {
-              debugPrint('Error loading module ${file.path}: $e');
-            }
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('Error loading module ${file.path}: $e');
           }
         }
       }

