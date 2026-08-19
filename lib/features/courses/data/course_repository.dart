@@ -3,8 +3,10 @@
 // Feature: courses — Data layer
 // Loads and owns the Course/Chapter data model.
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import '../../../utils/course_expansion.dart';
+import '../../../core/services/tdc_parser.dart';
 
 class QuizQuestion {
   final String question;
@@ -116,22 +118,39 @@ class Course {
     return course;
   }
 
+  /// Builds a [Course] from a raw TDC map (output of [TdcParser]).
+  static Course fromTdcMap(Map<String, dynamic> m) => Course.fromMap(m);
+
+  /// Loads all courses. Reads [assets/courses.tdc] first (canonical DSL);
+  /// falls back to localized JSON or default JSON if the TDC asset is absent or fails.
   static Future<List<Course>> loadAll([String locale = 'fr']) async {
-    String filename = 'assets/courses/courses_$locale.json';
+    // Try .tdc first (canonical format)
     try {
-      final data = await rootBundle.loadString(filename);
+      final src = await rootBundle.loadString('assets/courses.tdc');
+      final maps = parseTdcSafe(src);
+      if (maps.isNotEmpty) {
+        return maps.map(Course.fromMap).toList();
+      }
+      if (kDebugMode) debugPrint('[CourseRepository] courses.tdc parsed 0 courses, falling back to JSON');
+    } catch (_) {
+      if (kDebugMode) debugPrint('[CourseRepository] courses.tdc not found, using JSON fallback');
+    }
+
+    // JSON fallback (localized or root)
+    try {
+      final data = await rootBundle.loadString('assets/courses/courses_$locale.json');
       final list = json.decode(data) as List<dynamic>;
-      return list
-          .map((m) => Course.fromMap(m as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      // Fallback
-      final fallback =
-          await rootBundle.loadString('assets/courses/courses_en.json');
-      final list = json.decode(fallback) as List<dynamic>;
-      return list
-          .map((m) => Course.fromMap(m as Map<String, dynamic>))
-          .toList();
+      return list.map((m) => Course.fromMap(m as Map<String, dynamic>)).toList();
+    } catch (_) {
+      try {
+        final fallback = await rootBundle.loadString('assets/courses/courses_en.json');
+        final list = json.decode(fallback) as List<dynamic>;
+        return list.map((m) => Course.fromMap(m as Map<String, dynamic>)).toList();
+      } catch (_) {
+        final data = await rootBundle.loadString('assets/courses.json');
+        final list = json.decode(data) as List<dynamic>;
+        return list.map((m) => Course.fromMap(m as Map<String, dynamic>)).toList();
+      }
     }
   }
 }
