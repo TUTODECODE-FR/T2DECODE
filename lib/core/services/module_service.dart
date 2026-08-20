@@ -100,10 +100,6 @@ class ModuleService {
             if (!course.keywords.contains('EXTERNAL')) {
               course.keywords.add('EXTERNAL');
             }
-<<<<<<< HEAD
-
-=======
->>>>>>> c7c7ed1d (feat(courses): add .tdc DSL parser and loader with JSON fallback)
             externalCourses.add(course);
           }
         } catch (e) {

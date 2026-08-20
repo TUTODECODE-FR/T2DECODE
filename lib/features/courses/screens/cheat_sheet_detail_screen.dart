@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/core/widgets/tdc_widgets.dart';
+import 'package:tutodecode/features/courses/data/cheat_sheet_style.dart';
 import 'cheat_sheet_screen.dart';
 
 class CheatSheetDetailScreen extends StatefulWidget {
@@ -85,7 +86,7 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
           decoration: BoxDecoration(
               color: _getColor(e).withValues(alpha: 0.1),
               borderRadius: TdcRadius.md),
-          child: Icon(_getIcon(e), color: _getColor(e), size: 24),
+          child: Icon(CheatSheetStyle.categoryIcon(e), color: _getColor(e), size: 24),
         ),
         const SizedBox(width: 20),
         Expanded(
@@ -281,90 +282,11 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
     );
   }
 
-  Color _getColor(CheatSheetEntry e) {
-    if (e.colorHex != null && e.colorHex!.isNotEmpty) {
-      final hex = e.colorHex!.replaceAll('#', '');
-      try {
-        return Color(int.parse('FF$hex', radix: 16));
-      } catch (_) {}
-    }
-    switch (e.category) {
-      case 'WINDOWS':
-        return const Color(0xFF00A4EF);
-      case 'MAC':
-        return const Color(0xFF999999);
-      case 'LINUX':
-        return const Color(0xFFFCC624);
-      case 'DOCKER':
-        return const Color(0xFF2496ED);
-      case 'RÉSEAU':
-        return const Color(0xFF10B981);
-      case 'GIT':
-        return const Color(0xFFF05032);
-      case 'SÉCURITÉ':
-        return const Color(0xFFEF4444);
-      default:
-        return TdcColors.accent;
-    }
-  }
-
-  IconData _getIcon(CheatSheetEntry e) {
-    if (e.iconName != null && e.iconName!.isNotEmpty) {
-      switch (e.iconName) {
-        case 'security':
-          return Icons.security;
-        case 'terminal':
-          return Icons.terminal;
-        case 'cloud':
-          return Icons.cloud;
-        case 'dns':
-          return Icons.dns;
-        case 'lock':
-          return Icons.lock;
-        case 'api':
-          return Icons.api;
-        case 'bug_report':
-          return Icons.bug_report;
-        case 'admin_panel_settings':
-          return Icons.admin_panel_settings;
-        case 'storage':
-          return Icons.storage;
-        case 'network':
-          return Icons.network_check;
-        case 'search':
-          return Icons.search;
-      }
-    }
-    switch (e.category) {
-      case 'WINDOWS':
-        return Icons.window;
-      case 'MAC':
-        return Icons.apple;
-      case 'LINUX':
-        return Icons.terminal;
-      case 'DOCKER':
-        return Icons.directions_boat;
-      case 'RÉSEAU':
-        return Icons.lan;
-      case 'GIT':
-        return Icons.merge_type;
-      case 'SÉCURITÉ':
-        return Icons.security;
-      default:
-        return Icons.code;
-    }
-  }
+  Color _getColor(CheatSheetEntry e) => CheatSheetStyle.categoryColor(e);
 
   Widget _buildDangerLevel(int level) {
-    Color color = Colors.green;
-    String label = 'SÉCURISÉ';
-    if (level == 2) {
-      color = Colors.orange;
-      label = 'PRUDENCE';
-    } else if (level >= 3) {
-      color = Colors.red;
-      label = 'CRITIQUE';
-    }
+    final color = CheatSheetStyle.dangerColor(level);
+    final label = CheatSheetStyle.dangerLabel(level).toUpperCase();
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -375,7 +297,11 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.warning_amber_rounded, size: 12, color: color),
+          Icon(
+            level >= 2 ? Icons.info_outline : Icons.check_circle_outline,
+            size: 12,
+            color: color,
+          ),
           const SizedBox(width: 6),
           Text(label,
               style: TextStyle(

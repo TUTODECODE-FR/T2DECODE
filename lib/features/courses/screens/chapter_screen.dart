@@ -12,6 +12,7 @@ import '../widgets/qcm_widget.dart';
 import 'package:tutodecode/features/courses/practice/course_practice_engine.dart';
 import 'package:tutodecode/features/courses/data/course_repository.dart';
 import 'package:tutodecode/features/courses/practice/widgets/practice_flow.dart';
+import 'package:tutodecode/core/responsive/responsive.dart';
 import 'package:tutodecode/utils/markdown_sanitizer.dart';
 
 class ChapterScreen extends StatefulWidget {
@@ -64,65 +65,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
 
     return Column(
       children: [
-        // Barre d'engagement & XP
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-            color: TdcColors.surfaceAlt,
-            border: Border(bottom: BorderSide(color: TdcColors.border)),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: TdcColors.accent.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.star, size: 14, color: TdcColors.accent),
-                    const SizedBox(width: 4),
-                    Text(
-                      '+50 XP',
-                      style: const TextStyle(
-                        color: TdcColors.accent,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Row(
-                children: [
-                  const Icon(Icons.timer_outlined, size: 14, color: TdcColors.textMuted),
-                  const SizedBox(width: 4),
-                  Text(
-                    chapter.duration.isNotEmpty ? chapter.duration : '15 min',
-                    style: const TextStyle(color: TdcColors.textMuted, fontSize: 11),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/ghost_ai');
-                },
-                icon: const Icon(Icons.smart_toy_outlined, size: 14, color: Colors.black),
-                label: const Text('POSER UNE QUESTION À GHOST AI', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TdcColors.accent,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-              ),
-            ],
-          ),
-        ),
+        _buildEngagementBar(context, chapter),
 
         Expanded(
           child: Align(
@@ -131,7 +74,10 @@ class _ChapterScreenState extends State<ChapterScreen> {
               constraints: const BoxConstraints(maxWidth: 820),
               child: ListView(
                 controller: _scroll,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                padding: EdgeInsets.symmetric(
+                  horizontal: TdcBreakpoints.isMobile(context) ? 12 : 24,
+                  vertical: 32,
+                ),
                 children: [
                   // Bannière Hero de Chapitre (Design 2026)
                   Container(
@@ -261,7 +207,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
                         const SizedBox(height: 14),
                         const Text(
                           '• La pratique vaut 100x la théorie : testez immédiatement les commandes dans la VM Bac à Sable.\n'
-                          '• En cas de doute ou de question technique, interrogez Ghost AI (assistant local) en 1 clic.\n'
+                          '• Relisez les points clés du chapitre avant le QCM.\n'
                           '• Validez le défi QCM ci-dessous pour valider vos 50 XP et faire progresser votre niveau !',
                           style: TextStyle(color: TdcColors.textPrimary, fontSize: 13, height: 1.7),
                         ),
@@ -563,6 +509,69 @@ class _ChapterScreenState extends State<ChapterScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildEngagementBar(BuildContext context, CourseChapter chapter) {
+    final isMobile = TdcBreakpoints.isMobile(context);
+    final duration = chapter.duration.isNotEmpty ? chapter.duration : '15 min';
+
+    final xpBadge = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: TdcColors.accent.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.star, size: 14, color: TdcColors.accent),
+          SizedBox(width: 4),
+          Text(
+            '+50 XP',
+            style: TextStyle(
+              color: TdcColors.accent,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    final durationBadge = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(Icons.timer_outlined, size: 14, color: TdcColors.textMuted),
+        const SizedBox(width: 4),
+        Text(duration, style: const TextStyle(color: TdcColors.textMuted, fontSize: 11)),
+      ],
+    );
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 12 : 20,
+        vertical: 10,
+      ),
+      decoration: BoxDecoration(
+        color: TdcColors.surfaceAlt,
+        border: const Border(bottom: BorderSide(color: TdcColors.border)),
+      ),
+      child: isMobile
+          ? Wrap(
+              spacing: 12,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [xpBadge, durationBadge],
+            )
+          : Row(
+              children: [
+                xpBadge,
+                const SizedBox(width: 12),
+                durationBadge,
+              ],
+            ),
     );
   }
 }

@@ -15,7 +15,6 @@ import '../core/theme/app_theme.dart';
 import '../core/responsive/responsive.dart';
 import '../features/courses/providers/courses_provider.dart';
 import '../features/ghost_ai/providers/ai_tutor_provider.dart';
-import '../features/tools/providers/phantom_provider.dart';
 import '../core/providers/shell_provider.dart';
 import '../core/navigation/nav_keys.dart';
 import '../core/providers/search_provider.dart';
@@ -62,10 +61,17 @@ class _AppShellState extends State<AppShell> {
         _NavItem(Icons.wifi_tethering, 'menu.ghost_link'.tr(), '/ghost-link'),
         _NavItem(
           Icons.terminal,
-          'T2C-Phantom',
+          'menu.phantom'.tr(),
           '/phantom',
-          trailing: Consumer<PhantomProvider>(
-            builder: (context, phantom, _) => _phantomDot(phantom),
+          comingSoon: true,
+          trailing: Text(
+            'menu.coming_soon'.tr(),
+            style: const TextStyle(
+              color: TdcColors.textMuted,
+              fontSize: 9,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
           ),
         ),
       ];
@@ -86,25 +92,6 @@ class _AppShellState extends State<AppShell> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: ai.isConnected ? TdcColors.info : TdcColors.textMuted,
-      ),
-    );
-  }
-
-  Widget _phantomDot(PhantomProvider phantom) {
-    if (!phantom.hasChecked) {
-      return const SizedBox(
-        width: 8,
-        height: 8,
-        child: CircularProgressIndicator(
-            strokeWidth: 1.5, color: TdcColors.textMuted),
-      );
-    }
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: phantom.isRunning ? Colors.green : TdcColors.textMuted,
       ),
     );
   }
@@ -185,8 +172,8 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer3<ShellProvider, CoursesProvider, SettingsProvider>(
-      builder: (context, shell, courses, settings, _) {
+    return Consumer2<ShellProvider, SettingsProvider>(
+      builder: (context, shell, settings, _) {
         return ResponsiveBuilder(
           builder: (ctx, type) {
             if (type.isDesktop) return _buildDesktop(ctx, shell, settings);
@@ -723,6 +710,19 @@ class _AppShellState extends State<AppShell> {
       isActive: isActive,
       insideDrawer: insideDrawer,
       onTap: () {
+        if (item.comingSoon) {
+          if (insideDrawer && Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('menu.phantom_coming_soon'.tr()),
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+          return;
+        }
         if (insideDrawer && Navigator.canPop(context)) {
           Navigator.pop(context);
         }
@@ -743,7 +743,9 @@ class _NavItem {
   final String label;
   final String route;
   final Widget? trailing;
-  const _NavItem(this.icon, this.label, this.route, {this.trailing});
+  final bool comingSoon;
+  const _NavItem(this.icon, this.label, this.route,
+      {this.trailing, this.comingSoon = false});
 }
 
 class _HoverNavItem extends StatefulWidget {
@@ -802,11 +804,13 @@ class _HoverNavItemState extends State<_HoverNavItem> {
                   Icon(
                     widget.item.icon,
                     size: 18,
-                    color: isActive
-                        ? TdcColors.accent
-                        : _hovered
-                            ? TdcColors.textPrimary
-                            : TdcColors.textSecondary,
+                    color: widget.item.comingSoon
+                        ? TdcColors.textMuted
+                        : isActive
+                            ? TdcColors.accent
+                            : _hovered
+                                ? TdcColors.textPrimary
+                                : TdcColors.textSecondary,
                   ),
                   const SizedBox(width: TdcSpacing.sm),
                   Expanded(
@@ -949,6 +953,16 @@ class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
                             subtitle: item.route,
                             onTap: () {
                               AppNavigator.pop();
+                              if (item.comingSoon) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('menu.phantom_coming_soon'.tr()),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                                return;
+                              }
                               AppNavigator.pushNamed(item.route);
                             },
                           )),

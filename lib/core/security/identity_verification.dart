@@ -23,11 +23,10 @@ class IdentityVerification {
 
   // Assets critiques bundlés avec l'application
   static const List<String> _CRITICAL_ASSETS = [
-    'assets/courses/courses_fr.json',
-    'assets/courses/courses_en.json',
+    'assets/courses.tdc',
     'assets/manifest.json',
     'assets/asset_checksums.json',
-    'assets/cheat_sheets.json',
+    'assets/cheat_sheets.tdc',
     'assets/logo.png',
   ];
 

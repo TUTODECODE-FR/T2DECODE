@@ -29,6 +29,96 @@ class TdcParser {
     return parser._parseCourses();
   }
 
+  /// Parses a cheat sheet `.tdc` source (blocks `entry "id" { ... }`).
+  static List<Map<String, dynamic>> parseCheatSheets(String source) {
+    final parser = TdcParser(source);
+    return parser._parseCheatEntries();
+  }
+
+  List<Map<String, dynamic>> _parseCheatEntries() {
+    final entries = <Map<String, dynamic>>[];
+    _skipWhitespaceAndComments();
+    while (_pos < _src.length) {
+      _expect('entry');
+      entries.add(_parseCheatEntry());
+      _skipWhitespaceAndComments();
+    }
+    return entries;
+  }
+
+  Map<String, dynamic> _parseCheatEntry() {
+    _skipWhitespace();
+    _parseString(); // entry id (informational)
+    _skipWhitespace();
+    _expectChar('{');
+
+    final entry = <String, dynamic>{
+      'command': '',
+      'description': '',
+      'category': '',
+      'dangerLevel': 1,
+    };
+
+    _skipWhitespaceAndComments();
+    while (_pos < _src.length && _peek() != '}') {
+      final key = _parseIdent();
+      _skipWhitespace();
+      _expectChar(':');
+      _skipWhitespace();
+
+      if (key == 'command' || key == 'description') {
+        entry[key] = _parseString();
+      } else if (key == 'category') {
+        entry['category'] = _parseStringOrBare();
+      } else if (key == 'dangerLevel') {
+        entry['dangerLevel'] = _parseInt();
+      } else if (key == 'explanation') {
+        entry['detailedExplanation'] = _src.startsWith('"""', _pos)
+            ? _parseTripleString()
+            : _parseString();
+      } else if (key == 'options' || key == 'examples') {
+        entry[key] = _parseList();
+      } else if (key == 'colorHex') {
+        entry['colorHex'] = _parseStringOrBare();
+      } else if (key == 'iconName') {
+        entry['iconName'] = _parseIdent();
+      } else {
+        _skipValue();
+      }
+      _skipWhitespaceAndComments();
+    }
+    _expectChar('}');
+    return entry;
+  }
+
+  int _parseInt() {
+    _skipWhitespace();
+    final start = _pos;
+    while (_pos < _src.length && RegExp(r'[0-9]').hasMatch(_src[_pos])) {
+      _pos++;
+    }
+    if (start == _pos) {
+      throw TdcParseError(_line, 'Expected integer');
+    }
+    return int.parse(_src.substring(start, _pos));
+  }
+
+  void _skipValue() {
+    if (_peek() == '"') {
+      if (_src.startsWith('"""', _pos)) {
+        _parseTripleString();
+      } else {
+        _parseString();
+      }
+    } else if (_peek() == '[') {
+      _parseList();
+    } else {
+      while (_pos < _src.length && _src[_pos] != '\n' && _src[_pos] != '}') {
+        _pos++;
+      }
+    }
+  }
+
   // ── Top-level ─────────────────────────────────────────────────────────────
 
   List<Map<String, dynamic>> _parseCourses() {
@@ -380,21 +470,52 @@ class TdcParser {
   }
 
   /// Parses a bracketed list: [item1, item2, ...]
+  /// Items may be bare identifiers or quoted strings; commas inside quoted
+  /// strings are allowed. Unquoted items may contain / and spaces (e.g. TCP/IP).
   List<String> _parseList() {
     _expectChar('[');
     final items = <String>[];
     _skipWhitespace();
     while (_peek() != ']' && _pos < _src.length) {
-      final item = _parseIdent();
+      String item;
+      if (_peek() == '"') {
+        item = _parseString();
+      } else {
+        item = _parseListItem();
+      }
       if (item.isNotEmpty) items.add(item);
       _skipWhitespace();
       if (_peek() == ',') {
         _pos++;
         _skipWhitespace();
+      } else if (_peek() != ']' && _pos < _src.length) {
+        // Skip stray characters (malformed lists) to avoid infinite loops.
+        _pos++;
       }
     }
     _expectChar(']');
     return items;
+  }
+
+  /// Reads a single unquoted list item until `,` or `]`.
+  String _parseListItem() {
+    final start = _pos;
+    while (_pos < _src.length) {
+      final c = _src[_pos];
+      if (c == ',' || c == ']') break;
+      _pos++;
+    }
+    return _src.substring(start, _pos).trim();
+  }
+}
+
+/// Parses cheat sheet `.tdc`; returns [] on error.
+List<Map<String, dynamic>> parseCheatSheetsSafe(String source) {
+  try {
+    return TdcParser.parseCheatSheets(source);
+  } catch (e) {
+    if (kDebugMode) debugPrint('[TdcParser:cheats] $e');
+    return [];
   }
 }
 

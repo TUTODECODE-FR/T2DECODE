@@ -70,6 +70,7 @@ import 'core/providers/search_provider.dart';
 
 // Theme & Navigation
 import 'core/theme/app_theme.dart';
+import 'core/widgets/locale_sync.dart';
 import 'core/navigation/nav_keys.dart';
 import 'core/security/identity_verification.dart';
 
@@ -159,16 +160,11 @@ class TutoDeCodeApp extends StatelessWidget {
           navigatorObservers: [AppNavigator.observer],
           initialRoute: '/',
           builder: (context, child) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (context.mounted) {
-                context
-                    .read<CoursesProvider>()
-                    .updateLocale(context.locale.languageCode);
-              }
-            });
-            return Navigator(
-              onGenerateRoute: (settings) => MaterialPageRoute(
-                builder: (context) => AppShell(child: child!),
+            return LocaleSync(
+              child: Navigator(
+                onGenerateRoute: (settings) => MaterialPageRoute(
+                  builder: (context) => AppShell(child: child!),
+                ),
               ),
             );
           },

@@ -55,7 +55,7 @@ make build-dmg       # Créer l'installateur DMG (macOS)
 
 - **Entièrement hors ligne / air-gapped** : Aucune API externe. Toutes les fonctionnalités doivent fonctionner sans Internet. Ollama s'exécute localement. GhostLink fonctionne uniquement sur LAN.
 - **Aucune analyse (analytics), aucun tracking** : N'ajoutez aucune télémétrie externe ni d'appels réseau à des services tiers.
-- **Assets** : `assets/courses.json`, `assets/cheat_sheets.json`, `assets/netkit_cheat_sheets.json`, `assets/manifest.json`, `assets/asset_checksums.json`, `assets/logo.png` doivent rester cohérents avec les sommes de contrôle.
+- **Assets** : `assets/courses.tdc`, `assets/courses_{locale}.tdc`, `assets/cheat_sheets.tdc`, `assets/cheat_sheets_{locale}.tdc`, `assets/netkit_cheat_sheets.tdc`, `assets/manifest.json`, `assets/asset_checksums.json`, `assets/logo.png` doivent rester cohérents avec les sommes de contrôle. Les contenus pédagogiques utilisent le format TUTODECODE Script (`.tdc`).
 - **Multi-plateforme** : Cible Android, iOS, macOS, Windows, Linux. Évitez le code spécifique à une plateforme sans les vérifications (guards) appropriées.
 
 ## Règles de Comportement (Optimisation des Quotas)

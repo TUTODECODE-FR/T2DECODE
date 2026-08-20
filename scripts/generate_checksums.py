@@ -5,10 +5,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = [
-    ROOT / 'assets' / 'courses' / 'courses_fr.json',
-    ROOT / 'assets' / 'courses' / 'courses_en.json',
-    ROOT / 'assets' / 'cheat_sheets.json',
-    ROOT / 'assets' / 'netkit_cheat_sheets.json',
+    ROOT / 'assets' / 'courses.tdc',
+    ROOT / 'assets' / 'cheat_sheets.tdc',
+    ROOT / 'assets' / 'netkit_cheat_sheets.tdc',
     ROOT / 'assets' / 'manifest.json',
     ROOT / 'assets' / 'logo.png',
 ]

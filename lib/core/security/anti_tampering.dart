@@ -26,10 +26,9 @@ const bool _enablePhantomTelemetry = false;
 // référence et serait en confiance circulaire s'il était dans sa propre liste.
 // Son intégrité est garantie par le snapshot flutter_secure_storage.
 const List<String> _kCriticalAssets = [
-  'assets/courses/courses_fr.json',
-  'assets/courses/courses_en.json',
-  'assets/cheat_sheets.json',
-  'assets/netkit_cheat_sheets.json',
+  'assets/courses.tdc',
+  'assets/cheat_sheets.tdc',
+  'assets/netkit_cheat_sheets.tdc',
   'assets/manifest.json',
 ];
 

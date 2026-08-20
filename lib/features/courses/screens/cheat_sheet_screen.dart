@@ -6,7 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/core/widgets/tdc_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:tutodecode/features/courses/data/cheat_sheet_categories.dart';
 import 'package:tutodecode/features/courses/data/cheat_sheet_repository.dart';
+import 'package:tutodecode/features/courses/data/cheat_sheet_style.dart';
 
 class CheatSheetEntry {
   final String command, description, category;
@@ -65,11 +68,11 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
   String _selectedCategory = 'TOUT';
   List<CheatSheetEntry> _entries = [];
   bool _loading = true;
+  String? _loadedLocale;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context
           .read<ShellProvider>()
@@ -77,12 +80,23 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
     });
   }
 
-  Future<void> _loadData() async {
-    final data = await CheatSheetRepository.loadAll();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final locale = context.locale.languageCode;
+    if (_loadedLocale != locale) {
+      _loadData(locale: locale);
+    }
+  }
+
+  Future<void> _loadData({required String locale}) async {
+    setState(() => _loading = true);
+    final data = await CheatSheetRepository.loadAll(locale: locale);
     if (mounted) {
       setState(() {
         _entries = data;
         _loading = false;
+        _loadedLocale = locale;
       });
       _handleArguments();
     }
@@ -110,12 +124,8 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
           child: CircularProgressIndicator(color: TdcColors.accent));
     }
     final filtered = _entries.where((e) {
-      final matchesSearch =
-          e.command.toLowerCase().contains(_filter.toLowerCase()) ||
-              e.description.toLowerCase().contains(_filter.toLowerCase());
-      final matchesCat =
-          _selectedCategory == 'TOUT' || e.category == _selectedCategory;
-      return matchesSearch && matchesCat;
+      return CheatSheetCategories.matchesSearch(e, _filter) &&
+          CheatSheetCategories.matchesFilter(_selectedCategory, e);
     }).toList();
 
     // Tri : commandes critiques (dangerLevel=3) en tête, puis par description
@@ -141,10 +151,14 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
               : ListView.builder(
                   padding: const EdgeInsets.all(24),
                   itemCount: filtered.length,
-                  itemBuilder: (context, i) => TdcFadeSlide(
-                    delay: Duration(milliseconds: i * 25),
-                    child: _card(filtered[i]),
-                  ),
+                  itemBuilder: (context, i) {
+                    final card = _card(filtered[i]);
+                    if (i >= 12) return card;
+                    return TdcFadeSlide(
+                      delay: Duration(milliseconds: i * 20),
+                      child: card,
+                    );
+                  },
                 ),
         ),
       ],
@@ -156,21 +170,19 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
       margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFEF4444).withValues(alpha: 0.08),
+        color: TdcColors.warningDim,
         borderRadius: TdcRadius.md,
-        border:
-            Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.3)),
+        border: Border.all(color: TdcColors.warning.withValues(alpha: 0.35)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.warning_amber_rounded,
-              color: Color(0xFFEF4444), size: 18),
+          const Icon(Icons.info_outline, color: TdcColors.warning, size: 18),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              '$count commandes marquées ⚠️ Critique dans cette liste — à maîtriser avant d\'exécuter.',
+              '$count commandes sensibles dans cette liste — lisez l\'explication avant d\'exécuter.',
               style: const TextStyle(
-                  color: Color(0xFFEF4444),
+                  color: TdcColors.warning,
                   fontSize: 12,
                   fontWeight: FontWeight.w600),
             ),
@@ -181,27 +193,11 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
   }
 
   Widget _buildSearchAndFilters() {
-    final categories = [
-      'TOUT',
-      'Red Team',
-      'Blue Team',
-      'Admin Sys',
-      'Cloud',
-      'SÉCURITÉ',
-      'LINUX',
-      'WINDOWS',
-      'DOCKER',
-      'RÉSEAU',
-      'GIT'
-    ];
+    final categories = CheatSheetCategories.filterLabels;
     final totalEntries = _entries.length;
     final filteredCount = _entries.where((e) {
-      final matchesSearch = _filter.isEmpty ||
-          e.command.toLowerCase().contains(_filter.toLowerCase()) ||
-          e.description.toLowerCase().contains(_filter.toLowerCase());
-      final matchesCat =
-          _selectedCategory == 'TOUT' || e.category == _selectedCategory;
-      return matchesSearch && matchesCat;
+      return CheatSheetCategories.matchesSearch(e, _filter) &&
+          CheatSheetCategories.matchesFilter(_selectedCategory, e);
     }).length;
 
     return Container(
@@ -234,7 +230,7 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
               const SizedBox(width: 10),
               _DangerLegend(level: 2, label: 'Prudence'),
               const SizedBox(width: 10),
-              _DangerLegend(level: 3, label: 'Critique'),
+              _DangerLegend(level: 3, label: 'Sensible'),
             ],
           ),
           const SizedBox(height: 10),
@@ -275,12 +271,9 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
   }
 
   Widget _card(CheatSheetEntry e) {
-    final color = _getColor(e);
-    final dangerColor = e.dangerLevel == 3
-        ? const Color(0xFFEF4444)
-        : e.dangerLevel == 2
-            ? const Color(0xFFF59E0B)
-            : null;
+    final color = CheatSheetStyle.categoryColor(e);
+    final dangerColor =
+        e.dangerLevel >= 2 ? CheatSheetStyle.dangerColor(e.dangerLevel) : null;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
@@ -321,7 +314,8 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
                         color: color.withValues(alpha: 0.1),
                         borderRadius: TdcRadius.md,
                       ),
-                      child: Icon(_getIcon(e), color: color, size: 22),
+                      child: Icon(CheatSheetStyle.categoryIcon(e),
+                          color: color, size: 22),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -365,9 +359,8 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
                                       ),
                                       const SizedBox(width: 3),
                                       Text(
-                                        e.dangerLevel == 3
-                                            ? 'Critique'
-                                            : 'Prudence',
+                                        CheatSheetStyle.dangerLabel(
+                                            e.dangerLevel),
                                         style: TextStyle(
                                           color: dangerColor,
                                           fontSize: 10,
@@ -413,7 +406,20 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
                               ],
                             ),
                           ),
-                          // Catégorie pill
+                          if (e.detailedExplanation != null &&
+                              e.detailedExplanation!.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              e.detailedExplanation!,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: TdcColors.textTertiary,
+                                fontSize: 11,
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
                           const SizedBox(height: 6),
                           Text(
                             e.category,
@@ -439,79 +445,6 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
     );
   }
 
-  Color _getColor(CheatSheetEntry e) {
-    if (e.colorHex != null && e.colorHex!.isNotEmpty) {
-      final hex = e.colorHex!.replaceAll('#', '');
-      try {
-        return Color(int.parse('FF$hex', radix: 16));
-      } catch (_) {}
-    }
-    switch (e.category) {
-      case 'WINDOWS':
-        return const Color(0xFF00A4EF);
-      case 'MAC':
-        return const Color(0xFF999999);
-      case 'LINUX':
-        return const Color(0xFFFCC624);
-      case 'DOCKER':
-        return const Color(0xFF2496ED);
-      case 'RÉSEAU':
-        return const Color(0xFF10B981);
-      case 'GIT':
-        return const Color(0xFFF05032);
-      case 'SÉCURITÉ':
-        return const Color(0xFFEF4444);
-      default:
-        return TdcColors.accent;
-    }
-  }
-
-  IconData _getIcon(CheatSheetEntry e) {
-    if (e.iconName != null && e.iconName!.isNotEmpty) {
-      switch (e.iconName) {
-        case 'security':
-          return Icons.security;
-        case 'terminal':
-          return Icons.terminal;
-        case 'cloud':
-          return Icons.cloud;
-        case 'dns':
-          return Icons.dns;
-        case 'lock':
-          return Icons.lock;
-        case 'api':
-          return Icons.api;
-        case 'bug_report':
-          return Icons.bug_report;
-        case 'admin_panel_settings':
-          return Icons.admin_panel_settings;
-        case 'storage':
-          return Icons.storage;
-        case 'network':
-          return Icons.network_check;
-        case 'search':
-          return Icons.search;
-      }
-    }
-    switch (e.category) {
-      case 'WINDOWS':
-        return Icons.window;
-      case 'MAC':
-        return Icons.apple;
-      case 'LINUX':
-        return Icons.terminal;
-      case 'DOCKER':
-        return Icons.directions_boat;
-      case 'RÉSEAU':
-        return Icons.lan;
-      case 'GIT':
-        return Icons.merge_type;
-      case 'SÉCURITÉ':
-        return Icons.security;
-      default:
-        return Icons.code;
-    }
-  }
 }
 
 class _DangerLegend extends StatelessWidget {
@@ -519,16 +452,7 @@ class _DangerLegend extends StatelessWidget {
   final String label;
   const _DangerLegend({required this.level, required this.label});
 
-  Color get _color {
-    switch (level) {
-      case 3:
-        return const Color(0xFFEF4444);
-      case 2:
-        return const Color(0xFFF59E0B);
-      default:
-        return TdcColors.textMuted;
-    }
-  }
+  Color get _color => CheatSheetStyle.dangerColor(level);
 
   @override
   Widget build(BuildContext context) {

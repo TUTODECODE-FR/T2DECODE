@@ -4,44 +4,32 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tutodecode/core/services/tdc_parser.dart';
 import '../screens/cheat_sheet_screen.dart';
 
 class CheatSheetRepository {
   static const _userEntriesKey = 'user_cheat_entries';
 
-  static Future<List<CheatSheetEntry>> loadAll() async {
+  static Future<List<CheatSheetEntry>> loadAll({String locale = 'fr'}) async {
     final entries = <CheatSheetEntry>[];
 
-    // 1. Charger les assets JSON officiels
-    for (final asset in [
-      'assets/cheat_sheets.json',
-      'assets/netkit_cheat_sheets.json'
-    ]) {
-      try {
-        final data = await rootBundle.loadString(asset);
-        final decoded = json.decode(data);
-        if (decoded is! List) {
-          if (kDebugMode) debugPrint('Invalid format in $asset: expected List');
-          continue;
-        }
-        for (final item in decoded) {
-          if (item is! Map<String, dynamic>) continue;
-          // Validation de schéma : champs obligatoires
-          if (!_isValidEntry(item)) continue;
-          try {
-            entries.add(CheatSheetEntry.fromMap(item));
-          } catch (e) {
-            if (kDebugMode)
-              debugPrint('Skipping malformed entry in $asset: $e');
-          }
-        }
-      } catch (e) {
-        if (kDebugMode)
-          debugPrint('Error loading cheat sheets from $asset: $e');
+    if (locale != 'fr') {
+      final localized = await _loadTdcAsset(
+          'assets/cheat_sheets_$locale.tdc', entries);
+      if (localized == 0) {
+        await _loadTdcAsset('assets/cheat_sheets.tdc', entries);
       }
+      final netkitLocalized = await _loadTdcAsset(
+          'assets/netkit_cheat_sheets_$locale.tdc', entries);
+      if (netkitLocalized == 0) {
+        await _loadTdcAsset('assets/netkit_cheat_sheets.tdc', entries);
+      }
+    } else {
+      await _loadTdcAsset('assets/cheat_sheets.tdc', entries);
+      await _loadTdcAsset('assets/netkit_cheat_sheets.tdc', entries);
     }
 
-    // 2. Charger les entrées sauvegardées par l'utilisateur
+    // User-saved entries (JSON in prefs — import .tdc modules later)
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_userEntriesKey);
@@ -64,7 +52,28 @@ class CheatSheetRepository {
     return entries;
   }
 
-  /// Valide qu'une entrée possède les champs obligatoires et les types attendus.
+  static Future<int> _loadTdcAsset(
+      String asset, List<CheatSheetEntry> entries) async {
+    try {
+      final data = await rootBundle.loadString(asset);
+      final maps = parseCheatSheetsSafe(data);
+      if (maps.isEmpty) return 0;
+      var count = 0;
+      for (final item in maps) {
+        if (!_isValidEntry(item)) continue;
+        try {
+          entries.add(CheatSheetEntry.fromMap(item));
+          count++;
+        } catch (e) {
+          if (kDebugMode) debugPrint('Skipping malformed entry in $asset: $e');
+        }
+      }
+      return count;
+    } catch (_) {
+      return 0;
+    }
+  }
+
   static bool _isValidEntry(Map<String, dynamic> m) {
     final command = m['command'];
     final description = m['description'];
@@ -73,7 +82,6 @@ class CheatSheetRepository {
     return true;
   }
 
-  /// Sauvegarde une entrée "retenue" depuis un simulateur
   static Future<void> saveUserEntry({
     required String title,
     required String detail,
@@ -85,7 +93,6 @@ class CheatSheetRepository {
       final list =
           raw != null ? json.decode(raw) as List<dynamic> : <dynamic>[];
 
-      // Évite les doublons (même title + category)
       list.removeWhere((m) =>
           (m as Map<String, dynamic>)['command'] == title &&
           m['category'] == category);
@@ -106,9 +113,9 @@ class CheatSheetRepository {
     }
   }
 
-  /// Supprime toutes les entrées sauvegardées par l'utilisateur
   static Future<void> clearUserEntries() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userEntriesKey);
   }
 }
+
