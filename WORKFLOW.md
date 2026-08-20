@@ -45,6 +45,43 @@ assets/
 
 ---
 
+## Guide rapide pour un traducteur (exemple : anglais)
+
+### Étape 1 : Forker le repo T2DECODE sur GitLab
+
+Vous n’avez besoin que d’un navigateur web pour commencer.
+
+### Étape 2 : Créer un fichier `.tdc` par langue
+
+Pour traduire l’interface en anglais, créez :
+- `assets/locales/en.tdc` à partir de `assets/locales/fr.tdc`
+- `assets/courses_en.tdc` à partir de `assets/courses.tdc`
+- `assets/cheat_sheets_en.tdc` à partir de `assets/cheat_sheets.tdc`
+
+### Étape 3 : Utiliser TDC Studio App (optionnel mais recommandé)
+
+Ouvrez TDC Studio App sur votre bureau. L’assistant d’accueil explique :
+1. L’onglet **Cheat Sheets** pour les commandes.
+2. L’onglet **Locales UI** pour les textes de l’interface.
+3. L’onglet **Export** pour écrire directement dans `assets/`.
+
+Cochez **« Ne plus me montrer »** quand vous connaissez le fonctionnement.
+
+### Étape 4 : Ne traduire que les valeurs visibles
+
+Conservez intactes :
+- les identifiants de cours : `course "linux-basics"`
+- les identifiants d’entrées : `entry "ip-link-show"`
+- les clés de locale : `menu.home`, `home.banner.title`
+
+Traduisez seulement ce qui est entre guillemets après le `:`.
+
+### Étape 5 : Ouvrir une Merge Request
+
+Nommez votre branche `feat/translation-en` et décrivez ce que vous avez traduit. La CI valide la syntaxe `.tdc` automatiquement.
+
+---
+
 ## Outils recommandés
 
 | Outil | Utilisation |
