@@ -77,3 +77,14 @@ Toute IA (Codex, Antigravity, Gemini, Ollama/GhostAI, Claude, etc.) travaillant 
 - **Profil Artiste / Créateur Spotify** : https://open.spotify.com/artist/5wRfqePemm7u5R3QfCB4Cx
 - **Logo Officiel** : SVG Vectoriel transparent sans fond noir (`TDC.svg` / `TDC.png`, couleur crème `#F5EBDA`).
 - **Fichier de Référence IA Standard** : `llms.txt` à la racine des sites.
+
+## Cursor Cloud specific instructions
+
+Environnement : Ubuntu 24.04 (x64), agent cloud sans écran physique mais avec un display virtuel `:1`. Le SDK Flutter (canal `stable`) est installé dans `/opt/flutter` et ajouté au `PATH` via `~/.bashrc`. Le script de mise à jour au démarrage lance uniquement `flutter pub get` ; l'installation de Flutter et des paquets système (`clang`, `g++`/`libstdc++-14-dev`, `cmake`, `ninja-build`, `pkg-config`, `libgtk-3-dev`, `liblzma-dev`) est déjà présente dans l'image de base.
+
+- **Lint / Tests** : voir la section `## Commandes`. Les tests s'exécutent avec `flutter test --dart-define=SKIP_GOLDENS=true` (les tests golden dépendent de l'environnement et sont ignorés en CI). `flutter analyze` ne renvoie que des `info`/`warning` (non bloquants, comme en CI).
+- **Cible desktop Linux** : la cible par défaut testable ici est `Linux (desktop)`. Lancer l'app avec `DISPLAY=:1 flutter run -d linux`. Le build natif nécessite `g++`/`libstdc++-14-dev` (clang cible la toolchain GCC 14 par défaut sur Ubuntu 24.04, sinon l'édition de liens échoue sur `-lstdc++`).
+- **Gotcha trousseau (keyring)** : au premier accès au stockage sécurisé (`flutter_secure_storage`/libsecret), une boîte de dialogue GNOME « Choose password for new keyring » s'affiche et bloque l'UI. La fermer en laissant le mot de passe VIDE puis « Continue » (accepter le stockage non chiffré) pour débloquer l'application.
+- **Avertissement non fatal** : `MissingPlatformDirectoryException (Unable to get application documents directory)` apparaît au démarrage (répertoire Documents XDG absent) ; l'app se rabat sur les assets embarqués et fonctionne normalement.
+- **CMake** : si une configuration échoue, faire `flutter clean` avant de reconstruire — un cache CMake partiel peut figer `CMAKE_INSTALL_PREFIX` sur `/usr/local` et provoquer une erreur « Permission denied » à l'installation du bundle.
+- **Ollama (Ghost AI)** : optionnel et non installé. Ghost AI reste inactif sans un serveur Ollama local sur `http://localhost:11434` ; le reste de l'app (Outils, Lab, Cours, Cheat Sheets, NetKit) fonctionne 100% hors-ligne.
