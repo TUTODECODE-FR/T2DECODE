@@ -22,4 +22,25 @@ void main() {
     expect(courses.isNotEmpty, true);
     expect(courses.length, 16);
   });
+
+  test('keyword lists accept unicode and slash tokens', () {
+    const src = '''
+course "kw-test" {
+  title: "T"
+  description: "D"
+  category: security
+  level: beginner
+  duration: "1h"
+  icon: Security
+  keywords: [cybersécurité, TCP/IP, CI/CD, GitHub Actions]
+}
+''';
+    final maps = TdcParser.parse(src);
+    expect(maps.single['keywords'], [
+      'cybersécurité',
+      'TCP/IP',
+      'CI/CD',
+      'GitHub Actions',
+    ]);
+  });
 }

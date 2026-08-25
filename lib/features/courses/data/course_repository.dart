@@ -136,21 +136,15 @@ class Course {
       if (kDebugMode) debugPrint('[CourseRepository] courses.tdc not found, using JSON fallback');
     }
 
-    // JSON fallback (localized or root)
+    // JSON fallback (localized courses/, then English)
     try {
       final data = await rootBundle.loadString('assets/courses/courses_$locale.json');
       final list = json.decode(data) as List<dynamic>;
       return list.map((m) => Course.fromMap(m as Map<String, dynamic>)).toList();
     } catch (_) {
-      try {
-        final fallback = await rootBundle.loadString('assets/courses/courses_en.json');
-        final list = json.decode(fallback) as List<dynamic>;
-        return list.map((m) => Course.fromMap(m as Map<String, dynamic>)).toList();
-      } catch (_) {
-        final data = await rootBundle.loadString('assets/courses.json');
-        final list = json.decode(data) as List<dynamic>;
-        return list.map((m) => Course.fromMap(m as Map<String, dynamic>)).toList();
-      }
+      final fallback = await rootBundle.loadString('assets/courses/courses_en.json');
+      final list = json.decode(fallback) as List<dynamic>;
+      return list.map((m) => Course.fromMap(m as Map<String, dynamic>)).toList();
     }
   }
 }

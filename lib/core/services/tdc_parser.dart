@@ -380,17 +380,33 @@ class TdcParser {
   }
 
   /// Parses a bracketed list: [item1, item2, ...]
+  ///
+  /// Items may contain Unicode letters and punctuation (e.g. `cybersécurité`,
+  /// `TCP/IP`, `CI/CD`, `GitHub Actions`). Tokens are read until `,` or `]`.
+  /// ASCII-only [_parseIdent] must not be used here: Dart `\w` is ASCII by
+  /// default, which previously caused an infinite loop on accented keywords.
   List<String> _parseList() {
     _expectChar('[');
     final items = <String>[];
     _skipWhitespace();
     while (_peek() != ']' && _pos < _src.length) {
-      final item = _parseIdent();
+      final start = _pos;
+      while (_pos < _src.length) {
+        final c = _src[_pos];
+        if (c == ',' || c == ']') break;
+        _pos++;
+      }
+      final item = _src.substring(start, _pos).trim();
       if (item.isNotEmpty) items.add(item);
       _skipWhitespace();
       if (_peek() == ',') {
         _pos++;
         _skipWhitespace();
+      } else if (_pos == start) {
+        throw TdcParseError(
+          _line,
+          'Unexpected character in list: "${_peek()}"',
+        );
       }
     }
     _expectChar(']');
