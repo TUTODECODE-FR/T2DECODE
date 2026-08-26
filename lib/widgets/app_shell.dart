@@ -15,7 +15,6 @@ import '../core/theme/app_theme.dart';
 import '../core/responsive/responsive.dart';
 import '../features/courses/providers/courses_provider.dart';
 import '../features/ghost_ai/providers/ai_tutor_provider.dart';
-import '../features/tools/providers/phantom_provider.dart';
 import '../core/providers/shell_provider.dart';
 import '../core/navigation/nav_keys.dart';
 import '../core/providers/search_provider.dart';
@@ -62,11 +61,8 @@ class _AppShellState extends State<AppShell> {
         _NavItem(Icons.wifi_tethering, 'menu.ghost_link'.tr(), '/ghost-link'),
         _NavItem(
           Icons.terminal,
-          'T2C-Phantom',
+          'T2C Phantom',
           '/phantom',
-          trailing: Consumer<PhantomProvider>(
-            builder: (context, phantom, _) => _phantomDot(phantom),
-          ),
         ),
       ];
 
@@ -86,25 +82,6 @@ class _AppShellState extends State<AppShell> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: ai.isConnected ? TdcColors.info : TdcColors.textMuted,
-      ),
-    );
-  }
-
-  Widget _phantomDot(PhantomProvider phantom) {
-    if (!phantom.hasChecked) {
-      return const SizedBox(
-        width: 8,
-        height: 8,
-        child: CircularProgressIndicator(
-            strokeWidth: 1.5, color: TdcColors.textMuted),
-      );
-    }
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: phantom.isRunning ? Colors.green : TdcColors.textMuted,
       ),
     );
   }

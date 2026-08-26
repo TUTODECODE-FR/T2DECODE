@@ -76,6 +76,41 @@ APP_VERSION="1.0.1" ./scripts/build_pkg.sh
 
 ---
 
+## App Sandbox : Mac App Store vs Developer ID
+
+Les entitlements Release (`macos/Runner/Release.entitlements`) activent
+`com.apple.security.app-sandbox = true` — **obligatoire** pour le Mac App Store
+(erreur ASC `90296` sinon).
+
+| Canal | Sandbox | Fichier | Notes |
+|-------|---------|---------|-------|
+| **Mac App Store** (Archive → Distribute) | **Obligatoire `true`** | `Release.entitlements` | Signer avec *Apple Distribution* / profil Mac App Store. |
+| **Developer ID** (DMG/ZIP hors store) | Souvent retiré | même source + post-traitement | `scripts/build_macos_local.sh` **supprime** `app-sandbox` après le build pour lancer depuis le Finder sans profil d’approvisionnement embarqué. |
+| **Debug / Profile** | `true` + JIT | `DebugProfile.entitlements` | `allow-jit` uniquement hors Release MAS. |
+
+Entitlements Release (minimaux T2DECODE) :
+- `app-sandbox` — MAS
+- `network.client` — Ollama (localhost/LAN) + clients GhostLink
+- `network.server` — GhostLink (UDP 54321 + TCP 54322)
+- `files.user-selected.read-write` — `file_picker` / import modules
+
+Pas de `files.downloads.read-write`, pas de JIT/unsigned-memory en Release.
+
+Vérifier avant upload MAS :
+
+```bash
+plutil -p macos/Runner/Release.entitlements
+# "com.apple.security.app-sandbox" => 1 (true)
+
+# Après Archive, sur le .app produit :
+codesign -d --entitlements :- "…/T2DECODE.app" | grep -A1 app-sandbox
+```
+
+`project.pbxproj` : Release → `CODE_SIGN_ENTITLEMENTS = Runner/Release.entitlements` ;
+Debug/Profile → `Runner/DebugProfile.entitlements`.
+
+---
+
 ## Signature + notarisation (distribution "propre")
 
 Sans signature/notarisation, macOS peut afficher des alertes Gatekeeper.

@@ -61,3 +61,11 @@ Pour eviter l'erreur "Apple n'a pas pu confirmer...", il faut:
 3. `staple` le ticket de notarization
 
 Le workflow fait ces 3 etapes automatiquement quand les secrets macOS sont presentes.
+
+## Mac App Store vs Developer ID (sandbox)
+
+- **Mac App Store** : `macos/Runner/Release.entitlements` doit avoir
+  `com.apple.security.app-sandbox = true` (sinon ASC **90296**).
+  Details et checklist : [`docs/macos-build.md`](macos-build.md) (section App Sandbox).
+- **Developer ID / build local** : `scripts/build_macos_local.sh` retire le sandbox
+  apres compilation pour un lancement Finder sans profil d'approvisionnement MAS.

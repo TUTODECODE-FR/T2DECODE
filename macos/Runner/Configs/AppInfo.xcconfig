@@ -8,7 +8,13 @@
 PRODUCT_NAME = T2DECODE
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = org.t2decode.app
+PRODUCT_BUNDLE_IDENTIFIER = com.tutodecode.mac
+
+// Apple Developer Team (Association TUTODECODE) — survives Flutter regen via AppInfo include
+DEVELOPMENT_TEAM = TS97M57BJV
+CODE_SIGN_STYLE = Manual
+CODE_SIGNING_ALLOWED = YES
+CODE_SIGN_IDENTITY = Developer ID Application
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 T2DECODE. All rights reserved.
