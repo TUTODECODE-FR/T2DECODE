@@ -6,6 +6,37 @@ Pour la CI (GitHub Actions) et la liste des secrets, voir `docs/signing.md`.
 
 ---
 
+## Flux release macOS (récap)
+
+**Signer en local, puis envoyer l’artefact signé sur GitLab** (pas de signature dans la CI GitLab).
+
+```bash
+# 1) Build + Developer ID + notarize → dist/macos/
+export APPLE_ID="…"
+export APPLE_APP_SPECIFIC_PASSWORD="…"
+export APPLE_TEAM_ID="TS97M57BJV"   # ou NOTARY_PROFILE=…
+make sign-macos
+
+# 2) Upload GitLab Release / Generic Package
+export GITLAB_TOKEN="glpat-…"       # si glab auth expiré
+make upload-macos-gitlab
+# équivalent : TAG=v1.0.5 ./scripts/upload_macos_to_gitlab.sh
+
+# 3) Mac App Store (distinct du DMG GitLab)
+# Xcode → Archive → Organizer → Distribute → App Store Connect
+```
+
+| | **DMG GitLab** | **Mac App Store** |
+|--|----------------|-------------------|
+| Script / outil | `make sign-macos` puis `make upload-macos-gitlab` | Archive Xcode → ASC |
+| Certificat | Developer ID Application | Apple Distribution + profil MAS |
+| Sandbox | retiré par `build_macos_local.sh` | `app-sandbox = true` obligatoire |
+| Destination | `tutodecode-org/T2DECODE` Releases / Packages | App Store Connect |
+
+Détails auth / variables : [`docs/signing.md`](signing.md).
+
+---
+
 ## Prerequis
 
 - macOS + Xcode installe
@@ -115,30 +146,50 @@ Debug/Profile → `Runner/DebugProfile.entitlements`.
 
 Sans signature/notarisation, macOS peut afficher des alertes Gatekeeper.
 
-### 1) Signer (Developer ID Application)
+### Script recommandé (Developer ID → dist/macos/)
 
 ```bash
-APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
+export APPLE_ID="email@domain.tld"
+export APPLE_APP_SPECIFIC_PASSWORD="app-specific-password"
+export APPLE_TEAM_ID="TEAMID"
+# optionnel: MACOS_CERT_IDENTITY="Developer ID Application: …"
+make sign-macos
+# artefacts: dist/macos/T2DECODE.app, T2DECODE-macOS.dmg, T2DECODE-macOS.zip
+```
+
+Puis upload GitLab (pas le Mac App Store) :
+
+```bash
+export GITLAB_TOKEN="glpat-…"
+make upload-macos-gitlab
+```
+
+### Étapes manuelles (équivalent)
+
+#### 1) Signer (Developer ID Application)
+
+```bash
+APP_PATH="dist/macos/T2DECODE.app"
 codesign --force --deep --options runtime --timestamp --sign "Developer ID Application: ..." "$APP_PATH"
 codesign --verify --deep --strict --verbose=2 "$APP_PATH"
 spctl --assess --type execute --verbose "$APP_PATH"
 ```
 
-### 2) Notariser (notarytool)
+#### 2) Notariser (notarytool)
 
 ```bash
-APP_PATH="build/macos/Build/Products/Release/T2DECODE.app"
-rm -f T2DECODE-macOS.zip
-ditto -c -k --keepParent "$APP_PATH" T2DECODE-macOS.zip
+APP_PATH="dist/macos/T2DECODE.app"
+rm -f dist/macos/T2DECODE-macOS.zip
+ditto -c -k --keepParent "$APP_PATH" dist/macos/T2DECODE-macOS.zip
 
-xcrun notarytool submit T2DECODE-macOS.zip \
+xcrun notarytool submit dist/macos/T2DECODE-macOS.zip \
   --apple-id "email@domain.tld" \
   --password "app-specific-password" \
   --team-id "TEAMID" \
   --wait
 ```
 
-### 3) Staple
+#### 3) Staple
 
 ```bash
 xcrun stapler staple "$APP_PATH"

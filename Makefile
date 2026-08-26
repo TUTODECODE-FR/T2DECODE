@@ -11,7 +11,7 @@ ifeq ($(TUTODECODE_OFFICIAL_BUILD),true)
 endif
 
 
-.PHONY: help setup get build-android build-android-fdroid build-ios build-macos build-windows build-linux build-all clean clean-macos test
+.PHONY: help setup get build-android build-android-fdroid build-ios build-macos build-windows build-linux build-all clean clean-macos test sign-macos upload-macos-gitlab release-macos-local
 
 help:
 	@echo "Usage: make [target]"
@@ -24,6 +24,9 @@ help:
 	@echo "  build-android-fdroid  Build Android APK (F-Droid mode)"
 	@echo "  build-ios      Build iOS IPA (Requires macOS)"
 	@echo "  build-macos    Build macOS App (Requires macOS)"
+	@echo "  sign-macos     Build + Developer ID sign + notarize → dist/macos/"
+	@echo "  upload-macos-gitlab  Upload dist/macos/ DMG/ZIP to GitLab Release"
+	@echo "  release-macos-local  sign-macos then upload-macos-gitlab"
 	@echo "  build-windows  Build Windows EXE (Requires Windows)"
 	@echo "  build-linux    Build Linux Binary (Requires Linux)"
 	@echo "  build-all      Build for all platforms (if supported by OS)"
@@ -65,6 +68,18 @@ build-dmg: build-macos
 build-pkg: build-macos
 	@chmod +x scripts/build_pkg.sh
 	@./scripts/build_pkg.sh
+
+# Local Developer ID + notarize (GitLab DMG). Not Mac App Store.
+sign-macos: $(PUBSTAMP)
+	@chmod +x scripts/sign_notarize_macos.sh
+	@SKIP_PUB_GET=1 ./scripts/sign_notarize_macos.sh
+
+# Requires GITLAB_TOKEN (or valid glab auth). Artefacts already signed in dist/macos/.
+upload-macos-gitlab:
+	@chmod +x scripts/upload_macos_to_gitlab.sh
+	@./scripts/upload_macos_to_gitlab.sh
+
+release-macos-local: sign-macos upload-macos-gitlab
 
 build-windows-installer:
 	@echo "🪟 Pour Windows, lancez Inno Setup sur windows/installer/tutodecode.iss après le build."
