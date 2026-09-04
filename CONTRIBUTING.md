@@ -1,5 +1,18 @@
 # Contribuer à TUTODECODE
 
+## Tableau des bénévoles (source de vérité)
+
+**Avant d’ouvrir une issue ou de coder au hasard**, consulte et mets à jour le cahier des charges vivant :
+
+👉 **[VOLUNTEER_BOARD.md](./VOLUNTEER_BOARD.md)** — backlog des améliorations, statut, et colonne **Pris par** (ton pseudo GitLab/GitHub).
+
+- Claim en 4 étapes : choisir `Libre` → MR qui **ne remplit que** **Pris par** (`@username`) + `En cours` → travailler sur une branche → au merge : `Fait` + lien MR.
+- Si **Pris par** est rempli → **ne pas prendre** (discussion ou autre tâche). Soft lock **14 jours** sans activité → retour à `Libre`. Une tâche `En cours` à la fois (recommandé).
+- Une tâche = une Merge Request, avec **DCO** (`Signed-off-by`).
+- Contact : [contact@tutodecode.org](mailto:contact@tutodecode.org)
+
+Les issues GitLab restent utiles pour discuter un point précis, mais **le board est la référence** pour savoir qui fait quoi.
+
 ## Prérequis
 - Flutter SDK
 - Dart SDK
