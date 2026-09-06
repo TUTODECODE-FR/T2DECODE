@@ -5,11 +5,9 @@
 **Source de vérité** : [issues label `benevolat`](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat)  
 Index : [VOLUNTEER_BOARD.md](./VOLUNTEER_BOARD.md) · Contributeurs : [CONTRIBUTORS.md](./CONTRIBUTORS.md)
 
-1. Consulter les issues `benevolat` (ou en créer une avec ce label).
-2. Coder sur une branche dédiée.
-3. Ouvrir une **Merge Request** avec **DCO** (`Signed-off-by`).
-
-Pas de tableau markdown « Pris par » à éditer — assignee GitLab optionnel.
+1. **Proposer** : créer une issue avec `benevolat` + `wishlist|bug|proposition`.
+2. **Prendre** : branche `volunteer/prendre-<iid>` + `volunteer/claims/<iid>.md` (pseudo GitLab) + MR titrée **exactement** `prendre #<iid>` → après merge, la CI assigne l’issue (`en-cours`). Collision = pipeline rouge.
+3. **Coder** : branche dédiée + **Merge Request** avec **DCO** (`Signed-off-by`).
 
 Contact : [contact@tutodecode.org](mailto:contact@tutodecode.org)
 

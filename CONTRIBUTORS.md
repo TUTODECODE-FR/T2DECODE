@@ -4,6 +4,8 @@ Merci aux personnes qui font avancer **T2DECODE** — développement, UX, pédag
 
 Pour rejoindre : [issues `benevolat`](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat) · [VOLUNTEER_BOARD.md](./VOLUNTEER_BOARD.md) · [CONTRIBUTING.md](./CONTRIBUTING.md)
 
+Pour **prendre** une tâche : MR `prendre #<iid>` + marqueur `volunteer/claims/<iid>.md` (voir VOLUNTEER_BOARD).
+
 *Entrée ajoutée quand une première MR est mergée (ou sur demande à contact@tutodecode.org).*
 
 ## Bénévoles actifs

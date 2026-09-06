@@ -4,24 +4,53 @@
 > Label : `benevolat` (+ `wishlist` / `bug` / `proposition` selon le cas).
 
 Ce fichier est un **index** (pas un tableau à éditer à la main).  
-Pas de colonne « Pris par » — on se coordonne via les **issues** et les **Merge Requests**.
+Contributeurs : [CONTRIBUTORS.md](./CONTRIBUTORS.md).
 
-## Comment contribuer (sans édition manuelle)
+## Flux bénévole (automatisé)
 
-1. **Consulter** les [issues `benevolat`](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat).
-2. **Proposer** une idée / **signaler** un bug : créer une issue avec le label `benevolat` (et `wishlist` ou `bug`).
-3. **Coder** : branche + **Merge Request** avec DCO (`Signed-off-by`).
+### 1. Proposer une idée / un bug
 
-Assignees GitLab = travail en cours (optionnel). Fermer l’issue au merge.
+Créer une [issue GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/new) avec les labels `benevolat` + `wishlist|bug|proposition`.
+
+### 2. Prendre une tâche (`prendre #<iid>`)
+
+Anti-collision : une seule personne peut être assignee. Le CI bloque une 2ᵉ claim.
+
+1. Choisir une issue **ouverte sans assignee**.
+2. Branche `volunteer/prendre-<iid>` (ex. `volunteer/prendre-42`).
+3. Marqueur `volunteer/claims/<iid>.md` :
+
+```markdown
+username: ton-pseudo
+```
+
+4. MR titrée **exactement** `prendre #<iid>` + **DCO**.
+5. Maxime (ou un reviewer) **valide / merge**.
+
+### 3. Après le merge (automatique)
+
+Job CI `volunteer_claim_apply` sur `main` :
+
+1. détecte le claim (fichier et/ou titre) ;
+2. assigne l’issue à l’auteur ;
+3. pose `en-cours`, retire `libre` si présent.
+
+Puis coder : branche feature + MR classique.
+
+### 4. Garde anti-collision (MR)
+
+`volunteer_claim_validate` **échoue** si l’issue a déjà un **autre** assignee.
 
 ### Labels recommandés
 
 | Label | Usage |
 | :--- | :--- |
-| `benevolat` | **Obligatoire** — apparaît sur ce board |
+| `benevolat` | **Obligatoire** |
 | `wishlist` | Idée / amélioration |
 | `proposition` | Proposition communauté |
 | `bug` | Anomalie |
+| `libre` | Optionnel — retiré au claim |
+| `en-cours` | Posé automatiquement après merge du claim |
 | `P1` / `P2` / `P3` | Priorité (optionnel) |
 
 ### Contact
@@ -31,8 +60,6 @@ Association TUTODECODE — [contact@tutodecode.org](mailto:contact@tutodecode.or
 ---
 
 ## Idées de départ (à créer comme issues)
-
-Si le label `benevolat` n’a pas encore d’issues, voici des pistes (créez une issue chacune) :
 
 | ID | Priorité | Titre | Compétences |
 | :--- | :--- | :--- | :--- |
