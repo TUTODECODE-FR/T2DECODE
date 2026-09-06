@@ -1,5 +1,18 @@
 # Contribuer à TUTODECODE
 
+## Wishlist / bénévolat (Issues GitLab)
+
+**Source de vérité** : [issues label `benevolat`](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat)  
+Index : [VOLUNTEER_BOARD.md](./VOLUNTEER_BOARD.md) · Contributeurs : [CONTRIBUTORS.md](./CONTRIBUTORS.md)
+
+1. Consulter les issues `benevolat` (ou en créer une avec ce label).
+2. Coder sur une branche dédiée.
+3. Ouvrir une **Merge Request** avec **DCO** (`Signed-off-by`).
+
+Pas de tableau markdown « Pris par » à éditer — assignee GitLab optionnel.
+
+Contact : [contact@tutodecode.org](mailto:contact@tutodecode.org)
+
 ## Prérequis
 - Flutter SDK
 - Dart SDK
@@ -21,8 +34,8 @@ Consultez le fichier [DCO.md](DCO.md) pour lire le certificat complet.
 
 ## Installation
 ```bash
-git clone https://github.com/TUTODECODE-FR/T2DECODE.git
-cd TUTODECODE
+git clone https://gitlab.com/tutodecode-org/T2DECODE.git
+cd T2DECODE
 make get
 ```
 
