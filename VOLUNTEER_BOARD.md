@@ -10,11 +10,13 @@ Contributeurs : [CONTRIBUTORS.md](./CONTRIBUTORS.md).
 
 ### 1. Proposer une idée / un bug
 
-Créer une [issue GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/new) avec les labels `benevolat` + `wishlist|bug|proposition`.
+[Nouvelle issue](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/new) → modèle **Proposition** ou **Bug_benevolat**  
+(labels `benevolat` + `wishlist|bug|proposition`). Le dropdown Type (Incident / Issue / Task) **n’accepte pas** de types custom sur GitLab.com : on s’appuie sur **modèles + labels**.
 
 ### 2. Prendre une tâche (`prendre #<iid>`)
 
-Anti-collision : une seule personne peut être assignee. Le CI bloque une 2ᵉ claim.
+Anti-collision : une seule personne peut être assignee. Le CI bloque une 2ᵉ claim.  
+**Ne pas** ouvrir une issue « Prendre » pour claimer — le modèle *Prendre_une_tache* renvoie ici.
 
 1. Choisir une issue **ouverte sans assignee**.
 2. Branche `volunteer/prendre-<iid>` (ex. `volunteer/prendre-42`).
@@ -24,14 +26,20 @@ Anti-collision : une seule personne peut être assignee. Le CI bloque une 2ᵉ c
 username: ton-pseudo
 ```
 
-4. MR titrée **exactement** `prendre #<iid>` + **DCO**.
-5. Maxime (ou un reviewer) **valide / merge**.
+4. MR titrée **exactement** `prendre #<iid>` + **DCO** (modèle MR **Prendre** recommandé).
+5. Maxime (ou un reviewer) **valide / merge** la MR claim.
 
 ### 3. Après le merge (automatique)
 
+| Merge de… | Effet |
+| :--- | :--- |
+| Issue / discussion « Proposition » | ❌ ne réserve pas la tâche |
+| MR `prendre #N` (titre +/ou `volunteer/claims/`) | ✅ CI assigne + `en-cours` |
+| MR de **code** | ✅ ferme l’issue (livraison) |
+
 Job CI `volunteer_claim_apply` sur `main` :
 
-1. détecte le claim (fichier et/ou titre) ;
+1. détecte le claim (fichier et/ou titre) — distinct des MR de code ;
 2. assigne l’issue à l’auteur ;
 3. pose `en-cours`, retire `libre` si présent.
 

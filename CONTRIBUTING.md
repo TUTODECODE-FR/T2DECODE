@@ -5,8 +5,8 @@
 **Source de vérité** : [issues label `benevolat`](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat)  
 Index : [VOLUNTEER_BOARD.md](./VOLUNTEER_BOARD.md) · Contributeurs : [CONTRIBUTORS.md](./CONTRIBUTORS.md)
 
-1. **Proposer** : créer une issue avec `benevolat` + `wishlist|bug|proposition`.
-2. **Prendre** : branche `volunteer/prendre-<iid>` + `volunteer/claims/<iid>.md` (pseudo GitLab) + MR titrée **exactement** `prendre #<iid>` → après merge, la CI assigne l’issue (`en-cours`). Collision = pipeline rouge.
+1. **Proposer** : modèle d’issue **Proposition** ou **Bug_benevolat** (labels `benevolat` + `proposition`/`wishlist` ou `bug`). Le menu Type (Incident / Issue / Task) n’est **pas** personnalisable sur GitLab.com — on utilise modèles + labels. Type **Task** optionnel pour le suivi.
+2. **Prendre** : **pas** une issue « Prendre » — branche `volunteer/prendre-<iid>` + `volunteer/claims/<iid>.md` + MR titrée **exactement** `prendre #<iid>` (modèle MR **Prendre**) → après merge de **cette** MR, la CI assigne (`en-cours`). Collision = pipeline rouge. Merger une Proposition **n’assigne pas** ; la MR de code ferme l’issue.
 3. **Coder** : branche dédiée + **Merge Request** avec **DCO** (`Signed-off-by`).
 
 Contact : [contact@tutodecode.org](mailto:contact@tutodecode.org)
