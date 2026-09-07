@@ -40,13 +40,7 @@ if [[ ! -f "assets/logo.png" ]]; then
 fi
 
 # Create necessary directories
-if [[ -L "build" ]]; then
-    TARGET=$(readlink "build")
-    echo "ℹ️ 'build' is a symlink pointing to $TARGET. Recreating target directory..."
-    mkdir -p "$TARGET"
-else
-    mkdir -p build
-fi
+mkdir -p build
 mkdir -p assets/icons
 mkdir -p assets/splash
 

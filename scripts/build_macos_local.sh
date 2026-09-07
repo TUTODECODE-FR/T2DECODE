@@ -4,14 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-# Force build/ onto a local, non-FileProvider path to avoid disallowed xattrs and build.db I/O issues.
-TMP_BUILD_ROOT="/tmp/t2decode-build"
-mkdir -p "$TMP_BUILD_ROOT"
-if [[ -e "$ROOT_DIR/build" && ! -L "$ROOT_DIR/build" ]]; then
-  ts="$(date +%Y%m%d-%H%M%S)"
-  mv "$ROOT_DIR/build" "$ROOT_DIR/build.backup-${ts}"
-fi
-ln -sfn "$TMP_BUILD_ROOT" "$ROOT_DIR/build"
+mkdir -p "$ROOT_DIR/build"
 
 if [[ "${SKIP_PUB_GET:-0}" != "1" ]]; then
   flutter pub get >/dev/null
@@ -96,12 +89,13 @@ fi
 
 # Always strip Sandbox entitlement for local CLI builds so the app launches from Finder
 # (macOS kills Sandboxed apps missing an embedded provisioning profile).
-codesign -d --entitlements :- "$APP_PATH" > "$TMP_BUILD_ROOT/entitlements.xml" 2>/dev/null || true
-if grep -q "com.apple.security.app-sandbox" "$TMP_BUILD_ROOT/entitlements.xml" 2>/dev/null; then
-  /usr/libexec/PlistBuddy -c "Delete :com.apple.security.app-sandbox" "$TMP_BUILD_ROOT/entitlements.xml" >/dev/null 2>&1 || true
+ENTITLEMENTS_TMP="$ROOT_DIR/build/.entitlements.xml"
+codesign -d --entitlements :- "$APP_PATH" > "$ENTITLEMENTS_TMP" 2>/dev/null || true
+if grep -q "com.apple.security.app-sandbox" "$ENTITLEMENTS_TMP" 2>/dev/null; then
+  /usr/libexec/PlistBuddy -c "Delete :com.apple.security.app-sandbox" "$ENTITLEMENTS_TMP" >/dev/null 2>&1 || true
   xattr -cr "$APP_PATH" 2>/dev/null || true
   xattr -cr "$APP_PATH/Contents/Frameworks" 2>/dev/null || true
-  /usr/bin/codesign --force --sign - --entitlements "$TMP_BUILD_ROOT/entitlements.xml" --timestamp=none --generate-entitlement-der "$APP_PATH" >/dev/null 2>&1 || true
+  /usr/bin/codesign --force --sign - --entitlements "$ENTITLEMENTS_TMP" --timestamp=none --generate-entitlement-der "$APP_PATH" >/dev/null 2>&1 || true
 fi
 
 if [[ "$rc" -eq 0 ]]; then
