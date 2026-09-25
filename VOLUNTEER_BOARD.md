@@ -44,7 +44,7 @@ Guide détaillé : [CONTRIBUTING.md](./CONTRIBUTING.md)
 | ID | Statut | Priorité | Titre | Description courte | Compétences | Pris par | MR / Lien |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | T2D-001 | Libre | P1 | Aligner CONTRIBUTING sur GitLab | Remplacer le `git clone` GitHub obsolète par l’URL GitLab canonique et documenter `make get` / vérifs Flutter. | Markdown, Git | — | — |
-| T2D-002 | Libre | P1 | HybridAssetLoader : JSON bundlés | Charger aussi `assets/translations/{en,es,…}.json` depuis le bundle (aujourd’hui seul `fr.json` + override Documents). | Flutter/Dart, i18n | — | — |
+| T2D-002 | En cours | P1 | HybridAssetLoader : JSON bundlés | Charger aussi `assets/translations/{en,es,…}.json` depuis le bundle (aujourd’hui seul `fr.json` + override Documents). | Flutter/Dart, i18n | @queijo.ch | — |
 | T2D-003 | Libre | P1 | i18n écran Accueil | Remplacer les chaînes FR en dur de `home_screen.dart` (`Mes parcours`, `Tuteur IA`, etc.) par des clés `.tr()`. | Flutter, FR/EN | — | — |
 | T2D-004 | Libre | P2 | Compléter traductions ES/DE/AR/ZH | Aligner les ~21 clés manquantes (`home.*`) sur `fr.json` / `en.json` dans `assets/translations/`. | Traduction, JSON | — | — |
 | T2D-005 | Libre | P2 | Accessibilité shell & navigation | Ajouter `Semantics` / labels sur la barre latérale, nav mobile et actions principales (`app_shell`, home). | Flutter, a11y | — | — |
