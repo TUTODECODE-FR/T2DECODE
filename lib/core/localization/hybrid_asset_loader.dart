@@ -23,7 +23,19 @@ class HybridAssetLoader extends AssetLoader {
       return baseTranslations;
     }
 
-    // 2. Tenter de charger la langue cible depuis le dossier local de l'utilisateur
+    // 2. Charger le fichier groupé de la langue demandée (ex: en.json) depuis les assets
+    try {
+      final String langStr =
+          await rootBundle.loadString('$path/${locale.languageCode}.json');
+      final Map<String, dynamic> langTranslations =
+          jsonDecode(langStr) as Map<String, dynamic>;
+      _mergeDeep(baseTranslations, langTranslations);
+    } catch (e) {
+      debugPrint(
+          '[HybridAssetLoader] Pas de fichier groupé pour ${locale.languageCode}: $e');
+    }
+
+    // 3. Tenter de charger la langue cible depuis le dossier local de l'utilisateur
     try {
       final docDir = await getApplicationDocumentsDirectory();
       final targetFile = File(
