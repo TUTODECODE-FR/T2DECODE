@@ -1,0 +1,13 @@
+# Propriété de l'Association TUTODECODE
+# Les relectures techniques sont assignées au compte administrateur agissant pour l'association
+* @itswinancher
+
+# ── Zone bénévole en libre-service ──────────────────────────────────────────
+# Entrées SANS propriétaire : dans CODEOWNERS, la dernière règle qui matche
+# l'emporte — ces fichiers ne requièrent donc PAS l'approbation de
+# @itswinancher. Le gardien de cette zone = la CI (job volunteer_claim_validate
+# + bot planifié volunteer_claim_bot). Tout autre fichier (code, CI, docs de
+# gouvernance) reste soumis à la relecture mainteneur.
+VOLUNTEER_BOARD.md
+CONTRIBUTORS.md
+volunteer/claims/
