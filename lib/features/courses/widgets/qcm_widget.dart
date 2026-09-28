@@ -241,10 +241,10 @@ class _QcmWidgetState extends State<QcmWidget> {
                 ),
               ),
               Text(
-                'SÉRIE EN COURS : $_score REUSSI',
+                'Série : $_score/${_activeQuestions.length}',
                 style: const TextStyle(
                     color: TdcColors.textMuted,
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w600),
               ),
             ],

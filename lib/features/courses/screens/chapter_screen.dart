@@ -9,9 +9,6 @@ import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 import '../widgets/qcm_widget.dart';
-import 'package:tutodecode/features/courses/practice/course_practice_engine.dart';
-import 'package:tutodecode/features/courses/data/course_repository.dart';
-import 'package:tutodecode/features/courses/practice/widgets/practice_flow.dart';
 import 'package:tutodecode/utils/markdown_sanitizer.dart';
 
 class ChapterScreen extends StatefulWidget {
@@ -107,17 +104,21 @@ class _ChapterScreenState extends State<ChapterScreen> {
                 ],
               ),
               const Spacer(),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/ghost_ai');
-                },
-                icon: const Icon(Icons.smart_toy_outlined, size: 14, color: Colors.black),
-                label: const Text('POSER UNE QUESTION À GHOST AI', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TdcColors.accent,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              Flexible(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/ghost_ai');
+                  },
+                  icon: const Icon(Icons.smart_toy_outlined, size: 14, color: Colors.black),
+                  label: const Text('Poser une question à Ghost AI',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TdcColors.accent,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                    elevation: 0,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
                 ),
               ),
             ],
@@ -155,7 +156,10 @@ class _ChapterScreenState extends State<ChapterScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 8,
+                          runSpacing: 8,
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -174,29 +178,30 @@ class _ChapterScreenState extends State<ChapterScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.greenAccent.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.3)),
-                              ),
-                              child: const Text(
-                                '🔥 MODE INCIDENT REEL',
-                                style: TextStyle(
-                                  color: Colors.greenAccent,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
+                            if (course.keywords.any((k) => k.toLowerCase().contains('incident')) ||
+                                course.id.toLowerCase().contains('incident'))
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.greenAccent.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.3)),
+                                ),
+                                child: const Text(
+                                  '🔥 MODE INCIDENT RÉEL',
+                                  style: TextStyle(
+                                    color: Colors.greenAccent,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const Spacer(),
                             Row(
-                              children: [
-                                const Icon(Icons.star, color: TdcColors.accent, size: 14),
-                                const SizedBox(width: 4),
-                                const Text('+50 XP', style: TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 12)),
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Icons.star, color: TdcColors.accent, size: 14),
+                                SizedBox(width: 4),
+                                Text('+50 XP', style: TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 12)),
                               ],
                             ),
                           ],
@@ -216,6 +221,46 @@ class _ChapterScreenState extends State<ChapterScreen> {
                           'Module : ${course.title} • Durée estimée : ${chapter.duration.isNotEmpty ? chapter.duration : "15 min"}',
                           style: const TextStyle(color: TdcColors.textMuted, fontSize: 12),
                         ),
+                        if (course.author != null && course.author!.isNotEmpty) ...[
+                          const SizedBox(height: 10),
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 6,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.person_outline, size: 13, color: TdcColors.accent),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    'Auteur : ${course.author}',
+                                    style: const TextStyle(
+                                      color: TdcColors.accent,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (course.signedBy != null && course.signedBy!.isNotEmpty)
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.verified_outlined, size: 13, color: Colors.greenAccent),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      'Signé : ${course.signedBy}',
+                                      style: const TextStyle(
+                                        color: Colors.greenAccent,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -223,55 +268,8 @@ class _ChapterScreenState extends State<ChapterScreen> {
 
                   // Contenu Markdown du chapitre
                   _markdown(chapter.content),
-                  const SizedBox(height: 36),
 
-                  // Carte Résumé "À Retenir Absolument"
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0F0F16),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: TdcColors.accent.withValues(alpha: 0.05),
-                          blurRadius: 12,
-                          spreadRadius: 1,
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: const [
-                            Icon(Icons.workspace_premium, color: TdcColors.accent, size: 22),
-                            SizedBox(width: 10),
-                            Text(
-                              '💡 FICHE RÉFLEXE : À RETENIR ABSOLUMENT',
-                              style: TextStyle(
-                                color: TdcColors.accent,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 13,
-                                letterSpacing: 1.1,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        const Text(
-                          '• La pratique vaut 100x la théorie : testez immédiatement les commandes dans la VM Bac à Sable.\n'
-                          '• En cas de doute ou de question technique, interrogez Ghost AI (assistant local) en 1 clic.\n'
-                          '• Validez le défi QCM ci-dessous pour valider vos 50 XP et faire progresser votre niveau !',
-                          style: TextStyle(color: TdcColors.textPrimary, fontSize: 13, height: 1.7),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 36),
-
-                  _practiceSection(course, chapter),
-                  if (chapter.quiz != null) ...[
+                  if (chapter.quiz != null && chapter.quiz!.isNotEmpty) ...[
                     const SizedBox(height: 36),
                     const TdcSectionTitle('QUIZ & DÉFI XP'),
                     const SizedBox(height: 16),
@@ -302,115 +300,9 @@ class _ChapterScreenState extends State<ChapterScreen> {
     );
   }
 
-  Widget _practiceSection(Course course, CourseChapter chapter) {
-    final links = CoursePracticeEngine.recommend(course, chapter);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const TdcSectionTitle('PRATIQUE (VIRTUEL)'),
-        const SizedBox(height: 12),
-        const Text(
-          "Teste le concept dans un environnement contrôlé (simulation locale) ou ouvre directement un lab.",
-          style:
-              TextStyle(color: TdcColors.textMuted, fontSize: 12, height: 1.35),
-        ),
-        const SizedBox(height: 14),
-        ...links.map((l) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: TdcCard(
-                padding: const EdgeInsets.all(14),
-                onTap: l.labArgs != null ? () => _openLab(l.labArgs!) : null,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(l.icon, size: 18, color: l.tint),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l.title,
-                                style: const TextStyle(
-                                  color: TdcColors.textPrimary,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                l.subtitle,
-                                style: const TextStyle(
-                                  color: TdcColors.textMuted,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (l.labArgs != null)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: l.tint.withValues(alpha: 0.10),
-                              border: Border.all(
-                                  color: l.tint.withValues(alpha: 0.25)),
-                            ),
-                            child: Text(
-                              'Ouvrir le lab',
-                              style: TextStyle(
-                                  color: l.tint,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    PracticeFlowDiagram(nodes: l.flow),
-                    if (l.embeddedSandbox != null) ...[
-                      const SizedBox(height: 12),
-                      l.embeddedSandbox!,
-                    ],
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        if (l.labArgs != null)
-                          OutlinedButton.icon(
-                            onPressed: () => _openLab(l.labArgs!),
-                            icon: const Icon(Icons.science_outlined, size: 16),
-                            label: const Text('Lab'),
-                          ),
-                        if (l.toolRoute != null)
-                          OutlinedButton.icon(
-                            onPressed: () =>
-                                Navigator.pushNamed(context, l.toolRoute!),
-                            icon: const Icon(Icons.handyman_outlined, size: 16),
-                            label: const Text('Outil'),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )),
-      ],
-    );
-  }
-
-  void _openLab(Map<String, dynamic> args) {
-    Navigator.pushNamed(context, '/lab', arguments: args);
-  }
-
   Widget _markdown(String content) {
     return MarkdownBody(
       data: MarkdownSanitizer.sanitize(content),
-      // Sécurité : Désactiver les images distantes et les liens non-contrôlés
       imageBuilder: (uri, title, alt) => Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -428,32 +320,6 @@ class _ChapterScreenState extends State<ChapterScreen> {
           ],
         ),
       ),
-      onTapLink: (text, href, title) {
-        if (href != null) {
-          final uri = Uri.tryParse(href);
-          if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
-            showDialog(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: const Text('Lien externe'),
-                content: Text('Voulez-vous ouvrir ce lien externe ?\n\n$href'),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Annuler')),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        // On pourrait utiliser launchUrl ici si on veut autoriser
-                      },
-                      child: const Text('Ouvrir',
-                          style: TextStyle(color: TdcColors.danger))),
-                ],
-              ),
-            );
-          }
-        }
-      },
       styleSheet: MarkdownStyleSheet(
         p: const TextStyle(
             color: TdcColors.textPrimary, fontSize: 15, height: 1.7),
@@ -500,6 +366,14 @@ class _ChapterScreenState extends State<ChapterScreen> {
             color: TdcColors.accent, fontWeight: FontWeight.bold),
         tableBody: const TextStyle(color: TdcColors.textPrimary),
         tableBorder: TableBorder.all(color: TdcColors.border),
+        horizontalRuleDecoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: TdcColors.accent.withValues(alpha: 0.2),
+              width: 1,
+            ),
+          ),
+        ),
       ),
     );
   }

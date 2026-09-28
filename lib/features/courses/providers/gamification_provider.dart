@@ -441,11 +441,11 @@ class GamificationProvider with ChangeNotifier {
   }
 
   String _calculateRank(int level) {
-    if (level >= 15) return 'Légende';
-    if (level >= 12) return 'Master';
-    if (level >= 8) return 'Expert';
-    if (level >= 4) return 'Apprenti';
-    return 'Novice';
+    if (level >= 15) return 'Fantôme';
+    if (level >= 12) return 'Root';
+    if (level >= 8) return 'Sysadmin';
+    if (level >= 4) return 'Opérateur';
+    return 'Recrue';
   }
 
   Future<void> _updateAchievements(String chapterKey) async {

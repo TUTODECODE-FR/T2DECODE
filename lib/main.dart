@@ -166,10 +166,14 @@ class TutoDeCodeApp extends StatelessWidget {
                     .updateLocale(context.locale.languageCode);
               }
             });
-            return Navigator(
-              onGenerateRoute: (settings) => MaterialPageRoute(
-                builder: (context) => AppShell(child: child!),
-              ),
+            return Overlay(
+              key: ValueKey(child),
+              initialEntries: [
+                OverlayEntry(
+                  builder: (context) =>
+                      AppShell(child: child ?? const SizedBox.shrink()),
+                ),
+              ],
             );
           },
           onGenerateRoute: (settings) {

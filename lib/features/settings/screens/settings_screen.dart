@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_selector/file_selector.dart';
@@ -11,6 +12,8 @@ import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/responsive/responsive.dart';
 import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 import 'package:tutodecode/core/services/backup_service.dart';
+import 'package:tutodecode/core/services/module_service.dart';
+import 'package:tutodecode/core/services/tdc_dsl_parser.dart';
 import './security_diagnostic_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -280,6 +283,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         const SizedBox(height: 12),
         _buildActionTile(
+          title: 'Importer un cours / module (.tdc, .json)',
+          subtitle:
+              'Importer un cours créé avec TDC-SDK (.tdc) ou un module externe',
+          icon: Icons.library_books,
+          onTap: _importEncryptedBackup,
+        ),
+        const SizedBox(height: 12),
+        _buildActionTile(
           title: 'Export des données',
           subtitle:
               'Exporter progression + réglages en fichier chiffré (AES) avec mot de passe',
@@ -328,7 +339,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _importEncryptedBackup() async {
     final file = await openFile(acceptedTypeGroups: [
-      const XTypeGroup(label: 'TutoDeCode Backup', extensions: ['tdc']),
+      const XTypeGroup(label: 'Fichiers TutoDeCode (.tdc, .json)', extensions: ['tdc', 'json']),
     ]);
     if (file == null) return;
 
@@ -338,37 +349,102 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Fichier de sauvegarde invalide (taille).'),
+            content: Text('Fichier invalide (taille vide ou supérieure à 10 Mo).'),
             backgroundColor: TdcColors.danger),
       );
       return;
     }
 
-    final password = await _promptPassword(
-      title: 'Mot de passe de sauvegarde',
-      confirm: false,
-    );
-    if (password == null || password.isEmpty) return;
-
     try {
       final bytes = await file.readAsBytes();
-      await _backup.importEncrypted(bytes: bytes, password: password);
+      final text = utf8.decode(bytes, allowMalformed: true).trim();
 
+      // 1. Détection automatique: Cours au format TDC DSL (.tdc créé par TDC-SDK)
+      if (TdcDslParser.isTdcDsl(text)) {
+        final moduleService = ModuleService();
+        final course = await moduleService.importModuleContent(text);
+        if (!mounted) return;
+        final courses = context.read<CoursesProvider>();
+        await courses.reload();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Cours "${course.title}" importé avec succès dans vos modules !'),
+            backgroundColor: TdcColors.success,
+          ),
+        );
+        return;
+      }
+
+      // 2. Détection automatique: Module de cours JSON ou Backup JSON
+      dynamic jsonDecoded;
+      try {
+        jsonDecoded = jsonDecode(text);
+      } catch (_) {}
+
+      if (jsonDecoded is Map) {
+        // Cas A: Module de cours JSON brut
+        if (jsonDecoded['id'] != null &&
+            jsonDecoded['content'] is List &&
+            jsonDecoded['header'] == null &&
+            jsonDecoded['settings'] == null) {
+          final moduleService = ModuleService();
+          final course = await moduleService.importModuleContent(text);
+          if (!mounted) return;
+          final courses = context.read<CoursesProvider>();
+          await courses.reload();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Cours "${course.title}" importé avec succès !'),
+              backgroundColor: TdcColors.success,
+            ),
+          );
+          return;
+        }
+
+        // Cas B: Sauvegarde chiffrée (TDCB)
+        if (jsonDecoded['header'] is Map &&
+            jsonDecoded['header']['magic'] == 'TDCB') {
+          final password = await _promptPassword(
+            title: 'Mot de passe de sauvegarde',
+            confirm: false,
+          );
+          if (password == null || password.isEmpty) return;
+
+          await _backup.importEncrypted(bytes: bytes, password: password);
+          if (!mounted) return;
+          final settings = context.read<SettingsProvider>();
+          final courses = context.read<CoursesProvider>();
+          await settings.reload();
+          await courses.reload();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Sauvegarde restaurée avec succès.')),
+          );
+          return;
+        }
+      }
+
+      // Cas C: Tentative de restauration chiffrée standard
+      final password = await _promptPassword(
+        title: 'Mot de passe de sauvegarde',
+        confirm: false,
+      );
+      if (password == null || password.isEmpty) return;
+
+      await _backup.importEncrypted(bytes: bytes, password: password);
       if (!mounted) return;
       final settings = context.read<SettingsProvider>();
       final courses = context.read<CoursesProvider>();
       await settings.reload();
       await courses.reload();
-
-      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sauvegarde restaurée.')),
+        const SnackBar(content: Text('Sauvegarde restaurée avec succès.')),
       );
     } catch (e) {
       if (!mounted) return;
+      final errorMsg = e.toString().replaceFirst('Exception: ', '');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('Import impossible: $e'),
+            content: Text('Import impossible : $errorMsg'),
             backgroundColor: TdcColors.danger),
       );
     }
