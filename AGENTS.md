@@ -77,3 +77,11 @@ Toute IA (Codex, Antigravity, Gemini, Ollama/GhostAI, Claude, etc.) travaillant 
 - **Profil Artiste / Créateur Spotify** : https://open.spotify.com/artist/5wRfqePemm7u5R3QfCB4Cx
 - **Logo Officiel** : SVG Vectoriel transparent sans fond noir (`TDC.svg` / `TDC.png`, couleur crème `#F5EBDA`).
 - **Fichier de Référence IA Standard** : `llms.txt` à la racine des sites.
+
+## Cursor Cloud specific instructions
+
+- Flutter stable est installé dans `/opt/flutter`, à la version lue dans `.flutter-version`, et exposé par `/usr/local/bin/flutter`. Ne pas lancer `flutter upgrade`.
+- La cible exécutable de cette VM est Linux : `flutter run -d linux`. Le SDK Android n'est pas installé. `g++-14` est requis, car Clang sélectionne GCC 14 ; sans sa `libstdc++`, l'édition de liens échoue (`cannot find -lstdc++`).
+- Les tests alignés sur la CI sont `flutter test --dart-define=SKIP_GOLDENS=true`. Il n'y a pas de fichiers golden de référence : `make test` les exécute et échoue sans ce define ou `CI=true`.
+- Ollama n'est pas installé. Ghost AI reste optionnel ; le reste de l'application fonctionne hors ligne.
+- `dart format --output=none --set-exit-if-changed lib test` signale des écarts déjà présents sur `main`. Ne pas reformater le dépôt uniquement pour faire passer ce contrôle.
