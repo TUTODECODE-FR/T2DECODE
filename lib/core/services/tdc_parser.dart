@@ -285,12 +285,28 @@ class TdcParser {
     _pos++;
   }
 
+  bool _isIdentChar(int code) {
+    if ((code >= 48 && code <= 57) ||
+        (code >= 65 && code <= 90) ||
+        (code >= 97 && code <= 122) ||
+        code == 95 || // _
+        code == 45 || // -
+        code == 47) { // /  (TCP/IP, CI/CD)
+      return true;
+    }
+    // Accented keywords such as "réseau" or "déploiement".
+    if (code > 127) {
+      return RegExp(r'^\p{L}$', unicode: true).hasMatch(String.fromCharCode(code));
+    }
+    return false;
+  }
+
   String _parseIdent() {
     final buf = StringBuffer();
     while (_pos < _src.length) {
-      final c = _src[_pos];
-      if (RegExp(r'[\w\-]').hasMatch(c)) {
-        buf.write(c);
+      final code = _src.codeUnitAt(_pos);
+      if (_isIdentChar(code)) {
+        buf.writeCharCode(code);
         _pos++;
       } else {
         break;
@@ -385,8 +401,15 @@ class TdcParser {
     final items = <String>[];
     _skipWhitespace();
     while (_peek() != ']' && _pos < _src.length) {
-      final item = _parseIdent();
-      if (item.isNotEmpty) items.add(item);
+      if (_peek() == '"') {
+        items.add(_parseString());
+      } else {
+        final start = _pos;
+        final item = _parseIdent();
+        if (item.isNotEmpty) items.add(item);
+        // Unexpected punctuation must not stall the lexer.
+        if (_pos == start) _pos++;
+      }
       _skipWhitespace();
       if (_peek() == ',') {
         _pos++;
