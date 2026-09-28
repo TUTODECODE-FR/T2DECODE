@@ -471,8 +471,11 @@ build_android_test:
         - macos/**/*
         - ios/**/*
       when: on_success
+    # Docs-only and volunteer-claim MRs do not match the paths above.
+    # rules:when:manual is blocking unless allow_failure is true, so a
+    # fallback manual job never finishes and fails "Pipelines must succeed".
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: manual
+      when: never
 
 build_linux_test:
   stage: build-test
@@ -499,8 +502,10 @@ build_linux_test:
         - macos/**/*
         - ios/**/*
       when: on_success
+    # Same as build_android_test: do not leave a blocking manual job
+    # when the merge request does not touch build inputs.
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: manual
+      when: never
 
 # === STAGE: VOLUNTEER CLAIM APPLY (main after merge of prendre #N) ===
 volunteer_claim_apply:
