@@ -66,9 +66,8 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted) return;
       if (mismatched.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content:
-                Text('Alerte intégrité: certains assets semblent modifiés.'),
+          SnackBar(
+            content: Text('home.integrity_alert'.tr()),
             backgroundColor: TdcColors.danger,
           ),
         );
@@ -247,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: TdcColors.textPrimary,
                   size: TdcAdaptive.icon(context, 18)),
               SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
-              Text('Mes parcours',
+              Text('home.sections.my_courses'.tr(),
                   style: TextStyle(
                       color: TdcColors.textPrimary,
                       fontSize: TdcText.h3(context),
@@ -310,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: TdcAdaptive.space(context, 32)),
           ElevatedButton(
             onPressed: () => AppNavigator.pushNamed('/tools'),
-            child: const Text('Explorer'),
+            child: Text('home.banner.explore'.tr()),
           ),
         ],
       ),
@@ -321,14 +320,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('T2DECODE',
+        Text('app.title'.tr(),
             style: TextStyle(
                 color: TdcColors.textPrimary,
                 fontSize: TdcText.h2(context),
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.4)),
         const SizedBox(height: 6),
-        Text('Apprendre. Construire. Comprendre.',
+        Text('home.tagline'.tr(),
             style: TextStyle(
                 color: TdcColors.textMuted,
                 fontSize: TdcText.caption(context))),
@@ -698,7 +697,7 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text('Progression globale',
+            Text('home.progress.overall'.tr(),
                 style: TextStyle(
                     color: TdcColors.textPrimary,
                     fontWeight: FontWeight.bold,
@@ -721,7 +720,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: TdcAdaptive.space(context, 6)),
           Text(
-              '${prov.completedCount} sur ${prov.totalChaptersCount} chapitres',
+              'home.progress.chapters_ratio'.tr(namedArgs: {
+                'completed': '${prov.completedCount}',
+                'total': '${prov.totalChaptersCount}',
+              }),
               style: TextStyle(
                   color: TdcColors.textMuted,
                   fontSize: TdcText.caption(context))),
@@ -743,7 +745,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(width: TdcAdaptive.space(context, TdcSpacing.sm)),
               Flexible(
                 child: Text(
-                  'Parcours informatiques',
+                  'home.sections.courses'.tr(),
                   style: TextStyle(
                       color: TdcColors.textPrimary,
                       fontSize: TdcText.h2(context),
@@ -949,7 +951,11 @@ class _HomeScreenState extends State<HomeScreen> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis),
         SizedBox(height: TdcAdaptive.space(context, 5)),
-        Text('${course.category.toUpperCase()} · $total chapitres',
+        Text(
+            'home.sections.course_meta'.tr(namedArgs: {
+              'category': course.category.toUpperCase(),
+              'count': '$total',
+            }),
             style: TextStyle(
                 color: TdcColors.textMuted,
                 fontSize: TdcText.caption(context),
@@ -1035,7 +1041,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis),
               SizedBox(height: TdcAdaptive.space(context, 4)),
-              Text('${course.category.toUpperCase()} · $total chapitres',
+              Text(
+                  'home.sections.course_meta'.tr(namedArgs: {
+                    'category': course.category.toUpperCase(),
+                    'count': '$total',
+                  }),
                   style: TextStyle(
                       color: TdcColors.textMuted,
                       fontSize: TdcText.caption(context))),
@@ -1247,7 +1257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 size: TdcAdaptive.icon(context, 16),
                 color: running ? TdcColors.info : TdcColors.textMuted),
             SizedBox(width: TdcAdaptive.space(context, 8)),
-            Text('Tuteur IA',
+            Text('home.ai_panel.title'.tr(),
                 style: TextStyle(
                     color: TdcColors.textPrimary,
                     fontWeight: FontWeight.bold,
@@ -1281,7 +1291,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ElevatedButton.icon(
                 onPressed: () => Navigator.pushNamed(context, '/ai'),
                 icon: Icon(Icons.chat, size: TdcAdaptive.icon(context, 14)),
-                label: Text('Ouvrir le Chat',
+                label: Text('home.ai_panel.open_chat'.tr(),
                     style: TextStyle(fontSize: TdcText.button(context))),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: TdcColors.accent,
@@ -1291,7 +1301,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
           if (!running) ...[
-            Text('Assistant IA local optionnel.',
+            Text('home.ai_panel.optional'.tr(),
                 style: TextStyle(
                     color: TdcColors.textMuted,
                     fontSize: TdcText.caption(context),
@@ -1302,7 +1312,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: OutlinedButton.icon(
                 onPressed: () => Navigator.pushNamed(context, '/ai'),
                 icon: Icon(Icons.settings, size: TdcAdaptive.icon(context, 14)),
-                label: Text('Configurer',
+                label: Text('home.ai_panel.configure'.tr(),
                     style: TextStyle(fontSize: TdcText.button(context))),
                 style: OutlinedButton.styleFrom(
                     foregroundColor: TdcColors.textSecondary,
@@ -1341,7 +1351,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     size: TdcAdaptive.icon(context, 16),
                     color: active ? TdcColors.accent : TdcColors.textMuted),
                 SizedBox(width: TdcAdaptive.space(context, 8)),
-                Text('Ghost Link',
+                Text('home.ghost_link.title'.tr(),
                     style: TextStyle(
                         color: TdcColors.textPrimary,
                         fontWeight: FontWeight.bold,
@@ -1379,7 +1389,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.pushNamed(context, '/ghost-link'),
                     icon: Icon(Icons.chat_bubble_outline,
                         size: TdcAdaptive.icon(context, 14)),
-                    label: Text('Ouvrir le Chat',
+                    label: Text('home.ghost_link.open_chat'.tr(),
                         style: TextStyle(fontSize: TdcText.button(context))),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: TdcColors.accent,
@@ -1390,7 +1400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
               if (!active) ...[
-                Text('Chat P2P chiffré sur votre réseau local.',
+                Text('home.ghost_link.desc'.tr(),
                     style: TextStyle(
                         color: TdcColors.textMuted,
                         fontSize: TdcText.caption(context),
@@ -1403,7 +1413,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.pushNamed(context, '/ghost-link'),
                     icon: Icon(Icons.wifi_tethering,
                         size: TdcAdaptive.icon(context, 14)),
-                    label: Text('Démarrer',
+                    label: Text('home.ghost_link.start'.tr(),
                         style: TextStyle(fontSize: TdcText.button(context))),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: TdcColors.accent,
@@ -1593,7 +1603,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: TdcColors.textPrimary,
                 fontSize: TdcText.scale(context, 48),
                 fontWeight: FontWeight.bold)),
-        Text('${prov.completedCount} sur ${prov.totalChaptersCount} chapitres',
+        Text(
+            'home.progress.chapters_ratio'.tr(namedArgs: {
+              'completed': '${prov.completedCount}',
+              'total': '${prov.totalChaptersCount}',
+            }),
             style: TextStyle(
                 color: TdcColors.textSecondary,
                 fontSize: TdcText.caption(context))),

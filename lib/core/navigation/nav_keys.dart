@@ -87,8 +87,17 @@ class AppRouteObserver extends NavigatorObserver {
         // Use post frame callback to avoid issues with build/layout phase
         WidgetsBinding.instance.addPostFrameCallback((_) {
           try {
-            Provider.of<ShellProvider>(context, listen: false)
-                .setActiveRoute(name);
+            final shell = Provider.of<ShellProvider>(context, listen: false);
+            if (name == '/') {
+              shell.updateShell(
+                title: 'Accueil',
+                showBackButton: false,
+                actions: [],
+                activeRoute: '/',
+              );
+            } else {
+              shell.setActiveRoute(name);
+            }
           } catch (e) {
             debugPrint('ShellProvider update failed: $e');
           }

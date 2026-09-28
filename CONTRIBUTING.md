@@ -21,9 +21,10 @@ Consultez le fichier [DCO.md](DCO.md) pour lire le certificat complet.
 
 ## Installation
 ```bash
-git clone https://github.com/TUTODECODE-FR/T2DECODE.git
-cd TUTODECODE
-make get
+git clone https://gitlab.com/tutodecode-org/T2DECODE.git
+cd T2DECODE
+make setup   # vérifie que Flutter/Dart/Ollama sont bien installés
+make get     # installe les dépendances du projet
 ```
 
 ## Vérifications avant PR
