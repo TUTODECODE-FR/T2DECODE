@@ -1,5 +1,9 @@
-import java.util.Properties
+import java.io.File
 import java.io.FileInputStream
+import java.util.Properties
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
 
 plugins {
     id("com.android.application")
@@ -63,9 +67,14 @@ android {
             } else if (!isFdroidBuild) {
                 signingConfig = signingConfigs.getByName("debug")
             }
-            // Disable minification to prevent R8 ProGuard errors during release build
-            isMinifyEnabled = false
-            isShrinkResources = false
+            // R8 drops Flutter's unused Play Store deferred-component classes.
+            // F-Droid rejects the APK while those type references stay in the dex.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -78,6 +87,64 @@ android {
                 (output as com.android.build.gradle.internal.api.ApkVariantOutputImpl).versionCodeOverride = variant.versionCode * 10 + abiVersionCode
             }
         }
+    }
+}
+
+configurations.configureEach {
+    exclude(group = "com.google.android.play", module = "core")
+    exclude(group = "com.google.android.play", module = "core-common")
+    exclude(group = "com.google.android.play", module = "feature-delivery")
+    exclude(group = "com.google.android.play", module = "app-update")
+    exclude(group = "com.google.android.play", module = "review")
+}
+
+// PlayStoreDeferredComponentManager lives inside Flutter's embedding jar and
+// mentions com.google.android.play even though this app never calls it.
+// Remove those class files before release compilation so they cannot reach the dex.
+fun stripPlayStoreClasses(jar: File) {
+    if (!jar.isFile || !jar.name.contains("flutter_embedding")) {
+        return
+    }
+    val temp = File(jar.parentFile, "${jar.name}.stripped")
+    var removed = 0
+    ZipFile(jar).use { zip ->
+        ZipOutputStream(temp.outputStream()).use { out ->
+            val entries = zip.entries()
+            while (entries.hasMoreElements()) {
+                val entry = entries.nextElement()
+                val drop = entry.name.contains("PlayStoreDeferredComponentManager") ||
+                    entry.name.contains("FlutterPlayStoreSplitApplication")
+                if (drop) {
+                    removed += 1
+                    continue
+                }
+                out.putNextEntry(ZipEntry(entry.name).apply { time = entry.time })
+                if (!entry.isDirectory) {
+                    zip.getInputStream(entry).use { input -> input.copyTo(out) }
+                }
+                out.closeEntry()
+            }
+        }
+    }
+    if (removed == 0) {
+        temp.delete()
+        return
+    }
+    if (!jar.delete() || !temp.renameTo(jar)) {
+        temp.copyTo(jar, overwrite = true)
+        temp.delete()
+    }
+    logger.lifecycle("Stripped $removed Play Store class entries from ${jar.name}")
+}
+
+tasks.matching { it.name == "preBuild" }.configureEach {
+    doLast {
+        val classpath = configurations.findByName("releaseCompileClasspath") ?: return@doLast
+        val candidates = classpath.files.filter { it.name.contains("flutter_embedding") }
+        logger.lifecycle(
+            "Play Store strip candidates: ${candidates.joinToString { it.name }.ifEmpty { "(none)" }}"
+        )
+        candidates.forEach { stripPlayStoreClasses(it) }
     }
 }
 
