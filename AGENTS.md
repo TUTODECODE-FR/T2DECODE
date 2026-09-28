@@ -80,7 +80,7 @@ Toute IA (Codex, Antigravity, Gemini, Ollama/GhostAI, Claude, etc.) travaillant 
 
 ## Cursor Cloud specific instructions
 
-- Flutter stable est installé dans `/opt/flutter`, à la version lue dans `.flutter-version`, et exposé par `/usr/local/bin/flutter`. Ne pas lancer `flutter upgrade`.
+- L'installation Cloud Agent est `scripts/cloud-agent-install.sh`, appelée par `.cursor/environment.json`. Elle place Flutter stable dans `/opt/flutter`, à la version lue dans `.flutter-version`, et l'expose via `/usr/local/bin/flutter`. Ne pas lancer `flutter upgrade`.
 - La cible exécutable de cette VM est Linux : `flutter run -d linux`. Le SDK Android n'est pas installé. `g++-14` est requis, car Clang sélectionne GCC 14 ; sans sa `libstdc++`, l'édition de liens échoue (`cannot find -lstdc++`).
 - Les tests alignés sur la CI sont `flutter test --dart-define=SKIP_GOLDENS=true`. Il n'y a pas de fichiers golden de référence : `make test` les exécute et échoue sans ce define ou `CI=true`.
 - Ollama n'est pas installé. Ghost AI reste optionnel ; le reste de l'application fonctionne hors ligne.
