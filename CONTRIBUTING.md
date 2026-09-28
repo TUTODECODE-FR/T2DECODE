@@ -35,7 +35,8 @@ Consultez le fichier [DCO.md](DCO.md) pour lire le certificat complet.
 ```bash
 git clone https://gitlab.com/tutodecode-org/T2DECODE.git
 cd T2DECODE
-make get
+make setup   # vérifie que Flutter/Dart/Ollama sont bien installés
+make get     # installe les dépendances du projet
 ```
 
 ## Vérifications avant PR
