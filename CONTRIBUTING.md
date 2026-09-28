@@ -1,5 +1,16 @@
 # Contribuer à TUTODECODE
 
+## Wishlist / bénévolat (Issues GitLab)
+
+**Source de vérité** : [issues label `benevolat`](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat)  
+Index : [VOLUNTEER_BOARD.md](./VOLUNTEER_BOARD.md) · Contributeurs : [CONTRIBUTORS.md](./CONTRIBUTORS.md)
+
+1. **Proposer** : modèle d’issue **Proposition** ou **Bug_benevolat** (labels `benevolat` + `proposition`/`wishlist` ou `bug`). Le menu Type (Incident / Issue / Task) n’est **pas** personnalisable sur GitLab.com — on utilise modèles + labels. Type **Task** optionnel pour le suivi.
+2. **Prendre** : **pas** une issue « Prendre » — branche `volunteer/prendre-<iid>` + `volunteer/claims/<iid>.md` + MR titrée **exactement** `prendre #<iid>` (modèle MR **Prendre**) → **pipeline verte = ticket verrouillé pour vous, immédiatement** (aucune validation humaine). Le bot assigne l’issue (`en-cours`) et merge la MR tout seul. Collision = pipeline rouge (« déjà pris par @xxx »). Une seule claim active à la fois ; inactivité 14 j = claim fermée automatiquement. Merger une Proposition **n’assigne pas** ; la MR de code ferme l’issue.
+3. **Coder** : branche dédiée + **Merge Request** avec **DCO** (`Signed-off-by`).
+
+Contact : [contact@tutodecode.org](mailto:contact@tutodecode.org)
+
 ## Prérequis
 - Flutter SDK
 - Dart SDK
@@ -7,8 +18,9 @@
 - Git
 
 ## Gouvernance
-- Les propriétaires de zones sont définis dans `.github/CODEOWNERS`.
-- Toute contribution doit passer par une revue explicite avant merge.
+- Les propriétaires de zones sont définis dans `.gitlab/CODEOWNERS` (miroir : `.github/CODEOWNERS`).
+- Toute contribution **code** doit passer par une revue explicite avant merge.
+- **Exception libre-service** : les MR de claim bénévole (qui ne touchent que `volunteer/claims/`, `VOLUNTEER_BOARD.md`, `CONTRIBUTORS.md`) sont validées et mergées automatiquement par la CI — la zone bénévole n’a pas de propriétaire CODEOWNERS, le gardien est le job `volunteer_claim_validate` + le bot planifié.
 - Les changements sécurité/CI doivent inclure une justification technique dans la PR.
 
 ## Developer Certificate of Origin (DCO)

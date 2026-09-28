@@ -36,7 +36,7 @@
     <a href="#-téléchargement--installation-prêt-à-lemploi">Télécharger</a> · 
     <a href="#-présentation--modules">Présentation</a> · 
     <a href="#-assurance-qualité--transparence">Qualité & Sécurité</a> · 
-    <a href="#-rejoindre-léquipe--contribuer">Contribuer</a> · 
+    <a href="#-communauté--bénévoles">Contribuer</a> · 
     <a href="#-compilation-depuis-les-sources-développeurs">Compiler</a> · 
     <a href="docs/architecture.md">Architecture</a>
   </p>
@@ -56,7 +56,7 @@
   - [Android (F-Droid)](#-installation-android-f-droid)
 - [🛠️ Présentation & Modules](#️-présentation--modules)
 - [🛡️ Assurance Qualité & Transparence](#-assurance-qualité--transparence)
-- [🤝 Rejoindre l'Équipe & Contribuer](#-rejoindre-léquipe--contribuer)
+- [🤝 Communauté / Bénévoles](#-communauté--bénévoles)
 - [🗺️ Roadmap & Prochaines Évolutions](#️-roadmap--prochaines-évolutions)
 - [🛡️ Vérification d'Intégrité (Zero Trust)](#️-vérification-dintégrité--sécurité-zero-trust)
 - [💻 Compilation depuis les Sources](#-compilation-depuis-les-sources-développeurs)
@@ -145,13 +145,23 @@ T2DECODE s'appuie sur une ingénierie de sécurité rigoureuse et automatisée :
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🤝 Rejoindre l'Équipe & Contribuer
+## 🤝 Communauté / Bénévoles
 
-L'**Association TUTODECODE** accueille les contributeurs et développeurs passionnés par les réseaux et la cybersécurité !
+L'**Association TUTODECODE** accueille les contributeurs passionnés par les réseaux et la cybersécurité.
 
-- 📖 **Guide de contribution** : Consultez [`CONTRIBUTING.md`](CONTRIBUTING.md) pour les détails.
-- 👥 **Recrutement mainteneurs** : Voir les opportunités dans [`MAINTAINERS.md`](MAINTAINERS.md).
-- 💬 **Support & Échanges** : Contactez l'équipe sur `contact@tutodecode.org`.
+- **Issues live** : [label `benevolat`](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat)
+- Index : [`VOLUNTEER_BOARD.md`](VOLUNTEER_BOARD.md)
+- Contributeurs : [`CONTRIBUTORS.md`](CONTRIBUTORS.md)
+- Guide : [`CONTRIBUTING.md`](CONTRIBUTING.md)
+- Mainteneurs : [`MAINTAINERS.md`](MAINTAINERS.md)
+
+### Contribuer en 3 étapes
+
+1. Consulter (ou créer) une [issue `benevolat`](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat).
+2. Développer sur une branche.
+3. Ouvrir une **Merge Request** avec DCO (`Signed-off-by`).
+
+Rien à éditer à la main dans un tableau markdown. Contact : `contact@tutodecode.org`.
 
 <img src="assets/separator.svg" width="100%" height="4">
 

@@ -20,6 +20,33 @@ cache:
   paths:
     - .pub-cache/global_packages
 
+# Chemins « code » : les MR docs-only (claims bénévoles, README…) sautent les
+# jobs lourds (flutter test/analyze) — pipeline de claim verte en ~1 minute.
+.code-change-paths: &code-change-paths
+  - lib/**/*
+  - test/**/*
+  - pubspec.yaml
+  - pubspec.lock
+  - analysis_options.yaml
+  - scripts/**/*
+  - ci_scripts/**/*
+  - android/**/*
+  - ios/**/*
+  - macos/**/*
+  - windows/**/*
+  - linux/**/*
+  - web/**/*
+  - .gitlab-ci.yml
+
+# Règles « MR code-only » : auto si du code change, sinon manuel (non bloquant).
+.mr-code-rules: &mr-code-rules
+  - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    changes: *code-change-paths
+    when: on_success
+  - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    when: manual
+    allow_failure: true
+
 # === STAGE: VALIDATE ===
 dco_check:
   stage: validate
@@ -51,6 +78,46 @@ dco_check:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_PATH != $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH'
       when: manual
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+# === CLAIMS BÉNÉVOLES EN LIBRE-SERVICE ===
+# Une MR « prendre #<iid> » OUVERTE verrouille le ticket immédiatement :
+# pipeline verte = le ticket est à vous (aucune action mainteneur requise).
+# Ce job est en lecture seule (aucun secret) ; le bot planifié merge.
+volunteer_claim_validate:
+  stage: validate
+  image: python:3.12-alpine
+  variables:
+    # Projet canonique (les pipelines de fork tournent avec l'ID du fork)
+    VOLUNTEER_PROJECT: "tutodecode-org/T2DECODE"
+  before_script:
+    - apk add --no-cache git
+    - git config --global --add safe.directory "$CI_PROJECT_DIR"
+    - git fetch origin "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-main}" || true
+  script:
+    - python3 scripts/test_volunteer_claim.py
+    - python3 scripts/volunteer_claim_apply.py --mode validate
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+
+# Bot bénévole (pipeline planifiée sur main, ex. toutes les 15 min) :
+# revalide chaque MR de claim ouverte, assigne l'issue tout de suite
+# (assignee + label en-cours), merge les MR valides sans intervention,
+# commente les invalides, ferme les claims inactives (14 j) et libère
+# les tickets abandonnés. Nécessite la variable protégée
+# PROJECT_ACCESS_TOKEN (scope api) — jamais exposée aux pipelines de MR.
+volunteer_claim_bot:
+  stage: validate
+  image: python:3.12-alpine
+  variables:
+    VOLUNTEER_PROJECT: "tutodecode-org/T2DECODE"
+  script:
+    - python3 scripts/volunteer_claim_apply.py --mode bot
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "main"'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH == "main" && $VOLUNTEER_BOT == "1"'
       when: on_success
 
 test_and_analyze:
@@ -94,25 +161,19 @@ test_and_analyze:
       else
         echo "✅ Android permissions security check passed."
       fi
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: on_success
+  rules: *mr-code-rules
 
 airgap_leak_canary:
   stage: validate
   script:
     - python3 scripts/audit_airgap_leak.py
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: on_success
+  rules: *mr-code-rules
 
 binary_hardening_audit:
   stage: validate
   script:
     - python3 scripts/audit_binary_hardening.py
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: on_success
+  rules: *mr-code-rules
 
 sbom_generator:
   stage: validate
@@ -123,62 +184,48 @@ sbom_generator:
       - sbom-cyclonedx.json
       - sbom-spdx.json
     expire_in: 7 days
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: on_success
+  rules: *mr-code-rules
 
 fuzz_testing_suite:
   stage: validate
   script:
     - flutter pub get
     - flutter test test/unit/fuzz_test.dart
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: on_success
+  rules: *mr-code-rules
 
 deep_health_recesses_test:
   stage: validate
   script:
     - flutter pub get
     - flutter test test/unit/deep_app_recesses_test.dart
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: on_success
+  rules: *mr-code-rules
 
 ai_safety_guard_test:
   stage: validate
   script:
     - flutter pub get
     - flutter test test/unit/ai_safety_guard_test.dart
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: on_success
+  rules: *mr-code-rules
 
 constant_time_crypto_test:
   stage: validate
   script:
     - flutter pub get
     - flutter test test/unit/constant_time_security_test.dart
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: on_success
+  rules: *mr-code-rules
 
 strict_type_compilation_check:
   stage: validate
   script:
     - flutter pub get
     - flutter analyze --no-fatal-infos --no-fatal-warnings || true
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: on_success
+  rules: *mr-code-rules
 
 dependency_confusion_shield:
   stage: validate
   script:
     - python3 scripts/check_dependency_confusion.py
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: on_success
+  rules: *mr-code-rules
 
 secrets_and_private_keys_scan:
   stage: validate
@@ -459,6 +506,20 @@ build_linux_test:
     # when the merge request does not touch build inputs.
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: never
+
+# === STAGE: VOLUNTEER CLAIM APPLY (main after merge of prendre #N) ===
+volunteer_claim_apply:
+  stage: auto-tag
+  image: python:3.12-alpine
+  before_script:
+    - apk add --no-cache git
+    - git config --global --add safe.directory "$CI_PROJECT_DIR"
+    - git fetch origin main || true
+  script:
+    - python3 scripts/volunteer_claim_apply.py --mode apply
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+      when: on_success
 
 # === STAGE: AUTO-TAG ===
 auto_tag:
