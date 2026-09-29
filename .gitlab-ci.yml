@@ -724,43 +724,15 @@ publish_homebrew_tap:
         echo "Error: HOMEBREW_TAP_TOKEN is not set. Skipping Homebrew Tap update."
         exit 0
       fi
+    - chmod +x scripts/update_homebrew_cask.sh
     - |
-      if [ ! -f "T2DECODE-macOS.dmg" ]; then
-        echo "T2DECODE-macOS.dmg not found locally! Attempting download from SourceForge..."
-        DOWNLOAD_URL="https://downloads.sourceforge.net/project/t2decode/$CI_COMMIT_TAG/T2DECODE-macOS.dmg"
-        curl -L -o T2DECODE-macOS.dmg "$DOWNLOAD_URL" || true
-      fi
-    - |
-      if [ ! -f "T2DECODE-macOS.dmg" ] || [ ! -s "T2DECODE-macOS.dmg" ]; then
-        echo "Warning: T2DECODE-macOS.dmg unavailable for SHA256 calculation. Skipping Cask update."
-        exit 0
-      fi
-    - SHA256_HASH=$(sha256sum T2DECODE-macOS.dmg | awk '{print $1}')
-    - echo "Computed SHA256 $SHA256_HASH"
-    - VERSION="${CI_COMMIT_TAG#v}"
+      VERSION="${CI_COMMIT_TAG#v}"
+      # Downloads a real DMG (GitLab package, GitHub release, then SourceForge)
+      # and refuses HTML error pages before writing the cask.
+      scripts/update_homebrew_cask.sh "$VERSION" /tmp/t2decode.rb
     - git clone "https://oauth2:${HOMEBREW_TAP_TOKEN}@gitlab.com/tutodecode-org/homebrew-tap.git" /tmp/homebrew-tap || { echo "Failed to clone homebrew-tap"; exit 0; }
     - mkdir -p /tmp/homebrew-tap/Casks
-    - |
-      cat > /tmp/homebrew-tap/Casks/t2decode.rb <<EOF
-      cask "t2decode" do
-        version "$VERSION"
-        sha256 "$SHA256_HASH"
-
-        url "https://downloads.sourceforge.net/project/t2decode/v#{version}/T2DECODE-macOS.dmg",
-            verified: "downloads.sourceforge.net/t2decode/"
-        name "T2DECODE"
-        desc "Offline simulator and toolkit for networking and cybersecurity"
-        homepage "https://tutodecode.org/"
-
-        app "T2DECODE.app"
-
-        zap trash: [
-          "~/Library/Application Support/org.t2decode.app",
-          "~/Library/Preferences/org.t2decode.app.plist",
-          "~/Library/Saved Application State/org.t2decode.app.savedState",
-        ]
-      end
-      EOF
+    - cp /tmp/t2decode.rb /tmp/homebrew-tap/Casks/t2decode.rb
     - cd /tmp/homebrew-tap
     - git config user.name "gitlab-ci[bot]"
     - git config user.email "gitlab-ci[bot]@tutodecode.org"
