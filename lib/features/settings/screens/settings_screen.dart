@@ -14,6 +14,7 @@ import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 import 'package:tutodecode/core/services/backup_service.dart';
 import 'package:tutodecode/core/services/module_service.dart';
 import 'package:tutodecode/core/services/tdc_dsl_parser.dart';
+import 'package:tutodecode/core/services/tdc_studio_document.dart';
 import './security_diagnostic_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -339,7 +340,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _importEncryptedBackup() async {
     final file = await openFile(acceptedTypeGroups: [
-      const XTypeGroup(label: 'Fichiers TutoDeCode (.tdc, .json)', extensions: ['tdc', 'json']),
+      const XTypeGroup(
+          label: 'Fichiers TutoDeCode (.tdc, .json)',
+          extensions: ['tdc', 'json']),
     ]);
     if (file == null) return;
 
@@ -349,7 +352,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Fichier invalide (taille vide ou supérieure à 10 Mo).'),
+            content:
+                Text('Fichier invalide (taille vide ou supérieure à 10 Mo).'),
             backgroundColor: TdcColors.danger),
       );
       return;
@@ -358,8 +362,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       final bytes = await file.readAsBytes();
       final text = utf8.decode(bytes, allowMalformed: true).trim();
+      final namedTdc = TdcOpenDecision.claimsTdc(file.name) ||
+          TdcOpenDecision.claimsTdc(file.path);
+      final decision = TdcOpenDecision.decide(text, namedTdc: namedTdc);
 
-      // 1. Détection automatique: Cours au format TDC DSL (.tdc créé par TDC-SDK)
+      // Hiérarchie TDC Studio avant tout import. Une extension .tdc seule est refusée.
+      if (decision.importCourse) {
+        final moduleService = ModuleService();
+        final course = await moduleService.importModuleContent(text);
+        if (!mounted) return;
+        final courses = context.read<CoursesProvider>();
+        await courses.reload();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Cours "${course.title}" importé avec succès dans vos modules !'),
+            backgroundColor: TdcColors.success,
+          ),
+        );
+        return;
+      }
+      if (decision.rejected) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text(decision.message ?? TdcStudioDocument.notStudioMessage),
+            backgroundColor: TdcColors.danger,
+          ),
+        );
+        return;
+      }
+      if (decision.document != null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(decision.message ?? decision.document!.openedMessage),
+            backgroundColor: TdcColors.success,
+          ),
+        );
+        return;
+      }
+
+      // 1. Détection automatique: cours TDC DSL sans en-tête Studio (v1).
       if (TdcDslParser.isTdcDsl(text)) {
         final moduleService = ModuleService();
         final course = await moduleService.importModuleContent(text);
@@ -368,7 +413,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         await courses.reload();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Cours "${course.title}" importé avec succès dans vos modules !'),
+            content: Text(
+                'Cours "${course.title}" importé avec succès dans vos modules !'),
             backgroundColor: TdcColors.success,
           ),
         );
@@ -566,7 +612,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.bug_report_outlined, size: 14, color: TdcColors.warning),
+                  Icon(Icons.bug_report_outlined,
+                      size: 14, color: TdcColors.warning),
                   SizedBox(width: 8),
                   Text('Signaler un bug / problème'),
                 ],
@@ -723,14 +770,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Text(
               'Pour garantir l\'anonymat et le respect de la vie privée (Zero Tracking), le signalement de bugs s\'effectue via nos canaux officiels :',
-              style: TextStyle(fontSize: 13, height: 1.4, color: TdcColors.textSecondary),
+              style: TextStyle(
+                  fontSize: 13, height: 1.4, color: TdcColors.textSecondary),
             ),
             SizedBox(height: 16),
             SelectableText(
               '• Dépôt GitLab Officiel :\n  https://gitlab.com/tutodecode-org/T2DECODE/-/issues/new\n\n'
               '• Miroir GitHub :\n  https://github.com/TUTODECODE-FR/T2DECODE/issues/new\n\n'
               '• Support direct Association :\n  contact@tutodecode.org',
-              style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: TdcColors.accent),
+              style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 12,
+                  color: TdcColors.accent),
             ),
           ],
         ),

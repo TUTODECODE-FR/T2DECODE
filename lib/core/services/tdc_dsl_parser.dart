@@ -13,9 +13,14 @@ class TdcDslParser {
   }
 
   /// Parses TDC DSL content and returns a standard Course Map compatible with Course.fromMap.
+  ///
+  /// A TDC Studio document may start with `tdc-version` and `type` before the
+  /// `course` block. Those header fields are skipped here; hierarchy checks
+  /// happen before this parser is asked to load a file.
   static Map<String, dynamic> parse(String source) {
     final tokens = _tokenize(source);
     final parser = _DslParser(tokens);
+    parser._skipStudioHeader();
     return parser.parseCourse();
   }
 
@@ -307,9 +312,12 @@ class _DslParser {
     String duration = '15min';
     String content = '';
     final quizQuestions = <Map<String, dynamic>>[];
+    final codeBlocks = <Map<String, dynamic>>[];
 
     while (!_match(_TokenType.braceClose) && _current != null) {
-      if (_match(_TokenType.identifier, 'title')) {
+      if (_match(_TokenType.identifier, 'codeblock')) {
+        codeBlocks.add(_parseCodeBlock());
+      } else if (_match(_TokenType.identifier, 'title')) {
         _consume();
         _optionalColon();
         title = _parseValueAsString();
@@ -346,7 +354,38 @@ class _DslParser {
       'title': title,
       'duration': duration,
       'content': content,
+      if (codeBlocks.isNotEmpty) 'codeBlocks': codeBlocks,
       if (quizQuestions.isNotEmpty) 'quiz': quizQuestions,
+    };
+  }
+
+  Map<String, dynamic> _parseCodeBlock() {
+    _expect(_TokenType.identifier, 'codeblock');
+    final language = _consume().value;
+    _expect(_TokenType.braceOpen, '{');
+
+    String title = '';
+    String code = '';
+    while (!_match(_TokenType.braceClose) && _current != null) {
+      if (_match(_TokenType.identifier, 'title')) {
+        _consume();
+        _optionalColon();
+        title = _parseValueAsString();
+      } else if (_match(_TokenType.identifier, 'code')) {
+        _consume();
+        _optionalColon();
+        code = _parseValueAsString();
+      } else {
+        _consume();
+        _optionalColon();
+        _skipValue();
+      }
+    }
+    _expect(_TokenType.braceClose, '}');
+    return <String, dynamic>{
+      'language': language,
+      'title': title,
+      'code': code,
     };
   }
 
@@ -358,9 +397,21 @@ class _DslParser {
     List<String> options = [];
     int correctAnswer = 0;
     String? explanation;
+    var usedSignedChoices = false;
 
     while (!_match(_TokenType.braceClose) && _current != null) {
-      if (_match(_TokenType.identifier, 'options') ||
+      if (_match(_TokenType.identifier, '+') ||
+          _match(_TokenType.identifier, '-')) {
+        final correct = _current!.value == '+';
+        _consume();
+        final text = _parseValueAsString();
+        if (!usedSignedChoices) {
+          options = <String>[];
+          usedSignedChoices = true;
+        }
+        if (correct) correctAnswer = options.length;
+        options.add(text);
+      } else if (_match(_TokenType.identifier, 'options') ||
           _match(_TokenType.identifier, 'choices')) {
         _consume();
         _optionalColon();
@@ -390,6 +441,17 @@ class _DslParser {
       'correctIndex': correctAnswer,
       if (explanation != null) 'explanation': explanation,
     };
+  }
+
+  void _skipStudioHeader() {
+    if (!_match(_TokenType.identifier, 'tdc-version')) return;
+    _consume();
+    _optionalColon();
+    if (_current != null) _consume();
+    if (!_match(_TokenType.identifier, 'type')) return;
+    _consume();
+    _optionalColon();
+    if (_current != null) _consume();
   }
 
   void _optionalColon() {

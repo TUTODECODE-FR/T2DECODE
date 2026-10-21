@@ -72,6 +72,7 @@ import 'core/providers/search_provider.dart';
 import 'core/theme/app_theme.dart';
 import 'core/navigation/nav_keys.dart';
 import 'core/security/identity_verification.dart';
+import 'core/services/tdc_open_listener.dart';
 
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -166,14 +167,16 @@ class TutoDeCodeApp extends StatelessWidget {
                     .updateLocale(context.locale.languageCode);
               }
             });
-            return Overlay(
-              key: ValueKey(child),
-              initialEntries: [
-                OverlayEntry(
-                  builder: (context) =>
-                      AppShell(child: child ?? const SizedBox.shrink()),
-                ),
-              ],
+            return TdcOpenListener(
+              child: Overlay(
+                key: ValueKey(child),
+                initialEntries: [
+                  OverlayEntry(
+                    builder: (context) =>
+                        AppShell(child: child ?? const SizedBox.shrink()),
+                  ),
+                ],
+              ),
             );
           },
           onGenerateRoute: (settings) {

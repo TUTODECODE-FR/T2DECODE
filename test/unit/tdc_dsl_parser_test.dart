@@ -77,7 +77,8 @@ Rédigez votre contenu ici...
       final course = Course.fromMap(map);
       expect(course.id, equals('nouveau-cours'));
       expect(course.chapters.length, equals(1));
-      expect(course.chapters.first.quiz?.first.question, equals('Nouvelle question ?'));
+      expect(course.chapters.first.quiz?.first.question,
+          equals('Nouvelle question ?'));
     });
   });
 }
