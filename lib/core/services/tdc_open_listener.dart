@@ -81,7 +81,7 @@ class _TdcOpenListenerState extends State<TdcOpenListener> {
       await courses.reload();
       if (!mounted) return;
       courses.selectChapter(course.id, course.chapters.first.id);
-      AppNavigator.pushNamed('/chapter');
+      unawaited(AppNavigator.pushNamed('/chapter'));
       _snack('Cours "${course.title}" ouvert.');
     }
   }

@@ -160,7 +160,7 @@ class TdcOpenDecision {
         document: null,
       );
     }
-    return TdcOpenDecision._(
+    return const TdcOpenDecision._(
       importCourse: false,
       rejected: false,
       continueLegacy: true,
@@ -562,8 +562,8 @@ class _Parser {
 
   String _parseValue() {
     if (_is(_Kind.string)) return _advance().text;
-    // Newlines are not tokens, so the next key sits against this value.
-    // Consume one token, plus a unit suffix such as the "min" in "15min".
+    // A newline separates this value from the next field. "15min" is a
+    // number token plus an identifier suffix on the same line.
     if (_is(_Kind.number)) {
       final buffer = StringBuffer(_advance().text);
       if (_is(_Kind.ident) && !_isAt(1, _Kind.colon)) {

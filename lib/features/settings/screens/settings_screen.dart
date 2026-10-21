@@ -373,6 +373,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (!mounted) return;
         final courses = context.read<CoursesProvider>();
         await courses.reload();
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -411,6 +412,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (!mounted) return;
         final courses = context.read<CoursesProvider>();
         await courses.reload();
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
