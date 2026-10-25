@@ -1,0 +1,823 @@
+tdc-version: 2
+type: course
+
+course "Python" {
+  title: "Scripts Python"
+  description: """
+Cours Python : écrire des scripts d'administration système
+
+Ce cours apprend à écrire des scripts Python fiables, en partant d'un vrai projet : un script qui crée un dépôt GitHub privé, génère des dossiers Job01 à JobNN et fait le premier push. C'est le même projet que dans le cours Bash, ce qui permet de comparer les deux langages. Il s'adresse aux débutants qui veulent automatiser des tâches d'administration système.
+
+À la fin, tu sauras :
+• écrire et lancer un script, et corriger les erreurs classiques (indentation, fins de ligne Windows, environnement virtuel) ;
+• structurer un script en fonctions avec des codes de sortie clairs ;
+• gérer les erreurs avec try/except et nettoyer proprement les fichiers temporaires ;
+• valider ce que tape l'utilisateur avant de l'utiliser ;
+• manipuler un secret (un token) sans le laisser fuiter ;
+• appeler une API web avec requests, lancer des commandes avec subprocess et automatiser git.
+
+Chaque chapitre suit le même rythme : une idée, un petit exemple sur un autre sujet que le projet, puis un quiz de 3 questions avec un corrigé expliqué. Les exemples sont volontairement courts : le but est que tu écrives ton propre script, pas que tu recopies le mien.
+
+Environnement conseillé : Linux ou WSL/Ubuntu sous Windows. Les commandes du cours se tapent dans le terminal Ubuntu, pas dans PowerShell.
+"""
+  category: "linux"
+  level: "intermediate"
+  duration: "5h15"
+  icon: "Terminal"
+
+  module "premier-script" {
+    title: "Chapitre 1 : premier script"
+    duration: "20min"
+    content: """
+Un script Python est un fichier texte, de suffixe `.py`, qui contient des instructions exécutées de haut en bas. Rien de plus.
+```python
+#!/usr/bin/env python3
+import getpass
+
+print(f"Bonjour, {getpass.getuser()}")
+```
+La première ligne, le **shebang**, dit au système quel programme doit lire le fichier. `env python3` cherche Python 3 dans le PATH. Elle ne sert que si tu lances le script directement avec `./script.py` : pour Python lui-même, c'est un simple commentaire.
+`import getpass` charge un module de la bibliothèque standard, et `getpass.getuser()` renvoie le nom de l'utilisateur connecté.
+Il y a deux façons de lancer un script :
+• `python3 script.py` : Python lit le fichier directement, aucun prérequis.
+• `./script.py` : le système exécute le fichier lui-même, ce qui demande d'abord `chmod +x script.py`.
+Sous Windows (PowerShell), on lance `python script.py` ou `py script.py` : le shebang est ignoré.
+Pour connaître la version installée :
+```bash
+python3 --version
+```
+Pour vérifier la syntaxe sans rien exécuter :
+```bash
+python3 -m py_compile script.py
+```
+Si rien ne s'affiche, la syntaxe est correcte. Cette commande ne détecte que les erreurs d'écriture (une parenthèse non fermée, un `:` oublié) : une erreur qui n'apparaît qu'à l'exécution, comme un fichier introuvable, ne sera pas vue. Elle crée aussi un dossier `__pycache__`, que tu peux ignorer.
+"""
+
+    codeblock "python" {
+      title: "Informations système"
+      code: """
+import platform
+
+print(platform.system(), platform.release())
+"""
+    }
+
+    quiz {
+      question "Que fait la première ligne #!/usr/bin/env python3 ?" {
+        - "elle vérifie la syntaxe du script"
+        - "elle importe le module python3"
+        + "elle indique quel programme doit exécuter le script quand on le lance avec ./script.py"
+        explanation: "Quand tu lances ./script.py, le système lit les deux premiers caractères du fichier. S'ils valent #!, il utilise le chemin qui suit comme programme chargé d'exécuter le script. Pour Python, la ligne est un commentaire (elle commence par #), donc elle ne change rien quand tu lances python3 script.py."
+      }
+
+      question "Quelle commande vérifie la syntaxe sans exécuter le script ?" {
+        - "python3 --check script.py"
+        + "python3 -m py_compile script.py"
+        - "chmod -c script.py"
+        explanation: "py_compile compile le fichier sans l'exécuter, et signale les erreurs d'écriture (parenthèse oubliée, deux-points manquant). Elle ne voit pas les erreurs qui n'apparaissent qu'à l'exécution : une variable mal nommée ou un fichier introuvable ne seront découverts qu'au lancement. Les deux autres commandes n'existent pas ou font autre chose."
+      }
+
+      question "Faut-il faire chmod +x pour lancer python3 script.py ?" {
+        + "non, Python lit le fichier directement"
+        - "uniquement sous Windows"
+        - "oui, toujours"
+        explanation: "Avec python3 script.py, c'est Python qui est lancé, et le script n'est qu'un fichier qu'il lit. Le droit d'exécution ne concerne que le lancement direct ./script.py, où le système doit décider s'il a le droit de lancer le fichier."
+      }
+    }
+  }
+
+  module "environnement" {
+    title: "Chapitre 2 : environnement, indentation et environnements virtuels"
+    duration: "25min"
+    content: """
+Trois pièges attendent le débutant avant même d'écrire la première vraie ligne.
+
+### python ou python3 ?
+Sous Linux et WSL, la commande est `python3`. Sous Windows, c'est `python` ou `py`. Vérifie toujours avec `python3 --version`.
+
+### L'indentation fait partie du langage
+Python n'utilise pas d'accolades : ce sont les espaces au début de ligne qui délimitent les blocs.
+```python
+nombre = 3
+if nombre > 2:
+    print("grand")
+    print("toujours dans le if")
+print("ici, on est sorti du if")
+```
+La convention est de 4 espaces par niveau. Mélanger des tabulations et des espaces dans un même fichier provoque une `TabError` ou une `IndentationError`. Règle ton éditeur pour qu'il insère des espaces quand tu appuies sur Tab.
+
+### Le piège Windows/WSL (fins de ligne)
+Python lit sans problème un fichier enregistré avec des fins de ligne Windows (CRLF). En revanche, avec `./script.py`, le système lit le shebang tel quel, `\r` compris, et cherche un programme nommé `python3\r` :
+```
+env: 'python3\r': No such file or directory
+```
+Correction : supprime les `\r` en fin de ligne.
+```bash
+sed -i 's/\r$//' script.py
+```
+Dans VS Code, regarde en bas à droite : si tu lis `CRLF`, clique dessus et choisis `LF`. Travaille aussi dans ton dossier Linux (`~/projet`) plutôt que dans `/mnt/c/...`, plus lent et exposé aux interférences de OneDrive.
+
+### Les environnements virtuels
+Installer des bibliothèques directement dans le Python du système les mélange entre projets, et Ubuntu le refuse souvent (message `externally-managed-environment`). On crée donc un environnement par projet :
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install requests
+deactivate
+```
+Sous Ubuntu, si la première commande échoue, installe d'abord `sudo apt install python3-venv`. Sous PowerShell, l'activation se fait avec `.venv\Scripts\Activate.ps1`. Ajoute `.venv/` à ton fichier `.gitignore` : cet environnement ne se partage pas.
+"""
+
+    quiz {
+      question "Pourquoi l'indentation est-elle importante en Python ?" {
+        + "elle délimite les blocs de code (if, for, def)"
+        - "elle sert uniquement à rendre le code plus joli"
+        - "elle sert à écrire des commentaires"
+        explanation: "En Python, il n'y a pas d'accolades : c'est l'indentation qui dit quelles lignes appartiennent au if, à la boucle ou à la fonction. Une ligne mal décalée change le sens du programme ou provoque une IndentationError. La convention est de 4 espaces par niveau, jamais de mélange avec des tabulations."
+      }
+
+      question "Pourquoi un script en CRLF peut-il échouer avec ./script.py alors qu'il marche avec python3 script.py ?" {
+        - "le fichier est trop long"
+        - "Python refuse de lire les fichiers CRLF"
+        + "le retour chariot colle au nom de l'interpréteur dans la ligne shebang"
+        explanation: "Python sait lire les fins de ligne Windows, donc python3 script.py fonctionne. Mais avec ./script.py, c'est le système qui lit la ligne shebang : il garde le \\r à la fin et cherche un programme nommé python3\\r, qui n'existe pas. La commande sed -i 's/\\r$//' script.py règle le problème."
+      }
+
+      question "Pourquoi créer un environnement virtuel avec python3 -m venv ?" {
+        - "pour chiffrer le code du script"
+        - "pour accélérer l'exécution de Python"
+        + "pour isoler les bibliothèques d'un projet de celles du système et des autres projets"
+        explanation: "Chaque environnement virtuel contient ses propres bibliothèques installées avec pip. Deux projets peuvent ainsi utiliser des versions différentes d'une même bibliothèque sans conflit, et tu ne modifies pas le Python du système. Cela n'a aucun effet sur la vitesse ni sur la confidentialité du code."
+      }
+    }
+  }
+
+  module "variables" {
+    title: "Chapitre 3 : variables, types et f-strings"
+    duration: "25min"
+    content: """
+Une variable se crée avec `=`. Contrairement à Bash, les espaces autour du `=` sont permis, et même conseillés :
+```python
+nom = "Anna"
+age = 30
+print(f"Bonjour {nom}, tu as {age} ans")
+```
+Les guillemets simples et doubles sont équivalents en Python : `'Anna'` et `"Anna"` donnent le même texte.
+
+### Les types de base
+• `str` : du texte, `"Marseille"`.
+• `int` : un entier, `42`.
+• `float` : un nombre à virgule, `3.14`.
+• `bool` : `True` ou `False`.
+• `list` : une liste ordonnée, `["web01", "db01"]`.
+• `dict` : des paires clé/valeur, `{"hote": "web01", "port": 22}`.
+```python
+serveurs = ["web01", "db01"]
+config = {"hote": "web01", "port": 22}
+print(serveurs[0])
+print(config["port"])
+```
+Contrairement à Bash, une valeur contenant un espace reste d'un seul morceau : il n'y a pas de découpage à éviter avec des guillemets.
+
+### Les f-strings
+Un texte précédé de `f` remplace ce qui est entre accolades par sa valeur : `f"Bonjour {nom}"`. C'est l'équivalent du `"Bonjour $nom"` de Bash.
+
+### Le piège de input()
+`input()` renvoie toujours du **texte**, même si l'utilisateur tape un nombre :
+```python
+reponse = input("Combien de dossiers ? ")
+print(reponse + reponse)       # tape 3 : affiche 33
+nombre = int(reponse)
+print(nombre + nombre)         # affiche 6
+```
+`int(...)` lève une erreur `ValueError` si le texte n'est pas un nombre : nous verrons au chapitre 6 comment le gérer.
+
+### Les arguments du script
+`sys.argv` est la liste des arguments donnés au lancement. `python3 script.py Marseille` donne `sys.argv[0]` égal à `script.py` et `sys.argv[1]` égal à `Marseille`. `len(sys.argv)` donne leur nombre, programme compris.
+```python
+import sys
+
+if len(sys.argv) != 2:
+    print("Usage : script.py NOM")
+else:
+    print(f"Bonjour {sys.argv[1]}")
+```
+"""
+
+    quiz {
+      question "Que contient x après x = input(\"Nombre : \") si l'utilisateur tape 5 ?" {
+        + "la chaîne de texte \"5\""
+        - "le nombre à virgule 5.0"
+        - "l'entier 5"
+        explanation: "input() renvoie toujours du texte. Pour faire des calculs, il faut convertir avec int(x). Sans conversion, \"5\" + \"5\" donne \"55\" (concaténation) et non 10."
+      }
+
+      question "Que fait print(f\"Bonjour {nom}\") ?" {
+        + "il remplace {nom} par la valeur de la variable nom"
+        - "il affiche littéralement Bonjour {nom}"
+        - "il provoque une erreur de syntaxe"
+        explanation: "Le f devant les guillemets active les accolades : Python évalue ce qu'elles contiennent et insère le résultat dans le texte. Sans le f, le texte serait affiché tel quel, accolades comprises."
+      }
+
+      question "Avec python3 script.py Marseille, que contient sys.argv[1] ?" {
+        - "python3"
+        + "Marseille"
+        - "script.py"
+        explanation: "sys.argv[0] est le nom du script (script.py) et les arguments suivent à partir de l'indice 1. python3 lui-même n'est pas dans la liste. C'est pour cela qu'on teste len(sys.argv) avant de lire sys.argv[1] : sans argument, l'indice 1 n'existe pas et Python lève une IndexError."
+      }
+    }
+  }
+
+  module "fonctions" {
+    title: "Chapitre 4 : fonctions, codes de sortie et messages d'erreur"
+    duration: "30min"
+    content: """
+### Les codes de sortie
+Chaque programme se termine avec un nombre : `0` signifie « succès », tout autre nombre signifie « échec ». Un script Python se termine avec le code `0` s'il va jusqu'au bout, et avec le code `1` s'il s'arrête sur une exception non gérée. Pour choisir toi-même :
+```python
+import sys
+
+sys.exit(0)    # succès
+sys.exit(1)    # échec
+```
+Pour lire le code de sortie de la dernière commande, tape `echo $?` sous Bash et `$LASTEXITCODE` sous PowerShell. C'est ce que lisent les autres programmes (et les tests automatiques) pour savoir si ton script a fonctionné.
+
+### Écrire des fonctions
+Une fonction regroupe des instructions sous un nom, pour ne pas les répéter :
+```python
+def saluer(prenom):
+    message = f"Bonjour {prenom}"
+    return message
+
+print(saluer("Anna"))
+```
+`return` renvoie une valeur à celui qui appelle la fonction. Les variables créées dans une fonction, comme `message`, sont **locales** par défaut : elles disparaissent à la fin de la fonction. C'est l'inverse de Bash, où il fallait écrire `local`. Évite le mot-clé `global`, qui fait revenir les mauvaises surprises.
+
+### Afficher les erreurs au bon endroit
+Un programme a deux sorties : la **sortie standard** (résultats normaux) et l'**erreur standard** (messages d'erreur). En Python, `print` écrit sur la sortie standard, sauf si tu précises `file=sys.stderr`. Les messages d'information ou d'erreur d'un script vont sur l'erreur standard, pour ne pas se mélanger aux résultats que d'autres programmes pourraient lire.
+
+Un modèle très utile, à adapter avec tes propres mots :
+```python
+import sys
+from pathlib import Path
+
+def info(message):
+    print(f"[OK] {message}", file=sys.stderr)
+
+def die(message):
+    print(f"[ERREUR] {message}", file=sys.stderr)
+    sys.exit(1)
+
+if not Path("config.txt").is_file():
+    die("config.txt introuvable")
+info("Configuration trouvée")
+```
+Lecture : `Path("config.txt").is_file()` teste si le fichier existe ; `not` inverse le résultat ; `die` affiche le message puis arrête tout le script avec le code 1.
+
+### La fonction main
+Dans un vrai script, on range le programme dans une fonction `main` et on la lance ainsi :
+```python
+def main():
+    info("Début du travail")
+
+if __name__ == "__main__":
+    main()
+```
+Ce test signifie « lance `main()` seulement si ce fichier est exécuté directement, et pas s'il est importé par un autre script ».
+"""
+
+    codeblock "python" {
+      title: "Espace disque"
+      code: """
+import shutil
+
+total, utilise, libre = shutil.disk_usage("/")
+print(f"Libre : {libre // 10**9} Go sur {total // 10**9} Go")
+"""
+    }
+
+    quiz {
+      question "Que fait sys.exit(1) ?" {
+        - "il relance le script"
+        - "il arrête le script avec un code de succès"
+        + "il arrête le script avec un code de sortie d'échec"
+        explanation: "sys.exit(n) termine le script immédiatement avec le code n. Le code 0 veut dire succès, tout autre nombre un échec. Les autres programmes, ou ton terminal avec echo $?, lisent ce code pour savoir si le script a réussi."
+      }
+
+      question "Dans une fonction, que devient une variable créée par message = \"salut\" ?" {
+        - "elle est globale : elle existe partout dans le script"
+        + "elle est locale : elle disparaît à la fin de la fonction"
+        - "elle est exportée vers les autres programmes"
+        explanation: "En Python, une variable affectée dans une fonction est locale par défaut, ce qui évite d'écraser sans le vouloir une variable du reste du script. C'est plus sûr que Bash, où il fallait penser à écrire local. Ce n'est jamais transmis à un autre programme : cela passe par les variables d'environnement."
+      }
+
+      question "Pourquoi écrire print(msg, file=sys.stderr) ?" {
+        + "pour envoyer le message sur l'erreur standard, séparée des résultats"
+        - "pour supprimer le message"
+        - "pour mettre le message en rouge"
+        explanation: "L'erreur standard est un canal séparé de la sortie normale. Un programme qui lit les résultats de ton script n'est ainsi pas pollué par tes messages. file=sys.stderr ne colore rien et ne supprime rien : il change seulement la destination."
+      }
+    }
+  }
+
+  module "erreurs" {
+    title: "Chapitre 5 : gérer les erreurs et nettoyer (try, with, tempfile)"
+    duration: "35min"
+    content: """
+Quand une erreur survient, Python lève une **exception**. Si personne ne l'attrape, le script s'arrête et affiche la pile d'appels (le *traceback*). C'est l'inverse de Bash, qui continue après une erreur sauf si on active `set -e` : en Python, l'arrêt est le comportement par défaut.
+
+### Attraper une erreur précise
+```python
+from pathlib import Path
+
+try:
+    contenu = Path("config.txt").read_text()
+except FileNotFoundError:
+    die("config.txt introuvable")
+```
+On nomme toujours l'erreur attendue (`FileNotFoundError`, `ValueError`, `KeyError`…). Deux écritures sont à éviter :
+• `except:` seul, qui attrape tout, même l'arrêt volontaire avec Ctrl+C ;
+• `except Exception: pass`, qui avale l'erreur sans rien dire : le script continue avec des données fausses et plus personne ne sait pourquoi. C'est le même piège que `set -e` masqué en Bash.
+
+### finally et with
+`finally` s'exécute dans tous les cas, erreur ou non :
+```python
+try:
+    print("travail en cours")
+finally:
+    print("toujours exécuté")
+```
+L'instruction `with` fait le même travail de façon plus courte pour les ressources à fermer :
+```python
+with open("journal.txt", "w") as fichier:
+    fichier.write("démarrage")
+# ici, le fichier est fermé, même si write() avait échoué
+```
+
+### Fichiers temporaires et nettoyage
+Pour un dossier temporaire, ne choisis pas un nom à la main : utilise `tempfile`, qui crée un nom unique et imprévisible, avec des droits restreints. Combiné à `with`, le nettoyage est automatique, même en cas d'erreur :
+```python
+import tempfile
+from pathlib import Path
+
+with tempfile.TemporaryDirectory() as tmp:
+    fichier = Path(tmp) / "fichier.txt"
+    fichier.write_text("données")
+    print(fichier.read_text())
+# ici, le dossier temporaire a été supprimé
+```
+Lecture : `Path(tmp) / "fichier.txt"` construit un chemin, l'opérateur `/` joue le rôle du séparateur de dossier.
+
+### Ne pas faire fuiter un secret dans une erreur
+Un traceback affiche des morceaux de ton code et parfois des valeurs. Ne mets jamais de secret dans un message d'erreur que tu affiches ou que tu journalises.
+"""
+
+    quiz {
+      question "Que se passe-t-il par défaut quand une exception n'est pas attrapée ?" {
+        - "le script se relance depuis le début"
+        + "le script s'arrête et affiche un traceback"
+        - "le script continue en ignorant l'erreur"
+        explanation: "Python arrête le script à la première exception non gérée et affiche la pile d'appels, ce qui aide à localiser le problème. Le code de sortie est alors 1. C'est une différence importante avec Bash, qui continue par défaut après une erreur."
+      }
+
+      question "Pourquoi éviter d'écrire except Exception: pass ?" {
+        - "Python l'interdit"
+        - "il ralentit le script"
+        + "il cache les erreurs, qui deviennent impossibles à diagnostiquer"
+        explanation: "Python l'autorise, mais l'erreur est avalée sans trace : le script continue avec des données absentes ou fausses, et le vrai problème apparaît plus tard, ailleurs. Mieux vaut attraper l'erreur précise que tu attends, et laisser les autres arrêter le script."
+      }
+
+      question "Que garantit with tempfile.TemporaryDirectory() as tmp: ?" {
+        + "le dossier est supprimé à la sortie du bloc, même en cas d'erreur"
+        - "le dossier est sauvegardé automatiquement"
+        - "le dossier est chiffré"
+        explanation: "L'instruction with appelle le nettoyage quand on quitte le bloc, qu'il se termine normalement ou par une exception. C'est l'équivalent Python de mktemp -d associé à trap ... EXIT en Bash, mais en plus court. Le nom du dossier est de plus unique et imprévisible."
+      }
+    }
+  }
+
+  module "validation" {
+    title: "Chapitre 6 : valider ce que tape l'utilisateur"
+    duration: "30min"
+    content: """
+Une règle de sécurité simple : **ne jamais faire confiance à une entrée**. Un nom, un chemin ou un identifiant tapé par l'utilisateur peut contenir des espaces, des tirets en début de chaîne, des caractères spéciaux. Avant de l'utiliser (dans une URL, une commande, un nom de fichier), on vérifie qu'il ressemble à ce qu'on attend.
+
+### Les expressions régulières avec re
+Le module `re` demande : « cette chaîne correspond-elle à ce modèle ? ». Le modèle est une **expression régulière**. On l'écrit avec un `r` devant les guillemets, pour que les antislashs restent intacts.
+```python
+import re
+
+cp = "13000"
+if re.fullmatch(r"[0-9]{5}", cp):
+    print("valide")
+else:
+    print("refusé")
+```
+• `[0-9]` : un chiffre.
+• `[a-z]` : une lettre minuscule.
+• `{5}` : exactement 5 fois.
+• `+` : une fois ou plus.
+• `.` : n'importe quel caractère (pour un point littéral, écris `\.`).
+• `^` et `$` : début et fin de chaîne, utiles avec `re.search`.
+
+### Trois fonctions, trois comportements
+• `re.fullmatch(modèle, texte)` : la chaîne **entière** doit correspondre. C'est presque toujours le bon choix pour valider.
+• `re.match(modèle, texte)` : seul le **début** de la chaîne est vérifié.
+• `re.search(modèle, texte)` : le modèle peut se trouver **n'importe où**.
+`re.match(r"[0-9]{5}", "13000abc")` réussit, alors que `re.fullmatch` de la même chose échoue. C'est l'erreur classique qui laisse passer des valeurs invalides.
+
+Attention : dans un modèle, `\d` accepte aussi les chiffres d'autres alphabets, et `str.isdigit()` accepte des caractères comme `²`. Pour valider un nombre ASCII, utilise `[0-9]`.
+
+### Une fonction de validation
+```python
+def valider_departement(d):
+    if not re.fullmatch(r"[0-9]{2}", d):
+        die(f"Département invalide : {d!r}")
+
+valider_departement("13")      # accepté
+valider_departement("1; ls")   # refusé
+```
+Le `!r` affiche la valeur entre guillemets, ce qui rend visibles les espaces cachés. Le deuxième appel montre l'intérêt : une valeur piégée est arrêtée **avant** d'être utilisée ailleurs.
+
+### Les arguments avec argparse
+Pour lire des arguments proprement, plutôt que `sys.argv` à la main, utilise `argparse` :
+```python
+import argparse
+
+parser = argparse.ArgumentParser(description="Crée des dossiers de projet")
+parser.add_argument("nom")
+parser.add_argument("--nombre", type=int, default=3)
+args = parser.parse_args()
+
+if not 1 <= args.nombre <= 99:
+    die("Le nombre doit être compris entre 1 et 99")
+```
+`argparse` écrit tout seul le message d'aide (`--help`), refuse un `--nombre abc` et termine avec le code 2 en cas d'erreur d'usage. Les bornes, elles, restent à vérifier toi-même.
+
+### Méthode pour écrire un bon modèle
+1. Lis la documentation du service concerné : quels caractères sont autorisés, quelle longueur maximale ?
+2. Écris trois exemples valides et trois exemples pièges (commence par -, contient un espace, est vide).
+3. Écris le modèle, puis teste les six exemples.
+"""
+
+    quiz {
+      question "Pourquoi valider une saisie avant de l'utiliser ?" {
+        - "pour accélérer le script"
+        + "elle peut contenir des caractères piégés (espace, ;, tiret en début)"
+        - "Python l'impose"
+        explanation: "Une saisie peut contenir n'importe quoi : un espace qui coupe un nom en deux, un ; qui enchaîne une autre commande, un tiret en début de mot que le programme prend pour une option. En vérifiant que la valeur ressemble à ce qu'on attend avant de l'utiliser, on arrête ces cas piégés à l'entrée. Python n'impose rien : c'est une bonne pratique que tu t'imposes."
+      }
+
+      question "Que renvoie re.fullmatch(r\"[0-9]{5}\", \"13000abc\") ?" {
+        - "une erreur de syntaxe"
+        + "None : la chaîne entière doit correspondre"
+        - "un objet de correspondance"
+        explanation: "Le modèle [0-9]{5} décrit exactement cinq chiffres. Dans 13000abc, les cinq chiffres sont suivis de trois lettres : la chaîne entière ne correspond pas, donc fullmatch renvoie None, qui vaut faux dans un if."
+      }
+
+      question "Et que renvoie re.match(r\"[0-9]{5}\", \"13000abc\") ?" {
+        + "un objet de correspondance, car match ne vérifie que le début de la chaîne"
+        - "une erreur de syntaxe"
+        - "None"
+        explanation: "re.match regarde seulement si le début de la chaîne correspond au modèle. 13000abc commence par cinq chiffres, donc le test réussit, alors que la valeur n'est pas un code postal valide. C'est pour cela qu'on préfère re.fullmatch pour valider."
+      }
+    }
+  }
+
+  module "secrets" {
+    title: "Chapitre 7 : manipuler un secret sans le laisser fuiter"
+    duration: "30min"
+    content: """
+Un **token d'API** est un mot de passe : qui le possède agit à ta place. Dans un script, il y a trois endroits où il fuit facilement.
+• **Dans le code du script.** Le script finit sur GitHub, dans une capture d'écran ou un message. Parade : ne jamais l'écrire dans le fichier.
+• **Dans la ligne de commande.** `python3 script.py --token abc123` est visible par tous les utilisateurs de la machine avec `ps`, et reste dans l'historique du terminal. Parade : le demander pendant l'exécution.
+• **Dans l'affichage.** `print(token)`, un journal en mode débogage, ou un message d'erreur qui contient l'URL. Parade : ne jamais l'afficher.
+
+### Demander le secret sans l'afficher
+```python
+import getpass
+
+token = getpass.getpass("Token : ")
+if not token:
+    die("Token vide")
+```
+`getpass.getpass` masque la saisie. `input()`, lui, affiche ce que tu tapes : il ne convient pas pour un secret.
+
+### Le transmettre à l'API sans qu'il apparaisse dans ps
+Avec la bibliothèque `requests`, le token part dans un en-tête de la requête HTTPS, pas dans les arguments d'un programme :
+```python
+import requests
+
+reponse = requests.get(
+    "https://api.example.com/me",
+    headers={"Authorization": f"Bearer {token}"},
+    timeout=10,
+)
+```
+Le token n'apparaît donc ni dans `ps`, ni dans l'historique.
+
+### Les variables d'environnement
+Un script peut aussi lire un secret préparé à l'avance avec `os.environ.get("MON_TOKEN")`. C'est pratique pour les tâches automatiques, mais une variable d'environnement est héritée par tous les programmes que ton script lance. Réserve cette solution aux cas où personne ne peut taper le secret.
+
+### Autres règles
+• Ne mets jamais le token dans une URL (`https://user:TOKEN@...`) : il se retrouve ensuite écrit en clair dans des fichiers comme `.git/config`, dans les journaux et dans les messages d'erreur de `requests`.
+• Si tu stockes un secret dans un fichier `.env`, ajoute-le à `.gitignore` avant le premier commit.
+• Si un token a fuité (collé dans un chat, un message, un dépôt), **révoque-le tout de suite** dans les paramètres du service et crée-en un nouveau. Le supprimer du message ne suffit pas.
+• Donne au token le minimum de droits nécessaires.
+"""
+
+    quiz {
+      question "Pourquoi python3 script.py --token abc123 est-il dangereux ?" {
+        - "Python refuse cet argument"
+        - "c'est plus lent"
+        + "le token est visible avec ps et reste dans l'historique du terminal"
+        explanation: "Les arguments d'un programme sont visibles par tous les utilisateurs de la machine avec ps, et la ligne tapée est enregistrée dans l'historique du terminal. Le token y apparaîtrait en clair. Le demander avec getpass pendant l'exécution évite les deux problèmes."
+      }
+
+      question "Quelle fonction lit un secret sans l'afficher à l'écran ?" {
+        - "input()"
+        + "getpass.getpass()"
+        - "print()"
+        explanation: "getpass.getpass() masque la saisie, comme read -s en Bash. input() affiche chaque caractère tapé, et print() sert à afficher et non à lire. Pense aussi à vérifier que le secret n'est pas vide avant de l'utiliser."
+      }
+
+      question "Tu as collé un token dans un chat par erreur. Que fais-tu ?" {
+        - "tu attends de voir si quelqu'un l'utilise"
+        + "tu révoques le token et tu en crées un nouveau"
+        - "tu supprimes le message, c'est suffisant"
+        explanation: "Supprimer le message ne sert à rien : le token a pu être lu, copié, enregistré dans des journaux. Un secret exposé doit être considéré comme compromis. Il faut le révoquer chez le service concerné, puis en créer un nouveau."
+      }
+    }
+  }
+
+  module "api" {
+    title: "Chapitre 8 : appeler une API avec requests et json"
+    duration: "40min"
+    content: """
+Une **API REST** est un service web qu'on pilote avec des requêtes HTTP. La bibliothèque `requests` envoie la requête et sait lire la réponse au format JSON. Installe-la dans ton environnement virtuel (chapitre 2) :
+```bash
+pip install requests
+```
+
+### Lire le code de statut HTTP
+Le code de statut dit si la requête a réussi. C'est lui qu'il faut tester, pas seulement le contenu de la réponse.
+• **200** (OK) : lecture réussie.
+• **201** (Créé) : ressource créée.
+• **401** (Non authentifié) : token faux ou expiré.
+• **403** (Interdit) : token valide mais droits insuffisants.
+• **404** (Introuvable) : mauvaise URL, ou ressource privée non accessible.
+• **422** (Données refusées) : par exemple, un nom qui existe déjà.
+```python
+reponse = requests.get(
+    "https://api.example.com/profil",
+    headers={"Authorization": f"Bearer {token}"},
+    timeout=10,
+)
+
+if reponse.status_code == 200:
+    info("Connexion réussie")
+elif reponse.status_code == 401:
+    die("Token refusé (code HTTP 401)")
+else:
+    die(f"Erreur inattendue (code HTTP {reponse.status_code})")
+```
+Le paramètre `timeout` est indispensable : sans lui, `requests` peut attendre indéfiniment une réponse qui ne vient pas, et ton script reste bloqué.
+
+### Les erreurs réseau
+Si le réseau est coupé ou le serveur injoignable, `requests` lève une exception au lieu de renvoyer un code. On l'attrape comme au chapitre 5 :
+```python
+try:
+    reponse = requests.get(url, timeout=10)
+except requests.exceptions.RequestException:
+    die("Impossible de joindre le serveur")
+```
+Écris le message toi-même : celui de la bibliothèque contient l'URL complète, qui peut contenir un secret.
+
+### Lire du JSON
+```python
+donnees = reponse.json()
+login = donnees.get("login")
+```
+`reponse.json()` transforme la réponse en dictionnaire Python. `donnees["login"]` provoque une `KeyError` si le champ manque, alors que `donnees.get("login")` renvoie `None`.
+
+### Envoyer du JSON sans erreur
+N'assemble jamais du JSON avec des guillemets à la main : une valeur contenant un guillemet casserait le JSON, et un utilisateur malveillant pourrait y glisser d'autres champs. Passe un dictionnaire et laisse `requests` s'en charger :
+```python
+reponse = requests.post(
+    "https://api.example.com/depots",
+    json={"name": nom, "private": True},
+    headers={"Authorization": f"Bearer {token}"},
+    timeout=10,
+)
+```
+"""
+
+    quiz {
+      question "Une API répond 403. Que cela signifie-t-il en général ?" {
+        - "la ressource n'existe pas"
+        - "le token est faux"
+        + "le token est valide mais les droits sont insuffisants"
+        explanation: "401 et 403 se ressemblent mais n'ont pas le même sens. Un 401 veut dire « je ne sais pas qui tu es » (token absent, faux ou expiré). Un 403 veut dire « je sais qui tu es, mais tu n'as pas le droit de faire ça » (token valide, droits insuffisants). Le message d'erreur du script doit les distinguer, car la correction n'est pas la même."
+      }
+
+      question "Pourquoi passer json={...} à requests.post plutôt que construire la chaîne JSON à la main ?" {
+        + "pour éviter un JSON cassé ou une injection de champs"
+        - "requests l'exige"
+        - "c'est plus joli"
+        explanation: "Si tu assembles le JSON à la main avec des guillemets, un nom contenant un guillemet casse le JSON. Pire, une valeur malveillante peut y ajouter d'autres champs. Avec json=, requests échappe correctement les caractères spéciaux et garantit un JSON valide."
+      }
+
+      question "Pourquoi toujours préciser timeout dans requests.get ?" {
+        - "pour chiffrer la requête"
+        + "sans timeout, la requête peut attendre indéfiniment et bloquer le script"
+        - "pour rendre la requête plus rapide"
+        explanation: "Par défaut, requests n'impose aucune limite de temps. Si le serveur ne répond jamais, ton script reste bloqué sans erreur ni message. Avec timeout=10, une exception est levée au bout de 10 secondes, et tu peux l'attraper pour afficher un message clair."
+      }
+    }
+  }
+
+  module "fichiers" {
+    title: "Chapitre 9 : fichiers, boucles et sous-processus"
+    duration: "40min"
+    content: """
+### Les chemins et les dossiers avec pathlib
+Le module `pathlib` manipule les chemins de façon portable, sous Linux comme sous Windows :
+```python
+from pathlib import Path
+
+dossier = Path("projet")
+dossier.mkdir(parents=True, exist_ok=True)
+(dossier / "README.md").write_text("# Mon projet\n")
+```
+• `dossier / "README.md"` assemble un chemin.
+• `mkdir(parents=True, exist_ok=True)` crée le dossier et ses parents, sans erreur s'il existe déjà. C'est l'équivalent de `mkdir -p`.
+• `write_text` crée un fichier avec le texte donné, et `read_text` le relit.
+
+### Écrire un fichier de plusieurs lignes
+Pour un texte long, utilise des guillemets triples, qui acceptent les retours à la ligne :
+```python
+texte = '''# Mon projet
+Ce fichier a été créé par un script.
+'''
+(dossier / "README.md").write_text(texte)
+```
+C'est l'équivalent Python du here-document de Bash. Tout ce qui se trouve entre les guillemets triples est du texte, jamais exécuté.
+
+### Les boucles
+Pour répéter une action, par exemple créer `Job01`, `Job02`… :
+```python
+for i in range(1, nombre + 1):
+    nom = f"Job{i:02d}"      # :02d = nombre sur 2 chiffres : 01, 02…
+    (dossier / nom).mkdir(exist_ok=True)
+```
+`range(1, nombre + 1)` donne les entiers de 1 à `nombre` inclus : la borne de fin est exclue. Pour parcourir des fichiers : `for fichier in Path(".").glob("*.txt"):`.
+
+### Lancer une commande avec subprocess
+Pour lancer un programme externe (`git`, `date`, `systemctl`…), on utilise `subprocess` :
+```python
+import subprocess
+
+resultat = subprocess.run(
+    ["date", "+%F"],
+    capture_output=True,
+    text=True,
+    check=True,
+)
+print(resultat.stdout.strip())
+```
+• La commande est donnée sous forme de **liste** : chaque élément est un argument à part entière, sans découpage ni interprétation.
+• `capture_output=True` récupère ce que la commande affiche, dans `resultat.stdout`. C'est l'équivalent de `$(...)` en Bash.
+• `text=True` donne du texte au lieu d'octets.
+• `check=True` lève une exception `CalledProcessError` si la commande échoue.
+
+N'écris jamais `shell=True` avec une valeur saisie par l'utilisateur : le texte serait passé à un interpréteur de commandes, et une valeur comme `1; ls` lancerait une commande de plus.
+"""
+
+    codeblock "python" {
+      title: "Lister les fichiers .log"
+      code: """
+from pathlib import Path
+
+for fichier in Path("/var/log").glob("*.log"):
+    print(fichier.name, fichier.stat().st_size)
+"""
+    }
+
+    quiz {
+      question "Que produit f\"Job{i:02d}\" pour i = 3 ?" {
+        + "Job03"
+        - "Job{i:02d}"
+        - "Job3"
+        explanation: "Dans :02d, d désigne un nombre entier, 2 la largeur minimale et 0 le caractère de remplissage : 3 devient 03. Le f devant les guillemets fait remplacer ce qui est entre accolades par sa valeur formatée."
+      }
+
+      question "Pourquoi éviter subprocess.run(commande, shell=True) avec une valeur saisie par l'utilisateur ?" {
+        - "cela ne fonctionne pas sous Linux"
+        - "c'est plus lent"
+        + "une valeur comme \"1; ls\" serait interprétée par le shell et lancerait une commande de plus"
+        explanation: "Avec shell=True, le texte entier est confié à un interpréteur de commandes, qui comprend les caractères spéciaux comme ; ou &&. Une saisie piégée peut donc exécuter n'importe quoi. Avec une liste d'arguments, chaque élément reste un argument isolé, sans interprétation."
+      }
+
+      question "Que fait mkdir(parents=True, exist_ok=True) ?" {
+        - "il crée le dossier seulement s'il est vide"
+        - "il supprime le dossier puis le recrée"
+        + "il crée le dossier et ses parents, sans erreur s'il existe déjà"
+        explanation: "parents=True crée aussi les dossiers intermédiaires manquants, et exist_ok=True évite une FileExistsError quand le dossier est déjà là. C'est l'équivalent de mkdir -p en Bash. Il ne supprime jamais rien."
+      }
+    }
+  }
+
+  module "git" {
+    title: "Chapitre 10 : automatiser git sans laisser fuiter le token"
+    duration: "40min"
+    content: """
+Pour publier un dossier sur un dépôt distant, un script enchaîne les mêmes commandes que toi à la main. On range l'appel à git dans une petite fonction :
+
+```python
+import subprocess
+
+def git(dossier, *args, env=None):
+    subprocess.run(["git", "-C", str(dossier), *args], check=True, env=env)
+
+git(dossier, "init", "--quiet")
+git(dossier, "add", ".")
+git(dossier, "commit", "--quiet", "-m", "Premier commit")
+git(dossier, "branch", "-M", "main")
+git(dossier, "remote", "add", "origin", "https://github.com/utilisateur/depot.git")
+git(dossier, "push", "--quiet", "-u", "origin", "main")
+```
+
+`git -C dossier` exécute la commande dans ce dossier sans changer de dossier courant. `check=True` arrête le script si une commande git échoue. Pour qu'un `commit` fonctionne, `git config user.name` et `git config user.email` doivent être définis : vérifie-le au début du script, en lançant `git config user.name` avec `capture_output=True` et en testant que `stdout` n'est pas vide.
+
+### Le problème : git demande un mot de passe
+Le `push` vers un dépôt privé demande un identifiant. Les mauvaises solutions :
+• mettre le token dans l'URL : il est alors enregistré en clair dans `.git/config` ;
+• le passer comme argument d'une commande : il est visible par `ps` ;
+• l'écrire dans un fichier oublié ensuite.
+
+### Une solution propre : GIT_ASKPASS
+Git peut appeler un petit programme pour obtenir ses identifiants. Le script de ce programme lit les valeurs depuis des variables d'environnement, jamais depuis un fichier :
+```python
+import os
+import tempfile
+from pathlib import Path
+
+with tempfile.TemporaryDirectory() as tmp:
+    askpass = Path(tmp) / "askpass.sh"
+    askpass.write_text('''#!/usr/bin/env bash
+case "$1" in
+    Username*) echo "$GIT_USER" ;;
+    *)         echo "$GIT_TOKEN" ;;
+esac
+''')
+    askpass.chmod(0o700)
+
+    env = {
+        **os.environ,
+        "GIT_ASKPASS": str(askpass),
+        "GIT_USER": utilisateur,
+        "GIT_TOKEN": token,
+    }
+    git(dossier, "push", "--quiet", "-u", "origin", "main", env=env)
+```
+
+Points importants :
+• le paramètre `env` définit ces variables **pour ce seul sous-processus** : elles ne sont ni exportées, ni ajoutées aux variables de ton script ;
+• le dossier temporaire est supprimé à la sortie du `with` (chapitre 5), donc le programme `askpass.sh` disparaît dès la fin du `push` ;
+• `chmod(0o700)` rend le fichier exécutable pour toi seul ;
+• l'URL du dépôt ne contient aucun secret.
+
+### Vérifier le résultat
+```python
+print((dossier / ".git" / "config").read_text())   # l'URL ne doit contenir aucun token
+git(dossier, "log", "--oneline")                   # le commit doit apparaître
+```
+
+### Alternative : le client officiel gh
+GitHub fournit un programme en ligne de commande, `gh`, qui gère l'authentification lui-même (`gh auth login`) et sait créer un dépôt en une commande. Tu peux le lancer avec `subprocess` comme n'importe quel programme. C'est plus court qu'un script `requests`, mais on apprend moins ce qui se passe réellement. Les deux approches valent la peine d'être connues.
+"""
+
+    quiz {
+      question "Que fait check=True dans subprocess.run ?" {
+        - "il ignore les erreurs de la commande"
+        + "il lève une exception CalledProcessError si la commande échoue"
+        - "il affiche la sortie de la commande"
+        explanation: "Sans check=True, subprocess.run renvoie simplement le résultat, même si la commande a échoué : le script continue comme si de rien n'était. Avec check=True, un code de sortie différent de 0 lève une exception, qui arrête le script ou que tu peux attraper avec try/except."
+      }
+
+      question "Pourquoi ne pas mettre le token dans l'URL du dépôt distant ?" {
+        - "l'URL serait trop longue"
+        - "git refuse les URL avec un identifiant"
+        + "il serait enregistré en clair dans .git/config"
+        explanation: "Quand on ajoute un dépôt distant, git enregistre son URL dans .git/config, qui est un simple fichier texte. Un token dans l'URL y resterait en clair, et partirait avec le dossier s'il est copié ou partagé. Git n'a pas de problème avec les URL contenant un identifiant : c'est simplement dangereux."
+      }
+
+      question "Que permet le paramètre env= de subprocess.run ?" {
+        + "définir les variables d'environnement seulement pour ce sous-processus"
+        - "exporter les variables pour toutes les commandes suivantes"
+        - "chiffrer les variables"
+        explanation: "env= donne au programme lancé son propre jeu de variables d'environnement. Le token n'est donc visible que par ce sous-processus, pendant sa durée de vie, et ne reste pas dans les variables du script. C'est plus sûr que de modifier os.environ, qui concernerait tous les programmes lancés ensuite."
+      }
+    }
+  }
+}
