@@ -31,6 +31,19 @@ class CoursesProvider with ChangeNotifier {
     _load();
   }
 
+  /// In-memory catalogue for widget tests. Skips asset and module loading.
+  @visibleForTesting
+  CoursesProvider.seeded(
+    List<Course> courses, {
+    String? courseId,
+    String? chapterId,
+  }) : _courses = List<Course>.from(courses),
+       _currentCourseId = courseId,
+       _currentChapterId = chapterId,
+       _loaded = true {
+    _phantomService = PhantomCacheService(PhantomTrustValidator());
+  }
+
   void updateLocale(String locale) {
     if (_currentLocale != locale) {
       _currentLocale = locale;
@@ -157,7 +170,9 @@ class CoursesProvider with ChangeNotifier {
 
       // Pour l'exemple, on cherche un fichier "courses_index.json" dans le cache T2C-Phantom
       final jsonStr = await _phantomService.readDecryptedString(
-          'courses_index.json', passphrase);
+        'courses_index.json',
+        passphrase,
+      );
       if (jsonStr != null) {
         final decoded = json.decode(jsonStr) as List;
         final phantomCourses = decoded
@@ -168,7 +183,8 @@ class CoursesProvider with ChangeNotifier {
         _courses = [..._courses, ...phantomCourses];
       } else {
         throw Exception(
-            "Impossible de lire le cache Phantom ou mot de passe incorrect.");
+          "Impossible de lire le cache Phantom ou mot de passe incorrect.",
+        );
       }
     } catch (e) {
       _errorMessage = "Erreur Phantom: $e";
