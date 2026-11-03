@@ -17,6 +17,10 @@ class ModuleService {
   static const int _maxModuleBytes = 5 * 1024 * 1024; // 5 MB
   static const int _maxBackupsPerModule = 5;
 
+  /// TDC Studio course intros are several paragraphs. 500 characters rejected
+  /// python-scripting.tdc (1348) and bash-scripting.tdc (1110) before save.
+  static const int maxDescriptionChars = 4000;
+
   bool _isModuleFile(FileSystemEntity f) {
     if (f is! File) return false;
     final name = f.path.split(Platform.pathSeparator).last;
@@ -38,7 +42,8 @@ class ModuleService {
   }
 
   /// Imports a .tdc DSL or .json course string and saves it as an active external module.
-  Future<Course> importModuleContent(String rawContent, {String? customFileName}) async {
+  Future<Course> importModuleContent(String rawContent,
+      {String? customFileName}) async {
     final data = _parseModuleData(rawContent);
     if (data == null) {
       throw Exception('Format de module invalide (ni TDC DSL ni JSON valide)');
@@ -48,9 +53,34 @@ class ModuleService {
       throw Exception(validationError);
     }
     final course = Course.fromMap(data);
+    if (!course.chapters.any((chapter) => chapter.content.trim().isNotEmpty)) {
+      throw Exception('Contenu vide');
+    }
     final targetName = customFileName ?? '${course.id}.json';
     await saveModule(targetName, json.encode(data), '');
     return course;
+  }
+
+  /// True when [imported] is in [loaded] as a visible external course.
+  ///
+  /// The settings import action uses this so the success message is shown
+  /// only when the course list actually contains the module title and text.
+  static bool courseAppearsInList(List<Course> loaded, Course imported) {
+    for (final course in loaded) {
+      if (course.id != imported.id || course.title != imported.title) {
+        continue;
+      }
+      if (!course.keywords.contains('EXTERNAL')) {
+        continue;
+      }
+      if (course.title.trim().isEmpty) {
+        continue;
+      }
+      if (course.chapters.any((chapter) => chapter.content.trim().isNotEmpty)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /// Returns the directory where external modules should be placed.
@@ -459,8 +489,9 @@ class ModuleService {
     if (m['title'] is! String || (m['title'] as String).length > 100)
       return 'Titre trop long (>100)';
     if (m['description'] is! String ||
-        (m['description'] as String).length > 500)
-      return 'Description trop longue (>500)';
+        (m['description'] as String).length > maxDescriptionChars) {
+      return 'Description trop longue (>$maxDescriptionChars)';
+    }
     if (m['content'] is! List) return 'Le contenu doit être une liste';
 
     final content = m['content'] as List;
@@ -477,10 +508,12 @@ class ModuleService {
         return 'Chapitre $i: champs obligatoires manquants';
       }
 
-      // Limiter la taille du texte par chapitre (ex: max 100KB de markdown)
+      // Cap chapter markdown (100 KB) and reject a blank chapter body.
       final text = chap['content']?.toString() ?? '';
-      if (text.length > 102400)
+      if (text.trim().isEmpty) return 'Chapitre $i: contenu vide';
+      if (text.length > 102400) {
         return 'Chapitre $i: texte trop volumineux (>100KB)';
+      }
 
       // Sanitarisation basique additionnelle si nécessaire (Markdown hardened plus tard)
     }

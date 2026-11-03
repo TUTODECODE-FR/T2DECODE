@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:tutodecode/core/providers/settings_provider.dart';
+import 'package:tutodecode/features/courses/data/course_repository.dart';
 import 'package:tutodecode/features/courses/providers/courses_provider.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
@@ -339,7 +340,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _importEncryptedBackup() async {
     final file = await openFile(acceptedTypeGroups: [
-      const XTypeGroup(label: 'Fichiers TutoDeCode (.tdc, .json)', extensions: ['tdc', 'json']),
+      const XTypeGroup(
+          label: 'Fichiers TutoDeCode (.tdc, .json)',
+          extensions: ['tdc', 'json']),
     ]);
     if (file == null) return;
 
@@ -349,7 +352,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Fichier invalide (taille vide ou supérieure à 10 Mo).'),
+            content:
+                Text('Fichier invalide (taille vide ou supérieure à 10 Mo).'),
             backgroundColor: TdcColors.danger),
       );
       return;
@@ -363,12 +367,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (TdcDslParser.isTdcDsl(text)) {
         final moduleService = ModuleService();
         final course = await moduleService.importModuleContent(text);
+        await _ensureImportedCourseVisible(course);
         if (!mounted) return;
-        final courses = context.read<CoursesProvider>();
-        await courses.reload();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Cours "${course.title}" importé avec succès dans vos modules !'),
+            content: Text(
+                'Cours "${course.title}" importé avec succès dans vos modules !'),
             backgroundColor: TdcColors.success,
           ),
         );
@@ -389,9 +393,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             jsonDecoded['settings'] == null) {
           final moduleService = ModuleService();
           final course = await moduleService.importModuleContent(text);
+          await _ensureImportedCourseVisible(course);
           if (!mounted) return;
-          final courses = context.read<CoursesProvider>();
-          await courses.reload();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Cours "${course.title}" importé avec succès !'),
@@ -447,6 +450,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             content: Text('Import impossible : $errorMsg'),
             backgroundColor: TdcColors.danger),
       );
+    }
+  }
+
+  /// Reloads courses and refuses a success message when the module is absent.
+  Future<void> _ensureImportedCourseVisible(Course course) async {
+    if (!mounted) return;
+    final courses = context.read<CoursesProvider>();
+    await courses.reload();
+    if (!mounted) return;
+    if (!ModuleService.courseAppearsInList(courses.courses, course)) {
+      throw Exception('Le module n\'a pas été ajouté à la liste des cours.');
     }
   }
 
@@ -566,7 +580,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.bug_report_outlined, size: 14, color: TdcColors.warning),
+                  Icon(Icons.bug_report_outlined,
+                      size: 14, color: TdcColors.warning),
                   SizedBox(width: 8),
                   Text('Signaler un bug / problème'),
                 ],
@@ -723,14 +738,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Text(
               'Pour garantir l\'anonymat et le respect de la vie privée (Zero Tracking), le signalement de bugs s\'effectue via nos canaux officiels :',
-              style: TextStyle(fontSize: 13, height: 1.4, color: TdcColors.textSecondary),
+              style: TextStyle(
+                  fontSize: 13, height: 1.4, color: TdcColors.textSecondary),
             ),
             SizedBox(height: 16),
             SelectableText(
               '• Dépôt GitLab Officiel :\n  https://gitlab.com/tutodecode-org/T2DECODE/-/issues/new\n\n'
               '• Miroir GitHub :\n  https://github.com/TUTODECODE-FR/T2DECODE/issues/new\n\n'
               '• Support direct Association :\n  contact@tutodecode.org',
-              style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: TdcColors.accent),
+              style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 12,
+                  color: TdcColors.accent),
             ),
           ],
         ),
