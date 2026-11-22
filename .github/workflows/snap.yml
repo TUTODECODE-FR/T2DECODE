@@ -1,0 +1,77 @@
+name: Snap Store
+
+# À chaque tag vX.Y.Z (poussé sur GitLab puis recopié ici par le miroir) :
+# snap compilé pour amd64 et arm64 avec la version du tag, envoyé sur
+# snapcraft.io/t2decode et publié sur le canal « stable ». Les installations
+# existantes se mettent ensuite à jour toutes seules (snapd vérifie plusieurs
+# fois par jour). Lancement manuel : publication sur « edge » pour tester.
+#
+# Secret : SNAPCRAFT_STORE_CREDENTIALS (sortie de « snapcraft export-login »).
+
+'on':
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "Canal de publication"
+        type: choice
+        options: [edge, beta, candidate]
+        default: edge
+
+permissions:
+  contents: read
+
+concurrency:
+  group: snap-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  snap:
+    name: Snap ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    env:
+      SNAP_PUBLISH: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS != '' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Version du tag dans snapcraft.yaml
+        run: |
+          ref="${GITHUB_REF_NAME}"
+          if [[ "$ref" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then v="${BASH_REMATCH[1]}"
+          else v="$(sed -n 's/^version: *\([0-9.]*\).*/\1/p' pubspec.yaml)+git$(git rev-parse --short HEAD)"; fi
+          sed -i "s/^version: .*/version: '$v'/" snap/snapcraft.yaml
+          grep '^version:' snap/snapcraft.yaml
+          echo "Snap $v (${{ matrix.arch }})" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: snapcore/action-build@3bdaa03e1ba6bf59a65f84a751d943d549a54e79 # v1.3.0
+        id: build
+
+      - name: Publication sur le Snap Store
+        if: env.SNAP_PUBLISH == 'true'
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        uses: snapcore/action-publish@214b86e5ca036ead1668c79afb81e550e6c54d40 # v1.2.0
+        with:
+          snap: ${{ steps.build.outputs.snap }}
+          release: ${{ startsWith(github.ref, 'refs/tags/v') && 'stable' || github.event.inputs.channel || 'edge' }}
+
+      - name: Identifiants absents
+        if: env.SNAP_PUBLISH != 'true'
+        run: |
+          echo "::warning::SNAPCRAFT_STORE_CREDENTIALS absent : snap compilé mais pas publié"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: t2decode-snap-${{ matrix.arch }}
+          path: ${{ steps.build.outputs.snap }}
