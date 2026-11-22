@@ -87,8 +87,8 @@ LessonOpening prepareLessonOpening(String markdown, String chapterTitle) {
 
   if (rest.isNotEmpty) {
     final newline = rest.indexOf('\n');
-    final firstLine = (newline == -1 ? rest : rest.substring(0, newline))
-        .trim();
+    final firstLine =
+        (newline == -1 ? rest : rest.substring(0, newline)).trim();
     final heading = RegExp(r'^#\s+([^#].*)$').firstMatch(firstLine);
     if (heading != null) {
       final text = heading.group(1)!.trim();
@@ -450,8 +450,8 @@ class _ChapterPips extends StatelessWidget {
                 color: i == current - 1
                     ? TdcColors.accent
                     : i < current - 1
-                    ? TdcColors.accent.withValues(alpha: 0.4)
-                    : const Color(0xFF1C1C1C),
+                        ? TdcColors.accent.withValues(alpha: 0.4)
+                        : const Color(0xFF1C1C1C),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),

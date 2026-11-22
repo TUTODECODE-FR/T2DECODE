@@ -26,7 +26,9 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         backgroundColor: TdcColors.accent,
-        content: Text('🔄 Machine Virtuelle réinitialisée à son état d\'origine !', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        content: Text(
+            '🔄 Machine Virtuelle réinitialisée à son état d\'origine !',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -52,7 +54,8 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
                     color: TdcColors.accent.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Icon(Icons.terminal, color: TdcColors.accent, size: 18),
+                  child: const Icon(Icons.terminal,
+                      color: TdcColors.accent, size: 18),
                 ),
                 const SizedBox(width: 10),
                 const Column(
@@ -69,18 +72,25 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
                     ),
                     Text(
                       'Système isolé — Entraînez-vous sans aucun risque pour votre PC',
-                      style: TextStyle(color: TdcColors.textMuted, fontSize: 11),
+                      style:
+                          TextStyle(color: TdcColors.textMuted, fontSize: 11),
                     ),
                   ],
                 ),
                 const Spacer(),
                 OutlinedButton.icon(
                   onPressed: _resetVM,
-                  icon: const Icon(Icons.refresh, size: 14, color: TdcColors.accent),
-                  label: const Text('RÉINITIALISER LA VM', style: TextStyle(fontSize: 10, color: TdcColors.accent, fontWeight: FontWeight.bold)),
+                  icon: const Icon(Icons.refresh,
+                      size: 14, color: TdcColors.accent),
+                  label: const Text('RÉINITIALISER LA VM',
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: TdcColors.accent,
+                          fontWeight: FontWeight.bold)),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: TdcColors.border),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                 ),
               ],
@@ -95,11 +105,17 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  const Text('EXERCICES RÉFLEXES : ', style: TextStyle(color: TdcColors.textMuted, fontSize: 10, fontWeight: FontWeight.bold)),
+                  const Text('EXERCICES RÉFLEXES : ',
+                      style: TextStyle(
+                          color: TdcColors.textMuted,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold)),
                   _buildExerciseChip('ls -lah /var/log', 'Inspecter les logs'),
                   _buildExerciseChip('whoami && pwd', 'Diagnostic identité'),
-                  _buildExerciseChip('chmod 755 script.sh', 'Permissions binaire'),
-                  _buildExerciseChip('grep -rn "ERROR" /var/log', 'Recherche de pannes'),
+                  _buildExerciseChip(
+                      'chmod 755 script.sh', 'Permissions binaire'),
+                  _buildExerciseChip(
+                      'grep -rn "ERROR" /var/log', 'Recherche de pannes'),
                   _buildExerciseChip('rm -rf /tmp/demo', 'Nettoyage récursif'),
                 ],
               ),
@@ -127,14 +143,18 @@ class _LinuxSimulatorState extends State<LinuxSimulator> {
       padding: const EdgeInsets.only(right: 8),
       child: ActionChip(
         avatar: const Icon(Icons.code, size: 12, color: TdcColors.accent),
-        label: Text('$label ($command)', style: const TextStyle(fontSize: 10, color: TdcColors.textPrimary)),
+        label: Text('$label ($command)',
+            style: const TextStyle(fontSize: 10, color: TdcColors.textPrimary)),
         backgroundColor: TdcColors.surface,
         side: const BorderSide(color: TdcColors.border),
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: TdcColors.surfaceAlt,
-              content: Text('💡 Tapez "$command" dans le terminal ci-dessous pour tester !', style: const TextStyle(color: TdcColors.accent, fontFamily: 'monospace')),
+              content: Text(
+                  '💡 Tapez "$command" dans le terminal ci-dessous pour tester !',
+                  style: const TextStyle(
+                      color: TdcColors.accent, fontFamily: 'monospace')),
               duration: const Duration(seconds: 2),
             ),
           );

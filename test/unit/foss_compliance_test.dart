@@ -5,7 +5,7 @@ void main() {
   group('FOSS & Air-Gapped Compliance Automated Audit', () {
     test('pubspec.yaml must not contain any telemetry or proprietary SDKs', () {
       final pubspec = File('pubspec.yaml').readAsStringSync();
-      
+
       final bannedPackages = [
         'firebase',
         'google_mobile_ads',
@@ -37,23 +37,30 @@ void main() {
       }
     });
 
-    test('Android F-Droid ProGuard rules and Gradle exclusions must be present', () {
+    test('Android F-Droid ProGuard rules and Gradle exclusions must be present',
+        () {
       final proguardFile = File('android/app/proguard-rules.pro');
-      expect(proguardFile.existsSync(), isTrue, reason: 'proguard-rules.pro missing!');
+      expect(proguardFile.existsSync(), isTrue,
+          reason: 'proguard-rules.pro missing!');
 
       final proguardContent = proguardFile.readAsStringSync();
       expect(proguardContent.contains('com.google.android.play'), isTrue);
 
       final appGradle = File('android/app/build.gradle.kts').readAsStringSync();
-      expect(appGradle.contains('exclude(group = "com.google.android.play")'), isTrue);
+      expect(appGradle.contains('exclude(group = "com.google.android.play")'),
+          isTrue);
 
       final rootGradle = File('android/build.gradle.kts').readAsStringSync();
-      expect(rootGradle.contains('exclude(group = "com.google.android.play")'), isTrue);
+      expect(rootGradle.contains('exclude(group = "com.google.android.play")'),
+          isTrue);
     });
 
-    test('AndroidManifest.xml must not declare intrusive surveillance permissions', () {
-      final manifest = File('android/app/src/main/AndroidManifest.xml').readAsStringSync();
-      
+    test(
+        'AndroidManifest.xml must not declare intrusive surveillance permissions',
+        () {
+      final manifest =
+          File('android/app/src/main/AndroidManifest.xml').readAsStringSync();
+
       final bannedPermissions = [
         'android.permission.ACCESS_FINE_LOCATION',
         'android.permission.ACCESS_COARSE_LOCATION',
@@ -68,7 +75,8 @@ void main() {
         expect(
           manifest.contains(perm),
           isFalse,
-          reason: 'Intrusive permission "$perm" declared in AndroidManifest.xml!',
+          reason:
+              'Intrusive permission "$perm" declared in AndroidManifest.xml!',
         );
       }
     });

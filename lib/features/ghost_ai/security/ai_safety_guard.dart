@@ -4,21 +4,27 @@
 /// AI Safety Guard — Anti-Prompt Injection, Anti-Jailbreak & Anti-Extraction for Ghost AI.
 class AISafetyGuard {
   static final List<RegExp> _injectionPatterns = [
-    RegExp(r'ignore\s+(all\s+)?(previous|prior|above)\s+instructions', caseSensitive: false),
-    RegExp(r'disregard\s+(all\s+)?(previous|prior|above)\s+instructions', caseSensitive: false),
-    RegExp(r'you\s+are\s+now\s+(DAN|unfiltered|jailbroken|godmode|root)', caseSensitive: false),
+    RegExp(r'ignore\s+(all\s+)?(previous|prior|above)\s+instructions',
+        caseSensitive: false),
+    RegExp(r'disregard\s+(all\s+)?(previous|prior|above)\s+instructions',
+        caseSensitive: false),
+    RegExp(r'you\s+are\s+now\s+(DAN|unfiltered|jailbroken|godmode|root)',
+        caseSensitive: false),
     RegExp(r'system\s+override\s*:', caseSensitive: false),
     RegExp(r'developer\s+mode\s+(enabled|on)', caseSensitive: false),
-    RegExp(r'reveal\s+your\s+(system\s+prompt|hidden\s+instructions)', caseSensitive: false),
+    RegExp(r'reveal\s+your\s+(system\s+prompt|hidden\s+instructions)',
+        caseSensitive: false),
     RegExp(r'output\s+the\s+exact\s+prompt\s+above', caseSensitive: false),
-    RegExp(r'bypass\s+all\s+(safety|content|ethical)\s+filters', caseSensitive: false),
+    RegExp(r'bypass\s+all\s+(safety|content|ethical)\s+filters',
+        caseSensitive: false),
     RegExp(r'base64\s+decode\s+and\s+execute', caseSensitive: false),
   ];
 
   static final List<RegExp> _maliciousOutputPatterns = [
     RegExp(r'rm\s+-rf\s+/(boot|sys|etc|var|usr|bin)?', caseSensitive: false),
     RegExp(r':\(\)\{\s*:\|:&\s*\};:', caseSensitive: false), // Fork bomb
-    RegExp(r'mkfs\.(ext[234]|vfat|ntfs)\s+/dev/[a-z0-9]+', caseSensitive: false),
+    RegExp(r'mkfs\.(ext[234]|vfat|ntfs)\s+/dev/[a-z0-9]+',
+        caseSensitive: false),
     RegExp(r'dd\s+if=/dev/zero\s+of=/dev/[a-z0-9]+', caseSensitive: false),
   ];
 
@@ -51,7 +57,8 @@ class AISafetyGuard {
     String sanitized = output;
     for (final pattern in _maliciousOutputPatterns) {
       if (pattern.hasMatch(sanitized)) {
-        sanitized = sanitized.replaceAll(pattern, '[COMMANDE DESTRUCTIVE BLOQUÉE PAR T2DECODE AIR-GAP GUARD]');
+        sanitized = sanitized.replaceAll(pattern,
+            '[COMMANDE DESTRUCTIVE BLOQUÉE PAR T2DECODE AIR-GAP GUARD]');
       }
     }
     return sanitized;

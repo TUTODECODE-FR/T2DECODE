@@ -33,9 +33,9 @@ class _ChapterScreenState extends State<ChapterScreen> {
     final chapter = prov.currentChapter;
     if (course != null && chapter != null) {
       context.read<ShellProvider>().updateShell(
-        title: chapter.title,
-        showBackButton: true,
-      );
+            title: chapter.title,
+            showBackButton: true,
+          );
     }
   }
 
@@ -272,9 +272,8 @@ class _ChapterScreenState extends State<ChapterScreen> {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: isLocked || hasNext
-                    ? TdcColors.accent
-                    : TdcColors.success,
+                backgroundColor:
+                    isLocked || hasNext ? TdcColors.accent : TdcColors.success,
                 foregroundColor: Colors.black,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 14),

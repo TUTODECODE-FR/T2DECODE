@@ -66,7 +66,8 @@ class _NetKitScreenState extends State<NetKitScreen>
           ),
           child: Row(
             children: [
-              Icon(isOffline ? Icons.wifi_off : Icons.cable, color: TdcColors.info, size: 16),
+              Icon(isOffline ? Icons.wifi_off : Icons.cable,
+                  color: TdcColors.info, size: 16),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(

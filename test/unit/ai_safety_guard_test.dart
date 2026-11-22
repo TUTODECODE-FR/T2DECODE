@@ -18,7 +18,10 @@ void main() {
     test('Blocks dangerous shell commands from AI responses', () {
       final dangerousResponse = "rm -rf / --no-preserve-root";
       final sanitized = AISafetyGuard.sanitizeOutput(dangerousResponse);
-      expect(sanitized, contains('[COMMANDE DESTRUCTIVE BLOQUÉE PAR T2DECODE AIR-GAP GUARD]'));
+      expect(
+          sanitized,
+          contains(
+              '[COMMANDE DESTRUCTIVE BLOQUÉE PAR T2DECODE AIR-GAP GUARD]'));
     });
   });
 }

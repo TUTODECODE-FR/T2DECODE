@@ -28,7 +28,8 @@ class ConstantTimeSecurity {
 
   /// Securely overwrites a byte buffer in RAM with zeros (Memory Zeroization / Anti-Dump).
   static void zeroize(TypedData buffer) {
-    final byteData = buffer.buffer.asUint8List(buffer.offsetInBytes, buffer.lengthInBytes);
+    final byteData =
+        buffer.buffer.asUint8List(buffer.offsetInBytes, buffer.lengthInBytes);
     for (int i = 0; i < byteData.length; i++) {
       byteData[i] = 0;
     }
@@ -49,7 +50,8 @@ class ConstantTimeSecurity {
       final nextLevel = <String>[];
       for (int i = 0; i < currentLevel.length; i += 2) {
         final left = currentLevel[i];
-        final right = (i + 1 < currentLevel.length) ? currentLevel[i + 1] : left;
+        final right =
+            (i + 1 < currentLevel.length) ? currentLevel[i + 1] : left;
         final combined = utf8.encode('$left:$right');
         final parentHash = sha256.convert(combined).toString();
         nextLevel.add(parentHash);

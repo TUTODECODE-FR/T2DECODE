@@ -154,7 +154,8 @@ L'utilisateur étudie ce contenu. Utilise ces informations pour répondre de man
     for (final m in messages) {
       final role = m['role'] ?? 'user';
       final content = m['content'] ?? '';
-      final sanitizedContent = role == 'user' ? AISafetyGuard.sanitizePrompt(content) : content;
+      final sanitizedContent =
+          role == 'user' ? AISafetyGuard.sanitizePrompt(content) : content;
       msgs.add({'role': role, 'content': sanitizedContent});
     }
 

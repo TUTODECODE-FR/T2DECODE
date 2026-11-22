@@ -10,7 +10,6 @@ import 'package:tutodecode/features/ghost_ai/security/ai_safety_guard.dart';
 
 void main() {
   group('🔍 T2DECODE Deep App Recesses & 100% Comprehensive Health Test', () {
-    
     // ─── 1. TEST CRYPTOGRAPHIC & MEMORY HARDENING ─────────────────────────
     test('🔒 Constant-Time Security & Memory Zeroization Verification', () {
       final tokenA = 'T2D-SECRET-AUTH-TOKEN-994821';
@@ -46,7 +45,8 @@ void main() {
 
       // Changing 1 character in 1 hash MUST invalidate the root
       final alteredLeafs = List<String>.from(leafHashes);
-      alteredLeafs[0] = sha256.convert(utf8.encode('course_network_tampered')).toString();
+      alteredLeafs[0] =
+          sha256.convert(utf8.encode('course_network_tampered')).toString();
       final alteredRoot = ConstantTimeSecurity.computeMerkleRoot(alteredLeafs);
       expect(merkleRoot != alteredRoot, isTrue);
     });
@@ -65,16 +65,21 @@ void main() {
 
       for (final badPrompt in adversarialPrompts) {
         final sanitized = AISafetyGuard.sanitizePrompt(badPrompt);
-        expect(sanitized.contains('SECURITY ALERT') || sanitized.contains('[FILTRÉ]'), isTrue,
+        expect(
+            sanitized.contains('SECURITY ALERT') ||
+                sanitized.contains('[FILTRÉ]'),
+            isTrue,
             reason: 'Failed to neutralize adversarial prompt: $badPrompt');
       }
 
       // Safe technical questions must remain untouched
-      final safePrompt = 'Explique-moi le fonctionnement du protocole TCP/IP et le handshake à 3 voies.';
+      final safePrompt =
+          'Explique-moi le fonctionnement du protocole TCP/IP et le handshake à 3 voies.';
       expect(AISafetyGuard.sanitizePrompt(safePrompt), equals(safePrompt));
 
       // Output sanitization of dangerous destructive commands
-      final dangerousOutput = 'Pour réinitialiser le système, exécutez rm -rf /';
+      final dangerousOutput =
+          'Pour réinitialiser le système, exécutez rm -rf /';
       final safeOutput = AISafetyGuard.sanitizeOutput(dangerousOutput);
       expect(safeOutput.contains('BLOQUÉE PAR T2DECODE'), isTrue);
     });
@@ -95,7 +100,9 @@ void main() {
       expect(osiLayers.last['layer'], equals(1));
     });
 
-    test('⚙️ Simulator 2: Security & Encryption Simulator logic (AES/RSA/Hashing)', () {
+    test(
+        '⚙️ Simulator 2: Security & Encryption Simulator logic (AES/RSA/Hashing)',
+        () {
       final message = 'T2DECODE Sovereign Payload';
       final hash = sha256.convert(utf8.encode(message)).toString();
       expect(hash.length, equals(64));
@@ -103,12 +110,22 @@ void main() {
     });
 
     test('⚙️ Simulator 3: System Architecture & Kernel Simulator logic', () {
-      final syscalls = ['read', 'write', 'open', 'close', 'fork', 'execve', 'mmap'];
+      final syscalls = [
+        'read',
+        'write',
+        'open',
+        'close',
+        'fork',
+        'execve',
+        'mmap'
+      ];
       expect(syscalls.contains('fork'), isTrue);
       expect(syscalls.contains('mmap'), isTrue);
     });
 
-    test('⚙️ Simulator 4: Cloud & Container Simulator logic (Docker/Kubernetes)', () {
+    test(
+        '⚙️ Simulator 4: Cloud & Container Simulator logic (Docker/Kubernetes)',
+        () {
       final containerSpecs = {
         'image': 't2decode-hardened:latest',
         'security_opt': ['no-new-privileges:true'],
@@ -119,10 +136,12 @@ void main() {
       expect((containerSpecs['cap_drop'] as List).contains('ALL'), isTrue);
     });
 
-    test('⚙️ Simulator 5: Cryptography (Diffie-Hellman Key Exchange simulation)', () {
+    test(
+        '⚙️ Simulator 5: Cryptography (Diffie-Hellman Key Exchange simulation)',
+        () {
       final p = 23; // prime
-      final g = 5;  // generator
-      final a = 6;  // Alice private
+      final g = 5; // generator
+      final a = 6; // Alice private
       final b = 15; // Bob private
 
       final A = (BigInt.from(g).pow(a) % BigInt.from(p)).toInt();
@@ -134,7 +153,8 @@ void main() {
       expect(secretAlice, equals(secretBob));
     });
 
-    test('⚙️ Simulator 6: Internet Routing (BGP/DNS/Subnetting simulation)', () {
+    test('⚙️ Simulator 6: Internet Routing (BGP/DNS/Subnetting simulation)',
+        () {
       final dnsRecords = {
         'tutodecode.org': {'type': 'A', 'value': '127.0.0.1'},
         'winancher.dev': {'type': 'A', 'value': '127.0.0.1'},

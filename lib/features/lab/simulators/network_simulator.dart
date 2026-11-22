@@ -19,7 +19,8 @@ class NetworkSimulator extends StatefulWidget {
 class _NetworkSimulatorState extends State<NetworkSimulator>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  final TextEditingController _ipController = TextEditingController(text: '192.168.1.100');
+  final TextEditingController _ipController =
+      TextEditingController(text: '192.168.1.100');
 
   bool _isScanning = false;
   bool _isPinging = false;
@@ -54,18 +55,72 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
 
   void _initializeData() {
     _discoveredDevices = [
-      NetworkDevice(ip: '192.168.1.1', hostname: 'gateway.router', type: 'Passerelle', os: 'OpenWrt', openPorts: [22, 80, 443]),
-      NetworkDevice(ip: '192.168.1.10', hostname: 'firewall-shield', type: 'Pare-feu', os: 'pfSense', openPorts: [22, 443]),
-      NetworkDevice(ip: '192.168.1.100', hostname: 'web-server-prod', type: 'Serveur Web', os: 'Ubuntu', openPorts: [80, 443]),
-      NetworkDevice(ip: '192.168.1.105', hostname: 'db-master-sec', type: 'Base de Données', os: 'Debian', openPorts: [5432]),
-      NetworkDevice(ip: '192.168.1.210', hostname: 'workstation-dev', type: 'Poste Client', os: 'Linux', openPorts: [22]),
+      NetworkDevice(
+          ip: '192.168.1.1',
+          hostname: 'gateway.router',
+          type: 'Passerelle',
+          os: 'OpenWrt',
+          openPorts: [22, 80, 443]),
+      NetworkDevice(
+          ip: '192.168.1.10',
+          hostname: 'firewall-shield',
+          type: 'Pare-feu',
+          os: 'pfSense',
+          openPorts: [22, 443]),
+      NetworkDevice(
+          ip: '192.168.1.100',
+          hostname: 'web-server-prod',
+          type: 'Serveur Web',
+          os: 'Ubuntu',
+          openPorts: [80, 443]),
+      NetworkDevice(
+          ip: '192.168.1.105',
+          hostname: 'db-master-sec',
+          type: 'Base de Données',
+          os: 'Debian',
+          openPorts: [5432]),
+      NetworkDevice(
+          ip: '192.168.1.210',
+          hostname: 'workstation-dev',
+          type: 'Poste Client',
+          os: 'Linux',
+          openPorts: [22]),
     ];
 
     _capturedPackets.addAll([
-      CapturedPacket(id: 1, time: '0.0012', source: '192.168.1.210', destination: '192.168.1.1', protocol: 'DNS', info: 'Query A tutodecode.org', payload: '0000  00 0c 29 aa bb cc 52 54  00 12 34 56  ..)...RT..4V'),
-      CapturedPacket(id: 2, time: '0.0035', source: '192.168.1.1', destination: '192.168.1.210', protocol: 'DNS', info: 'Response A 192.168.1.100', payload: '0000  52 54 00 12 34 56 00 0c  29 aa bb cc  RT..4V..)...'),
-      CapturedPacket(id: 3, time: '0.0080', source: '192.168.1.210', destination: '192.168.1.100', protocol: 'TCP', info: '54322 → 80 [SYN]', payload: '0000  52 54 00 12 34 56 00 0c  29 aa bb cc  RT..4V..)...'),
-      CapturedPacket(id: 4, time: '0.0125', source: '192.168.1.100', destination: '192.168.1.210', protocol: 'HTTP', info: 'POST /api/login HTTP/1.1', payload: 'POST /api/login HTTP/1.1\r\nHost: tutodecode.org\r\n{"user":"admin","pass":"S3cur3!"}'),
+      CapturedPacket(
+          id: 1,
+          time: '0.0012',
+          source: '192.168.1.210',
+          destination: '192.168.1.1',
+          protocol: 'DNS',
+          info: 'Query A tutodecode.org',
+          payload: '0000  00 0c 29 aa bb cc 52 54  00 12 34 56  ..)...RT..4V'),
+      CapturedPacket(
+          id: 2,
+          time: '0.0035',
+          source: '192.168.1.1',
+          destination: '192.168.1.210',
+          protocol: 'DNS',
+          info: 'Response A 192.168.1.100',
+          payload: '0000  52 54 00 12 34 56 00 0c  29 aa bb cc  RT..4V..)...'),
+      CapturedPacket(
+          id: 3,
+          time: '0.0080',
+          source: '192.168.1.210',
+          destination: '192.168.1.100',
+          protocol: 'TCP',
+          info: '54322 → 80 [SYN]',
+          payload: '0000  52 54 00 12 34 56 00 0c  29 aa bb cc  RT..4V..)...'),
+      CapturedPacket(
+          id: 4,
+          time: '0.0125',
+          source: '192.168.1.100',
+          destination: '192.168.1.210',
+          protocol: 'HTTP',
+          info: 'POST /api/login HTTP/1.1',
+          payload:
+              'POST /api/login HTTP/1.1\r\nHost: tutodecode.org\r\n{"user":"admin","pass":"S3cur3!"}'),
     ]);
     _selectedPacket = _capturedPackets[3];
   }
@@ -91,7 +146,10 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               indicatorColor: TdcColors.accent,
               labelColor: TdcColors.accent,
               unselectedLabelColor: TdcColors.textMuted,
-              labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1.0),
+              labelStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                  letterSpacing: 1.0),
               tabs: const [
                 Tab(text: 'CARTE RÉSEAU & SCAN'),
                 Tab(text: 'INSPECTEUR PAQUETS'),
@@ -110,7 +168,8 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                 const SimulatorAIAssistant(
                   topic: 'Réseau épuré',
                   accentColor: TdcColors.network,
-                  systemPrompt: 'Tu es Ghost. Réponds en 2 phrases max, ultra clair et concis.',
+                  systemPrompt:
+                      'Tu es Ghost. Réponds en 2 phrases max, ultra clair et concis.',
                   suggestedQuestions: [
                     'Comment marche le réseau en 1 phrase ?',
                     'Différence entre IP et MAC ?',
@@ -137,15 +196,27 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
           const SizedBox(width: 10),
           const Text(
             'NETKIT — TOPOLOGIE & ANLYSE',
-            style: TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: 1.0),
+            style: TextStyle(
+                color: TdcColors.textPrimary,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                letterSpacing: 1.0),
           ),
           const Spacer(),
           ElevatedButton.icon(
             onPressed: _isScanning ? null : _runScan,
             icon: _isScanning
-                ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
+                ? const SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.black))
                 : const Icon(Icons.radar, size: 16, color: Colors.black),
-            label: Text(_isScanning ? 'SCAN...' : 'LANCER SCAN', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black)),
+            label: Text(_isScanning ? 'SCAN...' : 'LANCER SCAN',
+                style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
             style: ElevatedButton.styleFrom(
               backgroundColor: TdcColors.accent,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -174,22 +245,41 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
                 onTap: () => setState(() => _selectedDeviceIp = device.ip),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
-                    color: isSelected ? TdcColors.accent.withOpacity(0.12) : TdcColors.surface,
+                    color: isSelected
+                        ? TdcColors.accent.withOpacity(0.12)
+                        : TdcColors.surface,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: isSelected ? TdcColors.accent : TdcColors.border),
+                    border: Border.all(
+                        color:
+                            isSelected ? TdcColors.accent : TdcColors.border),
                   ),
                   child: Row(
                     children: [
-                      Icon(_getDeviceIcon(device.type), color: isSelected ? TdcColors.accent : TdcColors.textMuted, size: 20),
+                      Icon(_getDeviceIcon(device.type),
+                          color: isSelected
+                              ? TdcColors.accent
+                              : TdcColors.textMuted,
+                          size: 20),
                       const SizedBox(width: 10),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(device.hostname, style: TextStyle(color: isSelected ? TdcColors.textPrimary : TdcColors.textMuted, fontWeight: FontWeight.bold, fontSize: 12)),
-                          Text(device.ip, style: const TextStyle(fontFamily: 'monospace', fontSize: 10, color: TdcColors.textMuted)),
+                          Text(device.hostname,
+                              style: TextStyle(
+                                  color: isSelected
+                                      ? TdcColors.textPrimary
+                                      : TdcColors.textMuted,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12)),
+                          Text(device.ip,
+                              style: const TextStyle(
+                                  fontFamily: 'monospace',
+                                  fontSize: 10,
+                                  color: TdcColors.textMuted)),
                         ],
                       ),
                     ],
@@ -205,11 +295,16 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
 
   IconData _getDeviceIcon(String type) {
     switch (type) {
-      case 'Passerelle': return Icons.router_outlined;
-      case 'Pare-feu': return Icons.shield_outlined;
-      case 'Serveur Web': return Icons.dns_outlined;
-      case 'Base de Données': return Icons.storage_outlined;
-      default: return Icons.computer_outlined;
+      case 'Passerelle':
+        return Icons.router_outlined;
+      case 'Pare-feu':
+        return Icons.shield_outlined;
+      case 'Serveur Web':
+        return Icons.dns_outlined;
+      case 'Base de Données':
+        return Icons.storage_outlined;
+      default:
+        return Icons.computer_outlined;
     }
   }
 
@@ -220,8 +315,16 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('ÉQUIPEMENTS RÉSEAU (${_discoveredDevices.length})', style: const TextStyle(color: TdcColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
-            Text('IP Locale : 192.168.1.210', style: const TextStyle(fontFamily: 'monospace', color: TdcColors.accent, fontSize: 11)),
+            Text('ÉQUIPEMENTS RÉSEAU (${_discoveredDevices.length})',
+                style: const TextStyle(
+                    color: TdcColors.textMuted,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold)),
+            Text('IP Locale : 192.168.1.210',
+                style: const TextStyle(
+                    fontFamily: 'monospace',
+                    color: TdcColors.accent,
+                    fontSize: 11)),
           ],
         ),
         const SizedBox(height: 12),
@@ -238,23 +341,43 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
       decoration: BoxDecoration(
         color: TdcColors.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: isSelected ? TdcColors.accent.withOpacity(0.5) : TdcColors.border),
+        border: Border.all(
+            color: isSelected
+                ? TdcColors.accent.withOpacity(0.5)
+                : TdcColors.border),
       ),
       child: Row(
         children: [
           Icon(_getDeviceIcon(device.type), color: TdcColors.accent, size: 18),
           const SizedBox(width: 12),
-          Text(device.hostname, style: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 12)),
+          Text(device.hostname,
+              style: const TextStyle(
+                  color: TdcColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12)),
           const SizedBox(width: 8),
-          Text(device.ip, style: const TextStyle(fontFamily: 'monospace', color: TdcColors.textMuted, fontSize: 11)),
+          Text(device.ip,
+              style: const TextStyle(
+                  fontFamily: 'monospace',
+                  color: TdcColors.textMuted,
+                  fontSize: 11)),
           const Spacer(),
           Wrap(
             spacing: 4,
-            children: device.openPorts.map((p) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(4)),
-              child: Text(':$p', style: const TextStyle(fontFamily: 'monospace', fontSize: 10, color: TdcColors.accent)),
-            )).toList(),
+            children: device.openPorts
+                .map((p) => Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(4)),
+                      child: Text(':$p',
+                          style: const TextStyle(
+                              fontFamily: 'monospace',
+                              fontSize: 10,
+                              color: TdcColors.accent)),
+                    ))
+                .toList(),
           ),
         ],
       ),
@@ -280,16 +403,46 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               return GestureDetector(
                 onTap: () => setState(() => _selectedPacket = p),
                 child: Container(
-                  color: isSel ? TdcColors.accent.withOpacity(0.1) : (i.isEven ? const Color(0xFF09090D) : Colors.black),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  color: isSel
+                      ? TdcColors.accent.withOpacity(0.1)
+                      : (i.isEven ? const Color(0xFF09090D) : Colors.black),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   child: Row(
                     children: [
-                      SizedBox(width: 40, child: Text(p.protocol, style: TextStyle(color: p.protocol == 'HTTP' ? Colors.redAccent : TdcColors.accent, fontWeight: FontWeight.bold, fontSize: 11))),
-                      SizedBox(width: 100, child: Text(p.source, style: const TextStyle(fontFamily: 'monospace', color: TdcColors.textMuted, fontSize: 11))),
-                      const Icon(Icons.arrow_right_alt, color: TdcColors.textMuted, size: 14),
-                      SizedBox(width: 100, child: Text(p.destination, style: const TextStyle(fontFamily: 'monospace', color: TdcColors.textMuted, fontSize: 11))),
+                      SizedBox(
+                          width: 40,
+                          child: Text(p.protocol,
+                              style: TextStyle(
+                                  color: p.protocol == 'HTTP'
+                                      ? Colors.redAccent
+                                      : TdcColors.accent,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11))),
+                      SizedBox(
+                          width: 100,
+                          child: Text(p.source,
+                              style: const TextStyle(
+                                  fontFamily: 'monospace',
+                                  color: TdcColors.textMuted,
+                                  fontSize: 11))),
+                      const Icon(Icons.arrow_right_alt,
+                          color: TdcColors.textMuted, size: 14),
+                      SizedBox(
+                          width: 100,
+                          child: Text(p.destination,
+                              style: const TextStyle(
+                                  fontFamily: 'monospace',
+                                  color: TdcColors.textMuted,
+                                  fontSize: 11))),
                       const SizedBox(width: 12),
-                      Expanded(child: Text(p.info, style: const TextStyle(fontFamily: 'monospace', color: TdcColors.textPrimary, fontSize: 11), overflow: TextOverflow.ellipsis)),
+                      Expanded(
+                          child: Text(p.info,
+                              style: const TextStyle(
+                                  fontFamily: 'monospace',
+                                  color: TdcColors.textPrimary,
+                                  fontSize: 11),
+                              overflow: TextOverflow.ellipsis)),
                     ],
                   ),
                 ),
@@ -304,7 +457,11 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
             padding: const EdgeInsets.all(12),
             color: const Color(0xFF050508),
             child: SingleChildScrollView(
-              child: Text(_selectedPacket!.payload, style: const TextStyle(fontFamily: 'monospace', color: Colors.greenAccent, fontSize: 11)),
+              child: Text(_selectedPacket!.payload,
+                  style: const TextStyle(
+                      fontFamily: 'monospace',
+                      color: Colors.greenAccent,
+                      fontSize: 11)),
             ),
           ),
       ],
@@ -319,7 +476,12 @@ class NetworkDevice {
   final String os;
   final List<int> openPorts;
 
-  NetworkDevice({required this.ip, required this.hostname, required this.type, required this.os, required this.openPorts});
+  NetworkDevice(
+      {required this.ip,
+      required this.hostname,
+      required this.type,
+      required this.os,
+      required this.openPorts});
 }
 
 class PingResult {
@@ -336,5 +498,12 @@ class CapturedPacket {
   final String info;
   final String payload;
 
-  CapturedPacket({required this.id, required this.time, required this.source, required this.destination, required this.protocol, required this.info, required this.payload});
+  CapturedPacket(
+      {required this.id,
+      required this.time,
+      required this.source,
+      required this.destination,
+      required this.protocol,
+      required this.info,
+      required this.payload});
 }

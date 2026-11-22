@@ -482,7 +482,8 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildInsightChip(
                 context,
                 icon: Icons.check_circle_outline,
-                label: '${prov.completedCount} ${_formatChapters(prov.completedCount)} terminé${prov.completedCount > 1 ? "s" : ""}',
+                label:
+                    '${prov.completedCount} ${_formatChapters(prov.completedCount)} terminé${prov.completedCount > 1 ? "s" : ""}',
                 tone: TdcColors.success,
               ),
               _buildInsightChip(
@@ -646,10 +647,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ElevatedButton.icon(
                 onPressed: () => _resumeCourse(context, prov, course, chapter),
-                icon: Icon(
-                    isNewUser
-                        ? Icons.play_arrow
-                        : Icons.arrow_forward,
+                icon: Icon(isNewUser ? Icons.play_arrow : Icons.arrow_forward,
                     size: 16),
                 label: Text(isNewUser ? 'Commencer →' : 'Reprendre →'),
               ),
@@ -835,11 +833,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontWeight: isSel ? FontWeight.bold : FontWeight.w600,
                       color: isSel
                           ? (isIncident ? Colors.black : Colors.black)
-                          : (isIncident ? Colors.greenAccent : TdcColors.textSecondary),
+                          : (isIncident
+                              ? Colors.greenAccent
+                              : TdcColors.textSecondary),
                     ),
                   ),
                   selected: isSel,
-                  selectedColor: isIncident ? Colors.greenAccent : TdcColors.accent,
+                  selectedColor:
+                      isIncident ? Colors.greenAccent : TdcColors.accent,
                   backgroundColor: isIncident
                       ? Colors.greenAccent.withValues(alpha: 0.1)
                       : TdcColors.surface,
@@ -872,7 +873,8 @@ class _HomeScreenState extends State<HomeScreen> {
         : (_selectedCategory == '🔥 MODE INCIDENT'
             ? allCourses
                 .where((c) =>
-                    c.keywords.any((k) => k.toLowerCase().contains('incident')) ||
+                    c.keywords
+                        .any((k) => k.toLowerCase().contains('incident')) ||
                     c.id.toLowerCase().contains('incident') ||
                     c.title.toLowerCase().contains('incident'))
                 .toList()

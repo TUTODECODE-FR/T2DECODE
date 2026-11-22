@@ -5,8 +5,10 @@ import 'package:tutodecode/core/security/constant_time_security.dart';
 void main() {
   group('ConstantTimeSecurity Shield', () {
     test('compareStrings timing safety', () {
-      expect(ConstantTimeSecurity.compareStrings('secret123', 'secret123'), isTrue);
-      expect(ConstantTimeSecurity.compareStrings('secret123', 'wrong1234'), isFalse);
+      expect(ConstantTimeSecurity.compareStrings('secret123', 'secret123'),
+          isTrue);
+      expect(ConstantTimeSecurity.compareStrings('secret123', 'wrong1234'),
+          isFalse);
     });
 
     test('zeroize memory wiping', () {

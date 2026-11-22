@@ -28,7 +28,8 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: stable
+          flutter-version: '3.44.1' # = .flutter-version
 
       - name: Install Linux Build Dependencies
         run: |
@@ -77,7 +78,8 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: stable
+          flutter-version: '3.44.1' # = .flutter-version
 
       - name: Install Dependencies
         run: flutter pub get
@@ -106,7 +108,8 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: stable
+          flutter-version: '3.44.1' # = .flutter-version
 
       - name: Install Dependencies
         run: flutter pub get
@@ -226,41 +229,6 @@ jobs:
           rsync -e "ssh -i ~/.ssh/sf_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" -avP release_assets/ winancher@frs.sourceforge.net:/home/frs/project/t2decode/${{ github.ref_name }}/ || true
         env:
           SF_PRIVATE_KEY: ${{ secrets.SF_PRIVATE_KEY }}
-
-  build-snap-multiarch:
-    name: Build & Publish Snap (${{ matrix.architecture }})
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - architecture: amd64
-            runner: ubuntu-latest
-          - architecture: arm64
-            runner: ubuntu-24.04-arm
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Build Snap Package (${{ matrix.architecture }})
-        uses: snapcore/action-build@v1
-        id: snapbuild
-
-      - name: Upload Snap Artifact (${{ matrix.architecture }})
-        uses: actions/upload-artifact@v4
-        with:
-          name: snap-${{ matrix.architecture }}
-          path: ${{ steps.snapbuild.outputs.snap }}
-
-      - name: Publish Snap to Snap Store (${{ matrix.architecture }})
-        if: env.SNAPCRAFT_STORE_CREDENTIALS != ''
-        uses: snapcore/action-publish@v1
-        with:
-          snapcraft-token: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
-          store-clearing-link: ${{ steps.snapbuild.outputs.snap }}
-        continue-on-error: true
-        env:
-          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
 
   # GitHub produit et signe ; GitLab reçoit les mêmes fichiers (sommes vérifiées).
   gitlab:

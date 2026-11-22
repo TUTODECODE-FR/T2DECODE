@@ -37,12 +37,18 @@ List<_Tok> _lex(String src) {
       i++;
     } else if (_space(c)) {
       i++;
-    } else if (c == 0x22 && i + 2 < r.length && r[i + 1] == 0x22 && r[i + 2] == 0x22) {
+    } else if (c == 0x22 &&
+        i + 2 < r.length &&
+        r[i + 1] == 0x22 &&
+        r[i + 2] == 0x22) {
       // """ … """ (\""" = guillemets littéraux)
       var j = i + 3;
       var end = -1;
       while (j + 2 < r.length) {
-        if (r[j] == 0x22 && r[j + 1] == 0x22 && r[j + 2] == 0x22 && r[j - 1] != 0x5C) {
+        if (r[j] == 0x22 &&
+            r[j + 1] == 0x22 &&
+            r[j + 2] == 0x22 &&
+            r[j - 1] != 0x5C) {
           end = j;
           break;
         }
@@ -61,7 +67,11 @@ List<_Tok> _lex(String src) {
         if (r[j] == 0x5C && j + 1 < r.length) {
           j++;
           final e = r[j];
-          b.write(e == 0x6E ? '\n' : e == 0x74 ? '\t' : String.fromCharCode(e));
+          b.write(e == 0x6E
+              ? '\n'
+              : e == 0x74
+                  ? '\t'
+                  : String.fromCharCode(e));
           continue;
         }
         b.writeCharCode(r[j]);
@@ -72,12 +82,15 @@ List<_Tok> _lex(String src) {
     } else if ('{}[],:'.codeUnits.contains(c)) {
       out.add(_Tok(_K.punct, String.fromCharCode(c), line));
       i++;
-    } else if ((c == 0x2B || c == 0x2D) && (i + 1 >= r.length || _space(r[i + 1]) || r[i + 1] == 0x22)) {
+    } else if ((c == 0x2B || c == 0x2D) &&
+        (i + 1 >= r.length || _space(r[i + 1]) || r[i + 1] == 0x22)) {
       out.add(_Tok(_K.punct, String.fromCharCode(c), line));
       i++;
     } else {
       var j = i;
-      while (j < r.length && !_space(r[j]) && !'{}[],:"'.codeUnits.contains(r[j])) {
+      while (j < r.length &&
+          !_space(r[j]) &&
+          !'{}[],:"'.codeUnits.contains(r[j])) {
         j++;
       }
       out.add(_Tok(_K.word, sub(i, j), line));
@@ -106,7 +119,8 @@ String _dedent(String s) {
   }
   if (closing > 0 && closing < min) min = closing;
   return lines.map((l) {
-    if (min > 0 && l.length >= min && l.substring(0, min).trim().isEmpty) return l.substring(min);
+    if (min > 0 && l.length >= min && l.substring(0, min).trim().isEmpty)
+      return l.substring(min);
     if (l.trim().isEmpty) return '';
     return l;
   }).join('\n');
@@ -120,7 +134,8 @@ class _Node {
   final List<MapEntry<bool, String>> options = [];
   _Node(this.kind);
   String f(String k) => fields[k] is String ? fields[k] as String : '';
-  List<String> list(String k) => fields[k] is List<String> ? fields[k] as List<String> : <String>[];
+  List<String> list(String k) =>
+      fields[k] is List<String> ? fields[k] as List<String> : <String>[];
 }
 
 class _Parser {
@@ -144,7 +159,8 @@ class _Parser {
       } else if (tk.k == _K.punct && (tk.s == '+' || tk.s == '-')) {
         next();
         final v = next();
-        if (v.k != _K.str && v.k != _K.word) throw err('texte attendu après ${tk.s}');
+        if (v.k != _K.str && v.k != _K.word)
+          throw err('texte attendu après ${tk.s}');
         n.options.add(MapEntry(tk.s == '+', v.s));
       } else if (tk.k == _K.word) {
         next();
@@ -194,23 +210,28 @@ List<Map<String, dynamic>> parseTdcCourses(String src) {
   final out = <Map<String, dynamic>>[];
   for (final n in root.children.where((c) => c.kind == 'course')) {
     var desc = n.f('description').trim();
-    if (desc.runes.length > 500) desc = '${String.fromCharCodes(desc.runes.take(499)).trim()}…';
+    if (desc.runes.length > 500)
+      desc = '${String.fromCharCodes(desc.runes.take(499)).trim()}…';
     final chapters = <Map<String, dynamic>>[];
     for (final m in n.children.where((c) => c.kind == 'module')) {
       final code = <Map<String, dynamic>>[];
       final quiz = <Map<String, dynamic>>[];
       for (final b in m.children) {
         if (b.kind == 'codeblock') {
-          code.add({'language': b.name, 'title': b.f('title'), 'code': b.f('code')});
+          code.add(
+              {'language': b.name, 'title': b.f('title'), 'code': b.f('code')});
         } else if (b.kind == 'quiz') {
           for (final q in b.children.where((c) => c.kind == 'question')) {
             final ok = q.options.indexWhere((o) => o.key);
-            if (ok < 0) throw TdcError('cours "${n.name}" : question sans bonne réponse (+)');
+            if (ok < 0)
+              throw TdcError(
+                  'cours "${n.name}" : question sans bonne réponse (+)');
             quiz.add({
               'question': q.name,
               'choices': q.options.map((o) => o.value).toList(),
               'correctIndex': ok,
-              if (q.f('explanation').isNotEmpty) 'explanation': q.f('explanation'),
+              if (q.f('explanation').isNotEmpty)
+                'explanation': q.f('explanation'),
             });
           }
         }

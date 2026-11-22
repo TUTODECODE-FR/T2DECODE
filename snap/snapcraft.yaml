@@ -49,7 +49,7 @@ parts:
       - libepoxy0
       - liblzma5
     override-build: |
-      git clone https://github.com/flutter/flutter.git -b stable /tmp/flutter
+      git clone --depth 1 https://github.com/flutter/flutter.git -b 3.44.1 /tmp/flutter
       export PATH="/tmp/flutter/bin:$PATH"
       flutter config --no-enable-swift-package-manager
       flutter pub get

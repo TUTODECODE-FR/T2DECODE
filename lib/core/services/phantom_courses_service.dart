@@ -57,18 +57,22 @@ class PhantomCoursesService {
       ..findProxy = ((_) => 'PROXY 127.0.0.1:$proxyPort')
       ..connectionTimeout = const Duration(seconds: 3);
     try {
-      final sig = json.decode(
-          utf8.decode(await _get(client, Uri.parse(sigUrl), 64 << 10)));
+      final sig = json
+          .decode(utf8.decode(await _get(client, Uri.parse(sigUrl), 64 << 10)));
       if (sig is! Map) return null;
       final sha = sig['sha256'], size = sig['size'], issued = sig['issued'];
       final sigHex = sig['sig'];
-      if (sha is! String || size is! int || issued is! int || sigHex is! String) {
+      if (sha is! String ||
+          size is! int ||
+          issued is! int ||
+          sigHex is! String) {
         return null;
       }
       final modules = ModuleService();
       final dir = await modules.getModulesDirectory();
       final current = await _installedVersion(dir);
-      if (issued <= current) return null; // déjà à jour, ou retour arrière refusé
+      if (issued <= current)
+        return null; // déjà à jour, ou retour arrière refusé
       if (size <= 0 || size > (16 << 20)) return null;
 
       final data = await _get(client, Uri.parse(fileUrl), size);
@@ -93,7 +97,8 @@ class PhantomCoursesService {
         if (modules.validateModuleJson(content) != null) continue;
         final fileName = '$_prefix$id.json';
         keep.add(fileName);
-        final version = 't2c:${_hex((await Sha256().hash(utf8.encode(content))).bytes)}';
+        final version =
+            't2c:${_hex((await Sha256().hash(utf8.encode(content))).bytes)}';
         if (await modules.getSavedSha(fileName) == version) continue;
         await modules.saveModule(fileName, content, version);
         changed++;
@@ -101,14 +106,17 @@ class PhantomCoursesService {
       // cours retirés du fichier : retirés de l'application
       for (final f in dir.listSync().whereType<File>()) {
         final name = f.uri.pathSegments.last;
-        if (name.startsWith(_prefix) && name.endsWith('.json') && !keep.contains(name)) {
+        if (name.startsWith(_prefix) &&
+            name.endsWith('.json') &&
+            !keep.contains(name)) {
           await f.delete();
           changed++;
         }
       }
       await File('${dir.path}/$_versionFile')
           .writeAsString(json.encode({'issued': issued, 'sha256': sha}));
-      return CoursUpdate(keep.length, changed, DateTime.fromMillisecondsSinceEpoch(issued * 1000));
+      return CoursUpdate(keep.length, changed,
+          DateTime.fromMillisecondsSinceEpoch(issued * 1000));
     } on SocketException {
       return null; // T2C Phantom non lancé : rien à faire
     } on TimeoutException {
@@ -120,7 +128,8 @@ class PhantomCoursesService {
 
   static Future<int> _installedVersion(Directory dir) async {
     try {
-      final v = json.decode(await File('${dir.path}/$_versionFile').readAsString());
+      final v =
+          json.decode(await File('${dir.path}/$_versionFile').readAsString());
       return v is Map && v['issued'] is int ? v['issued'] as int : 0;
     } catch (_) {
       return 0;
@@ -137,7 +146,8 @@ class PhantomCoursesService {
     final out = <int>[];
     await for (final chunk in resp.timeout(const Duration(seconds: 60))) {
       out.addAll(chunk);
-      if (out.length > max) throw const HttpException('réponse trop volumineuse');
+      if (out.length > max)
+        throw const HttpException('réponse trop volumineuse');
     }
     return out;
   }
@@ -147,14 +157,18 @@ class PhantomCoursesService {
 
   static List<int> _unhex(String s) {
     if (s.length.isOdd) throw const FormatException('hex');
-    return [for (var i = 0; i < s.length; i += 2) int.parse(s.substring(i, i + 2), radix: 16)];
+    return [
+      for (var i = 0; i < s.length; i += 2)
+        int.parse(s.substring(i, i + 2), radix: 16)
+    ];
   }
 
   static void _askRestart(CoursUpdate u) {
     void show() {
       final ctx = AppNavigator.context;
       if (ctx == null) return;
-      final d = '${u.version.day.toString().padLeft(2, '0')}/${u.version.month.toString().padLeft(2, '0')}/${u.version.year}';
+      final d =
+          '${u.version.day.toString().padLeft(2, '0')}/${u.version.month.toString().padLeft(2, '0')}/${u.version.year}';
       showDialog<void>(
         context: ctx,
         builder: (c) => AlertDialog(

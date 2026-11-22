@@ -8,8 +8,10 @@ void main() {
 
     // Chaos generators
     String generateChaoticString(int length) {
-      final chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#\$%^&*()_+-=[]{}|;:",.<>?/`~\\\'\n\r\t\x00\xFF';
-      return List.generate(length, (_) => chars[random.nextInt(chars.length)]).join();
+      final chars =
+          '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#\$%^&*()_+-=[]{}|;:",.<>?/`~\\\'\n\r\t\x00\xFF';
+      return List.generate(length, (_) => chars[random.nextInt(chars.length)])
+          .join();
     }
 
     test('⚡ Fuzz Test: IP & CIDR Subnet Parser Extreme Resilience', () {
@@ -41,8 +43,12 @@ void main() {
             final address = parts[0].trim();
             final prefix = parts.length > 1 ? int.tryParse(parts[1]) : null;
             final isIpv4 = address.split('.').length == 4 &&
-                address.split('.').every((o) => int.tryParse(o) != null && int.parse(o) >= 0 && int.parse(o) <= 255);
-            final isValid = isIpv4 && (prefix == null || (prefix >= 0 && prefix <= 32));
+                address.split('.').every((o) =>
+                    int.tryParse(o) != null &&
+                    int.parse(o) >= 0 &&
+                    int.parse(o) <= 255);
+            final isValid =
+                isIpv4 && (prefix == null || (prefix >= 0 && prefix <= 32));
             expect(isValid is bool, isTrue);
           } catch (_) {
             // Handled gracefully

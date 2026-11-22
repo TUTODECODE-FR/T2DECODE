@@ -37,10 +37,10 @@ class CoursesProvider with ChangeNotifier {
     List<Course> courses, {
     String? courseId,
     String? chapterId,
-  }) : _courses = List<Course>.from(courses),
-       _currentCourseId = courseId,
-       _currentChapterId = chapterId,
-       _loaded = true {
+  })  : _courses = List<Course>.from(courses),
+        _currentCourseId = courseId,
+        _currentChapterId = chapterId,
+        _loaded = true {
     _phantomService = PhantomCacheService(PhantomTrustValidator());
   }
 
