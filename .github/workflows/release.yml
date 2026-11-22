@@ -320,3 +320,148 @@ jobs:
           elif [ "${code:0:1}" != 2 ]; then
             cat /tmp/r.json; exit 1
           fi
+
+  # Homebrew : met à jour le cask du tap tutodecode-org/homebrew-tap (GitLab).
+  # Empreinte prise dans SHA256SUMS.txt de la release et revérifiée sur le DMG téléchargé.
+  # Secret : HOMEBREW_TAP_TOKEN (jeton du projet homebrew-tap, droit write_repository).
+  homebrew:
+    name: Homebrew (cask t2decode)
+    needs: publish-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+      TAG: ${{ github.ref_name }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: Mise à jour du cask
+        run: |
+          if [ -z "$HOMEBREW_TAP_TOKEN" ]; then
+            echo "::notice::HOMEBREW_TAP_TOKEN absent : cask Homebrew non mis à jour"; exit 0
+          fi
+          [[ "$TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]] || { echo "::notice::tag $TAG non publié sur Homebrew"; exit 0; }
+          ver="${BASH_REMATCH[1]}"
+          base="https://github.com/$REPO/releases/download/$TAG"
+          curl -fsSL --retry 5 -o SHA256SUMS.txt "$base/SHA256SUMS.txt"
+          curl -fsSL --retry 5 -o T2DECODE-macOS.dmg "$base/T2DECODE-macOS.dmg"
+          sha256sum -c --ignore-missing SHA256SUMS.txt
+          sha=$(awk '$2=="T2DECODE-macOS.dmg"{print $1}' SHA256SUMS.txt)
+          [ ${#sha} = 64 ] || { echo "::error::empreinte du DMG introuvable"; exit 1; }
+          git clone -q "https://oauth2:${HOMEBREW_TAP_TOKEN}@gitlab.com/tutodecode-org/homebrew-tap.git" tap
+          cat > tap/Casks/t2decode.rb <<CASK
+          cask "t2decode" do
+            version "$ver"
+            sha256 "$sha"
+
+            url "https://github.com/$REPO/releases/download/v#{version}/T2DECODE-macOS.dmg"
+            name "T2DECODE"
+            desc "Offline simulator and toolkit for networking and cybersecurity"
+            homepage "https://tutodecode.org/"
+
+            livecheck do
+              url :url
+              strategy :github_latest
+            end
+
+            app "T2DECODE.app"
+
+            zap trash: [
+              "~/Library/Application Support/org.t2decode.app",
+              "~/Library/Preferences/org.t2decode.app.plist",
+              "~/Library/Saved Application State/org.t2decode.app.savedState",
+            ]
+          end
+          CASK
+          cd tap
+          git config user.name "TUTODECODE CI"; git config user.email "contact@tutodecode.org"
+          git add Casks/t2decode.rb
+          if git diff --cached --quiet; then echo "cask déjà à jour"; exit 0; fi
+          git commit -qm "chore: t2decode $ver"
+          git push -q origin HEAD
+          echo "Homebrew : t2decode $ver" >> "$GITHUB_STEP_SUMMARY"
+
+  # winget : soumet la version à microsoft/winget-pkgs (PR automatique, validée par Microsoft).
+  # Secret : WINGET_TOKEN (jeton GitHub classique, droit public_repo, pour la PR depuis un fork).
+  winget:
+    name: winget (TUTODECODE.T2DECODE)
+    needs: publish-release
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    env:
+      WINGET_TOKEN: ${{ secrets.WINGET_TOKEN }}
+      TAG: ${{ github.ref_name }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: Soumission
+        shell: pwsh
+        run: |
+          if (-not $env:WINGET_TOKEN) { "::notice::WINGET_TOKEN absent : winget non soumis"; exit 0 }
+          if ($env:TAG -notmatch '^v(\d+\.\d+\.\d+)$') { "::notice::tag $env:TAG non soumis à winget"; exit 0 }
+          $ver = $Matches[1]
+          $base = "https://github.com/$env:REPO/releases/download/$env:TAG"
+          Invoke-WebRequest "$base/SHA256SUMS.txt" -OutFile SHA256SUMS.txt
+          $line = Select-String -Path SHA256SUMS.txt -Pattern 'T2DECODE-Windows-Setup\.exe$'
+          if (-not $line) { "::warning::pas d'installateur Windows dans cette release : winget ignoré"; exit 0 }
+          $sha = ($line.Line -split '\s+')[0].ToUpper()
+          $id = "TUTODECODE.T2DECODE"; $dir = "manifests\t\TUTODECODE\T2DECODE\$ver"
+          New-Item -ItemType Directory -Force $dir | Out-Null
+          $schema = "1.9.0"
+          @"
+          # yaml-language-server: `$schema=https://aka.ms/winget-manifest.version.$schema.schema.json
+          PackageIdentifier: $id
+          PackageVersion: $ver
+          DefaultLocale: fr-FR
+          ManifestType: version
+          ManifestVersion: $schema
+          "@ -replace '(?m)^          ', '' | Set-Content "$dir\$id.yaml" -Encoding utf8
+          @"
+          # yaml-language-server: `$schema=https://aka.ms/winget-manifest.installer.$schema.schema.json
+          PackageIdentifier: $id
+          PackageVersion: $ver
+          InstallerType: inno
+          UpgradeBehavior: install
+          ReleaseDate: $(Get-Date -Format yyyy-MM-dd)
+          Installers:
+          - Architecture: x64
+            Scope: user
+            InstallerUrl: $base/T2DECODE-Windows-Setup.exe
+            InstallerSha256: $sha
+            InstallerSwitches:
+              Custom: /CURRENTUSER
+          - Architecture: x64
+            Scope: machine
+            InstallerUrl: $base/T2DECODE-Windows-Setup.exe
+            InstallerSha256: $sha
+            InstallerSwitches:
+              Custom: /ALLUSERS
+          ManifestType: installer
+          ManifestVersion: $schema
+          "@ -replace '(?m)^          ', '' | Set-Content "$dir\$id.installer.yaml" -Encoding utf8
+          @"
+          # yaml-language-server: `$schema=https://aka.ms/winget-manifest.defaultLocale.$schema.schema.json
+          PackageIdentifier: $id
+          PackageVersion: $ver
+          PackageLocale: fr-FR
+          Publisher: Association TUTODECODE
+          PublisherUrl: https://tutodecode.org/
+          PackageName: T2DECODE
+          PackageUrl: https://github.com/$env:REPO
+          License: GPL-3.0-only
+          LicenseUrl: https://github.com/$env:REPO/blob/main/LICENSE
+          ShortDescription: Plateforme locale d'apprentissage des réseaux, des systèmes et de la cybersécurité, sans cloud ni télémétrie.
+          Tags:
+          - cybersecurity
+          - education
+          - networking
+          - offline
+          ReleaseNotesUrl: https://github.com/$env:REPO/releases/tag/$env:TAG
+          ManifestType: defaultLocale
+          ManifestVersion: $schema
+          "@ -replace '(?m)^          ', '' | Set-Content "$dir\$id.locale.fr-FR.yaml" -Encoding utf8
+          Get-ChildItem $dir | ForEach-Object { "--- $($_.Name)"; Get-Content $_.FullName }
+          Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
+          .\wingetcreate.exe submit --token $env:WINGET_TOKEN --prtitle "New version: $id version $ver" $dir
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          "winget : $id $ver soumis" >> $env:GITHUB_STEP_SUMMARY
