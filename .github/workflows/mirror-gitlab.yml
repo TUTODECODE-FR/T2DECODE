@@ -1,6 +1,7 @@
 # Miroir du code vers GitLab à chaque push sur main et à chaque tag.
 # GitHub est la source : tout se fait ici, GitLab reçoit une copie.
-# Requiert : secret GITLAB_TOKEN (write_repository) ; variable GITLAB_PROJECT facultative.
+# Requiert : secret GITLAB_TOKEN (jeton de projet, rôle Maintainer, droits api + write_repository) ;
+# variable GITLAB_PROJECT facultative.
 name: Miroir GitLab
 
 on:
@@ -39,6 +40,8 @@ jobs:
           git remote add gitlab "https://oauth2:${GITLAB_TOKEN}@gitlab.com/${GITLAB_PROJECT}.git"
           if [ "${GITHUB_REF_TYPE}" = tag ]; then
             git push gitlab "refs/tags/${GITHUB_REF_NAME}"
-          else
-            git push gitlab "HEAD:refs/heads/main"
+          elif ! git push gitlab "HEAD:refs/heads/main"; then
+            # main protégé sur GitLab : copie dans github-main (à fusionner par MR)
+            git push --force gitlab "HEAD:refs/heads/github-main"
+            echo "::warning::main protégé sur GitLab : copie poussée dans github-main (à fusionner par une MR, ou autoriser les Maintainers à pousser sur main)"
           fi
