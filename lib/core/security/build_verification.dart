@@ -12,6 +12,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'anti_tampering.dart';
+import '../app_version.dart';
 
 /// Assets bundlés utilisés pour vérifier l'intégrité du build.
 const List<String> _kBuildAssets = [
@@ -23,7 +24,7 @@ const List<String> _kBuildAssets = [
 
 /// Système de vérification du build basé sur les checksums réels des assets.
 class BuildVerification {
-  static const String APP_VERSION = '1.0.3+3';
+  static const String APP_VERSION = kAppVersion;
 
   /// Vérifie le build actuel en calculant les checksums réels des assets.
   static Future<BuildVerificationResult> verifyCurrentBuild() async {

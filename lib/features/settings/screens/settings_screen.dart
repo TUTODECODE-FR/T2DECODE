@@ -16,6 +16,7 @@ import 'package:tutodecode/core/services/backup_service.dart';
 import 'package:tutodecode/core/services/module_service.dart';
 import 'package:tutodecode/core/services/tdc_dsl_parser.dart';
 import 'package:tutodecode/core/services/tdc_studio_document.dart';
+import 'package:tutodecode/core/app_version.dart';
 import './security_diagnostic_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -640,6 +641,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
             ),
+            OutlinedButton(
+              onPressed: _showTesterDialog,
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.science_outlined,
+                      size: 14, color: TdcColors.success),
+                  SizedBox(width: 8),
+                  Text('Devenir testeur'),
+                ],
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
@@ -675,18 +688,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             color: TdcColors.surfaceAlt,
             border: Border.fromBorderSide(BorderSide(color: TdcColors.border)),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(
-                Icons.verified,
-                color: TdcColors.success,
+              const Icon(
+                Icons.info_outline,
+                color: TdcColors.textSecondary,
                 size: 16,
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Signature : v1.0.3-official-release-verified',
-                  style: TextStyle(
+                  'Version : $kAppVersionName',
+                  style: const TextStyle(
                       fontFamily: 'monospace',
                       fontSize: 11,
                       color: TdcColors.textSecondary),
@@ -803,6 +816,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   fontFamily: 'monospace',
                   fontSize: 12,
                   color: TdcColors.accent),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Fermer'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showTesterDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: TdcColors.surface,
+        title: const Row(
+          children: [
+            Icon(Icons.science, color: TdcColors.success),
+            SizedBox(width: 10),
+            Text('Devenir testeur', style: TextStyle(fontSize: 16)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Aide-nous à améliorer T2DECODE : environ 20 minutes, sans compte ni inscription. '
+              'Le guide explique quoi tester et comment nous faire un retour.',
+              style: TextStyle(
+                  fontSize: 13, height: 1.4, color: TdcColors.textSecondary),
+            ),
+            const SizedBox(height: 16),
+            const SelectableText(
+              '• Guide du testeur :\n  https://github.com/TUTODECODE-FR/T2DECODE/blob/main/docs/TESTEURS.md\n\n'
+              '• Formulaire de retour :\n  https://github.com/TUTODECODE-FR/T2DECODE/issues/new/choose\n\n'
+              '• Par e-mail :\n  contact@tutodecode.org',
+              style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 12,
+                  color: TdcColors.accent),
+            ),
+            const SizedBox(height: 12),
+            SelectableText(
+              'Objet du mail : [Test T2DECODE v$kAppVersionName]',
+              style:
+                  const TextStyle(fontSize: 12, color: TdcColors.textSecondary),
             ),
           ],
         ),

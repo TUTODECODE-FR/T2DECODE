@@ -9,6 +9,7 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
+import '../app_version.dart';
 
 /// Système de vérification d'identité basé sur l'intégrité réelle des assets bundlés.
 /// Aucune clé privée ni donnée fictive — tout est calculé en local.
@@ -151,7 +152,7 @@ class IdentityVerification {
     return 'Unknown';
   }
 
-  static Future<String> _getAppVersion() async => '1.0.3';
+  static Future<String> _getAppVersion() async => kAppVersionName;
 
   /// Génère un ID de certificat cryptographiquement aléatoire (128 bits).
   static String _generateCertificateId() {

@@ -1,0 +1,67 @@
+name: "Retour de test"
+description: "Tu as testé T2DECODE : dis-nous ce qui marche et ce qui coince (guide : docs/TESTEURS.md)"
+title: "[Test] "
+labels: ["retour-de-test"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de tester T2DECODE ! Ne mets **aucun mot de passe ni information personnelle** ici : ce formulaire est public.
+        Guide du testeur : [docs/TESTEURS.md](https://github.com/TUTODECODE-FR/T2DECODE/blob/main/docs/TESTEURS.md)
+  - type: input
+    id: version
+    attributes:
+      label: Version de T2DECODE
+      description: "Réglages → Association & Mentions Légales → « Version »"
+      placeholder: "1.0.7"
+    validations:
+      required: true
+  - type: dropdown
+    id: systeme
+    attributes:
+      label: Système
+      options: [Windows, macOS, Linux, Android]
+    validations:
+      required: true
+  - type: input
+    id: systeme_detail
+    attributes:
+      label: Version du système et appareil
+      placeholder: "Windows 11, macOS 15, Ubuntu 24.04, Android 14 (Pixel 7)…"
+  - type: dropdown
+    id: installation
+    attributes:
+      label: Comment l'as-tu installé ?
+      options: [Installateur Windows (Setup.exe), Zip Windows portable, DMG macOS, Homebrew, Snap, Archive Linux, F-Droid, APK, Autre]
+  - type: checkboxes
+    id: teste
+    attributes:
+      label: Ce que tu as testé
+      options:
+        - label: Installation et premier lancement
+        - label: Fonctionnement hors ligne (mode avion)
+        - label: Cours officiels et quiz
+        - label: Outils (calculateur IP, chmod, hachage, générateur de scripts)
+        - label: Labo (simulateurs)
+        - label: Import d'un cours .tdc
+        - label: Affichage (fenêtre redimensionnée, rotation, thème clair/sombre)
+        - label: IA locale (Ollama)
+        - label: Cours depuis T2C Phantom
+  - type: textarea
+    id: marche
+    attributes:
+      label: Ce qui marche bien
+  - type: textarea
+    id: probleme
+    attributes:
+      label: Ce qui coince
+      description: "Ce que tu faisais, ce qui s'est passé, ce que tu attendais. Les captures d'écran sont les bienvenues."
+  - type: textarea
+    id: idees
+    attributes:
+      label: Idées et suggestions
+  - type: input
+    id: credit
+    attributes:
+      label: Remerciements
+      description: "Nom ou pseudo à citer dans les notes de version (laisse vide pour rester anonyme)."
