@@ -12,11 +12,12 @@ class QcmWidget extends StatefulWidget {
   final String? chapterContent;
   final void Function(bool success)? onComplete;
 
-  const QcmWidget(
-      {required this.questions,
-      this.chapterContent,
-      this.onComplete,
-      super.key});
+  const QcmWidget({
+    required this.questions,
+    this.chapterContent,
+    this.onComplete,
+    super.key,
+  });
 
   @override
   State<QcmWidget> createState() => _QcmWidgetState();
@@ -35,7 +36,9 @@ class _QcmWidgetState extends State<QcmWidget> {
     final list = List<QuizQuestion>.from(input)..shuffle();
     return list.map((q) {
       if (q.choices.isEmpty) return q;
-      final correctChoice = q.correctIndex < q.choices.length ? q.choices[q.correctIndex] : q.choices.first;
+      final correctChoice = q.correctIndex < q.choices.length
+          ? q.choices[q.correctIndex]
+          : q.choices.first;
       final shuffledChoices = List<String>.from(q.choices)..shuffle();
       final newCorrectIndex = shuffledChoices.indexOf(correctChoice);
       return QuizQuestion(
@@ -63,8 +66,10 @@ class _QcmWidgetState extends State<QcmWidget> {
     if (status.running) {
       if (!mounted) return;
       final model = context.read<SettingsProvider>().ollamaModel;
-      final newQ =
-          await OllamaService.generateQcm(model, widget.chapterContent!);
+      final newQ = await OllamaService.generateQcm(
+        model,
+        widget.chapterContent!,
+      );
       if (newQ != null && newQ.isNotEmpty && mounted) {
         setState(() {
           _activeQuestions = _prepareShuffledQuestions(newQ);
@@ -115,11 +120,15 @@ class _QcmWidgetState extends State<QcmWidget> {
           children: [
             const CircularProgressIndicator(color: TdcColors.accent),
             const SizedBox(height: 16),
-            Text('Ollama génère un QCM unique...',
-                style: TextStyle(
-                    color: TdcColors.accent.withValues(alpha: 0.8),
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold)),
+            const Text(
+              'Préparation du quiz…',
+              style: TextStyle(
+                color: TdcColors.textSecondary,
+                fontFamily: 'Aileron',
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
       );
@@ -134,9 +143,10 @@ class _QcmWidgetState extends State<QcmWidget> {
           color: TdcColors.surface,
           borderRadius: TdcRadius.lg,
           border: Border.all(
-              color: success
-                  ? TdcColors.success.withValues(alpha: 0.5)
-                  : TdcColors.danger.withValues(alpha: 0.5)),
+            color: success
+                ? TdcColors.success.withValues(alpha: 0.5)
+                : TdcColors.danger.withValues(alpha: 0.5),
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -150,9 +160,10 @@ class _QcmWidgetState extends State<QcmWidget> {
             Text(
               'Résultat : $_score / ${_activeQuestions.length}',
               style: const TextStyle(
-                  color: TdcColors.textPrimary,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold),
+                color: TdcColors.textPrimary,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 12),
             Text(
@@ -161,7 +172,10 @@ class _QcmWidgetState extends State<QcmWidget> {
                   : 'Certaines réponses sont incorrectes. Nous vous conseillons de relire le chapitre et de réessayer.',
               textAlign: TextAlign.center,
               style: const TextStyle(
-                  color: TdcColors.textSecondary, fontSize: 14, height: 1.5),
+                color: TdcColors.textSecondary,
+                fontSize: 14,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 32),
             if (!success)
@@ -225,8 +239,10 @@ class _QcmWidgetState extends State<QcmWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: TdcColors.accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
@@ -234,18 +250,20 @@ class _QcmWidgetState extends State<QcmWidget> {
                 child: Text(
                   'QUESTION ${_current + 1} SUR ${_activeQuestions.length}',
                   style: const TextStyle(
-                      color: TdcColors.accent,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
-                      letterSpacing: 1),
+                    color: TdcColors.accent,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                    letterSpacing: 1,
+                  ),
                 ),
               ),
               Text(
                 'Série : $_score/${_activeQuestions.length}',
                 style: const TextStyle(
-                    color: TdcColors.textMuted,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600),
+                  color: TdcColors.textMuted,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -253,10 +271,11 @@ class _QcmWidgetState extends State<QcmWidget> {
           Text(
             q.question,
             style: const TextStyle(
-                color: TdcColors.textPrimary,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                height: 1.4),
+              color: TdcColors.textPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              height: 1.4,
+            ),
           ),
           const SizedBox(height: 28),
           ...List.generate(q.choices.length, (i) {
@@ -272,7 +291,8 @@ class _QcmWidgetState extends State<QcmWidget> {
                 isSelected ? TdcColors.accent : TdcColors.textMuted;
             Widget? icon = isSelected
                 ? const Center(
-                    child: Icon(Icons.check, size: 14, color: Colors.white))
+                    child: Icon(Icons.check, size: 14, color: Colors.white),
+                  )
                 : null;
 
             if (_validated) {
@@ -281,13 +301,15 @@ class _QcmWidgetState extends State<QcmWidget> {
                 borderColor = TdcColors.success;
                 iconColor = TdcColors.success;
                 icon = const Center(
-                    child: Icon(Icons.check, size: 14, color: Colors.white));
+                  child: Icon(Icons.check, size: 14, color: Colors.white),
+                );
               } else if (isSelected && !isCorrect) {
                 bgColor = TdcColors.danger.withValues(alpha: 0.1);
                 borderColor = TdcColors.danger;
                 iconColor = TdcColors.danger;
                 icon = const Center(
-                    child: Icon(Icons.close, size: 14, color: Colors.white));
+                  child: Icon(Icons.close, size: 14, color: Colors.white),
+                );
               } else {
                 bgColor = TdcColors.surfaceAlt.withValues(alpha: 0.5);
                 borderColor = TdcColors.border.withValues(alpha: 0.5);
@@ -301,8 +323,10 @@ class _QcmWidgetState extends State<QcmWidget> {
                 borderRadius: TdcRadius.md,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 16,
+                  ),
                   decoration: BoxDecoration(
                     color: bgColor,
                     borderRadius: TdcRadius.md,
@@ -319,10 +343,7 @@ class _QcmWidgetState extends State<QcmWidget> {
                         height: 22,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(
-                            color: iconColor,
-                            width: 2,
-                          ),
+                          border: Border.all(color: iconColor, width: 2),
                           color: (isSelected || (_validated && isCorrect))
                               ? iconColor
                               : Colors.transparent,
@@ -337,8 +358,9 @@ class _QcmWidgetState extends State<QcmWidget> {
                             color: _validated
                                 ? (isCorrect || (isSelected && !isCorrect)
                                     ? TdcColors.textPrimary
-                                    : TdcColors.textSecondary
-                                        .withValues(alpha: 0.5))
+                                    : TdcColors.textSecondary.withValues(
+                                        alpha: 0.5,
+                                      ))
                                 : (isSelected
                                     ? TdcColors.textPrimary
                                     : TdcColors.textSecondary),
@@ -364,22 +386,27 @@ class _QcmWidgetState extends State<QcmWidget> {
               decoration: BoxDecoration(
                 color: TdcColors.accent.withValues(alpha: 0.1),
                 borderRadius: TdcRadius.md,
-                border:
-                    Border.all(color: TdcColors.accent.withValues(alpha: 0.3)),
+                border: Border.all(
+                  color: TdcColors.accent.withValues(alpha: 0.3),
+                ),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.lightbulb_outline,
-                      color: TdcColors.accent, size: 20),
+                  const Icon(
+                    Icons.lightbulb_outline,
+                    color: TdcColors.accent,
+                    size: 20,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       q.explanation!,
                       style: const TextStyle(
-                          color: TdcColors.textPrimary,
-                          fontSize: 14,
-                          height: 1.5),
+                        color: TdcColors.textPrimary,
+                        fontSize: 14,
+                        height: 1.5,
+                      ),
                     ),
                   ),
                 ],
@@ -405,7 +432,9 @@ class _QcmWidgetState extends State<QcmWidget> {
                         : 'VOIR MON RÉSULTAT')
                     : 'VALIDER MA RÉPONSE',
                 style: const TextStyle(
-                    fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
               ),
             ),
           ),
