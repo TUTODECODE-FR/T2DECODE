@@ -233,7 +233,10 @@ jobs:
           printf '%s\n' "$SF_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/sf_key
           chmod 600 ~/.ssh/sf_key
           ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts 2>/dev/null
-          rsync -e "ssh -i ~/.ssh/sf_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" -avP release_assets/ winancher@frs.sourceforge.net:/home/frs/project/t2decode/${{ github.ref_name }}/ || true
+          # échec signalé (avertissement) sans bloquer la release ni la recopie GitLab
+          if ! rsync -e "ssh -i ~/.ssh/sf_key -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes" -av release_assets/ winancher@frs.sourceforge.net:/home/frs/project/t2decode/${{ github.ref_name }}/; then
+            echo "::warning::SourceForge : envoi refusé (clé SSH SF_PRIVATE_KEY absente du compte SourceForge ?)"
+          fi
         env:
           SF_PRIVATE_KEY: ${{ secrets.SF_PRIVATE_KEY }}
 
