@@ -1,42 +1,34 @@
 #!/bin/bash
+# Image DMG d'installation : fenêtre 660×400 au fond TUTODECODE, icône de l'app à gauche,
+# raccourci Applications à droite, flèche entre les deux. Outil : create-dmg
+# (brew install create-dmg). Images : installer-art/ (installer-art/generer.py).
+set -euo pipefail
 
-# Configuration
-APP_NAME="T2DECODE"
-APP_BUNDLE_NAME="T2DECODE.app"
-BUILD_DIR="build/macos/Build/Products/Release"
-DMG_NAME="T2DECODE-macOS.dmg"
-DMG_STAGING_DIR="build/dmg_staging"
+APP="${1:-build/macos/Build/Products/Release/T2DECODE.app}"
+OUT="${2:-build/macos/Build/Products/Release/T2DECODE-macOS.dmg}"
+CREATE_DMG="${CREATE_DMG:-create-dmg}"
+here=$(cd "$(dirname "$0")/.." && pwd)
 
-echo "🚀 Préparation de la génération du DMG pour $APP_NAME..."
+[ -d "$APP" ] || { echo "❌ application introuvable : $APP (flutter build macos --release)"; exit 1; }
+command -v "$CREATE_DMG" >/dev/null || { echo "❌ create-dmg absent (brew install create-dmg)"; exit 1; }
 
-# 1. Vérifier si l'app est buildée
-if [[ ! -d "$BUILD_DIR/$APP_BUNDLE_NAME" ]]; then
-    echo "❌ Erreur: L'application n'est pas buildée dans $BUILD_DIR."
-    echo "Lancez d'abord: flutter build macos --release"
-    exit 1
-fi
+staging=$(mktemp -d)
+trap 'rm -rf "$staging"' EXIT
+ditto "$APP" "$staging/T2DECODE.app"
+rm -f "$OUT"
 
-# 2. Nettoyer l'espace de staging
-echo "🧹 Nettoyage de l'espace de travail..."
-rm -rf "$DMG_STAGING_DIR"
-mkdir -p "$DMG_STAGING_DIR"
-rm -f "$BUILD_DIR/$DMG_NAME"
+"$CREATE_DMG" \
+  --volname "T2DECODE" \
+  --volicon "$APP/Contents/Resources/AppIcon.icns" \
+  --background "$here/installer-art/dmg-fond.tiff" \
+  --window-pos 200 140 \
+  --window-size 660 422 \
+  --icon-size 128 \
+  --text-size 13 \
+  --icon "T2DECODE.app" 170 215 \
+  --hide-extension "T2DECODE.app" \
+  --app-drop-link 490 215 \
+  --no-internet-enable \
+  "$OUT" "$staging"
 
-# 3. Copier l'application
-echo "📂 Copie de l'application..."
-cp -R "$BUILD_DIR/$APP_BUNDLE_NAME" "$DMG_STAGING_DIR/"
-
-# 4. Créer le lien vers Applications
-echo "🔗 Création du lien vers /Applications..."
-ln -s /Applications "$DMG_STAGING_DIR/Applications"
-
-# 5. Créer le DMG
-echo "💿 Création de l'image disque (.dmg)..."
-sync
-sleep 2
-hdiutil create -volname "T2DECODE" -srcfolder "$DMG_STAGING_DIR" -ov -format UDZO "$BUILD_DIR/$DMG_NAME"
-
-echo "✅ DMG créé avec succès : $BUILD_DIR/$DMG_NAME"
-
-# 6. Nettoyage final
-rm -rf "$DMG_STAGING_DIR"
+echo "✅ DMG créé : $OUT"

@@ -23,19 +23,34 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DisableProgramGroupPage=yes
+DisableWelcomePage=no
+ArchitecturesAllowed=x64compatible
+ArchitecturesInstallIn64BitMode=x64compatible
+UninstallDisplayIcon={app}\{#MyAppExeName}
+UninstallDisplayName={#MyAppName}
+VersionInfoVersion={#MyAppVersion}
+VersionInfoProductName={#MyAppName}
+CloseApplications=yes
+ShowLanguageDialog=auto
 LicenseFile=..\..\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
-;PrivilegesRequired=lowest
+; Installation pour l'utilisateur seul par défaut (pas de demande administrateur),
+; avec le choix « pour tous les utilisateurs » dans l'assistant.
+PrivilegesRequired=lowest
+PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=.
 OutputBaseFilename=T2DECODE-Setup
 SetupIconFile=..\runner\resources\app_icon.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+WizardImageFile=..\..\installer-art\windows-assistant-164x314.bmp,..\..\installer-art\windows-assistant-328x628.bmp
+WizardSmallImageFile=..\..\installer-art\windows-icone-55.bmp,..\..\installer-art\windows-icone-110.bmp
+WizardImageStretch=no
 
 [Languages]
-Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
+Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
