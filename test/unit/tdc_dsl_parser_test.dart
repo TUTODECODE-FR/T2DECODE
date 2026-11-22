@@ -77,7 +77,71 @@ Rédigez votre contenu ici...
       final course = Course.fromMap(map);
       expect(course.id, equals('nouveau-cours'));
       expect(course.chapters.length, equals(1));
-      expect(course.chapters.first.quiz?.first.question, equals('Nouvelle question ?'));
+      expect(course.chapters.first.quiz?.first.question,
+          equals('Nouvelle question ?'));
+    });
+
+    test('parses a TDC Studio course header and signed quiz choices', () {
+      const dsl = '''
+tdc-version: 2
+type: course
+
+course "Bash" {
+  title: "Scripts Bash"
+  description: "Écrire des scripts"
+  category: linux
+  level: intermediate
+  duration: 5h05
+  icon: Terminal
+
+  module "intro" {
+    title: "Chapitre 1 : premier script"
+    duration: 20min
+    content: """
+Un script Bash est un fichier texte.
+"""
+    codeblock "bash" {
+      title: "Vérifier la syntaxe"
+      code: """
+bash -n script.sh
+"""
+    }
+    quiz {
+      question "Que fait le shebang ?" {
+        - "c'est un commentaire sans effet"
+        + "elle indique quel programme doit lire le script"
+        - "elle importe une bibliothèque"
+        explanation: "Le système lit #! au lancement."
+      }
+    }
+  }
+}
+''';
+
+      final map = TdcDslParser.parse(dsl);
+      expect(map['id'], equals('Bash'));
+      expect(map['title'], equals('Scripts Bash'));
+      expect(map['duration'], equals('5h05'));
+
+      final mod = (map['content'] as List).first as Map<String, dynamic>;
+      expect(mod['content'], contains('Un script Bash est un fichier texte.'));
+      final blocks = mod['codeBlocks'] as List;
+      expect(blocks.single['language'], equals('bash'));
+      expect(blocks.single['code'], contains('bash -n script.sh'));
+      final quiz = mod['quiz'] as List;
+      final q = quiz.first as Map<String, dynamic>;
+      expect(
+          q['choices'],
+          equals([
+            "c'est un commentaire sans effet",
+            'elle indique quel programme doit lire le script',
+            'elle importe une bibliothèque',
+          ]));
+      expect(q['correctIndex'], equals(1));
+      expect(q['explanation'], contains('#!'));
+
+      final course = Course.fromMap(map);
+      expect(course.chapters.first.quiz?.first.correctIndex, equals(1));
     });
   });
 }

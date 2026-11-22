@@ -1079,5 +1079,830 @@
         ]
       }
     ]
+  },
+  {
+    "id": "Bash",
+    "title": "Scripts Bash",
+    "description": "Cours Bash : écrire des scripts d'administration système\n\nCe cours apprend à écrire des scripts Bash fiables, en partant d'un vrai projet : un script qui crée un dépôt GitHub privé, génère des dossiers Job01 à JobNN et fait le premier push. Il s'adresse aux débutants qui veulent automatiser des tâches d'administration système.\n\nÀ la fin, tu sauras :\n• écrire et lancer un script, et corriger les erreurs classiques (fins de ligne Windows, guillemets oubliés) ;\n• structurer un script en fonctions avec des codes de sortie clairs ;\n• valider ce que tape l'utilisateur avant de l'utiliser ;\n• manipuler un secret (un token) sans le laisser fuiter ;\n• appeler une API web avec curl et lire sa réponse.\n\nChaque chapitre suit le même rythme : une idée, un petit exemple sur un autre sujet que le projet, puis un quiz de 3 questions avec un corrigé expliqué. Les exemples sont volontairement courts : le but est que tu écrives ton propre script, pas que tu recopies le mien.\n\nEnvironnement conseillé : Linux ou WSL/Ubuntu sous Windows. Les commandes du cours se tapent dans le terminal Ubuntu, pas dans PowerShell.",
+    "icon": "Terminal",
+    "level": "intermediate",
+    "duration": "5h05",
+    "category": "linux",
+    "author": "Anna",
+    "keywords": [
+      "linux"
+    ],
+    "content": [
+      {
+        "id": "intro",
+        "title": "Chapitre 1 : premier script",
+        "duration": "20min",
+        "content": "Un script Bash est un fichier texte qui contient des commandes, exécutées l'une après l'autre. Rien de plus.\n```bash\n#!/usr/bin/env bash\necho \"Bonjour, $USER\"\n```\nLa première ligne, le **shebang**, dit au système quel programme doit lire le fichier. `env bash` cherche Bash dans le PATH, ce qui marche sur la plupart des machines.\nIl y a deux façons de lancer un script :\n• `bash script.sh` : Bash lit le fichier directement, aucun prérequis.\n• `./script.sh` : le système exécute le fichier lui-même, ce qui demande d'abord `chmod +x script.sh`.\nLe `chmod +x` ajoute le droit d'exécution. Sans lui, `./script.sh` répond `Permission denied`. Pendant que tu écris ton script, `bash script.sh` suffit.\nPour vérifier la syntaxe sans rien exécuter :\n```bash\nbash -n script.sh\n```\nSi rien ne s'affiche, la syntaxe est correcte. Prends l'habitude de lancer cette commande avant chaque test.",
+        "quiz": [
+          {
+            "question": "Que fait la première ligne #!/usr/bin/env bash ?",
+            "choices": [
+              "c'est un simple commentaire sans effet",
+              "elle indique quel programme doit lire le script",
+              "elle importe une bibliothèque"
+            ],
+            "correctIndex": 1,
+            "explanation": "Quand tu lances ./script.sh, le système lit les deux premiers caractères du fichier. S'ils valent #!, il utilise le chemin qui suit comme programme chargé d'exécuter le script. La ligne ressemble à un commentaire (elle commence par #), c'est pourquoi on la croit sans effet, mais elle sert de consigne au système."
+          },
+          {
+            "question": "Quelle commande vérifie la syntaxe sans exécuter le script ?",
+            "choices": [
+              "bash -n script.sh",
+              "chmod -n script.sh",
+              "bash --run script.sh"
+            ],
+            "correctIndex": 0,
+            "explanation": "L'option -n (pour « no exec ») fait lire le script par Bash sans rien exécuter, juste pour détecter les erreurs de syntaxe : un guillemet non fermé, un fi oublié. Elle ne détecte pas les erreurs de logique ni un programme absent. À ne pas confondre avec -x, qui exécute et affiche chaque commande."
+          },
+          {
+            "question": "Faut-il faire chmod +x pour lancer bash script.sh ?",
+            "choices": [
+              "oui, toujours",
+              "non, Bash lit le fichier directement",
+              "uniquement sous Windows"
+            ],
+            "correctIndex": 1,
+            "explanation": "Avec bash script.sh, c'est Bash qui est lancé, et le script n'est qu'un fichier qu'il lit. Le droit d'exécution ne concerne que le lancement direct ./script.sh, où le système doit décider s'il a le droit de lancer le fichier."
+          }
+        ]
+      },
+      {
+        "id": "processes",
+        "title": "Chapitre 2 : le piège Windows/WSL (fins de ligne)",
+        "duration": "15min",
+        "content": "C'est l'erreur la plus fréquente quand on écrit du Bash sous Windows. Tu lances ton script et tu obtiens :\n```text\nscript.sh: line 2: $'\\r': command not found\n: invalid option name\n```\nCause : Windows termine chaque ligne par deux caractères invisibles, `\\r\\n` (CRLF). Linux n'attend que `\\n` (LF). Bash lit le `\\r` comme un caractère faisant partie de la commande, et ne la reconnaît plus.\nCorrection : supprime les `\\r` en fin de ligne :\n\n```bash\nsed -i 's/\\r$//' script.sh\n```\nLecture de la commande : `sed -i` modifie le fichier sur place, `s/\\r$//` remplace un `\\r` situé en fin de ligne (`$`) par rien.\nPour que ça ne revienne pas : Dans VS Code, regarde en bas à droite de la fenêtre : si tu lis `CRLF`, clique dessus et choisis `LF`, puis enregistre. Évite aussi de modifier un même script à deux endroits (Bureau Windows et dossier Linux) : tu risques de travailler sur deux copies différentes.",
+        "codeBlocks": [
+          {
+            "language": "bash",
+            "title": "Repérer les fins de ligne Windows",
+            "code": "file script.sh\ngrep -c $'\\r' script.sh"
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Quelle commande supprime les \\r de fin de ligne ?",
+            "choices": [
+              "sed -i 's/\\r$//' script.sh",
+              "chmod -r script.sh",
+              "rm \\r script.sh"
+            ],
+            "correctIndex": 0,
+            "explanation": "Dans s/\\r$//, s/ancien/nouveau/ remplace du texte, \\r désigne le caractère de retour chariot, et $ signifie « en fin de ligne ». La commande remplace donc un \\r situé en fin de ligne par rien. L'option -i applique la modification directement dans le fichier. chmod -r change des droits et ne touche pas au contenu."
+          },
+          {
+            "question": "Dans VS Code, quel format de fin de ligne choisir pour un script Bash ?",
+            "choices": [
+              "CRLF",
+              "LF",
+              "peu importe"
+            ],
+            "correctIndex": 1,
+            "explanation": "Linux termine une ligne par \\n (LF). Windows ajoute \\r avant (CRLF). Un éditeur réglé sur CRLF réintroduit le problème à chaque enregistrement, d'où l'intérêt de choisir LF une fois pour toutes pour les scripts Bash."
+          },
+          {
+            "question": "Pourquoi vaut-il mieux travailler dans ~/projet que dans /mnt/c/... ?",
+            "choices": [
+              "c'est plus rapide et OneDrive (s'il y est) ne risque pas d'interférer",
+              "Bash refuse de s'exécuter sur /mnt/c",
+              "les fichiers y sont chiffrés"
+            ],
+            "correctIndex": 0,
+            "explanation": "/mnt/c est le disque Windows, vu depuis Linux à travers une couche de traduction : les accès y sont plus lents. Le Bureau est en plus synchronisé par OneDrive, qui peut verrouiller ou modifier des fichiers au mauvais moment. Bash fonctionne très bien sur /mnt/c, ce n'est donc pas interdit, simplement moins fiable."
+          }
+        ]
+      },
+      {
+        "id": "services",
+        "title": "Chapitre 3 : variables et guillemets",
+        "duration": "25min",
+        "content": "Une variable se déclare sans espace autour du = et se lit avec $ :\n```bash\nnom=\"Anna\"\necho \"Bonjour $nom\"\n```\n`nom = \"Anna\"` (avec des espaces) est une erreur : Bash croit que `nom` est une commande.\n\n### La règle d'or : toujours mettre les variables entre guillemets\n\nImagine un nom de dossier avec un espace :\n```bash\ndossier=\"Mes Documents\"\nmkdir $dossier      # FAUX : crée deux dossiers, \"Mes\" et \"Documents\"\nmkdir \"$dossier\"    # JUSTE : crée un seul dossier \"Mes Documents\"\n```\nSans guillemets, Bash coupe la valeur à chaque espace. C'est la source n°1 de bugs, et parfois de failles de sécurité, dans les scripts.\n• `\"$var\"` : la valeur, en un seul morceau.\n• `'$var'` : le texte littéral `$var`, rien n'est interprété.\n• `$var` : la valeur, découpée aux espaces (à éviter).\n\n### Récupérer le résultat d'une commande\n```bash\naujourdhui=\"$(date +%F)\"\necho \"Nous sommes le $aujourdhui\"\n```\n`$(...)` exécute la commande et remplace l'expression par sa sortie.\n### Arguments du script\n`$1`, `$2`… sont les arguments donnés au lancement : `bash script.sh Marseille` met `Marseille` dans `$1`. `$#` donne leur nombre.",
+        "codeBlocks": [
+          {
+            "language": "bash",
+            "title": "Tester les guillemets",
+            "code": "dossier=\"Mes Documents\"\nmkdir \"$dossier\"\nls -d \"$dossier\""
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Que provoque nom = \"Anna\" (avec des espaces) ?",
+            "choices": [
+              "la variable nom reçoit Anna",
+              "une erreur : Bash croit que nom est une commande",
+              "deux variables sont créées"
+            ],
+            "correctIndex": 1,
+            "explanation": "Bash découpe une ligne en mots séparés par des espaces. Dans nom = \"Anna\", le premier mot, nom, est pris pour le nom d'une commande, et = et Anna pour ses arguments. Bash répond alors nom: command not found. Pour affecter une variable, il faut coller le nom, le = et la valeur : nom=\"Anna\"."
+          },
+          {
+            "question": "Que contient la sortie de echo '$nom' (guillemets simples) ?",
+            "choices": [
+              "la valeur de la variable nom",
+              "le texte littéral $nom",
+              "une erreur"
+            ],
+            "correctIndex": 1,
+            "explanation": "Les guillemets simples protègent tout ce qu'ils contiennent : rien n'est remplacé, $nom reste le texte $nom. Les guillemets doubles, eux, laissent Bash remplacer les variables. C'est pour cela qu'on écrit \"$nom\" et non '$nom' quand on veut la valeur."
+          },
+          {
+            "question": "Que fait $(date +%F) ?",
+            "choices": [
+              "il exécute la commande et la remplace par sa sortie",
+              "il affiche littéralement date +%F",
+              " il crée un fichier date"
+            ],
+            "correctIndex": 0,
+            "explanation": "La forme $(commande) s'appelle la substitution de commande : Bash exécute la commande, récupère ce qu'elle affiche et le met à la place de l'expression. Ici, date +%F affiche une date du type 2026-10-17, qu'on range ensuite dans une variable."
+          }
+        ]
+      },
+      {
+        "id": "module-4",
+        "title": "Chapitre 4 : fonctions, codes de sortie et messages d'erreur",
+        "duration": "30min",
+        "content": "### Les codes de sortie\nChaque commande se termine avec un nombre : `0` signifie « succès », tout autre nombre signifie « échec ». Le code de la dernière commande est dans `$?`.\n```bash\nls /dossier-inexistant\necho $?     # affiche 2 (échec)\nls /tmp\necho $?     # affiche 0 (succès)\n```\n\nTon script peut produire son propre code avec `exit` : `exit 0` pour réussir, `exit 1` pour signaler une erreur. C'est ce que lisent les autres programmes (et les tests automatiques) pour savoir si ton script a fonctionné.\n\n### Écrire des fonctions\nUne fonction regroupe des commandes sous un nom, pour ne pas les répéter :\n```bash\nsaluer() {\n    local prenom=\"$1\"\n    echo \"Bonjour $prenom\"\n}\n\nsaluer \"Anna\"\n```\n`local` limite la variable à la fonction. Sans lui, la variable devient globale et peut écraser une autre variable du script sans prévenir.\n\n### Afficher les erreurs au bon endroit\nBash a deux sorties : la **sortie standard** (résultats normaux) et l'**erreur standard** (messages d'erreur, numéro 2). Les messages d'information ou d'erreur d'un script vont sur l'erreur standard avec `>&2`, pour ne pas se mélanger aux résultats que d'autres programmes pourraient lire.\n\nUn modèle très utile, à adapter avec tes propres mots :\n```bash\ninfo() { echo \"[OK] $*\" >&2; }\ndie()  { echo \"[ERREUR] $*\" >&2; exit 1; }\n\n[[ -f config.txt ]] || die \"config.txt introuvable\"\ninfo \"Configuration trouvée\"\n```\n\nLecture : `[[ -f config.txt ]]` teste si le fichier existe ; `||` signifie « sinon, fais ceci ». `die` affiche le message puis arrête tout le script avec le code 1.\nPour tester `die`, lance le script puis tape `echo $?` : tu dois lire `1`. Si le test réussit, tu lis `0`.",
+        "quiz": [
+          {
+            "question": "Que contient $? ?",
+            "choices": [
+              "le code de sortie de la dernière commande",
+              "le numéro du processus",
+              "le nombre d'arguments du script"
+            ],
+            "correctIndex": 0,
+            "explanation": "Après chaque commande, Bash note un nombre dans $? : 0 pour un succès, autre chose pour un échec. Les autres propositions existent aussi, mais sous d'autres noms : le numéro du processus est $$, et le nombre d'arguments est $#."
+          },
+          {
+            "question": "À quoi sert local dans une fonction ?",
+            "choices": [
+              "à limiter la variable à la fonction",
+              "à rendre le code plus lisible",
+              "à exporter la variable vers les autres programmes"
+            ],
+            "correctIndex": 0,
+            "explanation": "Sans local, une variable créée dans une fonction est globale : elle existe encore après la fonction et peut écraser une variable de même nom ailleurs dans le script, ce qui provoque des bugs difficiles à trouver. Avec local, elle disparaît à la fin de la fonction. Elle n'est pas pour autant transmise aux autres programmes : cela, c'est le rôle de export."
+          },
+          {
+            "question": "Dans [[ -f config.txt ]] || die \"introuvable\", quand die s'exécute-t-il ?",
+            "choices": [
+              "quand le fichier existe",
+              "quand le fichier n'existe pas",
+              "toujours"
+            ],
+            "correctIndex": 1,
+            "explanation": "Le || se lit « sinon » : la commande de droite ne s'exécute que si celle de gauche a échoué. Le test [[ -f config.txt ]] réussit (code 0) quand le fichier existe, donc die ne se lance que lorsque le fichier est absent."
+          }
+        ]
+      },
+      {
+        "id": "module-5",
+        "title": "Chapitre 5 : rendre le script robuste (set -euo pipefail, mktemp, trap)",
+        "duration": "35min",
+        "content": "Par défaut, Bash continue après une erreur, ce qui est dangereux : un `cd` raté suivi d'un `rm -rf *` supprime les mauvais fichiers. On active donc au début du script un mode strict :\n```bash\n#!/usr/bin/env bash\nset -euo pipefail\n```\n• `-e` : le script s'arrête dès qu'une commande échoue.\n• `-u` : utiliser une variable non définie est une erreur, ce qui protège des fautes de frappe.\n• `-o pipefail` : un pipe `a | b` échoue si `a` échoue, pas seulement si `b` échoue.\n\n### Les limites de set -e\n`set -e` n'est pas une protection totale. Il est ignoré dans plusieurs situations :\n• dans la condition d'un `if`, ou à gauche d'un `&&` ou d'un `||` ;\n• dans une substitution de commande `$(...)`, sauf si tu actives `shopt -s inherit_errexit` ;\n• dans une fonction appelée dans l'un de ces contextes.\n\nExemple de piège : `local resultat=\"$(commande_qui_echoue)\"` renvoie le code de `local`, qui réussit, et masque l'échec. Écris plutôt en deux temps :\n```bash\nlocal resultat\nresultat=\"$(commande_qui_echoue)\"   # ici l'échec est bien vu\n```\nRègle pratique : ne compte pas uniquement sur `set -e`. Pour les étapes critiques, vérifie toi-même : `commande || die \"message\"`.\n\n### Fichiers temporaires et nettoyage\nPour un fichier temporaire, ne choisis pas un nom à la main : utilise `mktemp`, qui crée un nom unique et non prévisible. Avec `trap`, le nettoyage s'exécute à la fin du script, même en cas d'erreur :\n```bash\nTMP=\"$(mktemp -d)\"\ntrap 'rm -rf \"$TMP\"' EXIT\n\necho \"données\" > \"$TMP/fichier.txt\"\n```\n\nLecture : `trap 'commande' EXIT` dit « exécute cette commande quand le script se termine, quelle que soit la raison ».",
+        "quiz": [
+          {
+            "question": "Que fait l'option -u de set -euo pipefail ?",
+            "choices": [
+              "elle arrête le script si on lit une variable non définie",
+              "elle ignore toutes les erreurs",
+              "elle affiche chaque commande exécutée"
+            ],
+            "correctIndex": 0,
+            "explanation": "Sans -u, une variable non définie est silencieusement remplacée par du vide. Si tu écris rm -rf \"$DOSSIR/\" avec une faute de frappe, la variable DOSSIR n'existe pas, le chemin devient / et la commande vise la racine du disque. Avec -u, le script s'arrête avant de causer des dégâts."
+          },
+          {
+            "question": "Avec set -e, que se passe-t-il pour local r=\"$(commande_qui_echoue)\" ?",
+            "choices": [
+              "le script s'arrête, comme prévu",
+              "l'échec est masqué, car local renvoie un succès",
+              "la commande n'est pas exécutée"
+            ],
+            "correctIndex": 1,
+            "explanation": "local est lui-même une commande, et il réussit presque toujours. Quand tu écris local r=\"$(commande)\", le code de retour que Bash voit est celui de local, pas celui de commande : l'échec disparaît. La solution est de séparer la déclaration (local r) et l'affectation (r=\"$(commande)\")."
+          },
+          {
+            "question": "Pourquoi utiliser mktemp plutôt qu'un nom choisi à la main comme /tmp/fichier ?",
+            "choices": [
+              "le nom est unique et imprévisible",
+              "c'est plus rapide à taper",
+              "il supprime tout seul le fichier"
+            ],
+            "correctIndex": 0,
+            "explanation": "Un nom fixe comme /tmp/fichier est prévisible : un autre utilisateur peut créer à l'avance un fichier de ce nom pour détourner ton script. mktemp choisit un nom unique et aléatoire, et crée le fichier avec des droits restreints. Il ne supprime rien tout seul : c'est trap ... EXIT qui s'en charge."
+          }
+        ]
+      },
+      {
+        "id": "module-6",
+        "title": "Chapitre 6 : valider ce que tape l'utilisateur",
+        "duration": "30min",
+        "content": "Une règle de sécurité simple : **ne jamais faire confiance à une entrée**. Un nom, un chemin ou un identifiant tapé par l'utilisateur peut contenir des espaces, des tirets en début de chaîne, des caractères spéciaux. Avant de l'utiliser (dans une URL, une commande, un nom de fichier), on vérifie qu'il ressemble à ce qu'on attend.\n\n### Le test [[ ... =~ ... ]]\n`=~` demande : « cette chaîne correspond-elle à ce modèle ? ». Le modèle est une **expression régulière**.\n```bash\ncp=\"13000\"\n[[ \"$cp\" =~ ^[0-9]{5}$ ]] && echo \"valide\" || echo \"refusé\"\n```\n• `^` : début de la chaîne.\n• `$` : fin de la chaîne.\n• `[0-9]` : un chiffre.\n• `[a-z]` : une lettre minuscule.\n• `{5}` : exactement 5 fois.\n• `+` : une fois ou plus.\n• `.` : n'importe quel caractère (pour un point littéral, écris `\\.`).\nSans `^` au début et `$` à la fin, `13000abc` serait accepté, car le modèle se retrouve à *l'intérieur* de la chaîne.\n\n### Une fonction de validation\n```bash\nvalider_departement() {\n    local d=\"$1\"\n    [[ \"$d\" =~ ^[0-9]{2}$ ]] || die \"Département invalide : '$d'\"\n}\n\nvalider_departement \"13\"      # accepté\nvalider_departement \"1; ls\"   # refusé\n```\n\nLe deuxième appel montre l'intérêt : une valeur piégée est arrêtée avant d'être utilisée ailleurs.\n\n### Méthode pour écrire un bon modèle\n1. Lis la documentation du service concerné : quels caractères sont autorisés, quelle longueur maximale ?\n2. Écris trois exemples valides et trois exemples pièges (commence par -, contient un espace, est vide).\n3. Écris le modèle, puis teste les six exemples.",
+        "quiz": [
+          {
+            "question": "Pourquoi valider une saisie avant de l'utiliser ?",
+            "choices": [
+              "elle peut contenir des caractères piégés (espace, ;, tiret en début)",
+              "pour accélérer le script",
+              "Bash l'impose"
+            ],
+            "correctIndex": 0,
+            "explanation": "Une saisie peut contenir n'importe quoi : un espace qui coupe un nom en deux, un ; qui enchaîne une autre commande, un tiret en début de mot que le programme prend pour une option. En vérifiant que la valeur ressemble à ce qu'on attend avant de l'utiliser, on arrête ces cas piégés à l'entrée. Bash n'impose rien : c'est une bonne pratique que tu t'imposes."
+          },
+          {
+            "question": "[[ \"13000abc\" =~ ^[0-9]{5}$ ]] réussit-il ?",
+            "choices": [
+              "oui",
+              "non, la chaîne entière doit correspondre",
+              "c'est une erreur de syntaxe"
+            ],
+            "correctIndex": 1,
+            "explanation": "Le modèle ^[0-9]{5}$ dit : début de chaîne, cinq chiffres, fin de chaîne. Dans 13000abc, les cinq chiffres sont suivis de trois lettres, donc la fin de chaîne n'arrive pas après le cinquième chiffre : le test échoue."
+          },
+          {
+            "question": "Et [[ \"13000abc\" =~ [0-9]{5} ]], sans ^ ni $ ?",
+            "choices": [
+              "oui, car le modèle se retrouve à l'intérieur de la chaîne",
+              "non",
+              "cela dépend de la version de Bash"
+            ],
+            "correctIndex": 0,
+            "explanation": "Sans ^ ni $, le test demande seulement si la chaîne contient cinq chiffres de suite quelque part. 13000abc en contient (au début), donc le test réussit. C'est l'erreur classique qui laisse passer des valeurs invalides."
+          }
+        ]
+      },
+      {
+        "id": "module-7",
+        "title": "Chapitre 7 : manipuler un secret sans le laisser fuiter",
+        "duration": "30min",
+        "content": "Un **token d'API** est un mot de passe : qui le possède agit à ta place. Dans un script, il y a trois endroits où il fuit facilement.\n• **Dans le code du script.** Le script finit sur GitHub, dans une capture d'écran ou un message. Parade : ne jamais l'écrire dans le fichier.\n• **Dans la ligne de commande**. `curl -H \"Authorization: Bearer abc123\"` est visible par tous les utilisateurs de la machine avec `ps`, et reste dans l'historique du terminal. Parade : le passer par l'entrée standard.\n• **Dans l'affichage**. `echo \"$TOKEN\"`, ou `set -x` qui affiche chaque commande exécutée. Parade : ne jamais l'afficher.\n\n### Demander le secret sans l'afficher\n```bash\nread -r -s -p \"Token : \" TOKEN\necho                       # saut de ligne, car -s masque la saisie\n[[ -n \"$TOKEN\" ]] || die \"Token vide\"\n```\n`-s` masque la saisie, `-r` empêche Bash d'interpréter les antislashs, `-p` affiche l'invite.\n\n### Le transmettre à `curl` sans qu'il apparaisse dans `ps`\n`printf` est une commande interne de Bash : elle n'apparaît pas dans la liste des processus. On lui fait écrire un fichier de configuration pour `curl`, lu sur l'entrée standard (`--config -`) :\n```bash\nprintf 'header = \"Authorization: Bearer %s\"\\n' \"$TOKEN\" |\n    curl --silent --config - https://api.example.com/me\n```\nLe token passe dans un tube (pipe) entre les deux commandes, jamais dans les arguments de `curl`.\n\n### Autres règles\n• Ne fais pas `export TOKEN` si ce n'est pas nécessaire : une variable exportée est visible par tous les programmes lancés ensuite.\n• Ne mets jamais le token dans une URL (`https://user:TOKEN@...`) : il se retrouve ensuite écrit en clair dans des fichiers comme `.git/config`.\n• Si un token a fuité (collé dans un chat, un message, un dépôt), **révoque-le tout de suite** dans les paramètres du service et crée-en un nouveau. Le supprimer du message ne suffit pas.\n• Donne au token le minimum de droits nécessaires.",
+        "quiz": [
+          {
+            "question": "Pourquoi curl -H \"Authorization: Bearer abc123\" est-il dangereux ?",
+            "choices": [
+              "le token est visible avec ps et reste dans l'historique",
+              "c'est plus lent",
+              "curl refuse cette option"
+            ],
+            "correctIndex": 0,
+            "explanation": "Les arguments d'un programme sont visibles par tous les utilisateurs de la machine avec ps, et la ligne tapée est enregistrée dans l'historique du terminal. Le token y apparaîtrait en clair. Passer le secret par l'entrée standard (--config -) évite les deux problèmes."
+          },
+          {
+            "question": "Pourquoi faire un echo seul juste après read -r -s ?",
+            "choices": [
+              "pour passer à la ligne, car la saisie masquée n'en affiche pas",
+              "pour vider la variable",
+              "pour effacer l'historique"
+            ],
+            "correctIndex": 0,
+            "explanation": "Quand tu tapes Entrée, le terminal affiche normalement un retour à la ligne. Avec -s, rien de ce que tu tapes n'est affiché, y compris ce retour. Sans l'echo, le message suivant du script s'afficherait collé à l'invite Token :."
+          },
+          {
+            "question": "Tu as collé un token dans un chat par erreur. Que fais-tu ?",
+            "choices": [
+              "tu supprimes le message, c'est suffisant",
+              "tu révoques le token et tu en crées un nouveau",
+              "tu attends de voir si quelqu'un l'utilise"
+            ],
+            "correctIndex": 1,
+            "explanation": "Supprimer le message ne sert à rien : le token a pu être lu, copié, enregistré dans des journaux. Un secret exposé doit être considéré comme compromis. Il faut le révoquer chez le service concerné, puis en créer un nouveau."
+          }
+        ]
+      },
+      {
+        "id": "module-8",
+        "title": "Chapitre 8 : appeler une API avec curl et jq",
+        "duration": "40min",
+        "content": "Une **API REST** est un service web qu'on pilote avec des requêtes HTTP. `curl` envoie la requête, `jq` lit la réponse (au format JSON).\n\n### Lire le code de statut HTTP\nLe code de statut dit si la requête a réussi. C'est lui qu'il faut tester, pas seulement le texte de la réponse.\n• **200** (OK) : lecture réussie.\n• **201** (Créé) : ressource créée.\n• **401** (Non authentifié) : token faux ou expiré.\n• **403** (Interdit) : token valide mais droits insuffisants.\n• **404** (Introuvable) : mauvaise URL, ou ressource privée non accessible.\n• **422** (Données refusées) : par exemple, un nom qui existe déjà.\nOn range la réponse dans un fichier temporaire et on récupère le code à part :\n```bash\ncode=\"$(curl --silent --output \"$TMP/reponse.json\" --write-out '%{http_code}' \\\n    https://api.example.com/profil)\"\n\ncase \"$code\" in\n    200) info \"Connexion réussie\" ;;\n    401) die \"Token refusé (code HTTP 401)\" ;;\n    *)   die \"Erreur inattendue (code HTTP $code)\" ;;\nesac\n```\n\n`--silent` supprime la barre de progression, `--output` envoie la réponse dans un fichier, `--write-out '%{http_code}'` affiche le code de statut. Le `case` compare ce code à plusieurs valeurs, ce qui est plus lisible qu'une suite de `if`.\n\n### Lire du JSON avec jq\n```bash\nlogin=\"$(jq -r '.login' \"$TMP/reponse.json\")\"\n```\n`.login` désigne le champ `login`, et `-r` retire les guillemets autour de la valeur.\n\n### Construire du JSON sans erreur\nN'assemble jamais du JSON avec des guillemets à la main : une valeur contenant un guillemet casserait le JSON, et un utilisateur malveillant pourrait y glisser d'autres champs. Laisse `jq` s'en charger :\n```bash\ncorps=\"$(jq -n --arg nom \"$nom\" '{name: $nom, private: true}')\"\n```\nPour envoyer ce corps : `curl --data \"$corps\" ...` (curl choisit alors la méthode POST).",
+        "quiz": [
+          {
+            "question": "Une API répond 403. Que cela signifie-t-il en général ?",
+            "choices": [
+              "le token est faux",
+              "le token est valide mais les droits sont insuffisants",
+              " la ressource n'existe pas"
+            ],
+            "correctIndex": 1,
+            "explanation": "401 et 403 se ressemblent mais n'ont pas le même sens. Un 401 veut dire « je ne sais pas qui tu es » (token absent, faux ou expiré). Un 403 veut dire « je sais qui tu es, mais tu n'as pas le droit de faire ça » (token valide, droits insuffisants). Le message d'erreur du script doit les distinguer, car la correction n'est pas la même."
+          },
+          {
+            "question": "Pourquoi construire du JSON avec jq -n --arg plutôt qu'à la main ?",
+            "choices": [
+              "pour éviter un JSON cassé ou une injection de champs",
+              "c'est plus joli",
+              "curl l'exige"
+            ],
+            "correctIndex": 0,
+            "explanation": "Si tu écris le JSON à la main avec \"{\\\"name\\\":\\\"$nom\\\"}\", un nom contenant un guillemet casse le JSON. Pire, une valeur malveillante peut y ajouter d'autres champs. jq -n --arg échappe correctement les caractères spéciaux et garantit un JSON valide."
+          },
+          {
+            "question": "Que fait --write-out '%{http_code}' ?",
+            "choices": [
+              "il affiche le code de statut HTTP de la réponse",
+              "il écrit la réponse dans un fichier",
+              "il masque les erreurs"
+            ],
+            "correctIndex": 0,
+            "explanation": "Avec --output, le contenu de la réponse part dans un fichier. L'option --write-out '%{http_code}' affiche ensuite le code de statut sur la sortie standard, ce qui permet de le récupérer dans une variable avec $(...)."
+          }
+        ]
+      },
+      {
+        "id": "module-9",
+        "title": "Chapitre 9 : here-documents, boucles et formulaires dialog",
+        "duration": "40min",
+        "content": "### Les here-documents : écrire un fichier depuis le script\nQuand ton script doit créer un fichier de plusieurs lignes (un README, un petit script, une configuration), tu utilises un **here-document** :\n```bash\ncat > \"$dossier/README.md\" <<'EOF'\n# Mon projet\nCe fichier a été créé par un script.\nEOF\n```\n\nTout ce qui se trouve entre `<<'EOF'` et la ligne `EOF` est copié dans le fichier, sans être exécuté. Si tu vois un `#!/usr/bin/env bash` au milieu d'un script, ce n'est donc pas un doublon : c'est le contenu d'un autre fichier que le script est en train d'écrire.\nLes guillemets autour de `'EOF'` comptent :\n• `<<'EOF'` : le texte est copié tel quel, `$variable` reste littéral.\n• `<<EOF` : les `$variable` sont remplacées par leur valeur.\nLa ligne de fin `EOF` doit être seule sur sa ligne, sans espace devant.\n\n### Les boucles\nPour répéter une action, par exemple créer `Job01`, `Job02`… :\n```bash\nfor ((i = 1; i <= nombre; i++)); do\n    printf -v nom 'Job%02d' \"$i\"     # %02d = nombre sur 2 chiffres : 01, 02…\n    mkdir -p \"$dossier/$nom\"\ndone\n```\n`printf -v nom` range le résultat dans la variable `nom` au lieu de l'afficher. `mkdir -p` ne se plaint pas si le dossier existe déjà.\nPour parcourir une liste : `for fichier in *.txt; do ... done`. Pense toujours aux guillemets : `\"$fichier\"`.\n\n### Un formulaire avec dialog\n`dialog` affiche des boîtes de dialogue dans le terminal (installation : `sudo apt install dialog`).\n```bash\nprenom=\"$(dialog --stdout --inputbox \"Ton prénom :\" 8 40)\" || die \"Annulé\"\nclear\n```\n`--stdout` renvoie la saisie sur la sortie standard, ce qui permet de la ranger dans une variable. Si l'utilisateur annule, `dialog` renvoie un code d'échec et le `|| die` arrête le script. `clear` nettoie l'écran ensuite.\nUne saisie venant de `dialog` reste une saisie utilisateur : passe-la par ta fonction de validation du chapitre 6.",
+        "quiz": [
+          {
+            "question": "Un #!/usr/bin/env bash apparaît au milieu d'un script, dans un here-document. Que faut-il en penser ?",
+            "choices": [
+              "c'est un doublon à supprimer",
+              " c'est le contenu d'un autre fichier que le script écrit",
+              "cela relance Bash"
+            ],
+            "correctIndex": 1,
+            "explanation": "Entre <<'EOF' et EOF, tout est du texte écrit tel quel dans un fichier, sans être exécuté. Si ce texte commence par un shebang, c'est que le script est en train de fabriquer un autre script. Le #! du milieu ne relance donc pas Bash et n'est pas un doublon."
+          },
+          {
+            "question": "Que contient la variable nom après printf -v nom 'Job%02d' 3 ?",
+            "choices": [
+              "Job03",
+              "Job3",
+              "rien, le résultat est seulement affiché"
+            ],
+            "correctIndex": 0,
+            "explanation": "Dans %02d, d désigne un nombre entier, 2 la largeur minimale et 0 le caractère de remplissage : 3 devient 03. L'option -v nom range le résultat dans la variable nom, au lieu de l'afficher."
+          },
+          {
+            "question": "À quoi sert dialog --stdout ?",
+            "choices": [
+              "à renvoyer la saisie sur la sortie standard, pour la ranger dans une variable",
+              " à afficher la boîte en plein écran",
+              "à activer les couleurs"
+            ],
+            "correctIndex": 0,
+            "explanation": "Par défaut, dialog écrit la réponse de l'utilisateur sur l'erreur standard, pour ne pas la mélanger avec l'affichage de la boîte. L'option --stdout l'envoie sur la sortie standard, ce qui permet de la récupérer avec $(...) dans une variable."
+          }
+        ]
+      },
+      {
+        "id": "module-10",
+        "title": "Chapitre 10 : automatiser git sans laisser fuiter le token",
+        "duration": "40min",
+        "content": "Pour publier un dossier sur un dépôt distant, un script enchaîne les mêmes commandes que toi à la main :\n\n```bash\ngit -C \"$dossier\" init --quiet\ngit -C \"$dossier\" add .\ngit -C \"$dossier\" commit --quiet -m \"Premier commit\"\ngit -C \"$dossier\" branch -M main\ngit -C \"$dossier\" remote add origin \"https://github.com/utilisateur/depot.git\"\ngit -C \"$dossier\" push --quiet -u origin main\n```\n\n`git -C \"$dossier\"` exécute la commande dans ce dossier sans avoir à faire cd (donc sans risque d'oublier de revenir). Pour qu'un `commit` fonctionne, `git config user.name` et `git config user.email` doivent être définis : vérifie-le au début du script.\n\n### Le problème : git demande un mot de passe\nLe `push` vers un dépôt privé demande un identifiant. Les mauvaises solutions :\n• mettre le token dans l'URL : il est alors enregistré en clair dans `.git/config` ;\n• le passer sur la ligne de commande : il est visible par `ps` ;\n• l'écrire dans un fichier oublié ensuite.\n\n### Une solution propre : `GIT_ASKPASS`\nGit peut appeler un petit programme pour obtenir ses identifiants. Le script de ce programme lit les valeurs depuis des variables d'environnement, jamais depuis un fichier :\n```bash\ncat > \"$TMP/askpass.sh\" <<'EOF'\n#!/usr/bin/env bash\ncase \"$1\" in\n    Username*) printf '%s\\n' \"$GIT_USER\" ;;\n    *)         printf '%s\\n' \"$GIT_TOKEN\" ;;\nesac\nEOF\nchmod 700 \"$TMP/askpass.sh\"\n\nGIT_ASKPASS=\"$TMP/askpass.sh\" GIT_USER=\"$utilisateur\" GIT_TOKEN=\"$TOKEN\" \\\n    git -C \"$dossier\" push --quiet -u origin main\n```\n\nPoints importants :\n• le `<<'EOF'` avec guillemets empêche Bash de remplacer `$GIT_USER` à l'écriture : les variables sont lues plus tard, au moment où git appelle le programme ;\n• les trois variables ne sont définies que pour cette seule commande `git` (écrites juste avant elle, sur la même ligne), donc pas de `export` ;\n• le dossier `$TMP` est créé avec `mktemp -d` et supprimé par `trap` (chapitre 5), donc le programme `askpass.sh` disparaît dès la fin du script ;\n• l'URL du dépôt ne contient aucun secret.\n\n### Vérifier le résultat\n```bash\ncat \"$dossier/.git/config\"      # l'URL ne doit contenir aucun token\ngit -C \"$dossier\" log --oneline # le commit doit apparaître\n```\n\n### Alternative : le client officiel gh\nGitHub fournit un programme en ligne de commande, `gh`, qui gère l'authentification lui-même (`gh auth login`) et sait créer un dépôt en une commande. C'est plus court qu'un script `curl`, mais on apprend moins ce qui se passe réellement. Les deux approches valent la peine d'être connues.",
+        "quiz": [
+          {
+            "question": "Pourquoi écrire git -C \"$dossier\" commit ... ?",
+            "choices": [
+              "pour exécuter la commande dans ce dossier sans cd",
+              "pour cloner le dépôt",
+              "pour valider automatiquement sans message"
+            ],
+            "correctIndex": 0,
+            "explanation": "git -C dossier fait travailler git dans ce dossier, sans que le script change de dossier. C'est plus sûr qu'un cd : si le cd échoue, les commandes suivantes s'exécuteraient au mauvais endroit."
+          },
+          {
+            "question": "Pourquoi ne pas mettre le token dans l'URL du dépôt distant ?",
+            "choices": [
+              "il serait enregistré en clair dans .git/config",
+              "l'URL serait trop longue",
+              "git refuse les URL avec un identifiant"
+            ],
+            "correctIndex": 0,
+            "explanation": "Quand on ajoute un dépôt distant, git enregistre son URL dans .git/config, qui est un simple fichier texte. Un token dans l'URL y resterait en clair, et partirait avec le dossier s'il est copié ou partagé. Git n'a pas de problème avec les URL contenant un identifiant : c'est simplement dangereux."
+          },
+          {
+            "question": "Dans le script askpass.sh écrit par here-document, à quoi servent les guillemets de <<'EOF' ?",
+            "choices": [
+              "à ce que $GIT_TOKEN soit lu plus tard, par git, et non remplacé à l'écriture du fichier",
+              "à accélérer l'écriture",
+              "à rien de particulier"
+            ],
+            "correctIndex": 0,
+            "explanation": "Sans guillemets, Bash remplacerait $GIT_TOKEN pendant l'écriture du fichier, par une valeur vide ou par le token lui-même, écrit en clair. Avec <<'EOF', le texte est copié tel quel, et la variable est lue plus tard par askpass.sh, quand git l'appelle."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Python",
+    "title": "Scripts Python",
+    "description": "Cours Python : écrire des scripts d'administration système\n\nCe cours apprend à écrire des scripts Python fiables, en partant d'un vrai projet : un script qui crée un dépôt GitHub privé, génère des dossiers Job01 à JobNN et fait le premier push. C'est le même projet que dans le cours Bash, ce qui permet de comparer les deux langages. Il s'adresse aux débutants qui veulent automatiser des tâches d'administration système.\n\nÀ la fin, tu sauras :\n• écrire et lancer un script, et corriger les erreurs classiques (indentation, fins de ligne Windows, environnement virtuel) ;\n• structurer un script en fonctions avec des codes de sortie clairs ;\n• gérer les erreurs avec try/except et nettoyer proprement les fichiers temporaires ;\n• valider ce que tape l'utilisateur avant de l'utiliser ;\n• manipuler un secret (un token) sans le laisser fuiter ;\n• appeler une API web avec requests, lancer des commandes avec subprocess et automatiser git.\n\nChaque chapitre suit le même rythme : une idée, un petit exemple sur un autre sujet que le projet, puis un quiz de 3 questions avec un corrigé expliqué. Les exemples sont volontairement courts : le but est que tu écrives ton propre script, pas que tu recopies le mien.\n\nEnvironnement conseillé : Linux ou WSL/Ubuntu sous Windows. Les commandes du cours se tapent dans le terminal Ubuntu, pas dans PowerShell.",
+    "icon": "Terminal",
+    "level": "intermediate",
+    "duration": "5h15",
+    "category": "linux",
+    "author": "Anna",
+    "keywords": [
+      "linux"
+    ],
+    "content": [
+      {
+        "id": "premier-script",
+        "title": "Chapitre 1 : premier script",
+        "duration": "20min",
+        "content": "Un script Python est un fichier texte, de suffixe `.py`, qui contient des instructions exécutées de haut en bas. Rien de plus.\n```python\n#!/usr/bin/env python3\nimport getpass\n\nprint(f\"Bonjour, {getpass.getuser()}\")\n```\nLa première ligne, le **shebang**, dit au système quel programme doit lire le fichier. `env python3` cherche Python 3 dans le PATH. Elle ne sert que si tu lances le script directement avec `./script.py` : pour Python lui-même, c'est un simple commentaire.\n`import getpass` charge un module de la bibliothèque standard, et `getpass.getuser()` renvoie le nom de l'utilisateur connecté.\nIl y a deux façons de lancer un script :\n• `python3 script.py` : Python lit le fichier directement, aucun prérequis.\n• `./script.py` : le système exécute le fichier lui-même, ce qui demande d'abord `chmod +x script.py`.\nSous Windows (PowerShell), on lance `python script.py` ou `py script.py` : le shebang est ignoré.\nPour connaître la version installée :\n```bash\npython3 --version\n```\nPour vérifier la syntaxe sans rien exécuter :\n```bash\npython3 -m py_compile script.py\n```\nSi rien ne s'affiche, la syntaxe est correcte. Cette commande ne détecte que les erreurs d'écriture (une parenthèse non fermée, un `:` oublié) : une erreur qui n'apparaît qu'à l'exécution, comme un fichier introuvable, ne sera pas vue. Elle crée aussi un dossier `__pycache__`, que tu peux ignorer.",
+        "codeBlocks": [
+          {
+            "language": "python",
+            "title": "Informations système",
+            "code": "import platform\n\nprint(platform.system(), platform.release())"
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Que fait la première ligne #!/usr/bin/env python3 ?",
+            "choices": [
+              "elle vérifie la syntaxe du script",
+              "elle importe le module python3",
+              "elle indique quel programme doit exécuter le script quand on le lance avec ./script.py"
+            ],
+            "correctIndex": 2,
+            "explanation": "Quand tu lances ./script.py, le système lit les deux premiers caractères du fichier. S'ils valent #!, il utilise le chemin qui suit comme programme chargé d'exécuter le script. Pour Python, la ligne est un commentaire (elle commence par #), donc elle ne change rien quand tu lances python3 script.py."
+          },
+          {
+            "question": "Quelle commande vérifie la syntaxe sans exécuter le script ?",
+            "choices": [
+              "python3 --check script.py",
+              "python3 -m py_compile script.py",
+              "chmod -c script.py"
+            ],
+            "correctIndex": 1,
+            "explanation": "py_compile compile le fichier sans l'exécuter, et signale les erreurs d'écriture (parenthèse oubliée, deux-points manquant). Elle ne voit pas les erreurs qui n'apparaissent qu'à l'exécution : une variable mal nommée ou un fichier introuvable ne seront découverts qu'au lancement. Les deux autres commandes n'existent pas ou font autre chose."
+          },
+          {
+            "question": "Faut-il faire chmod +x pour lancer python3 script.py ?",
+            "choices": [
+              "non, Python lit le fichier directement",
+              "uniquement sous Windows",
+              "oui, toujours"
+            ],
+            "correctIndex": 0,
+            "explanation": "Avec python3 script.py, c'est Python qui est lancé, et le script n'est qu'un fichier qu'il lit. Le droit d'exécution ne concerne que le lancement direct ./script.py, où le système doit décider s'il a le droit de lancer le fichier."
+          }
+        ]
+      },
+      {
+        "id": "environnement",
+        "title": "Chapitre 2 : environnement, indentation et environnements virtuels",
+        "duration": "25min",
+        "content": "Trois pièges attendent le débutant avant même d'écrire la première vraie ligne.\n\n### python ou python3 ?\nSous Linux et WSL, la commande est `python3`. Sous Windows, c'est `python` ou `py`. Vérifie toujours avec `python3 --version`.\n\n### L'indentation fait partie du langage\nPython n'utilise pas d'accolades : ce sont les espaces au début de ligne qui délimitent les blocs.\n```python\nnombre = 3\nif nombre > 2:\n    print(\"grand\")\n    print(\"toujours dans le if\")\nprint(\"ici, on est sorti du if\")\n```\nLa convention est de 4 espaces par niveau. Mélanger des tabulations et des espaces dans un même fichier provoque une `TabError` ou une `IndentationError`. Règle ton éditeur pour qu'il insère des espaces quand tu appuies sur Tab.\n\n### Le piège Windows/WSL (fins de ligne)\nPython lit sans problème un fichier enregistré avec des fins de ligne Windows (CRLF). En revanche, avec `./script.py`, le système lit le shebang tel quel, `\\r` compris, et cherche un programme nommé `python3\\r` :\n```\nenv: 'python3\\r': No such file or directory\n```\nCorrection : supprime les `\\r` en fin de ligne.\n```bash\nsed -i 's/\\r$//' script.py\n```\nDans VS Code, regarde en bas à droite : si tu lis `CRLF`, clique dessus et choisis `LF`. Travaille aussi dans ton dossier Linux (`~/projet`) plutôt que dans `/mnt/c/...`, plus lent et exposé aux interférences de OneDrive.\n\n### Les environnements virtuels\nInstaller des bibliothèques directement dans le Python du système les mélange entre projets, et Ubuntu le refuse souvent (message `externally-managed-environment`). On crée donc un environnement par projet :\n```bash\npython3 -m venv .venv\nsource .venv/bin/activate\npip install requests\ndeactivate\n```\nSous Ubuntu, si la première commande échoue, installe d'abord `sudo apt install python3-venv`. Sous PowerShell, l'activation se fait avec `.venv\\Scripts\\Activate.ps1`. Ajoute `.venv/` à ton fichier `.gitignore` : cet environnement ne se partage pas.",
+        "quiz": [
+          {
+            "question": "Pourquoi l'indentation est-elle importante en Python ?",
+            "choices": [
+              "elle délimite les blocs de code (if, for, def)",
+              "elle sert uniquement à rendre le code plus joli",
+              "elle sert à écrire des commentaires"
+            ],
+            "correctIndex": 0,
+            "explanation": "En Python, il n'y a pas d'accolades : c'est l'indentation qui dit quelles lignes appartiennent au if, à la boucle ou à la fonction. Une ligne mal décalée change le sens du programme ou provoque une IndentationError. La convention est de 4 espaces par niveau, jamais de mélange avec des tabulations."
+          },
+          {
+            "question": "Pourquoi un script en CRLF peut-il échouer avec ./script.py alors qu'il marche avec python3 script.py ?",
+            "choices": [
+              "le fichier est trop long",
+              "Python refuse de lire les fichiers CRLF",
+              "le retour chariot colle au nom de l'interpréteur dans la ligne shebang"
+            ],
+            "correctIndex": 2,
+            "explanation": "Python sait lire les fins de ligne Windows, donc python3 script.py fonctionne. Mais avec ./script.py, c'est le système qui lit la ligne shebang : il garde le \\r à la fin et cherche un programme nommé python3\\r, qui n'existe pas. La commande sed -i 's/\\r$//' script.py règle le problème."
+          },
+          {
+            "question": "Pourquoi créer un environnement virtuel avec python3 -m venv ?",
+            "choices": [
+              "pour chiffrer le code du script",
+              "pour accélérer l'exécution de Python",
+              "pour isoler les bibliothèques d'un projet de celles du système et des autres projets"
+            ],
+            "correctIndex": 2,
+            "explanation": "Chaque environnement virtuel contient ses propres bibliothèques installées avec pip. Deux projets peuvent ainsi utiliser des versions différentes d'une même bibliothèque sans conflit, et tu ne modifies pas le Python du système. Cela n'a aucun effet sur la vitesse ni sur la confidentialité du code."
+          }
+        ]
+      },
+      {
+        "id": "variables",
+        "title": "Chapitre 3 : variables, types et f-strings",
+        "duration": "25min",
+        "content": "Une variable se crée avec `=`. Contrairement à Bash, les espaces autour du `=` sont permis, et même conseillés :\n```python\nnom = \"Anna\"\nage = 30\nprint(f\"Bonjour {nom}, tu as {age} ans\")\n```\nLes guillemets simples et doubles sont équivalents en Python : `'Anna'` et `\"Anna\"` donnent le même texte.\n\n### Les types de base\n• `str` : du texte, `\"Marseille\"`.\n• `int` : un entier, `42`.\n• `float` : un nombre à virgule, `3.14`.\n• `bool` : `True` ou `False`.\n• `list` : une liste ordonnée, `[\"web01\", \"db01\"]`.\n• `dict` : des paires clé/valeur, `{\"hote\": \"web01\", \"port\": 22}`.\n```python\nserveurs = [\"web01\", \"db01\"]\nconfig = {\"hote\": \"web01\", \"port\": 22}\nprint(serveurs[0])\nprint(config[\"port\"])\n```\nContrairement à Bash, une valeur contenant un espace reste d'un seul morceau : il n'y a pas de découpage à éviter avec des guillemets.\n\n### Les f-strings\nUn texte précédé de `f` remplace ce qui est entre accolades par sa valeur : `f\"Bonjour {nom}\"`. C'est l'équivalent du `\"Bonjour $nom\"` de Bash.\n\n### Le piège de input()\n`input()` renvoie toujours du **texte**, même si l'utilisateur tape un nombre :\n```python\nreponse = input(\"Combien de dossiers ? \")\nprint(reponse + reponse)       # tape 3 : affiche 33\nnombre = int(reponse)\nprint(nombre + nombre)         # affiche 6\n```\n`int(...)` lève une erreur `ValueError` si le texte n'est pas un nombre : nous verrons au chapitre 6 comment le gérer.\n\n### Les arguments du script\n`sys.argv` est la liste des arguments donnés au lancement. `python3 script.py Marseille` donne `sys.argv[0]` égal à `script.py` et `sys.argv[1]` égal à `Marseille`. `len(sys.argv)` donne leur nombre, programme compris.\n```python\nimport sys\n\nif len(sys.argv) != 2:\n    print(\"Usage : script.py NOM\")\nelse:\n    print(f\"Bonjour {sys.argv[1]}\")\n```",
+        "quiz": [
+          {
+            "question": "Que contient x après x = input(\"Nombre : \") si l'utilisateur tape 5 ?",
+            "choices": [
+              "la chaîne de texte \"5\"",
+              "le nombre à virgule 5.0",
+              "l'entier 5"
+            ],
+            "correctIndex": 0,
+            "explanation": "input() renvoie toujours du texte. Pour faire des calculs, il faut convertir avec int(x). Sans conversion, \"5\" + \"5\" donne \"55\" (concaténation) et non 10."
+          },
+          {
+            "question": "Que fait print(f\"Bonjour {nom}\") ?",
+            "choices": [
+              "il remplace {nom} par la valeur de la variable nom",
+              "il affiche littéralement Bonjour {nom}",
+              "il provoque une erreur de syntaxe"
+            ],
+            "correctIndex": 0,
+            "explanation": "Le f devant les guillemets active les accolades : Python évalue ce qu'elles contiennent et insère le résultat dans le texte. Sans le f, le texte serait affiché tel quel, accolades comprises."
+          },
+          {
+            "question": "Avec python3 script.py Marseille, que contient sys.argv[1] ?",
+            "choices": [
+              "python3",
+              "Marseille",
+              "script.py"
+            ],
+            "correctIndex": 1,
+            "explanation": "sys.argv[0] est le nom du script (script.py) et les arguments suivent à partir de l'indice 1. python3 lui-même n'est pas dans la liste. C'est pour cela qu'on teste len(sys.argv) avant de lire sys.argv[1] : sans argument, l'indice 1 n'existe pas et Python lève une IndexError."
+          }
+        ]
+      },
+      {
+        "id": "fonctions",
+        "title": "Chapitre 4 : fonctions, codes de sortie et messages d'erreur",
+        "duration": "30min",
+        "content": "### Les codes de sortie\nChaque programme se termine avec un nombre : `0` signifie « succès », tout autre nombre signifie « échec ». Un script Python se termine avec le code `0` s'il va jusqu'au bout, et avec le code `1` s'il s'arrête sur une exception non gérée. Pour choisir toi-même :\n```python\nimport sys\n\nsys.exit(0)    # succès\nsys.exit(1)    # échec\n```\nPour lire le code de sortie de la dernière commande, tape `echo $?` sous Bash et `$LASTEXITCODE` sous PowerShell. C'est ce que lisent les autres programmes (et les tests automatiques) pour savoir si ton script a fonctionné.\n\n### Écrire des fonctions\nUne fonction regroupe des instructions sous un nom, pour ne pas les répéter :\n```python\ndef saluer(prenom):\n    message = f\"Bonjour {prenom}\"\n    return message\n\nprint(saluer(\"Anna\"))\n```\n`return` renvoie une valeur à celui qui appelle la fonction. Les variables créées dans une fonction, comme `message`, sont **locales** par défaut : elles disparaissent à la fin de la fonction. C'est l'inverse de Bash, où il fallait écrire `local`. Évite le mot-clé `global`, qui fait revenir les mauvaises surprises.\n\n### Afficher les erreurs au bon endroit\nUn programme a deux sorties : la **sortie standard** (résultats normaux) et l'**erreur standard** (messages d'erreur). En Python, `print` écrit sur la sortie standard, sauf si tu précises `file=sys.stderr`. Les messages d'information ou d'erreur d'un script vont sur l'erreur standard, pour ne pas se mélanger aux résultats que d'autres programmes pourraient lire.\n\nUn modèle très utile, à adapter avec tes propres mots :\n```python\nimport sys\nfrom pathlib import Path\n\ndef info(message):\n    print(f\"[OK] {message}\", file=sys.stderr)\n\ndef die(message):\n    print(f\"[ERREUR] {message}\", file=sys.stderr)\n    sys.exit(1)\n\nif not Path(\"config.txt\").is_file():\n    die(\"config.txt introuvable\")\ninfo(\"Configuration trouvée\")\n```\nLecture : `Path(\"config.txt\").is_file()` teste si le fichier existe ; `not` inverse le résultat ; `die` affiche le message puis arrête tout le script avec le code 1.\n\n### La fonction main\nDans un vrai script, on range le programme dans une fonction `main` et on la lance ainsi :\n```python\ndef main():\n    info(\"Début du travail\")\n\nif __name__ == \"__main__\":\n    main()\n```\nCe test signifie « lance `main()` seulement si ce fichier est exécuté directement, et pas s'il est importé par un autre script ».",
+        "codeBlocks": [
+          {
+            "language": "python",
+            "title": "Espace disque",
+            "code": "import shutil\n\ntotal, utilise, libre = shutil.disk_usage(\"/\")\nprint(f\"Libre : {libre // 10**9} Go sur {total // 10**9} Go\")"
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Que fait sys.exit(1) ?",
+            "choices": [
+              "il relance le script",
+              "il arrête le script avec un code de succès",
+              "il arrête le script avec un code de sortie d'échec"
+            ],
+            "correctIndex": 2,
+            "explanation": "sys.exit(n) termine le script immédiatement avec le code n. Le code 0 veut dire succès, tout autre nombre un échec. Les autres programmes, ou ton terminal avec echo $?, lisent ce code pour savoir si le script a réussi."
+          },
+          {
+            "question": "Dans une fonction, que devient une variable créée par message = \"salut\" ?",
+            "choices": [
+              "elle est globale : elle existe partout dans le script",
+              "elle est locale : elle disparaît à la fin de la fonction",
+              "elle est exportée vers les autres programmes"
+            ],
+            "correctIndex": 1,
+            "explanation": "En Python, une variable affectée dans une fonction est locale par défaut, ce qui évite d'écraser sans le vouloir une variable du reste du script. C'est plus sûr que Bash, où il fallait penser à écrire local. Ce n'est jamais transmis à un autre programme : cela passe par les variables d'environnement."
+          },
+          {
+            "question": "Pourquoi écrire print(msg, file=sys.stderr) ?",
+            "choices": [
+              "pour envoyer le message sur l'erreur standard, séparée des résultats",
+              "pour supprimer le message",
+              "pour mettre le message en rouge"
+            ],
+            "correctIndex": 0,
+            "explanation": "L'erreur standard est un canal séparé de la sortie normale. Un programme qui lit les résultats de ton script n'est ainsi pas pollué par tes messages. file=sys.stderr ne colore rien et ne supprime rien : il change seulement la destination."
+          }
+        ]
+      },
+      {
+        "id": "erreurs",
+        "title": "Chapitre 5 : gérer les erreurs et nettoyer (try, with, tempfile)",
+        "duration": "35min",
+        "content": "Quand une erreur survient, Python lève une **exception**. Si personne ne l'attrape, le script s'arrête et affiche la pile d'appels (le *traceback*). C'est l'inverse de Bash, qui continue après une erreur sauf si on active `set -e` : en Python, l'arrêt est le comportement par défaut.\n\n### Attraper une erreur précise\n```python\nfrom pathlib import Path\n\ntry:\n    contenu = Path(\"config.txt\").read_text()\nexcept FileNotFoundError:\n    die(\"config.txt introuvable\")\n```\nOn nomme toujours l'erreur attendue (`FileNotFoundError`, `ValueError`, `KeyError`…). Deux écritures sont à éviter :\n• `except:` seul, qui attrape tout, même l'arrêt volontaire avec Ctrl+C ;\n• `except Exception: pass`, qui avale l'erreur sans rien dire : le script continue avec des données fausses et plus personne ne sait pourquoi. C'est le même piège que `set -e` masqué en Bash.\n\n### finally et with\n`finally` s'exécute dans tous les cas, erreur ou non :\n```python\ntry:\n    print(\"travail en cours\")\nfinally:\n    print(\"toujours exécuté\")\n```\nL'instruction `with` fait le même travail de façon plus courte pour les ressources à fermer :\n```python\nwith open(\"journal.txt\", \"w\") as fichier:\n    fichier.write(\"démarrage\")\n# ici, le fichier est fermé, même si write() avait échoué\n```\n\n### Fichiers temporaires et nettoyage\nPour un dossier temporaire, ne choisis pas un nom à la main : utilise `tempfile`, qui crée un nom unique et imprévisible, avec des droits restreints. Combiné à `with`, le nettoyage est automatique, même en cas d'erreur :\n```python\nimport tempfile\nfrom pathlib import Path\n\nwith tempfile.TemporaryDirectory() as tmp:\n    fichier = Path(tmp) / \"fichier.txt\"\n    fichier.write_text(\"données\")\n    print(fichier.read_text())\n# ici, le dossier temporaire a été supprimé\n```\nLecture : `Path(tmp) / \"fichier.txt\"` construit un chemin, l'opérateur `/` joue le rôle du séparateur de dossier.\n\n### Ne pas faire fuiter un secret dans une erreur\nUn traceback affiche des morceaux de ton code et parfois des valeurs. Ne mets jamais de secret dans un message d'erreur que tu affiches ou que tu journalises.",
+        "quiz": [
+          {
+            "question": "Que se passe-t-il par défaut quand une exception n'est pas attrapée ?",
+            "choices": [
+              "le script se relance depuis le début",
+              "le script s'arrête et affiche un traceback",
+              "le script continue en ignorant l'erreur"
+            ],
+            "correctIndex": 1,
+            "explanation": "Python arrête le script à la première exception non gérée et affiche la pile d'appels, ce qui aide à localiser le problème. Le code de sortie est alors 1. C'est une différence importante avec Bash, qui continue par défaut après une erreur."
+          },
+          {
+            "question": "Pourquoi éviter d'écrire except Exception: pass ?",
+            "choices": [
+              "Python l'interdit",
+              "il ralentit le script",
+              "il cache les erreurs, qui deviennent impossibles à diagnostiquer"
+            ],
+            "correctIndex": 2,
+            "explanation": "Python l'autorise, mais l'erreur est avalée sans trace : le script continue avec des données absentes ou fausses, et le vrai problème apparaît plus tard, ailleurs. Mieux vaut attraper l'erreur précise que tu attends, et laisser les autres arrêter le script."
+          },
+          {
+            "question": "Que garantit with tempfile.TemporaryDirectory() as tmp: ?",
+            "choices": [
+              "le dossier est supprimé à la sortie du bloc, même en cas d'erreur",
+              "le dossier est sauvegardé automatiquement",
+              "le dossier est chiffré"
+            ],
+            "correctIndex": 0,
+            "explanation": "L'instruction with appelle le nettoyage quand on quitte le bloc, qu'il se termine normalement ou par une exception. C'est l'équivalent Python de mktemp -d associé à trap ... EXIT en Bash, mais en plus court. Le nom du dossier est de plus unique et imprévisible."
+          }
+        ]
+      },
+      {
+        "id": "validation",
+        "title": "Chapitre 6 : valider ce que tape l'utilisateur",
+        "duration": "30min",
+        "content": "Une règle de sécurité simple : **ne jamais faire confiance à une entrée**. Un nom, un chemin ou un identifiant tapé par l'utilisateur peut contenir des espaces, des tirets en début de chaîne, des caractères spéciaux. Avant de l'utiliser (dans une URL, une commande, un nom de fichier), on vérifie qu'il ressemble à ce qu'on attend.\n\n### Les expressions régulières avec re\nLe module `re` demande : « cette chaîne correspond-elle à ce modèle ? ». Le modèle est une **expression régulière**. On l'écrit avec un `r` devant les guillemets, pour que les antislashs restent intacts.\n```python\nimport re\n\ncp = \"13000\"\nif re.fullmatch(r\"[0-9]{5}\", cp):\n    print(\"valide\")\nelse:\n    print(\"refusé\")\n```\n• `[0-9]` : un chiffre.\n• `[a-z]` : une lettre minuscule.\n• `{5}` : exactement 5 fois.\n• `+` : une fois ou plus.\n• `.` : n'importe quel caractère (pour un point littéral, écris `\\.`).\n• `^` et `$` : début et fin de chaîne, utiles avec `re.search`.\n\n### Trois fonctions, trois comportements\n• `re.fullmatch(modèle, texte)` : la chaîne **entière** doit correspondre. C'est presque toujours le bon choix pour valider.\n• `re.match(modèle, texte)` : seul le **début** de la chaîne est vérifié.\n• `re.search(modèle, texte)` : le modèle peut se trouver **n'importe où**.\n`re.match(r\"[0-9]{5}\", \"13000abc\")` réussit, alors que `re.fullmatch` de la même chose échoue. C'est l'erreur classique qui laisse passer des valeurs invalides.\n\nAttention : dans un modèle, `\\d` accepte aussi les chiffres d'autres alphabets, et `str.isdigit()` accepte des caractères comme `²`. Pour valider un nombre ASCII, utilise `[0-9]`.\n\n### Une fonction de validation\n```python\ndef valider_departement(d):\n    if not re.fullmatch(r\"[0-9]{2}\", d):\n        die(f\"Département invalide : {d!r}\")\n\nvalider_departement(\"13\")      # accepté\nvalider_departement(\"1; ls\")   # refusé\n```\nLe `!r` affiche la valeur entre guillemets, ce qui rend visibles les espaces cachés. Le deuxième appel montre l'intérêt : une valeur piégée est arrêtée **avant** d'être utilisée ailleurs.\n\n### Les arguments avec argparse\nPour lire des arguments proprement, plutôt que `sys.argv` à la main, utilise `argparse` :\n```python\nimport argparse\n\nparser = argparse.ArgumentParser(description=\"Crée des dossiers de projet\")\nparser.add_argument(\"nom\")\nparser.add_argument(\"--nombre\", type=int, default=3)\nargs = parser.parse_args()\n\nif not 1 <= args.nombre <= 99:\n    die(\"Le nombre doit être compris entre 1 et 99\")\n```\n`argparse` écrit tout seul le message d'aide (`--help`), refuse un `--nombre abc` et termine avec le code 2 en cas d'erreur d'usage. Les bornes, elles, restent à vérifier toi-même.\n\n### Méthode pour écrire un bon modèle\n1. Lis la documentation du service concerné : quels caractères sont autorisés, quelle longueur maximale ?\n2. Écris trois exemples valides et trois exemples pièges (commence par -, contient un espace, est vide).\n3. Écris le modèle, puis teste les six exemples.",
+        "quiz": [
+          {
+            "question": "Pourquoi valider une saisie avant de l'utiliser ?",
+            "choices": [
+              "pour accélérer le script",
+              "elle peut contenir des caractères piégés (espace, ;, tiret en début)",
+              "Python l'impose"
+            ],
+            "correctIndex": 1,
+            "explanation": "Une saisie peut contenir n'importe quoi : un espace qui coupe un nom en deux, un ; qui enchaîne une autre commande, un tiret en début de mot que le programme prend pour une option. En vérifiant que la valeur ressemble à ce qu'on attend avant de l'utiliser, on arrête ces cas piégés à l'entrée. Python n'impose rien : c'est une bonne pratique que tu t'imposes."
+          },
+          {
+            "question": "Que renvoie re.fullmatch(r\"[0-9]{5}\", \"13000abc\") ?",
+            "choices": [
+              "une erreur de syntaxe",
+              "None : la chaîne entière doit correspondre",
+              "un objet de correspondance"
+            ],
+            "correctIndex": 1,
+            "explanation": "Le modèle [0-9]{5} décrit exactement cinq chiffres. Dans 13000abc, les cinq chiffres sont suivis de trois lettres : la chaîne entière ne correspond pas, donc fullmatch renvoie None, qui vaut faux dans un if."
+          },
+          {
+            "question": "Et que renvoie re.match(r\"[0-9]{5}\", \"13000abc\") ?",
+            "choices": [
+              "un objet de correspondance, car match ne vérifie que le début de la chaîne",
+              "une erreur de syntaxe",
+              "None"
+            ],
+            "correctIndex": 0,
+            "explanation": "re.match regarde seulement si le début de la chaîne correspond au modèle. 13000abc commence par cinq chiffres, donc le test réussit, alors que la valeur n'est pas un code postal valide. C'est pour cela qu'on préfère re.fullmatch pour valider."
+          }
+        ]
+      },
+      {
+        "id": "secrets",
+        "title": "Chapitre 7 : manipuler un secret sans le laisser fuiter",
+        "duration": "30min",
+        "content": "Un **token d'API** est un mot de passe : qui le possède agit à ta place. Dans un script, il y a trois endroits où il fuit facilement.\n• **Dans le code du script.** Le script finit sur GitHub, dans une capture d'écran ou un message. Parade : ne jamais l'écrire dans le fichier.\n• **Dans la ligne de commande.** `python3 script.py --token abc123` est visible par tous les utilisateurs de la machine avec `ps`, et reste dans l'historique du terminal. Parade : le demander pendant l'exécution.\n• **Dans l'affichage.** `print(token)`, un journal en mode débogage, ou un message d'erreur qui contient l'URL. Parade : ne jamais l'afficher.\n\n### Demander le secret sans l'afficher\n```python\nimport getpass\n\ntoken = getpass.getpass(\"Token : \")\nif not token:\n    die(\"Token vide\")\n```\n`getpass.getpass` masque la saisie. `input()`, lui, affiche ce que tu tapes : il ne convient pas pour un secret.\n\n### Le transmettre à l'API sans qu'il apparaisse dans ps\nAvec la bibliothèque `requests`, le token part dans un en-tête de la requête HTTPS, pas dans les arguments d'un programme :\n```python\nimport requests\n\nreponse = requests.get(\n    \"https://api.example.com/me\",\n    headers={\"Authorization\": f\"Bearer {token}\"},\n    timeout=10,\n)\n```\nLe token n'apparaît donc ni dans `ps`, ni dans l'historique.\n\n### Les variables d'environnement\nUn script peut aussi lire un secret préparé à l'avance avec `os.environ.get(\"MON_TOKEN\")`. C'est pratique pour les tâches automatiques, mais une variable d'environnement est héritée par tous les programmes que ton script lance. Réserve cette solution aux cas où personne ne peut taper le secret.\n\n### Autres règles\n• Ne mets jamais le token dans une URL (`https://user:TOKEN@...`) : il se retrouve ensuite écrit en clair dans des fichiers comme `.git/config`, dans les journaux et dans les messages d'erreur de `requests`.\n• Si tu stockes un secret dans un fichier `.env`, ajoute-le à `.gitignore` avant le premier commit.\n• Si un token a fuité (collé dans un chat, un message, un dépôt), **révoque-le tout de suite** dans les paramètres du service et crée-en un nouveau. Le supprimer du message ne suffit pas.\n• Donne au token le minimum de droits nécessaires.",
+        "quiz": [
+          {
+            "question": "Pourquoi python3 script.py --token abc123 est-il dangereux ?",
+            "choices": [
+              "Python refuse cet argument",
+              "c'est plus lent",
+              "le token est visible avec ps et reste dans l'historique du terminal"
+            ],
+            "correctIndex": 2,
+            "explanation": "Les arguments d'un programme sont visibles par tous les utilisateurs de la machine avec ps, et la ligne tapée est enregistrée dans l'historique du terminal. Le token y apparaîtrait en clair. Le demander avec getpass pendant l'exécution évite les deux problèmes."
+          },
+          {
+            "question": "Quelle fonction lit un secret sans l'afficher à l'écran ?",
+            "choices": [
+              "input()",
+              "getpass.getpass()",
+              "print()"
+            ],
+            "correctIndex": 1,
+            "explanation": "getpass.getpass() masque la saisie, comme read -s en Bash. input() affiche chaque caractère tapé, et print() sert à afficher et non à lire. Pense aussi à vérifier que le secret n'est pas vide avant de l'utiliser."
+          },
+          {
+            "question": "Tu as collé un token dans un chat par erreur. Que fais-tu ?",
+            "choices": [
+              "tu attends de voir si quelqu'un l'utilise",
+              "tu révoques le token et tu en crées un nouveau",
+              "tu supprimes le message, c'est suffisant"
+            ],
+            "correctIndex": 1,
+            "explanation": "Supprimer le message ne sert à rien : le token a pu être lu, copié, enregistré dans des journaux. Un secret exposé doit être considéré comme compromis. Il faut le révoquer chez le service concerné, puis en créer un nouveau."
+          }
+        ]
+      },
+      {
+        "id": "api",
+        "title": "Chapitre 8 : appeler une API avec requests et json",
+        "duration": "40min",
+        "content": "Une **API REST** est un service web qu'on pilote avec des requêtes HTTP. La bibliothèque `requests` envoie la requête et sait lire la réponse au format JSON. Installe-la dans ton environnement virtuel (chapitre 2) :\n```bash\npip install requests\n```\n\n### Lire le code de statut HTTP\nLe code de statut dit si la requête a réussi. C'est lui qu'il faut tester, pas seulement le contenu de la réponse.\n• **200** (OK) : lecture réussie.\n• **201** (Créé) : ressource créée.\n• **401** (Non authentifié) : token faux ou expiré.\n• **403** (Interdit) : token valide mais droits insuffisants.\n• **404** (Introuvable) : mauvaise URL, ou ressource privée non accessible.\n• **422** (Données refusées) : par exemple, un nom qui existe déjà.\n```python\nreponse = requests.get(\n    \"https://api.example.com/profil\",\n    headers={\"Authorization\": f\"Bearer {token}\"},\n    timeout=10,\n)\n\nif reponse.status_code == 200:\n    info(\"Connexion réussie\")\nelif reponse.status_code == 401:\n    die(\"Token refusé (code HTTP 401)\")\nelse:\n    die(f\"Erreur inattendue (code HTTP {reponse.status_code})\")\n```\nLe paramètre `timeout` est indispensable : sans lui, `requests` peut attendre indéfiniment une réponse qui ne vient pas, et ton script reste bloqué.\n\n### Les erreurs réseau\nSi le réseau est coupé ou le serveur injoignable, `requests` lève une exception au lieu de renvoyer un code. On l'attrape comme au chapitre 5 :\n```python\ntry:\n    reponse = requests.get(url, timeout=10)\nexcept requests.exceptions.RequestException:\n    die(\"Impossible de joindre le serveur\")\n```\nÉcris le message toi-même : celui de la bibliothèque contient l'URL complète, qui peut contenir un secret.\n\n### Lire du JSON\n```python\ndonnees = reponse.json()\nlogin = donnees.get(\"login\")\n```\n`reponse.json()` transforme la réponse en dictionnaire Python. `donnees[\"login\"]` provoque une `KeyError` si le champ manque, alors que `donnees.get(\"login\")` renvoie `None`.\n\n### Envoyer du JSON sans erreur\nN'assemble jamais du JSON avec des guillemets à la main : une valeur contenant un guillemet casserait le JSON, et un utilisateur malveillant pourrait y glisser d'autres champs. Passe un dictionnaire et laisse `requests` s'en charger :\n```python\nreponse = requests.post(\n    \"https://api.example.com/depots\",\n    json={\"name\": nom, \"private\": True},\n    headers={\"Authorization\": f\"Bearer {token}\"},\n    timeout=10,\n)\n```",
+        "quiz": [
+          {
+            "question": "Une API répond 403. Que cela signifie-t-il en général ?",
+            "choices": [
+              "la ressource n'existe pas",
+              "le token est faux",
+              "le token est valide mais les droits sont insuffisants"
+            ],
+            "correctIndex": 2,
+            "explanation": "401 et 403 se ressemblent mais n'ont pas le même sens. Un 401 veut dire « je ne sais pas qui tu es » (token absent, faux ou expiré). Un 403 veut dire « je sais qui tu es, mais tu n'as pas le droit de faire ça » (token valide, droits insuffisants). Le message d'erreur du script doit les distinguer, car la correction n'est pas la même."
+          },
+          {
+            "question": "Pourquoi passer json={...} à requests.post plutôt que construire la chaîne JSON à la main ?",
+            "choices": [
+              "pour éviter un JSON cassé ou une injection de champs",
+              "requests l'exige",
+              "c'est plus joli"
+            ],
+            "correctIndex": 0,
+            "explanation": "Si tu assembles le JSON à la main avec des guillemets, un nom contenant un guillemet casse le JSON. Pire, une valeur malveillante peut y ajouter d'autres champs. Avec json=, requests échappe correctement les caractères spéciaux et garantit un JSON valide."
+          },
+          {
+            "question": "Pourquoi toujours préciser timeout dans requests.get ?",
+            "choices": [
+              "pour chiffrer la requête",
+              "sans timeout, la requête peut attendre indéfiniment et bloquer le script",
+              "pour rendre la requête plus rapide"
+            ],
+            "correctIndex": 1,
+            "explanation": "Par défaut, requests n'impose aucune limite de temps. Si le serveur ne répond jamais, ton script reste bloqué sans erreur ni message. Avec timeout=10, une exception est levée au bout de 10 secondes, et tu peux l'attraper pour afficher un message clair."
+          }
+        ]
+      },
+      {
+        "id": "fichiers",
+        "title": "Chapitre 9 : fichiers, boucles et sous-processus",
+        "duration": "40min",
+        "content": "### Les chemins et les dossiers avec pathlib\nLe module `pathlib` manipule les chemins de façon portable, sous Linux comme sous Windows :\n```python\nfrom pathlib import Path\n\ndossier = Path(\"projet\")\ndossier.mkdir(parents=True, exist_ok=True)\n(dossier / \"README.md\").write_text(\"# Mon projet\\n\")\n```\n• `dossier / \"README.md\"` assemble un chemin.\n• `mkdir(parents=True, exist_ok=True)` crée le dossier et ses parents, sans erreur s'il existe déjà. C'est l'équivalent de `mkdir -p`.\n• `write_text` crée un fichier avec le texte donné, et `read_text` le relit.\n\n### Écrire un fichier de plusieurs lignes\nPour un texte long, utilise des guillemets triples, qui acceptent les retours à la ligne :\n```python\ntexte = '''# Mon projet\nCe fichier a été créé par un script.\n'''\n(dossier / \"README.md\").write_text(texte)\n```\nC'est l'équivalent Python du here-document de Bash. Tout ce qui se trouve entre les guillemets triples est du texte, jamais exécuté.\n\n### Les boucles\nPour répéter une action, par exemple créer `Job01`, `Job02`… :\n```python\nfor i in range(1, nombre + 1):\n    nom = f\"Job{i:02d}\"      # :02d = nombre sur 2 chiffres : 01, 02…\n    (dossier / nom).mkdir(exist_ok=True)\n```\n`range(1, nombre + 1)` donne les entiers de 1 à `nombre` inclus : la borne de fin est exclue. Pour parcourir des fichiers : `for fichier in Path(\".\").glob(\"*.txt\"):`.\n\n### Lancer une commande avec subprocess\nPour lancer un programme externe (`git`, `date`, `systemctl`…), on utilise `subprocess` :\n```python\nimport subprocess\n\nresultat = subprocess.run(\n    [\"date\", \"+%F\"],\n    capture_output=True,\n    text=True,\n    check=True,\n)\nprint(resultat.stdout.strip())\n```\n• La commande est donnée sous forme de **liste** : chaque élément est un argument à part entière, sans découpage ni interprétation.\n• `capture_output=True` récupère ce que la commande affiche, dans `resultat.stdout`. C'est l'équivalent de `$(...)` en Bash.\n• `text=True` donne du texte au lieu d'octets.\n• `check=True` lève une exception `CalledProcessError` si la commande échoue.\n\nN'écris jamais `shell=True` avec une valeur saisie par l'utilisateur : le texte serait passé à un interpréteur de commandes, et une valeur comme `1; ls` lancerait une commande de plus.",
+        "codeBlocks": [
+          {
+            "language": "python",
+            "title": "Lister les fichiers .log",
+            "code": "from pathlib import Path\n\nfor fichier in Path(\"/var/log\").glob(\"*.log\"):\n    print(fichier.name, fichier.stat().st_size)"
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Que produit f\"Job{i:02d}\" pour i = 3 ?",
+            "choices": [
+              "Job03",
+              "Job{i:02d}",
+              "Job3"
+            ],
+            "correctIndex": 0,
+            "explanation": "Dans :02d, d désigne un nombre entier, 2 la largeur minimale et 0 le caractère de remplissage : 3 devient 03. Le f devant les guillemets fait remplacer ce qui est entre accolades par sa valeur formatée."
+          },
+          {
+            "question": "Pourquoi éviter subprocess.run(commande, shell=True) avec une valeur saisie par l'utilisateur ?",
+            "choices": [
+              "cela ne fonctionne pas sous Linux",
+              "c'est plus lent",
+              "une valeur comme \"1; ls\" serait interprétée par le shell et lancerait une commande de plus"
+            ],
+            "correctIndex": 2,
+            "explanation": "Avec shell=True, le texte entier est confié à un interpréteur de commandes, qui comprend les caractères spéciaux comme ; ou &&. Une saisie piégée peut donc exécuter n'importe quoi. Avec une liste d'arguments, chaque élément reste un argument isolé, sans interprétation."
+          },
+          {
+            "question": "Que fait mkdir(parents=True, exist_ok=True) ?",
+            "choices": [
+              "il crée le dossier seulement s'il est vide",
+              "il supprime le dossier puis le recrée",
+              "il crée le dossier et ses parents, sans erreur s'il existe déjà"
+            ],
+            "correctIndex": 2,
+            "explanation": "parents=True crée aussi les dossiers intermédiaires manquants, et exist_ok=True évite une FileExistsError quand le dossier est déjà là. C'est l'équivalent de mkdir -p en Bash. Il ne supprime jamais rien."
+          }
+        ]
+      },
+      {
+        "id": "git",
+        "title": "Chapitre 10 : automatiser git sans laisser fuiter le token",
+        "duration": "40min",
+        "content": "Pour publier un dossier sur un dépôt distant, un script enchaîne les mêmes commandes que toi à la main. On range l'appel à git dans une petite fonction :\n\n```python\nimport subprocess\n\ndef git(dossier, *args, env=None):\n    subprocess.run([\"git\", \"-C\", str(dossier), *args], check=True, env=env)\n\ngit(dossier, \"init\", \"--quiet\")\ngit(dossier, \"add\", \".\")\ngit(dossier, \"commit\", \"--quiet\", \"-m\", \"Premier commit\")\ngit(dossier, \"branch\", \"-M\", \"main\")\ngit(dossier, \"remote\", \"add\", \"origin\", \"https://github.com/utilisateur/depot.git\")\ngit(dossier, \"push\", \"--quiet\", \"-u\", \"origin\", \"main\")\n```\n\n`git -C dossier` exécute la commande dans ce dossier sans changer de dossier courant. `check=True` arrête le script si une commande git échoue. Pour qu'un `commit` fonctionne, `git config user.name` et `git config user.email` doivent être définis : vérifie-le au début du script, en lançant `git config user.name` avec `capture_output=True` et en testant que `stdout` n'est pas vide.\n\n### Le problème : git demande un mot de passe\nLe `push` vers un dépôt privé demande un identifiant. Les mauvaises solutions :\n• mettre le token dans l'URL : il est alors enregistré en clair dans `.git/config` ;\n• le passer comme argument d'une commande : il est visible par `ps` ;\n• l'écrire dans un fichier oublié ensuite.\n\n### Une solution propre : GIT_ASKPASS\nGit peut appeler un petit programme pour obtenir ses identifiants. Le script de ce programme lit les valeurs depuis des variables d'environnement, jamais depuis un fichier :\n```python\nimport os\nimport tempfile\nfrom pathlib import Path\n\nwith tempfile.TemporaryDirectory() as tmp:\n    askpass = Path(tmp) / \"askpass.sh\"\n    askpass.write_text('''#!/usr/bin/env bash\ncase \"$1\" in\n    Username*) echo \"$GIT_USER\" ;;\n    *)         echo \"$GIT_TOKEN\" ;;\nesac\n''')\n    askpass.chmod(0o700)\n\n    env = {\n        **os.environ,\n        \"GIT_ASKPASS\": str(askpass),\n        \"GIT_USER\": utilisateur,\n        \"GIT_TOKEN\": token,\n    }\n    git(dossier, \"push\", \"--quiet\", \"-u\", \"origin\", \"main\", env=env)\n```\n\nPoints importants :\n• le paramètre `env` définit ces variables **pour ce seul sous-processus** : elles ne sont ni exportées, ni ajoutées aux variables de ton script ;\n• le dossier temporaire est supprimé à la sortie du `with` (chapitre 5), donc le programme `askpass.sh` disparaît dès la fin du `push` ;\n• `chmod(0o700)` rend le fichier exécutable pour toi seul ;\n• l'URL du dépôt ne contient aucun secret.\n\n### Vérifier le résultat\n```python\nprint((dossier / \".git\" / \"config\").read_text())   # l'URL ne doit contenir aucun token\ngit(dossier, \"log\", \"--oneline\")                   # le commit doit apparaître\n```\n\n### Alternative : le client officiel gh\nGitHub fournit un programme en ligne de commande, `gh`, qui gère l'authentification lui-même (`gh auth login`) et sait créer un dépôt en une commande. Tu peux le lancer avec `subprocess` comme n'importe quel programme. C'est plus court qu'un script `requests`, mais on apprend moins ce qui se passe réellement. Les deux approches valent la peine d'être connues.",
+        "quiz": [
+          {
+            "question": "Que fait check=True dans subprocess.run ?",
+            "choices": [
+              "il ignore les erreurs de la commande",
+              "il lève une exception CalledProcessError si la commande échoue",
+              "il affiche la sortie de la commande"
+            ],
+            "correctIndex": 1,
+            "explanation": "Sans check=True, subprocess.run renvoie simplement le résultat, même si la commande a échoué : le script continue comme si de rien n'était. Avec check=True, un code de sortie différent de 0 lève une exception, qui arrête le script ou que tu peux attraper avec try/except."
+          },
+          {
+            "question": "Pourquoi ne pas mettre le token dans l'URL du dépôt distant ?",
+            "choices": [
+              "l'URL serait trop longue",
+              "git refuse les URL avec un identifiant",
+              "il serait enregistré en clair dans .git/config"
+            ],
+            "correctIndex": 2,
+            "explanation": "Quand on ajoute un dépôt distant, git enregistre son URL dans .git/config, qui est un simple fichier texte. Un token dans l'URL y resterait en clair, et partirait avec le dossier s'il est copié ou partagé. Git n'a pas de problème avec les URL contenant un identifiant : c'est simplement dangereux."
+          },
+          {
+            "question": "Que permet le paramètre env= de subprocess.run ?",
+            "choices": [
+              "définir les variables d'environnement seulement pour ce sous-processus",
+              "exporter les variables pour toutes les commandes suivantes",
+              "chiffrer les variables"
+            ],
+            "correctIndex": 0,
+            "explanation": "env= donne au programme lancé son propre jeu de variables d'environnement. Le token n'est donc visible que par ce sous-processus, pendant sa durée de vie, et ne reste pas dans les variables du script. C'est plus sûr que de modifier os.environ, qui concernerait tous les programmes lancés ensuite."
+          }
+        ]
+      }
+    ]
   }
 ]
