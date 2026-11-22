@@ -105,8 +105,10 @@ volunteer_claim_validate:
 # revalide chaque MR de claim ouverte, assigne l'issue tout de suite
 # (assignee + label en-cours), merge les MR valides sans intervention,
 # commente les invalides, ferme les claims inactives (14 j) et libère
-# les tickets abandonnés. Nécessite la variable protégée
-# PROJECT_ACCESS_TOKEN (scope api) — jamais exposée aux pipelines de MR.
+# les tickets abandonnés. Nécessite la variable protégée dédiée
+# VOLUNTEER_BOT_TOKEN (scope api) — jamais exposée aux pipelines de MR.
+# (PROJECT_ACCESS_TOKEN reste acceptée en repli, mais elle est réservée
+# à d'autres usages CI comme auto_tag.)
 volunteer_claim_bot:
   stage: validate
   image: python:3.12-alpine

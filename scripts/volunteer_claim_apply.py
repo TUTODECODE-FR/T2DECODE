@@ -34,7 +34,8 @@ protected ``main`` branch (schedules, manual runs, pushes).
 
 Auth (first non-empty wins)
 ---------------------------
-``PROJECT_ACCESS_TOKEN`` / ``GITLAB_TOKEN`` / ``CI_JOB_TOKEN`` / anonymous
+``VOLUNTEER_BOT_TOKEN`` / ``PROJECT_ACCESS_TOKEN`` (legacy fallback) /
+``GITLAB_TOKEN`` / ``CI_JOB_TOKEN`` / anonymous
 (anonymous is enough for read-only checks on a public project).
 
 Env (GitLab CI)
@@ -618,7 +619,7 @@ class GitlabClient:
 
 
 def resolve_token() -> tuple[str, bool]:
-    for key in ("PROJECT_ACCESS_TOKEN", "GITLAB_TOKEN"):
+    for key in ("VOLUNTEER_BOT_TOKEN", "PROJECT_ACCESS_TOKEN", "GITLAB_TOKEN"):
         val = os.environ.get(key, "").strip()
         if val:
             return val, False
@@ -898,7 +899,7 @@ def run_apply(args: argparse.Namespace) -> int:
     client = build_client()
     if client is None:
         print(
-            "⏭️  No PROJECT_ACCESS_TOKEN/GITLAB_TOKEN/CI_JOB_TOKEN or CI_PROJECT_ID — "
+            "⏭️  No VOLUNTEER_BOT_TOKEN/PROJECT_ACCESS_TOKEN/GITLAB_TOKEN/CI_JOB_TOKEN or CI_PROJECT_ID — "
             "skip apply (keeps pipeline green)."
         )
         return 0
@@ -1103,7 +1104,7 @@ def run_bot(args: argparse.Namespace) -> int:
     client = build_client()
     if client is None or not client.token:
         print(
-            "❌ volunteer_claim_bot nécessite PROJECT_ACCESS_TOKEN (maintainer, "
+            "❌ volunteer_claim_bot nécessite VOLUNTEER_BOT_TOKEN (maintainer, "
             "scope api) + CI_PROJECT_ID. Lancez-le depuis une pipeline planifiée "
             "sur main (variable protégée).",
             file=sys.stderr,
