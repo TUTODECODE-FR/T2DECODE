@@ -68,9 +68,15 @@ notarize() { # envoie à Apple et attend le verdict
 case "$kind" in
 app)
 	app=${1:?chemin du .app}
-	# d'abord le contenu, puis l'application elle-même
-	find "$app/Contents" -type f -perm -u+x -not -path "*/Contents/MacOS/*" -print0 2>/dev/null |
-		while IFS= read -r -d '' f; do sign "$f"; done
+	# de l'intérieur vers l'extérieur : binaires isolés, puis sous-ensembles
+	# (.framework, .xpc, .app, .bundle) du plus profond au moins profond,
+	# signés comme ensembles (signer seulement leur binaire casse leur sceau).
+	(cd "$app/Contents" && find . -type f \( -name "*.dylib" -o -perm -u+x \) -not -path "./MacOS/*" \
+		-not -path "*.framework/*" -not -path "*.xpc/*" -not -path "*.app/*" -not -path "*.bundle/*" -print0) |
+		while IFS= read -r -d '' f; do sign "$app/Contents/$f"; done
+	(cd "$app/Contents" && find . -type d \( -name "*.framework" -o -name "*.xpc" -o -name "*.app" -o -name "*.bundle" \)) |
+		awk -F/ '{print NF "\t" $0}' | sort -rn | cut -f2- |
+		while IFS= read -r b; do sign "$app/Contents/$b"; done
 	sign "$app"
 	codesign --verify --strict --deep --verbose=2 "$app"
 	ditto -c -k --keepParent "$app" "$work/app.zip"
