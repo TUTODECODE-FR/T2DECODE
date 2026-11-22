@@ -291,20 +291,25 @@ Future<void> _loadScreenshotFonts() async {
     ..addFont(rootBundle.load('assets/fonts/Aileron-Bold.otf'));
   await aileron.load();
 
-  final icons = FontLoader('MaterialIcons')
-    ..addFont(
-      _fileFont(
-        '/opt/flutter/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
-      ),
-    );
-  await icons.load();
+  final flutterRoot = Platform.environment['FLUTTER_ROOT'] ?? '/opt/flutter';
+  await _loadFileFonts('MaterialIcons', [
+    '$flutterRoot/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
+  ]);
+  await _loadFileFonts('monospace', [
+    '/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf',
+    '/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf',
+  ]);
+}
 
-  final mono = FontLoader('monospace')
-    ..addFont(_fileFont('/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf'))
-    ..addFont(
-      _fileFont('/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf'),
-    );
-  await mono.load();
+// Polices du système : ignorées si absentes (seul le rendu des captures change).
+Future<void> _loadFileFonts(String family, List<String> paths) async {
+  final present = paths.where((p) => File(p).existsSync()).toList();
+  if (present.isEmpty) return;
+  final loader = FontLoader(family);
+  for (final p in present) {
+    loader.addFont(_fileFont(p));
+  }
+  await loader.load();
 }
 
 Future<ByteData> _fileFont(String path) async {
