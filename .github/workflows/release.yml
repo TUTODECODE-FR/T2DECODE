@@ -96,7 +96,7 @@ jobs:
         shell: pwsh
         run: |
           $ref = "${{ github.ref_name }}"
-          if ($ref -match '^v(\d+\.\d+\.\d+)$') { $ver = $Matches[1] }
+          if ($ref -match '^v(\d+\.\d+\.\d+(\.\d+)?)$') { $ver = $Matches[1] }
           else { $ver = (Select-String -Path pubspec.yaml -Pattern '^version:\s*([0-9.]+)').Matches[0].Groups[1].Value }
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
           if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress | Out-Null }
@@ -340,7 +340,7 @@ jobs:
           if [ -z "$HOMEBREW_TAP_TOKEN" ]; then
             echo "::notice::HOMEBREW_TAP_TOKEN absent : cask Homebrew non mis à jour"; exit 0
           fi
-          [[ "$TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]] || { echo "::notice::tag $TAG non publié sur Homebrew"; exit 0; }
+          [[ "$TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?)$ ]] || { echo "::notice::tag $TAG non publié sur Homebrew"; exit 0; }
           ver="${BASH_REMATCH[1]}"
           base="https://github.com/$REPO/releases/download/$TAG"
           curl -fsSL --retry 5 -o SHA256SUMS.txt "$base/SHA256SUMS.txt"
@@ -398,7 +398,7 @@ jobs:
         shell: pwsh
         run: |
           if (-not $env:WINGET_TOKEN) { "::notice::WINGET_TOKEN absent : winget non soumis"; exit 0 }
-          if ($env:TAG -notmatch '^v(\d+\.\d+\.\d+)$') { "::notice::tag $env:TAG non soumis à winget"; exit 0 }
+          if ($env:TAG -notmatch '^v(\d+\.\d+\.\d+(\.\d+)?)$') { "::notice::tag $env:TAG non soumis à winget"; exit 0 }
           $ver = $Matches[1]
           $base = "https://github.com/$env:REPO/releases/download/$env:TAG"
           Invoke-WebRequest "$base/SHA256SUMS.txt" -OutFile SHA256SUMS.txt

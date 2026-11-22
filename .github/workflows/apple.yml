@@ -40,7 +40,8 @@ jobs:
         id: v
         run: |
           ref="${GITHUB_REF_NAME}"
-          if [[ "$ref" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then version="${BASH_REMATCH[1]}"
+          # App Store : 3 chiffres maximum (v1.0.7.2 → 1.0.7 ; le numéro de build reste unique)
+          if [[ "$ref" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)(\.[0-9]+)?$ ]]; then version="${BASH_REMATCH[1]}"
           else version=$(sed -n 's/^version: *\([0-9.]*\).*/\1/p' pubspec.yaml); fi
           build=$(git rev-list --count HEAD)
           echo "version=$version" >> "$GITHUB_OUTPUT"
