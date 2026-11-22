@@ -306,14 +306,14 @@ jobs:
             links=$(jq -c --arg n "$name" --arg u "$url" '. + [{name:$n, url:$u, link_type:"package"}]' <<<"$links")
             echo "↑ $name"
           done
-          body=$(jq -n --arg tag "$TAG" --argjson links "$links" \
-            '{tag_name:$tag, name:("T2DECODE " + $tag),
-              description:"Fichiers générés et signés par GitHub Actions, recopiés ici à l'identique (SHA256SUMS.txt).",
-              assets:{links:$links}}')
+          desc="Fichiers générés et signés par GitHub Actions, recopiés ici à l'identique (SHA256SUMS.txt)."
+          body=$(jq -n --arg tag "$TAG" --arg desc "$desc" --argjson links "$links" \
+            '{tag_name:$tag, name:("T2DECODE " + $tag), description:$desc, assets:{links:$links}}')
           code=$(curl -s -o /tmp/r.json -w '%{http_code}' -H "PRIVATE-TOKEN: $GITLAB_TOKEN" \
             -H "Content-Type: application/json" -X POST "$api/releases" -d "$body")
           if [ "$code" = 409 ]; then
-            for row in $(jq -c '.[]' <<<"$links"); do
+            # release déjà créée (par la CI GitLab) : liens ajoutés sous un nom distinct
+            jq -c '.[] | .name += " (copie GitLab)"' <<<"$links" | while IFS= read -r row; do
               curl -s -o /dev/null -H "PRIVATE-TOKEN: $GITLAB_TOKEN" -H "Content-Type: application/json" \
                 -X POST "$api/releases/$TAG/assets/links" -d "$row" || true
             done
