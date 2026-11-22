@@ -32,5 +32,47 @@
 	<string>NSApplication</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Ghost Link a besoin d&apos;accéder au réseau local pour connecter des appareils.</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Cours TUTODECODE</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>org.t2decode.tdc</string>
+			</array>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>tdc</string>
+			</array>
+		</dict>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>org.t2decode.tdc</string>
+			<key>UTTypeDescription</key>
+			<string>Cours TUTODECODE</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.plain-text</string>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>tdc</string>
+				</array>
+				<key>public.mime-type</key>
+				<string>text/x-tutodecode-course</string>
+			</dict>
+		</dict>
+	</array>
 </dict>
 </plist>

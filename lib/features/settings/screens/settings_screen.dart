@@ -15,6 +15,7 @@ import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 import 'package:tutodecode/core/services/backup_service.dart';
 import 'package:tutodecode/core/services/module_service.dart';
 import 'package:tutodecode/core/services/tdc_dsl_parser.dart';
+import 'package:tutodecode/core/services/tdc_studio_document.dart';
 import './security_diagnostic_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -362,8 +363,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       final bytes = await file.readAsBytes();
       final text = utf8.decode(bytes, allowMalformed: true).trim();
+      final namedTdc = TdcOpenDecision.claimsTdc(file.name) ||
+          TdcOpenDecision.claimsTdc(file.path);
+      final decision = TdcOpenDecision.decide(text, namedTdc: namedTdc);
 
-      // 1. Détection automatique: Cours au format TDC DSL (.tdc créé par TDC-SDK)
+      // Hiérarchie TDC Studio avant tout import. Une extension .tdc seule est refusée.
+      if (decision.importCourse) {
+        final moduleService = ModuleService();
+        final course = await moduleService.importModuleContent(text);
+        if (!mounted) return;
+        final courses = context.read<CoursesProvider>();
+        await courses.reload();
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Cours "${course.title}" importé avec succès dans vos modules !'),
+            backgroundColor: TdcColors.success,
+          ),
+        );
+        return;
+      }
+      if (decision.rejected) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text(decision.message ?? TdcStudioDocument.notStudioMessage),
+            backgroundColor: TdcColors.danger,
+          ),
+        );
+        return;
+      }
+      if (decision.document != null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(decision.message ?? decision.document!.openedMessage),
+            backgroundColor: TdcColors.success,
+          ),
+        );
+        return;
+      }
+
+      // 1. Détection automatique: cours TDC DSL sans en-tête Studio (v1).
       if (TdcDslParser.isTdcDsl(text)) {
         final moduleService = ModuleService();
         final course = await moduleService.importModuleContent(text);

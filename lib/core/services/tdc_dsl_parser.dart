@@ -15,7 +15,8 @@ class TdcDslParser {
   /// Parses TDC DSL content and returns a standard Course Map compatible with Course.fromMap.
   ///
   /// A TDC Studio document may start with `tdc-version` and `type` before the
-  /// `course` block. Those header fields are skipped; the course tree is unchanged.
+  /// `course` block. Those header fields are skipped here; hierarchy checks
+  /// happen before this parser is asked to load a file.
   static Map<String, dynamic> parse(String source) {
     final tokens = _tokenize(source);
     final parser = _DslParser(tokens);
