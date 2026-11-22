@@ -1,0 +1,119 @@
+name: Apple (App Store + téléchargement notarisé)
+
+# À chaque tag vX.Y.Z (poussé sur GitLab puis recopié ici par le miroir) :
+#   - App Store : app signée pour le Mac App Store, envoyée dans App Store Connect
+#     (TestFlight), soumise à l'examen si la variable APPSTORE_SUBMIT vaut 1 ;
+#   - téléchargement : app signée Developer ID et notarisée (aucune alerte macOS).
+# Même numéro de version que le tag ; numéro de build = nombre de commits (croissant).
+# Mode d'emploi : docs « Signature Apple » du dépôt T2C-Phantom.
+
+'on':
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Essai à blanc : compiler et signer sans rien envoyer à Apple"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apple-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  macos:
+    name: macOS (App Store + Developer ID)
+    runs-on: macos-latest
+    permissions:
+      contents: write # joindre l'app notarisée à la release GitHub du tag
+    env:
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run == 'true' && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # numéro de build = nombre de commits
+
+      - name: Version depuis le tag
+        id: v
+        run: |
+          ref="${GITHUB_REF_NAME}"
+          if [[ "$ref" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then version="${BASH_REMATCH[1]}"
+          else version=$(sed -n 's/^version: *\([0-9.]*\).*/\1/p' pubspec.yaml); fi
+          build=$(git rev-list --count HEAD)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+          echo "Version $version, build $build" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Compiler T2DECODE (macOS)
+        run: |
+          flutter pub get
+          flutter build macos --release \
+            --build-name "${{ steps.v.outputs.version }}" --build-number "${{ steps.v.outputs.build }}"
+          ditto build/macos/Build/Products/Release/T2DECODE.app "$RUNNER_TEMP/appstore/T2DECODE.app"
+          ditto build/macos/Build/Products/Release/T2DECODE.app "$RUNNER_TEMP/devid/T2DECODE.app"
+
+      - name: Téléchargement — signature Developer ID + notarisation
+        env:
+          MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
+          MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+          MACOS_CERT_IDENTITY: ${{ secrets.MACOS_CERT_IDENTITY }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          SIGN_REQUIRED: ${{ vars.MACOS_SIGN_REQUIRED || '0' }}
+        run: |
+          bash scripts/apple/developer-id-sign.sh app "$RUNNER_TEMP/devid/T2DECODE.app"
+          ditto -c -k --keepParent "$RUNNER_TEMP/devid/T2DECODE.app" "T2DECODE-macOS-${{ steps.v.outputs.version }}.zip"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: T2DECODE-macOS-notarise
+          path: T2DECODE-macOS-*.zip
+
+      - name: Joindre à la release GitHub du tag (si elle existe)
+        if: startsWith(github.ref, 'refs/tags/v') && env.DRY_RUN != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" T2DECODE-macOS-*.zip --clobber
+          else
+            echo "::notice::pas de release GitHub pour $GITHUB_REF_NAME : app notarisée disponible dans les artifacts"
+          fi
+
+      - name: Outils App Store (fastlane)
+        if: env.DRY_RUN != '1'
+        run: gem install fastlane --no-document --user-install && echo "$(ruby -e 'print Gem.user_dir')/bin" >> "$GITHUB_PATH"
+
+      - name: App Store — signature, envoi dans App Store Connect
+        env:
+          MAS_APP_CERT_P12_BASE64: ${{ secrets.MAS_APP_CERT_P12_BASE64 }}
+          MAS_INSTALLER_CERT_P12_BASE64: ${{ secrets.MAS_INSTALLER_CERT_P12_BASE64 }}
+          MAS_CERT_PASSWORD: ${{ secrets.MAS_CERT_PASSWORD }}
+          MAS_PROVISION_PROFILE_BASE64: ${{ secrets.MAS_PROVISION_PROFILE_BASE64 }}
+          MAS_APP_IDENTITY: ${{ secrets.MAS_APP_IDENTITY }}
+          MAS_INSTALLER_IDENTITY: ${{ secrets.MAS_INSTALLER_IDENTITY }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          APPSTORE_SUBMIT: ${{ vars.APPSTORE_SUBMIT || '0' }}
+          APPSTORE_AUTO_RELEASE: ${{ vars.APPSTORE_AUTO_RELEASE || '0' }}
+        run: |
+          bash scripts/apple/appstore-upload.sh "$RUNNER_TEMP/appstore/T2DECODE.app" \
+            "${{ steps.v.outputs.version }}" "${{ steps.v.outputs.build }}"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: env.DRY_RUN == '1'
+        with:
+          name: T2DECODE-appstore-essai
+          path: T2DECODE-*.pkg
+          if-no-files-found: ignore
