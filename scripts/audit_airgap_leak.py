@@ -25,6 +25,9 @@ FORBIDDEN_PATTERNS = [
 
 ALLOWED_HTTP_EXEMPTIONS = [
     "http://localhost",
+    # Cours depuis T2C Phantom : résolu seulement par le proxy local (127.0.0.1),
+    # fichier vérifié par signature Ed25519 (phantom_courses_service.dart).
+    "http://cours.t2c/",
     "http://127.0.0.1",
     "http://0.0.0.0",
     "http://www.w3.org",
