@@ -23,11 +23,12 @@ FORBIDDEN_PATTERNS = [
     (r"http://[a-zA-Z0-9\.\-]+", "Insecure HTTP URL detected (must be HTTPS or localhost)"),
 ]
 
+# Hôtes .t2c servis seulement par le proxy local de T2C Phantom (127.0.0.1), contenu
+# vérifié par signature Ed25519 (phantom_courses_service.dart) : comparaison exacte.
+ALLOWED_HTTP_EXACT = {"http://cours.t2c"}
+
 ALLOWED_HTTP_EXEMPTIONS = [
     "http://localhost",
-    # Cours depuis T2C Phantom : résolu seulement par le proxy local (127.0.0.1),
-    # fichier vérifié par signature Ed25519 (phantom_courses_service.dart).
-    "http://cours.t2c/",
     "http://127.0.0.1",
     "http://0.0.0.0",
     "http://www.w3.org",
@@ -77,6 +78,8 @@ def scan_files(root_dir):
                             matched_str = m.group(0)
                             # Check exemptions for HTTP
                             if "http://" in matched_str.lower():
+                                if matched_str.lower() in ALLOWED_HTTP_EXACT:
+                                    continue
                                 if any(exempt in matched_str.lower() for exempt in ALLOWED_HTTP_EXEMPTIONS):
                                     continue
                             
