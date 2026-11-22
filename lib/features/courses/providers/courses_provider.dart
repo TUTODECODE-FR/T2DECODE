@@ -203,7 +203,12 @@ class CoursesProvider with ChangeNotifier {
       final assetCourses = await Course.loadAll(_currentLocale);
       final externalCourses = await _moduleService.loadExternalModules();
 
-      _courses = [...assetCourses, ...externalCourses];
+      // un cours reçu (T2C Phantom, modules) remplace la version intégrée de même id
+      final externalIds = externalCourses.map((c) => c.id).toSet();
+      _courses = [
+        ...assetCourses.where((c) => !externalIds.contains(c.id)),
+        ...externalCourses,
+      ];
     } catch (err) {
       _errorMessage = err.toString();
       _courses = [];

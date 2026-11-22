@@ -146,7 +146,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _buildSwitchTile(
           title: 'Cours depuis T2C Phantom',
           subtitle:
-              'Au lancement, cherche les cours plus récents sur cours.t2c via T2C Phantom installé (réseau anonyme, sans GitHub). Redémarrage demandé si de nouveaux cours arrivent.',
+              'Au lancement, cherche une version plus récente de cours.tdc sur cours.t2c via T2C Phantom (réseau anonyme, sans GitHub). Signature TUTODECODE vérifiée ; redémarrage proposé.',
           value: settings.phantomCourses,
           onChanged: (settings.zeroNetworkMode || settings.offlineMode)
               ? null
