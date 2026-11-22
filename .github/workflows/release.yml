@@ -135,6 +135,17 @@ jobs:
           cp -f build/macos/Build/Products/Release/T2DECODE-macOS.dmg T2DECODE-macOS.dmg
           ditto -c -k --keepParent build/macos/Build/Products/Release/T2DECODE.app T2DECODE-macOS.zip
 
+      - name: Signature + notarisation de l'image DMG
+        env:
+          MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
+          MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+          MACOS_CERT_IDENTITY: ${{ secrets.MACOS_CERT_IDENTITY }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          SIGN_REQUIRED: ${{ vars.MACOS_SIGN_REQUIRED || '0' }}
+        run: bash scripts/apple/developer-id-sign.sh dmg T2DECODE-macOS.dmg
+
       - name: Upload macOS Artifacts
         uses: actions/upload-artifact@v4
         with:

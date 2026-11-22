@@ -90,7 +90,18 @@ binary)
 	ditto -c -k "$@" "$work/outils.zip" 2>/dev/null || zip -qj "$work/outils.zip" "$@"
 	notarize "$work/outils.zip"   # un binaire seul ne peut pas porter de ticket : Gatekeeper le vérifie en ligne
 	;;
+dmg)
+	dmg=${1:?chemin du .dmg}
+	# l'image elle-même : signée (sans runtime), notarisée et agrafée, pour qu'aucune
+	# alerte n'apparaisse à son ouverture, même hors ligne
+	codesign --force --timestamp --keychain "$keychain" --sign "$MACOS_CERT_IDENTITY" "$dmg"
+	codesign --verify --strict --verbose=2 "$dmg"
+	notarize "$dmg"
+	xcrun stapler staple "$dmg"
+	xcrun stapler validate "$dmg"
+	spctl --assess --type open --context context:primary-signature --verbose=2 "$dmg"
+	;;
 *)
-	echo "usage: $0 app|binary …"; exit 2 ;;
+	echo "usage: $0 app|dmg|binary …"; exit 2 ;;
 esac
 echo "signé et notarisé par Apple : $*"
