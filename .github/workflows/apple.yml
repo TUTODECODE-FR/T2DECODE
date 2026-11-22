@@ -1,9 +1,9 @@
-name: Apple (App Store + téléchargement notarisé)
+name: Apple (Mac App Store)
 
 # À chaque tag vX.Y.Z (poussé sur GitLab puis recopié ici par le miroir) :
 #   - App Store : app signée pour le Mac App Store, envoyée dans App Store Connect
 #     (TestFlight), soumise à l'examen si la variable APPSTORE_SUBMIT vaut 1 ;
-#   - téléchargement : app signée Developer ID et notarisée (aucune alerte macOS).
+#   (le téléchargement signé Developer ID et notarisé est produit par release.yml)
 # Même numéro de version que le tag ; numéro de build = nombre de commits (croissant).
 # Mode d'emploi : docs « Signature Apple » du dépôt T2C-Phantom.
 
@@ -28,8 +28,6 @@ jobs:
   macos:
     name: macOS (App Store + Developer ID)
     runs-on: macos-latest
-    permissions:
-      contents: write # joindre l'app notarisée à la release GitHub du tag
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run == 'true' && '1' || '0' }}
     steps:
@@ -59,36 +57,6 @@ jobs:
           flutter build macos --release \
             --build-name "${{ steps.v.outputs.version }}" --build-number "${{ steps.v.outputs.build }}"
           ditto build/macos/Build/Products/Release/T2DECODE.app "$RUNNER_TEMP/appstore/T2DECODE.app"
-          ditto build/macos/Build/Products/Release/T2DECODE.app "$RUNNER_TEMP/devid/T2DECODE.app"
-
-      - name: Téléchargement — signature Developer ID + notarisation
-        env:
-          MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
-          MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
-          MACOS_CERT_IDENTITY: ${{ secrets.MACOS_CERT_IDENTITY }}
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
-          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
-          SIGN_REQUIRED: ${{ vars.MACOS_SIGN_REQUIRED || '0' }}
-        run: |
-          bash scripts/apple/developer-id-sign.sh app "$RUNNER_TEMP/devid/T2DECODE.app"
-          ditto -c -k --keepParent "$RUNNER_TEMP/devid/T2DECODE.app" "T2DECODE-macOS-${{ steps.v.outputs.version }}.zip"
-
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: T2DECODE-macOS-notarise
-          path: T2DECODE-macOS-*.zip
-
-      - name: Joindre à la release GitHub du tag (si elle existe)
-        if: startsWith(github.ref, 'refs/tags/v') && env.DRY_RUN != '1'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            gh release upload "$GITHUB_REF_NAME" T2DECODE-macOS-*.zip --clobber
-          else
-            echo "::notice::pas de release GitHub pour $GITHUB_REF_NAME : app notarisée disponible dans les artifacts"
-          fi
 
       - name: Outils App Store (fastlane)
         if: env.DRY_RUN != '1'

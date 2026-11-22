@@ -114,6 +114,17 @@ jobs:
       - name: Build macOS Release
         run: flutter build macos --release
 
+      - name: Signature Developer ID + notarisation Apple
+        env:
+          MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
+          MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+          MACOS_CERT_IDENTITY: ${{ secrets.MACOS_CERT_IDENTITY }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          SIGN_REQUIRED: ${{ vars.MACOS_SIGN_REQUIRED || '0' }}
+        run: bash scripts/apple/developer-id-sign.sh app build/macos/Build/Products/Release/T2DECODE.app
+
       - name: Create DMG & ZIP Packages
         run: |
           chmod +x scripts/build_dmg.sh
@@ -168,6 +179,11 @@ jobs:
           find . -mindepth 1 -type d -exec rm -rf {} +
           # Generate checksums for all regular files
           sha256sum $(ls -1 | grep -v SHA256SUMS.txt) > SHA256SUMS.txt
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: release-files
+          path: release_assets/*
 
       - name: Create GitHub Release with All OS Artifacts
         uses: softprops/action-gh-release@v2
@@ -245,3 +261,58 @@ jobs:
         continue-on-error: true
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+
+  # GitHub produit et signe ; GitLab reçoit les mêmes fichiers (sommes vérifiées).
+  gitlab:
+    name: Recopie de la release sur GitLab
+    needs: publish-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+      GITLAB_PROJECT: ${{ vars.GITLAB_PROJECT || 'tutodecode-org/T2DECODE' }}
+      TAG: ${{ github.ref_name }}
+    steps:
+      - name: GitLab configuré ?
+        id: cfg
+        run: |
+          if [ -n "$GITLAB_TOKEN" ]; then echo "on=1" >> "$GITHUB_OUTPUT";
+          else echo "::notice::GITLAB_TOKEN absent : release GitLab ignorée"; fi
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        if: steps.cfg.outputs.on
+        with:
+          name: release-files
+          path: out
+      - name: Sommes de contrôle
+        if: steps.cfg.outputs.on
+        working-directory: out
+        run: sha256sum -c SHA256SUMS.txt
+      - name: Fichiers → registre GitLab + release
+        if: steps.cfg.outputs.on
+        run: |
+          set -euo pipefail
+          api="https://gitlab.com/api/v4/projects/$(jq -rn --arg p "$GITLAB_PROJECT" '$p|@uri')"
+          ver="${TAG#v}"
+          links="[]"
+          for f in out/*; do
+            name=$(basename "$f")
+            url="$api/packages/generic/t2decode/$ver/$name"
+            curl -fsS --retry 3 -H "PRIVATE-TOKEN: $GITLAB_TOKEN" --upload-file "$f" "$url" >/dev/null
+            links=$(jq -c --arg n "$name" --arg u "$url" '. + [{name:$n, url:$u, link_type:"package"}]' <<<"$links")
+            echo "↑ $name"
+          done
+          body=$(jq -n --arg tag "$TAG" --argjson links "$links" \
+            '{tag_name:$tag, name:("T2DECODE " + $tag),
+              description:"Fichiers générés et signés par GitHub Actions, recopiés ici à l'identique (SHA256SUMS.txt).",
+              assets:{links:$links}}')
+          code=$(curl -s -o /tmp/r.json -w '%{http_code}' -H "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+            -H "Content-Type: application/json" -X POST "$api/releases" -d "$body")
+          if [ "$code" = 409 ]; then
+            for row in $(jq -c '.[]' <<<"$links"); do
+              curl -s -o /dev/null -H "PRIVATE-TOKEN: $GITLAB_TOKEN" -H "Content-Type: application/json" \
+                -X POST "$api/releases/$TAG/assets/links" -d "$row" || true
+            done
+          elif [ "${code:0:1}" != 2 ]; then
+            cat /tmp/r.json; exit 1
+          fi
