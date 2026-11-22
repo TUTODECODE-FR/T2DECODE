@@ -143,6 +143,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onChanged: settings.zeroNetworkMode ? null : settings.setOfflineMode,
         ),
         const SizedBox(height: 12),
+        _buildSwitchTile(
+          title: 'Cours depuis T2C Phantom',
+          subtitle:
+              'Au lancement, cherche les cours plus récents sur cours.t2c via T2C Phantom installé (réseau anonyme, sans GitHub). Redémarrage demandé si de nouveaux cours arrivent.',
+          value: settings.phantomCourses,
+          onChanged: (settings.zeroNetworkMode || settings.offlineMode)
+              ? null
+              : settings.setPhantomCourses,
+        ),
+        const SizedBox(height: 12),
         const Text(
           'Mises à jour distantes désactivées : aucune synchronisation réseau.',
           style:

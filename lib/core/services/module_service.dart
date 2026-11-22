@@ -469,6 +469,18 @@ class ModuleService {
     return base64Encode(hash.bytes);
   }
 
+  /// Valide un module JSON reçu (null = valide), avant tout enregistrement.
+  String? validateModuleJson(String content) {
+    if (content.length > _maxModuleBytes) return 'Module trop volumineux';
+    try {
+      final data = json.decode(content);
+      if (data is! Map<String, dynamic>) return 'Module invalide';
+      return _validateModuleMap(data);
+    } catch (_) {
+      return 'JSON invalide';
+    }
+  }
+
   /// Validation stricte de la structure du module JSON.
   String? _validateModuleMap(Map<String, dynamic> m) {
     // 1. Champs obligatoires au niveau racine

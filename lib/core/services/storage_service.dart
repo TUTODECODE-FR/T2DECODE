@@ -18,6 +18,7 @@ class StorageService {
   // Network Transparency
   static const _offlineModeKey = 'offline_mode';
   static const _zeroNetworkModeKey = 'zero_network_mode';
+  static const _phantomCoursesKey = 'phantom_courses';
   static const _securityUpdatesKey = 'security_updates';
   static const _contentUpdatesKey = 'content_updates';
   static const _securityLogsKey = 'security_logs';
@@ -117,6 +118,12 @@ class StorageService {
   Future<bool> getOfflineMode() =>
       getBool(_offlineModeKey, defaultValue: false);
   Future<void> setOfflineMode(bool value) => setBool(_offlineModeKey, value);
+
+  /// Cours depuis T2C Phantom (cours.t2c via le proxy local), au lancement.
+  Future<bool> getPhantomCourses() =>
+      getBool(_phantomCoursesKey, defaultValue: false);
+  Future<void> setPhantomCourses(bool value) =>
+      setBool(_phantomCoursesKey, value);
 
   Future<bool> getZeroNetworkMode() =>
       getBool(_zeroNetworkModeKey, defaultValue: false);

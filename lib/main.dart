@@ -3,12 +3,14 @@
 // ============================================================
 // main.dart — Point d'entrée de TUTODECODE
 // ============================================================
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animations/animations.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 // Screens
+import 'core/services/phantom_courses_service.dart';
 import 'features/home/screens/home_screen.dart';
 import 'features/courses/screens/chapter_screen.dart';
 import 'features/courses/screens/cheat_sheet_screen.dart';
@@ -128,6 +130,8 @@ void main() async {
       child: const TutoDeCodeApp(),
     ),
   );
+  // Option « Cours depuis T2C Phantom » : vérification en arrière-plan.
+  unawaited(PhantomCoursesService.checkAtLaunch());
 }
 
 class TutoDeCodeApp extends StatelessWidget {

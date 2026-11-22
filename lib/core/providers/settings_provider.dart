@@ -9,6 +9,7 @@ class SettingsProvider with ChangeNotifier {
 
   bool _offlineMode = false;
   bool _zeroNetworkMode = false;
+  bool _phantomCourses = false;
   bool _securityUpdates = true;
   bool _contentUpdates = true;
   String _ollamaUrl = 'http://localhost:11434'; // NOSONAR
@@ -27,6 +28,7 @@ class SettingsProvider with ChangeNotifier {
   // Getters
   bool get offlineMode => _offlineMode;
   bool get zeroNetworkMode => _zeroNetworkMode;
+  bool get phantomCourses => _phantomCourses;
   bool get securityUpdates => _securityUpdates;
   bool get contentUpdates => _contentUpdates;
   String get ollamaUrl => _ollamaUrl;
@@ -50,6 +52,7 @@ class SettingsProvider with ChangeNotifier {
   Future<void> _loadSettings() async {
     _offlineMode = await _storage.getOfflineMode();
     _zeroNetworkMode = await _storage.getZeroNetworkMode();
+    _phantomCourses = await _storage.getPhantomCourses();
     _securityUpdates = await _storage.getSecurityUpdates();
     _contentUpdates = await _storage.getContentUpdates();
     _ollamaUrl = await _storage.getOllamaHost();
@@ -65,6 +68,12 @@ class SettingsProvider with ChangeNotifier {
   Future<void> setOfflineMode(bool value) async {
     _offlineMode = value;
     await _storage.setOfflineMode(value);
+    notifyListeners();
+  }
+
+  Future<void> setPhantomCourses(bool value) async {
+    _phantomCourses = value;
+    await _storage.setPhantomCourses(value);
     notifyListeners();
   }
 
