@@ -30,7 +30,9 @@ remote=${REMOTE:-}
 	exit 1
 }
 
-[ -z "$(git status --porcelain)" ] || { echo "❌ des modifications ne sont pas commitées"; git status --short; exit 1; }
+# seuls les fichiers suivis comptent (les fichiers non suivis ne sont jamais commités ici)
+[ -z "$(git status --porcelain --untracked-files=no)" ] || {
+	echo "❌ des modifications ne sont pas commitées"; git status --short --untracked-files=no; exit 1; }
 [ "$(git rev-parse --abbrev-ref HEAD)" = main ] || { echo "❌ place-toi sur main (git switch main)"; exit 1; }
 git fetch -q "$remote" main --tags
 [ "$(git rev-parse HEAD)" = "$(git rev-parse "$remote/main")" ] || {
