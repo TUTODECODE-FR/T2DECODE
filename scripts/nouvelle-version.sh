@@ -34,7 +34,8 @@ remote=${REMOTE:-}
 [ -z "$(git status --porcelain --untracked-files=no)" ] || {
 	echo "❌ des modifications ne sont pas commitées"; git status --short --untracked-files=no; exit 1; }
 [ "$(git rev-parse --abbrev-ref HEAD)" = main ] || { echo "❌ place-toi sur main (git switch main)"; exit 1; }
-git fetch -q "$remote" main --tags
+export GIT_TERMINAL_PROMPT=0
+git fetch -q --no-tags "$remote" main
 [ "$(git rev-parse HEAD)" = "$(git rev-parse "$remote/main")" ] || {
 	echo "❌ main n'est pas à jour avec $remote/main (git pull $remote main)"; exit 1; }
 
@@ -50,12 +51,13 @@ if [ "$type" = grande ]; then
 	nom=$nbase
 else
 	nbase=$base
-	# plus grand K déjà publié pour cette base (tags vX.Y.Z.K)
-	k=$(git tag -l "v$base.*" | sed -n "s/^v$(printf %s "$base" | sed 's/\./\\./g')\.\([0-9][0-9]*\)$/\1/p" | sort -n | tail -1)
+	# plus grand K déjà publié sur GitHub pour cette base (tags vX.Y.Z.K)
+	k=$(git ls-remote --tags --refs "$remote" "v$base.*" | sed 's#.*refs/tags/##' | sed -n "s/^v$(printf %s "$base" | sed 's/\./\\./g')\.\([0-9][0-9]*\)$/\1/p" | sort -n | tail -1)
 	nom="$base.$(( ${k:-0} + 1 ))"
 fi
 tag="v$nom"
-git rev-parse -q --verify "refs/tags/$tag" >/dev/null && { echo "❌ le tag $tag existe déjà"; exit 1; }
+[ -z "$(git ls-remote --tags --refs "$remote" "$tag")" ] || { echo "❌ le tag $tag existe déjà sur GitHub"; exit 1; }
+git rev-parse -q --verify "refs/tags/$tag" >/dev/null && { echo "❌ le tag $tag existe déjà ici (git tag -d $tag)"; exit 1; }
 
 echo "Version actuelle : $(sed -n "s/^const String kAppVersion = '\(.*\)';/\1/p" lib/core/app_version.dart) (pubspec $base+$build)"
 echo "Nouvelle version : $nom (pubspec $nbase+$nbuild, tag $tag)"
