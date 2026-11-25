@@ -20,7 +20,7 @@ Works fully offline, with no account and no data collection.</p>
 <a href="https://securityscorecards.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE"><img src="https://api.securityscorecards.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge?style=flat-square" alt="OpenSSF Scorecard"></a>
 </p>
 
-<p><a href="https://tutodecode.org/en/download"><strong>Download</strong></a> · <a href="https://tutodecode.org/en/t2decode">Overview</a> · <a href="https://tutodecode.org/en/schools">Schools</a> · <a href="#contributing">Contributing</a></p>
+<p><a href="https://tutodecode.org/en/download/"><strong>Download</strong></a> · <a href="https://tutodecode.org/en/t2decode/">Overview</a> · <a href="https://tutodecode.org/en/schools/">Schools</a> · <a href="#contributing">Contributing</a></p>
 
 </div>
 
@@ -44,7 +44,7 @@ No account, no telemetry, no advertising. The interface is in French.
 
 ## Install
 
-All links, always up to date: **[tutodecode.org/en/download](https://tutodecode.org/en/download)**
+All links, always up to date: **[tutodecode.org/en/download](https://tutodecode.org/en/download/)**
 
 | System | Where | Notes |
 | :--- | :--- | :--- |
@@ -60,7 +60,7 @@ brew tap tutodecode-org/tap https://gitlab.com/tutodecode-org/homebrew-tap.git
 brew install --cask t2decode
 ```
 
-For schools (silent install, offline computers, no administrator rights): see **[tutodecode.org/en/schools](https://tutodecode.org/en/schools)**.
+For schools (silent install, offline computers, no administrator rights): see **[tutodecode.org/en/schools](https://tutodecode.org/en/schools/)**.
 
 ## Verify the files
 
@@ -103,6 +103,6 @@ Bug reports, ideas and contributions are welcome.
 
 T2DECODE is free software under the [GNU GPL v3](LICENSE).
 
-Published by the TUTODECODE association (French non-profit, SIREN 102 763 133, RNA W134011896, Saint-Victoret), chaired by Maxime MARTIN CIVET. Website: [tutodecode.org](https://tutodecode.org/en/) · Contact: [tutodecode.org/en/contact](https://tutodecode.org/en/contact) · Mastodon: [@TUTODECODE](https://mastodon.social/@TUTODECODE)
+Published by the TUTODECODE association (French non-profit, SIREN 102 763 133, RNA W134011896, Saint-Victoret), chaired by Maxime MARTIN CIVET. Website: [tutodecode.org](https://tutodecode.org/en/) · Contact: [tutodecode.org/en/contact](https://tutodecode.org/en/contact/) · Mastodon: [@TUTODECODE](https://mastodon.social/@TUTODECODE)
 
 Main repository: GitHub. Mirrors: [GitLab](https://gitlab.com/tutodecode-org/T2DECODE), [SourceForge](https://sourceforge.net/projects/t2decode/).

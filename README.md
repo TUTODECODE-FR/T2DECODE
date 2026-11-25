@@ -20,7 +20,7 @@ Fonctionne entièrement hors ligne, sans compte et sans collecte de données.</p
 <a href="https://securityscorecards.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE"><img src="https://api.securityscorecards.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge?style=flat-square" alt="OpenSSF Scorecard"></a>
 </p>
 
-<p><a href="https://tutodecode.org/telecharger"><strong>Télécharger</strong></a> · <a href="https://tutodecode.org/t2decode">Présentation</a> · <a href="https://tutodecode.org/etablissements">Établissements</a> · <a href="#contribuer">Contribuer</a></p>
+<p><a href="https://tutodecode.org/telecharger/"><strong>Télécharger</strong></a> · <a href="https://tutodecode.org/t2decode/">Présentation</a> · <a href="https://tutodecode.org/etablissements/">Établissements</a> · <a href="#contribuer">Contribuer</a></p>
 
 </div>
 
@@ -44,7 +44,7 @@ Pas de compte, pas de télémétrie, pas de publicité. Interface en français.
 
 ## Installer
 
-Tous les liens, toujours à jour : **[tutodecode.org/telecharger](https://tutodecode.org/telecharger)**
+Tous les liens, toujours à jour : **[tutodecode.org/telecharger](https://tutodecode.org/telecharger/)**
 
 | Système | Où | Remarque |
 | :--- | :--- | :--- |
@@ -60,7 +60,7 @@ brew tap tutodecode-org/tap https://gitlab.com/tutodecode-org/homebrew-tap.git
 brew install --cask t2decode
 ```
 
-En établissement (installation silencieuse, postes sans Internet, sans droits administrateur) : voir **[tutodecode.org/etablissements](https://tutodecode.org/etablissements)**.
+En établissement (installation silencieuse, postes sans Internet, sans droits administrateur) : voir **[tutodecode.org/etablissements](https://tutodecode.org/etablissements/)**.
 
 ## Vérifier les fichiers
 
@@ -103,6 +103,6 @@ Signalements, idées et contributions sont bienvenus.
 
 T2DECODE est un logiciel libre sous licence [GNU GPL v3](LICENSE).
 
-Édité par l'association TUTODECODE (loi 1901, SIREN 102 763 133, RNA W134011896, Saint-Victoret), présidée par Maxime MARTIN CIVET. Site : [tutodecode.org](https://tutodecode.org) · Contact : [tutodecode.org/contact](https://tutodecode.org/contact) · Mastodon : [@TUTODECODE](https://mastodon.social/@TUTODECODE)
+Édité par l'association TUTODECODE (loi 1901, SIREN 102 763 133, RNA W134011896, Saint-Victoret), présidée par Maxime MARTIN CIVET. Site : [tutodecode.org](https://tutodecode.org) · Contact : [tutodecode.org/contact](https://tutodecode.org/contact/) · Mastodon : [@TUTODECODE](https://mastodon.social/@TUTODECODE)
 
 Dépôt principal : GitHub. Miroirs : [GitLab](https://gitlab.com/tutodecode-org/T2DECODE), [SourceForge](https://sourceforge.net/projects/t2decode/).
