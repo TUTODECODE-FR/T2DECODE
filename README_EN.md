@@ -65,7 +65,7 @@ Pre-compiled and verified binaries are distributed free of charge across our off
 | :--- | :--- | :--- | :--- |
 | **Linux** | [Snap Store](https://snapcraft.io/t2decode) / [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Snap / AppImage / DEB | `sudo snap install t2decode` |
 | **macOS** | [App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12) / **Homebrew** / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | PKG / DMG / Cask | `brew install --cask t2decode` |
-| **Android** | [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | APK / AAB | *Via F-Droid Client* |
+| **Android** | [Google Play](https://play.google.com/store/apps/details?id=org.tutodecode.t2decode) / [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) | APK / AAB | Google Play or F-Droid |
 | **Windows** | [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) / [SourceForge](https://sourceforge.net/projects/t2decode/) | EXE / ZIP | *Direct Download* |
 
 > **Audit Mirror & Third-Party Distribution**: You can also download all binaries and checksum files from our official [SourceForge Mirror](https://sourceforge.net/projects/t2decode/).
