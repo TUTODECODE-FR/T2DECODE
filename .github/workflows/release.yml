@@ -93,6 +93,21 @@ jobs:
       - name: Build Windows Release
         run: flutter build windows --release
 
+      # Runtime Visual C++ livré à côté de l'exe (déploiement local autorisé par Microsoft) :
+      # sans lui, un Windows neuf affiche « MSVCP140.dll est introuvable ». Pas besoin d'admin.
+      - name: Runtime Visual C++ (DLL locales)
+        shell: pwsh
+        run: |
+          $vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property installationPath
+          $crt = Get-ChildItem "$vs\VC\Redist\MSVC\*\x64\Microsoft.VC14*.CRT" -Directory | Sort-Object FullName | Select-Object -Last 1
+          if (-not $crt) { throw "Dossier Microsoft.VC14x.CRT introuvable" }
+          $dest = "build\windows\x64\runner\Release"
+          foreach ($d in "msvcp140.dll", "vcruntime140.dll", "vcruntime140_1.dll") {
+            Copy-Item (Join-Path $crt.FullName $d) $dest -Force
+          }
+          Get-ChildItem $dest -Filter *.dll | Select-Object Name, Length | Format-Table | Out-String | Write-Host
+          "Runtime VC++ : $($crt.FullName)" >> $env:GITHUB_STEP_SUMMARY
+
       - name: Windows non signé
         if: env.AZURE_SIGN_ON != 'true'
         shell: pwsh
