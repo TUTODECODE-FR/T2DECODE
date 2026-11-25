@@ -80,7 +80,7 @@ sudo snap install t2decode
 
 ### macOS Installation (Homebrew)
 ```bash
-brew tap tutodecode-org/homebrew-tap
+brew tap tutodecode-org/tap https://gitlab.com/tutodecode-org/homebrew-tap.git
 brew install --cask t2decode
 ```
 > **macOS**: the disk image is signed and notarized by Apple and opens normally. Drag T2DECODE into Applications.
