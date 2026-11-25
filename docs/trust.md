@@ -1,13 +1,13 @@
 # Confiance & vérifiabilité (T2DECODE)
 
-Cette page décrit comment T2DECODE **prouve** sa fiabilité, et quelles pratiques
+Cette page décrit comment T2DECODE **prouve**sa fiabilité, et quelles pratiques
 peuvent être mises en place pour renforcer la confiance dans le temps.
 
 Le principe : **ne pas demander la confiance — la rendre vérifiable**.
 
 ---
 
-## ✅ Ce que vous pouvez vérifier aujourd’hui
+## Ce que vous pouvez vérifier aujourd’hui
 
 ### 1) Chaîne de release vérifiable
 
@@ -28,7 +28,7 @@ et des protections anti-altération (locales, sans réseau).
 
 ---
 
-## 🚀 Ce que nous voulons renforcer (roadmap “fiabilité”)
+## Ce que nous voulons renforcer (roadmap “fiabilité”)
 
 ### 1) Audit de sécurité indépendant (revue de code / audit applicatif)
 

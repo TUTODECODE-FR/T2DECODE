@@ -44,77 +44,77 @@
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 📑 Sommaire
+## Sommaire
 
 <details>
 <summary><strong>Cliquez ici pour dérouler le sommaire complet</strong></summary>
 
-- [📦 Téléchargement & Installation](#-téléchargement--installation-prêt-à-lemploi)
-  - [Linux (Snap Store)](#-installation-linux-snap-store)
-  - [macOS (Homebrew)](#-installation-macos-homebrew)
-  - [Windows](#-lancement-windows-smartscreen)
-  - [Android (F-Droid)](#-installation-android-f-droid)
-- [🛠️ Présentation & Modules](#️-présentation--modules)
-- [🛡️ Assurance Qualité & Transparence](#-assurance-qualité--transparence)
-- [🤝 Communauté / Bénévoles](#-communauté--bénévoles)
-- [🗺️ Roadmap & Prochaines Évolutions](#️-roadmap--prochaines-évolutions)
-- [🛡️ Vérification d'Intégrité (Zero Trust)](#️-vérification-dintégrité--sécurité-zero-trust)
-- [💻 Compilation depuis les Sources](#-compilation-depuis-les-sources-développeurs)
-- [❓ Foire Aux Questions (FAQ)](#-foire-aux-questions-faq)
-- [📚 Documentation Complète](#-documentation-complète)
-- [⚖️ Mentions Légales & Licence](#️-mentions-légales--licence)
+- [Téléchargement & Installation](#téléchargement--installation-prêt-à-lemploi)
+  - [Linux (Snap Store)](#installation-linux-snap-store)
+  - [macOS (Homebrew)](#installation-macos-homebrew)
+  - [Windows](#installation-windows)
+  - [Android (F-Droid)](#installation-android-f-droid)
+- [Présentation & Modules](#présentation--modules)
+- [Assurance Qualité & Transparence](#assurance-qualité--transparence)
+- [Communauté / Bénévoles](#communauté--bénévoles)
+- [Roadmap & Prochaines Évolutions](#roadmap--prochaines-évolutions)
+- [Vérification d'Intégrité (Zero Trust)](#vérification-dintégrité--sécurité-zero-trust)
+- [Compilation depuis les Sources](#compilation-depuis-les-sources-développeurs)
+- [Foire Aux Questions (FAQ)](#foire-aux-questions-faq)
+- [Documentation Complète](#documentation-complète)
+- [Mentions Légales & Licence](#mentions-légales--licence)
 
 </details>
 
 ---
 
-## 📦 Téléchargement & Installation (Prêt à l'Emploi)
+## Téléchargement & Installation (Prêt à l'Emploi)
 
 Les binaires pré-compilés et authentifiés sont distribués gratuitement sur nos canaux officiels :
 
 | Plateforme | Canal de Distribution | Format | Commande / Méthode |
 | :--- | :--- | :--- | :--- |
-| **Linux** | [Snap Store](https://snapcraft.io/t2decode) / [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Snap / AppImage / DEB | `sudo snap install t2decode` |
-| **macOS** | [App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12) / **Homebrew** / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | PKG / DMG / Cask | `brew install --cask t2decode` |
-| **Android** | [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | APK / AAB | *Via F-Droid Client* |
-| **Windows** | [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) / [SourceForge](https://sourceforge.net/projects/t2decode/) | EXE / ZIP | *Téléchargement direct* |
+| **Linux**| [Snap Store](https://snapcraft.io/t2decode) / [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Snap / AppImage / DEB | `sudo snap install t2decode` |
+| **macOS**| [App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12) / **Homebrew**/ [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | PKG / DMG / Cask | `brew install --cask t2decode` |
+| **Android**| [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | APK / AAB | *Via F-Droid Client* |
+| **Windows**| [Releases GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) / [SourceForge](https://sourceforge.net/projects/t2decode/) | EXE / ZIP | *Téléchargement direct* |
 
-> 🌐 **Miroir d'audit & distribution tiers** : L'intégralité des binaires et fichiers de checksums est également disponible sur notre [Miroir officiel SourceForge](https://sourceforge.net/projects/t2decode/).
+> **Miroir d'audit & distribution tiers**: L'intégralité des binaires et fichiers de checksums est également disponible sur notre [Miroir officiel SourceForge](https://sourceforge.net/projects/t2decode/).
 
 ---
 
-### 🐧 Installation Linux (Snap Store)
+### Installation Linux (Snap Store)
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/t2decode)
 ```bash
 sudo snap install t2decode
 ```
 
-### 🍏 Installation macOS (Homebrew)
+### Installation macOS (Homebrew)
 ```bash
 brew tap tutodecode-org/homebrew-tap
 brew install --cask t2decode
 ```
-> 💡 **Première ouverture sur macOS (Gatekeeper)** : Si un message "Développeur non vérifié" apparaît au premier lancement du binaire `.dmg` : faites un **Clic Droit sur T2DECODE.app → Ouvrir**, ou exécutez `xattr -cr /Applications/T2DECODE.app` dans le Terminal.
+> **macOS** : l'image disque est signée et notarisée par Apple, elle s'ouvre normalement. Glissez T2DECODE dans Applications.
 
-### 🪟 Lancement Windows (SmartScreen)
-> 💡 **Première ouverture sur Windows (SmartScreen)** : Si la fenêtre de protection bleue Windows s'affiche au premier lancement de l'exécutable `.exe` : cliquez sur **"Informations complémentaires"** puis sur le bouton **"Exécuter quand même"**. L'application `Association TUTODECODE` sera mémorisée pour les lancements suivants.
+### Installation Windows
+> Téléchargez `T2DECODE-Windows-Setup.exe` depuis la [dernière version](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest). Il est signé par l'association : Windows affiche « Éditeur vérifié : TUTODECODE ». Choisissez « Installer pour moi seulement » si vous n'êtes pas administrateur du poste. Version sans installation : `T2DECODE-Windows.zip`.
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🛠️ Présentation & Modules
+## Présentation & Modules
 
-**T2DECODE** est un environnement d'apprentissage et d'expérimentation technique conçu pour fonctionner en **mode strictement autonome et hors-ligne (Air-gapped)**. Aucune donnée ne quitte votre ordinateur : zéro télémétrie, zéro tracking, zéro cloud tiers.
+**T2DECODE**est un environnement d'apprentissage et d'expérimentation technique conçu pour fonctionner en **mode strictement autonome et hors-ligne (Air-gapped)**. Aucune donnée ne quitte votre ordinateur : zéro télémétrie, zéro tracking, zéro cloud tiers.
 
-### 🧰 Les 6 Modules Clés Intégrés
+### Les 6 Modules Clés Intégrés
 
 | Module | Description & Usage Technique |
 | :--- | :--- |
-| **🧠 Ghost AI (LLM Local)** | Assistant IA local (Ollama) exploitant un pipeline RAG basé sur les cours intégrés. |
-| **🌐 NetKit (Réseaux)** | Modélisation et simulation dynamique de topologies réseau (adressage IPv4/v6, routage). |
-| **💻 Linux VM Sandbox** | Terminal virtuel POSIX sécurisé pour s'entraîner aux commandes et au bash. |
-| **🔐 CryptoLab** | Expérimentation interactive des algorithmes cryptographiques (RSA, AES, SHA-256). |
-| **🛠️ Outils Métier** | Calculateur CIDR IPv4/v6, convertisseur Chmod, générateur CRON, vérificateur d'empreintes. |
-| **📚 Cours Masterclass** | Guides d'ingénierie rédigés avec cas d'incidents réels, réflexes de production et QCM. |
+| **Ghost AI (LLM Local)**| Assistant IA local (Ollama) exploitant un pipeline RAG basé sur les cours intégrés. |
+| **NetKit (Réseaux)**| Modélisation et simulation dynamique de topologies réseau (adressage IPv4/v6, routage). |
+| **Linux VM Sandbox**| Terminal virtuel POSIX sécurisé pour s'entraîner aux commandes et au bash. |
+| **CryptoLab**| Expérimentation interactive des algorithmes cryptographiques (RSA, AES, SHA-256). |
+| **Outils Métier**| Calculateur CIDR IPv4/v6, convertisseur Chmod, générateur CRON, vérificateur d'empreintes. |
+| **Cours Masterclass**| Guides d'ingénierie rédigés avec cas d'incidents réels, réflexes de production et QCM. |
 
 ### Interface
 
@@ -129,27 +129,27 @@ brew install --cask t2decode
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🛡️ Assurance Qualité & Transparence
+## Assurance Qualité & Transparence
 
 T2DECODE s'appuie sur une ingénierie de sécurité rigoureuse et automatisée :
 
-- **163 Tests Automatisés** : Tests unitaires et d'interface utilisateur validés à 100% sur chaque modification.
-- **Audit de Couverture (`verify_coverage.py`)** : Contrôle continu du taux de couverture des tests.
-- **16 Scanners CI/CD DevSecOps** :
+- **163 Tests Automatisés**: Tests unitaires et d'interface utilisateur validés à 100% sur chaque modification.
+- **Audit de Couverture (`verify_coverage.py`)**: Contrôle continu du taux de couverture des tests.
+- **16 Scanners CI/CD DevSecOps**:
   - `Gitleaks` : Scan d'historique Git contre les fuites de clés.
   - `Semgrep SAST` : Audit de sécurité du code source.
   - `Google OSV-Scanner` & `Trivy` : Audit des vulnérabilités de dépendances Supply Chain.
   - `ClamAV` : Scan antivirus et anti-malware.
   - `flutter analyze`, `yamllint`, `shellcheck` : Linters de qualité et de conformité.
-- **Conformité OWASP MASVS** : Cartographie d'intégrité documentée dans [`docs/masvs-mapping.md`](docs/masvs-mapping.md).
+- **Conformité OWASP MASVS**: Cartographie d'intégrité documentée dans [`docs/masvs-mapping.md`](docs/masvs-mapping.md).
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🤝 Communauté / Bénévoles
+## Communauté / Bénévoles
 
-L'**Association TUTODECODE** accueille les contributeurs passionnés par les réseaux et la cybersécurité.
+L'**Association TUTODECODE**accueille les contributeurs passionnés par les réseaux et la cybersécurité.
 
-- **Issues live** : [label `benevolat`](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat)
+- **Issues live**: [label `benevolat`](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat)
 - Index : [`VOLUNTEER_BOARD.md`](VOLUNTEER_BOARD.md)
 - Contributeurs : [`CONTRIBUTORS.md`](CONTRIBUTORS.md)
 - Guide : [`CONTRIBUTING.md`](CONTRIBUTING.md)
@@ -159,48 +159,48 @@ L'**Association TUTODECODE** accueille les contributeurs passionnés par les ré
 
 1. Consulter (ou créer) une [issue `benevolat`](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat).
 2. Développer sur une branche.
-3. Ouvrir une **Merge Request** avec DCO (`Signed-off-by`).
+3. Ouvrir une **Merge Request**avec DCO (`Signed-off-by`).
 
 Rien à éditer à la main dans un tableau markdown. Contact : `contact@tutodecode.org`.
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🗺️ Roadmap & Prochaines Évolutions
+## Roadmap & Prochaines Évolutions
 
 - [x] Publication multiplateforme (Snap Store, Homebrew, F-Droid, App Store)
 - [x] Pipeline DevSecOps complet (16 scanners automatisés)
 - [x] Intégrité binaire et audit OWASP MASVS
-- [ ] T2C-Phantom : Module de synchronisation P2P décentralisée LAN
-- [ ] Extension des simulateurs Réseau & Analyse de paquets
+- [] T2C-Phantom : Module de synchronisation P2P décentralisée LAN
+- [] Extension des simulateurs Réseau & Analyse de paquets
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 🛡️ Vérification d'Intégrité & Sécurité (Zero Trust)
+## Vérification d'Intégrité & Sécurité (Zero Trust)
 
 *Contrôlez toujours l'empreinte numérique SHA-256 de vos exécutables avant de les lancer.*
 
 Comparez le résultat avec les sommes officielles publiées sur [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) ou [SourceForge](https://sourceforge.net/projects/t2decode/).
 
-#### 🐧 Linux & 🍏 macOS (Terminal)
+#### Linux & macOS (Terminal)
 ```bash
 sha256sum T2DECODE-Linux.tar.gz
 shasum -a 256 T2DECODE-macOS.dmg
 ```
 
-#### 🪟 Windows (PowerShell)
+#### Windows (PowerShell)
 ```powershell
 Get-FileHash .\T2DECODE-Windows.zip -Algorithm SHA256
 ```
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 💻 Compilation depuis les Sources (Développeurs)
+## Compilation depuis les Sources (Développeurs)
 
 #### Prérequis Système
-- **Flutter SDK** : Version `stable` (3.x+)
-- **Linux (Debian/Ubuntu)** : `sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev`
-- **macOS** : Xcode Command Line Tools (`xcode-select --install`)
-- **Windows** : Visual Studio 2022 (*Desktop C++* et composant *ATL*)
+- **Flutter SDK**: Version `stable` (3.x+)
+- **Linux (Debian/Ubuntu)**: `sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev`
+- **macOS**: Xcode Command Line Tools (`xcode-select --install`)
+- **Windows**: Visual Studio 2022 (*Desktop C++* et composant *ATL*)
 
 #### Initialisation et Lancement
 
@@ -224,7 +224,7 @@ make build-dmg      # Génère le paquet d'installation DMG (macOS)
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## ❓ Foire Aux Questions (FAQ)
+## Foire Aux Questions (FAQ)
 
 ### 1. L'application fonctionne-t-elle vraiment 100% hors-ligne ?
 Oui, l'application est conçue selon le principe Air-gapped : zéro télémétrie, zéro serveur cloud distant. Ollama (Ghost AI) s'exécute localement sur votre machine.
@@ -237,30 +237,30 @@ T2DECODE est diffusé sous licence libre **GNU General Public License v3.0 (GPLv
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## 📚 Documentation Complète
+## Documentation Complète
 
-- [🏗️ Architecture technique](docs/architecture.md)
-- [🔒 Politique de sécurité](SECURITY.md)
-- [🛡️ Cartographie OWASP MASVS](docs/masvs-mapping.md)
-- [🤝 Guide de contribution](CONTRIBUTING.md)
-- [👥 Recrutement mainteneurs](MAINTAINERS.md)
-- [📄 Licence GPLv3](LICENSE)
+- [Architecture technique](docs/architecture.md)
+- [Politique de sécurité](SECURITY.md)
+- [Cartographie OWASP MASVS](docs/masvs-mapping.md)
+- [Guide de contribution](CONTRIBUTING.md)
+- [Recrutement mainteneurs](MAINTAINERS.md)
+- [Licence GPLv3](LICENSE)
 
 <img src="assets/separator.svg" width="100%" height="4">
 
-## ⚖️ Mentions Légales & Licence
+## Mentions Légales & Licence
 
-Le projet T2DECODE est développé et édité par l'**Association TUTODECODE** (Association Loi 1901 à but non lucratif, SIREN 102 763 133, RNA W134011400).
+Le projet T2DECODE est développé et édité par l'**Association TUTODECODE**(Association Loi 1901 à but non lucratif, SIREN 102 763 133, RNA W134011400).
 
-- **Fondateur & Président** : Maxime MARTIN CIVET
-- **Site Officiel** : [tutodecode.org](https://tutodecode.org)
-- **Licence** : [GNU General Public License v3.0 (GPLv3)](LICENSE) — Logiciel Libre et Souverain.
+- **Fondateur & Président**: Maxime MARTIN CIVET
+- **Site Officiel**: [tutodecode.org](https://tutodecode.org)
+- **Licence**: [GNU General Public License v3.0 (GPLv3)](LICENSE) — Logiciel Libre et Souverain.
 
 ---
 
 <div align="center">
 
-**T2DECODE** — Plateforme pédagogique autonome et souveraine pour les réseaux et la cybersécurité
+**T2DECODE**— Plateforme pédagogique autonome et souveraine pour les réseaux et la cybersécurité
 
 Édité par l'Association TUTODECODE (Loi 1901, SIREN 102 763 133)
 

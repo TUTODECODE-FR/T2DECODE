@@ -322,30 +322,47 @@ jobs:
           name: release-files
           path: release_assets/*
 
+      - name: Note de version (message du tag)
+        id: notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          ref=$(gh api "repos/$REPO/git/ref/tags/$TAG" 2>/dev/null || true)
+          msg=""
+          if [ "$(jq -r '.object.type // ""' <<<"$ref")" = tag ]; then
+            msg=$(gh api "repos/$REPO/git/tags/$(jq -r .object.sha <<<"$ref")" -q .message)
+            msg=${msg#T2DECODE * : }
+          fi
+          { echo "text<<FIN_NOTES"; printf '%s\n' "$msg"; echo "FIN_NOTES"; } >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub Release with All OS Artifacts
         uses: softprops/action-gh-release@v2
         with:
           files: release_assets/*
           name: Release ${{ github.ref_name }}
           body: |
-            ## 🛡️ T2DECODE — Release ${{ github.ref_name }}
+            ## T2DECODE ${{ github.ref_name }}
 
-            Plateforme d'apprentissage technique et de cybersécurité 100% locale, sans cloud, sans tracking.
+            ${{ steps.notes.outputs.text }}
 
-            ### 📦 Binaires Multi-OS Inclus
-            - 🤖 **Android** : APK arm64-v8a, armeabi-v7a, x86_64
-            - 🐧 **Linux** : Archive 64-bit (`T2DECODE-Linux.tar.gz`) & Snap Store (`sudo snap install t2decode`)
-            - 🪟 **Windows** : installateur (`T2DECODE-Windows-Setup.exe`) ou version portable (`T2DECODE-Windows.zip`), signés par l'association TUTODECODE (Azure Artifact Signing)
-            - 🍏 **macOS** : image disque signée et notarisée par Apple (`T2DECODE-macOS.dmg`) : ouvrir, glisser T2DECODE dans Applications
+            Application libre pour apprendre les réseaux, la cybersécurité et l'administration système, entièrement hors ligne, sans compte ni pistage.
 
-            ### 🔍 Audits & Tests de Validation Effectués sur cette Version
-            - ✅ **Suite de Tests Unitaires & UI** : exécutée par la CI sur cette version.
-            - ✅ **Audit de Couverture de Code** : Contrôle automatisé par `verify_coverage.py`.
-            - ✅ **Scan de Secrets Historique** : Audit anti-fuite de clés par `Gitleaks`.
-            - ✅ **Analyse Statique SAST** : Audit de sécurité de code source par `Semgrep` & `flutter analyze`.
-            - ✅ **Sécurité Supply Chain** : Contrôle des vulnérabilités de dépendances par `Google OSV-Scanner`.
-            - ✅ **Analyse Antivirus & Anti-Malware** : Analyse `ClamAV` et scanner de motifs récursifs.
-            - ✅ **Intégrité des Métadonnées Executables** : Identification `Association TUTODECODE` dans `Runner.rc`.
+            ### Téléchargements
+            - Windows : installateur `T2DECODE-Windows-Setup.exe` ou version portable `T2DECODE-Windows.zip`, signés par l'association TUTODECODE.
+            - macOS : `T2DECODE-macOS.dmg`, signé et notarisé par Apple. Ouvrir l'image et glisser T2DECODE dans Applications.
+            - Linux : `T2DECODE-Linux.tar.gz`, ou `sudo snap install t2decode`.
+            - Android : APK arm64-v8a, armeabi-v7a et x86_64, ou F-Droid.
+
+            ### Vérifications faites par la CI sur cette version
+            - tests unitaires et d'interface ;
+            - analyse statique (`flutter analyze`, Semgrep) ;
+            - recherche de secrets (Gitleaks) ;
+            - vulnérabilités des dépendances (OSV-Scanner) ;
+            - analyse antivirus (ClamAV).
+
+            Empreintes SHA-256 de tous les fichiers : `SHA256SUMS.txt`.
           generate_release_notes: true
           draft: false
           prerelease: false
@@ -378,6 +395,7 @@ jobs:
       GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
       GITLAB_PROJECT: ${{ vars.GITLAB_PROJECT || 'tutodecode-org/T2DECODE' }}
       TAG: ${{ github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - name: GitLab configuré ?
         id: cfg
@@ -407,7 +425,14 @@ jobs:
             links=$(jq -c --arg n "$name" --arg u "$url" '. + [{name:$n, url:$u, link_type:"package"}]' <<<"$links")
             echo "↑ $name"
           done
+          notes=""
+          ref=$(GH_TOKEN="$GH_TOKEN" gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" 2>/dev/null || true)
+          if [ "$(jq -r '.object.type // ""' <<<"$ref")" = tag ]; then
+            notes=$(GH_TOKEN="$GH_TOKEN" gh api "repos/$GITHUB_REPOSITORY/git/tags/$(jq -r .object.sha <<<"$ref")" -q .message)
+            notes=${notes#T2DECODE * : }
+          fi
           desc="Fichiers générés et signés par GitHub Actions, recopiés ici à l'identique (SHA256SUMS.txt)."
+          [ -z "$notes" ] || desc=$(printf '%s\n\n%s' "$notes" "$desc")
           body=$(jq -n --arg tag "$TAG" --arg desc "$desc" --argjson links "$links" \
             '{tag_name:$tag, name:("T2DECODE " + $tag), description:$desc, assets:{links:$links}}')
           code=$(curl -s -o /tmp/r.json -w '%{http_code}' -H "PRIVATE-TOKEN: $GITLAB_TOKEN" \
