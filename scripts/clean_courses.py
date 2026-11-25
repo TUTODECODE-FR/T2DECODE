@@ -5,25 +5,30 @@ Nettoie les emojis des cours et améliore les titres de blocs de code.
 import json
 import re
 
-EMOJI_PATTERN = re.compile(
-    "["
-    "\U0001F600-\U0001F64F"  # emoticons
-    "\U0001F300-\U0001F5FF"  # symbols & pictographs
-    "\U0001F680-\U0001F6FF"  # transport & map
-    "\U0001F1E0-\U0001F1FF"  # flags
-    "\U00002702-\U000027B0"
-    "\U000024C2"             # circled M
-    "\U0001F900-\U0001F9FF"  # supplemental symbols
-    "\U0001FA00-\U0001FA6F"
-    "\U0001FA70-\U0001FAFF"
-    "\U00002600-\U000026FF"  # misc symbols
-    "\U00002700-\U000027BF"  # dingbats
-    "\U0000FE00-\U0000FE0F"  # variation selectors
-    "\U0001F018-\U0001F270"
-    "\U0000200D"             # zero width joiner
-    "]+",
-    flags=re.UNICODE,
+# Plages Unicode des emojis et pictogrammes (bornes incluses), testées caractère par caractère.
+EMOJI_RANGES = (
+    (0x1F600, 0x1F64F),  # emoticons
+    (0x1F300, 0x1F5FF),  # symbols & pictographs
+    (0x1F680, 0x1F6FF),  # transport & map
+    (0x1F1E0, 0x1F1FF),  # flags
+    (0x24C2, 0x24C2),    # circled M
+    (0x1F900, 0x1F9FF),  # supplemental symbols
+    (0x1FA00, 0x1FAFF),  # symbols & pictographs extended
+    (0x2600, 0x26FF),    # misc symbols
+    (0x2700, 0x27BF),    # dingbats
+    (0xFE00, 0xFE0F),    # variation selectors
+    (0x1F018, 0x1F270),
+    (0x200D, 0x200D),    # zero width joiner
 )
+
+
+def _est_emoji(caractere):
+    code = ord(caractere)
+    return any(debut <= code <= fin for debut, fin in EMOJI_RANGES)
+
+
+def retirer_emojis(texte):
+    return "".join(c for c in texte if not _est_emoji(c))
 
 # Titres de blocs de code améliorés (mapping emoji-title → clean title)
 CODE_TITLE_MAP = {
@@ -50,7 +55,7 @@ CODE_TITLE_MAP = {
 
 def strip_emojis(text: str) -> str:
     """Supprime les emojis d'une chaîne et nettoie les espaces résiduels."""
-    cleaned = EMOJI_PATTERN.sub("", text)
+    cleaned = retirer_emojis(text)
     # Nettoyer les espaces multiples résiduels
     cleaned = re.sub(r"  +", " ", cleaned)
     # Nettoyer les espaces en début/fin de ligne dans le markdown
