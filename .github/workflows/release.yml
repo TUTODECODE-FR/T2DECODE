@@ -71,6 +71,12 @@ jobs:
   build-windows:
     name: Build Windows Desktop
     runs-on: windows-latest
+    environment: signature-windows # sujet OIDC fixe (accès fédéré Entra), limité à main et v* dans les réglages
+    permissions:
+      contents: read
+      id-token: write # jeton OIDC pour azure/login
+    env:
+      AZURE_SIGN_ON: ${{ vars.AZURE_SIGNING_ACCOUNT != '' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -86,6 +92,45 @@ jobs:
 
       - name: Build Windows Release
         run: flutter build windows --release
+
+      - name: Windows non signé
+        if: env.AZURE_SIGN_ON != 'true'
+        shell: pwsh
+        run: |
+          Write-Output "::warning::AZURE_SIGNING_ACCOUNT absent : exécutables Windows NON signés (alerte SmartScreen)"
+
+      - name: Connexion Azure (OIDC)
+        if: env.AZURE_SIGN_ON == 'true'
+        uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Signer l'application (avant zip et installateur)
+        if: env.AZURE_SIGN_ON == 'true'
+        uses: azure/artifact-signing-action@c7ab2a863ab5f9a846ddb8265964877ef296ee82 # v2.0.0
+        with:
+          endpoint: ${{ vars.AZURE_SIGNING_ENDPOINT }}
+          signing-account-name: ${{ vars.AZURE_SIGNING_ACCOUNT }}
+          certificate-profile-name: ${{ vars.AZURE_CERT_PROFILE }}
+          files-folder: ${{ github.workspace }}\build\windows\x64\runner\Release
+          files-folder-filter: exe
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
+          description: T2DECODE
+          description-url: https://github.com/TUTODECODE-FR/T2DECODE
+          # seule la session ouverte par azure/login sert
+          exclude-environment-credential: true
+          exclude-workload-identity-credential: true
+          exclude-managed-identity-credential: true
+          exclude-shared-token-cache-credential: true
+          exclude-visual-studio-credential: true
+          exclude-visual-studio-code-credential: true
+          exclude-azure-powershell-credential: true
+          exclude-azure-developer-cli-credential: true
+          exclude-interactive-browser-credential: true
 
       - name: Archive Windows Release
         shell: powershell
@@ -104,6 +149,45 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           Copy-Item windows\installer\T2DECODE-Setup.exe T2DECODE-Windows-Setup.exe
           "Installateur T2DECODE $ver" >> $env:GITHUB_STEP_SUMMARY
+          New-Item -ItemType Directory setup | Out-Null
+          Copy-Item T2DECODE-Windows-Setup.exe setup/
+
+      - name: Signer l'installateur
+        if: env.AZURE_SIGN_ON == 'true'
+        uses: azure/artifact-signing-action@c7ab2a863ab5f9a846ddb8265964877ef296ee82 # v2.0.0
+        with:
+          endpoint: ${{ vars.AZURE_SIGNING_ENDPOINT }}
+          signing-account-name: ${{ vars.AZURE_SIGNING_ACCOUNT }}
+          certificate-profile-name: ${{ vars.AZURE_CERT_PROFILE }}
+          files-folder: ${{ github.workspace }}\setup
+          files-folder-filter: exe
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
+          description: T2DECODE
+          description-url: https://github.com/TUTODECODE-FR/T2DECODE
+          exclude-environment-credential: true
+          exclude-workload-identity-credential: true
+          exclude-managed-identity-credential: true
+          exclude-shared-token-cache-credential: true
+          exclude-visual-studio-credential: true
+          exclude-visual-studio-code-credential: true
+          exclude-azure-powershell-credential: true
+          exclude-azure-developer-cli-credential: true
+          exclude-interactive-browser-credential: true
+
+      - name: Vérifier les signatures
+        if: env.AZURE_SIGN_ON == 'true'
+        shell: pwsh
+        run: |
+          Copy-Item setup/T2DECODE-Windows-Setup.exe . -Force
+          $bad = 0
+          foreach ($f in @(Get-ChildItem build/windows/x64/runner/Release -Filter *.exe) + @(Get-Item T2DECODE-Windows-Setup.exe)) {
+            $s = Get-AuthenticodeSignature $f.FullName
+            "$($f.Name) : $($s.Status) — $($s.SignerCertificate.Subject)" | Tee-Object -Append $env:GITHUB_STEP_SUMMARY
+            if ($s.Status -ne 'Valid' -or -not $s.TimeStamperCertificate) { $bad++ }
+          }
+          if ($bad) { Write-Error "$bad exécutable(s) mal signé(s) ou sans horodatage"; exit 1 }
 
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
