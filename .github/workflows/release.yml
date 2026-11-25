@@ -105,7 +105,7 @@ jobs:
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          allow-no-subscriptions: true # le principal n'a de rôle que sur le compte de signature
 
       - name: Signer l'application (avant zip et installateur)
         if: env.AZURE_SIGN_ON == 'true'
