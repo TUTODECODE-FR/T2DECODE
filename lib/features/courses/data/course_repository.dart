@@ -79,7 +79,7 @@ class Course {
         (isExternal ? 'Auteur tiers' : 'Association TUTODECODE');
     final signedBy = m['signedBy']?.toString() ??
         m['signed_by']?.toString() ??
-        (isExternal ? null : 'Association TUTODECODE (RNA W134011400)');
+        (isExternal ? null : 'Association TUTODECODE (RNA W134011896)');
 
     final course = Course(
       id: m['id'],
