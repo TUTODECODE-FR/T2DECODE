@@ -1,25 +1,25 @@
 # Tableau des contributions bénévoles — T2DECODE
 
-> **Source de vérité = [Issues GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat)**
+> **Source de vérité = [Issues GitLab](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/?label_name[]=benevolat)**  
 > Label : `benevolat` (+ `wishlist` / `bug` / `proposition` selon le cas).
 
-Ce fichier est un **index**(pas un tableau à éditer à la main).  
+Ce fichier est un **index** (pas un tableau à éditer à la main).  
 Contributeurs : [CONTRIBUTORS.md](./CONTRIBUTORS.md).
 
 ## Flux bénévole (100 % automatisé)
 
 ### 1. Proposer une idée / un bug
 
-[Nouvelle issue](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/new) → modèle **Proposition**ou **Bug_benevolat**
-(labels `benevolat` + `wishlist|bug|proposition`). Le dropdown Type (Incident / Issue / Task) **n’accepte pas**de types custom sur GitLab.com : on s’appuie sur **modèles + labels**.
+[Nouvelle issue](https://gitlab.com/tutodecode-org/T2DECODE/-/issues/new) → modèle **Proposition** ou **Bug_benevolat**  
+(labels `benevolat` + `wishlist|bug|proposition`). Le dropdown Type (Incident / Issue / Task) **n’accepte pas** de types custom sur GitLab.com : on s’appuie sur **modèles + labels**.
 
 ### 2. Prendre une tâche (`prendre #<iid>`) — effet immédiat
 
-**Le ticket est verrouillé pour vous dès l’ouverture de la MR**— pas besoin d’attendre
-qui que ce soit. **Ne pas**ouvrir une issue « Prendre » pour claimer — le modèle
+**Le ticket est verrouillé pour vous dès l’ouverture de la MR** — pas besoin d’attendre
+qui que ce soit. **Ne pas** ouvrir une issue « Prendre » pour claimer — le modèle
 *Prendre_une_tache* renvoie ici.
 
-1. Choisir une issue **ouverte sans assignee**(idéalement label `libre`).
+1. Choisir une issue **ouverte sans assignee** (idéalement label `libre`).
 2. Branche `volunteer/prendre-<iid>` (ex. `volunteer/prendre-42`).
 3. Marqueur `volunteer/claims/<iid>.md` :
 
@@ -27,38 +27,38 @@ qui que ce soit. **Ne pas**ouvrir une issue « Prendre » pour claimer — le mo
 username: ton-pseudo-gitlab
 ```
 
-4. MR titrée **exactement**`prendre #<iid>` + **DCO**(`Signed-off-by`) — modèle MR **Prendre**recommandé.
+4. MR titrée **exactement** `prendre #<iid>` + **DCO** (`Signed-off-by`) — modèle MR **Prendre** recommandé.
 5. La pipeline de la MR se déclenche aussitôt :
-   - **verte**→ le ticket est **à vous, immédiatement**(même si la MR reste ouverte).
+   - **verte** → le ticket est **à vous, immédiatement** (même si la MR reste ouverte).
      Le bot bénévole (pipeline planifiée sur `main`) assigne l’issue (`en-cours`)
-     et **merge la MR tout seul**peu après.
-   - **rouge**→ ticket déjà pris (« déjà pris par @xxx (MR !NNN) »), format
+     et **merge la MR tout seul** peu après.
+   - **rouge** → ticket déjà pris (« déjà pris par @xxx (MR !NNN) »), format
      invalide, ou fichier hors zone bénévole : le message de la CI dit quoi corriger.
 
 ### 3. Règles anti-collision
 
-- **Une seule claim active par personne**(MR de claim ouverte *ou* ticket `en-cours` assigné).
-- Si deux MR visent le même ticket, **la plus ancienne gagne**; l’autre échoue en CI.
-- **Abandon**: fermez votre MR de claim → le bot libère le ticket automatiquement.
-- **Inactivité**: une MR de claim sans activité pendant **14 jours**est fermée par le bot → le ticket redevient `libre`.
+- **Une seule claim active par personne** (MR de claim ouverte *ou* ticket `en-cours` assigné).
+- Si deux MR visent le même ticket, **la plus ancienne gagne** ; l’autre échoue en CI.
+- **Abandon** : fermez votre MR de claim → le bot libère le ticket automatiquement.
+- **Inactivité** : une MR de claim sans activité pendant **14 jours** est fermée par le bot → le ticket redevient `libre`.
 
 ### 4. Après le claim : coder
 
 Branche feature dédiée + MR classique (relecture mainteneur, comme tout le code).  
-La MR de code **ferme l’issue**une fois mergée (livraison).
+La MR de code **ferme l’issue** une fois mergée (livraison).
 
 | Merge de… | Effet |
 | :--- | :--- |
 | Issue / discussion « Proposition » | ne réserve pas la tâche |
-| MR `prendre #N` **ouverte**| verrouille le ticket (immédiat) |
+| MR `prendre #N` **ouverte** | verrouille le ticket (immédiat) |
 | MR `prendre #N` mergée (par le bot) | assigne + `en-cours` + archive le claim |
-| MR de **code**| ferme l’issue (livraison) |
+| MR de **code** | ferme l’issue (livraison) |
 
 ### Labels recommandés
 
 | Label | Usage |
 | :--- | :--- |
-| `benevolat` | **Obligatoire**|
+| `benevolat` | **Obligatoire** |
 | `wishlist` | Idée / amélioration |
 | `proposition` | Proposition communauté |
 | `bug` | Anomalie |

@@ -23,7 +23,7 @@ Seule la dernière version stable est considérée comme supportée pour les cor
 | Dernière version stable | |
 | Anciennes versions | |
 
-**Portée du support :**Chaque version stable reçoit des correctifs de sécurité jusqu'à la publication de la version stable suivante. Les versions majeures (ex: v1.x) sont supportées pendant au moins 6 mois après la sortie de la version majeure suivante.
+**Portée du support :** Chaque version stable reçoit des correctifs de sécurité jusqu'à la publication de la version stable suivante. Les versions majeures (ex: v1.x) sont supportées pendant au moins 6 mois après la sortie de la version majeure suivante.
 
 ## Fin de Support (End of Life)
 
@@ -32,7 +32,7 @@ Une version atteint sa fin de support dans les cas suivants :
 - Une nouvelle version stable est publiée : l'ancienne version cesse de recevoir des correctifs de sécurité immédiatement.
 - La version a plus de 12 mois d'ancienneté sans mise à jour majeure.
 
-Les utilisateurs sont **fortement encouragés**à mettre à jour vers la dernière version stable dès sa disponibilité. Les annonces de fin de support sont publiées dans les [notes de version](https://github.com/TUTODECODE-FR/T2DECODE/releases) et dans le fichier `CHANGELOG.md`.
+Les utilisateurs sont **fortement encouragés** à mettre à jour vers la dernière version stable dès sa disponibilité. Les annonces de fin de support sont publiées dans les [notes de version](https://github.com/TUTODECODE-FR/T2DECODE/releases) et dans le fichier `CHANGELOG.md`.
 
 ## Nomenclature Logicielle (SBOM)
 

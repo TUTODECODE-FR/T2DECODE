@@ -1,7 +1,7 @@
 # Lab de sécurité local (offline) — préparer un environnement isolé (volontairement vulnérable)
 
 Ce guide explique comment préparer un environnement **100% local**, **contrôlé**
-et **rejouable**pour apprendre l’**audit**, la **détection**et le **durcissement**
+et **rejouable** pour apprendre l’**audit**, la **détection** et le **durcissement**
 sans exposer de services vulnérables à Internet.
 
 T2DECODE ne “déploie” pas automatiquement des cibles vulnérables : il fournit
@@ -22,11 +22,11 @@ votre responsabilité.
 
 ### Option A — 3 VMs (recommandé)
 
-- **VM Poste de test**: outils d’analyse / audit
-- **VM Cible**: service/app volontairement vulnérable
-- **VM Observateur**: collecte logs / IDS / dashboards (local)
+- **VM Poste de test** : outils d’analyse / audit
+- **VM Cible** : service/app volontairement vulnérable
+- **VM Observateur** : collecte logs / IDS / dashboards (local)
 
-Réseau : **host‑only**ou **VLAN dédié**. Pas de route vers Internet.
+Réseau : **host‑only** ou **VLAN dédié**. Pas de route vers Internet.
 
 ### Option B — 1 machine + conteneurs (prudence)
 

@@ -1,6 +1,6 @@
 # Confiance & vérifiabilité (T2DECODE)
 
-Cette page décrit comment T2DECODE **prouve**sa fiabilité, et quelles pratiques
+Cette page décrit comment T2DECODE **prouve** sa fiabilité, et quelles pratiques
 peuvent être mises en place pour renforcer la confiance dans le temps.
 
 Le principe : **ne pas demander la confiance — la rendre vérifiable**.

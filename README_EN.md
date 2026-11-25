@@ -63,10 +63,10 @@ Pre-compiled and verified binaries are distributed free of charge across our off
 
 | Platform | Distribution Channel | Format | Command / Method |
 | :--- | :--- | :--- | :--- |
-| **Linux**| [Snap Store](https://snapcraft.io/t2decode) / [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Snap / AppImage / DEB | `sudo snap install t2decode` |
-| **macOS**| [App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12) / **Homebrew**/ [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | PKG / DMG / Cask | `brew install --cask t2decode` |
-| **Android**| [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | APK / AAB | *Via F-Droid Client* |
-| **Windows**| [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) / [SourceForge](https://sourceforge.net/projects/t2decode/) | EXE / ZIP | *Direct Download* |
+| **Linux** | [Snap Store](https://snapcraft.io/t2decode) / [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | Snap / AppImage / DEB | `sudo snap install t2decode` |
+| **macOS** | [App Store](https://apps.apple.com/us/app/t2decode-plateforme/id6762523276?mt=12) / **Homebrew** / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | PKG / DMG / Cask | `brew install --cask t2decode` |
+| **Android** | [F-Droid](https://f-droid.org/packages/org.t2decode.app/) / [Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) | APK / AAB | *Via F-Droid Client* |
+| **Windows** | [GitLab Releases](https://gitlab.com/tutodecode-org/T2DECODE/-/releases) / [SourceForge](https://sourceforge.net/projects/t2decode/) | EXE / ZIP | *Direct Download* |
 
 > **Audit Mirror & Third-Party Distribution**: You can also download all binaries and checksum files from our official [SourceForge Mirror](https://sourceforge.net/projects/t2decode/).
 
@@ -92,18 +92,18 @@ brew install --cask t2decode
 
 ## Overview & Core Modules
 
-**T2DECODE**is an educational and technical experimentation environment designed to operate in **strictly autonomous, air-gapped mode**. No data leaves your machine: zero telemetry, zero tracking, zero third-party cloud.
+**T2DECODE** is an educational and technical experimentation environment designed to operate in **strictly autonomous, air-gapped mode**. No data leaves your machine: zero telemetry, zero tracking, zero third-party cloud.
 
 ### The 6 Built-In Core Modules
 
 | Module | Description & Technical Scope |
 | :--- | :--- |
-| **Ghost AI (Local LLM)**| Local AI assistant (Ollama) running an RAG pipeline connected directly to built-in courses. |
-| **NetKit (Networking)**| Dynamic network topology modeling and simulation (IPv4/v6 addressing, routing). |
-| **Linux VM Sandbox**| Secure POSIX virtual terminal for practicing system administration and shell scripting. |
-| **CryptoLab**| Interactive experimentation with cryptographic algorithms (RSA, AES, SHA-256). |
-| **Utility Tools**| IPv4/v6 CIDR calculator, Chmod converter, CRON generator, hash verifier. |
-| **Masterclass Courses**| Engineering guides featuring real incident case studies and production best practices. |
+| **Ghost AI (Local LLM)** | Local AI assistant (Ollama) running an RAG pipeline connected directly to built-in courses. |
+| **NetKit (Networking)** | Dynamic network topology modeling and simulation (IPv4/v6 addressing, routing). |
+| **Linux VM Sandbox** | Secure POSIX virtual terminal for practicing system administration and shell scripting. |
+| **CryptoLab** | Interactive experimentation with cryptographic algorithms (RSA, AES, SHA-256). |
+| **Utility Tools** | IPv4/v6 CIDR calculator, Chmod converter, CRON generator, hash verifier. |
+| **Masterclass Courses** | Engineering guides featuring real incident case studies and production best practices. |
 
 ### User Interface
 
@@ -136,7 +136,7 @@ T2DECODE relies on a rigorous, automated DevSecOps engineering process:
 
 ## Join the Team & Contribute
 
-The **TUTODECODE Association**welcomes contributors and developers passionate about networking and cybersecurity!
+The **TUTODECODE Association** welcomes contributors and developers passionate about networking and cybersecurity!
 
 - **Contribution Guide**: Read [`CONTRIBUTING.md`](CONTRIBUTING.md) for details.
 - **Maintainer Recruitment**: Check opportunities in [`MAINTAINERS.md`](MAINTAINERS.md).
@@ -149,8 +149,8 @@ The **TUTODECODE Association**welcomes contributors and developers passionate ab
 - [x] Cross-platform releases (Snap Store, Homebrew, F-Droid, App Store)
 - [x] Full DevSecOps pipeline (16 automated scanners)
 - [x] Binary integrity and OWASP MASVS audit
-- [] T2C-Phantom: Decentralized P2P LAN sync module
-- [] Extended Network Simulators & Packet Analysis
+- [ ] T2C-Phantom: Decentralized P2P LAN sync module
+- [ ] Extended Network Simulators & Packet Analysis
 
 <img src="assets/separator.svg" width="100%" height="4">
 
@@ -229,7 +229,7 @@ T2DECODE is distributed under the free software **GNU General Public License v3.
 
 ## Legal Notice & License
 
-The T2DECODE project is maintained and published by **TUTODECODE Association**(French Non-Profit Association Law 1901, SIREN 102 763 133, RNA W134011400).
+The T2DECODE project is maintained and published by **TUTODECODE Association** (French Non-Profit Association Law 1901, SIREN 102 763 133, RNA W134011400).
 
 - **Founder & President**: Maxime MARTIN CIVET
 - **Official Website**: [tutodecode.org](https://tutodecode.org)
@@ -239,7 +239,7 @@ The T2DECODE project is maintained and published by **TUTODECODE Association**(F
 
 <div align="center">
 
-**T2DECODE**— Autonomous & Sovereign Educational Platform for Computer Networks and Cybersecurity
+**T2DECODE** — Autonomous & Sovereign Educational Platform for Computer Networks and Cybersecurity
 
 Published by TUTODECODE Association (Law 1901, SIREN 102 763 133)
 

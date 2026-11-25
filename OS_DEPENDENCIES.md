@@ -37,9 +37,9 @@ sudo gem install cocoapods
 
 Pour compiler l'application sous Windows, installez les outils suivants :
 
-1. **Git pour Windows**: [Télécharger Git](https://git-scm.com/download/win)
-2. **Visual Studio 2022**(pas VS Code, bien Visual Studio) : [Télécharger Visual Studio](https://visualstudio.microsoft.com/fr/downloads/)
-   - Lors de l'installation, cochez impérativement la charge de travail : **"Développement Desktop en C++"**(Desktop development with C++).
+1. **Git pour Windows** : [Télécharger Git](https://git-scm.com/download/win)
+2. **Visual Studio 2022** (pas VS Code, bien Visual Studio) : [Télécharger Visual Studio](https://visualstudio.microsoft.com/fr/downloads/)
+   - Lors de l'installation, cochez impérativement la charge de travail : **"Développement Desktop en C++"** (Desktop development with C++).
 
 ---
 
@@ -47,7 +47,7 @@ Pour compiler l'application sous Windows, installez les outils suivants :
 
 Quelle que soit votre plateforme, vous aurez besoin de :
 
-1. **Flutter SDK**(version 3.0.0 ou supérieure) : [Guide d'installation Flutter](https://docs.flutter.dev/get-started/install)
-2. **Ollama**(Recommandé pour l'IA locale Ghost AI) : [Télécharger Ollama](https://ollama.com)
+1. **Flutter SDK** (version 3.0.0 ou supérieure) : [Guide d'installation Flutter](https://docs.flutter.dev/get-started/install)
+2. **Ollama** (Recommandé pour l'IA locale Ghost AI) : [Télécharger Ollama](https://ollama.com)
 
 Une fois ces dépendances installées, vous pouvez retourner sur le `README.md` et exécuter `make setup` !
