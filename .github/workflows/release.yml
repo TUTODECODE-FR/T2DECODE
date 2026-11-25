@@ -102,8 +102,10 @@ jobs:
           $crt = Get-ChildItem "$vs\VC\Redist\MSVC\*\x64\Microsoft.VC14*.CRT" -Directory | Sort-Object FullName | Select-Object -Last 1
           if (-not $crt) { throw "Dossier Microsoft.VC14x.CRT introuvable" }
           $dest = "build\windows\x64\runner\Release"
-          foreach ($d in "msvcp140.dll", "vcruntime140.dll", "vcruntime140_1.dll") {
-            Copy-Item (Join-Path $crt.FullName $d) $dest -Force
+          # toutes les DLL du runtime (msvcp140*, vcruntime140*, concrt140, vccorlib140)
+          Copy-Item (Join-Path $crt.FullName "*.dll") $dest -Force
+          foreach ($d in "msvcp140.dll", "msvcp140_1.dll", "msvcp140_2.dll", "vcruntime140.dll", "vcruntime140_1.dll") {
+            if (-not (Test-Path (Join-Path $dest $d))) { throw "$d manquante" }
           }
           Get-ChildItem $dest -Filter *.dll | Select-Object Name, Length | Format-Table | Out-String | Write-Host
           "Runtime VC++ : $($crt.FullName)" >> $env:GITHUB_STEP_SUMMARY
