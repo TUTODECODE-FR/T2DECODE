@@ -13,23 +13,12 @@
   <em>100% Hors-Ligne · Zéro Cloud · Zéro Tracking · Licence Libre GPLv3</em></p>
 
   <p align="center">
-    <img src="https://img.shields.io/badge/pipeline-passed-brightgreen?style=flat-square" alt="Pipeline Passed">
-    <img src="https://img.shields.io/badge/Latest_Release-v1.0.3-blue?style=flat-square" alt="Release v1.0.3">
-    <img src="https://img.shields.io/badge/License-GPLv3-gold?style=flat-square" alt="License GPLv3">
-    <img src="https://img.shields.io/badge/Homebrew-Cask-orange?style=flat-square" alt="Homebrew Cask">
-    <img src="https://img.shields.io/badge/F--Droid-Available-0070e0?style=flat-square" alt="F-Droid">
-    <img src="https://img.shields.io/badge/OpenSSF_Best_Practices-Gold-yellow?style=flat-square" alt="OpenSSF Gold">
-  </p>
-  <p align="center">
-    <img src="https://img.shields.io/badge/100%25_AIR--GAPPED-OFFLINE_FIRST-success?style=flat-square" alt="Offline First">
-    <img src="https://img.shields.io/badge/ZERO_CLOUD-NO_TRACKING-00bcd4?style=flat-square" alt="Zero Cloud">
-    <img src="https://img.shields.io/badge/GHOST_AI-OLLAMA_LOCAL_LLM-8e24aa?style=flat-square" alt="Ghost AI Local LLM">
-  </p>
-  <p align="center">
-    <img src="https://img.shields.io/badge/COMMITS-VERIFIED_SSH-00e676?style=flat-square" alt="Verified Commits">
-    <img src="https://img.shields.io/badge/SOVEREIGN_CODE-GPLV3-orange?style=flat-square" alt="Sovereign Code">
-    <img src="https://img.shields.io/badge/FLUTTER_CORE-MULTI--PLATFORM-0288d1?style=flat-square" alt="Multi-platform">
-    <img src="https://img.shields.io/badge/TUTODECODE-VERIFIED_REPOSITORY-039be5?style=flat-square" alt="Verified Repository">
+    <a href="https://github.com/TUTODECODE-FR/T2DECODE/releases/latest"><img src="https://img.shields.io/github/v/release/TUTODECODE-FR/T2DECODE?style=flat-square" alt="Dernière version"></a>
+    <a href="https://github.com/TUTODECODE-FR/T2DECODE/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/T2DECODE/ci.yml?branch=main&style=flat-square&label=CI" alt="CI"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/github/license/TUTODECODE-FR/T2DECODE?style=flat-square" alt="Licence"></a>
+    <a href="https://f-droid.org/packages/org.t2decode.app/"><img src="https://img.shields.io/f-droid/v/org.t2decode.app?style=flat-square" alt="F-Droid"></a>
+    <a href="https://snapcraft.io/t2decode"><img src="https://img.shields.io/snapcraft/v/t2decode/latest/stable?style=flat-square" alt="Snap"></a>
+    <a href="https://securityscorecards.dev/viewer/?uri=github.com/TUTODECODE-FR/T2DECODE"><img src="https://api.securityscorecards.dev/projects/github.com/TUTODECODE-FR/T2DECODE/badge?style=flat-square" alt="OpenSSF Scorecard"></a>
   </p>
 
   <p>
