@@ -1,0 +1,2209 @@
+tdc-version: 2
+type: course
+
+course "ipv4-adressage-sous-reseaux" {
+  title: "Adressage IPv4 et sous-réseaux"
+  description: """
+Ce cours apprend à lire, calculer et distribuer des adresses IPv4, à la main et sans calculatrice. Il s'adresse aux élèves de bac pro CIEL, BTS SIO, BTS CIEL, BUT réseaux et aux autodidactes qui débutent en réseau.
+
+À la fin, tu sauras :
+• convertir une adresse entre décimal et binaire, et appliquer un masque avec l'opération ET ;
+• passer d'une notation CIDR (/26) à un masque (255.255.255.192) et inversement ;
+• trouver en moins d'une minute l'adresse réseau, le broadcast et la plage d'hôtes de n'importe quelle adresse ;
+• dire si deux machines sont dans le même réseau, et donc si elles passent par la passerelle ;
+• reconnaître les adresses particulières : privées (RFC 1918), APIPA, loopback, partagées, documentation, multicast ;
+• découper un réseau en sous-réseaux de taille fixe (FLSM) puis de tailles variables (VLSM) ;
+• construire et documenter le plan d'adressage d'une PME sur trois sites ;
+• diagnostiquer les erreurs d'adressage les plus fréquentes sous Linux et Windows.
+
+Chaque chapitre suit le même rythme : une idée, des exemples calculés pas à pas, des exercices corrigés, puis une banque de questions (5 tirées au hasard à chaque essai, donc refais-les plusieurs fois). Les calculs se font sur papier : c'est ce qu'on te demandera en examen et en entretien. Un outil de vérification hors ligne (Python, déjà installé sur Debian et Ubuntu) est donné au chapitre 9 pour contrôler tes résultats, pas pour les remplacer.
+
+Prérequis : savoir ce qu'est un ordinateur en réseau et ouvrir un terminal. Aucune connaissance du binaire n'est demandée.
+"""
+  category: "network"
+  level: "beginner"
+  duration: "7h"
+  icon: "AccountTree"
+  keywords: ["ipv4", "adresse ip", "masque", "cidr", "sous-réseau", "subnetting", "vlsm", "flsm", "broadcast", "rfc 1918", "apipa", "plan d'adressage", "binaire"]
+
+  module "binaire" {
+    title: "Chapitre 1 : une adresse IPv4, ce sont 32 bits"
+    duration: "35min"
+    content: """
+Une adresse IPv4 comme `192.168.1.10` est en réalité un nombre de **32 bits** (32 chiffres 0 ou 1). Pour qu'un humain puisse la lire, on la coupe en **4 octets** de 8 bits, on écrit chaque octet en décimal et on les sépare par des points : c'est la **notation décimale pointée** (dotted decimal).
+
+```text
+192      .168      .1        .10
+11000000 .10101000 .00000001 .00001010
+```
+
+Conséquences immédiates :
+• un octet va de `00000000` à `11111111`, donc de **0 à 255**. Une adresse `192.168.1.256` n'existe pas ;
+• il y a 2^32 = **4 294 967 296** adresses IPv4 possibles, soit environ 4,3 milliards. C'est trop peu pour la planète, d'où les adresses privées et la traduction d'adresses (NAT) vues au chapitre 6, et IPv6.
+
+### Les poids des bits d'un octet
+
+Chaque position d'un octet a un poids, qui double de droite à gauche :
+
+| Position | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---|---|---|---|---|---|---|---|
+| Poids | 128 | 64 | 32 | 16 | 8 | 4 | 2 | 1 |
+
+Apprends cette ligne par cœur : tout le reste du cours s'appuie dessus. Le bit de gauche (128) est le bit de **poids fort**, celui de droite (1) le bit de **poids faible**.
+
+### Du binaire vers le décimal : on additionne
+
+On additionne les poids des positions qui valent 1.
+
+```text
+10101000
+128 + 32 + 8 = 168
+```
+
+### Du décimal vers le binaire : on soustrait
+
+On parcourt les poids de gauche à droite. Si le poids tient dans ce qui reste, on écrit 1 et on le retire ; sinon on écrit 0.
+
+Exemple avec 200 :
+
+| Poids | 128 | 64 | 32 | 16 | 8 | 4 | 2 | 1 |
+|---|---|---|---|---|---|---|---|---|
+| Reste avant | 200 | 72 | 8 | 8 | 8 | 0 | 0 | 0 |
+| Bit | 1 | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+
+200 = `11001000`. Vérification : 128 + 64 + 8 = 200.
+
+### Les valeurs à reconnaître sans calcul
+
+Les masques (chapitre 3) n'utilisent que des octets formés de 1 à gauche puis de 0 à droite. Il n'en existe que neuf :
+
+| Binaire | Décimal |
+|---|---|
+| 00000000 | 0 |
+| 10000000 | 128 |
+| 11000000 | 192 |
+| 11100000 | 224 |
+| 11110000 | 240 |
+| 11111000 | 248 |
+| 11111100 | 252 |
+| 11111110 | 254 |
+| 11111111 | 255 |
+
+Astuce : chaque ligne ajoute le poids suivant. 128, puis 128 + 64 = 192, puis 192 + 32 = 224, et ainsi de suite.
+
+### L'opération ET (AND)
+
+Une machine trouve son réseau en faisant un **ET logique** bit à bit entre son adresse et son masque. La règle tient en une ligne : le résultat vaut 1 seulement si les deux bits valent 1.
+
+| A | B | A ET B |
+|---|---|---|
+| 0 | 0 | 0 |
+| 0 | 1 | 0 |
+| 1 | 0 | 0 |
+| 1 | 1 | 1 |
+
+Exemple sur un octet : `11001000` (200) ET `11110000` (240) :
+
+```text
+  11001000   (200)
+ET 11110000   (240)
+= 11000000   (192)
+```
+
+Avec un octet de masque à 255, l'octet de l'adresse est recopié tel quel ; avec un octet à 0, il devient 0. Seul l'octet « intéressant » du masque demande un calcul. Tu t'en serviras au chapitre 4.
+
+### À toi de jouer
+
+1. Convertis en binaire : 172, 16, 45, 99.
+2. Convertis en décimal : `01100100`, `10000001`, `00001111`, `11111100`.
+3. Écris l'adresse `172.16.45.200` entièrement en binaire.
+4. Quelle adresse correspond à `11000000.10101000.00001111.01100100` ?
+5. Calcule `10110111` ET `11100000`, puis donne le résultat en décimal.
+
+### Correction
+
+1. 172 = 128 + 32 + 8 + 4 = `10101100` ; 16 = `00010000` ; 45 = 32 + 8 + 4 + 1 = `00101101` ; 99 = 64 + 32 + 2 + 1 = `01100011`.
+2. `01100100` = 64 + 32 + 4 = 100 ; `10000001` = 128 + 1 = 129 ; `00001111` = 8 + 4 + 2 + 1 = 15 ; `11111100` = 252.
+3. `10101100.00010000.00101101.11001000`.
+4. 192.168.15.100.
+5. `10110111` ET `11100000` = `10100000`, soit 128 + 32 = **160**. Seuls les trois bits de gauche sont gardés.
+
+Erreur classique : oublier les zéros de tête. `16` s'écrit `00010000` sur 8 bits, pas `10000`. Sans les zéros, tes colonnes se décalent et tous les calculs suivants sont faux.
+"""
+
+    codeblock "bash" {
+      title: "Vérifier une conversion depuis un terminal Linux (Bash)"
+      code: """
+# bc est dans le paquet bc (sudo apt install bc s'il manque)
+# décimal vers binaire sur 8 bits
+echo "obase=2; 200" | bc            # affiche 11001000
+printf '%08d\n' "$(echo 'obase=2; 16' | bc)"   # affiche 00010000
+# binaire vers décimal
+echo $((2#10101000))                # affiche 168
+# ET logique entre deux valeurs
+echo $((200 & 240))                 # affiche 192
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Combien de bits contient une adresse IPv4 ?" {
+        - "16 bits"
+        + "32 bits"
+        - "64 bits"
+        - "128 bits"
+        explanation: "Une adresse IPv4 fait 32 bits, découpés en 4 octets de 8 bits. 128 bits, c'est la taille d'une adresse IPv6. L'erreur fréquente est de confondre le nombre d'octets (4) avec la taille en bits."
+      }
+
+      question "Quelle est la valeur décimale de 10101000 ?" {
+        - "148"
+        - "170"
+        + "168"
+        - "176"
+        explanation: "On additionne les poids des bits à 1 : 128 + 32 + 8 = 168. 170 correspond à 10101010 et 176 à 10110000 : un seul bit décalé change tout le résultat."
+      }
+
+      question "Comment s’écrit 200 en binaire sur 8 bits ?" {
+        + "11001000"
+        - "11000100"
+        - "10101000"
+        - "11010000"
+        explanation: "200 - 128 = 72, 72 - 64 = 8, 8 - 8 = 0 : les bits 128, 64 et 8 sont à 1, ce qui donne 11001000. 11010000 vaut 208 et 10101000 vaut 168."
+      }
+
+      question "Pourquoi 192.168.1.300 n’est-elle pas une adresse IPv4 valide ?" {
+        - "parce que le dernier octet ne peut pas dépasser 254"
+        + "parce qu'un octet ne peut pas dépasser 255"
+        - "parce que les adresses en 192.168 s'arrêtent à 192.168.1.200"
+        - "parce qu'une adresse ne peut pas contenir trois chiffres par octet"
+        explanation: "Un octet a 8 bits, sa valeur maximale est 11111111 = 255. 300 demanderait 9 bits. 255 est une valeur valide d'octet ; elle a simplement un rôle particulier quand elle sert de broadcast."
+      }
+
+      question "Combien d’adresses IPv4 différentes existe-t-il en tout ?" {
+        - "environ 16 millions"
+        - "environ 255 milliards"
+        + "environ 4,3 milliards"
+        - "exactement 1 milliard"
+        explanation: "32 bits donnent 2^32 = 4 294 967 296 combinaisons, environ 4,3 milliards. 16 millions correspond à 2^24, la taille d'un réseau /8. Une partie de ces adresses est en plus réservée (privées, multicast, etc.)."
+      }
+
+      question "Quel est le résultat de 11001000 ET 11110000 ?" {
+        - "11111000"
+        - "00111000"
+        + "11000000"
+        - "11110000"
+        explanation: "Le ET donne 1 seulement si les deux bits valent 1. Bit à bit : 1&1=1, 1&1=1, 0&1=0, 0&1=0, 1&0=0, puis 0. Résultat 11000000 = 192. 11111000 serait le résultat d'un OU, pas d'un ET."
+      }
+
+      question "Que devient un octet d’adresse quand l’octet correspondant du masque vaut 255 ?" {
+        + "il est recopié tel quel"
+        - "il devient 0"
+        - "il devient 255"
+        - "il est inversé bit à bit"
+        explanation: "255 = 11111111. Faire un ET avec que des 1 garde chaque bit de l'adresse : l'octet est recopié. Avec un octet de masque à 0, au contraire, le résultat est toujours 0."
+      }
+
+      question "Quelle valeur ne peut PAS apparaître comme octet d’un masque de sous-réseau ?" {
+        - "248"
+        - "252"
+        + "250"
+        - "224"
+        explanation: "Un octet de masque est une suite de 1 puis de 0. 250 = 11111010 mélange les deux : ce n'est pas un masque valide. 224, 248 et 252 valent 11100000, 11111000 et 11111100."
+      }
+
+      question "Quelle est l’écriture binaire correcte de 16 sur un octet ?" {
+        - "10000"
+        - "00001000"
+        + "00010000"
+        - "00100000"
+        explanation: "16 est le poids de la 4e position en partant de la gauche (128, 64, 32, 16). Sur 8 bits on écrit 00010000. Écrire 10000 sans les zéros de tête décale toutes les colonnes. 00001000 vaut 8 et 00100000 vaut 32."
+      }
+
+      question "Quelle adresse décimale correspond à 00001010.00000000.00000001.11111110 ?" {
+        - "10.0.1.255"
+        + "10.0.1.254"
+        - "8.0.1.254"
+        - "10.0.2.254"
+        explanation: "00001010 = 8 + 2 = 10 ; 00000000 = 0 ; 00000001 = 1 ; 11111110 = 254. Le dernier bit à 0 retire 1 à 255. 8.0.1.254 vient d'un oubli du bit de poids 2."
+      }
+
+      question "Dans un octet, quel est le poids du bit le plus à gauche ?" {
+        - "1"
+        - "8"
+        - "255"
+        + "128"
+        explanation: "Les poids sont 128, 64, 32, 16, 8, 4, 2, 1 de gauche à droite. Le bit de gauche est le bit de poids fort et vaut 128. 255 est la somme de tous les poids, pas le poids d'un seul bit."
+      }
+
+      question "Combien vaut 45 en binaire sur 8 bits ?" {
+        - "00101011"
+        + "00101101"
+        - "00110101"
+        - "00101110"
+        explanation: "45 = 32 + 8 + 4 + 1 : bits 32, 8, 4 et 1 à 1, soit 00101101. 00101011 vaut 43, 00110101 vaut 53, 00101110 vaut 46."
+      }
+    }
+  }
+
+  module "classes" {
+    title: "Chapitre 2 : les classes historiques, et pourquoi on les a abandonnées"
+    duration: "25min"
+    content: """
+Avant 1993, la taille d'un réseau était imposée par la **valeur du premier octet** de l'adresse. C'est l'adressage par classes (classful), défini en 1981. Il a été remplacé par le CIDR (chapitre 3), mais tu le croiseras encore : dans les cours, dans certains outils, et dans le vocabulaire (« un réseau de classe C » pour dire « un /24 »).
+
+### Le tableau des classes
+
+| Classe | Premiers bits | 1er octet | Masque par défaut | Usage |
+|---|---|---|---|---|
+| A | 0 | 0 à 127 | 255.0.0.0 (/8) | très grands réseaux |
+| B | 10 | 128 à 191 | 255.255.0.0 (/16) | réseaux moyens |
+| C | 110 | 192 à 223 | 255.255.255.0 (/24) | petits réseaux |
+| D | 1110 | 224 à 239 | aucun | multicast |
+| E | 1111 | 240 à 255 | aucun | réservé (expérimental) |
+
+Dans la classe A, deux valeurs sont à part : `0` (« ce réseau-ci ») et `127` (boucle locale, chapitre 6). Les réseaux de classe A utilisables vont donc de 1 à 126.
+
+### Comment retrouver la classe sans apprendre le tableau
+
+Regarde les premiers bits du premier octet :
+• il commence par `0` : il vaut moins de 128, classe A ;
+• il commence par `10` : entre 128 et 191, classe B ;
+• il commence par `110` : entre 192 et 223, classe C ;
+• il commence par `1110` : entre 224 et 239, classe D.
+
+Les bornes 128, 192, 224, 240 sont exactement les octets de masque du chapitre 1.
+
+### Pourquoi on a abandonné les classes
+
+Avec les classes, une organisation de 2 000 machines était trop grande pour un réseau de classe C (254 hôtes) et recevait donc une classe B : 65 534 adresses, dont plus de 63 000 inutilisées. Les adresses s'épuisaient et les tables de routage d'Internet grossissaient vite. En 1993, le **CIDR** (Classless Inter-Domain Routing, RFC 1519, remplacé par la RFC 4632) a supprimé ce lien entre premier octet et taille du réseau : la taille est donnée par le **préfixe** (`/22`), quel que soit le premier octet.
+
+Aujourd'hui :
+• `10.0.0.0/24` est parfaitement correct, même si 10 est « de classe A » ;
+• `200.100.48.0/21` aussi, même si 200 est « de classe C » ;
+• dire qu'un réseau « est de classe C » est un abus de langage : il faut toujours donner le préfixe.
+
+Garde la notion de classe pour deux usages seulement : reconnaître le multicast (224 à 239) et les adresses réservées (240 et plus), et comprendre les anciens documents.
+
+### À toi de jouer
+
+Pour chaque adresse, donne la classe historique et le masque par défaut qu'elle aurait eu :
+1. 10.37.130.9
+2. 172.16.45.200
+3. 192.168.1.10
+4. 191.255.0.1
+5. 224.0.0.251
+6. 223.1.1.1
+7. 128.0.0.1
+8. Une entreprise de 600 postes au temps des classes : quelle classe recevait-elle, et combien d'adresses gaspillait-elle environ ?
+
+### Correction
+
+1. 10 < 128 : classe A, 255.0.0.0.
+2. 172 entre 128 et 191 : classe B, 255.255.0.0.
+3. 192 entre 192 et 223 : classe C, 255.255.255.0.
+4. 191 : dernière valeur de la classe B, 255.255.0.0. Piège : 191 n'est pas en classe C.
+5. 224 : classe D, multicast, pas de masque par défaut. 224.0.0.251 est l'adresse multicast utilisée par mDNS (découverte d'imprimantes, Bonjour).
+6. 223 : dernière valeur de la classe C, 255.255.255.0.
+7. 128 : première valeur de la classe B, 255.255.0.0.
+8. 600 > 254 : une classe C ne suffisait pas, elle recevait une classe B de 65 534 hôtes. Gaspillage : 65 534 - 600 = 64 934 adresses environ. Avec le CIDR, un /22 (1 022 hôtes) suffit.
+"""
+
+    quiz {
+      pick: 5
+      question "Dans l’adressage par classes, quelle classe correspond au premier octet 172 ?" {
+        - "classe A"
+        + "classe B"
+        - "classe C"
+        - "classe D"
+        explanation: "La classe B va de 128 à 191 (premiers bits 10). 172 en fait partie. On confond souvent avec la classe C parce que 172.16.0.0 est une plage privée, mais la classe ne dépend que du premier octet."
+      }
+
+      question "Quel était le masque par défaut d’une adresse de classe C ?" {
+        - "255.0.0.0"
+        - "255.255.0.0"
+        + "255.255.255.0"
+        - "255.255.255.255"
+        explanation: "Classe A : /8 (255.0.0.0), classe B : /16 (255.255.0.0), classe C : /24 (255.255.255.0). 255.255.255.255 désigne une seule adresse (/32), pas un réseau."
+      }
+
+      question "À quoi sert la plage 224.0.0.0 à 239.255.255.255 (ancienne classe D) ?" {
+        - "aux adresses privées d'entreprise"
+        - "aux adresses de bouclage"
+        + "au multicast (diffusion vers un groupe)"
+        - "aux adresses attribuées automatiquement sans DHCP"
+        explanation: "La classe D est réservée au multicast : un paquet envoyé à une adresse de groupe est reçu par toutes les machines abonnées à ce groupe. On ne l'attribue jamais à une carte réseau comme adresse d'hôte."
+      }
+
+      question "Quel premier octet est la dernière valeur de la classe B ?" {
+        - "127"
+        + "191"
+        - "192"
+        - "223"
+        explanation: "La classe B couvre les premiers octets qui commencent par les bits 10, soit de 10000000 (128) à 10111111 (191). 192 est la première valeur de la classe C, 223 la dernière."
+      }
+
+      question "Pourquoi l’adressage par classes a-t-il été abandonné ?" {
+        + "il gaspillait beaucoup d'adresses et faisait grossir les tables de routage"
+        - "il ne permettait pas plus de 254 réseaux dans le monde"
+        - "il était incompatible avec Ethernet"
+        - "il interdisait les adresses privées"
+        explanation: "Une organisation trop grande pour une classe C recevait une classe B de 65 534 hôtes, même pour quelques centaines de machines. Le CIDR (1993) permet de choisir un préfixe adapté, par exemple /22 pour 1 000 machines, et d'agréger des routes."
+      }
+
+      question "Avec le CIDR, le réseau 10.20.30.0/24 est-il valide ?" {
+        + "oui, le préfixe ne dépend plus du premier octet"
+        - "non, une adresse en 10 doit utiliser un /8"
+        - "non, un /24 est réservé aux adresses de 192 à 223"
+        - "oui, mais seulement sur Internet public"
+        explanation: "Depuis le CIDR, n'importe quel préfixe peut s'appliquer à n'importe quelle adresse. 10.20.30.0/24 est d'ailleurs un réseau privé très courant. Croire que 10 impose /8 est l'erreur typique de qui raisonne encore en classes."
+      }
+
+      question "Quels sont les premiers bits d’une adresse de l’ancienne classe C ?" {
+        - "0"
+        - "10"
+        + "110"
+        - "1110"
+        explanation: "Classe A : 0, classe B : 10, classe C : 110, classe D : 1110, classe E : 1111. 110xxxxx va de 11000000 (192) à 11011111 (223)."
+      }
+
+      question "Quelle plage de premier octet correspondait à la classe E ?" {
+        - "192 à 223"
+        - "224 à 239"
+        + "240 à 255"
+        - "128 à 191"
+        explanation: "La classe E (premiers bits 1111) va de 240 à 255. Elle est réservée et non routée sur Internet. 224 à 239 est la classe D, le multicast."
+      }
+
+      question "Une organisation de 600 machines, à l’époque des classes, recevait typiquement :" {
+        - "une classe C de 254 hôtes"
+        - "deux classes A"
+        + "une classe B de 65 534 hôtes"
+        - "une classe D"
+        explanation: "600 dépasse les 254 hôtes d'une classe C. La classe suivante était la B, avec 65 534 hôtes, soit plus de 64 000 adresses inutilisées. C'est exactement le gaspillage que le CIDR a supprimé."
+      }
+
+      question "Que signifie le sigle CIDR ?" {
+        - "Classful Internet Domain Routing"
+        + "Classless Inter-Domain Routing"
+        - "Central IP Distribution Registry"
+        - "Common Internet Datagram Routing"
+        explanation: "Classless Inter-Domain Routing : routage entre domaines sans classes. Le mot important est classless : la longueur du préfixe est donnée explicitement au lieu d'être déduite du premier octet."
+      }
+
+      question "Pourquoi les réseaux de classe A utilisables vont-ils de 1 à 126 et pas de 0 à 127 ?" {
+        - "parce que 0 et 127 sont des adresses de multicast"
+        + "parce que 0 désigne « ce réseau » et 127 est réservé au bouclage local"
+        - "parce que 0 et 127 sont réservés aux routeurs"
+        - "parce que 127 appartient à la classe B"
+        explanation: "0.0.0.0/8 signifie « ce réseau-ci » et 127.0.0.0/8 est la boucle locale (loopback). Aucun des deux n'est attribué à un réseau réel. 127 commence bien par le bit 0, il est donc en classe A."
+      }
+
+      question "Le premier octet 223 appartient à quelle classe historique ?" {
+        - "classe B"
+        + "classe C"
+        - "classe D"
+        - "classe E"
+        explanation: "223 = 11011111 : il commence par 110, c'est la dernière valeur de la classe C. 224 = 11100000 commence par 1110 et ouvre la classe D."
+      }
+    }
+  }
+
+  module "masque-cidr" {
+    title: "Chapitre 3 : le masque et la notation CIDR"
+    duration: "35min"
+    content: """
+Une adresse IPv4 seule ne suffit pas : il faut savoir quelle partie désigne le **réseau** et quelle partie désigne la **machine** (l'hôte). C'est le rôle du **masque de sous-réseau** (subnet mask).
+
+### Le principe
+
+Le masque est lui aussi un nombre de 32 bits :
+• les bits à **1**, toujours à gauche, marquent la **partie réseau** ;
+• les bits à **0**, toujours à droite, marquent la **partie hôte**.
+
+```text
+Adresse : 192.168.1.10   11000000.10101000.00000001.00001010
+Masque  : 255.255.255.0  11111111.11111111.11111111.00000000
+                         <------- partie réseau ------><hôte->
+```
+
+Toutes les machines d'un même réseau ont la même partie réseau. Elles ne diffèrent que par la partie hôte.
+
+### La notation CIDR
+
+Écrire `255.255.255.0` est long. La notation CIDR donne simplement **le nombre de bits à 1** du masque, après une barre oblique : `192.168.1.10/24`. On dit aussi **longueur de préfixe** (prefix length). Les deux écritures disent exactement la même chose.
+
+### Passer de /n au masque
+
+Méthode : chaque groupe de 8 bits à 1 donne un octet 255 ; les bits restants donnent un octet du tableau du chapitre 1 ; le reste vaut 0.
+
+Exemple `/20` : 20 = 8 + 8 + 4. Deux octets à 255, puis 4 bits à 1 (`11110000` = 240), puis 0.
+Masque : **255.255.240.0**.
+
+Exemple `/27` : 27 = 8 + 8 + 8 + 3. Trois octets à 255, puis `11100000` = 224.
+Masque : **255.255.255.224**.
+
+### Passer du masque à /n
+
+On compte les bits à 1 : 255 vaut 8, et pour l'octet restant on utilise le tableau.
+
+| Octet | 128 | 192 | 224 | 240 | 248 | 252 | 254 | 255 |
+|---|---|---|---|---|---|---|---|---|
+| Bits à 1 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+
+Exemple : `255.255.252.0` = 8 + 8 + 6 + 0 = **/22**.
+
+### Le tableau à savoir refaire
+
+Le dernier octet utile de chaque préfixe, et le nombre d'adresses du bloc :
+
+| Préfixe | Masque | Adresses | Hôtes utilisables |
+|---|---|---|---|
+| /8 | 255.0.0.0 | 16 777 216 | 16 777 214 |
+| /16 | 255.255.0.0 | 65 536 | 65 534 |
+| /20 | 255.255.240.0 | 4 096 | 4 094 |
+| /22 | 255.255.252.0 | 1 024 | 1 022 |
+| /23 | 255.255.254.0 | 512 | 510 |
+| /24 | 255.255.255.0 | 256 | 254 |
+| /25 | 255.255.255.128 | 128 | 126 |
+| /26 | 255.255.255.192 | 64 | 62 |
+| /27 | 255.255.255.224 | 32 | 30 |
+| /28 | 255.255.255.240 | 16 | 14 |
+| /29 | 255.255.255.248 | 8 | 6 |
+| /30 | 255.255.255.252 | 4 | 2 |
+| /31 | 255.255.255.254 | 2 | 2 (liaison point à point, RFC 3021) |
+| /32 | 255.255.255.255 | 1 | 1 (une seule machine) |
+
+### Combien d'hôtes ?
+
+Avec `h` bits d'hôte (h = 32 - préfixe), le réseau contient **2^h adresses**. On en retire 2 : la première (adresse du réseau) et la dernière (broadcast). D'où la formule **2^h - 2 hôtes**.
+
+Exemple : `/26` donne h = 6, 2^6 = 64 adresses, **62 hôtes**.
+
+Deux exceptions à connaître :
+• **/31** : la RFC 3021 autorise les deux adresses comme adresses d'hôtes sur une liaison point à point entre deux routeurs (pas de broadcast nécessaire) ;
+• **/32** : une seule adresse, utilisée pour désigner une machine précise (route vers un hôte, adresse de bouclage d'un routeur, règle de pare-feu).
+
+### Le masque inverse (wildcard)
+
+Les listes de contrôle d'accès Cisco, la configuration OSPF sur Cisco et certains outils (ipcalc) utilisent le **masque inverse** : on inverse chaque bit, ce qui revient à faire 255 - octet.
+`/27` : masque 255.255.255.224, masque inverse **0.0.0.31**.
+
+### À toi de jouer
+
+1. Donne le masque décimal de : /12, /19, /21, /26, /29.
+2. Donne la longueur de préfixe de : 255.255.255.128, 255.255.248.0, 255.192.0.0, 255.255.255.252.
+3. Combien d'hôtes utilisables dans un /21 ? dans un /28 ?
+4. Le service informatique propose le masque 255.255.255.160. Est-il valide ?
+5. Donne le masque inverse d'un /20.
+6. Quel est le plus petit préfixe (le moins de bits réseau) qui donne au moins 500 hôtes ? Et au moins 30 hôtes ?
+
+### Correction
+
+1. /12 = 8 + 4 : **255.240.0.0** ; /19 = 16 + 3 : **255.255.224.0** ; /21 = 16 + 5 : **255.255.248.0** ; /26 = 24 + 2 : **255.255.255.192** ; /29 = 24 + 5 : **255.255.255.248**.
+2. 255.255.255.128 = **/25** ; 255.255.248.0 = 16 + 5 = **/21** ; 255.192.0.0 = 8 + 2 = **/10** ; 255.255.255.252 = **/30**.
+3. /21 : h = 11, 2^11 - 2 = **2 046** hôtes. /28 : h = 4, 2^4 - 2 = **14** hôtes.
+4. Non. 160 = `10100000` : un 0 entre deux 1. Un masque doit être une suite continue de 1 puis de 0. Les valeurs proches valides sont 128 (/25) et 192 (/26).
+5. Masque 255.255.240.0, inverse : 255-255, 255-255, 255-240, 255-0 = **0.0.15.255**.
+6. Il faut 2^h - 2 ≥ 500. 2^8 - 2 = 254 (trop peu), 2^9 - 2 = 510 : h = 9, préfixe 32 - 9 = **/23**. Pour 30 hôtes : 2^5 - 2 = 30, h = 5, **/27** (juste, sans marge).
+"""
+
+    quiz {
+      pick: 5
+      question "Quel masque correspond à /26 ?" {
+        - "255.255.255.224"
+        + "255.255.255.192"
+        - "255.255.255.128"
+        - "255.255.255.240"
+        explanation: "26 = 24 + 2 : trois octets à 255, puis 2 bits à 1 (11000000 = 192). 255.255.255.224 est un /27, 255.255.255.128 un /25 et 255.255.255.240 un /28."
+      }
+
+      question "Quelle longueur de préfixe correspond au masque 255.255.252.0 ?" {
+        - "/20"
+        - "/21"
+        + "/22"
+        - "/23"
+        explanation: "255 + 255 donnent 16 bits, 252 = 11111100 en donne 6, le dernier octet 0. Total : 22. 255.255.254.0 serait /23 et 255.255.248.0 serait /21."
+      }
+
+      question "Combien d’hôtes utilisables contient un réseau /27 ?" {
+        - "32"
+        + "30"
+        - "62"
+        - "27"
+        explanation: "Bits d'hôte : 32 - 27 = 5, soit 2^5 = 32 adresses, moins l'adresse du réseau et le broadcast : 30 hôtes. Répondre 32 revient à oublier ces deux adresses réservées."
+      }
+
+      question "Lequel de ces masques est INVALIDE ?" {
+        - "255.255.255.248"
+        - "255.255.240.0"
+        + "255.255.255.160"
+        - "255.254.0.0"
+        explanation: "160 = 10100000 : un 0 se trouve entre deux 1. Un masque doit avoir tous ses 1 à gauche et tous ses 0 à droite. 248 (11111000), 240 (11110000) et 254 (11111110) respectent cette règle."
+      }
+
+      question "Quel est le masque inverse (wildcard) d’un /28 ?" {
+        - "0.0.0.16"
+        + "0.0.0.15"
+        - "255.255.255.15"
+        - "0.0.0.240"
+        explanation: "Le masque /28 est 255.255.255.240. On fait 255 moins chaque octet : 0.0.0.15. 0.0.0.16 est la taille du bloc, pas le masque inverse, une confusion fréquente."
+      }
+
+      question "Quel est le plus petit réseau (le préfixe le plus long) capable d’accueillir 100 hôtes ?" {
+        - "/26"
+        + "/25"
+        - "/24"
+        - "/27"
+        explanation: "Un /26 offre 62 hôtes : trop peu. Un /25 offre 2^7 - 2 = 126 hôtes : suffisant. Un /24 (254 hôtes) marche aussi mais gaspille plus d'adresses."
+      }
+
+      question "Combien d’hôtes utilisables contient un réseau /23 ?" {
+        - "254"
+        - "512"
+        + "510"
+        - "1022"
+        explanation: "32 - 23 = 9 bits d'hôte, 2^9 = 512 adresses, moins 2 : 510 hôtes. 1022 correspond à un /22, 254 à un /24."
+      }
+
+      question "Dans un masque de sous-réseau, que représentent les bits à 1 ?" {
+        + "la partie réseau de l'adresse"
+        - "la partie hôte de l'adresse"
+        - "les machines allumées"
+        - "les ports ouverts"
+        explanation: "Les bits à 1 du masque, à gauche, indiquent la partie réseau, commune à toutes les machines du réseau. Les bits à 0, à droite, indiquent la partie hôte, propre à chaque machine."
+      }
+
+      question "Quel masque correspond à /20 ?" {
+        - "255.255.224.0"
+        - "255.255.248.0"
+        - "255.255.255.240"
+        + "255.255.240.0"
+        explanation: "20 = 16 + 4 : deux octets à 255, puis 4 bits à 1 (11110000 = 240) dans le 3e octet, et 0. Attention à ne pas mettre le 240 dans le dernier octet : 255.255.255.240 est un /28."
+      }
+
+      question "À quoi sert un préfixe /31 selon la RFC 3021 ?" {
+        - "à un réseau local de 2 postes plus une passerelle"
+        + "à une liaison point à point entre deux routeurs, les deux adresses étant utilisables"
+        - "à une adresse de broadcast unique"
+        - "à rien, un /31 n'a aucun hôte utilisable"
+        explanation: "Sur une liaison point à point il n'y a que deux extrémités et pas besoin de broadcast : la RFC 3021 permet d'utiliser les deux adresses du /31. La formule 2^h - 2 donnerait 0, d'où l'erreur courante qui consiste à le croire inutilisable."
+      }
+
+      question "Le masque 255.192.0.0 s’écrit en notation CIDR :" {
+        - "/8"
+        + "/10"
+        - "/12"
+        - "/18"
+        explanation: "255 donne 8 bits et 192 = 11000000 en donne 2 : 8 + 2 = 10. Un /12 serait 255.240.0.0. /18 viendrait d'une lecture du 192 dans le 3e octet."
+      }
+
+      question "Une machine est configurée en 10.5.5.5/32. Que désigne ce préfixe ?" {
+        - "un réseau de 32 machines"
+        - "un réseau de 2 adresses"
+        + "une seule adresse, cette machine précisément"
+        - "un réseau de broadcast"
+        explanation: "/32 signifie que les 32 bits sont des bits réseau : il n'y a plus aucun bit d'hôte, donc une seule adresse. On l'utilise pour une route vers un hôte, une adresse de bouclage de routeur ou une règle de pare-feu ciblée."
+      }
+
+      question "Quel préfixe faut-il au minimum pour 1 000 hôtes ?" {
+        - "/23"
+        + "/22"
+        - "/21"
+        - "/24"
+        explanation: "Un /23 offre 510 hôtes, insuffisant. Un /22 offre 2^10 - 2 = 1 022 hôtes. Un /21 (2 046) fonctionne mais réserve deux fois plus d'adresses que nécessaire."
+      }
+    }
+  }
+
+  module "reseau-broadcast" {
+    title: "Chapitre 4 : adresse réseau, broadcast et plage d'hôtes"
+    duration: "40min"
+    content: """
+C'est le calcul le plus demandé en examen et le plus utile en dépannage. Pour une adresse et son préfixe, on cherche quatre choses :
+• l'**adresse du réseau** (network address) : la première du bloc, tous les bits d'hôte à 0. Elle désigne le réseau lui-même et ne s'attribue à aucune machine ;
+• l'**adresse de diffusion** (broadcast) : la dernière du bloc, tous les bits d'hôte à 1. Un paquet envoyé à cette adresse est reçu par toutes les machines du réseau ;
+• la **plage d'hôtes** : tout ce qui est entre les deux (première adresse + 1 jusqu'à broadcast - 1) ;
+• le **nombre d'hôtes** : 2^h - 2.
+
+### Méthode 1 : en binaire (la méthode « officielle »)
+
+Exemple : `172.16.45.200/20`.
+
+```text
+Adresse  : 10101100.00010000.0010 1101.11001000   (172.16.45.200)
+Masque   : 11111111.11111111.1111 0000.00000000   (255.255.240.0)
+Réseau   : 10101100.00010000.0010 0000.00000000   (ET logique)    = 172.16.32.0
+Broadcast: 10101100.00010000.0010 1111.11111111   (bits hôte à 1) = 172.16.47.255
+```
+
+Le réseau est obtenu par un ET entre l'adresse et le masque. Le broadcast s'obtient en mettant à 1 tous les bits d'hôte (les bits où le masque vaut 0).
+
+### Méthode 2 : le « nombre magique » (la méthode rapide)
+
+Elle donne le même résultat sans écrire les 32 bits.
+
+1. Repère l'**octet intéressant** : celui du masque qui n'est ni 255 ni 0. Si le préfixe est un multiple de 8 (/8, /16, /24), il n'y en a pas, et le calcul est immédiat.
+2. Calcule la **taille du bloc** : 256 - valeur de cet octet du masque.
+3. Les réseaux commencent aux **multiples de la taille du bloc** dans cet octet. Prends le plus grand multiple inférieur ou égal à la valeur de l'adresse dans cet octet.
+4. Les octets **avant** l'octet intéressant sont recopiés. Les octets **après** valent 0 pour le réseau et 255 pour le broadcast.
+5. Le broadcast est l'adresse juste avant le réseau suivant (multiple suivant - 1 dans l'octet intéressant).
+
+Même exemple, `172.16.45.200/20` :
+1. masque 255.255.**240**.0, octet intéressant = le 3e ;
+2. bloc = 256 - 240 = **16** ;
+3. multiples de 16 : 0, 16, 32, **48**... 45 est entre 32 et 48, donc **32** ;
+4. réseau = **172.16.32.0** ;
+5. réseau suivant 172.16.48.0, donc broadcast = **172.16.47.255**.
+
+Plage d'hôtes : **172.16.32.1 à 172.16.47.254**, soit 2^12 - 2 = **4 094** hôtes.
+
+### Deuxième exemple, dans le 4e octet
+
+`192.168.5.77/27` :
+• masque 255.255.255.**224**, bloc = 256 - 224 = **32** ;
+• multiples de 32 : 0, 32, 64, 96... 77 est entre 64 et 96, donc **64** ;
+• réseau **192.168.5.64**, broadcast **192.168.5.95** (96 - 1) ;
+• hôtes **192.168.5.65 à 192.168.5.94**, 30 hôtes.
+
+### Troisième exemple, dans le 2e octet
+
+`10.37.130.9/11` :
+• masque 255.**224**.0.0, bloc = **32** dans le 2e octet ;
+• 37 est entre 32 et 64, donc **32** ;
+• réseau **10.32.0.0**, broadcast **10.63.255.255** ;
+• hôtes 10.32.0.1 à 10.63.255.254, soit 2^21 - 2 = 2 097 150 hôtes.
+
+### Le piège des adresses qui « finissent par 0 ou 255 »
+
+Avec un préfixe plus court que /24, une adresse se terminant par 0 ou 255 peut être une adresse d'hôte parfaitement normale.
+• `192.168.0.255/23` : réseau 192.168.0.0, broadcast 192.168.**1**.255. Donc 192.168.0.255 est un **hôte** valide.
+• `10.0.15.0/23` : réseau 10.0.14.0, broadcast 10.0.15.255. Donc 10.0.15.0 est aussi un **hôte** valide.
+Ne juge jamais une adresse sur son dernier octet : calcule.
+
+### À toi de jouer
+
+Pour chaque adresse, donne le réseau, le broadcast, la première et la dernière adresse d'hôte, et le nombre d'hôtes :
+1. 192.168.5.130/26
+2. 10.0.14.250/23
+3. 172.31.200.17/28
+4. 192.168.100.66/29
+5. 10.10.10.10/30
+6. 200.100.50.25/21
+7. 10.1.255.255/15 : cette adresse peut-elle être attribuée à un PC ?
+8. 192.168.0.255/23 : cette adresse peut-elle être attribuée à un PC ?
+
+### Correction
+
+| N° | Réseau | Broadcast | 1er hôte | Dernier hôte | Hôtes |
+|---|---|---|---|---|---|
+| 1 | 192.168.5.128 | 192.168.5.191 | 192.168.5.129 | 192.168.5.190 | 62 |
+| 2 | 10.0.14.0 | 10.0.15.255 | 10.0.14.1 | 10.0.15.254 | 510 |
+| 3 | 172.31.200.16 | 172.31.200.31 | 172.31.200.17 | 172.31.200.30 | 14 |
+| 4 | 192.168.100.64 | 192.168.100.71 | 192.168.100.65 | 192.168.100.70 | 6 |
+| 5 | 10.10.10.8 | 10.10.10.11 | 10.10.10.9 | 10.10.10.10 | 2 |
+| 6 | 200.100.48.0 | 200.100.55.255 | 200.100.48.1 | 200.100.55.254 | 2 046 |
+| 7 | 10.0.0.0 | 10.1.255.255 | 10.0.0.1 | 10.1.255.254 | 131 070 |
+| 8 | 192.168.0.0 | 192.168.1.255 | 192.168.0.1 | 192.168.1.254 | 510 |
+
+Détails des calculs :
+1. /26 : bloc 64 dans le 4e octet ; 130 est entre 128 et 192.
+2. /23 : masque 255.255.254.0, bloc 2 dans le 3e octet ; multiples de 2 : 14 est pair, donc réseau 10.0.14.0 ; réseau suivant 10.0.16.0.
+3. /28 : bloc 16 ; 17 est entre 16 et 32. Remarque : l'adresse donnée est elle-même le premier hôte.
+4. /29 : bloc 8 ; 66 est entre 64 et 72.
+5. /30 : bloc 4 ; 10 est entre 8 et 12. Les deux seuls hôtes sont .9 et .10.
+6. /21 : masque 255.255.248.0, bloc 8 dans le 3e octet ; 50 est entre 48 et 56.
+7. /15 : masque 255.254.0.0, bloc 2 dans le 2e octet ; réseau 10.0.0.0, broadcast 10.1.255.255. L'adresse est **le broadcast** : non, on ne peut pas l'attribuer.
+8. Comme vu plus haut, c'est un hôte du milieu de la plage : **oui**, elle est attribuable (même si certains vieux équipements la refusent, par erreur).
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle est l’adresse réseau de 192.168.5.77/27 ?" {
+        - "192.168.5.0"
+        - "192.168.5.32"
+        + "192.168.5.64"
+        - "192.168.5.72"
+        explanation: "/27 donne un bloc de 32. Les réseaux commencent à 0, 32, 64, 96... 77 est entre 64 et 96 : le réseau est 192.168.5.64. 192.168.5.0 serait la réponse avec un /24."
+      }
+
+      question "Quelle est l’adresse de broadcast de 172.16.45.200/20 ?" {
+        - "172.16.45.255"
+        - "172.16.255.255"
+        + "172.16.47.255"
+        - "172.16.63.255"
+        explanation: "/20 : octet intéressant le 3e, bloc 256 - 240 = 16. 45 est entre 32 et 48, réseau 172.16.32.0, broadcast juste avant 172.16.48.0, soit 172.16.47.255. 172.16.45.255 revient à raisonner comme en /24."
+      }
+
+      question "Quelle est la plage d’hôtes de 192.168.100.66/29 ?" {
+        - "192.168.100.64 à 192.168.100.71"
+        + "192.168.100.65 à 192.168.100.70"
+        - "192.168.100.66 à 192.168.100.72"
+        - "192.168.100.65 à 192.168.100.72"
+        explanation: "/29 : bloc 8, réseau 192.168.100.64, broadcast 192.168.100.71. Les hôtes sont entre les deux : .65 à .70. La première réponse inclut le réseau et le broadcast, qui ne sont pas attribuables."
+      }
+
+      question "Pour un masque 255.255.255.240, quelle est la taille d’un bloc ?" {
+        - "15"
+        + "16"
+        - "14"
+        - "240"
+        explanation: "Taille du bloc = 256 - 240 = 16 adresses. Sur ces 16 adresses, 14 sont des hôtes utilisables. 15 est la valeur du masque inverse, pas la taille du bloc."
+      }
+
+      question "L’adresse 10.1.255.255/15 peut-elle être attribuée à un poste ?" {
+        - "oui, c'est un hôte en milieu de plage"
+        + "non, c'est l'adresse de broadcast du réseau 10.0.0.0/15"
+        - "non, c'est l'adresse du réseau"
+        - "oui, mais seulement à un routeur"
+        explanation: "/15 : masque 255.254.0.0, bloc 2 dans le 2e octet. Réseau 10.0.0.0, réseau suivant 10.2.0.0, broadcast 10.1.255.255. C'est donc l'adresse de diffusion, non attribuable."
+      }
+
+      question "L’adresse 192.168.0.255/23 peut-elle être attribuée à un poste ?" {
+        + "oui, c'est un hôte normal du réseau 192.168.0.0/23"
+        - "non, une adresse qui finit par 255 est toujours un broadcast"
+        - "non, c'est l'adresse du réseau suivant"
+        - "non, le /23 n'existe pas en 192.168"
+        explanation: "En /23, le réseau va de 192.168.0.0 à 192.168.1.255. Le broadcast est 192.168.1.255 ; 192.168.0.255 est au milieu de la plage, donc attribuable. Juger sur le seul dernier octet est une erreur classique."
+      }
+
+      question "Quelle est l’adresse réseau de 10.0.14.250/23 ?" {
+        + "10.0.14.0"
+        - "10.0.15.0"
+        - "10.0.14.248"
+        - "10.0.12.0"
+        explanation: "/23 : masque 255.255.254.0, bloc de 2 dans le 3e octet. 14 est un multiple de 2, donc le réseau est 10.0.14.0 et il s'étend jusqu'à 10.0.15.255. 10.0.12.0 serait le réseau d'un /22."
+      }
+
+      question "Combien d’hôtes contient le réseau de 10.10.10.10/30 et lesquels ?" {
+        - "4 hôtes : .8, .9, .10, .11"
+        - "2 hôtes : .10 et .11"
+        + "2 hôtes : .9 et .10"
+        - "3 hôtes : .9, .10, .11"
+        explanation: "/30 : bloc 4, réseau 10.10.10.8, broadcast 10.10.10.11. Il reste .9 et .10. C'est le préfixe classique des liaisons entre deux routeurs, avec le /31."
+      }
+
+      question "Comment obtient-on l’adresse réseau à partir d’une adresse et de son masque ?" {
+        - "par un OU logique entre l'adresse et le masque"
+        + "par un ET logique entre l'adresse et le masque"
+        - "en soustrayant le masque de l'adresse"
+        - "en mettant tous les bits d'hôte à 1"
+        explanation: "Le ET garde les bits de la partie réseau (masque à 1) et met à 0 la partie hôte (masque à 0). Mettre les bits d'hôte à 1 donne au contraire le broadcast."
+      }
+
+      question "Quelle est l’adresse de broadcast de 200.100.50.25/21 ?" {
+        - "200.100.50.255"
+        - "200.100.63.255"
+        - "200.100.48.255"
+        + "200.100.55.255"
+        explanation: "/21 : 255.255.248.0, bloc 8 dans le 3e octet. 50 est entre 48 et 56 : réseau 200.100.48.0, broadcast 200.100.55.255. 200.100.48.255 oublie que le bloc s'étend sur 8 valeurs du 3e octet."
+      }
+
+      question "Quelle est l’adresse réseau de 10.37.130.9/11 ?" {
+        - "10.0.0.0"
+        - "10.37.0.0"
+        + "10.32.0.0"
+        - "10.36.0.0"
+        explanation: "/11 : masque 255.224.0.0, octet intéressant le 2e, bloc 32. 37 est entre 32 et 64 : réseau 10.32.0.0. 10.0.0.0 serait la réponse avec un /8, ce qui revient à raisonner en classes."
+      }
+
+      question "Le dernier hôte utilisable de 172.31.200.17/28 est :" {
+        - "172.31.200.31"
+        + "172.31.200.30"
+        - "172.31.200.32"
+        - "172.31.200.29"
+        explanation: "/28 : bloc 16, réseau 172.31.200.16, broadcast 172.31.200.31. Le dernier hôte est le broadcast moins 1, soit .30. 172.31.200.32 appartient déjà au réseau suivant."
+      }
+
+      question "Une adresse se termine par .0. Que peux-tu en conclure sans connaître le masque ?" {
+        - "c'est forcément l'adresse d'un réseau"
+        - "c'est forcément une adresse invalide"
+        + "rien de sûr : avec un préfixe inférieur à /24, ce peut être un hôte"
+        - "c'est forcément une passerelle"
+        explanation: "Exemple : 10.0.15.0/23 est un hôte, car le réseau est 10.0.14.0 et le broadcast 10.0.15.255. Seul le calcul avec le masque permet de savoir le rôle d'une adresse."
+      }
+    }
+  }
+
+  module "meme-reseau" {
+    title: "Chapitre 5 : même réseau ou pas ? Le rôle de la passerelle"
+    duration: "35min"
+    content: """
+Le calcul du chapitre 4 n'est pas un exercice scolaire : chaque machine le fait avant **chaque** envoi de paquet.
+
+### La décision d'envoi
+
+Quand un poste veut joindre une adresse de destination :
+1. il fait un ET entre **sa propre adresse** et **son masque** : il obtient son réseau ;
+2. il fait un ET entre **l'adresse de destination** et **son masque à lui** ;
+3. si les deux résultats sont égaux, la destination est **locale** : le poste cherche son adresse MAC avec ARP et lui envoie la trame directement ;
+4. sinon, la destination est **distante** : le poste envoie la trame à sa **passerelle par défaut** (default gateway), qui la routera.
+
+Point important : le poste n'utilise que **son** masque. Il ne connaît pas celui de la destination.
+
+### Exemple
+
+Poste A : `192.168.1.70/25`. Son réseau : 192.168.1.0 (bloc 128, 70 < 128).
+• vers `192.168.1.100` : 100 < 128, réseau 192.168.1.0, **local**, envoi direct ;
+• vers `192.168.1.130` : 130 ≥ 128, réseau 192.168.1.128, **distant**, envoi à la passerelle.
+
+Les deux adresses commencent par 192.168.1, et pourtant l'une est distante. Ne te fie jamais aux premiers octets.
+
+### Vérifier ce que fait réellement la machine
+
+Sous Linux, `ip route get` montre la décision prise par le noyau :
+
+```text
+$ ip route get 192.168.1.130
+192.168.1.130 via 192.168.1.1 dev eth0 src 192.168.1.70 uid 1000
+    cache
+$ ip route get 192.168.1.100
+192.168.1.100 dev eth0 src 192.168.1.70 uid 1000
+    cache
+```
+
+Le mot `via` indique un passage par la passerelle ; son absence, un envoi direct. Sous Windows, `Find-NetRoute -RemoteIPAddress 192.168.1.130` (PowerShell) donne l'interface et la route choisies, et `route print -4` affiche toute la table.
+
+### Règle de la passerelle
+
+La passerelle doit **être dans le même réseau que le poste**, sinon le poste ne peut pas la joindre directement. Exemple d'erreur : poste `192.168.10.62/26` (réseau 192.168.10.0, hôtes .1 à .62) avec passerelle `192.168.10.65` (réseau 192.168.10.64). Sous Linux, la commande `ip route add default via 192.168.10.65` est refusée par le noyau avec le message `Error: Nexthop has invalid gateway.` Sous Windows, l'interface graphique affiche un avertissement, et le poste n'atteint pas Internet.
+
+Par convention, beaucoup d'entreprises donnent à la passerelle la **première** adresse d'hôte du réseau (.1 en /24) ; d'autres prennent la dernière (.254). Ce n'est pas une règle technique, juste une habitude à documenter.
+
+### Le piège des masques différents
+
+Deux machines du même réseau physique, avec des masques différents, n'ont pas la même vision :
+• PC A : `192.168.1.10/24` ;
+• PC B : `192.168.1.200/25`.
+
+A calcule : B (192.168.1.200) ET 255.255.255.0 = 192.168.1.0, son propre réseau. Pour A, B est **local**.
+B calcule : son réseau est 192.168.1.128 (bloc 128, 200 ≥ 128). A (192.168.1.10) ET 255.255.255.128 = 192.168.1.0. Pour B, A est **distant** : B envoie ses réponses à la passerelle.
+
+Résultat : la communication est asymétrique, marche parfois (si la passerelle relaie), et produit des pannes incompréhensibles. Dans un même réseau, tout le monde doit avoir **le même masque**.
+
+### À toi de jouer
+
+Pour chaque couple, dis si l'envoi est direct ou passe par la passerelle (masque de la source) :
+1. Source 10.0.14.20/23, destination 10.0.15.200
+2. Source 172.16.33.4/20, destination 172.16.50.1
+3. Source 192.168.10.62/26, destination 192.168.10.65
+4. Même couple avec la source en /24
+5. Source 10.1.1.1/16, destination 10.1.2.1
+6. Un technicien configure un poste en 192.168.20.130/25 avec la passerelle 192.168.20.1. Que se passe-t-il ? Propose deux corrections possibles.
+
+### Correction
+
+1. /23 : réseau source 10.0.14.0, la destination (15 dans le 3e octet) est dans le même bloc 14-15 : **direct**.
+2. /20 : bloc 16, source dans 172.16.32.0 (32 à 47) ; 50 est dans 172.16.48.0 : **passerelle**.
+3. /26 : source dans 192.168.10.0 (0 à 63) ; .65 est dans 192.168.10.64 : **passerelle**.
+4. /24 : les deux sont dans 192.168.10.0 : **direct**. Le masque change tout.
+5. /16 : les deux sont dans 10.1.0.0 : **direct**.
+6. Le poste est dans 192.168.20.128/25 (hôtes .129 à .254). La passerelle .1 est dans 192.168.20.0/25 : elle n'est **pas joignable**. Le poste communique avec ses voisins de .129 à .254 mais rien au-delà. Corrections : soit utiliser la passerelle du réseau 192.168.20.128/25 (par exemple .254 si c'est elle qui est configurée sur le routeur), soit, si le réseau est réellement un /24, corriger le masque en /24. Il faut vérifier sur le routeur lequel des deux est juste.
+"""
+
+    codeblock "bash" {
+      title: "Lire sa configuration sous Linux (iproute2)"
+      code: """
+ip -4 -br addr show          # interfaces avec adresse/préfixe, une par ligne
+ip route                     # table de routage : la ligne default donne la passerelle
+ip route get 8.8.8.8         # quelle route le noyau utilise pour cette destination
+ip neigh                     # cache ARP : machines locales déjà contactées
+"""
+    }
+
+    codeblock "powershell" {
+      title: "Lire sa configuration sous Windows (PowerShell)"
+      code: """
+Get-NetIPAddress -AddressFamily IPv4 | Select-Object InterfaceAlias, IPAddress, PrefixLength
+Get-NetIPConfiguration                     # adresse, passerelle et DNS par interface
+Find-NetRoute -RemoteIPAddress 8.8.8.8     # route choisie pour une destination
+ipconfig /all                              # vue classique, masque en décimal
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Le poste 192.168.1.70/25 veut joindre 192.168.1.130. Comment envoie-t-il le paquet ?" {
+        - "directement, car les trois premiers octets sont identiques"
+        + "à sa passerelle par défaut, car 192.168.1.130 est dans un autre réseau /25"
+        - "en broadcast à tout le réseau"
+        - "il ne peut pas l'envoyer du tout"
+        explanation: "En /25 le bloc est 128 : le poste est dans 192.168.1.0 (0 à 127), la destination dans 192.168.1.128. Elle est donc distante et passe par la passerelle. Comparer les premiers octets à l'œil est le piège classique."
+      }
+
+      question "Pour décider si une destination est locale, quel masque le poste utilise-t-il ?" {
+        + "son propre masque uniquement"
+        - "le masque de la destination"
+        - "le plus long des deux masques"
+        - "le masque par défaut de la classe"
+        explanation: "Le poste ne connaît pas le masque de la destination. Il applique son propre masque à sa propre adresse et à celle de la destination, et compare. C'est pour cela que des masques différents dans un même réseau créent des pannes asymétriques."
+      }
+
+      question "Que signifie le mot via dans la sortie de ip route get ?" {
+        - "que la destination est sur le même réseau"
+        + "que le paquet passe par une passerelle"
+        - "que la destination est injoignable"
+        - "que le paquet est chiffré"
+        explanation: "La ligne 192.168.1.130 via 192.168.1.1 dev eth0 signifie : envoyer à 192.168.1.1 (la passerelle) par l'interface eth0. Sans via, l'envoi est direct sur le réseau local."
+      }
+
+      question "Un poste est en 192.168.20.130/25 avec la passerelle 192.168.20.1. Quel est le problème ?" {
+        - "aucun, la passerelle est toujours en .1"
+        - "l'adresse 192.168.20.130 est un broadcast"
+        + "la passerelle n'est pas dans le réseau du poste (192.168.20.128/25)"
+        - "le masque /25 est interdit en 192.168"
+        explanation: "En /25, le poste est dans 192.168.20.128 (hôtes .129 à .254). La passerelle .1 est dans 192.168.20.0/25 : le poste ne peut pas la joindre directement, donc il ne sort pas de son réseau. La convention du .1 n'est pas une règle."
+      }
+
+      question "Le poste 10.0.14.20/23 veut joindre 10.0.15.200. Que fait-il ?" {
+        + "il envoie directement, car les deux sont dans 10.0.14.0/23"
+        - "il passe par la passerelle, car le 3e octet diffère"
+        - "il refuse, car 10.0.15.200 est un broadcast"
+        - "il envoie en multicast"
+        explanation: "/23 : bloc de 2 dans le 3e octet. Le réseau 10.0.14.0/23 couvre 10.0.14.0 à 10.0.15.255. Les deux adresses sont dedans, l'envoi est direct malgré le 3e octet différent."
+      }
+
+      question "PC A en 192.168.1.10/24 et PC B en 192.168.1.200/25 sur le même switch. Que se passe-t-il ?" {
+        - "tout fonctionne normalement"
+        - "aucun des deux ne voit l'autre"
+        + "A considère B comme local, mais B considère A comme distant : communication asymétrique"
+        - "B considère A comme local, mais A considère B comme distant"
+        explanation: "A applique /24 : 192.168.1.200 est dans 192.168.1.0, local. B applique /25 : son réseau est 192.168.1.128 et 192.168.1.10 est dans 192.168.1.0, distant, donc B répond via la passerelle. Tout le réseau doit avoir le même masque."
+      }
+
+      question "Quelle commande Linux affiche la passerelle par défaut ?" {
+        - "ip neigh"
+        + "ip route"
+        - "ip link"
+        - "ip -br addr"
+        explanation: "ip route affiche la table de routage ; la ligne qui commence par default via indique la passerelle. ip neigh montre le cache ARP, ip link l'état des interfaces, ip -br addr les adresses."
+      }
+
+      question "Une destination est jugée locale. Comment le poste trouve-t-il son adresse MAC ?" {
+        - "par une requête DNS"
+        + "par une requête ARP"
+        - "en la demandant à la passerelle par DHCP"
+        - "il n'en a pas besoin"
+        explanation: "En IPv4, ARP (Address Resolution Protocol) envoie en broadcast la question « qui a cette adresse IP ? » et la machine concernée répond avec sa MAC. Le DNS traduit des noms en adresses IP, pas des IP en MAC."
+      }
+
+      question "Le poste 172.16.33.4/20 veut joindre 172.16.50.1. Que fait-il ?" {
+        - "envoi direct, même réseau 172.16.0.0"
+        + "envoi à la passerelle, car 172.16.50.1 est dans 172.16.48.0/20"
+        - "envoi direct, car 172.16 est une plage privée"
+        - "rejet, car 172.16.50.1 est une adresse réseau"
+        explanation: "/20 : bloc 16 dans le 3e octet. La source est dans 172.16.32.0 (32 à 47), la destination dans 172.16.48.0 (48 à 63). Les réseaux diffèrent : passage par la passerelle."
+      }
+
+      question "Quelle règle doit respecter l’adresse de la passerelle par défaut d’un poste ?" {
+        - "elle doit se terminer par .1"
+        - "elle doit être une adresse publique"
+        + "elle doit appartenir au même réseau que le poste"
+        - "elle doit être l'adresse du réseau"
+        explanation: "Le poste joint sa passerelle directement, avec ARP : elle doit donc être dans son réseau. Le .1 n'est qu'une convention, et l'adresse du réseau ne peut jamais être attribuée à une interface."
+      }
+
+      question "Le poste 192.168.10.62/26 veut joindre 192.168.10.65. Que fait-il ?" {
+        - "envoi direct, les adresses se suivent presque"
+        + "envoi à la passerelle, .65 est dans le réseau 192.168.10.64/26"
+        - "rejet, .65 est le broadcast"
+        - "envoi direct, car le masque de la destination est inconnu"
+        explanation: "/26 : bloc 64. La source est dans 192.168.10.0 (0 à 63), la destination dans 192.168.10.64. Deux adresses voisines peuvent être dans deux réseaux différents."
+      }
+
+      question "Quelle commande PowerShell indique la route choisie pour joindre une adresse donnée ?" {
+        - "Get-NetAdapter"
+        - "Test-Path"
+        + "Find-NetRoute -RemoteIPAddress"
+        - "Get-DnsClientCache"
+        explanation: "Find-NetRoute -RemoteIPAddress 8.8.8.8 renvoie l'adresse source et la route utilisées pour cette destination, l'équivalent de ip route get sous Linux. Get-NetAdapter liste les cartes, Get-DnsClientCache le cache DNS."
+      }
+    }
+  }
+
+  module "adresses-speciales" {
+    title: "Chapitre 6 : adresses privées, APIPA, loopback et autres plages réservées"
+    duration: "35min"
+    content: """
+Toutes les adresses ne se valent pas. Certaines plages ont un rôle fixé par des RFC et le registre des adresses spéciales de l'IANA (RFC 6890). Les reconnaître d'un coup d'œil fait gagner beaucoup de temps en dépannage.
+
+### Les plages privées (RFC 1918)
+
+La RFC 1918 réserve trois plages à l'usage interne des organisations. Elles ne sont **jamais routées sur Internet** : chacun peut les réutiliser chez soi.
+
+| Plage | Préfixe | De | À | Ancienne classe |
+|---|---|---|---|---|
+| 10.0.0.0/8 | /8 | 10.0.0.0 | 10.255.255.255 | A |
+| 172.16.0.0/12 | /12 | 172.16.0.0 | 172.31.255.255 | B (16 réseaux /16) |
+| 192.168.0.0/16 | /16 | 192.168.0.0 | 192.168.255.255 | C (256 réseaux /24) |
+
+Piège fréquent : **172.16.0.0/12 s'arrête à 172.31.255.255**. Les adresses 172.32.x.x ou 172.15.x.x sont publiques. Vérification : /12 donne un bloc de 16 dans le 2e octet, de 16 à 31.
+
+Pour sortir sur Internet, les machines en adresse privée passent par un routeur qui fait de la **traduction d'adresses** (NAT, et plus précisément PAT ou « masquerade ») : il remplace l'adresse source privée par son adresse publique.
+
+### L'espace partagé des opérateurs (RFC 6598)
+
+`100.64.0.0/10` (100.64.0.0 à 100.127.255.255) est réservé aux opérateurs qui font du NAT chez eux (CGNAT, Carrier-Grade NAT). Si ta box reçoit une adresse WAN en 100.64 à 100.127, tu es derrière un CGNAT : tu partages ton adresse publique avec d'autres abonnés, et ouvrir un port depuis Internet ne fonctionnera pas. Ce n'est pas une plage RFC 1918 : ne l'utilise pas pour ton réseau interne.
+
+### APIPA : l'adresse de secours (RFC 3927)
+
+`169.254.0.0/16` est la plage des adresses **lien-local** (link-local). Quand Windows est configuré en DHCP et ne reçoit **aucune réponse** de serveur DHCP, il s'attribue lui-même une adresse dans cette plage : c'est l'**APIPA** (Automatic Private IP Addressing). La RFC 3927 limite le choix à 169.254.1.0 à 169.254.254.255 (les 256 premières et 256 dernières adresses sont réservées).
+
+Ce qu'il faut retenir pour le dépannage : **une adresse en 169.254.x.x signifie que le DHCP n'a pas répondu**. Le poste ne peut joindre que d'autres machines APIPA du même lien, et il n'a pas de passerelle. Cause probable : câble, port de switch, mauvais VLAN, serveur DHCP arrêté ou étendue (scope) pleine, relais DHCP absent sur le routeur.
+
+Dans `ipconfig /all` (Windows en français), la ligne de l'adresse indique alors une adresse IPv4 « d'autoconfiguration » au lieu d'une adresse IPv4 classique.
+
+### La boucle locale (loopback)
+
+`127.0.0.0/8` est réservé au **bouclage** : un paquet envoyé vers une de ces adresses ne quitte jamais la machine. On utilise presque toujours `127.0.0.1`, associé au nom `localhost`. `ping 127.0.0.1` qui répond prouve que la pile TCP/IP fonctionne, mais **ne teste ni la carte réseau ni le câble**.
+
+### Les autres adresses à reconnaître
+
+| Adresse ou plage | Rôle |
+|---|---|
+| 0.0.0.0/8 | « cette machine sur ce réseau » ; 0.0.0.0 sert de source avant d'avoir une adresse (DHCP) et, dans une table de routage, `0.0.0.0/0` désigne la route par défaut |
+| 255.255.255.255 | broadcast limité : tout le réseau local, jamais routé |
+| 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24 | documentation (RFC 5737) : à utiliser dans les exemples, jamais en production |
+| 224.0.0.0/4 | multicast (ancienne classe D) |
+| 240.0.0.0/4 | réservé (ancienne classe E) |
+
+### À toi de jouer
+
+Classe chaque adresse (privée RFC 1918, publique, APIPA, loopback, CGNAT, documentation, multicast, broadcast limité) :
+1. 172.20.3.10
+2. 172.32.1.1
+3. 169.254.12.7
+4. 100.72.4.9
+5. 127.0.1.1
+6. 192.168.300.1
+7. 203.0.113.50
+8. 224.0.0.251
+9. 10.255.255.255
+10. 8.8.8.8
+
+Situation : un poste Windows du lycée affiche l'adresse 169.254.83.12, masque 255.255.0.0, sans passerelle. Donne trois vérifications à faire, dans l'ordre.
+
+### Correction
+
+1. Privée (dans 172.16.0.0/12, de 172.16 à 172.31).
+2. **Publique** : 172.32 est en dehors de 172.16.0.0/12.
+3. APIPA : le DHCP n'a pas répondu.
+4. Espace partagé CGNAT (100.64.0.0/10 va jusqu'à 100.127.255.255).
+5. Loopback : toute la plage 127.0.0.0/8 boucle, pas seulement 127.0.0.1. Debian l'utilise d'ailleurs pour le nom de la machine dans `/etc/hosts`.
+6. Invalide : 300 dépasse 255.
+7. Documentation (RFC 5737), ne doit pas apparaître sur un vrai réseau.
+8. Multicast (mDNS).
+9. Privée, et c'est aussi le broadcast du réseau 10.0.0.0/8 si on l'utilise en entier.
+10. Publique (résolveur DNS de Google).
+
+Situation APIPA : 1) lien physique : voyant du port, câble, `Get-NetAdapter` montre l'état Up ; 2) le bon VLAN sur le port du switch et la présence d'un relais DHCP si le serveur est dans un autre réseau ; 3) le serveur DHCP : service démarré, étendue active et pas pleine. Puis relancer la demande avec `ipconfig /release` et `ipconfig /renew`.
+"""
+
+    quiz {
+      pick: 5
+      question "Laquelle de ces adresses est une adresse privée RFC 1918 ?" {
+        - "172.32.10.5"
+        + "172.31.10.5"
+        - "100.64.10.5"
+        - "169.254.10.5"
+        explanation: "172.16.0.0/12 couvre 172.16.0.0 à 172.31.255.255 : 172.31.10.5 est privée. 172.32 est publique, 100.64 est l'espace partagé des opérateurs (RFC 6598) et 169.254 est le lien-local (APIPA)."
+      }
+
+      question "Un poste Windows affiche 169.254.83.12. Que faut-il en déduire ?" {
+        - "il a reçu une adresse de la box"
+        + "il n'a obtenu aucune réponse d'un serveur DHCP"
+        - "il est configuré en adresse statique"
+        - "il est connecté en IPv6 uniquement"
+        explanation: "169.254.0.0/16 est la plage APIPA : Windows s'y attribue une adresse quand le DHCP ne répond pas. Il faut chercher la cause entre le poste et le serveur DHCP : câble, VLAN, relais, serveur, étendue pleine."
+      }
+
+      question "Quelle est la dernière adresse de la plage privée 172.16.0.0/12 ?" {
+        - "172.16.255.255"
+        + "172.31.255.255"
+        - "172.32.255.255"
+        - "172.255.255.255"
+        explanation: "/12 : masque 255.240.0.0, bloc 16 dans le 2e octet, de 16 à 31. La plage va donc jusqu'à 172.31.255.255. Croire qu'elle s'arrête à 172.16.255.255 est une erreur fréquente."
+      }
+
+      question "Que prouve un ping 127.0.0.1 qui répond ?" {
+        - "que la carte réseau et le câble fonctionnent"
+        - "que la passerelle répond"
+        + "que la pile TCP/IP de la machine fonctionne"
+        - "que le DNS fonctionne"
+        explanation: "Un paquet vers 127.0.0.0/8 ne quitte jamais la machine : il ne passe ni par la carte ni par le câble. Pour tester la carte et le réseau local, il faut pinguer sa propre adresse puis la passerelle."
+      }
+
+      question "Ta box reçoit l’adresse WAN 100.80.12.4. Qu’est-ce que cela indique ?" {
+        - "une adresse publique normale"
+        - "une adresse privée RFC 1918"
+        + "un partage d'adresse par l'opérateur (CGNAT, RFC 6598)"
+        - "une adresse APIPA"
+        explanation: "100.64.0.0/10 (100.64 à 100.127) est l'espace partagé réservé aux opérateurs qui font du NAT. La box n'a pas d'adresse publique propre : ouvrir un port depuis Internet ne fonctionnera pas."
+      }
+
+      question "Quelle plage la RFC 5737 réserve-t-elle pour la documentation ?" {
+        + "203.0.113.0/24"
+        - "10.0.0.0/8"
+        - "127.0.0.0/8"
+        - "224.0.0.0/4"
+        explanation: "La RFC 5737 réserve 192.0.2.0/24, 198.51.100.0/24 et 203.0.113.0/24 aux exemples et à la documentation. 10.0.0.0/8 est privé, 127.0.0.0/8 le bouclage, 224.0.0.0/4 le multicast."
+      }
+
+      question "Pourquoi un poste en adresse privée peut-il quand même naviguer sur Internet ?" {
+        - "parce que les adresses privées sont routées sur Internet"
+        + "parce que le routeur traduit l'adresse source privée en adresse publique (NAT)"
+        - "parce que le DNS remplace son adresse"
+        - "parce que le serveur web connaît toutes les adresses privées"
+        explanation: "Les adresses RFC 1918 ne sont jamais routées sur Internet. Le routeur de sortie remplace l'adresse source par la sienne (NAT/PAT) et garde la correspondance pour renvoyer les réponses au bon poste."
+      }
+
+      question "Quelle est la taille de la plage de bouclage (loopback) ?" {
+        - "une seule adresse : 127.0.0.1"
+        - "127.0.0.0/24"
+        + "127.0.0.0/8"
+        - "127.0.0.0/16"
+        explanation: "Toute la plage 127.0.0.0/8 est réservée au bouclage. 127.0.0.1 est seulement la plus utilisée ; Debian utilise par exemple 127.0.1.1 pour le nom de la machine."
+      }
+
+      question "Dans une table de routage, que désigne 0.0.0.0/0 ?" {
+        - "une route vers l'adresse 0.0.0.0 uniquement"
+        + "la route par défaut, qui correspond à toutes les destinations"
+        - "une route invalide"
+        - "le broadcast limité"
+        explanation: "Un préfixe /0 n'a aucun bit réseau : il correspond à toutes les adresses. C'est la route utilisée quand aucune route plus précise ne correspond, donc la route par défaut vers la passerelle."
+      }
+
+      question "Quelle plage contient les adresses utilisables par APIPA selon la RFC 3927 ?" {
+        - "169.254.0.0 à 169.254.255.255, sans exception"
+        + "169.254.1.0 à 169.254.254.255"
+        - "169.254.0.1 à 169.254.0.254"
+        - "192.168.0.1 à 192.168.0.254"
+        explanation: "La RFC 3927 réserve les 256 premières et 256 dernières adresses de 169.254.0.0/16. Une machine choisit donc son adresse entre 169.254.1.0 et 169.254.254.255."
+      }
+
+      question "Laquelle de ces plages peut être utilisée librement pour un réseau interne d’entreprise ?" {
+        - "100.64.0.0/10"
+        - "203.0.113.0/24"
+        + "192.168.0.0/16"
+        - "169.254.0.0/16"
+        explanation: "192.168.0.0/16 fait partie des trois plages RFC 1918, prévues pour l'usage interne. 100.64.0.0/10 est réservé aux opérateurs, 203.0.113.0/24 à la documentation et 169.254.0.0/16 à l'autoconfiguration."
+      }
+
+      question "Que représente l’adresse 255.255.255.255 ?" {
+        - "le masque d'un réseau /24"
+        + "le broadcast limité : toutes les machines du réseau local, jamais routé"
+        - "l'adresse de la passerelle"
+        - "la dernière adresse publique d'Internet"
+        explanation: "255.255.255.255 est le broadcast limité. Un client DHCP l'utilise par exemple pour sa première demande, quand il n'a pas encore d'adresse. Les routeurs ne le transmettent pas d'un réseau à l'autre."
+      }
+
+      question "Une adresse en 10.200.4.1 est :" {
+        - "publique"
+        + "privée (10.0.0.0/8)"
+        - "réservée au multicast"
+        - "invalide, car le 2e octet dépasse 127"
+        explanation: "Toute adresse dont le premier octet vaut 10 est dans 10.0.0.0/8, plage privée RFC 1918, quel que soit le reste. Les autres octets peuvent aller de 0 à 255."
+      }
+    }
+  }
+
+  module "flsm" {
+    title: "Chapitre 7 : découper un réseau en sous-réseaux de même taille (FLSM)"
+    duration: "40min"
+    content: """
+Découper un réseau, c'est **emprunter des bits à la partie hôte** pour en faire des bits de sous-réseau. Le préfixe s'allonge, chaque morceau devient plus petit, et on obtient plusieurs réseaux séparés (un par service, par étage, par VLAN). Quand tous les morceaux ont la même taille, on parle de **FLSM** (Fixed Length Subnet Mask).
+
+Pourquoi découper : limiter la taille des domaines de diffusion (broadcast), séparer les usages (postes, serveurs, invités, téléphonie), et filtrer le trafic entre eux sur le routeur ou le pare-feu.
+
+### Les deux formules
+
+Avec **s** bits empruntés et **h** bits d'hôte restants :
+• nombre de sous-réseaux : **2^s** ;
+• hôtes par sous-réseau : **2^h - 2**.
+
+Chaque bit emprunté double le nombre de sous-réseaux et divise par deux leur taille.
+
+### Méthode 1 : on connaît le nombre de sous-réseaux
+
+Énoncé : découper `192.168.10.0/24` en **6** sous-réseaux.
+1. Il faut 2^s ≥ 6 : 2^2 = 4 (trop peu), 2^3 = 8. Donc **s = 3**.
+2. Nouveau préfixe : 24 + 3 = **/27** (masque 255.255.255.224).
+3. Taille du bloc : 256 - 224 = **32**, soit 30 hôtes par sous-réseau.
+4. On obtient 8 sous-réseaux (2 restent en réserve) :
+
+| N° | Réseau | Premier hôte | Dernier hôte | Broadcast |
+|---|---|---|---|---|
+| 1 | 192.168.10.0/27 | .1 | .30 | .31 |
+| 2 | 192.168.10.32/27 | .33 | .62 | .63 |
+| 3 | 192.168.10.64/27 | .65 | .94 | .95 |
+| 4 | 192.168.10.96/27 | .97 | .126 | .127 |
+| 5 | 192.168.10.128/27 | .129 | .158 | .159 |
+| 6 | 192.168.10.160/27 | .161 | .190 | .191 |
+| 7 | 192.168.10.192/27 | .193 | .222 | .223 |
+| 8 | 192.168.10.224/27 | .225 | .254 | .255 |
+
+Pour construire le tableau sans réfléchir : la colonne « réseau » avance de la taille du bloc (0, 32, 64...), le broadcast est le réseau suivant moins 1.
+
+### Méthode 2 : on connaît le nombre d'hôtes
+
+Énoncé : chaque service a besoin de **50 machines**, passerelle comprise.
+1. Il faut 2^h - 2 ≥ 50 : 2^5 - 2 = 30 (trop peu), 2^6 - 2 = 62. Donc **h = 6**.
+2. Préfixe : 32 - 6 = **/26**, bloc de 64.
+3. Dans un /24, on obtient 2^(26-24) = **4** sous-réseaux : .0, .64, .128, .192.
+
+Commence toujours par le critère le plus contraignant et vérifie l'autre : si on te demande 6 réseaux de 50 hôtes dans un /24, c'est impossible (il faudrait 6 × 64 = 384 adresses, il n'y en a que 256).
+
+### Trouver le n-ième sous-réseau sans tout écrire
+
+Le n-ième sous-réseau commence à : **début + (n - 1) × taille du bloc**, dans l'octet intéressant.
+
+Exemple : `172.16.0.0/16` découpé en /23. Le bloc vaut 2 dans le 3e octet.
+• 1er : 172.16.0.0/23 ; 2e : 172.16.2.0/23 ;
+• 10e : (10 - 1) × 2 = 18, donc **172.16.18.0/23** (hôtes 172.16.18.1 à 172.16.19.254) ;
+• nombre total : 2^(23-16) = **128** sous-réseaux ; le dernier est 172.16.254.0/23.
+
+### Le « sous-réseau zéro »
+
+D'anciens documents (RFC 950, 1985) déconseillaient d'utiliser le premier sous-réseau (tous les bits de sous-réseau à 0) et le dernier (tous à 1). Cette restriction est obsolète depuis longtemps (RFC 1878) et tous les équipements actuels les acceptent. Dans ce cours, comme en BTS, on les utilise. Si un exercice dit « sans subnet zero », retire simplement le premier et le dernier.
+
+### À toi de jouer
+
+1. Découpe `192.168.40.0/24` en 4 sous-réseaux égaux. Donne pour chacun réseau, plage d'hôtes, broadcast.
+2. Le lycée a 12 salles et veut un réseau par salle, dans `10.12.0.0/16`, chacun de même taille et le plus grand possible. Quel préfixe ? Combien d'hôtes par salle ? Donne le réseau de la salle 12.
+3. Dans `172.16.0.0/16`, il faut des sous-réseaux d'au moins 400 hôtes. Quel préfixe ? Combien de sous-réseaux ? Donne le 1er, le 2e, le 10e et le dernier.
+4. `10.0.0.0/8` découpé en 16 sous-réseaux égaux : préfixe, 3 premiers, dernier.
+5. Peut-on faire 5 sous-réseaux de 40 hôtes dans `192.168.1.0/24` ? Justifie.
+
+### Correction
+
+1. 4 = 2^2, s = 2, **/26**, bloc 64 :
+   • 192.168.40.0/26 : .1 à .62, broadcast .63 ;
+   • 192.168.40.64/26 : .65 à .126, broadcast .127 ;
+   • 192.168.40.128/26 : .129 à .190, broadcast .191 ;
+   • 192.168.40.192/26 : .193 à .254, broadcast .255.
+2. 12 salles : 2^4 = 16 ≥ 12, s = 4, préfixe 16 + 4 = **/20** (bloc 16 dans le 3e octet), 2^12 - 2 = **4 094** hôtes par salle (beaucoup trop, mais c'est ce que demande « le plus grand possible » ; en pratique on préférera VLSM ou des /24). Salle 12 : (12 - 1) × 16 = 176, **10.12.176.0/20** (hôtes 10.12.176.1 à 10.12.191.254).
+3. 2^h - 2 ≥ 400 : h = 9 (510 hôtes), préfixe **/23**. 2^(23-16) = **128** sous-réseaux. 1er 172.16.0.0/23, 2e 172.16.2.0/23, 10e 172.16.18.0/23, dernier 172.16.254.0/23.
+4. 16 = 2^4, préfixe 8 + 4 = **/12**, bloc 16 dans le 2e octet : 10.0.0.0/12, 10.16.0.0/12, 10.32.0.0/12... dernier **10.240.0.0/12**.
+5. 40 hôtes demandent un /26 (62 hôtes), soit 64 adresses. 5 × 64 = 320 > 256 : **impossible** en FLSM. Un /24 ne contient que 4 /26. Il faut un bloc plus grand (/23) ou réduire certains réseaux avec VLSM (chapitre 8).
+"""
+
+    quiz {
+      pick: 5
+      question "Combien de bits faut-il emprunter pour obtenir au moins 6 sous-réseaux ?" {
+        - "2"
+        + "3"
+        - "6"
+        - "4"
+        explanation: "2^2 = 4 ne suffit pas, 2^3 = 8 couvre 6 sous-réseaux. Il en reste 2 en réserve. Emprunter 6 bits donnerait 64 sous-réseaux, beaucoup trop petits."
+      }
+
+      question "Tu découpes 192.168.10.0/24 en /27. Combien de sous-réseaux obtiens-tu ?" {
+        - "4"
+        - "27"
+        + "8"
+        - "32"
+        explanation: "27 - 24 = 3 bits empruntés, 2^3 = 8 sous-réseaux de 32 adresses. 32 est la taille de chaque bloc, pas le nombre de sous-réseaux."
+      }
+
+      question "Quel est le 3e sous-réseau /27 de 192.168.10.0/24 ?" {
+        - "192.168.10.32/27"
+        + "192.168.10.64/27"
+        - "192.168.10.96/27"
+        - "192.168.10.27/27"
+        explanation: "Bloc de 32 : le 1er commence à .0, le 2e à .32, le 3e à (3 - 1) × 32 = .64. Une adresse comme .27 n'est jamais le début d'un réseau /27."
+      }
+
+      question "Chaque service a besoin de 50 machines. Quel préfixe choisir ?" {
+        - "/27"
+        + "/26"
+        - "/25"
+        - "/28"
+        explanation: "Un /27 donne 30 hôtes, insuffisant. Un /26 donne 62 hôtes. Un /25 (126) fonctionne aussi mais gaspille deux fois plus d'adresses."
+      }
+
+      question "Dans 172.16.0.0/16 découpé en /23, quel est le 10e sous-réseau ?" {
+        - "172.16.10.0/23"
+        - "172.16.20.0/23"
+        + "172.16.18.0/23"
+        - "172.16.9.0/23"
+        explanation: "En /23, le bloc vaut 2 dans le 3e octet. Le n-ième commence à (n - 1) × 2 : pour n = 10, 18. Prendre 10 × 2 = 20 donne le 11e : l'erreur du décalage de un."
+      }
+
+      question "Que se passe-t-il quand on emprunte un bit de plus à la partie hôte ?" {
+        + "le nombre de sous-réseaux double et leur taille est divisée par deux"
+        - "le nombre de sous-réseaux augmente de 1"
+        - "la taille des sous-réseaux double"
+        - "le nombre d'hôtes total du réseau de départ augmente"
+        explanation: "Chaque bit emprunté multiplie par 2 le nombre de sous-réseaux et divise par 2 le nombre d'adresses de chacun. Le total d'adresses ne change pas ; le nombre total d'hôtes utilisables diminue même, car chaque sous-réseau perd 2 adresses."
+      }
+
+      question "Peut-on créer 5 sous-réseaux de 40 hôtes chacun, de même taille, dans un /24 ?" {
+        - "oui, avec des /26"
+        - "oui, avec des /27"
+        + "non, il faudrait 5 blocs de 64 adresses, soit 320 adresses"
+        - "oui, avec des /25"
+        explanation: "40 hôtes imposent un /26 (bloc de 64). Un /24 ne contient que 4 blocs de 64. Un /27 n'offre que 30 hôtes. Il faut un espace plus grand ou du VLSM."
+      }
+
+      question "Combien de sous-réseaux /23 contient un réseau /16 ?" {
+        - "23"
+        - "64"
+        + "128"
+        - "256"
+        explanation: "23 - 16 = 7 bits de sous-réseau, 2^7 = 128. 256 serait le nombre de /24 dans un /16."
+      }
+
+      question "Tu découpes 10.0.0.0/8 en 16 sous-réseaux égaux. Quel est le dernier ?" {
+        - "10.255.0.0/12"
+        + "10.240.0.0/12"
+        - "10.15.0.0/12"
+        - "10.224.0.0/12"
+        explanation: "16 = 2^4, préfixe /12, bloc 16 dans le 2e octet. Le 16e commence à 15 × 16 = 240 : 10.240.0.0/12. 10.255.0.0 n'est pas aligné sur un bloc de 16."
+      }
+
+      question "Quelle est l’adresse de broadcast du sous-réseau 192.168.40.64/26 ?" {
+        - "192.168.40.255"
+        - "192.168.40.128"
+        + "192.168.40.127"
+        - "192.168.40.126"
+        explanation: "Le sous-réseau suivant commence à 64 + 64 = 128. Le broadcast est juste avant : .127. .126 est le dernier hôte, .128 le début du réseau suivant."
+      }
+
+      question "Que signifie FLSM ?" {
+        - "tous les sous-réseaux ont des masques différents"
+        + "tous les sous-réseaux utilisent le même masque"
+        - "le masque est fourni par le DHCP"
+        - "le masque change selon le jour"
+        explanation: "Fixed Length Subnet Mask : on découpe en morceaux de même taille, donc avec un masque identique. Le VLSM (Variable Length) autorise des tailles différentes selon les besoins."
+      }
+
+      question "Le lycée veut un réseau par salle pour 12 salles, en FLSM dans 10.12.0.0/16. Quel préfixe permet les plus grands réseaux ?" {
+        - "/18"
+        - "/28"
+        + "/20"
+        - "/19"
+        explanation: "12 salles exigent 2^s ≥ 12, soit s = 4 (16 sous-réseaux). 16 + 4 = /20. Un /19 ne donnerait que 8 sous-réseaux, un /18 seulement 4."
+      }
+
+      question "Le premier sous-réseau d’un découpage (tous les bits de sous-réseau à 0) est-il utilisable aujourd’hui ?" {
+        + "oui, la restriction de la RFC 950 est obsolète et les équipements actuels l'acceptent"
+        - "non, il est réservé au routeur"
+        - "non, il sert de broadcast"
+        - "seulement en IPv6"
+        explanation: "La règle « pas de subnet zero » vient de 1985. Elle est obsolète (RFC 1878) et tous les systèmes actuels l'acceptent. Si un énoncé l'interdit explicitement, on retire le premier et le dernier sous-réseau."
+      }
+    }
+  }
+
+  module "vlsm" {
+    title: "Chapitre 8 : des sous-réseaux sur mesure (VLSM) et l'agrégation de routes"
+    duration: "40min"
+    content: """
+En FLSM, tous les morceaux ont la taille du plus gros besoin. Avec un service de 100 postes et une liaison de 2 routeurs, on gaspille 126 adresses sur la liaison. Le **VLSM** (Variable Length Subnet Mask) donne à chaque réseau **le préfixe qui lui convient**.
+
+### La méthode en 5 étapes
+
+1. **Liste les besoins** et ajoute la passerelle à chaque réseau de machines (+1). Ajoute de la marge si l'énoncé le demande.
+2. **Trie** les besoins du plus grand au plus petit. C'est obligatoire : c'est ce qui garantit que chaque bloc tombe sur une frontière valide.
+3. Pour chaque besoin, choisis le **plus petit préfixe** qui suffit (2^h - 2 ≥ besoin).
+4. **Attribue** les blocs dans l'ordre, chacun commençant juste après la fin du précédent.
+5. **Vérifie** : chaque début de bloc doit être un multiple de sa taille, aucun bloc ne doit en chevaucher un autre, et note l'espace restant.
+
+### Exemple complet
+
+Réseau disponible : `192.168.50.0/24`. Besoins :
+
+| Réseau | Machines | + passerelle | Préfixe | Bloc |
+|---|---|---|---|---|
+| Postes | 100 | 101 | /25 (126) | 128 |
+| Wi-Fi | 50 | 51 | /26 (62) | 64 |
+| Serveurs | 25 | 26 | /27 (30) | 32 |
+| Imprimantes | 10 | 11 | /28 (14) | 16 |
+| Liaison R1-R2 | 2 | 2 | /30 (2) | 4 |
+| Liaison R1-R3 | 2 | 2 | /30 (2) | 4 |
+
+Attribution dans l'ordre :
+
+| Réseau | Adresse réseau | Hôtes | Broadcast |
+|---|---|---|---|
+| Postes | 192.168.50.0/25 | .1 à .126 | .127 |
+| Wi-Fi | 192.168.50.128/26 | .129 à .190 | .191 |
+| Serveurs | 192.168.50.192/27 | .193 à .222 | .223 |
+| Imprimantes | 192.168.50.224/28 | .225 à .238 | .239 |
+| Liaison R1-R2 | 192.168.50.240/30 | .241 et .242 | .243 |
+| Liaison R1-R3 | 192.168.50.244/30 | .245 et .246 | .247 |
+| Libre | 192.168.50.248/29 | .249 à .254 | .255 |
+
+Total utilisé : 128 + 64 + 32 + 16 + 4 + 4 = 248 adresses ; il reste un /29 libre pour plus tard.
+
+### Pourquoi l'ordre compte
+
+Si on commence par le petit /28 en 192.168.50.0, le /25 des postes ne peut pas commencer en .16 : un /25 doit commencer à un multiple de 128 (.0 ou .128). Il irait en .128, le /26 du Wi-Fi devrait être en .64, et le découpage devient un puzzle avec des trous. Trier du plus grand au plus petit évite tout ce travail.
+
+### La règle d'alignement
+
+Une adresse n'est **l'adresse d'un réseau /n** que si elle est un multiple de la taille du bloc dans l'octet intéressant.
+• `192.168.50.32/26` est **faux** : 32 n'est pas un multiple de 64. Le /26 qui contient .32 est 192.168.50.0/26.
+• `10.0.3.0/22` est **faux** : en /22 le bloc vaut 4 dans le 3e octet, et 3 n'est pas multiple de 4. Le bon réseau est 10.0.0.0/22.
+
+### Agrégation de routes (supernetting)
+
+C'est l'opération inverse : regrouper plusieurs réseaux contigus en un seul préfixe plus court, pour qu'un routeur annonce une seule route au lieu de plusieurs. Exemple : les quatre réseaux 172.16.4.0/24 à 172.16.7.0/24.
+
+```text
+172.16.4.0 = 172.16.000001 00.0
+172.16.5.0 = 172.16.000001 01.0
+172.16.6.0 = 172.16.000001 10.0
+172.16.7.0 = 172.16.000001 11.0
+             <- 22 bits communs ->
+```
+
+Les 22 premiers bits sont communs : la route agrégée est **172.16.4.0/22**. Conditions pour une agrégation exacte : le nombre de réseaux est une puissance de 2, ils sont contigus, et le premier est aligné (4 est un multiple de 4).
+
+Contre-exemple : 192.168.1.0/24 à 192.168.4.0/24. Le plus petit préfixe qui les contient tous est 192.168.0.0/21, qui englobe aussi 192.168.0.0, .5, .6 et .7 : l'agrégation n'est pas exacte. Si ces autres réseaux existent ailleurs, la route serait fausse.
+
+### À toi de jouer
+
+1. Tu disposes de `10.50.0.0/24`. Besoins (machines, sans la passerelle) : administration 60, ateliers 28, CDI 12, vidéosurveillance 5, une liaison entre deux routeurs. Fais le plan VLSM complet et indique l'espace libre.
+2. Ces réseaux sont-ils correctement écrits ? 192.168.8.64/26, 192.168.8.96/26, 172.16.12.0/22, 10.0.6.0/23, 10.0.5.0/23.
+3. Les réseaux 192.168.50.64/26 et 192.168.50.96/27 peuvent-ils coexister dans le même plan ?
+4. Agrège 10.1.8.0/24 à 10.1.15.0/24 en une seule route.
+5. Un collègue propose d'agréger 192.168.6.0/24 et 192.168.7.0/24 en 192.168.6.0/23, puis 192.168.7.0/24 et 192.168.8.0/24 en 192.168.7.0/23. Qu'en penses-tu ?
+
+### Correction
+
+1. Besoins avec passerelle : 61, 29, 13, 6, 2. Tri déjà fait.
+   • Administration 61 : /26 (62). **10.50.0.0/26**, hôtes .1 à .62, broadcast .63.
+   • Ateliers 29 : /27 (30). **10.50.0.64/27**, hôtes .65 à .94, broadcast .95.
+   • CDI 13 : /28 (14). **10.50.0.96/28**, hôtes .97 à .110, broadcast .111.
+   • Vidéosurveillance 6 : /29 (6, juste). **10.50.0.112/29**, hôtes .113 à .118, broadcast .119. Sans marge : un /28 serait plus prudent si des caméras doivent s'ajouter.
+   • Liaison : /30. **10.50.0.120/30**, hôtes .121 et .122, broadcast .123.
+   • Libre : 10.50.0.124/30, puis 10.50.0.128/25 (la moitié du /24 reste disponible).
+2. 192.168.8.64/26 : correct (64 multiple de 64). 192.168.8.96/26 : **faux**, 96 n'est pas multiple de 64 (ce serait 192.168.8.64/26). 172.16.12.0/22 : correct (12 multiple de 4). 10.0.6.0/23 : correct (6 pair). 10.0.5.0/23 : **faux** (5 impair, le réseau est 10.0.4.0/23).
+3. Non. 192.168.50.64/26 couvre .64 à .127, et 192.168.50.96/27 (.96 à .127) est entièrement dedans : **chevauchement**. Deux interfaces de routeur ne peuvent pas avoir des réseaux qui se chevauchent.
+4. 8 réseaux (puissance de 2), contigus, 8 est un multiple de 8 : **10.1.8.0/21**.
+5. La première agrégation est juste (6 est pair). La seconde est fausse : 192.168.7.0/23 n'est pas aligné (7 impair) ; le /23 qui contient 192.168.7.0 est 192.168.6.0/23. 192.168.7.0/24 et 192.168.8.0/24 ne peuvent pas être agrégés exactement : le plus petit préfixe commun est 192.168.0.0/20.
+"""
+
+    quiz {
+      pick: 5
+      question "Dans quel ordre attribue-t-on les sous-réseaux en VLSM ?" {
+        + "du plus grand besoin au plus petit"
+        - "du plus petit besoin au plus grand"
+        - "dans l'ordre alphabétique des services"
+        - "dans un ordre quelconque, cela ne change rien"
+        explanation: "En commençant par les plus grands blocs, chaque bloc suivant tombe naturellement sur une frontière valide. En commençant par les petits, les grands blocs ne trouvent plus de début aligné et le plan se remplit de trous."
+      }
+
+      question "Un service a 25 machines plus sa passerelle. Quel préfixe lui donner ?" {
+        - "/28"
+        + "/27"
+        - "/26"
+        - "/25"
+        explanation: "26 adresses sont nécessaires. Un /28 n'en offre que 14, un /27 en offre 30 : c'est le plus petit qui suffit. Un /26 (62) marcherait mais gaspillerait 36 adresses."
+      }
+
+      question "Le réseau 192.168.8.96/26 est-il correctement écrit ?" {
+        - "oui"
+        + "non, 96 n'est pas un multiple de 64 : le réseau est 192.168.8.64/26"
+        - "non, un /26 doit commencer à .0"
+        - "non, le réseau est 192.168.8.128/26"
+        explanation: "Un /26 a des blocs de 64 : il ne peut commencer qu'à .0, .64, .128 ou .192. L'adresse .96 appartient au bloc .64 à .127, donc au réseau 192.168.8.64/26."
+      }
+
+      question "192.168.50.64/26 et 192.168.50.96/27 peuvent-ils coexister ?" {
+        - "oui, leurs préfixes sont différents"
+        + "non, 192.168.50.96/27 est contenu dans 192.168.50.64/26"
+        - "oui, si on les met sur deux VLAN"
+        - "non, car un /27 ne peut pas suivre un /26"
+        explanation: "192.168.50.64/26 couvre .64 à .127 et 192.168.50.96/27 couvre .96 à .127 : les plages se chevauchent. Un VLAN n'y change rien, le routage serait ambigu."
+      }
+
+      question "Quelle route agrège exactement 172.16.4.0/24, 172.16.5.0/24, 172.16.6.0/24 et 172.16.7.0/24 ?" {
+        - "172.16.4.0/23"
+        - "172.16.0.0/21"
+        + "172.16.4.0/22"
+        - "172.16.4.0/24"
+        explanation: "Quatre réseaux /24 contigus, et 4 est un multiple de 4 : 24 - 2 = /22. 172.16.4.0/23 n'en couvre que deux ; 172.16.0.0/21 en couvre huit, dont quatre en trop."
+      }
+
+      question "Quelle route agrège exactement 10.1.8.0/24 à 10.1.15.0/24 ?" {
+        - "10.1.8.0/22"
+        + "10.1.8.0/21"
+        - "10.1.0.0/20"
+        - "10.1.8.0/20"
+        explanation: "Huit /24 (2^3) contigus : 24 - 3 = /21, et 8 est bien aligné sur un bloc de 8. 10.1.8.0/22 n'en couvre que quatre. 10.1.0.0/20 en couvre seize."
+      }
+
+      question "Le réseau 10.0.5.0/23 est-il correctement écrit ?" {
+        + "non, en /23 le 3e octet doit être pair : le réseau est 10.0.4.0/23"
+        - "oui"
+        - "non, le réseau est 10.0.6.0/23"
+        - "non, un /23 doit commencer à 10.0.0.0"
+        explanation: "En /23, le bloc vaut 2 dans le 3e octet : seuls les nombres pairs conviennent. 5 est dans le bloc 4-5, donc le réseau est 10.0.4.0/23."
+      }
+
+      question "Pour une liaison entre deux routeurs, quel préfixe économise le plus d’adresses ?" {
+        - "/24"
+        - "/29"
+        - "/30"
+        + "/31"
+        explanation: "Un /30 utilise 4 adresses pour 2 hôtes. Un /31 (RFC 3021) en utilise 2, les deux étant attribuables sur une liaison point à point. Le /30 reste très courant et accepté par tous les équipements."
+      }
+
+      question "Dans le plan VLSM de 192.168.50.0/24 (postes /25, Wi-Fi /26, serveurs /27), où commence le réseau des serveurs ?" {
+        - "192.168.50.128"
+        + "192.168.50.192"
+        - "192.168.50.160"
+        - "192.168.50.224"
+        explanation: "Postes : .0 à .127, Wi-Fi : .128 à .191. Le bloc suivant commence en .192, multiple de 32 : il convient pour le /27 des serveurs."
+      }
+
+      question "Pourquoi ajoute-t-on 1 au nombre de machines de chaque réseau ?" {
+        - "pour l'adresse de broadcast"
+        - "pour l'adresse du réseau"
+        + "pour l'interface du routeur qui sert de passerelle"
+        - "pour le serveur DHCP"
+        explanation: "La passerelle occupe une adresse d'hôte du réseau. L'adresse du réseau et le broadcast sont déjà retirés par la formule 2^h - 2 : les compter une seconde fois serait une erreur."
+      }
+
+      question "Peut-on agréger exactement 192.168.7.0/24 et 192.168.8.0/24 en 192.168.7.0/23 ?" {
+        - "oui, ils sont contigus"
+        + "non, 192.168.7.0/23 n'est pas aligné : le /23 qui contient 7 est 192.168.6.0/23"
+        - "oui, si les deux sont privés"
+        - "non, on ne peut agréger que des /16"
+        explanation: "Être contigus ne suffit pas : le premier réseau doit être aligné sur la taille du bloc agrégé. En /23, le 3e octet doit être pair ; 7 ne l'est pas. Ces deux réseaux ne s'agrègent exactement en aucun préfixe."
+      }
+
+      question "Quel est l’intérêt principal de l’agrégation de routes ?" {
+        - "augmenter le nombre d'hôtes de chaque réseau"
+        + "annoncer une seule route au lieu de plusieurs, pour réduire les tables de routage"
+        - "chiffrer le trafic entre sites"
+        - "supprimer le besoin de passerelle"
+        explanation: "Un routeur de siège peut annoncer 172.16.4.0/22 au lieu de quatre /24. Les tables sont plus petites, et un changement interne à un site n'oblige pas à modifier les routes des autres."
+      }
+
+      question "Une vidéosurveillance compte 5 caméras plus la passerelle. Quel préfixe est le plus petit possible ?" {
+        - "/30"
+        + "/29"
+        - "/28"
+        - "/27"
+        explanation: "6 adresses sont nécessaires ; un /29 offre exactement 6 hôtes. C'est juste : la moindre caméra ajoutée ne tiendra plus. Un /28 (14 hôtes) laisse de la marge, ce qui est souvent préférable."
+      }
+    }
+  }
+
+  module "outils-erreurs" {
+    title: "Chapitre 9 : vérifier ses calculs et diagnostiquer les erreurs classiques"
+    duration: "40min"
+    content: """
+Tu sais maintenant tout calculer à la main. En entreprise, on vérifie ensuite avec un outil, et on doit surtout savoir **reconnaître une erreur d'adressage sur une machine qui ne marche pas**.
+
+### Outil 1 : Python, déjà installé
+
+Le module `ipaddress` de la bibliothèque standard de Python fait tous les calculs de ce cours. Il fonctionne hors ligne, sous Linux comme sous Windows.
+
+```text
+$ python3 -c "import ipaddress as i; n=i.ip_interface('172.16.45.200/20').network; print(n, n.netmask, n.broadcast_address, n.num_addresses-2)"
+172.16.32.0/20 255.255.240.0 172.16.47.255 4094
+```
+
+Lister les sous-réseaux d'un découpage :
+
+```text
+$ python3 -c "import ipaddress as i; print(*i.ip_network('192.168.10.0/24').subnets(new_prefix=26))"
+192.168.10.0/26 192.168.10.64/26 192.168.10.128/26 192.168.10.192/26
+```
+
+`ip_network` est strict : il refuse une adresse qui n'est pas l'adresse d'un réseau, ce qui détecte les erreurs d'alignement du chapitre 8.
+
+```text
+$ python3 -c "import ipaddress as i; print(i.ip_network('192.168.50.32/26'))"
+Traceback (most recent call last):
+...
+ValueError: 192.168.50.32/26 has host bits set
+```
+
+### Outil 2 : ipcalc (Debian, Ubuntu)
+
+`sudo apt install ipcalc` installe une calculatrice en ligne de commande. L'option `-b` supprime l'affichage binaire. La présentation varie un peu selon les versions ; avec le paquet `ipcalc` de Debian on obtient une sortie de ce type :
+
+```text
+$ ipcalc -b 192.168.5.77/27
+Address:   192.168.5.77
+Netmask:   255.255.255.224 = 27
+Wildcard:  0.0.0.31
+=>
+Network:   192.168.5.64/27
+HostMin:   192.168.5.65
+HostMax:   192.168.5.94
+Broadcast: 192.168.5.95
+Hosts/Net: 30                    Class C, Private Internet
+```
+
+Sans `-b`, ipcalc affiche aussi chaque adresse en binaire, avec un espace à la frontière entre réseau et hôte : c'est un bon moyen de vérifier tes conversions du chapitre 1.
+
+### Outil 3 : un vérificateur de plan d'adressage
+
+Le petit script ci-dessous (dans le bloc de code) lit un fichier texte qui décrit ton plan et signale trois erreurs : réseau mal aligné, réseau trop petit, chevauchement entre deux réseaux. Il te servira pour le mini-projet du chapitre 10.
+
+### Les erreurs classiques, et comment les reconnaître
+
+| Symptôme | Cause probable | Vérification |
+|---|---|---|
+| Adresse en 169.254.x.x | le DHCP n'a pas répondu | lien, VLAN, relais DHCP, étendue pleine |
+| Le poste joint ses voisins mais pas Internet | passerelle absente, fausse, ou hors du réseau du poste | `ip route`, `Get-NetIPConfiguration`, calcul du réseau |
+| Certains voisins répondent, d'autres non | masque différent d'un poste à l'autre | comparer les préfixes de chaque poste |
+| Coupures aléatoires, message de conflit d'adresse sous Windows | même adresse sur deux machines | `ip neigh`, `arp -a`, sortir les adresses statiques de la plage distribuée par le DHCP |
+| Le VPN se connecte mais rien ne répond | même réseau des deux côtés (souvent 192.168.1.0/24) | choisir des plages internes peu courantes |
+| Les réseaux de deux sites se « mélangent » | chevauchement de plages | vérifier le plan, script de vérification |
+| Un nouveau service manque d'adresses | réseau trop juste, pas de marge | prévoir 20 à 30 % de marge ou un bloc de réserve |
+
+Autres erreurs fréquentes dans les calculs :
+• compter l'adresse du réseau et le broadcast comme hôtes ;
+• oublier la passerelle dans le nombre de machines ;
+• écrire `172.16.0.0/12` mais utiliser 172.32.x.x ;
+• raisonner en classes (« 10.x est forcément un /8 ») ;
+• croire qu'une adresse en .0 ou .255 est toujours interdite ;
+• placer les adresses statiques (serveurs, imprimantes) dans la plage distribuée par le DHCP : tôt ou tard, le DHCP attribue la même adresse à un poste.
+
+### À toi de jouer
+
+Diagnostique chaque situation et propose une correction.
+1. Poste Linux : `ip -4 -br addr` affiche `eth0 UP 192.168.1.50/24` ; `ip route` affiche seulement `192.168.1.0/24 dev eth0 proto kernel scope link src 192.168.1.50`. Le poste joint l'imprimante 192.168.1.20 mais pas Internet.
+2. Poste Windows : adresse 10.0.20.15, masque 255.255.255.0, passerelle 10.0.21.1. Le réseau est prévu en /23.
+3. Serveur fixé en 192.168.10.100/24 ; le DHCP du réseau distribue 192.168.10.50 à 192.168.10.150. Tous les deux ou trois jours, le serveur devient injoignable quelques minutes.
+4. Un télétravailleur chez lui en 192.168.1.0/24 se connecte au VPN de l'entreprise, dont le réseau interne est aussi 192.168.1.0/24. Il n'atteint pas le serveur de fichiers 192.168.1.10.
+5. Un fichier de plan contient `postes 10.0.3.0/22 300`. Que dira le script de vérification ?
+
+### Correction
+
+1. Il n'y a **pas de route par défaut** : aucune ligne `default via`. Le poste joint son réseau local mais ne sait pas où envoyer le reste. Correction temporaire : `sudo ip route add default via 192.168.1.1` (si .1 est bien le routeur) ; correction durable dans la configuration réseau (NetworkManager, netplan, `/etc/network/interfaces`) ou côté DHCP (option routeur).
+2. Avec le masque /24, le poste est dans 10.0.20.0/24 et la passerelle 10.0.21.1 est hors de son réseau. Le réseau prévu est 10.0.20.0/23 (10.0.20.0 à 10.0.21.255) : il faut corriger le **masque** en 255.255.254.0, et la passerelle redevient joignable.
+3. **Conflit d'adresses** : l'adresse statique du serveur est dans la plage du DHCP. Quand le DHCP la distribue à un poste, deux machines répondent. Correction : sortir le serveur de la plage (par exemple 192.168.10.10) ou exclure .100 de l'étendue, ou faire une réservation DHCP.
+4. Les deux réseaux sont identiques : pour le poste, 192.168.1.10 est **local**, il le cherche avec ARP chez lui au lieu de passer par le tunnel. Correction côté entreprise : utiliser des plages internes moins courantes (par exemple dans 10.0.0.0/8 ou 172.16.0.0/12, sous-réseaux choisis au hasard), ce que le plan du chapitre 10 fait.
+5. `ERREUR postes : 10.0.3.0/22 has host bits set` : en /22, le bloc vaut 4 dans le 3e octet, et 3 n'est pas un multiple de 4. Le bon réseau est 10.0.0.0/22 (1 022 hôtes, assez pour 300).
+"""
+
+    codeblock "python" {
+      title: "verif-plan.py : vérifier un plan d'adressage (alignement, taille, chevauchement)"
+      code: """
+#!/usr/bin/env python3
+# Usage : python3 verif-plan.py plan.txt
+# Une ligne par réseau : nom  réseau/préfixe  hôtes_nécessaires (passerelle comprise)
+import ipaddress, sys
+
+reseaux = []
+for ligne in open(sys.argv[1], encoding="utf-8"):
+    ligne = ligne.split("#")[0].strip()      # ignore les commentaires
+    if not ligne:
+        continue
+    nom, prefixe, besoin = ligne.split()
+    try:
+        net = ipaddress.ip_network(prefixe)  # refuse un réseau mal aligné
+    except ValueError as e:
+        print(f"ERREUR {nom} : {e}")
+        continue
+    dispo = net.num_addresses - 2 if net.prefixlen < 31 else net.num_addresses
+    etat = "OK" if dispo >= int(besoin) else "TROP PETIT"
+    print(f"{etat:10} {nom:12} {str(net):18} hôtes {dispo:>5} / besoin {besoin}")
+    reseaux.append((nom, net))
+
+for i, (n1, a) in enumerate(reseaux):
+    for n2, b in reseaux[i + 1:]:
+        if a.overlaps(b):
+            print(f"CHEVAUCHEMENT : {n1} ({a}) et {n2} ({b})")
+"""
+    }
+
+    codeblock "text" {
+      title: "Exemple de fichier plan.txt et résultat"
+      code: """
+# nom      réseau            hôtes (passerelle comprise)
+postes     192.168.50.0/25   101
+wifi       192.168.50.128/26 51
+serveurs   192.168.50.192/27 26
+erreur     192.168.50.32/26  20
+
+$ python3 verif-plan.py plan.txt
+OK         postes       192.168.50.0/25    hôtes   126 / besoin 101
+OK         wifi         192.168.50.128/26  hôtes    62 / besoin 51
+OK         serveurs     192.168.50.192/27  hôtes    30 / besoin 26
+ERREUR erreur : 192.168.50.32/26 has host bits set
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que signifie l’erreur Python « has host bits set » quand on passe 192.168.50.32/26 à ip_network ?" {
+        - "l'adresse est publique"
+        + "192.168.50.32 n'est pas l'adresse d'un réseau /26 (le bon réseau est 192.168.50.0/26)"
+        - "le préfixe /26 n'existe pas"
+        - "le réseau chevauche un autre réseau"
+        explanation: "En /26, les réseaux commencent à .0, .64, .128, .192. L'adresse .32 a des bits d'hôte à 1 : ce n'est pas une adresse de réseau. ip_network le refuse ; ip_interface l'accepterait, car c'est une adresse d'hôte valide."
+      }
+
+      question "Un poste Linux joint les machines de son réseau mais pas Internet, et ip route n’affiche aucune ligne default. Quelle est la cause ?" {
+        - "le masque est trop long"
+        + "aucune passerelle par défaut n'est configurée"
+        - "le DNS est en panne"
+        - "la carte réseau est désactivée"
+        explanation: "Sans route par défaut, le noyau ne sait pas où envoyer les paquets destinés à d'autres réseaux. Une panne DNS empêcherait la résolution des noms, mais un ping vers une adresse IP externe fonctionnerait encore."
+      }
+
+      question "Un serveur fixe est en 192.168.10.100 alors que le DHCP distribue .50 à .150. Quel risque ?" {
+        - "aucun, le DHCP détecte toujours les adresses fixes"
+        + "un conflit d'adresses quand le DHCP attribue .100 à un autre poste"
+        - "le serveur passe en APIPA"
+        - "le serveur reçoit deux adresses"
+        explanation: "Beaucoup de serveurs DHCP testent l'adresse avant de l'attribuer, mais si le serveur est éteint à ce moment, le conflit arrive. Les adresses fixes doivent être hors de l'étendue, ou faire l'objet d'une exclusion ou d'une réservation."
+      }
+
+      question "Poste Windows : 10.0.20.15, masque 255.255.255.0, passerelle 10.0.21.1. Le réseau prévu est un /23. Que corriger ?" {
+        - "la passerelle, en 10.0.20.1"
+        + "le masque, en 255.255.254.0"
+        - "l'adresse, en 10.0.21.15"
+        - "rien, la configuration est correcte"
+        explanation: "Le réseau prévu est 10.0.20.0/23, qui contient la passerelle 10.0.21.1. C'est le masque /24 qui exclut la passerelle. Changer la passerelle masquerait le problème, mais le poste ne verrait toujours pas la moitié de son réseau."
+      }
+
+      question "Pourquoi éviter 192.168.1.0/24 pour le réseau interne d’une entreprise qui a des télétravailleurs en VPN ?" {
+        - "parce que cette plage est publique"
+        - "parce qu'elle ne permet que 14 hôtes"
+        + "parce que beaucoup de box domestiques l'utilisent déjà, ce qui crée un conflit avec le réseau local du télétravailleur"
+        - "parce qu'elle est réservée à la documentation"
+        explanation: "Si le réseau de la maison et celui de l'entreprise sont identiques, le poste considère les serveurs comme locaux et ne passe pas par le tunnel. Choisir un sous-réseau peu courant dans 10.0.0.0/8 ou 172.16.0.0/12 évite le problème."
+      }
+
+      question "Quelle option d’ipcalc supprime l’affichage binaire ?" {
+        - "-s"
+        + "-b"
+        - "-n"
+        - "-x"
+        explanation: "Dans le paquet ipcalc de Debian, -b (ou --nobinary) supprime la représentation binaire. L'option -s sert à découper un réseau en sous-réseaux de tailles données."
+      }
+
+      question "Dans une sortie d’ipcalc, que désigne la ligne HostMin ?" {
+        - "l'adresse du réseau"
+        + "la première adresse d'hôte utilisable"
+        - "le nombre minimal d'hôtes"
+        - "le masque le plus court possible"
+        explanation: "HostMin est le premier hôte (réseau + 1) et HostMax le dernier (broadcast - 1). L'adresse du réseau apparaît sur la ligne Network, le nombre d'hôtes sur Hosts/Net."
+      }
+
+      question "Certains postes d’une salle se voient, d’autres non, alors qu’ils sont sur le même switch et le même VLAN. Que vérifier en premier ?" {
+        - "la version de Windows"
+        + "que tous les postes ont le même masque"
+        - "le serveur DNS"
+        - "la vitesse des ports"
+        explanation: "Avec des masques différents, chaque poste calcule un réseau différent et certains envoient à la passerelle ce qui devrait être local. Le DNS n'intervient pas dans un ping par adresse IP."
+      }
+
+      question "Quelle fonction du module Python ipaddress indique si deux réseaux se chevauchent ?" {
+        - "subnets()"
+        - "hosts()"
+        + "overlaps()"
+        - "supernet()"
+        explanation: "a.overlaps(b) renvoie True si les deux réseaux ont au moins une adresse en commun. subnets() découpe, hosts() liste les hôtes, supernet() donne le réseau parent."
+      }
+
+      question "Que renvoie num_addresses pour le réseau 192.168.10.0/26 créé avec ip_network ?" {
+        - "62"
+        + "64"
+        - "26"
+        - "63"
+        explanation: "num_addresses compte toutes les adresses du bloc, réseau et broadcast compris : 2^6 = 64. Pour les hôtes utilisables, il faut retirer 2, soit 62."
+      }
+
+      question "Le fichier de plan contient « postes 10.0.3.0/22 300 ». Que doit-on corriger ?" {
+        - "le nombre d'hôtes, un /22 n'en contient que 254"
+        + "l'adresse : en /22 le réseau qui contient 10.0.3.0 est 10.0.0.0/22"
+        - "rien, la ligne est correcte"
+        - "le préfixe, un /22 est interdit en 10.0.0.0/8"
+        explanation: "En /22, le bloc vaut 4 dans le 3e octet : le réseau doit commencer à 0, 4, 8... 10.0.0.0/22 offre 1 022 hôtes, largement assez pour 300."
+      }
+
+      question "Le poste reçoit bien une adresse DHCP du bon réseau, mais un ping vers 8.8.8.8 échoue alors que la passerelle répond. Qu’est-ce qui est hors de cause ?" {
+        - "le pare-feu du routeur"
+        - "la route de sortie du routeur"
+        + "l'adressage du poste (adresse, masque, passerelle)"
+        - "le NAT du routeur"
+        explanation: "Si le poste a une adresse correcte et joint sa passerelle, sa configuration locale est bonne. Le problème est au-delà : routage, NAT ou filtrage sur le routeur, ou accès de l'opérateur."
+      }
+    }
+  }
+
+  module "synthese-pme" {
+    title: "Chapitre 10 : synthèse, le plan d'adressage d'une PME sur trois sites"
+    duration: "40min"
+    content: """
+Ce dernier chapitre rassemble tout le cours dans un seul travail : construire, vérifier et documenter le plan d'adressage d'une PME. Tu vas utiliser les conversions (chapitre 1), les masques (chapitre 3), le calcul du réseau et du broadcast (chapitre 4), les plages privées (chapitre 6), le découpage FLSM (chapitre 7), le VLSM et l'agrégation (chapitre 8), puis le script de vérification (chapitre 9).
+
+### La situation
+
+Une PME de fabrication a trois sites reliés par des tunnels VPN entre leurs routeurs :
+• le **siège** (bureaux, serveurs, téléphonie sur IP) ;
+• l'**atelier** (production, automates) ;
+• une **agence** commerciale.
+
+Le responsable informatique veut un plan propre : un bloc par site, des réseaux séparés par usage (un VLAN par réseau), une seule route par site entre les routeurs, et de la place pour un quatrième site. Les nombres de machines ci-dessous **comprennent déjà 20 % de marge**.
+
+| Site | Réseau | Machines |
+|---|---|---|
+| Siège | Postes | 180 |
+| Siège | Wi-Fi | 90 |
+| Siège | Téléphonie IP | 50 |
+| Siège | Serveurs | 20 |
+| Siège | Imprimantes | 12 |
+| Siège | Administration (switchs, bornes) | 8 |
+| Atelier | Postes | 60 |
+| Atelier | Wi-Fi | 40 |
+| Atelier | Automates | 25 |
+| Atelier | Imprimantes | 5 |
+| Atelier | Administration | 5 |
+| Agence | Postes | 20 |
+| Agence | Wi-Fi | 15 |
+| Agence | Imprimantes | 3 |
+| Agence | Administration | 4 |
+
+Il faut aussi trois liaisons entre routeurs : siège-atelier, siège-agence, atelier-agence.
+
+### Étape 1 : choisir le bloc privé
+
+On prend une plage privée RFC 1918, mais **pas** 192.168.0.0/24 ni 192.168.1.0/24 : ce sont les réseaux par défaut de la plupart des box. Un salarié en télétravail sur sa box aurait le même réseau que l'entreprise, et le VPN ne marcherait pas (chapitre 9). On choisit un bloc peu courant dans 10.0.0.0/8 : **10.42.0.0/20** (10.42.0.0 à 10.42.15.255, 4 096 adresses).
+
+### Étape 2 : un bloc de même taille par site (FLSM)
+
+Le plus gros site est le siège. On ajoute la passerelle à chaque réseau puis on calcule la taille des blocs :
+
+| Réseau du siège | + passerelle | Préfixe | Bloc |
+|---|---|---|---|
+| Postes | 181 | /24 (254) | 256 |
+| Wi-Fi | 91 | /25 (126) | 128 |
+| Téléphonie IP | 51 | /26 (62) | 64 |
+| Serveurs | 21 | /27 (30) | 32 |
+| Imprimantes | 13 | /28 (14) | 16 |
+| Administration | 9 | /28 (14) | 16 |
+
+Total : 256 + 128 + 64 + 32 + 16 + 16 = **512 adresses**. Un /23 suffirait tout juste, sans aucune place pour grandir. On donne donc un **/22 (1 024 adresses)** à chaque site. Découper 10.42.0.0/20 en /22, c'est du FLSM : 2 bits empruntés, 4 blocs de 4 dans le 3e octet.
+
+| Bloc | Usage |
+|---|---|
+| 10.42.0.0/22 | Siège |
+| 10.42.4.0/22 | Atelier |
+| 10.42.8.0/22 | Agence |
+| 10.42.12.0/22 | Liaisons (10.42.12.0/24) et réserve |
+
+Avantage : chaque routeur annonce **une seule route par site** (un /22), et toute l'entreprise tient dans **une seule route 10.42.0.0/20**. C'est l'agrégation du chapitre 8, prévue dès le départ.
+
+### Étape 3 : le VLSM du siège, pas à pas
+
+On attribue les blocs du plus grand au plus petit, chacun juste après le précédent :
+
+| Réseau | Adresse réseau | Masque | Passerelle | Hôtes | Broadcast |
+|---|---|---|---|---|---|
+| Postes | 10.42.0.0/24 | 255.255.255.0 | 10.42.0.1 | 10.42.0.1 à 10.42.0.254 | 10.42.0.255 |
+| Wi-Fi | 10.42.1.0/25 | 255.255.255.128 | 10.42.1.1 | 10.42.1.1 à 10.42.1.126 | 10.42.1.127 |
+| Téléphonie IP | 10.42.1.128/26 | 255.255.255.192 | 10.42.1.129 | 10.42.1.129 à 10.42.1.190 | 10.42.1.191 |
+| Serveurs | 10.42.1.192/27 | 255.255.255.224 | 10.42.1.193 | 10.42.1.193 à 10.42.1.222 | 10.42.1.223 |
+| Imprimantes | 10.42.1.224/28 | 255.255.255.240 | 10.42.1.225 | 10.42.1.225 à 10.42.1.238 | 10.42.1.239 |
+| Administration | 10.42.1.240/28 | 255.255.255.240 | 10.42.1.241 | 10.42.1.241 à 10.42.1.254 | 10.42.1.255 |
+
+Contrôle de l'alignement : 128 est multiple de 64, 192 de 32, 224 de 16, 240 de 16. Le reste du bloc du siège, **10.42.2.0/23**, est libre.
+
+Détail d'un calcul, pour la téléphonie : 51 hôtes demandent 6 bits d'hôte (2^6 - 2 = 62), donc /26 et un bloc de 64. Le bloc commence en 10.42.1.128 ; il finit en 128 + 64 - 1 = 191 : c'est le broadcast.
+
+### Étape 4 : les liaisons entre routeurs
+
+Une liaison point à point n'a que deux adresses utiles : un /30 suffit (2^2 - 2 = 2). On les prend dans 10.42.12.0/24 :
+
+| Liaison | Réseau | Routeur A | Routeur B | Broadcast |
+|---|---|---|---|---|
+| Siège - atelier | 10.42.12.0/30 | 10.42.12.1 | 10.42.12.2 | 10.42.12.3 |
+| Siège - agence | 10.42.12.4/30 | 10.42.12.5 | 10.42.12.6 | 10.42.12.7 |
+| Atelier - agence | 10.42.12.8/30 | 10.42.12.9 | 10.42.12.10 | 10.42.12.11 |
+
+Remarque : la RFC 3021 autorise aussi les /31 sur les liaisons point à point (deux adresses, sans réseau ni broadcast), si les deux routeurs le gèrent.
+
+### Étape 5 : les règles de l'équipe
+
+Un plan n'est utile que si tout le monde l'applique de la même façon. On écrit les conventions :
+• la **passerelle** est toujours la première adresse utilisable du réseau ;
+• dans les réseaux de postes et de Wi-Fi, les **adresses statiques** (passerelle, bornes, équipements fixes) sont prises au début, de la 1re à la 19e adresse, et le **DHCP** distribue le reste (au siège : 10.42.0.20 à 10.42.0.254, soit 235 adresses pour 180 postes) ;
+• serveurs, imprimantes et administration : adresses fixes ou réservations DHCP, **jamais** dans une plage distribuée ;
+• chaque réseau est noté avec son préfixe, son masque, sa passerelle, son VLAN et son usage dans un tableau partagé.
+
+### Étape 6 : vérifier avec le script
+
+On écrit tout le plan dans `plan.txt` (bloc de code ci-dessous) et on lance `verif-plan.py` du chapitre 9. Le script doit répondre `OK` partout, sans `ERREUR` ni `CHEVAUCHEMENT`. Si une ligne affiche `TROP PETIT`, on augmente la taille du bloc et on le replace sur une frontière valide.
+
+### Étape 7 : tester sur un poste
+
+Sur un poste du siège en DHCP, on contrôle dans l'ordre :
+1. `ping 127.0.0.1` : la pile TCP/IP du poste fonctionne (boucle locale, 127.0.0.0/8) ;
+2. l'adresse reçue est dans le bon réseau, et pas en 169.254.x.x (APIPA, RFC 3927 : le DHCP n'a pas répondu) ;
+3. `ping` de la passerelle (10.42.0.1) ;
+4. `ping` d'une machine d'un autre site, par exemple l'imprimante 10.42.4.162 de l'atelier (10.42.4.161 est la passerelle de ce réseau) : cela prouve les routes entre sites.
+
+Sous Linux : `ip -4 -br addr` et `ip route`. Sous Windows : `ipconfig` ou `Get-NetIPConfiguration` dans PowerShell.
+
+### À toi de jouer
+
+1. Fais le plan VLSM de l'**atelier** dans 10.42.4.0/22 : réseau, passerelle, plage d'hôtes, broadcast, puis l'espace libre.
+2. Fais le plan VLSM de l'**agence** dans 10.42.8.0/22. Attention au Wi-Fi.
+3. Un quatrième site doit ouvrir : 70 postes et 20 appareils en Wi-Fi. Propose un bloc pour ce site sans sortir de 10.42.0.0/20 et sans chevaucher les liaisons, puis son plan VLSM.
+4. À l'agence, un poste en Wi-Fi est configuré à la main : 10.42.8.40, masque 255.255.255.224, passerelle 10.42.8.1. Il ne sort pas de son réseau. Pourquoi ?
+5. Un poste du siège affiche 169.254.33.10 après le changement d'un switch. Que vérifies-tu ?
+
+### Correction
+
+1. **Atelier** (besoins avec passerelle : 61, 41, 26, 6, 6) :
+
+| Réseau | Adresse réseau | Passerelle | Hôtes | Broadcast |
+|---|---|---|---|---|
+| Postes (61) | 10.42.4.0/26 | 10.42.4.1 | .1 à .62 | 10.42.4.63 |
+| Wi-Fi (41) | 10.42.4.64/26 | 10.42.4.65 | .65 à .126 | 10.42.4.127 |
+| Automates (26) | 10.42.4.128/27 | 10.42.4.129 | .129 à .158 | 10.42.4.159 |
+| Imprimantes (6) | 10.42.4.160/29 | 10.42.4.161 | .161 à .166 | 10.42.4.167 |
+| Administration (6) | 10.42.4.168/29 | 10.42.4.169 | .169 à .174 | 10.42.4.175 |
+
+Libre : 10.42.4.176/28, 10.42.4.192/26, 10.42.5.0/24 et 10.42.6.0/23. Le réseau des postes est plein à 61 sur 62 : la marge est déjà comptée, mais il faudra passer en /25 si l'atelier grandit encore.
+
+2. **Agence** (besoins avec passerelle : 21, 16, 5, 4 ; les imprimantes et l'administration ont toutes deux un /29, l'ordre entre elles ne change rien). Le Wi-Fi demande 16 adresses : un /28 n'en offre que 14, il faut un **/27**.
+
+| Réseau | Adresse réseau | Passerelle | Hôtes | Broadcast |
+|---|---|---|---|---|
+| Postes (21) | 10.42.8.0/27 | 10.42.8.1 | .1 à .30 | 10.42.8.31 |
+| Wi-Fi (16) | 10.42.8.32/27 | 10.42.8.33 | .33 à .62 | 10.42.8.63 |
+| Imprimantes (4) | 10.42.8.64/29 | 10.42.8.65 | .65 à .70 | 10.42.8.71 |
+| Administration (5) | 10.42.8.72/29 | 10.42.8.73 | .73 à .78 | 10.42.8.79 |
+
+Libre : 10.42.8.80/28, 10.42.8.96/27, 10.42.8.128/25, 10.42.9.0/24 et 10.42.10.0/23.
+
+3. Besoins : 71 (/25, 128) et 21 (/27, 32), soit 160 adresses. Le bloc 10.42.12.0/22 contient déjà les liaisons dans 10.42.12.0/24. Il reste 10.42.13.0/24 et **10.42.14.0/23** ; on prend le /23 pour garder de la marge (14 est multiple de 2, l'alignement est bon). Plan : postes 10.42.14.0/25 (passerelle 10.42.14.1, broadcast 10.42.14.127), Wi-Fi 10.42.14.128/27 (passerelle 10.42.14.129, broadcast 10.42.14.159). Le site annonce 10.42.14.0/23, et la route 10.42.0.0/20 reste valable. 10.42.16.0/23 serait hors du /20 ; 10.42.13.0/23 est mal aligné.
+
+4. 255.255.255.224 = /27. 10.42.8.40 est dans **10.42.8.32/27** (32 ≤ 40 < 64), le réseau du Wi-Fi. La passerelle 10.42.8.1 est dans 10.42.8.0/27, l'autre réseau : elle est hors du réseau du poste, qui ne peut pas la joindre. La bonne passerelle est **10.42.8.33**. Mieux : remettre le poste en DHCP.
+
+5. 169.254.x.x est une adresse **APIPA** : le poste n'a reçu aucune réponse DHCP. Après un changement de switch, on vérifie d'abord le port : lien actif, bon VLAN (celui des postes), puis le relais DHCP (helper) sur le routeur du siège et l'étendue DHCP. Ensuite `ipconfig /renew` sous Windows ou un redémarrage du client DHCP sous Linux.
+
+### Pour aller plus loin
+• RFC 1918, Address Allocation for Private Internets, IETF : https://www.rfc-editor.org/rfc/rfc1918
+• RFC 4632, Classless Inter-domain Routing (CIDR), IETF : https://www.rfc-editor.org/rfc/rfc4632
+• RFC 950, Internet Standard Subnetting Procedure, IETF : https://www.rfc-editor.org/rfc/rfc950
+• RFC 3927, Dynamic Configuration of IPv4 Link-Local Addresses, IETF : https://www.rfc-editor.org/rfc/rfc3927
+• Registre des adresses IPv4 à usage spécial, IANA : https://www.iana.org/assignments/iana-ipv4-special-registry/
+• Documentation du module ipaddress, Python Software Foundation : https://docs.python.org/3/library/ipaddress.html
+"""
+
+    codeblock "text" {
+      title: "plan.txt de la PME et résultat de verif-plan.py"
+      code: """
+# nom         réseau          hôtes nécessaires (passerelle comprise)
+# Siège : 10.42.0.0/22
+siege-postes  10.42.0.0/24    181
+siege-wifi    10.42.1.0/25    91
+siege-voip    10.42.1.128/26  51
+siege-serv    10.42.1.192/27  21
+siege-imp     10.42.1.224/28  13
+siege-admin   10.42.1.240/28  9
+# Atelier : 10.42.4.0/22
+atel-postes   10.42.4.0/26    61
+atel-wifi     10.42.4.64/26   41
+atel-autom    10.42.4.128/27  26
+atel-imp      10.42.4.160/29  6
+atel-admin    10.42.4.168/29  6
+# Agence : 10.42.8.0/22
+agen-postes   10.42.8.0/27    21
+agen-wifi     10.42.8.32/27   16
+agen-imp      10.42.8.64/29   4
+agen-admin    10.42.8.72/29   5
+# Liaisons entre routeurs : 10.42.12.0/24
+lien-si-at    10.42.12.0/30   2
+lien-si-ag    10.42.12.4/30   2
+lien-at-ag    10.42.12.8/30   2
+
+$ python3 verif-plan.py plan.txt
+OK         siege-postes 10.42.0.0/24       hôtes   254 / besoin 181
+OK         siege-wifi   10.42.1.0/25       hôtes   126 / besoin 91
+OK         siege-voip   10.42.1.128/26     hôtes    62 / besoin 51
+OK         siege-serv   10.42.1.192/27     hôtes    30 / besoin 21
+OK         siege-imp    10.42.1.224/28     hôtes    14 / besoin 13
+OK         siege-admin  10.42.1.240/28     hôtes    14 / besoin 9
+OK         atel-postes  10.42.4.0/26       hôtes    62 / besoin 61
+OK         atel-wifi    10.42.4.64/26      hôtes    62 / besoin 41
+OK         atel-autom   10.42.4.128/27     hôtes    30 / besoin 26
+OK         atel-imp     10.42.4.160/29     hôtes     6 / besoin 6
+OK         atel-admin   10.42.4.168/29     hôtes     6 / besoin 6
+OK         agen-postes  10.42.8.0/27       hôtes    30 / besoin 21
+OK         agen-wifi    10.42.8.32/27      hôtes    30 / besoin 16
+OK         agen-imp     10.42.8.64/29      hôtes     6 / besoin 4
+OK         agen-admin   10.42.8.72/29      hôtes     6 / besoin 5
+OK         lien-si-at   10.42.12.0/30      hôtes     2 / besoin 2
+OK         lien-si-ag   10.42.12.4/30      hôtes     2 / besoin 2
+OK         lien-at-ag   10.42.12.8/30      hôtes     2 / besoin 2
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Le réseau des postes du siège compte 180 machines, sans la passerelle. Quel préfixe choisis-tu ?" {
+        - "/25"
+        + "/24"
+        - "/23"
+        - "/26"
+        explanation: "180 + 1 passerelle = 181 hôtes. Un /25 n'en offre que 126 ; un /24 en offre 254, c'est le plus petit qui suffit. Un /23 (510 hôtes) gaspillerait la moitié du bloc."
+      }
+
+      question "Pourquoi attribue-t-on les blocs VLSM du plus grand au plus petit ?" {
+        - "pour que les petits réseaux aient les adresses les plus basses"
+        + "pour que chaque bloc commence sur une frontière valide sans laisser de trous"
+        - "parce que les routeurs refusent un petit réseau placé avant un grand"
+        - "pour économiser des bits dans le masque"
+        explanation: "Un bloc de taille T doit commencer à un multiple de T. En partant des plus grands, chaque bloc suivant tombe naturellement sur une frontière valide. Les routeurs, eux, n'imposent aucun ordre."
+      }
+
+      question "Le Wi-Fi de l’agence accueille 15 appareils. Quel préfixe faut-il, passerelle comprise ?" {
+        - "/28"
+        - "/29"
+        + "/27"
+        - "/26"
+        explanation: "15 + 1 = 16 hôtes. Un /28 donne 16 adresses mais seulement 14 hôtes, car le réseau et le broadcast ne sont pas utilisables. Il faut un /27 (30 hôtes). C'est le piège classique."
+      }
+
+      question "Le plan va de 10.42.0.0 à 10.42.15.255. Quelle route unique annonce toute l’entreprise ?" {
+        - "10.42.0.0/16"
+        - "10.42.0.0/22"
+        + "10.42.0.0/20"
+        - "10.42.0.0/24"
+        explanation: "16 réseaux /24 (0 à 15) = 4 096 adresses = 2^12, donc 32 - 12 = /20. Un /16 annoncerait aussi des adresses que l’entreprise n’utilise pas ; un /22 ne couvrirait que le siège."
+      }
+
+      question "Quel est le broadcast du réseau de téléphonie 10.42.1.128/26 ?" {
+        - "10.42.1.255"
+        - "10.42.1.192"
+        + "10.42.1.191"
+        - "10.42.1.127"
+        explanation: "En /26 le bloc vaut 64. Le réseau commence en .128 et finit en 128 + 64 - 1 = 191. .192 est le début du réseau suivant, .127 le broadcast du réseau précédent."
+      }
+
+      question "La convention de l’équipe place la passerelle sur la première adresse utilisable. Quelle est la passerelle du réseau 10.42.1.192/27 ?" {
+        - "10.42.1.192"
+        + "10.42.1.193"
+        - "10.42.1.1"
+        - "10.42.1.222"
+        explanation: "10.42.1.192 est l’adresse du réseau, inutilisable pour une machine. La première adresse utilisable est .193. 10.42.1.222 est la dernière, que certaines équipes choisissent, mais ce n’est pas la convention retenue ici."
+      }
+
+      question "Un poste de l’agence a 10.42.8.40/27 et la passerelle 10.42.8.1. Quel est le problème ?" {
+        - "10.42.8.40 est l’adresse du réseau"
+        - "le masque /27 n’existe pas en 10.0.0.0/8"
+        + "la passerelle est dans 10.42.8.0/27 alors que le poste est dans 10.42.8.32/27"
+        - "10.42.8.1 est une adresse de broadcast"
+        explanation: "En /27 les réseaux commencent à .0, .32, .64... Le poste (.40) est dans 10.42.8.32/27 ; sa passerelle doit être dans ce réseau, ici 10.42.8.33. Une passerelle hors du réseau du poste ne peut pas être jointe."
+      }
+
+      question "Pourquoi le plan évite-t-il 192.168.1.0/24 pour les réseaux de l’entreprise ?" {
+        - "parce que 192.168.1.0/24 est une plage publique"
+        + "parce que beaucoup de box l’utilisent, ce qui casse le VPN des salariés en télétravail"
+        - "parce qu’un /24 en 192.168 ne peut pas être découpé"
+        - "parce que la RFC 1918 interdit 192.168.1.0/24 en entreprise"
+        explanation: "192.168.0.0/16 est bien privée (RFC 1918) et utilisable. Mais si le réseau de la box et celui de l’entreprise sont identiques, le poste cherche les serveurs en local au lieu de passer par le tunnel. Un bloc peu courant en 10.0.0.0/8 évite ce conflit."
+      }
+
+      question "Le script affiche « TROP PETIT  atel-admin  10.42.4.168/29  hôtes 6 / besoin 7 ». Quelle correction est juste ?" {
+        - "passer en 10.42.4.168/28"
+        + "passer en /28 sur une frontière libre, par exemple 10.42.4.176/28"
+        - "garder le /29 et ne plus compter la passerelle"
+        - "passer en /30 pour gagner des adresses"
+        explanation: "7 hôtes demandent un /28 (14 hôtes). Un /28 doit commencer à un multiple de 16 : 168 ne l’est pas, ip_network refuserait 10.42.4.168/28. 176 est multiple de 16 et libre dans le plan de l’atelier. Un /30 est plus petit, pas plus grand."
+      }
+
+      question "Lequel de ces blocs est un /22 correctement écrit ?" {
+        - "10.42.6.0/22"
+        - "10.42.10.0/22"
+        + "10.42.8.0/22"
+        - "10.42.2.0/22"
+        explanation: "En /22, le bloc vaut 4 dans le 3e octet : un réseau /22 commence à 0, 4, 8, 12... Seul 8 est multiple de 4. 6, 10 et 2 ont des bits d’hôte à 1."
+      }
+
+      question "Combien de liaisons /30 peut-on découper dans 10.42.12.0/24 ?" {
+        - "32"
+        - "128"
+        + "64"
+        - "62"
+        explanation: "De /24 à /30, on emprunte 6 bits : 2^6 = 64 sous-réseaux de 4 adresses. 62 serait le nombre d’hôtes d’un /26, une confusion fréquente."
+      }
+
+      question "Un poste du siège affiche 169.254.33.10. Que t’apprend cette adresse ?" {
+        - "le poste a reçu une adresse du DHCP de secours de l’entreprise"
+        + "le poste n’a reçu aucune réponse DHCP et s’est donné une adresse APIPA"
+        - "le poste est connecté au Wi-Fi invités"
+        - "le poste est sur la liaison VPN"
+        explanation: "169.254.0.0/16 est la plage link-local (RFC 3927), que Windows appelle APIPA. Le poste se l’attribue seul quand aucun serveur DHCP ne répond : on vérifie le lien, le VLAN, le relais DHCP et l’étendue."
+      }
+
+      question "Combien d’hôtes peut contenir le bloc /22 d’un site ?" {
+        - "1 024"
+        - "510"
+        + "1 022"
+        - "2 046"
+        explanation: "Un /22 laisse 10 bits d’hôte : 2^10 = 1 024 adresses, moins le réseau et le broadcast, soit 1 022 hôtes. 1 024 compte à tort ces deux adresses ; 510 correspond à un /23."
+      }
+
+      question "Un 4e site doit ouvrir sans casser la route 10.42.0.0/20 ni chevaucher les liaisons en 10.42.12.0/24. Quel bloc lui donner ?" {
+        - "10.42.16.0/23"
+        - "10.42.13.0/23"
+        - "10.42.12.0/23"
+        + "10.42.14.0/23"
+        explanation: "10.42.14.0/23 (14 et 15) est aligné, libre et dans le /20. 10.42.16.0/23 est hors du /20 ; 10.42.13.0/23 est mal aligné (13 est impair) ; 10.42.12.0/23 contient les liaisons."
+      }
+
+      question "Le serveur de fichiers est fixé en 10.42.0.100 alors que le DHCP du siège distribue 10.42.0.20 à 10.42.0.254. Que risque-t-on ?" {
+        - "rien, le DHCP saute toujours les adresses déjà configurées à la main"
+        + "un conflit d’adresses le jour où le DHCP donne 10.42.0.100 à un poste"
+        - "que le serveur reçoive deux adresses"
+        - "que le serveur passe en APIPA"
+        explanation: "Un DHCP peut tester l’adresse avant de la proposer, mais si le serveur est éteint à ce moment, la même adresse est donnée deux fois. Les adresses statiques se placent hors de la plage distribuée, ou on fait une réservation."
+      }
+
+      question "Sur un poste de l’agence, ping 127.0.0.1 répond, mais pas la passerelle. Que prouve le premier ping ?" {
+        - "que le câble et le switch fonctionnent"
+        - "que la passerelle est en panne"
+        + "que la pile TCP/IP du poste fonctionne, sans rien dire du réseau"
+        - "que l’adresse IP du poste est correcte"
+        explanation: "127.0.0.1 est l’adresse de boucle locale (127.0.0.0/8) : le paquet ne passe jamais par la carte réseau. Ce ping teste seulement la pile du système. Le problème est ailleurs : câble, VLAN, adresse, masque ou passerelle."
+      }
+
+      question "Après le VLSM du siège, quel bloc reste libre dans 10.42.0.0/22 ?" {
+        - "10.42.1.0/24"
+        + "10.42.2.0/23"
+        - "10.42.3.0/23"
+        - "10.42.2.0/22"
+        explanation: "Les six réseaux du siège occupent 10.42.0.0 à 10.42.1.255 (512 adresses). Il reste 10.42.2.0 à 10.42.3.255, soit 10.42.2.0/23. 10.42.3.0/23 est mal aligné ; 10.42.2.0/22 l’est aussi et déborde du site."
+      }
+
+      question "Pourquoi a-t-on donné un /22 au siège alors qu’un /23 suffisait pour les besoins actuels ?" {
+        - "parce qu’un /23 n’existe pas en 10.0.0.0/8"
+        - "parce que le VLSM interdit un bloc rempli à 100 %"
+        + "pour garder de la place pour grandir, avec des blocs de même taille pour chaque site"
+        - "parce qu’un site doit toujours avoir 1 024 adresses"
+        explanation: "Les besoins (512 adresses de blocs) remplissent exactement un /23 : aucun nouveau réseau ne serait possible. Un /22 par site laisse de la place, garde un découpage régulier et une route par site."
+      }
+
+      question "Quelle adresse appartient au réseau des automates de l’atelier, 10.42.4.128/27 ?" {
+        - "10.42.4.160"
+        - "10.42.4.127"
+        - "10.42.4.100"
+        + "10.42.4.150"
+        explanation: "10.42.4.128/27 va de .128 (réseau) à .159 (broadcast) : .150 en fait partie. .160 est le début du réseau des imprimantes, .127 le broadcast du Wi-Fi, .100 est dans le Wi-Fi."
+      }
+
+      question "Quel masque inverse (wildcard) correspond aux réseaux /27 du plan ?" {
+        - "0.0.0.15"
+        + "0.0.0.31"
+        - "0.0.0.32"
+        - "255.255.255.224"
+        explanation: "Le masque /27 est 255.255.255.224 ; le masque inverse vaut 255 - 224 = 31 dans le dernier octet, soit 0.0.0.31. 0.0.0.15 correspond à un /28. 255.255.255.224 est le masque lui-même."
+      }
+    }
+  }
+}

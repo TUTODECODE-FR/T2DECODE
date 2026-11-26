@@ -1,0 +1,2508 @@
+tdc-version: 2
+type: course
+
+course "ipv6" {
+  title: "IPv6 : adresses, configuration et cohabitation avec IPv4"
+  description: """
+Ce cours apprend à lire, écrire, découper et configurer des adresses IPv6, puis à faire cohabiter IPv6 et IPv4 sur un même réseau. Il s'adresse aux élèves de bac pro CIEL, BTS SIO, BTS CIEL et BUT réseaux qui connaissent déjà l'adressage IPv4.
+
+À la fin, tu sauras :
+• écrire une adresse IPv6 sous sa forme abrégée correcte, et la remettre en forme complète ;
+• reconnaître le type d'une adresse (globale, lien-local, ULA, multicast) au premier coup d'œil ;
+• découper un préfixe /48 ou /56 en sous-réseaux /64 et dresser un plan d'adressage ;
+• expliquer et observer SLAAC, DHCPv6 et NDP (le remplaçant d'ARP) ;
+• configurer IPv6 sous Debian/Ubuntu et sous Windows 10/11 ou Windows Server, en ligne de commande ;
+• diagnostiquer un poste en double pile (IPv4 + IPv6) avec ping -6, traceroute, DNS AAAA.
+
+Les travaux pratiques ne demandent qu'une seule machine Debian ou Ubuntu (une machine virtuelle de préférence ; WSL2 marche en général, voir chapitre 5) : on y fabrique plusieurs « PC » et un routeur virtuels avec les espaces de noms réseau (network namespaces) de Linux. Aucun matériel, aucune connexion IPv6 chez ton fournisseur n'est nécessaire. Un poste Windows sert pour le chapitre 8.
+
+Toutes les adresses d'exemple utilisent le préfixe 2001:db8::/32, réservé à la documentation (RFC 3849) : elles ne correspondent à aucun réseau réel.
+
+Prérequis : adressage IPv4 (masque, passerelle, sous-réseaux), notions de modèle OSI, ligne de commande Linux de base, conversion binaire/hexadécimal.
+"""
+  category: "network"
+  level: "intermediate"
+  duration: "6h"
+  icon: "Lan"
+  keywords: ["ipv6", "slaac", "dhcpv6", "ndp", "icmpv6", "double pile", "dual stack", "préfixe", "adressage", "réseau"]
+
+  module "pourquoi-ipv6" {
+    title: "Chapitre 1 : pourquoi IPv6"
+    duration: "25min"
+    content: """
+### Le problème : il n'y a plus d'adresses IPv4 neuves
+
+Une adresse IPv4 fait 32 bits, soit environ 4,3 milliards d'adresses (2^32). Une partie est réservée (privées, multicast, expérimentales), et le reste a été distribué. L'IANA, qui répartit les adresses entre les cinq registres régionaux, a donné ses derniers blocs le 3 février 2011. Le registre européen, le RIPE NCC, a annoncé le 25 novembre 2019 qu'il n'avait plus de bloc IPv4 libre à attribuer.
+
+On a tenu jusque-là grâce à des rustines :
+• les adresses privées (RFC 1918 : 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) ;
+• la traduction d'adresses (NAT) : toute une maison ou une entreprise sort sur Internet avec une seule adresse publique ;
+• le CGNAT (NAT chez l'opérateur) : plusieurs clients partagent la même adresse publique, ce qui complique l'hébergement d'un service, les jeux en ligne et l'identification d'un abonné.
+
+### La réponse : 128 bits
+
+IPv6 (RFC 8200) code les adresses sur **128 bits**, soit 2^128, environ 3,4 × 10^38 adresses. Ce chiffre n'a pas pour but de « numéroter chaque grain de sable » : il permet surtout de donner à chaque réseau local un bloc de 2^64 adresses, et à chaque site un bloc de plusieurs milliers de réseaux, sans calcul de masque serré et sans NAT.
+
+### Ce qui change par rapport à IPv4
+
+| Point | IPv4 | IPv6 |
+|---|---|---|
+| Taille d'adresse | 32 bits | 128 bits |
+| Écriture | décimal pointé `192.0.2.10` | hexadécimal, groupes séparés par `:` |
+| En-tête | 20 à 60 octets, champs variables | 40 octets fixes + en-têtes d'extension |
+| Somme de contrôle d'en-tête | oui | supprimée (assurée par les couches 2 et 4) |
+| Fragmentation par les routeurs | oui | non : seul l'émetteur fragmente |
+| MTU minimale garantie | 68 octets | 1280 octets |
+| Diffusion (broadcast) | oui | **n'existe plus** : remplacée par le multicast |
+| Résolution adresse IP vers MAC | ARP | NDP (messages ICMPv6) |
+| Configuration automatique | DHCP | SLAAC et/ou DHCPv6 |
+| Champ « durée de vie » | TTL | Hop Limit (même rôle) |
+
+### L'en-tête IPv6
+
+L'en-tête fixe ne contient que 8 champs : Version (6), Traffic Class, Flow Label, Payload Length, **Next Header**, **Hop Limit**, adresse source, adresse destination. Le champ Next Header indique ce qui suit : 6 pour TCP, 17 pour UDP, 58 pour ICMPv6, ou un en-tête d'extension (routage, fragmentation...). Un en-tête simple et de taille fixe est plus facile à traiter pour un routeur.
+
+### ICMPv6 n'est plus optionnel
+
+En IPv4, beaucoup d'administrateurs bloquaient tout l'ICMP « par sécurité ». En IPv6, c'est une erreur grave : ICMPv6 transporte la découverte des voisins (NDP), les annonces de routeurs et le message **Packet Too Big** (type 2), indispensable puisque les routeurs ne fragmentent plus. Bloquer ICMPv6 en entier casse le réseau. La RFC 4890 détaille ce qu'il faut laisser passer ; on y revient au chapitre 9.
+
+### IPv6 est déjà là
+
+Windows (depuis Vista), Linux, macOS, Android et iOS activent IPv6 par défaut. Les grands opérateurs français fournissent IPv6 à leurs abonnés fixes et mobiles, et l'Arcep publie chaque année un baromètre de la transition vers IPv6. Conséquence pratique pour un technicien : même sur un réseau « tout IPv4 », chaque poste a déjà au moins une adresse IPv6 de lien-local et parle IPv6 avec ses voisins. Ignorer IPv6, c'est ignorer une partie du trafic de son propre réseau.
+
+### À toi de jouer
+
+Sur ta machine Linux, puis sur un poste Windows :
+1. Affiche toutes les adresses IPv6 de la machine.
+2. Repère combien d'adresses IPv6 a ta carte réseau principale.
+3. Compare avec le nombre d'adresses IPv4 de la même carte.
+
+### Correction
+
+Linux :
+```bash
+ip -6 address show
+```
+Windows (invite de commandes ou PowerShell) :
+```powershell
+ipconfig
+```
+Résultat attendu : la carte principale a **une** adresse IPv4, mais **au moins une** adresse IPv6 commençant par `fe80::` (lien-local), même sans aucune configuration. Si ta box fournit IPv6, tu vois en plus une ou plusieurs adresses commençant par `2` ou `3` (globales), dont une « temporaire » sous Windows. L'interface `lo` sous Linux porte `::1`, l'équivalent de `127.0.0.1`. Plusieurs adresses par carte, c'est le fonctionnement normal d'IPv6, pas une anomalie.
+"""
+
+    codeblock "bash" {
+      title: "Voir IPv6 sur une machine Linux"
+      code: """
+# adresses IPv6 de toutes les interfaces
+ip -6 address show
+# table de routage IPv6
+ip -6 route show
+# IPv6 est-il désactivé ? (0 = actif, 1 = désactivé)
+sysctl net.ipv6.conf.all.disable_ipv6
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Combien de bits compte une adresse IPv6 ?" {
+        - "32"
+        - "64"
+        + "128"
+        - "256"
+        explanation: "Une adresse IPv6 fait 128 bits (RFC 8200, RFC 4291), soit 16 octets. 32 bits, c'est IPv4. 64 bits est la taille habituelle de la partie identifiant d'interface, d'où la confusion fréquente."
+      }
+
+      question "Quelle est la taille de l’en-tête fixe d’un paquet IPv6 ?" {
+        - "20 octets"
+        + "40 octets"
+        - "60 octets"
+        - "128 octets"
+        explanation: "L'en-tête IPv6 fait toujours 40 octets, dont 32 pour les deux adresses. 20 octets est la taille minimale de l'en-tête IPv4, 60 sa taille maximale avec options."
+      }
+
+      question "Quel mécanisme IPv4 n’existe plus du tout en IPv6 ?" {
+        - "le multicast"
+        + "la diffusion (broadcast)"
+        - "l'unicast"
+        - "la durée de vie des paquets"
+        explanation: "IPv6 n'a pas d'adresse de broadcast. Les besoins de diffusion (trouver un voisin, trouver un routeur) passent par des groupes multicast ciblés, comme ff02::1 (tous les nœuds du lien). La durée de vie existe toujours sous le nom Hop Limit."
+      }
+
+      question "Dans un réseau IPv6, qui a le droit de fragmenter un paquet trop gros ?" {
+        - "chaque routeur sur le chemin"
+        + "uniquement la machine qui émet le paquet"
+        - "uniquement le dernier routeur"
+        - "personne, la fragmentation est interdite"
+        explanation: "En IPv6, les routeurs ne fragmentent jamais : ils renvoient un message ICMPv6 Packet Too Big à l'émetteur, qui réduit la taille ou fragmente lui-même avec un en-tête d'extension Fragment. La fragmentation existe donc, mais seulement à la source."
+      }
+
+      question "Pourquoi ne faut-il pas bloquer tout ICMPv6 sur un pare-feu ?" {
+        - "parce que ICMPv6 sert uniquement au ping"
+        + "parce que NDP, les annonces de routeurs et Packet Too Big passent par ICMPv6"
+        - "parce que ICMPv6 est chiffré"
+        - "parce que les pare-feu ne savent pas filtrer ICMPv6"
+        explanation: "ICMPv6 porte des fonctions vitales : découverte des voisins (remplaçant d'ARP), annonces de routeurs (SLAAC) et Packet Too Big (découverte de la MTU). Tout bloquer casse la connectivité. On filtre de façon sélective, comme le décrit la RFC 4890."
+      }
+
+      question "Quelle est la MTU minimale que tout lien IPv6 doit accepter ?" {
+        - "576 octets"
+        - "1500 octets"
+        + "1280 octets"
+        - "9000 octets"
+        explanation: "La RFC 8200 impose une MTU d'au moins 1280 octets sur tout lien IPv6. 576 octets est la taille de datagramme que tout hôte IPv4 doit pouvoir recevoir, 1500 la MTU Ethernet classique, 9000 une MTU de trames géantes (jumbo frames)."
+      }
+
+      question "Dans l’en-tête IPv6, quel champ remplace le TTL d’IPv4 ?" {
+        - "Flow Label"
+        - "Traffic Class"
+        + "Hop Limit"
+        - "Next Header"
+        explanation: "Hop Limit est décrémenté de 1 par chaque routeur ; à 0, le paquet est détruit et un ICMPv6 Time Exceeded est renvoyé. C'est exactement le rôle du TTL d'IPv4, avec un nom plus honnête. Next Header indique le protocole suivant."
+      }
+
+      question "Dans un paquet IPv6, le champ Next Header vaut 58. Que contient le paquet ?" {
+        - "un segment TCP"
+        - "un datagramme UDP"
+        + "un message ICMPv6"
+        - "un en-tête de fragmentation"
+        explanation: "58 est le numéro de protocole d'ICMPv6. TCP vaut 6, UDP vaut 17, et l'en-tête d'extension Fragment vaut 44. Ce champ joue le rôle du champ Protocol d'IPv4."
+      }
+
+      question "Quel champ de l’en-tête IPv4 a été supprimé en IPv6 pour accélérer le traitement par les routeurs ?" {
+        + "la somme de contrôle (checksum) de l'en-tête"
+        - "l'adresse source"
+        - "le numéro de version"
+        - "la longueur des données"
+        explanation: "IPv6 n'a plus de checksum d'en-tête : la couche liaison (CRC Ethernet) et la couche transport (checksum TCP/UDP, désormais obligatoire pour UDP) détectent déjà les erreurs. Le routeur n'a plus à recalculer une somme à chaque saut."
+      }
+
+      question "Un collègue dit : « Notre réseau est tout en IPv4, IPv6 ne nous concerne pas. » Qu’est-ce qui est faux ?" {
+        - "rien, IPv6 est désactivé par défaut sur les postes"
+        + "les postes ont déjà une adresse lien-local IPv6 et échangent en IPv6 avec leurs voisins"
+        - "IPv6 ne fonctionne qu'avec une box récente"
+        - "IPv6 remplace automatiquement IPv4 dès qu'il est présent"
+        explanation: "Windows, Linux et macOS activent IPv6 par défaut et se donnent une adresse fe80:: sur chaque carte. Ils échangent déjà des messages NDP et multicast IPv6 sur le réseau local. IPv6 ne remplace pas IPv4 : les deux cohabitent."
+      }
+
+      question "Quel organisme a distribué ses derniers blocs IPv4 aux registres régionaux en février 2011 ?" {
+        - "le RIPE NCC"
+        + "l'IANA"
+        - "l'IETF"
+        - "l'Arcep"
+        explanation: "L'IANA répartit les adresses entre les cinq registres régionaux (RIR). Elle a donné ses derniers blocs /8 le 3 février 2011. Le RIPE NCC est le registre européen (épuisé en novembre 2019), l'IETF écrit les RFC, l'Arcep est le régulateur français."
+      }
+
+      question "Pourquoi le CGNAT pose-t-il problème pour héberger un service chez soi ?" {
+        - "il bloque tout le trafic chiffré"
+        + "l'adresse publique est partagée entre plusieurs clients, donc aucune redirection de port n'est possible chez soi"
+        - "il impose une adresse IPv6 unique"
+        - "il désactive le DNS"
+        explanation: "Avec le CGNAT, la traduction d'adresses se fait chez l'opérateur, qui partage une adresse publique entre plusieurs abonnés. Tu ne contrôles pas ce NAT, donc tu ne peux pas y ouvrir de port. IPv6 donne une adresse globale à chaque machine et supprime ce problème (le pare-feu reste nécessaire)."
+      }
+    }
+  }
+
+  module "ecriture" {
+    title: "Chapitre 2 : écrire et abréger une adresse"
+    duration: "30min"
+    content: """
+### La forme complète
+
+Les 128 bits sont découpés en **8 groupes de 16 bits**, chacun écrit en **4 chiffres hexadécimaux**, séparés par `:`. Un chiffre hexadécimal vaut 4 bits (un « quartet », en anglais nibble).
+
+```text
+2001:0db8:0000:0000:0000:ff00:0042:8329
+```
+
+C'est long. Deux règles permettent d'abréger, et la RFC 5952 fixe **une seule** forme recommandée, pour que tout le monde écrive la même chose (utile pour comparer des journaux ou chercher dans un fichier).
+
+### Règle 1 : supprimer les zéros en tête de chaque groupe
+
+`0db8` devient `db8`, `0042` devient `42`, `0000` devient `0`. On ne supprime **jamais** les zéros de fin : `ff00` reste `ff00`.
+
+```text
+2001:db8:0:0:0:ff00:42:8329
+```
+
+### Règle 2 : remplacer une suite de groupes nuls par ::
+
+Une suite d'au moins **deux** groupes `0` consécutifs est remplacée par `::`, **une seule fois** dans l'adresse.
+
+```text
+2001:db8::ff00:42:8329
+```
+
+Pourquoi une seule fois ? Pour retrouver la forme complète, on compte les groupes présents (ici 5) et on sait qu'il en manque 3. Avec deux `::`, on ne saurait pas comment répartir les zéros manquants.
+
+### Les précisions de la RFC 5952
+
+• Le `::` remplace la suite de zéros **la plus longue**. Si deux suites ont la même longueur, on abrège **la première** (la plus à gauche).
+• Un groupe nul **isolé** ne s'abrège pas en `::` : on écrit `2001:db8:0:1:1:1:1:1`.
+• Les lettres hexadécimales s'écrivent **en minuscules**.
+• Pour donner un port, on met l'adresse entre crochets : `[2001:db8::1]:443`. C'est aussi la forme utilisée dans une URL : `http://[2001:db8::1]:8080/`.
+
+Exemples :
+
+| Forme complète | Forme RFC 5952 |
+|---|---|
+| `2001:0db8:0000:0000:0000:0000:0000:0001` | `2001:db8::1` |
+| `2001:0db8:0000:0001:0000:0000:0000:0001` | `2001:db8:0:1::1` |
+| `2001:0db8:0000:0000:0001:0000:0000:0001` | `2001:db8::1:0:0:1` |
+| `FE80:0000:0000:0000:0A00:27FF:FE4E:66A1` | `fe80::a00:27ff:fe4e:66a1` |
+| `0000:0000:0000:0000:0000:0000:0000:0001` | `::1` |
+| `0000:0000:0000:0000:0000:0000:0000:0000` | `::` |
+
+Troisième ligne : deux suites de deux zéros, même longueur, donc on abrège la première.
+
+### Repasser à la forme complète
+
+Méthode sûre en trois étapes :
+1. Compte les groupes écrits de part et d'autre du `::`.
+2. Ajoute autant de groupes `0000` qu'il en manque pour arriver à 8.
+3. Complète chaque groupe à 4 chiffres en ajoutant des zéros **à gauche**.
+
+Exemple : `2001:db8:a::42` contient 4 groupes, il en manque 4.
+```text
+2001:0db8:000a:0000:0000:0000:0000:0042
+```
+
+### Le préfixe
+
+Comme en IPv4 avec la notation CIDR, on écrit la longueur du préfixe après une barre oblique : `2001:db8:1:2::/64` désigne les 64 premiers bits. Il n'y a **pas de masque en décimal pointé** en IPv6 : on parle toujours en longueur de préfixe.
+
+### Laisser une machine vérifier
+
+Python (installé sur Debian et Ubuntu) contient le module `ipaddress`, qui applique la RFC 5952 :
+```bash
+python3 -c 'import ipaddress; print(ipaddress.ip_address("2001:0DB8:0:0:1:0:0:1"))'
+# 2001:db8::1:0:0:1
+python3 -c 'import ipaddress; print(ipaddress.ip_address("2001:db8::1").exploded)'
+# 2001:0db8:0000:0000:0000:0000:0000:0001
+```
+Sers-t'en pour **vérifier** tes réponses, pas pour éviter de les faire : en examen comme devant un équipement, il faut savoir le faire de tête.
+
+### À toi de jouer
+
+Abrège selon la RFC 5952 :
+1. `2001:0db8:0000:0000:0008:0800:200c:417a`
+2. `ff02:0000:0000:0000:0000:0000:0000:0002`
+3. `2001:0db8:0000:0000:0001:0000:0000:0000`
+4. `2001:0DB8:00A0:0000:0000:0000:0000:0010`
+5. `2001:0db8:0001:0000:0001:0001:0001:0001`
+
+Développe en forme complète :
+6. `fe80::1`
+7. `2001:db8:c:18::a`
+8. `::ffff:c000:280`
+
+Trouve l'erreur :
+9. `2001:db8::5::1`
+10. `2001:db8:g::1`
+
+### Correction
+
+1. `2001:db8::8:800:200c:417a` (suite de trois zéros, `0800` devient `800`, pas `8`).
+2. `ff02::2`
+3. `2001:db8:0:0:1::` : deux suites (deux zéros puis trois zéros), on abrège la plus longue, celle de la fin. Une adresse peut se terminer par `::`.
+4. `2001:db8:a0::10` (minuscules, `00a0` devient `a0`).
+5. `2001:db8:1:0:1:1:1:1` : un seul groupe nul, pas de `::`.
+6. `fe80:0000:0000:0000:0000:0000:0000:0001`
+7. `2001:0db8:000c:0018:0000:0000:0000:000a`
+8. `0000:0000:0000:0000:0000:ffff:c000:0280` (c'est l'adresse IPv4 192.0.2.128 « encapsulée », vue au chapitre 3).
+9. Deux `::` : adresse invalide, impossible de savoir combien de zéros vont de chaque côté.
+10. `g` n'est pas un chiffre hexadécimal (0 à 9, a à f) : adresse invalide.
+"""
+
+    codeblock "bash" {
+      title: "Vérifier une abréviation avec Python"
+      code: """
+for a in 2001:0db8:0000:0000:0008:0800:200c:417a 2001:0db8:0:0:1:0:0:0 2001:db8:c:18::a; do
+  python3 -c "import ipaddress,sys; ip=ipaddress.ip_address(sys.argv[1]); print(sys.argv[1], '->', ip.compressed, '|', ip.exploded)" "$a"
+done
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle est la forme RFC 5952 de 2001:0db8:0000:0000:0000:0000:0000:0001 ?" {
+        - "2001:db8:0::1"
+        + "2001:db8::1"
+        - "2001:0db8::0001"
+        - "2001:db8::0:1"
+        explanation: "On supprime les zéros en tête (0db8 devient db8, 0001 devient 1) puis on remplace la plus longue suite de zéros par ::. 2001:db8::0:1 laisse un zéro qui aurait dû être absorbé dans le ::."
+      }
+
+      question "Combien de fois peut-on utiliser :: dans une même adresse ?" {
+        - "autant de fois qu'il y a de suites de zéros"
+        + "une seule fois"
+        - "deux fois au maximum"
+        - "jamais si l'adresse commence par 2001"
+        explanation: "Le :: signifie « autant de groupes nuls qu'il en faut pour arriver à 8 ». Avec deux ::, la répartition des zéros serait ambiguë et l'adresse invalide."
+      }
+
+      question "Comment s’écrit correctement 2001:db8:0:0:1:0:0:1 ?" {
+        - "2001:db8:0:0:1::1"
+        + "2001:db8::1:0:0:1"
+        - "2001:db8::1::1"
+        - "2001:db8:0::1:0::1"
+        explanation: "Deux suites de deux zéros de même longueur : la RFC 5952 impose d'abréger la première (la plus à gauche). Les formes avec deux :: sont invalides."
+      }
+
+      question "Que devient le groupe 0800 une fois les zéros en tête supprimés ?" {
+        - "8"
+        + "800"
+        - "08"
+        - "80"
+        explanation: "On ne supprime que les zéros de gauche. 0800 devient 800. Écrire 8 changerait la valeur (0x0008 au lieu de 0x0800) : c'est l'erreur la plus fréquente."
+      }
+
+      question "Comment écrire 2001:db8:0:1:1:1:1:1 en forme RFC 5952 ?" {
+        + "2001:db8:0:1:1:1:1:1"
+        - "2001:db8::1:1:1:1:1"
+        - "2001:db8:1:1:1:1:1"
+        - "2001:db8:00:1:1:1:1:1"
+        explanation: "Un seul groupe nul isolé ne doit pas être abrégé en :: selon la RFC 5952 : on écrit 0. La forme avec :: serait comprise par les logiciels mais n'est pas la forme recommandée. Supprimer simplement le groupe ferait 7 groupes : adresse fausse."
+      }
+
+      question "Combien de bits représente un chiffre hexadécimal ?" {
+        - "2"
+        + "4"
+        - "8"
+        - "16"
+        explanation: "Un chiffre hexadécimal va de 0 à f, soit 16 valeurs, donc 4 bits (un quartet). Un groupe de 4 chiffres fait 16 bits, et 8 groupes font 128 bits."
+      }
+
+      question "Quelle est la forme complète de 2001:db8:a::42 ?" {
+        - "2001:0db8:a000:0000:0000:0000:0000:4200"
+        + "2001:0db8:000a:0000:0000:0000:0000:0042"
+        - "2001:0db8:000a:0042:0000:0000:0000:0000"
+        - "2001:db8:000a:0000:0000:0042"
+        explanation: "On compte 4 groupes, il en manque 4 qu'on place à l'endroit du ::. Puis on complète chaque groupe par des zéros à gauche : a devient 000a, 42 devient 0042. La dernière proposition n'a que 6 groupes."
+      }
+
+      question "Quelle adresse est invalide ?" {
+        - "2001:db8::"
+        - "::1"
+        + "2001:db8::12::1"
+        - "fe80::a00:27ff:fe4e:66a1"
+        explanation: "2001:db8::12::1 contient deux ::, ce qui est interdit. 2001:db8:: est valide (tous les groupes suivants sont nuls), ::1 est l'adresse de bouclage."
+      }
+
+      question "Comment écrire l’adresse 2001:db8::10 avec le port 8080 dans une URL ?" {
+        - "http://2001:db8::10:8080/"
+        + "http://[2001:db8::10]:8080/"
+        - "http://(2001:db8::10):8080/"
+        - "http://2001:db8::10/8080"
+        explanation: "Les crochets séparent l'adresse du port (RFC 3986, rappelé par la RFC 5952). Sans crochets, 2001:db8::10:8080 serait lu comme une autre adresse IPv6, sans port."
+      }
+
+      question "Selon la RFC 5952, en quelle casse écrit-on les lettres a à f ?" {
+        + "en minuscules"
+        - "en majuscules"
+        - "peu importe, les deux sont recommandées"
+        - "en majuscules pour le préfixe, minuscules pour l'interface"
+        explanation: "Les logiciels acceptent les deux casses en entrée, mais la forme recommandée est en minuscules. Une seule forme facilite la recherche dans les journaux et les comparaisons."
+      }
+
+      question "Comment abréger 2001:0db8:0000:0000:0001:0000:0000:0000 ?" {
+        - "2001:db8::1:0:0:0"
+        + "2001:db8:0:0:1::"
+        - "2001:db8::1::"
+        - "2001:db8:0:0:1"
+        explanation: "Il y a une suite de deux zéros et une suite de trois zéros. On abrège la plus longue, celle de la fin, et une adresse peut se terminer par ::. La dernière proposition n'a que 5 groupes."
+      }
+
+      question "Comment indique-t-on la taille du réseau en IPv6 ?" {
+        - "avec un masque comme 255.255.255.0"
+        + "avec une longueur de préfixe, par exemple /64"
+        - "avec un masque inversé (wildcard)"
+        - "avec une classe A, B ou C"
+        explanation: "IPv6 n'utilise que la notation par longueur de préfixe (/64, /48...). Il n'existe pas de masque en décimal pointé ni de classes d'adresses."
+      }
+
+      question "Combien de groupes de 16 bits manque-t-il dans fe80::a00:27ff:fe4e:66a1, à remplacer par le :: ?" {
+        - "2"
+        + "3"
+        - "4"
+        - "5"
+        explanation: "On compte 5 groupes écrits (fe80, a00, 27ff, fe4e, 66a1). 8 moins 5 donne 3 groupes nuls : fe80:0000:0000:0000:0a00:27ff:fe4e:66a1."
+      }
+    }
+  }
+
+  module "types" {
+    title: "Chapitre 3 : les types d'adresses"
+    duration: "35min"
+    content: """
+### Une carte, plusieurs adresses
+
+En IPv6, une interface a **normalement plusieurs adresses** en même temps, chacune avec une **portée** (scope) : le lien local seulement, le site, ou Internet entier. Le type se reconnaît aux premiers chiffres (RFC 4291).
+
+| Préfixe | Type | Portée | À retenir |
+|---|---|---|---|
+| `::/128` | non spécifiée | aucune | « pas encore d'adresse », utilisée comme source pendant la configuration |
+| `::1/128` | bouclage (loopback) | la machine | l'équivalent de 127.0.0.1 |
+| `2000::/3` | unicast global (GUA) | Internet | commence par 2 ou 3 ; routable publiquement |
+| `fe80::/10` | lien-local | le lien (le segment) | toujours présente, jamais routée |
+| `fc00::/7` | ULA (adresse locale unique) | le site | en pratique `fd00::/8` ; l'équivalent des adresses privées |
+| `ff00::/8` | multicast | variable | commence par ff |
+| `::ffff:0:0/96` | IPv4 encapsulée (IPv4-mapped) | interne | `::ffff:192.0.2.1` : une adresse IPv4 vue par un programme IPv6 |
+| `2001:db8::/32` | documentation | aucune | exemples dans les cours et documentations (RFC 3849) |
+
+Il n'y a **pas d'adresse de broadcast** et pas d'adresse « réseau » réservée comme en IPv4 : dans un /64, on peut en théorie utiliser toutes les valeurs.
+
+### Unicast global (GUA)
+
+Ce sont les adresses publiques, distribuées par les registres aux opérateurs puis aux clients. Structure habituelle d'une adresse globale dans un réseau local :
+
+```text
+| préfixe de routage global | sous-réseau | identifiant d'interface |
+|        48 bits            |  16 bits    |        64 bits          |
+  2001:db8:abcd               0012          0000:0000:0000:0010
+```
+
+Les 64 premiers bits désignent le réseau (le **préfixe**), les 64 derniers la machine (l'**identifiant d'interface**, IID). Ce découpage est développé au chapitre 4.
+
+### Lien-local (fe80::/10)
+
+Chaque interface IPv6 active s'attribue automatiquement une adresse `fe80::/64`, **sans serveur ni routeur**. Elle sert à parler aux voisins immédiats : découverte des voisins, annonces de routeurs, protocoles de routage. Un routeur ne la transmet jamais à un autre réseau.
+
+Conséquence importante : la même adresse `fe80::1` peut exister sur chaque segment. Pour lever l'ambiguïté, on précise l'interface avec un **identifiant de zone** après `%` :
+• Linux : `fe80::1%eth0` ;
+• Windows : `fe80::1%12` (le numéro d'interface, visible avec `ipconfig` ou `Get-NetIPInterface`).
+
+Dans la pratique, la passerelle par défaut d'un poste IPv6 est très souvent une adresse lien-local du routeur (`fe80::...`).
+
+### ULA (fc00::/7)
+
+Les adresses locales uniques (RFC 4193) servent à l'intérieur d'un site, sans être routées sur Internet. Seule la moitié `fd00::/8` est utilisée aujourd'hui : le 8e bit (L) vaut 1 pour « défini localement ». Structure :
+
+```text
+fd | identifiant global aléatoire (40 bits) | sous-réseau (16 bits) | IID (64 bits)
+fd12:3456:789a:0001::/64
+```
+
+L'identifiant global de 40 bits doit être **tiré au hasard** : si deux entreprises fusionnent ou se relient par VPN, il est très peu probable que leurs préfixes se chevauchent, contrairement à deux réseaux 192.168.1.0/24. Ne choisis donc pas `fd00::/48` « parce que c'est joli ».
+
+ULA ne remplace pas une adresse globale : un poste qui a une ULA et une GUA utilise la GUA pour Internet et l'ULA pour les services internes.
+
+### Multicast (ff00::/8)
+
+Une adresse multicast désigne un **groupe** de machines. Le 4e chiffre hexadécimal donne la portée : `ff02::` = lien local, `ff05::` = site, `ff0e::` = global.
+
+| Adresse | Groupe |
+|---|---|
+| `ff02::1` | tous les nœuds du lien |
+| `ff02::2` | tous les routeurs du lien |
+| `ff02::1:2` | tous les serveurs et relais DHCPv6 |
+| `ff02::fb` | mDNS |
+| `ff02::1:ff00:0/104` | adresses de nœud sollicité (solicited-node), utilisées par NDP (chapitre 5) |
+
+Sur Ethernet, une trame multicast IPv6 part vers une adresse MAC qui commence par `33:33`, suivie des 32 derniers bits de l'adresse IPv6. Exemple : `ff02::1` donne la MAC `33:33:00:00:00:01`.
+
+### Comment un poste choisit son adresse source
+
+Quand plusieurs adresses sont possibles, le système suit la RFC 6724 : même portée que la destination, préférer l'adresse non dépréciée, préférer IPv6 à IPv4 par défaut, etc. Pour une destination `fe80::...`, il prend son adresse lien-local ; pour Internet, une adresse globale (souvent temporaire, voir chapitre 6).
+
+### À toi de jouer
+
+Pour chaque adresse, donne le type et dis si un routeur peut la transmettre vers Internet :
+1. `2a01:cb00:12:3400::1`
+2. `fe80::4a2:f3ff:fe11:2233`
+3. `fd3c:8a1e:77b0:10::25`
+4. `ff02::2`
+5. `::1`
+6. `::ffff:198.51.100.7`
+7. `fc00::1`
+8. `ff05::1:3`
+
+Puis : sur ton Linux, affiche la portée (scope) de chaque adresse, et fais un ping vers tous les nœuds de ton lien.
+
+### Correction
+
+1. Unicast global (commence par 2) : routable sur Internet.
+2. Lien-local : jamais routée.
+3. ULA (fd) : routée à l'intérieur du site, pas sur Internet.
+4. Multicast, tous les routeurs du lien local : pas transmise hors du lien.
+5. Bouclage : ne quitte pas la machine.
+6. IPv4 encapsulée : n'apparaît pas sur le réseau, c'est une représentation interne d'une adresse IPv4 (198.51.100.7).
+7. Dans `fc00::/7` mais avec le bit L à 0 : plage réservée, non utilisée. À éviter.
+8. Multicast de portée site (`ff05`) ; `ff05::1:3` est le groupe « tous les serveurs DHCPv6 » du site (RFC 8415).
+
+Côté pratique :
+```bash
+ip -6 address show | grep inet6
+#    inet6 ::1/128 scope host
+#    inet6 fe80::a00:27ff:fe4e:66a1/64 scope link
+ping -6 -c 3 ff02::1%eth0
+```
+Remplace `eth0` par le nom de ta carte (`ip link`). Les réponses viennent des adresses `fe80::` de toutes les machines IPv6 du segment, y compris la tienne : c'est un inventaire rapide des voisins. Sur un réseau partagé (lycée, entreprise), fais-le seulement avec l'accord du responsable.
+"""
+
+    codeblock "bash" {
+      title: "Classer une adresse avec Python"
+      code: """
+python3 - <<'EOF'
+import ipaddress
+for a in ["2a01:cb00:12:3400::1", "fe80::1", "fd3c:8a1e:77b0:10::25",
+          "ff02::2", "::1", "2001:db8::1"]:
+    ip = ipaddress.ip_address(a)
+    print(f"{a:26} global={ip.is_global!s:5} privee={ip.is_private!s:5} "
+          f"lien-local={ip.is_link_local!s:5} multicast={ip.is_multicast}")
+EOF
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel préfixe correspond aux adresses de lien-local ?" {
+        - "fc00::/7"
+        + "fe80::/10"
+        - "ff02::/16"
+        - "2000::/3"
+        explanation: "fe80::/10 est réservé au lien-local (RFC 4291). fc00::/7 est l'ULA, ff02:: le multicast de portée lien, 2000::/3 l'unicast global."
+      }
+
+      question "Quel est l’équivalent IPv6 de 127.0.0.1 ?" {
+        - "::"
+        + "::1"
+        - "fe80::1"
+        - "ff02::1"
+        explanation: "::1 est l'adresse de bouclage. :: est l'adresse non spécifiée (aucune adresse). fe80::1 est une adresse lien-local souvent donnée aux routeurs, ff02::1 le groupe de tous les nœuds."
+      }
+
+      question "Une adresse commence par fd. De quel type est-elle ?" {
+        - "lien-local"
+        - "multicast"
+        + "ULA (adresse locale unique)"
+        - "unicast global"
+        explanation: "fd00::/8 est la partie utilisée de fc00::/7, les adresses locales uniques (RFC 4193). Elles jouent le rôle des adresses privées d'IPv4, mais avec un identifiant aléatoire pour éviter les collisions entre sites."
+      }
+
+      question "Pourquoi l’identifiant global d’un préfixe ULA doit-il être aléatoire ?" {
+        - "pour qu'il soit routable sur Internet"
+        + "pour éviter que deux sites reliés plus tard aient le même préfixe"
+        - "parce que les routeurs refusent fd00::/48"
+        - "pour chiffrer le trafic interne"
+        explanation: "Avec 40 bits aléatoires, deux organisations qui se relient (fusion, VPN) n'ont presque aucune chance d'avoir des préfixes qui se chevauchent. C'est la leçon tirée des innombrables réseaux 192.168.1.0/24 en conflit."
+      }
+
+      question "Que désigne l’adresse ff02::2 ?" {
+        - "tous les nœuds du lien"
+        + "tous les routeurs du lien"
+        - "tous les serveurs DHCPv6"
+        - "la passerelle par défaut"
+        explanation: "ff02::2 est le groupe multicast de tous les routeurs du lien : un poste y envoie ses sollicitations de routeur (RS). ff02::1 est le groupe de tous les nœuds, ff02::1:2 celui des serveurs et relais DHCPv6."
+      }
+
+      question "Sous Linux, comment pinguer l’adresse lien-local fe80::1 joignable par la carte eth0 ?" {
+        - "ping -6 fe80::1"
+        + "ping -6 fe80::1%eth0"
+        - "ping -6 fe80::1/64"
+        - "ping -6 [fe80::1]:eth0"
+        explanation: "Une adresse lien-local peut exister sur chaque segment ; il faut préciser l'interface avec un identifiant de zone %eth0 (ou l'option -I eth0). Sans lui, le système ne sait pas par quelle carte envoyer le paquet."
+      }
+
+      question "Dans l’adresse fe80::1%12 affichée par Windows, que signifie %12 ?" {
+        - "la longueur du préfixe"
+        + "le numéro de l'interface par laquelle l'adresse est joignable"
+        - "le numéro de VLAN"
+        - "la durée de vie de l'adresse en heures"
+        explanation: "C'est l'identifiant de zone (zone index). Windows utilise le numéro d'interface (ifIndex), visible avec ipconfig ou Get-NetIPInterface. Linux utilise plutôt le nom de la carte, comme %eth0."
+      }
+
+      question "Avec quel préfixe commencent les adresses unicast globales actuellement attribuées ?" {
+        - "fe80::/10"
+        + "2000::/3"
+        - "fd00::/8"
+        - "::/96"
+        explanation: "2000::/3 couvre les adresses qui commencent par 2 ou 3 en hexadécimal : c'est la plage d'où viennent les adresses publiques. Les trois autres préfixes ne sont pas routés sur Internet."
+      }
+
+      question "Quelle adresse MAC de destination porte une trame Ethernet envoyée à ff02::1 ?" {
+        - "ff:ff:ff:ff:ff:ff"
+        + "33:33:00:00:00:01"
+        - "01:00:5e:00:00:01"
+        - "00:00:00:00:00:01"
+        explanation: "Le multicast IPv6 sur Ethernet utilise des MAC 33:33 suivies des 32 derniers bits de l'adresse IPv6. ff:ff:ff:ff:ff:ff est le broadcast (inexistant en IPv6), 01:00:5e est le préfixe du multicast IPv4."
+      }
+
+      question "Quel préfixe est réservé aux exemples de documentation ?" {
+        - "fd00::/8"
+        - "2002::/16"
+        + "2001:db8::/32"
+        - "fe80::/64"
+        explanation: "La RFC 3849 réserve 2001:db8::/32 pour les documentations et les cours. Ces adresses ne doivent jamais être routées. 2002::/16 était utilisé par le mécanisme de transition 6to4."
+      }
+
+      question "Que représente l’adresse ::ffff:192.0.2.10 ?" {
+        - "une adresse ULA"
+        + "une adresse IPv4 représentée dans le format IPv6 (IPv4-mapped)"
+        - "un tunnel 6to4"
+        - "une adresse multicast IPv4"
+        explanation: "Le préfixe ::ffff:0:0/96 sert à un programme IPv6 pour manipuler une connexion IPv4 : tu le vois par exemple dans les journaux d'un serveur web qui écoute en IPv6 et reçoit une connexion IPv4. Ces adresses ne circulent pas sur le réseau."
+      }
+
+      question "Un poste a les adresses fe80::12, fd12:3456:789a:1::12 et 2001:db8:5:1::12. Laquelle utilise-t-il pour joindre un site sur Internet ?" {
+        - "fe80::12"
+        - "fd12:3456:789a:1::12"
+        + "2001:db8:5:1::12"
+        - "les trois en même temps"
+        explanation: "Seule l'adresse globale a une portée Internet. Le choix de l'adresse source (RFC 6724) écarte la lien-local, dont la portée est trop petite, et l'ULA, qui n'est pas routée sur Internet."
+      }
+
+      question "Que vaut le quatrième chiffre hexadécimal d’une adresse multicast ff05::... ?" {
+        - "le numéro de groupe"
+        + "la portée, ici le site"
+        - "la version du protocole"
+        - "le nombre de membres du groupe"
+        explanation: "Dans ffXY::, Y est la portée : 2 pour le lien, 5 pour le site, e pour global. ff05::1:3 atteint donc les serveurs DHCPv6 de tout le site, ff02::1:2 seulement ceux du lien."
+      }
+
+      question "Quelle adresse source utilise un poste qui n’a encore aucune adresse et vérifie que sa future adresse est libre ?" {
+        + "::"
+        - "::1"
+        - "fe80::"
+        - "ff02::1"
+        explanation: "L'adresse non spécifiée :: sert de source quand le poste n'a pas encore d'adresse utilisable, par exemple pendant la détection d'adresse dupliquée (DAD). ::1 ne quitte jamais la machine."
+      }
+    }
+  }
+
+  module "prefixes" {
+    title: "Chapitre 4 : préfixes et découpage en sous-réseaux"
+    duration: "40min"
+    content: """
+### La règle du /64
+
+Dans un réseau local IPv6, le préfixe fait **64 bits**, et l'identifiant d'interface 64 bits. Ce n'est pas un choix au hasard : SLAAC (chapitre 6) a besoin d'un identifiant d'interface de 64 bits, et la RFC 4291 demande des identifiants de 64 bits pour l'unicast. Un /64 contient 2^64 adresses (environ 1,8 × 10^19) : on ne le « remplit » jamais. On ne cherche donc **pas** à économiser des adresses dans un LAN, on cherche à **organiser les réseaux**.
+
+Exceptions courantes : `/128` pour une adresse seule (interface de bouclage d'un routeur), `/127` pour un lien point à point entre deux routeurs (RFC 6164).
+
+### Ce que reçoit un site
+
+| Taille | Usage habituel | Nombre de /64 |
+|---|---|---|
+| `/32` | un opérateur, un grand établissement | 2^32 |
+| `/48` | un site d'entreprise, un établissement scolaire | 65 536 |
+| `/56` | souvent donné aux abonnés particuliers | 256 |
+| `/60` | certains opérateurs | 16 |
+| `/64` | un seul réseau local | 1 |
+
+La RFC 6177 recommande de donner aux sites assez de place pour plusieurs sous-réseaux, et le RIPE NCC (document RIPE-690) conseille /48 pour une entreprise et /56 pour un particulier. Le calcul de base : **nombre de /64 = 2^(64 - longueur du préfixe)**.
+
+### Compter en quartets
+
+Chaque chiffre hexadécimal vaut 4 bits. Les frontières tombent donc toutes les 4 bits :
+
+```text
+2001:0db8:abcd:0012:...
+|<-- 16 -->|<-- 32 -->|<-- 48 -->|<-- 64 -->|
+```
+• /48 : les 3 premiers groupes sont fixés ;
+• /52 : 3 groupes + 1 chiffre ;
+• /56 : 3 groupes + 2 chiffres ;
+• /60 : 3 groupes + 3 chiffres ;
+• /64 : 4 groupes.
+
+Un découpage sur une frontière de quartet (multiple de 4) se lit directement dans l'adresse, sans binaire. C'est pourquoi on évite les préfixes comme /50 ou /57 dans un plan d'adressage : c'est possible, mais illisible.
+
+### Exemple : découper un /48
+
+Le lycée reçoit `2001:db8:abcd::/48`. Le 4e groupe (16 bits) est à toi pour numéroter les réseaux : de `0000` à `ffff`, soit 65 536 réseaux /64.
+
+Un plan lisible utilise des chiffres qui ont du sens :
+
+| Réseau | Préfixe |
+|---|---|
+| Administration, bâtiment A | `2001:db8:abcd:a010::/64` |
+| Salle informatique 1, bâtiment A | `2001:db8:abcd:a021::/64` |
+| Salle informatique 2, bâtiment A | `2001:db8:abcd:a022::/64` |
+| Wi-Fi élèves | `2001:db8:abcd:b100::/64` |
+| Serveurs | `2001:db8:abcd:5e00::/64` |
+| Liens entre routeurs | `2001:db8:abcd:ff00::/56`, découpé en /64 ou /127 |
+
+Ici, le premier chiffre du 4e groupe désigne un bâtiment ou une zone : on peut agréger tout le bâtiment A dans une seule route, `2001:db8:abcd:a000::/52`.
+
+### Exemple : découper en /52
+
+Découper `2001:db8:abcd::/48` en /52, c'est utiliser 4 bits de plus, donc **un chiffre hexadécimal** : 2^4 = 16 sous-réseaux.
+```text
+2001:db8:abcd:0000::/52
+2001:db8:abcd:1000::/52
+2001:db8:abcd:2000::/52
+...
+2001:db8:abcd:f000::/52
+```
+Chaque /52 contient 2^(64-52) = 4096 réseaux /64. Le /52 numéro 3 va de `2001:db8:abcd:3000::` à `2001:db8:abcd:3fff:ffff:ffff:ffff:ffff`.
+
+### Appartenance d'une adresse à un préfixe
+
+Question type : `2001:db8:abcd:12f4::25` est-elle dans `2001:db8:abcd:1200::/56` ?
+• /56 = 3 groupes + 2 chiffres : on compare `2001:db8:abcd:12`.
+• L'adresse commence par `2001:db8:abcd:12` (f4 vient après) : **oui**.
+
+Et dans `2001:db8:abcd:1200::/60` ? /60 = 3 groupes + 3 chiffres : `2001:db8:abcd:120` contre `2001:db8:abcd:12f` : **non**.
+
+### Préfixe hors quartet : un peu de binaire
+
+Pour un /62, il faut regarder le binaire du 4e groupe. Exemple : à quel /62 appartient `2001:db8:abcd:0017::1` ?
+• /62 = 48 + 14 bits : on garde les 14 premiers bits du 4e groupe, on met les 2 derniers à 0.
+• `0017` = `0000 0000 0001 0111` ; on met à 0 les 2 derniers bits : `0000 0000 0001 0100` = `0014`.
+• Réponse : `2001:db8:abcd:14::/62`, qui contient les /64 `...:14`, `:15`, `:16`, `:17`.
+
+### Le DNS inverse (ip6.arpa)
+
+Le DNS inverse IPv6 écrit chaque chiffre hexadécimal de l'adresse complète **à l'envers**, séparés par des points, sous `ip6.arpa`. Une zone par /48 contient 12 chiffres :
+```text
+2001:db8:abcd::/48  ->  d.c.b.a.8.b.d.0.1.0.0.2.ip6.arpa
+```
+C'est une raison de plus pour découper sur des frontières de quartet.
+
+### À toi de jouer
+
+1. Combien de réseaux /64 dans un /56 ? dans un /60 ? dans un /40 ?
+2. Ta box reçoit `2001:db8:4f2:ab00::/56`. Donne le premier, le deuxième et le dernier /64.
+3. Découpe `2001:db8:abcd::/48` en /56 : combien de /56 ? donne le 1er, le 2e et le 11e.
+4. `2001:db8:abcd:a0c3::99` est-elle dans `2001:db8:abcd:a000::/52` ? dans `2001:db8:abcd:a0c0::/60` ? dans `2001:db8:abcd:a0d0::/60` ?
+5. Quel est le /62 qui contient `2001:db8:1:2e::7` ?
+6. Le lycée a `2001:db8:abcd::/48` et 4 bâtiments (A, B, C, D) avec au plus 20 réseaux chacun. Propose un découpage qui permet une route agrégée par bâtiment.
+
+### Correction
+
+1. 2^(64-56) = 2^8 = **256** ; 2^(64-60) = **16** ; 2^(64-40) = 2^24 = **16 777 216**.
+2. /56 = 3 groupes + 2 chiffres (`ab`) ; les 2 derniers chiffres du 4e groupe sont libres : premier `2001:db8:4f2:ab00::/64`, deuxième `2001:db8:4f2:ab01::/64`, dernier `2001:db8:4f2:abff::/64`.
+3. 8 bits de plus, donc **256** /56. 1er : `2001:db8:abcd::/56` (soit `:0000::`), 2e : `2001:db8:abcd:100::/56`, 11e : le numéro 10 en partant de 0, soit 0x0a, donc `2001:db8:abcd:a00::/56`.
+4. /52 : compare `2001:db8:abcd:a` : **oui**. /60 `a0c0` : compare `a0c` : **oui**. /60 `a0d0` : `a0c` différent de `a0d` : **non**.
+5. `002e` = `0000 0000 0010 1110` ; on met les 2 derniers bits à 0 : `0000 0000 0010 1100` = `002c`. Réponse : `2001:db8:1:2c::/62` (contient 2c, 2d, 2e, 2f).
+6. Une solution : un /52 par bâtiment, en codant le bâtiment dans le 1er chiffre du 4e groupe. A = `2001:db8:abcd:a000::/52`, B = `...:b000::/52`, C = `...:c000::/52`, D = `...:d000::/52`. Chaque /52 contient 4096 /64, largement de quoi loger 20 réseaux (et de quoi grandir). Le routeur de cœur n'a besoin que d'une route par bâtiment. Toute autre solution sur frontière de quartet qui sépare les bâtiments est juste.
+"""
+
+    codeblock "bash" {
+      title: "Vérifier un découpage avec Python"
+      code: """
+python3 - <<'EOF'
+import ipaddress
+site = ipaddress.ip_network("2001:db8:abcd::/48")
+sous = list(site.subnets(new_prefix=52))
+print(len(sous), "sous-réseaux /52, le 4e :", sous[3])
+print(ipaddress.ip_address("2001:db8:abcd:12f4::25") in ipaddress.ip_network("2001:db8:abcd:1200::/56"))
+print(ipaddress.ip_interface("2001:db8:1:2e::7/62").network)
+print(ipaddress.ip_address("2001:db8:abcd::1").reverse_pointer)
+EOF
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Combien de réseaux /64 contient un préfixe /56 ?" {
+        - "8"
+        - "56"
+        + "256"
+        - "65 536"
+        explanation: "64 - 56 = 8 bits pour numéroter les sous-réseaux, soit 2^8 = 256 réseaux /64. 65 536 est le nombre de /64 dans un /48."
+      }
+
+      question "Quelle longueur de préfixe utilise-t-on pour un réseau local où les postes se configurent par SLAAC ?" {
+        - "/48"
+        - "/56"
+        + "/64"
+        - "/120"
+        explanation: "SLAAC fabrique un identifiant d'interface de 64 bits : le préfixe annoncé doit faire exactement /64. Avec /120 ou /56, les postes ne s'autoconfigurent pas."
+      }
+
+      question "Combien de sous-réseaux /52 obtient-on en découpant un /48 ?" {
+        - "4"
+        + "16"
+        - "52"
+        - "256"
+        explanation: "52 - 48 = 4 bits, soit 2^4 = 16 sous-réseaux. 4 bits, c'est exactement un chiffre hexadécimal : de 0 à f."
+      }
+
+      question "Quel est le dernier /64 du préfixe 2001:db8:4f2:ab00::/56 ?" {
+        - "2001:db8:4f2:ab99::/64"
+        + "2001:db8:4f2:abff::/64"
+        - "2001:db8:4f2:ffff::/64"
+        - "2001:db8:4f2:ab00:ffff::/64"
+        explanation: "/56 fixe les 2 premiers chiffres du 4e groupe (ab). Les 2 derniers chiffres hexadécimaux varient de 00 à ff : le dernier /64 est donc ab ff. ab99 oublie que l'on compte en hexadécimal."
+      }
+
+      question "L’adresse 2001:db8:abcd:12f4::25 appartient-elle à 2001:db8:abcd:1200::/56 ?" {
+        + "oui, les 56 premiers bits s'écrivent 2001:db8:abcd:12 dans les deux cas"
+        - "non, car 12f4 est différent de 1200"
+        - "non, car un /56 ne contient qu'un seul /64"
+        - "impossible à dire sans le binaire complet"
+        explanation: "/56 correspond à 3 groupes et 2 chiffres hexadécimaux. On compare 2001:db8:abcd:12 avec 2001:db8:abcd:12 : identiques. Les chiffres f4 sont dans la partie libre du préfixe."
+      }
+
+      question "Quel est le 2e sous-réseau /56 de 2001:db8:abcd::/48 ?" {
+        - "2001:db8:abcd:1::/56"
+        - "2001:db8:abcd:10::/56"
+        + "2001:db8:abcd:100::/56"
+        - "2001:db8:abce::/56"
+        explanation: "Un /56 utilise les 2 premiers chiffres du 4e groupe. Le 1er est 00xx, le 2e 01xx, c'est-à-dire 0100, écrit 100. 2001:db8:abcd:1::/56 désigne en réalité le même réseau que le premier (les chiffres de droite sont hors préfixe)."
+      }
+
+      question "À quel /62 appartient l’adresse 2001:db8:abcd:17::1 ?" {
+        - "2001:db8:abcd:10::/62"
+        + "2001:db8:abcd:14::/62"
+        - "2001:db8:abcd:16::/62"
+        - "2001:db8:abcd:17::/62"
+        explanation: "0x17 = 0001 0111 en binaire. Un /62 garde les 14 premiers bits du 4e groupe et met les 2 derniers à 0 : 0001 0100 = 0x14. Le /62 contient les /64 14, 15, 16 et 17."
+      }
+
+      question "Pourquoi préférer des préfixes multiples de 4 (/48, /52, /56, /60, /64) dans un plan d’adressage ?" {
+        - "parce que les autres longueurs sont interdites"
+        + "parce que la frontière tombe sur un chiffre hexadécimal, lisible sans calcul binaire"
+        - "parce que les routeurs sont plus rapides"
+        - "parce que le DNS refuse les autres longueurs"
+        explanation: "Un chiffre hexadécimal vaut 4 bits : avec des multiples de 4, on lit le réseau directement dans l'adresse, et les zones DNS inverses tombent juste. Les autres longueurs (/50, /62) restent valides, mais demandent du binaire."
+      }
+
+      question "Quelle longueur de préfixe recommande la RFC 6164 pour un lien point à point entre deux routeurs ?" {
+        - "/64 obligatoirement"
+        + "/127"
+        - "/30"
+        - "/112"
+        explanation: "La RFC 6164 recommande /127 sur les liens entre routeurs, ce qui évite certaines attaques d'épuisement du cache de voisins. /30 est l'habitude IPv4. Beaucoup d'opérateurs réservent quand même un /64 par lien et n'en utilisent qu'un /127."
+      }
+
+      question "Un particulier reçoit un /56 de son opérateur. Combien de réseaux locaux distincts peut-il créer en /64 ?" {
+        - "1"
+        - "16"
+        + "256"
+        - "4096"
+        explanation: "2^(64 - 56) = 256 réseaux /64 : de quoi séparer la maison, les objets connectés, un réseau invité, un laboratoire... C'est la taille conseillée par le RIPE NCC pour un particulier."
+      }
+
+      question "Le préfixe 2001:db8:abcd:a000::/52 contient-il 2001:db8:abcd:b012::1 ?" {
+        - "oui, car les trois premiers groupes sont identiques"
+        + "non, car le premier chiffre du 4e groupe est b et non a"
+        - "oui, car un /52 contient 4096 réseaux"
+        - "non, car un /52 ne contient que des adresses en a000"
+        explanation: "/52 fixe 3 groupes et 1 chiffre : il faut comparer 2001:db8:abcd:a et 2001:db8:abcd:b. Ils diffèrent, donc l'adresse est hors du préfixe."
+      }
+
+      question "Quelle est la zone DNS inverse du préfixe 2001:db8:abcd::/48 ?" {
+        - "abcd.db8.2001.ip6.arpa"
+        + "d.c.b.a.8.b.d.0.1.0.0.2.ip6.arpa"
+        - "2.0.0.1.0.d.b.8.a.b.c.d.ip6.arpa"
+        - "2001.db8.abcd.in-addr.arpa"
+        explanation: "On écrit les 12 chiffres hexadécimaux du préfixe sous forme complète (2001:0db8:abcd), à l'envers, un chiffre par niveau, sous ip6.arpa. in-addr.arpa est réservé à IPv4."
+      }
+
+      question "Pourquoi n’essaie-t-on pas d’économiser les adresses dans un réseau local IPv6 ?" {
+        - "parce que les adresses IPv6 sont gratuites"
+        + "parce qu'un /64 contient 2^64 adresses, bien plus qu'il n'en faut, et que SLAAC exige un /64"
+        - "parce que le NAT règle le problème"
+        - "parce qu'on peut réutiliser les mêmes adresses sur chaque réseau"
+        explanation: "Le but de l'adressage IPv6 est d'organiser, pas de rationner. Découper un LAN en /120 pour économiser casse SLAAC et complique le plan d'adressage sans rien apporter."
+      }
+
+      question "Combien de /64 contient le préfixe 2001:db8:abcd:a000::/52 ?" {
+        - "16"
+        - "256"
+        + "4096"
+        - "65 536"
+        explanation: "64 - 52 = 12 bits, soit 2^12 = 4096 réseaux /64, de 2001:db8:abcd:a000::/64 à 2001:db8:abcd:afff::/64."
+      }
+    }
+  }
+
+  module "ndp" {
+    title: "Chapitre 5 : NDP, le remplaçant d'ARP"
+    duration: "40min"
+    content: """
+### Ce que fait NDP
+
+Le protocole de découverte des voisins (Neighbor Discovery Protocol, RFC 4861) regroupe plusieurs fonctions qui, en IPv4, étaient dispersées entre ARP, ICMP Router Discovery et ICMP Redirect. Il utilise **cinq messages ICMPv6** :
+
+| Type | Message | Rôle |
+|---|---|---|
+| 133 | Router Solicitation (RS) | « Y a-t-il un routeur ? » envoyé par un poste |
+| 134 | Router Advertisement (RA) | le routeur annonce préfixes, passerelle, options |
+| 135 | Neighbor Solicitation (NS) | « Qui a cette adresse IPv6 ? Donne ta MAC » |
+| 136 | Neighbor Advertisement (NA) | « C'est moi, voici ma MAC » |
+| 137 | Redirect | le routeur signale un meilleur premier saut |
+
+Fonctions assurées : résolution d'adresse (comme ARP), détection d'un voisin injoignable (NUD), détection d'adresse dupliquée (DAD), découverte des routeurs et des préfixes, redirection.
+
+### Résolution d'adresse sans broadcast
+
+ARP envoie sa question en **broadcast** : toutes les machines du réseau la reçoivent et la traitent. NDP envoie la sienne vers une **adresse multicast de nœud sollicité** (solicited-node), calculée à partir de l'adresse cherchée :
+
+```text
+ff02::1:ff + les 24 derniers bits de l'adresse cherchée
+```
+
+Exemple : on cherche `2001:db8:1::a1b2:c3d4`. Les 24 derniers bits sont `b2:c3d4`. L'adresse multicast est `ff02::1:ffb2:c3d4`, et la MAC de destination `33:33:ff:b2:c3:d4`. Seules les cartes abonnées à ce groupe (en pratique une seule machine, ou très peu) traitent la trame : les autres la rejettent dès la couche 2.
+
+### Le cache des voisins
+
+L'équivalent de la table ARP s'appelle le **cache des voisins** (neighbor cache). Chaque entrée a un état :
+
+| État | Signification |
+|---|---|
+| INCOMPLETE | NS envoyé, pas encore de réponse |
+| REACHABLE | voisin confirmé joignable récemment |
+| STALE | entrée ancienne, encore utilisable, sera revérifiée au prochain envoi |
+| DELAY / PROBE | vérification en cours |
+| FAILED | aucune réponse : voisin injoignable |
+
+Linux :
+```bash
+ip -6 neigh show
+# fe80::1 dev eth0 lladdr 52:54:00:12:34:56 router REACHABLE
+# 2001:db8:1::20 dev eth0 lladdr 52:54:00:ab:cd:ef STALE
+```
+Le mot `router` indique que ce voisin a annoncé être un routeur. Windows : `Get-NetNeighbor -AddressFamily IPv6` ou `netsh interface ipv6 show neighbors`.
+
+### DAD : vérifier que l'adresse est libre
+
+Avant d'utiliser une nouvelle adresse (même la lien-local), un poste envoie un NS avec **la source `::`** et comme cible sa future adresse. Si quelqu'un répond, l'adresse est déjà prise : elle est marquée `dadfailed` sous Linux (« Dupliquée » sous Windows) et n'est pas utilisée. Pendant la vérification (environ une seconde), l'adresse est **tentative** :
+```text
+inet6 2001:db8:1::10/64 scope global tentative
+```
+C'est pourquoi un ping lancé juste après `ip address add` échoue parfois : il faut attendre une à deux secondes.
+
+### Sécurité : NDP fait confiance à tout le monde
+
+Comme ARP, NDP n'authentifie rien. Une machine du réseau peut :
+• répondre à la place d'une autre (usurpation, l'équivalent de l'ARP spoofing) ;
+• envoyer de **faux RA** et se faire passer pour le routeur (rogue RA), ce qui détourne le trafic ; c'est aussi l'effet d'un PC avec le partage de connexion activé par erreur.
+
+Les protections se placent sur le commutateur : **RA Guard** (RFC 6105, seuls les ports des vrais routeurs ont le droit d'envoyer des RA), inspection NDP, et le filtrage des ports. Le protocole SEND (RFC 3971), qui signe les messages, n'est presque pas implémenté.
+
+### Laboratoire : deux PC virtuels sur une seule machine
+
+Ce laboratoire utilise les **espaces de noms réseau** (network namespaces) de Linux : chaque espace a ses propres cartes, adresses et routes, comme un PC séparé. Un câble virtuel (paire `veth`) relie les deux. Il faut une machine Debian 12 ou Ubuntu 22.04/24.04 (machine virtuelle conseillée), les droits `sudo`, et le paquet `tcpdump`. WSL2 fonctionne en général, mais son noyau varie : en cas d'erreur, utilise une vraie VM.
+
+Les commandes ne touchent pas à ta carte réseau réelle. Tout disparaît avec `sudo ip netns del pc1` et `sudo ip netns del pc2`, ou au redémarrage.
+
+```bash
+sudo apt install -y tcpdump iproute2 iputils-ping
+sudo ip netns add pc1
+sudo ip netns add pc2
+# un câble virtuel : bout veth1 dans pc1, bout veth2 dans pc2
+sudo ip link add veth1 netns pc1 type veth peer name veth2 netns pc2
+sudo ip -n pc1 link set lo up
+sudo ip -n pc2 link set lo up
+sudo ip -n pc1 link set veth1 up
+sudo ip -n pc2 link set veth2 up
+sudo ip -n pc1 address add 2001:db8:1::1/64 dev veth1
+sudo ip -n pc2 address add 2001:db8:1::2/64 dev veth2
+sleep 2   # laisser DAD se terminer
+sudo ip -n pc1 -6 address show dev veth1
+```
+L'option `-n pc1` exécute la commande `ip` dans l'espace `pc1` ; `ip netns exec pc1 <commande>` lance n'importe quel programme dedans.
+
+### À toi de jouer
+
+1. Dans `pc1`, affiche les adresses de `veth1` : combien y en a-t-il, et pourquoi ?
+2. Dans un second terminal, lance une capture dans `pc2` limitée à ICMPv6, puis, dans le premier, vide le cache de `pc1` et pingue `pc2` une fois.
+3. Identifie dans la capture le NS, le NA, l'adresse multicast de nœud sollicité utilisée, puis l'écho.
+4. Affiche le cache des voisins de `pc1` juste après, puis 1 minute plus tard.
+5. Ajoute dans `pc2` l'adresse déjà utilisée par `pc1` (`2001:db8:1::1/64`) et observe son état.
+
+### Correction
+
+1. Deux adresses : `2001:db8:1::1/64 scope global` (ajoutée à la main) et `fe80::.../64 scope link`, créée automatiquement dès que l'interface est active.
+2. et 3. :
+```bash
+# terminal 2
+sudo ip netns exec pc2 tcpdump -n -i veth2 icmp6
+# terminal 1
+sudo ip -n pc1 neigh flush dev veth1
+sudo ip netns exec pc1 ping -6 -c 1 2001:db8:1::2
+```
+Sortie typique (les adresses fe80 et les MAC changent chez toi) :
+```text
+IP6 2001:db8:1::1 > ff02::1:ff00:2: ICMP6, neighbor solicitation, who has 2001:db8:1::2, length 32
+IP6 2001:db8:1::2 > 2001:db8:1::1: ICMP6, neighbor advertisement, tgt is 2001:db8:1::2, length 32
+IP6 2001:db8:1::1 > 2001:db8:1::2: ICMP6, echo request, id 1234, seq 1, length 64
+IP6 2001:db8:1::2 > 2001:db8:1::1: ICMP6, echo reply, id 1234, seq 1, length 64
+```
+Le NS part vers `ff02::1:ff00:2` : le préfixe `ff02::1:ff` suivi des 24 derniers bits de `2001:db8:1::2` (`00:0002`). Pas de broadcast.
+4. `sudo ip -n pc1 neigh show` : `2001:db8:1::2 dev veth1 lladdr ... REACHABLE`, puis `STALE` après quelques dizaines de secondes sans trafic confirmé. C'est normal : l'entrée sera revérifiée au prochain envoi.
+5.
+```bash
+sudo ip -n pc2 address add 2001:db8:1::1/64 dev veth2
+sleep 2
+sudo ip -n pc2 -6 address show dev veth2
+# inet6 2001:db8:1::1/64 scope global tentative dadfailed
+```
+DAD a détecté le doublon : l'adresse reste inutilisable dans `pc2`, et `pc1` n'est pas perturbé. Retire-la : `sudo ip -n pc2 address del 2001:db8:1::1/64 dev veth2`.
+"""
+
+    codeblock "bash" {
+      title: "Calculer l'adresse de nœud sollicité"
+      code: """
+python3 - <<'EOF'
+import ipaddress
+cible = ipaddress.ip_address("2001:db8:1::a1b2:c3d4")
+derniers24 = int(cible) & 0xFFFFFF
+sollicite = ipaddress.ip_address(int(ipaddress.ip_address("ff02::1:ff00:0")) | derniers24)
+print("noeud sollicite :", sollicite)
+mac = "33:33:" + ":".join(f"{b:02x}" for b in sollicite.packed[-4:])
+print("MAC de destination :", mac)
+EOF
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel protocole IPv4 est remplacé par NDP pour trouver l’adresse MAC d’un voisin ?" {
+        - "DHCP"
+        + "ARP"
+        - "DNS"
+        - "RIP"
+        explanation: "En IPv6, la résolution adresse IP vers adresse MAC se fait avec les messages Neighbor Solicitation et Neighbor Advertisement de NDP, transportés par ICMPv6. ARP n'existe plus."
+      }
+
+      question "Quel message ICMPv6 un poste envoie-t-il pour demander l’adresse MAC correspondant à une adresse IPv6 ?" {
+        - "Router Solicitation (133)"
+        - "Router Advertisement (134)"
+        + "Neighbor Solicitation (135)"
+        - "Echo Request (128)"
+        explanation: "Le NS (type 135) demande « qui a cette adresse ? ». La réponse est un Neighbor Advertisement (136). RS et RA servent à découvrir les routeurs."
+      }
+
+      question "Vers quelle adresse part le NS qui cherche 2001:db8:1::a1b2:c3d4 ?" {
+        - "ff02::1"
+        - "ff02::2"
+        + "ff02::1:ffb2:c3d4"
+        - "ff02::1:ffa1:b2c3"
+        explanation: "L'adresse de nœud sollicité est ff02::1:ff suivie des 24 derniers bits de la cible, soit b2:c3d4. Elle ne touche que la ou les machines dont l'adresse se termine ainsi, au lieu de tout le réseau."
+      }
+
+      question "Quel est l’avantage de l’adresse de nœud sollicité par rapport au broadcast d’ARP ?" {
+        - "elle chiffre la requête"
+        + "seules les machines concernées traitent la trame, les autres la rejettent au niveau de la carte réseau"
+        - "elle traverse les routeurs"
+        - "elle évite d'avoir une adresse MAC"
+        explanation: "La trame part vers une MAC multicast 33:33:ff:xx:xx:xx. Les cartes non abonnées l'ignorent sans déranger le processeur. Avec ARP, chaque machine du réseau traite chaque requête."
+      }
+
+      question "Quelle commande Linux affiche le cache des voisins IPv6 ?" {
+        - "arp -a"
+        + "ip -6 neigh show"
+        - "ip -6 route show"
+        - "ss -6"
+        explanation: "ip -6 neigh (ou ip -6 neighbour) affiche l'équivalent IPv6 de la table ARP, avec l'état de chaque entrée. arp -a ne montre que l'IPv4, ip -6 route la table de routage, ss les connexions."
+      }
+
+      question "Dans le cache des voisins, que signifie l’état STALE ?" {
+        - "le voisin est injoignable"
+        + "l'entrée est ancienne mais utilisable ; elle sera revérifiée au prochain envoi"
+        - "l'adresse est dupliquée"
+        - "le voisin est un routeur"
+        explanation: "STALE est un état normal : la correspondance n'a pas été confirmée récemment. Au prochain paquet, le système passe en DELAY puis PROBE pour vérifier. Un voisin injoignable passe en FAILED."
+      }
+
+      question "Pendant la détection d’adresse dupliquée (DAD), quelle adresse source utilise le NS ?" {
+        - "l'adresse à tester"
+        - "l'adresse lien-local"
+        + "l'adresse non spécifiée ::"
+        - "ff02::1"
+        explanation: "Le poste ne peut pas encore utiliser l'adresse qu'il teste. Il envoie donc le NS depuis ::, avec sa future adresse comme cible. Si un NA revient, l'adresse est déjà prise."
+      }
+
+      question "Après ip address add, l’adresse apparaît avec le mot tentative. Que se passe-t-il ?" {
+        - "l'adresse est refusée définitivement"
+        + "la détection d'adresse dupliquée est en cours ; l'adresse sera utilisable dans une à deux secondes"
+        - "l'interface est éteinte"
+        - "il manque la passerelle par défaut"
+        explanation: "Tentative signifie que DAD n'est pas fini. Si personne ne répond, l'adresse devient utilisable. Si un doublon répond, elle passe en dadfailed."
+      }
+
+      question "Quel est le type ICMPv6 d’un Router Advertisement ?" {
+        - "133"
+        + "134"
+        - "135"
+        - "137"
+        explanation: "133 = Router Solicitation, 134 = Router Advertisement, 135 = Neighbor Solicitation, 136 = Neighbor Advertisement, 137 = Redirect."
+      }
+
+      question "Un élève active le partage de connexion de son PC sur le réseau de la salle, et plusieurs postes perdent Internet. Quelle explication est la plus probable en IPv6 ?" {
+        - "son PC a lancé un serveur DNS"
+        + "son PC envoie des Router Advertisements et les postes l'utilisent comme routeur"
+        - "son PC a saturé le cache ARP"
+        - "son PC a désactivé ICMPv6"
+        explanation: "C'est le scénario classique du faux RA (rogue RA) : les postes acceptent n'importe quelle annonce de routeur. La protection se configure sur le commutateur avec RA Guard (RFC 6105)."
+      }
+
+      question "Quelle fonction de commutateur bloque les annonces de routeur venant de ports non autorisés ?" {
+        - "Port Security"
+        - "DHCP Snooping"
+        + "RA Guard"
+        - "Spanning Tree"
+        explanation: "RA Guard (RFC 6105) ne laisse passer les RA que sur les ports reliés aux vrais routeurs. DHCP Snooping joue un rôle comparable pour les serveurs DHCP en IPv4."
+      }
+
+      question "Dans le laboratoire, que fait la commande sudo ip -n pc1 address add 2001:db8:1::1/64 dev veth1 ?" {
+        - "elle ajoute l'adresse sur la carte réelle de la machine"
+        + "elle ajoute l'adresse sur l'interface veth1 de l'espace de noms pc1"
+        - "elle crée l'espace de noms pc1"
+        - "elle configure la route par défaut de pc1"
+        explanation: "L'option -n pc1 exécute la commande ip à l'intérieur de l'espace de noms réseau pc1. La carte réelle n'est pas touchée : c'est ce qui rend le laboratoire sans risque."
+      }
+
+      question "Sur une capture, tu vois un NS envoyé à ff02::1:ff00:2. Quelle adresse cherche probablement l’émetteur ?" {
+        - "ff02::2"
+        + "une adresse qui se termine par 00:0002, comme 2001:db8:1::2"
+        - "le routeur par défaut"
+        - "tous les nœuds du lien"
+        explanation: "L'adresse de nœud sollicité reprend les 24 derniers bits de l'adresse cherchée. ff02::1:ff00:2 correspond à toute adresse finissant par 00:0002, par exemple 2001:db8:1::2 ou fe80::2."
+      }
+    }
+  }
+
+  module "slaac-dhcpv6" {
+    title: "Chapitre 6 : SLAAC et DHCPv6"
+    duration: "40min"
+    content: """
+### Trois façons d'obtenir une adresse
+
+En IPv4, un poste reçoit tout de DHCP : adresse, masque, passerelle, DNS. En IPv6, le travail est partagé entre le **routeur** (annonces RA) et, éventuellement, un **serveur DHCPv6**. Trois modes existent :
+
+| Mode | Adresse | DNS | Drapeaux du RA |
+|---|---|---|---|
+| SLAAC seul | fabriquée par le poste | option RDNSS dans le RA | A=1, M=0, O=0 |
+| SLAAC + DHCPv6 sans état | fabriquée par le poste | DHCPv6 (et/ou RDNSS) | A=1, M=0, O=1 |
+| DHCPv6 avec état | donnée par le serveur DHCPv6 | DHCPv6 | M=1 (souvent A=0) |
+
+**Point crucial : DHCPv6 ne donne jamais la passerelle par défaut.** La route par défaut vient toujours d'un RA. Un réseau « DHCPv6 seul » sans routeur qui annonce reste sans passerelle.
+
+### Le Router Advertisement
+
+Un routeur IPv6 envoie des RA à intervalle régulier vers `ff02::1`, et immédiatement en réponse à un RS. Un RA contient :
+• la **durée de vie du routeur** (router lifetime) : si elle est supérieure à 0, le poste l'utilise comme passerelle par défaut, avec son adresse **lien-local** comme prochain saut ;
+• les drapeaux **M** (Managed : « adresse par DHCPv6 ») et **O** (Other : « autres informations par DHCPv6 ») ;
+• une ou plusieurs options **Prefix Information** : préfixe, drapeau **A** (autonome : « fabrique ton adresse dans ce préfixe »), drapeau **L** (on-link), durées de vie valide et préférée ;
+• éventuellement **RDNSS** (serveurs DNS, RFC 8106), **MTU**, etc.
+
+### SLAAC : l'autoconfiguration sans état
+
+SLAAC (RFC 4862) : le poste prend le préfixe /64 du RA et y ajoute **son propre identifiant d'interface** de 64 bits, puis fait un DAD. Aucun serveur ne garde de trace : c'est « sans état ».
+
+Trois méthodes pour fabriquer l'identifiant :
+
+**1. EUI-64 modifié** (historique) à partir de l'adresse MAC :
+```text
+MAC              08:00:27:4e:66:a1
+coupée en deux   08:00:27 | 4e:66:a1
+insérer ff:fe    08:00:27:ff:fe:4e:66:a1
+inverser le 7e bit du 1er octet : 08 = 0000 1000 -> 0000 1010 = 0a
+identifiant      0a00:27ff:fe4e:66a1
+```
+Défaut : l'adresse contient la MAC, donc l'appareil est **reconnaissable partout**, même quand il change de réseau. Problème de vie privée.
+
+**2. Identifiant stable et opaque** (RFC 7217) : calculé par une fonction de hachage à partir du préfixe, d'un secret de la machine et de l'interface. Stable sur un même réseau, différent d'un réseau à l'autre, ne révèle pas la MAC. Utilisé par défaut par NetworkManager (`stable-privacy`) et de façon comparable par Windows (identifiants aléatoires).
+
+**3. Adresses temporaires** (RFC 8981, qui remplace la RFC 4941) : adresses aléatoires renouvelées régulièrement et utilisées de préférence pour les connexions sortantes. Windows, macOS, Android, iOS et la plupart des distributions de bureau les activent par défaut.
+
+Un poste typique en SLAAC a donc : une lien-local, une adresse globale stable (pour être joint) et une ou plusieurs adresses temporaires (pour sortir).
+
+### Durées de vie
+
+Chaque adresse SLAAC a une **durée valide** et une **durée préférée**. Une fois la durée préférée écoulée, l'adresse est **dépréciée** (deprecated) : elle sert encore pour les connexions en cours mais plus pour les nouvelles. À la fin de la durée valide, elle disparaît. Sous Linux : `valid_lft` et `preferred_lft` dans `ip -6 address`.
+
+### DHCPv6
+
+DHCPv6 (RFC 8415) fonctionne en UDP : le client écoute sur le port **546**, le serveur sur le port **547**. Le client envoie ses demandes vers `ff02::1:2` (tous les serveurs et relais DHCPv6 du lien), depuis son adresse lien-local. Échange en quatre messages, souvent résumé « SARR » :
+
+1. **Solicit** : le client cherche un serveur ;
+2. **Advertise** : un serveur se propose ;
+3. **Request** : le client demande l'adresse ou les informations ;
+4. **Reply** : le serveur confirme.
+
+En mode sans état, deux messages suffisent : **Information-Request** puis **Reply**.
+
+Différences avec DHCP IPv4 :
+• le client est identifié par un **DUID** (DHCP Unique Identifier), pas par sa MAC. Une réservation « par MAC » comme en IPv4 n'est donc pas directe ;
+• pas de passerelle ni de masque dans les réponses ;
+• la **délégation de préfixe** (option IA_PD) permet à un routeur d'obtenir un préfixe entier (un /56 par exemple) : c'est ainsi que ta box reçoit le préfixe de ton opérateur ;
+• Android ne prend pas en charge DHCPv6 avec état pour les adresses : sur un réseau avec des téléphones Android, il faut SLAAC.
+
+### Choisir
+
+• Réseau d'élèves, Wi-Fi invité, réseau domestique : **SLAAC + RDNSS** (simple, compatible avec tout).
+• Réseau d'entreprise qui veut tracer précisément qui a quelle adresse : DHCPv6 avec état **en plus** de journaux NDP, en sachant que les appareils Android y échapperont.
+• Serveurs, routeurs, imprimantes : adresse **statique** (chapitres 7 et 8), choisie lisible (`::10`, `::53`).
+
+### Laboratoire : un routeur qui annonce un préfixe
+
+On reprend la méthode du chapitre 5 avec deux espaces de noms : `rtr` (le routeur) et `pc1`, reliés par une paire `veth`. Le routeur utilise **radvd**, le démon d'annonces de routeur de Linux.
+
+```bash
+sudo apt install -y radvd tcpdump
+for ns in rtr pc1; do sudo ip netns add $ns; sudo ip -n $ns link set lo up; done
+sudo ip link add r-lan netns rtr type veth peer name p1 netns pc1
+sudo ip -n rtr link set r-lan up
+sudo ip -n pc1 link set p1 up
+sudo ip -n rtr address add 2001:db8:10:1::1/64 dev r-lan
+# un routeur doit transmettre les paquets
+sudo ip netns exec rtr sysctl -w net.ipv6.conf.all.forwarding=1
+```
+
+Fichier `/etc/radvd-lab.conf` (crée-le avec `sudo nano /etc/radvd-lab.conf`) :
+```text
+interface r-lan {
+    AdvSendAdvert on;
+    MinRtrAdvInterval 3;
+    MaxRtrAdvInterval 10;
+    prefix 2001:db8:10:1::/64 {
+        AdvOnLink on;
+        AdvAutonomous on;
+    };
+    RDNSS 2001:db8:10:1::53 {
+    };
+};
+```
+Les intervalles courts (3 à 10 s) servent au laboratoire ; en production on garde les valeurs par défaut.
+
+Lancer radvd dans l'espace `rtr`, au premier plan :
+```bash
+sudo ip netns exec rtr radvd -C /etc/radvd-lab.conf -p /run/radvd-lab.pid -n -d 1
+```
+
+### À toi de jouer
+
+1. Lance radvd, puis, dans un autre terminal, regarde les adresses de `p1` dans `pc1` après quelques secondes. D'où vient l'adresse globale ? Retrouve dans son identifiant la MAC de `p1`.
+2. Affiche la route par défaut de `pc1` : quel est le prochain saut ?
+3. Capture un RA avec `tcpdump -v` dans `pc1` et relève : préfixe, drapeaux, durées de vie, DNS.
+4. Modifie la configuration pour annoncer `AdvManagedFlag on;` (M=1) et `AdvAutonomous off;`. Que se passe-t-il pour `pc1`, et pourquoi n'a-t-il pas d'adresse globale ?
+5. Question de réflexion : pourquoi la passerelle de `pc1` est-elle une adresse en `fe80::` et pas `2001:db8:10:1::1` ?
+
+### Correction
+
+1. ```bash
+sudo ip -n pc1 -6 address show dev p1
+# inet6 2001:db8:10:1:xxxx:xxff:fexx:xxxx/64 scope global dynamic
+#    valid_lft 86395sec preferred_lft 14395sec
+sudo ip -n pc1 link show p1    # lire la MAC (link/ether)
+```
+L'adresse est `dynamic` : fabriquée par SLAAC à partir du préfixe du RA. Dans un espace de noms, Linux utilise par défaut l'EUI-64 : tu retrouves la MAC avec `ff:fe` au milieu et le 7e bit inversé. Les durées 86400 s (valide) et 14400 s (préférée) sont les valeurs par défaut de radvd.
+2. ```bash
+sudo ip -n pc1 -6 route show default
+# default via fe80::xxxx:xxff:fexx:xxxx dev p1 proto ra metric 1024 expires 27sec
+```
+`proto ra` : route apprise par un RA. Le prochain saut est l'adresse lien-local de `r-lan`. La route expire au bout de la durée de vie du routeur annoncée dans le RA : par défaut, radvd prend 3 fois MaxRtrAdvInterval, soit 30 s ici (1800 s avec la valeur par défaut de 600 s), sauf si `AdvDefaultLifetime` est fixé. Chaque nouveau RA la remet à 30 s : tu vois donc le compteur redescendre puis remonter. Vérifie la valeur dans la capture (`router lifetime 30s`).
+3. ```bash
+sudo ip netns exec pc1 tcpdump -v -n -i p1 'icmp6 and ip6[40] == 134'
+```
+`ip6[40]` est le premier octet après l'en-tête IPv6 de 40 octets, c'est-à-dire le type ICMPv6. Tu lis `router advertisement`, `prefix info: LA valid time 86400s, pref. time 14400s`, `rdnss option ... addr: 2001:db8:10:1::53`. Les drapeaux M et O sont à 0 (`Flags [none]`), et la ligne d'en-tête indique `router lifetime 30s`.
+4. Avec M=1 et A=0 : le RA dit « ne fabrique pas d'adresse dans ce préfixe, demande-la au serveur DHCPv6 ». Aucun serveur DHCPv6 n'existe dans le laboratoire : `pc1` garde sa lien-local et sa route par défaut (elle vient toujours du RA), mais n'a **pas** d'adresse globale. C'est la panne classique « j'ai une passerelle IPv6 mais pas d'adresse ». Pour un serveur DHCPv6, on peut utiliser `dnsmasq` ou `kea-dhcp6-server` sous Linux, ou le rôle DHCP de Windows Server.
+5. Un routeur peut changer d'adresse globale (renumérotation chez l'opérateur), mais son adresse lien-local reste la même sur le lien. NDP et les RA fonctionnent uniquement avec des adresses lien-local. C'est le comportement normal d'IPv6, pas une erreur de configuration.
+
+Nettoyage : `Ctrl+C` sur radvd, puis `for ns in rtr pc1; do sudo ip netns del $ns; done`.
+"""
+
+    codeblock "bash" {
+      title: "Calculer un identifiant EUI-64 à partir d'une MAC"
+      code: """
+mac="08:00:27:4e:66:a1"
+IFS=: read -r a b c d e f <<< "$mac"
+a=$(printf '%02x' $(( 0x$a ^ 0x02 )))   # inverser le 7e bit (U/L)
+echo "identifiant : ${a}${b}:${c}ff:fe${d}:${e}${f}"
+# identifiant : 0a00:27ff:fe4e:66a1
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "D’où un poste IPv6 apprend-il sa passerelle par défaut ?" {
+        - "du serveur DHCPv6"
+        + "des Router Advertisements envoyés par le routeur"
+        - "du serveur DNS"
+        - "de l'adresse lien-local de sa propre carte"
+        explanation: "La route par défaut vient toujours d'un RA dont la durée de vie du routeur est supérieure à 0. DHCPv6 ne contient aucune option de passerelle : c'est la grande différence avec DHCP IPv4."
+      }
+
+      question "Que demande au poste le drapeau M=1 dans un Router Advertisement ?" {
+        - "d'utiliser SLAAC"
+        + "d'obtenir son adresse auprès d'un serveur DHCPv6"
+        - "de désactiver IPv6"
+        - "d'utiliser le routeur comme serveur DNS"
+        explanation: "M (Managed address configuration) signifie : adresses gérées par DHCPv6 avec état. O (Other configuration) signifie : autres informations (DNS...) par DHCPv6. Le drapeau A, dans l'option préfixe, autorise SLAAC."
+      }
+
+      question "Quel drapeau de l’option Prefix Information autorise le poste à fabriquer son adresse par SLAAC ?" {
+        - "M"
+        - "O"
+        + "A"
+        - "L"
+        explanation: "A (autonomous address configuration) autorise SLAAC dans ce préfixe. L (on-link) indique que le préfixe est directement joignable sur le lien. M et O sont des drapeaux du RA lui-même, pas du préfixe."
+      }
+
+      question "Quels ports UDP utilise DHCPv6 ?" {
+        - "67 (serveur) et 68 (client)"
+        + "547 (serveur) et 546 (client)"
+        - "53 (serveur) et 5353 (client)"
+        - "546 (serveur) et 547 (client)"
+        explanation: "En DHCPv6 (RFC 8415), le client écoute sur 546 et le serveur ou relais sur 547. 67 et 68 sont les ports de DHCP IPv4. La dernière proposition inverse les rôles."
+      }
+
+      question "Dans quel ordre se déroule un échange DHCPv6 avec état ?" {
+        - "Discover, Offer, Request, Ack"
+        + "Solicit, Advertise, Request, Reply"
+        - "Request, Reply, Solicit, Advertise"
+        - "Router Solicitation, Router Advertisement, Request, Reply"
+        explanation: "SARR : Solicit, Advertise, Request, Reply. DORA (Discover, Offer, Request, Ack) est la séquence de DHCP IPv4. RS et RA appartiennent à NDP."
+      }
+
+      question "Quel est l’identifiant EUI-64 modifié correspondant à la MAC 08:00:27:4e:66:a1 ?" {
+        - "0800:27ff:fe4e:66a1"
+        + "0a00:27ff:fe4e:66a1"
+        - "0a00:27fe:ff4e:66a1"
+        - "0800:27fe:ff4e:66a1"
+        explanation: "On coupe la MAC en deux, on insère ff:fe au milieu, puis on inverse le 7e bit du premier octet : 08 devient 0a. Les erreurs classiques : oublier l'inversion ou écrire fe:ff au lieu de ff:fe."
+      }
+
+      question "Quel inconvénient présente une adresse SLAAC fabriquée en EUI-64 ?" {
+        - "elle n'est pas routable sur Internet"
+        + "elle contient la MAC, ce qui permet de suivre l'appareil d'un réseau à l'autre"
+        - "elle change à chaque redémarrage"
+        - "elle impose un serveur DHCPv6"
+        explanation: "La partie basse de l'adresse reste la même partout puisqu'elle dérive de la MAC. Les identifiants stables opaques (RFC 7217) et les adresses temporaires (RFC 8981) corrigent ce problème."
+      }
+
+      question "Quel est le rôle principal des adresses temporaires (RFC 8981) ?" {
+        - "remplacer l'adresse lien-local"
+        + "servir d'adresse source aléatoire et renouvelée pour les connexions sortantes, afin de limiter le pistage"
+        - "permettre à un serveur d'être joint en permanence"
+        - "accélérer la détection d'adresse dupliquée"
+        explanation: "Une adresse temporaire change régulièrement : les sites visités ne peuvent pas suivre durablement un appareil par son adresse. L'adresse stable reste disponible pour être joint depuis l'extérieur."
+      }
+
+      question "Par quoi un client DHCPv6 est-il identifié auprès du serveur ?" {
+        - "par son adresse MAC uniquement"
+        + "par son DUID"
+        - "par son adresse lien-local"
+        - "par son nom d'hôte"
+        explanation: "DHCPv6 identifie le client par un DUID (DHCP Unique Identifier). Il peut être dérivé d'une MAC, mais pas forcément : réserver une adresse « par MAC » comme en IPv4 n'est donc pas direct."
+      }
+
+      question "Le RA d’un réseau a M=1 et A=0, mais aucun serveur DHCPv6 ne répond. Quelle est la situation des postes ?" {
+        - "ils fabriquent quand même une adresse globale par SLAAC"
+        + "ils ont une lien-local et une route par défaut, mais pas d'adresse globale"
+        - "ils n'ont plus aucune adresse IPv6"
+        - "ils prennent une adresse IPv4 à la place"
+        explanation: "Le RA donne la route par défaut, mais interdit SLAAC (A=0) et renvoie vers DHCPv6 (M=1). Sans serveur, pas d'adresse globale. La lien-local existe toujours, indépendamment du RA."
+      }
+
+      question "Quelle option du RA permet d’annoncer les serveurs DNS sans DHCPv6 ?" {
+        - "MTU"
+        + "RDNSS"
+        - "Prefix Information"
+        - "Redirect"
+        explanation: "L'option RDNSS (Recursive DNS Server, RFC 8106) annonce les adresses des serveurs DNS dans le RA. Avec SLAAC + RDNSS, aucun serveur DHCPv6 n'est nécessaire."
+      }
+
+      question "Une adresse SLAAC a dépassé sa durée préférée mais pas sa durée valide. Que se passe-t-il ?" {
+        - "elle est supprimée immédiatement"
+        + "elle est dépréciée : utilisable pour les connexions en cours, plus pour les nouvelles"
+        - "elle devient une adresse temporaire"
+        - "elle est transmise au serveur DHCPv6"
+        explanation: "Entre la fin de la durée préférée et la fin de la durée valide, l'adresse est dite deprecated. Le système choisit une autre adresse pour les nouvelles connexions, puis supprime celle-ci à la fin de la durée valide."
+      }
+
+      question "Comment une box obtient-elle le préfixe /56 qu’elle distribue dans la maison ?" {
+        - "par SLAAC sur son interface Internet"
+        + "par la délégation de préfixe DHCPv6 (IA_PD)"
+        - "par NAT66"
+        - "en le tirant au hasard dans fd00::/8"
+        explanation: "La délégation de préfixe (Prefix Delegation, option IA_PD de DHCPv6) permet à un routeur de recevoir un préfixe entier de l'opérateur, qu'il découpe ensuite en /64 pour ses réseaux locaux."
+      }
+
+      question "Un réseau compte beaucoup de téléphones Android. Quel mode d’adressage IPv6 faut-il prévoir ?" {
+        - "DHCPv6 avec état uniquement"
+        + "SLAAC (éventuellement avec DHCPv6 sans état ou RDNSS pour le DNS)"
+        - "des adresses statiques sur chaque téléphone"
+        - "aucun, Android n'utilise pas IPv6"
+        explanation: "Android ne prend pas en charge DHCPv6 avec état pour obtenir une adresse. Sur un réseau DHCPv6 seul, ces appareils n'auraient pas d'adresse globale. SLAAC fonctionne sur tous les systèmes."
+      }
+
+      question "Dans le laboratoire, pourquoi active-t-on net.ipv6.conf.all.forwarding=1 dans l’espace rtr ?" {
+        - "pour activer IPv6 dans l'espace de noms"
+        + "pour que la machine route les paquets entre ses interfaces, comme un routeur"
+        - "pour autoriser le ping"
+        - "pour générer des adresses temporaires"
+        explanation: "forwarding=1 transforme la machine en routeur : elle transmet les paquets d'une interface à l'autre. radvd vérifie ce réglage au démarrage, car annoncer un routeur qui ne route pas n'aurait pas de sens."
+      }
+    }
+  }
+
+  module "linux" {
+    title: "Chapitre 7 : configurer IPv6 sous Linux"
+    duration: "40min"
+    content: """
+### Deux niveaux : immédiat et permanent
+
+• `ip` modifie la configuration **immédiatement**, mais tout est perdu au redémarrage. Idéal pour tester et dépanner.
+• Le fichier de configuration du gestionnaire de réseau rend la configuration **permanente** : `/etc/network/interfaces` (Debian, ifupdown), Netplan (Ubuntu, fichiers `/etc/netplan/*.yaml`), ou NetworkManager (`nmcli`) sur les postes de bureau.
+
+Pour savoir lequel est utilisé : `ls /etc/netplan/` (Ubuntu), `systemctl is-active NetworkManager`, ou la présence d'une section pour ta carte dans `/etc/network/interfaces`.
+
+### Commandes immédiates avec ip
+
+```bash
+# ajouter une adresse statique
+sudo ip -6 address add 2001:db8:10:1::10/64 dev eth0
+# route par défaut (prochain saut lien-local du routeur, ou globale)
+sudo ip -6 route add default via fe80::1 dev eth0
+# vérifier
+ip -6 address show dev eth0
+ip -6 route show
+ip -6 route get 2001:db8:99::1     # quelle route et quelle source pour cette destination ?
+# retirer
+sudo ip -6 address del 2001:db8:10:1::10/64 dev eth0
+```
+Avec un prochain saut `fe80::`, le `dev eth0` est **obligatoire** : sans lui, le système ne sait pas sur quel lien se trouve cette adresse.
+
+### Permanent sous Debian (ifupdown)
+
+`/etc/network/interfaces` :
+```text
+auto eth0
+iface eth0 inet static
+    address 192.0.2.10/24
+    gateway 192.0.2.1
+
+iface eth0 inet6 static
+    address 2001:db8:10:1::10/64
+    gateway 2001:db8:10:1::1
+    dns-nameservers 2001:db8:10:1::53
+```
+La ligne `dns-nameservers` nécessite le paquet `resolvconf` ; sinon, ajoute le serveur DNS dans `/etc/resolv.conf` (`nameserver 2001:db8:10:1::53`). Pour un poste en SLAAC : `iface eth0 inet6 auto`. Application : `sudo ifdown eth0 && sudo ifup eth0`. **Attention à distance** : si tu es connecté en SSH par cette carte et que la nouvelle configuration est fausse, tu perds la main. Prévois un accès console (hyperviseur, iDRAC/iLO, écran).
+
+### Permanent sous Ubuntu (Netplan)
+
+`/etc/netplan/50-lab.yaml` (l'indentation en espaces est significative) :
+```yaml
+network:
+  version: 2
+  ethernets:
+    eth0:
+      dhcp4: true
+      accept-ra: false
+      addresses:
+        - "2001:db8:10:1::10/64"
+      routes:
+        - to: default
+          via: "2001:db8:10:1::1"
+      nameservers:
+        addresses: ["2001:db8:10:1::53"]
+```
+Pour un poste en SLAAC, remplace `accept-ra: false` par `accept-ra: true` et retire `addresses` et `routes`. `ipv6-privacy: true` active les adresses temporaires ; `dhcp6: true` active le client DHCPv6. L'ancienne clé `gateway6` est dépréciée : utilise `routes` avec `to: default`.
+
+Application sans risque : `sudo netplan try` applique et **revient en arrière tout seul** au bout de 120 secondes si tu ne confirmes pas. Indispensable à distance. Puis `sudo netplan apply`.
+
+### NetworkManager (postes de bureau)
+
+```bash
+nmcli connection show
+sudo nmcli connection modify "Wired connection 1" ipv6.method manual \
+  ipv6.addresses 2001:db8:10:1::10/64 ipv6.gateway 2001:db8:10:1::1 ipv6.dns 2001:db8:10:1::53
+sudo nmcli connection up "Wired connection 1"
+# revenir à SLAAC : ipv6.method auto
+```
+
+### Les réglages du noyau (sysctl)
+
+| Paramètre | Rôle |
+|---|---|
+| `net.ipv6.conf.<if>.disable_ipv6` | 1 = IPv6 désactivé sur l'interface |
+| `net.ipv6.conf.<if>.accept_ra` | 0 = ignorer les RA ; 1 = les accepter si la machine ne route pas ; 2 = les accepter même si elle route |
+| `net.ipv6.conf.all.forwarding` | 1 = la machine route (et, avec accept_ra=1, ignore alors les RA) |
+| `net.ipv6.conf.<if>.use_tempaddr` | 0 = pas d'adresse temporaire, 1 = en créer sans les préférer, 2 = les créer et les préférer |
+| `net.ipv6.conf.<if>.addr_gen_mode` | 0 = EUI-64, 2 ou 3 = identifiant stable opaque (RFC 7217) |
+
+Lecture : `sysctl net.ipv6.conf.eth0.accept_ra`. Modification immédiate : `sudo sysctl -w ...`. Permanente : un fichier dans `/etc/sysctl.d/`, par exemple `/etc/sysctl.d/90-ipv6.conf`, puis `sudo sysctl --system`.
+
+Désactiver IPv6 « pour être tranquille » est une mauvaise idée : certains logiciels s'attendent à avoir `::1`, et tu masques le problème au lieu de le comprendre.
+
+### Tester
+
+```bash
+ping -6 -c 4 2001:db8:10:1::1          # ping en IPv6 (iputils ; ping6 est l'ancien nom)
+ping -6 -c 2 -I eth0 ff02::2           # qui sont les routeurs du lien ?
+tracepath -6 2001:db8:99::1             # chemin et MTU, sans droits root
+traceroute -6 2001:db8:99::1            # paquet traceroute
+ss -6 -tlnp                             # services qui écoutent en IPv6 (TCP)
+```
+Un service qui écoute sur `[::]:22` accepte souvent aussi l'IPv4 (sous forme `::ffff:...`), selon le réglage `net.ipv6.bindv6only` (0 par défaut).
+
+### Laboratoire : deux réseaux et un routeur
+
+Topologie, entièrement en espaces de noms :
+```text
+ pc1 (p1) ---- (r-a) rtr (r-b) ---- (p2) pc2
+ 2001:db8:10:a::/64        2001:db8:10:b::/64
+```
+```bash
+for ns in rtr pc1 pc2; do sudo ip netns add $ns; sudo ip -n $ns link set lo up; done
+sudo ip link add r-a netns rtr type veth peer name p1 netns pc1
+sudo ip link add r-b netns rtr type veth peer name p2 netns pc2
+for x in "rtr r-a" "rtr r-b" "pc1 p1" "pc2 p2"; do set -- $x; sudo ip -n $1 link set $2 up; done
+sudo ip netns exec rtr sysctl -qw net.ipv6.conf.all.forwarding=1
+```
+
+### À toi de jouer
+
+1. Donne au routeur `::1` dans chaque réseau, à `pc1` l'adresse `::10` du réseau a, à `pc2` l'adresse `::20` du réseau b (statiques).
+2. Sans route par défaut, `pc1` peut-il pinguer `pc2` ? Explique.
+3. Ajoute les routes par défaut sur les PC : pour `pc1` avec l'adresse globale du routeur, pour `pc2` avec son adresse lien-local.
+4. Vérifie le chemin avec `tracepath -6`, puis avec `ip -6 route get`.
+5. Crée sur `pc1` un fichier Netplan équivalent (sans l'appliquer : `pc1` est un espace de noms, pas une machine). Écris-le seulement.
+
+### Correction
+
+1.
+```bash
+sudo ip -n rtr address add 2001:db8:10:a::1/64 dev r-a
+sudo ip -n rtr address add 2001:db8:10:b::1/64 dev r-b
+sudo ip -n pc1 address add 2001:db8:10:a::10/64 dev p1
+sudo ip -n pc2 address add 2001:db8:10:b::20/64 dev p2
+sleep 2
+```
+2. Non : `pc1` ne connaît que son réseau a (route automatique `2001:db8:10:a::/64 dev p1`). Pour `2001:db8:10:b::20`, il n'a pas de route : `ping` répond `connect: Network is unreachable`. Le routeur, lui, connaît les deux réseaux.
+3.
+```bash
+sudo ip -n pc1 -6 route add default via 2001:db8:10:a::1
+LL=$(sudo ip -n rtr -6 address show dev r-b scope link | awk '/inet6/ {print $2}' | cut -d/ -f1)
+sudo ip -n pc2 -6 route add default via "$LL" dev p2
+sudo ip netns exec pc1 ping -6 -c 2 2001:db8:10:b::20
+```
+Le ping passe. Les deux formes de passerelle fonctionnent ; la lien-local est celle qu'utilisent les RA.
+4.
+```bash
+sudo ip netns exec pc1 tracepath -6 2001:db8:10:b::20
+#  1?: [LOCALHOST]                        0.0xxms pmtu 1500
+#  1:  2001:db8:10:a::1                   0.0xxms
+#  2:  2001:db8:10:b::20                  0.0xxms reached
+sudo ip -n pc1 -6 route get 2001:db8:10:b::20
+# 2001:db8:10:b::20 from :: via 2001:db8:10:a::1 dev p1 src 2001:db8:10:a::10 ...
+```
+5. Exemple de fichier attendu :
+```yaml
+network:
+  version: 2
+  ethernets:
+    p1:
+      accept-ra: false
+      addresses: ["2001:db8:10:a::10/64"]
+      routes:
+        - to: default
+          via: "2001:db8:10:a::1"
+```
+Garde ce laboratoire : il resservira au chapitre 9. Nettoyage : `for ns in rtr pc1 pc2; do sudo ip netns del $ns; done`.
+"""
+
+    codeblock "bash" {
+      title: "Script de diagnostic IPv6 rapide (Linux)"
+      code: """
+#!/usr/bin/env bash
+# usage : bash diag6.sh eth0
+if="${1:?usage: $0 interface}"
+echo "== Adresses";        ip -6 address show dev "$if"
+echo "== Route par défaut"; ip -6 route show default
+echo "== Voisins";         ip -6 neigh show dev "$if"
+echo "== Réglages";        sysctl net.ipv6.conf."$if".accept_ra net.ipv6.conf."$if".disable_ipv6 net.ipv6.conf.all.forwarding
+echo "== Routeurs du lien"; ping -6 -c 2 -W 1 -I "$if" ff02::2 2>&1 | grep -E 'bytes from|received'
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle commande ajoute immédiatement l’adresse 2001:db8:10:1::10/64 sur eth0 ?" {
+        + "sudo ip -6 address add 2001:db8:10:1::10/64 dev eth0"
+        - "sudo ifconfig eth0 2001:db8:10:1::10/64"
+        - "sudo ip -6 route add 2001:db8:10:1::10/64 dev eth0"
+        - "sudo netplan add 2001:db8:10:1::10/64 eth0"
+        explanation: "ip address add ajoute une adresse à une interface. ip route add ajouterait une route, pas une adresse. ifconfig est obsolète et n'a pas cette syntaxe ; netplan n'a pas de sous-commande add."
+      }
+
+      question "Pourquoi faut-il préciser dev eth0 dans ip -6 route add default via fe80::1 dev eth0 ?" {
+        - "parce que la commande échoue toujours sans dev"
+        + "parce qu'une adresse lien-local n'a de sens que sur une interface précise"
+        - "pour activer IPv6 sur eth0"
+        - "pour rendre la route permanente"
+        explanation: "fe80::1 peut exister sur chaque lien. Le système doit savoir par quelle interface joindre ce prochain saut. Avec une passerelle globale, le dev est déduit de la table de routage."
+      }
+
+      question "Quel est l’intérêt de sudo netplan try par rapport à netplan apply ?" {
+        - "il valide la syntaxe sans rien appliquer"
+        + "il applique la configuration et revient en arrière tout seul si tu ne confirmes pas"
+        - "il redémarre la machine"
+        - "il convertit le fichier en /etc/network/interfaces"
+        explanation: "netplan try applique puis attend une confirmation (120 s par défaut). Sans confirmation, l'ancienne configuration revient. C'est la sécurité indispensable quand on travaille à distance."
+      }
+
+      question "Dans Netplan, quelle écriture définit la route par défaut IPv6 de façon non dépréciée ?" {
+        - "gateway6: 2001:db8:10:1::1"
+        + "routes: avec to: default et via: 2001:db8:10:1::1"
+        - "default6: 2001:db8:10:1::1"
+        - "ipv6-gateway: 2001:db8:10:1::1"
+        explanation: "La documentation de Netplan indique que gateway6 est dépréciée au profit de routes avec to: default et via. Les deux autres clés n'existent pas."
+      }
+
+      question "Que vaut net.ipv6.conf.eth0.accept_ra pour qu’une machine ignore totalement les annonces de routeur ?" {
+        + "0"
+        - "1"
+        - "2"
+        - "-1"
+        explanation: "0 = ignorer les RA. 1 = les accepter tant que la machine ne route pas (forwarding=0). 2 = les accepter même si elle route, utile pour un routeur qui reçoit sa route par défaut d'un RA."
+      }
+
+      question "Quelle ligne de /etc/network/interfaces configure un poste Debian en SLAAC ?" {
+        - "iface eth0 inet6 dhcp"
+        + "iface eth0 inet6 auto"
+        - "iface eth0 inet6 slaac"
+        - "iface eth0 inet auto6"
+        explanation: "La méthode auto d'ifupdown pour inet6 utilise SLAAC (et peut lancer un client DHCPv6 sans état si le RA le demande). dhcp lance un client DHCPv6. slaac et auto6 n'existent pas."
+      }
+
+      question "Que doit valoir use_tempaddr pour créer des adresses temporaires et les préférer comme source ?" {
+        - "0"
+        - "1"
+        + "2"
+        - "3"
+        explanation: "0 = pas d'adresse temporaire, 1 = en créer mais préférer l'adresse publique, 2 = en créer et les préférer pour les connexions sortantes."
+      }
+
+      question "pc1 n’a pas de route par défaut et pingue une adresse d’un autre réseau. Quel message obtient-il ?" {
+        - "Destination Host Unreachable"
+        + "connect: Network is unreachable"
+        - "Request timed out"
+        - "Packet too big"
+        explanation: "Sans route, le noyau refuse d'envoyer le paquet et ping affiche immédiatement Network is unreachable. Destination Host Unreachable apparaît quand la route existe mais que le voisin ne répond pas aux NS."
+      }
+
+      question "Quelle commande indique la route et l’adresse source qu’utilisera le système pour joindre 2001:db8:99::1 ?" {
+        - "ip -6 neigh get 2001:db8:99::1"
+        + "ip -6 route get 2001:db8:99::1"
+        - "ping -6 -R 2001:db8:99::1"
+        - "ss -6 2001:db8:99::1"
+        explanation: "ip route get simule la décision de routage : prochain saut, interface et adresse source. C'est très utile quand une machine a plusieurs adresses ou plusieurs routes."
+      }
+
+      question "Que signifie une ligne LISTEN [::]:22 dans la sortie de ss -6 -tln ?" {
+        - "le service n'accepte que la boucle locale"
+        + "le service écoute sur toutes les adresses IPv6 de la machine, port 22"
+        - "le service est désactivé"
+        - "le port 22 est bloqué par le pare-feu"
+        explanation: "[::] est l'adresse non spécifiée : le service écoute sur toutes les adresses IPv6. Avec net.ipv6.bindv6only=0 (défaut), il accepte aussi souvent les connexions IPv4. Le pare-feu n'apparaît pas dans ss."
+      }
+
+      question "Quelle commande remplace ping6 sur une Debian ou une Ubuntu récente ?" {
+        - "ping --ipv6-only"
+        + "ping -6"
+        - "ping6 n'a pas de remplaçant"
+        - "ip ping -6"
+        explanation: "Le ping du paquet iputils accepte -6 pour forcer IPv6 (et -4 pour IPv4). ping6 existe souvent encore comme alias, mais ping -6 est la forme actuelle, identique sous Windows."
+      }
+
+      question "Un administrateur modifie /etc/network/interfaces d’un serveur distant en SSH et lance ifdown puis ifup. Quel est le risque ?" {
+        - "aucun, SSH se reconnecte tout seul"
+        + "perdre l'accès au serveur si la nouvelle configuration est fausse"
+        - "effacer le disque"
+        - "désactiver IPv4 définitivement"
+        explanation: "La connexion SSH passe par la carte que l'on reconfigure : une faute de frappe et la machine devient injoignable. Il faut un accès console de secours, ou un outil qui revient en arrière comme netplan try."
+      }
+
+      question "Pourquoi tracepath -6 est-il utile en plus du chemin ?" {
+        - "il chiffre les paquets"
+        + "il affiche la MTU du chemin (pmtu) et fonctionne sans droits root"
+        - "il teste les ports TCP"
+        - "il affiche les adresses MAC des routeurs"
+        explanation: "tracepath découvre la MTU du chemin en s'appuyant sur les messages Packet Too Big. Une MTU inférieure à 1500 révèle souvent un tunnel (VPN, 6in4), source fréquente de pannes IPv6."
+      }
+    }
+  }
+
+  module "windows" {
+    title: "Chapitre 8 : configurer IPv6 sous Windows"
+    duration: "35min"
+    content: """
+### Lire la configuration
+
+```powershell
+ipconfig /all
+```
+Extrait typique d'un poste en SLAAC (Windows en français) :
+```text
+Carte Ethernet Ethernet :
+   Adresse IPv6. . . . . . . . . . . . . .: 2001:db8:10:1:6c1d:2e4a:9b3f:1a20(préféré)
+   Adresse IPv6 temporaire . . . . . . . .: 2001:db8:10:1:85a1:44f2:7c0e:913b(préféré)
+   Adresse IPv6 de liaison locale. . . . .: fe80::6c1d:2e4a:9b3f:1a20%12(préféré)
+   Passerelle par défaut. . . . . . . . . : fe80::1%12
+                                            192.0.2.1
+   Serveurs DNS. . . . . . . . . . . . . : 2001:db8:10:1::53
+```
+• `%12` est le numéro d'interface (ifIndex).
+• L'adresse globale stable n'est pas dérivée de la MAC : Windows utilise par défaut un identifiant aléatoire stable, plus des adresses temporaires.
+• La passerelle IPv6 est une adresse lien-local : c'est normal (chapitre 6).
+
+En PowerShell, plus précis et scriptable :
+```powershell
+Get-NetIPAddress -AddressFamily IPv6 | Format-Table InterfaceAlias, IPAddress, PrefixLength, PrefixOrigin, SuffixOrigin, AddressState
+Get-NetRoute -AddressFamily IPv6 -DestinationPrefix ::/0
+Get-NetNeighbor -AddressFamily IPv6
+Get-NetIPInterface -AddressFamily IPv6   # numéros d'interface, RouterDiscovery, Dhcp...
+```
+`PrefixOrigin` et `SuffixOrigin` disent d'où vient l'adresse : `RouterAdvertisement` + `Link` ou `Random` = SLAAC ; `Dhcp` = DHCPv6 ; `Manual` = statique ; `WellKnown` = lien-local.
+
+### Configurer une adresse statique
+
+Avec PowerShell **en administrateur** :
+```powershell
+New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 2001:db8:10:1::10 -PrefixLength 64 -DefaultGateway 2001:db8:10:1::1
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses ("2001:db8:10:1::53","192.0.2.53")
+```
+Pour retirer :
+```powershell
+Remove-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 2001:db8:10:1::10 -Confirm:$false
+Remove-NetRoute -InterfaceAlias "Ethernet" -DestinationPrefix ::/0 -Confirm:$false
+```
+`Remove-NetRoute` sans précision retirerait **toutes** les routes par défaut IPv6 de la carte, y compris celle apprise par RA : à faire en connaissance de cause.
+
+Équivalent avec `netsh` (encore très présent dans les scripts et sur Windows Server) :
+```powershell
+netsh interface ipv6 add address "Ethernet" 2001:db8:10:1::10/64
+netsh interface ipv6 add route ::/0 "Ethernet" 2001:db8:10:1::1
+netsh interface ipv6 add dnsserver "Ethernet" 2001:db8:10:1::53
+netsh interface ipv6 show addresses
+```
+Par l'interface graphique : `ncpa.cpl`, propriétés de la carte, « Protocole Internet version 6 (TCP/IPv6) ».
+
+### Tester
+
+```powershell
+ping -6 2001:db8:10:1::1
+ping fe80::1%12
+tracert -6 2001:db8:99::1
+Test-NetConnection -ComputerName 2001:db8:10:1::53 -Port 53
+Resolve-DnsName www.example.org -Type AAAA
+```
+
+### Ne pas désactiver IPv6, préférer IPv4 si besoin
+
+Microsoft rappelle qu'IPv6 fait partie intégrante de Windows depuis Vista et **déconseille de le désactiver** ou de décocher IPv6 sur une carte : certains composants (par exemple sur un contrôleur de domaine ou un cluster) peuvent cesser de fonctionner. Si une application pose problème en IPv6, Microsoft recommande plutôt de **préférer IPv4** dans la politique de préfixes, avec la valeur de registre `DisabledComponents` = `0x20` (redémarrage nécessaire) :
+```powershell
+reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters" /v DisabledComponents /t REG_DWORD /d 0x20 /f
+netsh interface ipv6 show prefixpolicies
+```
+Après redémarrage, l'entrée `::ffff:0:0/96` (IPv4) a une priorité (precedence) plus haute que `::/0`. Modifier le registre est une action d'administrateur : sauvegarde d'abord la clé, et ne mets jamais `0xffffffff` (valeur incorrecte, qui ralentit le démarrage) ; la valeur « désactiver » documentée est `0xFF`.
+
+### Confidentialité des adresses
+
+```powershell
+Get-NetIPv6Protocol | Format-List UseTemporaryAddresses, RandomizeIdentifiers
+```
+Sur un serveur, on peut vouloir désactiver les adresses temporaires pour que les journaux distants montrent toujours la même adresse : `Set-NetIPv6Protocol -UseTemporaryAddresses Disabled`. Sur un poste client, garde-les.
+
+### À toi de jouer
+
+Sur un poste Windows 10/11 ou Windows Server 2022 de test (machine virtuelle conseillée) :
+1. Liste les adresses IPv6 avec leur origine. Identifie la lien-local, la temporaire et la stable.
+2. Trouve le numéro d'interface de ta carte et pingue la passerelle IPv6 par son adresse lien-local.
+3. Ajoute l'adresse statique `fd12:3456:789a:1::10/64` (une ULA de test) sans passerelle, vérifie-la, puis retire-la.
+4. Affiche la table de politique de préfixes et dis, d'après elle, si le poste préfère IPv6 ou IPv4.
+5. Écris un court script PowerShell qui affiche « IPv6 global : OK » si la carte a au moins une adresse globale valide, « IPv6 global : absent » sinon.
+
+### Correction
+
+1. `Get-NetIPAddress -AddressFamily IPv6 | Format-Table InterfaceAlias, IPAddress, PrefixOrigin, SuffixOrigin` : `fe80::` avec `WellKnown` = lien-local ; `SuffixOrigin Random` et `PrefixOrigin RouterAdvertisement` = stable ou temporaire (la temporaire apparaît aussi comme « Adresse IPv6 temporaire » dans `ipconfig`). Sans IPv6 chez ton fournisseur, tu ne vois que la lien-local.
+2. `Get-NetIPInterface -AddressFamily IPv6` donne `ifIndex` (par exemple 12). La passerelle est dans `ipconfig`. Puis `ping fe80::1%12` (remplace par l'adresse réelle).
+3.
+```powershell
+New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress fd12:3456:789a:1::10 -PrefixLength 64
+Get-NetIPAddress -IPAddress fd12:3456:789a:1::10
+Remove-NetIPAddress -IPAddress fd12:3456:789a:1::10 -Confirm:$false
+```
+4. `netsh interface ipv6 show prefixpolicies` : par défaut, `::1/128` a la précédence 50, `::/0` 40 et `::ffff:0:0/96` 35. 40 est plus grand que 35 : IPv6 est préféré. Avec `DisabledComponents` = `0x20`, l'ordre s'inverse.
+5.
+```powershell
+$g = Get-NetIPAddress -AddressFamily IPv6 -InterfaceAlias "Ethernet" -ErrorAction SilentlyContinue |
+     Where-Object { $_.IPAddress -match '^[23]' -and $_.AddressState -eq 'Preferred' }
+if ($g) { "IPv6 global : OK ($($g[0].IPAddress))" } else { "IPv6 global : absent" }
+```
+L'expression `^[23]` repère les adresses de `2000::/3`.
+"""
+
+    codeblock "powershell" {
+      title: "Résumé IPv6 d'un poste Windows"
+      code: """
+Get-NetIPAddress -AddressFamily IPv6 |
+  Where-Object InterfaceAlias -notlike 'Loopback*' |
+  Sort-Object InterfaceAlias |
+  Format-Table InterfaceAlias, IPAddress, PrefixLength, PrefixOrigin, SuffixOrigin, AddressState -AutoSize
+Get-NetRoute -AddressFamily IPv6 -DestinationPrefix ::/0 | Format-Table InterfaceAlias, NextHop, RouteMetric
+Get-DnsClientServerAddress -AddressFamily IPv6 | Where-Object ServerAddresses
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle commande PowerShell configure une adresse IPv6 statique avec sa passerelle ?" {
+        + "New-NetIPAddress -InterfaceAlias Ethernet -IPAddress 2001:db8:10:1::10 -PrefixLength 64 -DefaultGateway 2001:db8:10:1::1"
+        - "Set-NetIPv6Address -Interface Ethernet -Address 2001:db8:10:1::10/64"
+        - "Add-NetIPv6 -Ethernet 2001:db8:10:1::10 -Gateway 2001:db8:10:1::1"
+        - "New-NetRoute -IPAddress 2001:db8:10:1::10 -PrefixLength 64"
+        explanation: "New-NetIPAddress crée l'adresse et, avec -DefaultGateway, la route par défaut. Set-NetIPv6Address et Add-NetIPv6 n'existent pas ; New-NetRoute crée une route, pas une adresse."
+      }
+
+      question "Dans ipconfig, la passerelle IPv6 s’affiche fe80::1%12. Est-ce une erreur ?" {
+        - "oui, la passerelle doit être une adresse globale"
+        + "non, la passerelle apprise par RA est l'adresse lien-local du routeur"
+        - "oui, %12 indique une erreur de configuration"
+        - "non, mais seulement si DHCPv6 est actif"
+        explanation: "Les Router Advertisements partent de l'adresse lien-local du routeur, que le poste utilise comme prochain saut. %12 précise l'interface concernée. C'est le fonctionnement normal."
+      }
+
+      question "Que recommande Microsoft quand une application fonctionne mal en IPv6 ?" {
+        - "décocher IPv6 sur toutes les cartes"
+        + "préférer IPv4 dans la politique de préfixes (DisabledComponents = 0x20) plutôt que désactiver IPv6"
+        - "mettre DisabledComponents à 0xffffffff"
+        - "désinstaller la pile TCP/IP"
+        explanation: "Microsoft déconseille de désactiver IPv6, dont dépendent des composants Windows. 0x20 change seulement l'ordre de préférence. 0xffffffff est une valeur incorrecte qui provoque un retard au démarrage."
+      }
+
+      question "Avec la politique de préfixes par défaut de Windows, ::/0 a la précédence 40 et ::ffff:0:0/96 la précédence 35. Quel protocole est préféré ?" {
+        + "IPv6, car sa précédence est plus haute"
+        - "IPv4, car 35 est plus petit"
+        - "aucun, Windows tire au hasard"
+        - "IPv4, car il est plus ancien"
+        explanation: "La politique de préfixes (RFC 6724) choisit la destination dont la précédence est la plus haute. 40 est supérieur à 35 : une destination IPv6 passe avant une destination IPv4."
+      }
+
+      question "Quelle valeur de SuffixOrigin indique, dans Get-NetIPAddress, une adresse saisie à la main ?" {
+        - "Link"
+        - "Random"
+        + "Manual"
+        - "WellKnown"
+        explanation: "Manual = configuration statique. Random = identifiant aléatoire (SLAAC Windows, temporaire ou stable), Link = dérivé de l'adresse de la carte, WellKnown = adresse connue comme la lien-local ou le bouclage."
+      }
+
+      question "Quelle commande netsh ajoute l’adresse 2001:db8:10:1::10/64 sur la carte Ethernet ?" {
+        + "netsh interface ipv6 add address Ethernet 2001:db8:10:1::10/64"
+        - "netsh ipv6 set ip Ethernet 2001:db8:10:1::10/64"
+        - "netsh interface ip add address6 Ethernet 2001:db8:10:1::10"
+        - "netsh interface ipv6 add route 2001:db8:10:1::10/64 Ethernet"
+        explanation: "La syntaxe est netsh interface ipv6 add address suivie de l'interface et de l'adresse avec sa longueur de préfixe. add route ajoute une route, pas une adresse."
+      }
+
+      question "Comment pinguer depuis Windows l’adresse lien-local fe80::1 joignable par l’interface 12 ?" {
+        - "ping fe80::1/12"
+        + "ping fe80::1%12"
+        - "ping -i 12 fe80::1"
+        - "ping [fe80::1]:12"
+        explanation: "Windows utilise l'identifiant de zone %numéro_d'interface. /12 serait une longueur de préfixe, -i règle le TTL, et les crochets avec :12 désignent un port."
+      }
+
+      question "Quelle cmdlet affiche le cache des voisins IPv6 sous Windows ?" {
+        - "Get-NetARP"
+        + "Get-NetNeighbor -AddressFamily IPv6"
+        - "Get-NetIPv6Cache"
+        - "arp -6"
+        explanation: "Get-NetNeighbor affiche les voisins IPv4 et IPv6 ; -AddressFamily IPv6 filtre. netsh interface ipv6 show neighbors donne le même résultat. Les autres commandes n'existent pas."
+      }
+
+      question "Quelle commande vérifie qu’un nom possède une adresse IPv6 dans le DNS, sous PowerShell ?" {
+        - "Resolve-DnsName www.example.org -Type A"
+        + "Resolve-DnsName www.example.org -Type AAAA"
+        - "Resolve-DnsName www.example.org -Type PTR"
+        - "Test-NetConnection www.example.org -IPv6"
+        explanation: "L'enregistrement DNS d'une adresse IPv6 est AAAA (quatre fois plus grand que A, l'enregistrement IPv4). PTR sert au DNS inverse."
+      }
+
+      question "Sur un serveur Windows, pourquoi désactiver parfois les adresses temporaires ?" {
+        - "pour accélérer le démarrage"
+        + "pour que le serveur sorte toujours avec la même adresse, ce qui simplifie les règles de pare-feu et les journaux distants"
+        - "pour activer DHCPv6"
+        - "parce qu'elles empêchent le ping"
+        explanation: "Un serveur doit être prévisible : ses connexions sortantes doivent venir d'une adresse connue. Set-NetIPv6Protocol -UseTemporaryAddresses Disabled le permet. Sur un poste client, les adresses temporaires protègent la vie privée."
+      }
+
+      question "Quelle commande Windows trace le chemin IPv6 vers une destination ?" {
+        - "traceroute -6"
+        + "tracert -6"
+        - "pathping -ipv6"
+        - "route print -6"
+        explanation: "Sous Windows, la commande est tracert, avec -6 pour forcer IPv6. traceroute est le nom Linux. route print -6 affiche la table de routage IPv6, sans tracer de chemin."
+      }
+
+      question "Que fait Remove-NetRoute -InterfaceAlias Ethernet -DestinationPrefix ::/0 -Confirm:$false ?" {
+        - "il supprime uniquement la route statique ajoutée à la main"
+        + "il supprime toutes les routes par défaut IPv6 de la carte, y compris celles apprises par RA"
+        - "il supprime toutes les adresses IPv6"
+        - "il désactive IPv6 sur la carte"
+        explanation: "La commande cible toutes les routes ::/0 de l'interface, quelle que soit leur origine. Si tu veux supprimer une seule passerelle, précise aussi -NextHop."
+      }
+    }
+  }
+
+  module "double-pile" {
+    title: "Chapitre 9 : double pile, DNS et cohabitation avec IPv4"
+    duration: "40min"
+    content: """
+### La double pile (dual stack)
+
+La méthode de transition la plus répandue est la **double pile** : chaque machine a une adresse IPv4 **et** des adresses IPv6, chaque routeur route les deux, et chaque application choisit. Avantages : simple, compatible avec tout. Inconvénients : deux plans d'adressage, deux jeux de règles de pare-feu, deux sources de pannes.
+
+### Le rôle du DNS
+
+Un nom peut avoir un enregistrement **A** (IPv4) et un enregistrement **AAAA** (IPv6) :
+```bash
+dig +short A www.example.org
+dig +short AAAA www.example.org
+host -t AAAA www.example.org
+```
+Le protocole utilisé pour **interroger** le DNS ne dit rien sur la réponse : un serveur DNS joint en IPv4 peut renvoyer des AAAA, et inversement.
+
+### Qui gagne, IPv4 ou IPv6 ?
+
+Quand un nom a les deux types d'adresse, le système trie les destinations selon la RFC 6724 : par défaut, **IPv6 passe en premier**, si le poste a une adresse IPv6 globale. Mais si le chemin IPv6 est cassé (pare-feu, tunnel en panne), l'utilisateur attendrait de longues secondes avant le repli sur IPv4.
+
+D'où **Happy Eyeballs** (RFC 8305) : le navigateur ou la bibliothèque lance la connexion IPv6, et si elle n'aboutit pas très vite (250 ms recommandées), lance la connexion IPv4 en parallèle ; la première qui répond gagne. Conséquence pour le dépannage : **une panne IPv6 peut être invisible** dans le navigateur, et n'apparaître qu'avec des outils qui ne font pas ce repli (scripts, `curl -6`, mises à jour système).
+
+Sous Linux, la préférence de la bibliothèque C se règle dans `/etc/gai.conf` : décommenter `precedence ::ffff:0:0/96  100` fait passer IPv4 en premier. Sous Windows, c'est la politique de préfixes vue au chapitre 8.
+
+### Forcer un protocole pour diagnostiquer
+
+| Outil | IPv4 | IPv6 |
+|---|---|---|
+| ping | `ping -4` | `ping -6` |
+| curl | `curl -4` | `curl -6` |
+| traceroute (Linux) / tracert (Windows) | `-4` | `-6` |
+| ssh | `ssh -4` | `ssh -6` |
+| PowerShell | `Test-NetConnection` sur l'adresse IPv4 | sur l'adresse IPv6 |
+
+Méthode de diagnostic « couche par couche » pour un poste en double pile qui a un problème :
+1. Ai-je une adresse globale IPv6 ? (`ip -6 a`, `ipconfig`)
+2. Ai-je une route par défaut IPv6 ? (`ip -6 route show default`, `Get-NetRoute ::/0`)
+3. Ma passerelle répond-elle ? (`ping -6 fe80::...%eth0`)
+4. Une adresse IPv6 externe répond-elle ? (`ping -6` vers une adresse connue)
+5. Le DNS renvoie-t-il un AAAA ? (`dig AAAA`, `Resolve-DnsName -Type AAAA`)
+6. Le service répond-il en IPv6 ? (`curl -6 -I https://...`, `Test-NetConnection -Port`)
+7. La MTU passe-t-elle ? (`tracepath -6`, `ping -6 -s 1452` puis plus grand)
+
+### Le pare-feu en double pile
+
+Erreur courante : un pare-feu IPv4 bien réglé, et **rien** en IPv6. Avec IPv6, chaque machine a une adresse globale potentiellement joignable : **le pare-feu remplace la protection que le NAT donnait par effet de bord**. Règles minimales sur un routeur ou une machine :
+• bloquer les connexions entrantes non sollicitées, comme en IPv4 ;
+• **laisser passer** ICMPv6 nécessaire : Packet Too Big, Destination Unreachable, Time Exceeded, Parameter Problem, et NDP (types 133 à 136) sur le lien local ; echo request recommandé (RFC 4890) ;
+• appliquer les mêmes règles applicatives en IPv4 et en IPv6.
+
+Avec nftables, la famille `inet` traite IPv4 et IPv6 dans une seule table, ce qui évite d'oublier l'un des deux :
+```text
+table inet filtre {
+  chain entree {
+    type filter hook input priority 0; policy drop;
+    ct state established,related accept
+    iif "lo" accept
+    meta l4proto ipv6-icmp icmpv6 type { destination-unreachable, packet-too-big, time-exceeded, parameter-problem, echo-request, nd-router-advert, nd-neighbor-solicit, nd-neighbor-advert } accept
+    meta l4proto icmp icmp type { echo-request, destination-unreachable, time-exceeded } accept
+    tcp dport 22 accept
+  }
+}
+```
+**Attention** : appliquer une politique `drop` à distance sans avoir autorisé ta propre session (ici SSH, port 22) te coupe l'accès. Teste d'abord sur une machine locale ou un espace de noms.
+
+### Quand IPv4 manque : NAT64, DNS64, tunnels
+
+• **NAT64 + DNS64** (RFC 6146, RFC 6147) : le réseau est en IPv6 seul. Pour un site qui n'a qu'une adresse IPv4, le serveur DNS64 fabrique un faux AAAA dans le préfixe `64:ff9b::/96` (RFC 6052), et la passerelle NAT64 traduit vers IPv4. Exemple : `192.0.2.33` devient `64:ff9b::c000:221`. Beaucoup de réseaux mobiles fonctionnent ainsi.
+• **464XLAT** (RFC 6877) : ajoute une petite traduction sur le téléphone pour les applications qui ne parlent qu'IPv4.
+• **Tunnels** (6in4, et autrefois 6to4 et Teredo) : transportent IPv6 dans IPv4 quand l'opérateur ne fournit pas IPv6. 6to4 et Teredo sont aujourd'hui abandonnés ; ISATAP et Teredo sont désactivés par défaut sous Windows.
+• **NAT66 / NPTv6** existe, mais ce n'est pas la façon normale de faire de l'IPv6 : chaque machine peut avoir sa propre adresse globale.
+
+### À toi de jouer
+
+Reprends le laboratoire du chapitre 7 (`rtr`, `pc1`, `pc2`), en double pile :
+1. Ajoute un plan IPv4 : réseau a `192.168.10.0/24`, réseau b `192.168.20.0/24`, routeur en `.1`, `pc1` en `.10`, `pc2` en `.20`, routes par défaut, routage IPv4 activé sur `rtr`.
+2. Lance un petit serveur web sur `pc2` qui écoute en IPv4 et IPv6 sur le port 8080, puis teste depuis `pc1` avec `curl -4` et `curl -6`.
+3. Simule une panne IPv6 : supprime la route par défaut IPv6 de `pc1`. Que montrent `curl -4` et `curl -6` ? Pourquoi un navigateur ne la verrait peut-être pas ?
+4. Remets la route. Sur `rtr`, avec nftables, bloque **tout** ICMPv6 transmis (chaîne forward), puis teste un ping et un curl en IPv6. Ensuite, n'autorise que le nécessaire.
+5. Calcule l'adresse NAT64 de `198.51.100.10` dans `64:ff9b::/96`.
+
+### Correction
+
+1.
+```bash
+sudo ip -n rtr address add 192.168.10.1/24 dev r-a
+sudo ip -n rtr address add 192.168.20.1/24 dev r-b
+sudo ip -n pc1 address add 192.168.10.10/24 dev p1
+sudo ip -n pc2 address add 192.168.20.20/24 dev p2
+sudo ip -n pc1 route add default via 192.168.10.1
+sudo ip -n pc2 route add default via 192.168.20.1
+sudo ip netns exec rtr sysctl -qw net.ipv4.ip_forward=1
+```
+2.
+```bash
+sudo ip netns exec pc2 python3 -m http.server 8080 --bind :: &
+sudo ip netns exec pc1 curl -4 -sI http://192.168.20.20:8080/ | head -1
+sudo ip netns exec pc1 curl -6 -sI 'http://[2001:db8:10:b::20]:8080/' | head -1
+# HTTP/1.0 200 OK  (deux fois)
+```
+`--bind ::` écoute sur toutes les adresses IPv6 ; le module `http.server` désactive lui-même l'option `IPV6_V6ONLY` de sa socket, il accepte donc aussi l'IPv4 (vu comme `::ffff:192.168.10.10`). Note les crochets dans l'URL IPv6.
+3. `sudo ip -n pc1 -6 route del default` : `curl -4` répond toujours, `curl -6` échoue immédiatement (`Network is unreachable`). Un navigateur qui pratique Happy Eyeballs, devant un nom avec A et AAAA, se serait rabattu sur IPv4 en quelques centaines de millisecondes : l'utilisateur ne voit rien, mais le problème existe. C'est pourquoi on teste toujours les deux protocoles séparément. Remets la route avec la commande du chapitre 7.
+4.
+```bash
+sudo apt install -y nftables
+sudo ip netns exec rtr nft add table inet filtre
+sudo ip netns exec rtr nft 'add chain inet filtre transit { type filter hook forward priority 0; policy accept; }'
+sudo ip netns exec rtr nft add rule inet filtre transit meta l4proto ipv6-icmp drop
+sudo ip netns exec pc1 ping -6 -c 2 2001:db8:10:b::20    # échoue
+sudo ip netns exec pc1 curl -6 -sI 'http://[2001:db8:10:b::20]:8080/' | head -1   # répond encore
+```
+Le curl passe encore ici : NDP ne traverse pas le routeur (chaque lien a le sien) et la MTU est la même partout. Mais sur un vrai réseau avec un tunnel ou un VPN (MTU plus petite), les **Packet Too Big** seraient bloqués : les petites pages passeraient, les gros transferts resteraient bloqués sans message d'erreur. C'est une panne réelle et fréquente. Version correcte :
+```bash
+sudo ip netns exec rtr nft flush chain inet filtre transit
+sudo ip netns exec rtr nft add rule inet filtre transit icmpv6 type { destination-unreachable, packet-too-big, time-exceeded, parameter-problem, echo-request, echo-reply } accept
+sudo ip netns exec rtr nft add rule inet filtre transit meta l4proto ipv6-icmp drop
+```
+5. `198.51.100.10` en hexadécimal : 198 = c6, 51 = 33, 100 = 64, 10 = 0a, soit `c633:640a`. Adresse : `64:ff9b::c633:640a`.
+
+Nettoyage : `sudo ip netns pids pc2 | xargs -r sudo kill` puis supprime les espaces de noms.
+"""
+
+    codeblock "bash" {
+      title: "Comparer IPv4 et IPv6 pour un même service"
+      code: """
+#!/usr/bin/env bash
+# usage : bash compare46.sh www.example.org
+h="${1:?usage: $0 nom}"
+echo "A    : $(dig +short A "$h" | tr '\n' ' ')"
+echo "AAAA : $(dig +short AAAA "$h" | tr '\n' ' ')"
+for v in 4 6; do
+  t=$(curl -$v -s -o /dev/null -w '%{http_code} en %{time_connect}s' --max-time 5 "https://$h/") \
+    && echo "IPv$v : HTTP $t" || echo "IPv$v : échec"
+done
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Qu’est-ce que la double pile (dual stack) ?" {
+        - "un tunnel IPv6 dans IPv4"
+        + "le fait qu'une machine et le réseau gèrent IPv4 et IPv6 en même temps"
+        - "deux cartes réseau dans une machine"
+        - "la traduction d'IPv6 vers IPv4"
+        explanation: "En double pile, chaque équipement a une configuration IPv4 et une configuration IPv6 complètes et indépendantes. Les tunnels et la traduction (NAT64) sont d'autres mécanismes de transition."
+      }
+
+      question "Quel enregistrement DNS contient une adresse IPv6 ?" {
+        - "A"
+        + "AAAA"
+        - "PTR"
+        - "MX"
+        explanation: "AAAA (quad-A) contient une adresse de 128 bits, A une adresse IPv4 de 32 bits. PTR sert au DNS inverse, MX désigne les serveurs de messagerie."
+      }
+
+      question "Que fait l’algorithme Happy Eyeballs (RFC 8305) ?" {
+        - "il désactive IPv6 quand IPv4 est disponible"
+        + "il tente IPv6 et, sans réponse rapide, lance aussi IPv4 ; la première connexion établie gagne"
+        - "il répartit la charge entre IPv4 et IPv6"
+        - "il chiffre les connexions IPv6"
+        explanation: "Happy Eyeballs évite d'attendre longtemps quand IPv6 est cassé. Effet secondaire : une panne IPv6 peut passer inaperçue dans le navigateur, d'où l'intérêt de tester avec curl -6."
+      }
+
+      question "Un utilisateur dit que le web fonctionne, mais les mises à jour de son serveur Linux échouent avec des délais d’attente. Le serveur a une adresse IPv6 globale. Quelle vérification faire en premier ?" {
+        - "changer le câble réseau"
+        + "tester la connectivité IPv6 seule, par exemple avec curl -6 ou ping -6 vers une adresse externe"
+        - "désactiver IPv4"
+        - "vider le cache du navigateur"
+        explanation: "Les outils sans repli rapide vers IPv4 souffrent d'une panne IPv6 que le navigateur masque. Il faut tester chaque protocole séparément."
+      }
+
+      question "Quelle ligne de /etc/gai.conf fait préférer IPv4 à IPv6 sous Linux ?" {
+        - "prefer ipv4"
+        + "precedence ::ffff:0:0/96  100"
+        - "label ::/0 4"
+        - "disable_ipv6 = 1"
+        explanation: "gai.conf règle la table de précédence de getaddrinfo. Donner 100 au préfixe ::ffff:0:0/96 (les adresses IPv4 vues par IPv6) fait passer IPv4 en premier. disable_ipv6 est un réglage sysctl, pas une ligne de gai.conf."
+      }
+
+      question "Pourquoi un pare-feu IPv6 est-il encore plus important qu’en IPv4 derrière une box ?" {
+        - "parce qu'IPv6 n'a pas de chiffrement"
+        + "parce que sans NAT, chaque machine a une adresse globale potentiellement joignable depuis Internet"
+        - "parce qu'IPv6 est plus lent"
+        - "parce que les adresses IPv6 sont publiées dans le DNS automatiquement"
+        explanation: "Le NAT d'IPv4 bloquait les connexions entrantes par effet de bord. En IPv6, c'est le pare-feu qui doit le faire explicitement, en refusant les connexions entrantes non sollicitées."
+      }
+
+      question "Un administrateur bloque tout ICMPv6 qui traverse son routeur. Les petites pages web passent, mais les gros téléchargements à travers un VPN restent bloqués. Pourquoi ?" {
+        - "le VPN ne gère pas IPv6"
+        + "les messages Packet Too Big sont bloqués, la découverte de MTU échoue"
+        - "le DNS ne répond plus"
+        - "le cache des voisins est saturé"
+        explanation: "Les routeurs IPv6 ne fragmentent pas : ils renvoient Packet Too Big. Si ce message est filtré, l'émetteur ne réduit jamais la taille des paquets et les gros paquets disparaissent. C'est un trou noir de MTU."
+      }
+
+      question "Quelle est l’adresse NAT64 de 192.0.2.33 dans le préfixe 64:ff9b::/96 ?" {
+        - "64:ff9b::192.0.2.33:0"
+        + "64:ff9b::c000:221"
+        - "64:ff9b::c0:2:21"
+        - "64:ff9b::2100:c0"
+        explanation: "On convertit chaque octet en hexadécimal : 192 = c0, 0 = 00, 2 = 02, 33 = 21, soit c000:0221, écrit c000:221. On l'ajoute dans les 32 derniers bits du préfixe /96. La forme 64:ff9b::192.0.2.33 est aussi acceptée, mais pas la première proposition."
+      }
+
+      question "Quel mécanisme permet à un réseau en IPv6 seul d’atteindre un site qui n’a qu’une adresse IPv4 ?" {
+        - "SLAAC"
+        - "RA Guard"
+        + "NAT64 associé à DNS64"
+        - "la double pile"
+        explanation: "DNS64 fabrique un AAAA artificiel dans le préfixe NAT64, et la passerelle NAT64 traduit les paquets vers IPv4. La double pile suppose au contraire que le poste ait une adresse IPv4."
+      }
+
+      question "Quelle option de curl force une connexion en IPv6 ?" {
+        - "curl --ipv6-only"
+        + "curl -6"
+        - "curl -v6"
+        - "curl -H IPv6"
+        explanation: "curl -6 (ou --ipv6) résout le nom uniquement en IPv6 et se connecte en IPv6. curl -4 force IPv4. Combiné à -I, il permet de comparer rapidement les deux protocoles."
+      }
+
+      question "Dans nftables, quel est l’intérêt de la famille de tables inet ?" {
+        - "elle ne filtre qu'IPv6"
+        + "une même table filtre IPv4 et IPv6, ce qui évite d'oublier l'un des deux"
+        - "elle désactive le suivi de connexions"
+        - "elle est réservée aux routeurs"
+        explanation: "La famille inet traite les deux protocoles dans les mêmes chaînes. Avec iptables et ip6tables, il fallait maintenir deux jeux de règles séparés, avec le risque d'en oublier un."
+      }
+
+      question "Un serveur DNS est interrogé en IPv4. Peut-il renvoyer des enregistrements AAAA ?" {
+        + "oui, le protocole de transport de la requête DNS n'a pas de rapport avec le type d'enregistrement demandé"
+        - "non, un serveur joint en IPv4 ne connaît que les A"
+        - "oui, mais seulement en DNS inverse"
+        - "non, il faut un serveur DNS64"
+        explanation: "On peut demander des AAAA à un serveur joint en IPv4 et des A à un serveur joint en IPv6. DNS64 sert à fabriquer des AAAA pour des sites qui n'en ont pas, ce qui est un autre sujet."
+      }
+
+      question "Pourquoi ne pas reprendre le NAT d’IPv4 dans un réseau IPv6 classique ?" {
+        - "parce que le NAT est interdit par la loi"
+        + "parce qu'il y a assez d'adresses pour chaque machine et que le NAT complique les applications sans apporter de sécurité qu'un pare-feu ne donne pas"
+        - "parce que les routeurs IPv6 ne savent pas traduire"
+        - "parce qu'IPv6 chiffre déjà les adresses"
+        explanation: "La sécurité vient du filtrage, pas de la traduction. NPTv6 et NAT66 existent pour des cas particuliers, mais la conception normale d'IPv6 est l'adressage de bout en bout avec un pare-feu à état."
+      }
+
+      question "Que fait la commande python3 -m http.server 8080 --bind :: lancée dans pc2 ?" {
+        - "elle écoute seulement sur ::1"
+        + "elle écoute sur toutes les adresses IPv6 de pc2, et accepte aussi les connexions IPv4"
+        - "elle écoute seulement en IPv4"
+        - "elle crée une adresse IPv6 sur pc2"
+        explanation: ":: est l'adresse non spécifiée, donc toutes les adresses. Le module http.server désactive l'option IPV6_V6ONLY de sa socket : elle accepte aussi les connexions IPv4, vues comme ::ffff:a.b.c.d. Pour les autres programmes, c'est le réglage net.ipv6.bindv6only (0 par défaut sous Linux) qui décide."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse et mini-projet"
+    duration: "40min"
+    content: """
+### Ce qu'il faut retenir
+
+• Adresse de 128 bits, 8 groupes hexadécimaux ; une seule forme recommandée (RFC 5952) : zéros de tête supprimés, `::` sur la plus longue suite (la première en cas d'égalité, jamais pour un groupe seul), minuscules.
+• Plusieurs adresses par interface : lien-local `fe80::/10` toujours présente, globale `2000::/3`, ULA `fd00::/8`, multicast `ff00::/8`. Pas de broadcast.
+• Un réseau local = un **/64**. Un site reçoit un /48 ou un /56 ; nombre de /64 = 2^(64 - préfixe). On découpe sur des multiples de 4 bits.
+• NDP remplace ARP (NS/NA vers l'adresse de nœud sollicité), découvre les routeurs (RS/RA) et vérifie les doublons (DAD).
+• La passerelle vient **toujours** d'un RA ; l'adresse vient de SLAAC (drapeau A) et/ou de DHCPv6 (drapeau M) ; le DNS de RDNSS ou de DHCPv6 (drapeau O).
+• Linux : `ip -6`, Netplan (`netplan try`), ifupdown, sysctl. Windows : `New-NetIPAddress`, `Get-NetIPAddress`, `netsh interface ipv6` ; ne pas désactiver IPv6, préférer IPv4 avec `0x20` si nécessaire.
+• Double pile : tester IPv4 et IPv6 **séparément** (`-4`, `-6`), un pare-feu pour les deux, ne jamais bloquer tout ICMPv6.
+
+### Mini-projet : le réseau IPv6 d'un petit établissement
+
+Contexte : un collège reçoit le préfixe `2001:db8:c011::/48` de son fournisseur. Il a trois réseaux : **administration** (postes Windows, adresses suivies), **salle informatique** (postes en libre service) et **serveurs** (DNS, partage de fichiers). Tu construis une maquette complète sur une machine Debian ou Ubuntu avec des espaces de noms, puis tu rédiges une courte documentation.
+
+Topologie de la maquette :
+```text
+            (r-adm) ---- adm1     administration
+  rtr ---- (r-salle) ---- salle1   salle informatique
+            (r-srv) ---- srv1     serveurs
+```
+
+#### Étape 1 : plan d'adressage (sur papier)
+
+Propose un /64 par réseau, sur frontière de quartet, avec une logique lisible. Prévois un préfixe ULA aléatoire pour les services internes. Donne l'adresse du routeur et des serveurs.
+
+#### Étape 2 : construire la maquette
+
+Crée les quatre espaces de noms, les trois câbles virtuels, active le routage IPv6 et donne au routeur ses adresses `::1`.
+
+#### Étape 3 : adressage automatique
+
+Lance radvd sur le routeur : SLAAC + RDNSS pour la salle (DNS = `srv1`), et pour l'administration un RA avec le drapeau O (adresse par SLAAC, autres informations par DHCPv6 sans état). Le réseau serveurs n'a pas de SLAAC : adresse statique.
+
+#### Étape 4 : vérifications
+
+Depuis `salle1` : adresse globale, route par défaut, ping de `srv1`, tracepath. Depuis `adm1` : drapeau O visible dans une capture du RA.
+
+#### Étape 5 : filtrage
+
+Sur le routeur, en nftables (famille `inet`) : la salle peut joindre `srv1` en TCP 445 et en DNS (UDP et TCP 53), mais **pas** le réseau administration ; l'administration peut tout joindre ; l'ICMPv6 nécessaire passe partout.
+
+#### Étape 6 : documentation
+
+Une page : plan d'adressage, choix SLAAC/DHCPv6 justifiés, règles de filtrage, commandes de vérification.
+
+### Correction guidée
+
+**Étape 1.** Une solution (d'autres sont justes si elles sont cohérentes) :
+
+| Réseau | Préfixe global | Routeur | Hôte notable |
+|---|---|---|---|
+| Administration | `2001:db8:c011:10::/64` | `::1` | (SLAAC + DHCPv6 sans état) |
+| Salle informatique | `2001:db8:c011:20::/64` | `::1` | (SLAAC) |
+| Serveurs | `2001:db8:c011:50::/64` | `::1` | `srv1` = `::53` |
+| Liens et équipements | `2001:db8:c011:ff00::/56` | réservé | |
+
+ULA : tire 40 bits au hasard, par exemple avec
+```bash
+printf 'fd%02x:%04x:%04x::/48\n' $((RANDOM%256)) $RANDOM $RANDOM
+```
+(`$RANDOM` de Bash suffit pour une maquette ; pour un vrai site, utilise une source plus sûre comme `openssl rand -hex 5`). Il reste 65 536 sous-réseaux dans le /48 global : on peut grandir sans renuméroter.
+
+**Étape 2.**
+```bash
+for ns in rtr adm1 salle1 srv1; do sudo ip netns add $ns; sudo ip -n $ns link set lo up; done
+sudo ip link add r-adm   netns rtr type veth peer name e0 netns adm1
+sudo ip link add r-salle netns rtr type veth peer name e0 netns salle1
+sudo ip link add r-srv   netns rtr type veth peer name e0 netns srv1
+for i in r-adm r-salle r-srv; do sudo ip -n rtr link set $i up; done
+for ns in adm1 salle1 srv1; do sudo ip -n $ns link set e0 up; done
+sudo ip netns exec rtr sysctl -qw net.ipv6.conf.all.forwarding=1
+sudo ip -n rtr address add 2001:db8:c011:10::1/64 dev r-adm
+sudo ip -n rtr address add 2001:db8:c011:20::1/64 dev r-salle
+sudo ip -n rtr address add 2001:db8:c011:50::1/64 dev r-srv
+sudo ip -n srv1 address add 2001:db8:c011:50::53/64 dev e0
+sudo ip -n srv1 -6 route add default via 2001:db8:c011:50::1
+```
+Le même nom `e0` peut exister dans trois espaces de noms différents : ce sont trois « machines ».
+
+**Étape 3.** `/etc/radvd-college.conf` :
+```text
+interface r-salle {
+    AdvSendAdvert on;
+    MaxRtrAdvInterval 10;
+    prefix 2001:db8:c011:20::/64 { AdvOnLink on; AdvAutonomous on; };
+    RDNSS 2001:db8:c011:50::53 { };
+};
+interface r-adm {
+    AdvSendAdvert on;
+    MaxRtrAdvInterval 10;
+    AdvOtherConfigFlag on;
+    prefix 2001:db8:c011:10::/64 { AdvOnLink on; AdvAutonomous on; };
+};
+```
+```bash
+sudo ip netns exec rtr radvd -C /etc/radvd-college.conf -p /run/radvd-college.pid -n -d 1
+```
+Pas de section pour `r-srv` : les serveurs sont en statique. Dans un vrai réseau, le serveur DHCPv6 sans état de l'administration serait par exemple le rôle DHCP de Windows Server ou `kea-dhcp6-server`.
+
+**Étape 4.**
+```bash
+sudo ip netns exec salle1 ip -6 address show dev e0 scope global
+sudo ip netns exec salle1 ip -6 route show default
+sudo ip netns exec salle1 ping -6 -c 2 2001:db8:c011:50::53
+sudo ip netns exec salle1 tracepath -6 2001:db8:c011:50::53
+sudo ip netns exec adm1 timeout 15 tcpdump -v -n -i e0 'icmp6 and ip6[40] == 134'
+```
+Attendu : adresse `2001:db8:c011:20:...` en `dynamic`, route `default via fe80::... proto ra`, ping et tracepath en 2 sauts ; dans la capture d'`adm1`, `Flags [other stateful]`.
+
+**Étape 5.**
+```bash
+sudo ip netns exec rtr nft -f - <<'EOF'
+table inet college {
+  chain transit {
+    type filter hook forward priority 0; policy drop;
+    ct state established,related accept
+    icmpv6 type { destination-unreachable, packet-too-big, time-exceeded, parameter-problem, echo-request } accept
+    iifname "r-adm" accept
+    iifname "r-salle" ip6 daddr 2001:db8:c011:50::53 tcp dport 445 accept
+    iifname "r-salle" ip6 daddr 2001:db8:c011:50::53 meta l4proto { tcp, udp } th dport 53 accept
+  }
+}
+EOF
+```
+Vérification : depuis `salle1`, un ping vers une adresse d'`adm1` passe (echo-request autorisé), mais une connexion TCP vers `adm1` est bloquée (le paquet est jeté par `policy drop` : le client attend jusqu'au délai d'expiration, sans message de refus) ; depuis `adm1`, tout passe. Pour tester un port sans vrai service, lance `python3 -m http.server 445 --bind ::` dans `srv1` et `curl -6 'http://[2001:db8:c011:50::53]:445/'` depuis `salle1`. Si tu veux aussi interdire le ping de la salle vers l'administration, ajoute une règle `iifname "r-salle" oifname "r-adm" icmpv6 type echo-request drop` **avant** la ligne ICMPv6.
+
+**Étape 6.** La documentation reprend le tableau de l'étape 1, et justifie : SLAAC pour la salle (simple, compatible avec tous les systèmes, aucune traçabilité nécessaire), drapeau O pour l'administration (DNS et options par DHCPv6 sans état), statique pour les serveurs (adresses stables pour le DNS et les règles de pare-feu). Elle mentionne RA Guard à activer sur les commutateurs de la salle, et les commandes de vérification de l'étape 4.
+
+Nettoyage : `Ctrl+C` sur radvd, puis `for ns in rtr adm1 salle1 srv1; do sudo ip netns del $ns; done`.
+
+### Pour aller plus loin
+
+• RFC 8200, « Internet Protocol, Version 6 (IPv6) Specification », IETF.
+• RFC 4291 (architecture d'adressage), RFC 5952 (écriture recommandée), RFC 4861 (NDP), RFC 4862 (SLAAC), RFC 8415 (DHCPv6), RFC 8981 (adresses temporaires), RFC 4890 (filtrage ICMPv6), RFC 8305 (Happy Eyeballs), IETF.
+• « Entreprises : comment déployer IPv6 », task force IPv6 animée par l'Arcep et Internet Society France (en français), et le baromètre annuel de la transition vers IPv6 de l'Arcep.
+• « Configure IPv6 in Windows for advanced users » (DisabledComponents, politique de préfixes), Microsoft Learn.
+• Documentation de Netplan (netplan.readthedocs.io) et pages de manuel `ip-address(8)`, `ip-route(8)`, `ip-netns(8)`, `radvd.conf(5)`.
+• RFC 9099, « Operational Security Considerations for IPv6 Networks », IETF, pour la sécurité en exploitation.
+"""
+
+    quiz {
+      pick: 10
+      question "Quelle est la forme RFC 5952 de 2001:0DB8:0000:0000:0000:0000:00AB:0000 ?" {
+        - "2001:DB8::AB:0"
+        + "2001:db8::ab:0"
+        - "2001:db8::ab::"
+        - "2001:db8:0:0:0:0:ab::"
+        explanation: "Minuscules, zéros de tête supprimés, :: sur la plus longue suite (cinq groupes nuls). Le dernier zéro est seul : il reste écrit 0. Deux :: sont interdits."
+      }
+
+      question "Combien de groupes nuls remplace le :: dans 2001:db8:1::5:6 ?" {
+        - "2"
+        + "3"
+        - "4"
+        - "5"
+        explanation: "Il y a 5 groupes écrits (2001, db8, 1, 5, 6). 8 moins 5 = 3 groupes nuls."
+      }
+
+      question "Quelle adresse est une ULA ?" {
+        - "fe80::1"
+        - "2001:db8::1"
+        + "fd5e:91a2:3c40:20::1"
+        - "ff05::1:3"
+        explanation: "Les ULA commencent par fd (fd00::/8, partie utilisée de fc00::/7). fe80:: est lien-local, 2001:db8:: documentation, ff05:: multicast de site."
+      }
+
+      question "Le collège a 2001:db8:c011::/48. Combien de réseaux /64 peut-il créer ?" {
+        - "256"
+        - "4096"
+        + "65 536"
+        - "16 777 216"
+        explanation: "2^(64 - 48) = 2^16 = 65 536. 256 correspond à un /56, 4096 à un /52."
+      }
+
+      question "Quel est le premier /64 du /56 2001:db8:c011:ff00::/56 ?" {
+        + "2001:db8:c011:ff00::/64"
+        - "2001:db8:c011:ff01::/64"
+        - "2001:db8:c011:f000::/64"
+        - "2001:db8:c011::/64"
+        explanation: "Le /56 fixe ff ; les deux derniers chiffres du 4e groupe vont de 00 à ff. Le premier /64 est donc ff00."
+      }
+
+      question "Quel message NDP un poste envoie-t-il au démarrage pour trouver un routeur sans attendre la prochaine annonce ?" {
+        + "Router Solicitation vers ff02::2"
+        - "Neighbor Solicitation vers ff02::1"
+        - "Router Advertisement vers ff02::1"
+        - "Solicit vers ff02::1:2"
+        explanation: "Le RS (type 133) part vers le groupe de tous les routeurs ff02::2 ; le routeur répond par un RA. Solicit est un message DHCPv6."
+      }
+
+      question "Dans la capture d’un RA, tu lis Flags [other stateful]. Que doivent faire les postes ?" {
+        - "obtenir leur adresse par DHCPv6 avec état"
+        + "fabriquer leur adresse par SLAAC (si A=1) et demander les autres informations, comme le DNS, en DHCPv6 sans état"
+        - "ignorer le routeur"
+        - "désactiver les adresses temporaires"
+        explanation: "other stateful correspond au drapeau O. Le drapeau M (managed) n'est pas présent : l'adresse vient de SLAAC, les options de DHCPv6 sans état (Information-Request puis Reply)."
+      }
+
+      question "Pourquoi la route par défaut d’un poste SLAAC désigne-t-elle une adresse fe80:: ?" {
+        - "parce que le routeur n'a pas d'adresse globale"
+        + "parce que les RA sont envoyés depuis l'adresse lien-local du routeur, qui reste stable même si le préfixe change"
+        - "parce que la configuration est incorrecte"
+        - "parce que DHCPv6 l'impose"
+        explanation: "NDP fonctionne avec les adresses lien-local. Le poste retient l'adresse source du RA comme prochain saut. Une renumérotation du préfixe global ne change pas cette adresse."
+      }
+
+      question "Le RA annonce le préfixe 2001:db8:c011:20::/120 avec A=1. Que se passe-t-il ?" {
+        - "les postes prennent une adresse dans ce /120"
+        + "les postes ne fabriquent pas d'adresse par SLAAC, car le préfixe n'a pas 64 bits"
+        - "les postes complètent le préfixe à /64 eux-mêmes"
+        - "le routeur refuse de démarrer"
+        explanation: "SLAAC ajoute un identifiant de 64 bits au préfixe : préfixe + identifiant doivent faire 128 bits. Un préfixe /120 ne permet pas l'autoconfiguration ; les postes l'ignorent pour SLAAC."
+      }
+
+      question "Quelle commande Linux montre que l’adresse 2001:db8:c011:50::53 est déjà utilisée sur le lien ?" {
+        - "ip -6 route show"
+        + "ip -6 address show, qui affiche dadfailed pour l'adresse en double"
+        - "sysctl net.ipv6.conf.all.forwarding"
+        - "ss -6 -tln"
+        explanation: "Quand la détection d'adresse dupliquée trouve un doublon, Linux garde l'adresse avec la marque tentative dadfailed, et ne l'utilise pas. Windows l'affiche comme Dupliquée."
+      }
+
+      question "Quelle commande PowerShell vérifie le DNS IPv6 d’un nom ?" {
+        - "Get-NetIPAddress -Name www.example.org"
+        + "Resolve-DnsName www.example.org -Type AAAA"
+        - "Test-NetConnection -AAAA www.example.org"
+        - "nslookup -6 www.example.org"
+        explanation: "Resolve-DnsName interroge le DNS ; -Type AAAA demande les adresses IPv6. Avec nslookup, l'option correcte serait -type=AAAA."
+      }
+
+      question "Un serveur Windows rencontre un bug applicatif en IPv6. Quelle mesure est conforme aux recommandations de Microsoft ?" {
+        - "décocher IPv6 sur la carte"
+        - "mettre DisabledComponents à 0xffffffff"
+        + "mettre DisabledComponents à 0x20 pour préférer IPv4, puis redémarrer"
+        - "supprimer l'adresse lien-local"
+        explanation: "0x20 garde IPv6 actif mais fait passer IPv4 en premier dans la politique de préfixes. Décocher IPv6 n'est pas recommandé, et 0xffffffff est une valeur incorrecte."
+      }
+
+      question "Que fait sudo netplan try ?" {
+        - "il vérifie la syntaxe sans rien changer"
+        + "il applique la configuration et revient à l'ancienne si on ne confirme pas"
+        - "il redémarre la machine"
+        - "il active SLAAC sur toutes les cartes"
+        explanation: "netplan try est le filet de sécurité à distance : sans confirmation, l'ancienne configuration revient automatiquement."
+      }
+
+      question "Pourquoi est-il dangereux de bloquer le type ICMPv6 packet-too-big sur un routeur ?" {
+        - "le ping ne fonctionne plus"
+        + "la découverte de MTU échoue et les gros paquets disparaissent sans message"
+        - "les postes perdent leur adresse lien-local"
+        - "le DNS cesse de répondre"
+        explanation: "Les routeurs IPv6 ne fragmentent pas : sans Packet Too Big, l'émetteur ne sait pas qu'il doit réduire ses paquets. C'est le trou noir de MTU."
+      }
+
+      question "Dans le mini-projet, la règle iifname r-salle ip6 daddr 2001:db8:c011:50::53 tcp dport 445 accept autorise quoi ?" {
+        - "tout le trafic de la salle vers les serveurs"
+        + "les connexions de la salle vers srv1 sur le port TCP 445 (partage de fichiers)"
+        - "les connexions de srv1 vers la salle"
+        - "le ping de la salle vers srv1"
+        explanation: "La règle filtre l'interface d'entrée (le réseau salle), la destination (srv1) et le port TCP 445 (SMB). Les réponses passent grâce à la règle ct state established,related."
+      }
+
+      question "Quelle est l’adresse de nœud sollicité de 2001:db8:c011:50::53 ?" {
+        + "ff02::1:ff00:53"
+        - "ff02::1:ff50:53"
+        - "ff02::53"
+        - "ff02::1:ffc0:1150"
+        explanation: "On prend les 24 derniers bits de l'adresse : la forme complète finit par 0000:0053, donc les 24 derniers bits sont 00:0053. L'adresse est ff02::1:ff00:53."
+      }
+
+      question "Le DNS de la salle doit être annoncé sans serveur DHCPv6. Quelle option de radvd utiliser ?" {
+        - "AdvManagedFlag on"
+        + "RDNSS"
+        - "AdvOtherConfigFlag on"
+        - "AdvAutonomous off"
+        explanation: "La section RDNSS de radvd ajoute l'option RDNSS (RFC 8106) au RA. AdvOtherConfigFlag renverrait les postes vers un serveur DHCPv6 sans état pour le DNS."
+      }
+
+      question "Un poste a une adresse globale, une route par défaut, et le ping IPv6 vers l’extérieur fonctionne, mais curl -6 vers un site échoue alors que curl -4 réussit. Quelle hypothèse vérifier ?" {
+        - "l'adresse lien-local est absente"
+        + "le site n'a pas d'enregistrement AAAA, ou son service ne répond pas en IPv6 (ou un filtrage bloque le port en IPv6)"
+        - "le cache ARP est plein"
+        - "le poste n'a pas de MAC"
+        explanation: "Les couches 3 fonctionnent (ping). Il reste le DNS (dig AAAA) et la couche application ou le filtrage en IPv6. C'est la démarche couche par couche du chapitre 9."
+      }
+
+      question "Pourquoi tirer au hasard les 40 bits du préfixe ULA du collège ?" {
+        - "parce que la loi l'impose"
+        + "pour éviter un conflit de préfixe si le réseau est relié plus tard à un autre site (VPN, fusion)"
+        - "pour que le préfixe soit routable sur Internet"
+        - "pour rendre les adresses temporaires"
+        explanation: "La RFC 4193 demande un identifiant global aléatoire pour rendre très improbable le chevauchement de deux préfixes ULA, contrairement aux adresses privées IPv4 que tout le monde choisit identiques."
+      }
+
+      question "À quoi sert l’option -n de la commande ip dans les laboratoires du cours ?" {
+        - "à afficher les adresses sans résolution de noms"
+        + "à exécuter la commande ip dans un espace de noms réseau donné"
+        - "à simuler la commande sans l'appliquer"
+        - "à créer une nouvelle carte réseau"
+        explanation: "ip -n pc1 ... équivaut à ip netns exec pc1 ip ... : la commande agit sur les interfaces de l'espace pc1. Attention : pour ping, -n a un autre sens (affichage numérique)."
+      }
+    }
+  }
+}

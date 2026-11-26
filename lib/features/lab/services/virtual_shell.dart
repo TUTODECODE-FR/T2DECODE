@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2024-2025 TUTODECODE Association <contact@tutodecode.org>
+import 'dart:convert';
 import 'dart:math';
+
+import 'package:tutodecode/features/training/permissions_trainer.dart';
 
 const String _pts0 = 'pts/0';
 
 extension _IterableFirstOrNull<T> on Iterable<T> {
   T? get firstOrNull => isEmpty ? null : first;
+  T? get lastOrNull => isEmpty ? null : last;
 }
 
 class VirtualFileSystem {
@@ -159,8 +163,87 @@ class VirtualFileSystem {
       }
       current = current.children![part]!;
     }
+    final existing = current.children![name];
+    if (existing != null && existing.isFile) {
+      // Réécrire un fichier existant garde ses droits (comme sous Linux).
+      existing.content = content;
+      return;
+    }
     current.children![name] = _FSNode.file(name, content)..parent = current;
   }
+
+  /// Droits (mode octal, ex. 0644 = 420) d'un fichier ou dossier, null s'il n'existe pas.
+  int? permissions(String path) => _getNode(path)?.permissions;
+
+  /// Change les droits d'un fichier ou dossier existant (bits 07777).
+  void setPermissions(String path, int mode) {
+    final node = _getNode(path);
+    if (node != null) node.permissions = mode & 0xFFF;
+  }
+
+  /// Copie récursive de [from] vers [to] (les dossiers parents de [to] doivent exister).
+  /// Renvoie false si la source ou le dossier parent de la destination est introuvable.
+  bool copy(String from, String to) {
+    final src = _getNode(from);
+    if (src == null || src == _root) return false;
+    final toParts = to.split('/').where((p) => p.isNotEmpty).toList();
+    if (toParts.isEmpty) return false;
+    final toName = toParts.removeLast();
+    final parent = _getNode('/${toParts.join('/')}');
+    if (parent == null || !parent.isDirectory) return false;
+    final existing = parent.children![toName];
+    if (existing != null && existing.isFile && src.isFile) {
+      existing.content = src.content;
+      return true;
+    }
+    parent.children![toName] = src.clone(toName)..parent = parent;
+    return true;
+  }
+
+  /// Crée [path] et ses dossiers parents (mkdir -p). Faux si un élément est un fichier.
+  bool mkdirp(String path) {
+    _FSNode current = _root;
+    for (final part in path.split('/').where((p) => p.isNotEmpty)) {
+      final child = current.children![part];
+      if (child == null) {
+        final node = _FSNode.directory(part)..parent = current;
+        current.children![part] = node;
+        current = node;
+      } else if (child.isFile) {
+        return false;
+      } else {
+        current = child;
+      }
+    }
+    return true;
+  }
+
+  /// Représentation façon « ls -l » : -rw-r--r--, drwxr-x---, -rwsr-xr-x…
+  static String modeString(int mode, {bool isDir = false}) {
+    final b = StringBuffer(isDir ? 'd' : '-');
+    const letters = 'rwx';
+    const special = [0x800, 0x400, 0x200];
+    for (var k = 0; k < 3; k++) {
+      final shift = 6 - 3 * k;
+      for (var j = 0; j < 3; j++) {
+        final set = mode & (1 << (shift + 2 - j)) != 0;
+        if (j == 2 && mode & special[k] != 0) {
+          final c = k == 2 ? 't' : 's';
+          b.write(set ? c : c.toUpperCase());
+        } else {
+          b.write(set ? letters[j] : '-');
+        }
+      }
+    }
+    return b.toString();
+  }
+
+  /// Applique un mode chmod à [current] : octal ou symbolique, avec la même
+  /// simulation que l'entraînement « Droits Linux » (GNU coreutils / gnulib).
+  /// Renvoie null si le mode est invalide.
+  static int? applyMode(String spec, int current,
+          {required bool isDir, int umask = 0x12}) =>
+      applyChmod(current, spec, dir: isDir, umask: umask);
 
   bool exists(String path) => _getNode(path) != null;
   bool isDir(String path) => _getNode(path)?.isDirectory ?? false;
@@ -221,38 +304,67 @@ class VirtualFileSystem {
     return node.children!.keys.toList()..sort();
   }
 
-  void _addFindResultIfMatches(
-      _FSNode node, String? name, List<String> results) {
-    if (node == _root) return;
-    if (name != null) {
-      if (_globMatch(name, node.name)) results.add(node.fullPath);
-    } else {
+  void _addFindResultIfMatches(_FSNode node, String? name, List<String> results,
+      String? type, bool ignoreCase) {
+    if (node == _root && name != null) return;
+    if (type == 'f' && !node.isFile) return;
+    if (type == 'd' && !node.isDirectory) return;
+    if (name == null || globMatch(name, node.name, ignoreCase: ignoreCase)) {
       results.add(node.fullPath);
     }
   }
 
-  void _traverseFind(_FSNode node, String? name, List<String> results) {
-    _addFindResultIfMatches(node, name, results);
+  void _traverseFind(_FSNode node, String? name, List<String> results,
+      String? type, bool ignoreCase) {
+    _addFindResultIfMatches(node, name, results, type, ignoreCase);
     if (node.isDirectory) {
       for (final child in node.children!.values) {
-        _traverseFind(child, name, results);
+        _traverseFind(child, name, results, type, ignoreCase);
       }
     }
   }
 
-  List<String> find(String startPath, {String? name}) {
+  /// [type] : 'f' (fichiers) ou 'd' (dossiers) ; null = tout.
+  List<String> find(String startPath,
+      {String? name, String? type, bool ignoreCase = false}) {
     final results = <String>[];
     final startNode = _getNode(startPath);
     if (startNode == null) return results;
 
-    _traverseFind(startNode, name, results);
+    _traverseFind(startNode, name, results, type, ignoreCase);
     return results..sort();
   }
 
-  bool _globMatch(String pattern, String text) {
-    final regex =
-        RegExp('^${pattern.replaceAll('.', r'\.').replaceAll('*', '.*')}\$');
-    return regex.hasMatch(text);
+  /// Motif du shell (* ? [abc]) appliqué à un nom complet.
+  static bool globMatch(String pattern, String text,
+      {bool ignoreCase = false}) {
+    final b = StringBuffer('^');
+    for (var i = 0; i < pattern.length; i++) {
+      final c = pattern[i];
+      if (c == '*') {
+        b.write('.*');
+      } else if (c == '?') {
+        b.write('.');
+      } else if (c == '[') {
+        final end = i + 2 <= pattern.length ? pattern.indexOf(']', i + 2) : -1;
+        if (end < 0) {
+          b.write(r'\[');
+        } else {
+          var set = pattern.substring(i + 1, end);
+          if (set.startsWith('!')) set = '^${set.substring(1)}';
+          b.write('[${set.replaceAll(r'\', r'\\')}]');
+          i = end;
+        }
+      } else {
+        b.write(RegExp.escape(c));
+      }
+    }
+    b.write(r'$');
+    try {
+      return RegExp(b.toString(), caseSensitive: !ignoreCase).hasMatch(text);
+    } on FormatException {
+      return false;
+    }
   }
 
   void _collectGrepTargets(
@@ -319,6 +431,20 @@ class _FSNode {
         children = {};
 
   bool get isFile => !isDirectory;
+
+  /// Copie profonde (le parent est à fixer par l'appelant).
+  _FSNode clone(String newName) {
+    final copy = isDirectory
+        ? _FSNode.directory(newName)
+        : _FSNode.file(newName, content);
+    copy.permissions = permissions;
+    if (isDirectory) {
+      for (final child in children!.values) {
+        copy.children![child.name] = child.clone(child.name)..parent = copy;
+      }
+    }
+    return copy;
+  }
 
   String get fullPath {
     if (parent == null) return '/';
@@ -392,148 +518,410 @@ class VirtualShell {
         0.0, 0.1, 10000, 2000, _pts0, 'R');
     _processes.add(proc);
 
-    List<String> result;
-    // Handle pipes simply
-    if (trimmed.contains(' | ')) {
-      result = _executePipe(trimmed);
-    } else if (trimmed.contains(' > ')) {
-      // Handle output redirection
-      result = _executeRedirect(trimmed);
-    } else {
-      result = _executeSingle(trimmed);
-    }
+    final result = _runLine(trimmed);
 
     _processes.remove(proc);
-    return result;
+    _tty = true;
+    return result.map(_plain).toList();
   }
 
-  List<String> _executePipe(String input) {
-    final parts = input.split(' | ').map((s) => s.trim()).toList();
-    if (parts.length < 2 || parts.any((p) => p.isEmpty)) {
-      return ['bash: syntax error near unexpected token \'|\''];
+  // --- Sorties d'erreur ------------------------------------------------------
+  // Les messages d'erreur portent une marque interne : ils ne passent pas dans
+  // un tube (|) ni dans une redirection de la sortie standard (>), comme stderr.
+  static const String _errMark = '\u0000';
+  static String _err(String message) => '$_errMark$message';
+  static bool _isErr(String line) => line.startsWith(_errMark);
+  static String _plain(String line) => _isErr(line) ? line.substring(1) : line;
+
+  /// Vrai si la sortie de la commande en cours s'affiche à l'écran (ni tube ni fichier).
+  bool _tty = true;
+
+  /// Découpe [s] sur [sep] hors guillemets (simples ou doubles) et hors caractère échappé.
+  static List<String> _splitUnquoted(String s, String sep) {
+    final parts = <String>[];
+    final buf = StringBuffer();
+    String? quote;
+    for (var i = 0; i < s.length; i++) {
+      final c = s[i];
+      if (quote != null) {
+        if (c == quote) quote = null;
+        buf.write(c);
+      } else if (c == '\\' && i + 1 < s.length) {
+        buf.write(c);
+        buf.write(s[++i]);
+      } else if (c == "'" || c == '"') {
+        quote = c;
+        buf.write(c);
+      } else if (c == sep) {
+        parts.add(buf.toString());
+        buf.clear();
+      } else {
+        buf.write(c);
+      }
+    }
+    parts.add(buf.toString());
+    return parts;
+  }
+
+  List<String> _runLine(String line) {
+    final segments = _splitUnquoted(line, '|');
+    if (segments.any((s) => s.trim().isEmpty)) {
+      return [_err('bash: syntax error near unexpected token \'|\'')];
+    }
+    final shown = <String>[];
+    List<String>? stdin;
+    for (var i = 0; i < segments.length; i++) {
+      final last = i == segments.length - 1;
+      final r = _runSegment(segments[i].trim(), stdin, last);
+      shown.addAll(r.shown);
+      stdin = r.pass;
+    }
+    return shown;
+  }
+
+  /// Exécute une commande d'un tube avec ses redirections (> >> 2> 2>> 2>&1 <).
+  _SegResult _runSegment(String segment, List<String>? stdin, bool last) {
+    final r = _parseRedirects(segment);
+    if (r.error != null) return _SegResult([], [_err(r.error!)]);
+
+    var input = stdin;
+    if (r.inFile != null) {
+      final path = _resolvePath(r.inFile!);
+      if (!fs.exists(path)) {
+        return _SegResult(
+            [], [_err('bash: ${r.inFile}: No such file or directory')]);
+      }
+      if (fs.isDir(path)) {
+        return _SegResult([], [_err('bash: ${r.inFile}: Is a directory')]);
+      }
+      input = _fileLines(fs.readFile(path) ?? '');
     }
 
-    var prevOutput = _executeSingle(parts.first);
-    for (int i = 1; i < parts.length; i++) {
-      prevOutput = _executeSingleWithInput(parts[i], prevOutput);
+    _tty = last && r.outFile == null;
+    var raw = input == null
+        ? _executeSingle(r.command)
+        : _executeSingleWithInput(r.command, input);
+    _tty = true;
+    if (r.errToOut) raw = raw.map(_plain).toList();
+
+    final shown = <String>[];
+    if (r.errFile != null) {
+      final e = _writeRedirect(
+          r.errFile!, raw.where(_isErr).map(_plain).toList(), r.errAppend);
+      if (e != null) shown.add(_err(e));
     }
-    return prevOutput;
-  }
-
-  List<String> _executeRedirect(String input) {
-    final parts = input.split(' > ');
-    if (parts.length < 2 || parts[1].trim().isEmpty) {
-      return ['bash: syntax error near unexpected token \'newline\''];
+    if (r.outFile != null) {
+      final e = _writeRedirect(
+          r.outFile!, raw.where((l) => !_isErr(l)).toList(), r.outAppend);
+      if (e != null) shown.add(_err(e));
     }
-
-    final output = _executeSingle(parts[0].trim());
-    final target = _resolvePath(parts[1].trim());
-    fs.write(target, output.join('\n'));
-    return [];
+    final visible = raw
+        .where((l) => _isErr(l) ? r.errFile == null : r.outFile == null)
+        .toList();
+    if (last) return _SegResult([], [...visible, ...shown]);
+    return _SegResult(visible.where((l) => !_isErr(l)).toList(),
+        [...visible.where(_isErr), ...shown]);
   }
 
-  List<String> _pipeGrep(List<String> args, List<String> stdinLines) {
-    if (args.length < 2) return stdinLines;
-    try {
-      final pattern = RegExp(args[1]);
-      return stdinLines.where((l) => pattern.hasMatch(l)).toList();
-    } on FormatException catch (e) {
-      return ['grep: invalid regular expression: ${e.message}'];
+  /// Écrit [lines] dans [target] (écrase ou ajoute). Renvoie un message d'erreur ou null.
+  String? _writeRedirect(String target, List<String> lines, bool append) {
+    final path = _resolvePath(target);
+    if (path == '/dev/null') return null;
+    if (fs.isDir(path)) return 'bash: $target: Is a directory';
+    if (!fs.isDir(_parentOf(path))) {
+      return 'bash: $target: No such file or directory';
     }
-  }
-
-  List<String> _pipeHead(List<String> args, List<String> stdinLines) {
-    final n =
-        args.length > 2 && args[1] == '-n' ? int.tryParse(args[2]) ?? 10 : 10;
-    return stdinLines.take(n).toList();
-  }
-
-  List<String> _pipeTail(List<String> args, List<String> stdinLines) {
-    final n =
-        args.length > 2 && args[1] == '-n' ? int.tryParse(args[2]) ?? 10 : 10;
-    return stdinLines.length > n
-        ? stdinLines.sublist(stdinLines.length - n)
-        : stdinLines;
-  }
-
-  List<String> _pipeWc(List<String> args, List<String> stdinLines) {
-    if (args.contains('-l')) return ['${stdinLines.length}'];
-    final words = stdinLines
-        .expand((l) => l.split(RegExp(r'\s+')))
-        .where((w) => w.isNotEmpty)
-        .length;
-    final chars = stdinLines.fold<int>(0, (s, l) => s + l.length + 1);
-    return ['  ${stdinLines.length}  $words  $chars'];
-  }
-
-  List<String> _pipeSort(List<String> args, List<String> stdinLines) {
-    final sorted = List<String>.from(stdinLines);
-    if (args.contains('-r')) {
-      sorted.sort((a, b) => b.compareTo(a));
+    final text = lines.join('\n');
+    final old = fs.readFile(path);
+    if (append && old != null && old.isNotEmpty) {
+      if (lines.isEmpty) return null;
+      fs.write(path, old.endsWith('\n') ? '$old$text' : '$old\n$text');
     } else {
-      sorted.sort();
+      fs.write(path, text);
     }
-    return sorted;
+    return null;
   }
 
-  List<String> _pipeUniq(List<String> stdinLines) {
-    final result = <String>[];
-    for (final line in stdinLines) {
-      if (result.isEmpty || result.last != line) result.add(line);
+  static String _parentOf(String absPath) {
+    final i = absPath.lastIndexOf('/');
+    return i <= 0 ? '/' : absPath.substring(0, i);
+  }
+
+  static String _baseName(String absPath) => absPath.split('/').last;
+
+  /// Isole les redirections d'une commande simple.
+  _Redirects _parseRedirects(String s) {
+    final r = _Redirects();
+    final cmd = StringBuffer();
+    String? quote;
+    var i = 0;
+    while (i < s.length) {
+      final c = s[i];
+      if (quote != null) {
+        if (c == quote) quote = null;
+        cmd.write(c);
+        i++;
+        continue;
+      }
+      if (c == '\\' && i + 1 < s.length) {
+        cmd.write(s.substring(i, i + 2));
+        i += 2;
+        continue;
+      }
+      if (c == "'" || c == '"') {
+        quote = c;
+        cmd.write(c);
+        i++;
+        continue;
+      }
+      if (c != '>' && c != '<') {
+        cmd.write(c);
+        i++;
+        continue;
+      }
+      // Descripteur 2 juste avant (« 2> » collé, précédé d'un blanc ou en début).
+      var fd = c == '<' ? 0 : 1;
+      final soFar = cmd.toString();
+      if (c == '>' &&
+          soFar.endsWith('2') &&
+          (soFar.length == 1 || soFar[soFar.length - 2].trim().isEmpty)) {
+        fd = 2;
+        cmd.clear();
+        cmd.write(soFar.substring(0, soFar.length - 1));
+      }
+      i++;
+      var append = false;
+      if (c == '>' && i < s.length && s[i] == '>') {
+        append = true;
+        i++;
+      }
+      if (fd == 2 && s.startsWith('&1', i)) {
+        r.errToOut = true;
+        i += 2;
+        continue;
+      }
+      while (i < s.length && s[i].trim().isEmpty) {
+        i++;
+      }
+      final start = i;
+      String? q;
+      while (i < s.length) {
+        final ch = s[i];
+        if (q != null) {
+          if (ch == q) q = null;
+        } else if (ch == "'" || ch == '"') {
+          q = ch;
+        } else if (ch.trim().isEmpty || ch == '>' || ch == '<') {
+          break;
+        }
+        i++;
+      }
+      final words = _tokenize(s.substring(start, i));
+      if (words.isEmpty) {
+        return r
+          ..error = 'bash: syntax error near unexpected token \'newline\'';
+      }
+      final word = words.first.text;
+      if (fd == 0) {
+        r.inFile = word;
+      } else if (fd == 1) {
+        r.outFile = word;
+        r.outAppend = append;
+      } else {
+        r.errFile = word;
+        r.errAppend = append;
+      }
+      cmd.write(' ');
     }
-    return result;
+    return r..command = cmd.toString().trim();
   }
 
-  List<String> _pipeCut(List<String> args, List<String> stdinLines) {
-    final dIdx = args.indexOf('-d');
-    final fIdx = args.indexOf('-f');
-    final delimiter =
-        dIdx >= 0 && dIdx + 1 < args.length ? args[dIdx + 1] : '\t';
-    final field = fIdx >= 0 && fIdx + 1 < args.length
-        ? int.tryParse(args[fIdx + 1]) ?? 1
-        : 1;
-    return stdinLines.map((l) {
-      final parts = l.split(delimiter);
-      return field <= parts.length ? parts[field - 1] : '';
-    }).toList();
-  }
-
+  /// Commandes qui lisent l'entrée standard quand aucun fichier n'est donné.
   List<String> _executeSingleWithInput(String cmd, List<String> stdinLines) {
     final args = _parseArgs(cmd);
     if (args.isEmpty) return stdinLines;
-    final base = args[0];
-    switch (base) {
+    final rest = args.sublist(1);
+    switch (args[0]) {
       case 'grep':
-        return _pipeGrep(args, stdinLines);
+        return _grepCmd(rest, stdinLines);
       case 'head':
-        return _pipeHead(args, stdinLines);
+        return _headTail(rest, stdinLines, head: true);
       case 'tail':
-        return _pipeTail(args, stdinLines);
+        return _headTail(rest, stdinLines, head: false);
       case 'wc':
-        return _pipeWc(args, stdinLines);
+        return _wcCmd(rest, stdinLines);
       case 'sort':
-        return _pipeSort(args, stdinLines);
+        return _sortCmd(rest, stdinLines);
       case 'uniq':
-        return _pipeUniq(stdinLines);
+        return _uniqCmd(rest, stdinLines);
       case 'cut':
-        return _pipeCut(args, stdinLines);
+        return _cutCmd(rest, stdinLines);
+      case 'cat':
+        return _catCmd(rest, stdinLines);
       default:
-        return stdinLines;
+        return _executeSingle(cmd);
     }
   }
 
-  List<String> _parseArgs(String cmd) {
-    final args = <String>[];
-    final regex = RegExp(r"""'[^']*'|"[^"]*"|\S+""");
-    for (final match in regex.allMatches(cmd)) {
-      var token = match.group(0)!;
-      if ((token.startsWith("'") && token.endsWith("'")) ||
-          (token.startsWith('"') && token.endsWith('"'))) {
-        token = token.substring(1, token.length - 1);
+  /// Découpe une ligne de commande en mots : guillemets simples et doubles,
+  /// barre oblique inverse ; [quoted] indique qu'une partie du mot était protégée.
+  static List<_Token> _tokenize(String cmd) {
+    final out = <_Token>[];
+    final buf = StringBuffer();
+    var inWord = false, quoted = false;
+    var i = 0;
+    while (i < cmd.length) {
+      final c = cmd[i];
+      if (c.trim().isEmpty) {
+        if (inWord) out.add(_Token(buf.toString(), quoted));
+        buf.clear();
+        inWord = false;
+        quoted = false;
+        i++;
+        continue;
       }
-      args.add(token);
+      inWord = true;
+      if (c == "'") {
+        quoted = true;
+        final end = cmd.indexOf("'", i + 1);
+        final stop = end < 0 ? cmd.length : end;
+        buf.write(cmd.substring(i + 1, stop));
+        i = stop + 1;
+      } else if (c == '"') {
+        quoted = true;
+        i++;
+        while (i < cmd.length && cmd[i] != '"') {
+          if (cmd[i] == '\\' &&
+              i + 1 < cmd.length &&
+              r'"\$`'.contains(cmd[i + 1])) {
+            i++;
+          }
+          buf.write(cmd[i]);
+          i++;
+        }
+        i++;
+      } else if (c == '\\' && i + 1 < cmd.length) {
+        quoted = true;
+        buf.write(cmd[i + 1]);
+        i += 2;
+      } else {
+        buf.write(c);
+        i++;
+      }
+    }
+    if (inWord) out.add(_Token(buf.toString(), quoted));
+    return out;
+  }
+
+  List<String> _parseArgs(String cmd) {
+    final tokens = _tokenize(cmd);
+    final args = <String>[];
+    for (var i = 0; i < tokens.length; i++) {
+      final t = tokens[i];
+      if (t.quoted || i == 0) {
+        args.add(t.text);
+        continue;
+      }
+      for (final word in _braceExpand(t.text)) {
+        args.addAll(_globExpand(word));
+      }
     }
     return args;
+  }
+
+  /// Développement des accolades de bash : a{b,c}d -> abd acd (listes à virgules).
+  static List<String> _braceExpand(String word) {
+    final open = word.indexOf('{');
+    if (open < 0) return [word];
+    var depth = 0;
+    final commas = <int>[];
+    for (var i = open; i < word.length; i++) {
+      final c = word[i];
+      if (c == '{') {
+        depth++;
+      } else if (c == '}') {
+        depth--;
+        if (depth == 0) {
+          if (commas.isEmpty) {
+            return _braceExpand(word.substring(i + 1))
+                .map((s) => '${word.substring(0, i + 1)}$s')
+                .toList();
+          }
+          final prefix = word.substring(0, open);
+          final suffix = word.substring(i + 1);
+          final bounds = [open, ...commas, i];
+          final result = <String>[];
+          for (var k = 0; k < bounds.length - 1; k++) {
+            final item = word.substring(bounds[k] + 1, bounds[k + 1]);
+            result.addAll(_braceExpand('$prefix$item$suffix'));
+          }
+          return result;
+        }
+      } else if (c == ',' && depth == 1) {
+        commas.add(i);
+      }
+    }
+    return [word];
+  }
+
+  /// Développement des jokers (* ? [..]) dans le dernier élément du chemin.
+  /// Sans correspondance, le mot reste tel quel (comportement par défaut de bash).
+  List<String> _globExpand(String word) {
+    if (!word.contains(RegExp(r'[*?\[]'))) return [word];
+    final slash = word.lastIndexOf('/');
+    final dirPart = slash < 0 ? '' : word.substring(0, slash + 1);
+    final pattern = word.substring(slash + 1);
+    if (dirPart.contains(RegExp(r'[*?\[]')) || pattern.isEmpty) return [word];
+    final dir = dirPart.isEmpty ? _cwd : _resolvePath(dirPart);
+    if (!fs.isDir(dir)) return [word];
+    final matches = fs
+        .listDir(dir)
+        .where((n) => pattern.startsWith('.') || !n.startsWith('.'))
+        .where((n) => VirtualFileSystem.globMatch(pattern, n))
+        .map((n) => '$dirPart$n')
+        .toList();
+    return matches.isEmpty ? [word] : matches;
+  }
+
+  /// Lignes d'un fichier (un fichier vide n'a aucune ligne).
+  static List<String> _fileLines(String content) {
+    if (content.isEmpty) return [];
+    final lines = content.split('\n');
+    if (content.endsWith('\n')) lines.removeLast();
+    return lines;
+  }
+
+  /// Sépare options courtes (-abc) et opérandes ; « -- » termine les options.
+  /// [valued] : options qui prennent une valeur (ex. -n 5, -n5).
+  static _Opts _options(List<String> args, {Set<String> valued = const {}}) {
+    final o = _Opts();
+    final flags = o.flags;
+    final values = o.values;
+    final operands = o.operands;
+    var ended = false;
+    for (var i = 0; i < args.length; i++) {
+      final a = args[i];
+      if (ended || !a.startsWith('-') || a == '-') {
+        operands.add(a);
+        continue;
+      }
+      if (a == '--') {
+        ended = true;
+        continue;
+      }
+      for (var k = 1; k < a.length; k++) {
+        final f = a[k];
+        if (valued.contains(f)) {
+          final v = k + 1 < a.length
+              ? a.substring(k + 1)
+              : (i + 1 < args.length ? args[++i] : '');
+          values[f] = v;
+          break;
+        }
+        flags.add(f);
+      }
+    }
+    return o;
   }
 
   List<String> _suCmd(List<String> rest) {
@@ -559,17 +947,19 @@ class VirtualShell {
     final handlers = <String, List<String> Function(List<String>)>{
       'ls': _ls,
       'cd': _cd,
-      'cat': _cat,
+      'cat': (a) => _catCmd(a, null),
       'mkdir': _mkdir,
+      'rmdir': _rmdir,
       'touch': _touch,
       'rm': _rm,
       'cp': _cp,
       'mv': _mv,
-      'head': _head,
-      'tail': _tail,
-      'wc': _wc,
+      'head': (a) => _headTail(a, null, head: true),
+      'tail': (a) => _headTail(a, null, head: false),
+      'wc': (a) => _wcCmd(a, null),
+      'cut': (a) => _cutCmd(a, null),
       'find': _find,
-      'grep': _grep,
+      'grep': (a) => _grepCmd(a, null),
       'chmod': _chmod,
       'uname': _uname,
       'du': _du,
@@ -588,8 +978,9 @@ class VirtualShell {
       'which': _which,
       'file': _file,
       'stat': _stat,
-      'sort': _sortCmd,
-      'uniq': _uniqCmd,
+      'sort': (a) => _sortCmd(a, null),
+      'uniq': (a) => _uniqCmd(a, null),
+      'echo': _echo,
       'su': _suCmd,
       'sudo': _sudoCmd,
       'man': _man,
@@ -604,8 +995,6 @@ class VirtualShell {
     switch (base) {
       case 'pwd':
         return [_cwd];
-      case 'echo':
-        return [rest.join(' ')];
       case 'whoami':
         return [_user];
       case 'hostname':
@@ -645,60 +1034,74 @@ class VirtualShell {
       case 'scp':
         return ['scp: simulation — transfert non disponible'];
       default:
-        return ['bash: $base: command not found'];
+        return [_err('bash: $base: command not found')];
     }
   }
 
-  List<String> _lsFile(String path, bool longFormat) {
-    if (longFormat) {
-      final size = (fs.readFile(path) ?? '').length;
-      return [
-        '-rw-r--r-- 1 $_user $_user $size Jun 12 08:00 ${path.split('/').last}'
-      ];
-    }
-    return [path.split('/').last];
-  }
+  String _child(String dir, String name) =>
+      dir == '/' ? '/$name' : '$dir/$name';
 
-  List<String> _lsLongFormat(String path, List<String> entries, bool showAll) {
-    final lines = <String>['total ${entries.length}'];
-    if (showAll) {
-      lines.add('drwxr-xr-x  2 $_user $_user 4096 Jun 12 08:00 .');
-      lines.add('drwxr-xr-x  3 $_user $_user 4096 Jun 12 08:00 ..');
-    }
-    for (final e in entries) {
-      final fullPath = path == '/' ? '/$e' : '$path/$e';
-      final isDir = fs.isDir(fullPath);
-      final size = isDir ? 4096 : (fs.readFile(fullPath) ?? '').length;
-      final perm = isDir ? 'drwxr-xr-x' : '-rw-r--r--';
-      lines.add(
-          '$perm  1 $_user $_user ${size.toString().padLeft(5)} Jun 12 08:00 $e${isDir ? '/' : ''}');
-    }
-    return lines;
+  String _longLine(String path, String name) {
+    final isDir = fs.isDir(path);
+    final size = isDir ? 4096 : (fs.readFile(path) ?? '').length;
+    final mode = fs.permissions(path) ?? (isDir ? 0x1ED : 0x1A4);
+    return '${VirtualFileSystem.modeString(mode, isDir: isDir)}  1 $_user $_user '
+        '${size.toString().padLeft(5)} Jun 12 08:00 $name${isDir ? '/' : ''}';
   }
 
   List<String> _ls(List<String> args) {
-    final showAll =
-        args.contains('-a') || args.contains('-la') || args.contains('-al');
-    final longFormat =
-        args.contains('-l') || args.contains('-la') || args.contains('-al');
-    final target = args.where((a) => !a.startsWith('-')).firstOrNull;
-    final path = target != null ? _resolvePath(target) : _cwd;
+    final o = _options(args);
+    final showAll = o.flags.contains('a');
+    final almostAll = o.flags.contains('A');
+    final longFormat = o.flags.contains('l');
+    // -d : un dossier est listé lui-même, pas son contenu (ls -ld dossier).
+    final dirItself = o.flags.contains('d');
+    final onePerLine = o.flags.contains('1') || !_tty;
+    final targets = o.operands.isEmpty ? ['.'] : o.operands;
 
-    if (!fs.exists(path))
-      return ['ls: cannot access \'$target\': No such file or directory'];
-    if (fs.isFile(path)) {
-      return _lsFile(path, longFormat);
+    final out = <String>[];
+    final dirs = <String>[];
+    final fileNames = <String>[];
+    for (final t in targets) {
+      final path = _resolvePath(t);
+      if (!fs.exists(path)) {
+        out.add(_err('ls: cannot access \'$t\': No such file or directory'));
+      } else if (fs.isFile(path) || dirItself) {
+        fileNames.add(longFormat ? _longLine(path, t) : t);
+      } else {
+        dirs.add(t);
+      }
     }
-
-    var entries = fs.listDir(path);
-    if (!showAll) entries = entries.where((e) => !e.startsWith('.')).toList();
-
-    if (longFormat) {
-      return _lsLongFormat(path, entries, showAll);
+    if (fileNames.isNotEmpty) {
+      out.addAll(longFormat || onePerLine ? fileNames : [fileNames.join('  ')]);
     }
-
-    if (showAll) entries = ['.', '..', ...entries];
-    return entries.isEmpty ? [] : [entries.join('  ')];
+    final headers = targets.length > 1;
+    for (final t in dirs) {
+      final path = _resolvePath(t);
+      if (headers) {
+        if (out.any((l) => !_isErr(l))) out.add('');
+        out.add('$t:');
+      }
+      var entries = fs.listDir(path);
+      if (!showAll && !almostAll) {
+        entries = entries.where((e) => !e.startsWith('.')).toList();
+      }
+      if (longFormat) {
+        out.add('total ${entries.length}');
+        if (showAll) {
+          out.add('drwxr-xr-x  2 $_user $_user  4096 Jun 12 08:00 .');
+          out.add('drwxr-xr-x  3 $_user $_user  4096 Jun 12 08:00 ..');
+        }
+        for (final e in entries) {
+          out.add(_longLine(_child(path, e), e));
+        }
+        continue;
+      }
+      if (showAll) entries = ['.', '..', ...entries];
+      if (entries.isEmpty) continue;
+      out.addAll(onePerLine ? entries : [entries.join('  ')]);
+    }
+    return out;
   }
 
   List<String> _cd(List<String> args) {
@@ -707,178 +1110,672 @@ class VirtualShell {
       return [];
     }
     final target = _resolvePath(args[0]);
-    if (!fs.exists(target))
-      return ['bash: cd: ${args[0]}: No such file or directory'];
-    if (!fs.isDir(target)) return ['bash: cd: ${args[0]}: Not a directory'];
+    if (!fs.exists(target)) {
+      return [_err('bash: cd: ${args[0]}: No such file or directory')];
+    }
+    if (!fs.isDir(target))
+      return [_err('bash: cd: ${args[0]}: Not a directory')];
     _cwd = target;
     return [];
   }
 
-  List<String> _cat(List<String> args) {
-    if (args.isEmpty) return ['cat: missing operand'];
-    final results = <String>[];
-    for (final arg in args.where((a) => !a.startsWith('-'))) {
+  List<String> _catCmd(List<String> args, List<String>? stdin) {
+    final o = _options(args);
+    final out = <String>[];
+    if (o.operands.isEmpty) {
+      if (stdin == null) return [_err('cat: missing operand')];
+      out.addAll(stdin);
+    }
+    final errors = <int, String>{};
+    for (final arg in o.operands) {
       final path = _resolvePath(arg);
       if (!fs.exists(path)) {
-        results.add('cat: $arg: No such file or directory');
+        errors[out.length] = 'cat: $arg: No such file or directory';
       } else if (fs.isDir(path)) {
-        results.add('cat: $arg: Is a directory');
+        errors[out.length] = 'cat: $arg: Is a directory';
       } else {
-        results.addAll((fs.readFile(path) ?? '').split('\n'));
+        out.addAll(_fileLines(fs.readFile(path) ?? ''));
       }
     }
-    return results;
+    final numbered = o.flags.contains('n')
+        ? [
+            for (var i = 0; i < out.length; i++)
+              '${(i + 1).toString().padLeft(6)}\t${out[i]}'
+          ]
+        : out;
+    // Les erreurs restent à leur place dans le flux affiché.
+    final result = <String>[];
+    for (var i = 0; i <= numbered.length; i++) {
+      if (errors.containsKey(i)) result.add(_err(errors[i]!));
+      if (i < numbered.length) result.add(numbered[i]);
+    }
+    return result;
+  }
+
+  List<String> _echo(List<String> args) {
+    // -n (sans saut de ligne final) n'a pas d'effet visible dans ce modèle.
+    var interpret = false;
+    var i = 0;
+    while (i < args.length && RegExp(r'^-[neE]+$').hasMatch(args[i])) {
+      if (args[i].contains('e')) interpret = true;
+      if (args[i].contains('E')) interpret = false;
+      i++;
+    }
+    var text = args.sublist(i).join(' ');
+    if (interpret) {
+      text = text
+          .replaceAll(r'\\', '\u0001')
+          .replaceAll(r'\n', '\n')
+          .replaceAll(r'\t', '\t')
+          .replaceAll('\u0001', r'\');
+    }
+    return text.split('\n');
   }
 
   List<String> _mkdir(List<String> args) {
-    for (final arg in args.where((a) => !a.startsWith('-'))) {
+    final o = _options(args, valued: {'m'});
+    final parents = o.flags.contains('p');
+    if (o.operands.isEmpty) return [_err('mkdir: missing operand')];
+    final out = <String>[];
+    for (final arg in o.operands) {
       final path = _resolvePath(arg);
-      if (fs.exists(path))
-        return ['mkdir: cannot create directory \'$arg\': File exists'];
-      fs.mkdir(path);
+      if (fs.exists(path)) {
+        if (!(parents && fs.isDir(path))) {
+          out.add(_err('mkdir: cannot create directory \'$arg\': File exists'));
+        }
+        continue;
+      }
+      if (parents) {
+        if (!fs.mkdirp(path)) {
+          out.add(
+              _err('mkdir: cannot create directory \'$arg\': Not a directory'));
+        }
+        continue;
+      }
+      final parent = _parentOf(path);
+      if (!fs.exists(parent)) {
+        out.add(_err(
+            'mkdir: cannot create directory \'$arg\': No such file or directory'));
+      } else if (!fs.isDir(parent)) {
+        out.add(
+            _err('mkdir: cannot create directory \'$arg\': Not a directory'));
+      } else {
+        fs.mkdir(path);
+      }
     }
-    return [];
+    return out;
+  }
+
+  List<String> _rmdir(List<String> args) {
+    final o = _options(args);
+    if (o.operands.isEmpty) return [_err('rmdir: missing operand')];
+    final out = <String>[];
+    for (final arg in o.operands) {
+      final path = _resolvePath(arg);
+      if (!fs.exists(path)) {
+        out.add(_err(
+            'rmdir: failed to remove \'$arg\': No such file or directory'));
+      } else if (!fs.isDir(path)) {
+        out.add(_err('rmdir: failed to remove \'$arg\': Not a directory'));
+      } else if (fs.listDir(path).isNotEmpty) {
+        out.add(_err('rmdir: failed to remove \'$arg\': Directory not empty'));
+      } else {
+        fs.delete(path);
+      }
+    }
+    return out;
   }
 
   List<String> _touch(List<String> args) {
-    for (final arg in args.where((a) => !a.startsWith('-'))) {
+    final o = _options(args);
+    if (o.operands.isEmpty) return [_err('touch: missing file operand')];
+    final out = <String>[];
+    for (final arg in o.operands) {
       final path = _resolvePath(arg);
-      if (!fs.exists(path)) fs.write(path, '');
+      if (fs.exists(path)) continue;
+      if (!fs.isDir(_parentOf(path))) {
+        out.add(
+            _err('touch: cannot touch \'$arg\': No such file or directory'));
+      } else {
+        fs.write(path, '');
+      }
     }
-    return [];
+    return out;
   }
 
   List<String> _rm(List<String> args) {
-    final recursive =
-        args.contains('-r') || args.contains('-rf') || args.contains('-fr');
-    for (final arg in args.where((a) => !a.startsWith('-'))) {
+    final o = _options(args);
+    final recursive = o.flags.contains('r') || o.flags.contains('R');
+    final force = o.flags.contains('f');
+    if (o.operands.isEmpty) {
+      return force ? [] : [_err('rm: missing operand')];
+    }
+    final out = <String>[];
+    for (final arg in o.operands) {
       final path = _resolvePath(arg);
-      if (!fs.exists(path))
-        return ['rm: cannot remove \'$arg\': No such file or directory'];
-      if (fs.isDir(path) && !recursive)
-        return ['rm: cannot remove \'$arg\': Is a directory'];
+      final base = arg.split('/').where((p) => p.isNotEmpty).lastOrNull ?? '';
+      if (path == '/') {
+        out.add(_err('rm: it is dangerous to operate recursively on \'/\''));
+        continue;
+      }
+      if (base == '.' || base == '..') {
+        out.add(_err(
+            'rm: refusing to remove \'.\' or \'..\' directory: skipping \'$arg\''));
+        continue;
+      }
+      if (!fs.exists(path)) {
+        if (!force) {
+          out.add(
+              _err('rm: cannot remove \'$arg\': No such file or directory'));
+        }
+        continue;
+      }
+      if (fs.isDir(path) && !recursive) {
+        out.add(_err('rm: cannot remove \'$arg\': Is a directory'));
+        continue;
+      }
       fs.delete(path);
     }
-    return [];
+    return out;
   }
 
   List<String> _cp(List<String> args) {
-    final files = args.where((a) => !a.startsWith('-')).toList();
-    if (files.length < 2) return ['cp: missing destination operand'];
-    final src = _resolvePath(files[0]);
-    final dst = _resolvePath(files[1]);
-    if (!fs.exists(src))
-      return ['cp: cannot stat \'${files[0]}\': No such file or directory'];
-    final content = fs.readFile(src);
-    if (content != null) {
-      final finalDst = fs.isDir(dst) ? '$dst/${src.split('/').last}' : dst;
-      fs.write(finalDst, content);
+    final o = _options(args);
+    final recursive =
+        o.flags.contains('r') || o.flags.contains('R') || o.flags.contains('a');
+    final files = o.operands;
+    if (files.length < 2) return [_err('cp: missing destination operand')];
+    final destArg = files.last;
+    final dest = _resolvePath(destArg);
+    final sources = files.sublist(0, files.length - 1);
+    if (sources.length > 1 && !fs.isDir(dest)) {
+      return [_err('cp: target \'$destArg\' is not a directory')];
     }
-    return [];
+    final out = <String>[];
+    for (final s in sources) {
+      final src = _resolvePath(s);
+      if (!fs.exists(src)) {
+        out.add(_err('cp: cannot stat \'$s\': No such file or directory'));
+        continue;
+      }
+      final srcIsDir = fs.isDir(src);
+      if (srcIsDir && !recursive) {
+        out.add(_err('cp: -r not specified; omitting directory \'$s\''));
+        continue;
+      }
+      final target = fs.isDir(dest) ? _child(dest, _baseName(src)) : dest;
+      if (target == src) {
+        out.add(_err('cp: \'$s\' and \'$destArg\' are the same file'));
+        continue;
+      }
+      if (srcIsDir && target.startsWith('$src/')) {
+        out.add(_err(
+            'cp: cannot copy a directory, \'$s\', into itself, \'$destArg\''));
+        continue;
+      }
+      if (!srcIsDir && fs.isDir(target)) {
+        out.add(_err(
+            'cp: cannot overwrite directory \'$destArg\' with non-directory'));
+        continue;
+      }
+      if (srcIsDir && fs.isFile(target)) {
+        out.add(_err(
+            'cp: cannot overwrite non-directory \'$destArg\' with directory \'$s\''));
+        continue;
+      }
+      if (!fs.isDir(_parentOf(target))) {
+        out.add(_err(srcIsDir
+            ? 'cp: cannot create directory \'$destArg\': No such file or directory'
+            : 'cp: cannot create regular file \'$destArg\': No such file or directory'));
+        continue;
+      }
+      _copyInto(src, target);
+    }
+    return out;
+  }
+
+  /// Copie [src] vers [target] ; un dossier existant reçoit le contenu (fusion).
+  void _copyInto(String src, String target) {
+    if (fs.isDir(src) && fs.isDir(target)) {
+      for (final name in fs.listDir(src)) {
+        _copyInto(_child(src, name), _child(target, name));
+      }
+      return;
+    }
+    fs.copy(src, target);
   }
 
   List<String> _mv(List<String> args) {
-    final files = args.where((a) => !a.startsWith('-')).toList();
-    if (files.length < 2) return ['mv: missing destination operand'];
-    final src = _resolvePath(files[0]);
-    final dst = _resolvePath(files[1]);
-    if (!fs.exists(src))
-      return ['mv: cannot stat \'${files[0]}\': No such file or directory'];
-    final finalDst = fs.isDir(dst) ? '$dst/${src.split('/').last}' : dst;
-    fs.rename(src, finalDst);
-    return [];
+    final files = _options(args).operands;
+    if (files.length < 2) return [_err('mv: missing destination operand')];
+    final destArg = files.last;
+    final dest = _resolvePath(destArg);
+    final sources = files.sublist(0, files.length - 1);
+    if (sources.length > 1 && !fs.isDir(dest)) {
+      return [_err('mv: target \'$destArg\' is not a directory')];
+    }
+    final out = <String>[];
+    for (final s in sources) {
+      final src = _resolvePath(s);
+      if (!fs.exists(src) || src == '/') {
+        out.add(_err('mv: cannot stat \'$s\': No such file or directory'));
+        continue;
+      }
+      final srcIsDir = fs.isDir(src);
+      final target = fs.isDir(dest) ? _child(dest, _baseName(src)) : dest;
+      if (target == src) {
+        out.add(_err('mv: \'$s\' and \'$destArg\' are the same file'));
+        continue;
+      }
+      if (srcIsDir && target.startsWith('$src/')) {
+        out.add(_err(
+            'mv: cannot move \'$s\' to a subdirectory of itself, \'$destArg\''));
+        continue;
+      }
+      if (!fs.isDir(_parentOf(target))) {
+        out.add(_err(
+            'mv: cannot move \'$s\' to \'$destArg\': No such file or directory'));
+        continue;
+      }
+      if (fs.exists(target)) {
+        if (!srcIsDir && fs.isDir(target)) {
+          out.add(_err(
+              'mv: cannot overwrite directory \'$destArg\' with non-directory'));
+          continue;
+        }
+        if (srcIsDir && fs.isFile(target)) {
+          out.add(_err(
+              'mv: cannot overwrite non-directory \'$destArg\' with directory \'$s\''));
+          continue;
+        }
+        if (srcIsDir && fs.listDir(target).isNotEmpty) {
+          out.add(_err(
+              'mv: cannot move \'$s\' to \'$destArg\': Directory not empty'));
+          continue;
+        }
+      }
+      fs.rename(src, target);
+    }
+    return out;
   }
 
-  List<String> _head(List<String> args) {
-    int n = 10;
-    String? file;
-    for (int i = 0; i < args.length; i++) {
-      if (args[i] == '-n' && i + 1 < args.length) {
-        n = int.tryParse(args[++i]) ?? 10;
-      } else if (!args[i].startsWith('-')) {
-        file = args[i];
+  List<String> _headTail(List<String> args, List<String>? stdin,
+      {required bool head}) {
+    final name = head ? 'head' : 'tail';
+    final normalized = [
+      for (final a in args)
+        if (RegExp(r'^-\d+$').hasMatch(a)) ...['-n', a.substring(1)] else a
+    ];
+    final o = _options(normalized, valued: {'n'});
+    final n = int.tryParse(o.values['n'] ?? '') ?? 10;
+    List<String> cut(List<String> lines) => head
+        ? lines.take(n).toList()
+        : (lines.length > n ? lines.sublist(lines.length - n) : lines);
+    if (o.operands.isEmpty) {
+      if (stdin == null) return [_err('$name: missing operand')];
+      return cut(stdin);
+    }
+    final out = <String>[];
+    final many = o.operands.length > 1;
+    for (final f in o.operands) {
+      final path = _resolvePath(f);
+      if (!fs.exists(path)) {
+        out.add(_err(
+            '$name: cannot open \'$f\' for reading: No such file or directory'));
+        continue;
+      }
+      if (fs.isDir(path)) {
+        out.add(_err('$name: error reading \'$f\': Is a directory'));
+        continue;
+      }
+      if (many) {
+        if (out.any((l) => !_isErr(l))) out.add('');
+        out.add('==> $f <==');
+      }
+      out.addAll(cut(_fileLines(fs.readFile(path) ?? '')));
+    }
+    return out;
+  }
+
+  List<String> _wcCmd(List<String> args, List<String>? stdin) {
+    final o = _options(args);
+    var show = [
+      o.flags.contains('l'),
+      o.flags.contains('w'),
+      o.flags.contains('c') || o.flags.contains('m'),
+    ];
+    final explicit = show.any((b) => b);
+    if (!explicit) show = [true, true, true];
+
+    List<int> counts(List<String> lines, {required bool bytes}) {
+      final words = lines
+          .expand((l) => l.split(RegExp(r'\s+')))
+          .where((w) => w.isNotEmpty)
+          .length;
+      final size = lines.fold<int>(
+          0,
+          (s, l) =>
+              s +
+              (bytes && !o.flags.contains('m')
+                  ? utf8.encode(l).length
+                  : l.length) +
+              1);
+      return [lines.length, words, size];
+    }
+
+    String fmt(List<int> c, String? label) {
+      final picked = [
+        for (var k = 0; k < 3; k++)
+          if (show[k]) c[k]
+      ];
+      final body = explicit ? picked.join(' ') : '  ${picked.join('  ')}';
+      return label == null ? body : '$body $label';
+    }
+
+    if (o.operands.isEmpty) {
+      if (stdin == null) return [_err('wc: missing operand')];
+      return [fmt(counts(stdin, bytes: true), null)];
+    }
+    final out = <String>[];
+    final total = [0, 0, 0];
+    for (final f in o.operands) {
+      final path = _resolvePath(f);
+      if (!fs.exists(path)) {
+        out.add(_err('wc: $f: No such file or directory'));
+        continue;
+      }
+      if (fs.isDir(path)) {
+        out.add(_err('wc: $f: Is a directory'));
+        continue;
+      }
+      final c = counts(_fileLines(fs.readFile(path) ?? ''), bytes: true);
+      for (var k = 0; k < 3; k++) {
+        total[k] += c[k];
+      }
+      out.add(fmt(c, f));
+    }
+    if (o.operands.length > 1) out.add(fmt(total, 'total'));
+    return out;
+  }
+
+  /// Lignes des fichiers donnés, sinon de l'entrée standard ; null si rien à lire.
+  List<String>? _inputLines(
+      String name, List<String> files, List<String>? stdin, List<String> errors,
+      {String Function(String f)? missing}) {
+    if (files.isEmpty) return stdin;
+    final lines = <String>[];
+    for (final f in files) {
+      final path = _resolvePath(f);
+      if (!fs.exists(path)) {
+        errors.add(_err(missing != null
+            ? missing(f)
+            : '$name: $f: No such file or directory'));
+      } else if (fs.isDir(path)) {
+        errors.add(_err('$name: $f: Is a directory'));
+      } else {
+        lines.addAll(_fileLines(fs.readFile(path) ?? ''));
       }
     }
-    if (file == null) return ['head: missing operand'];
-    final path = _resolvePath(file);
-    final content = fs.readFile(path);
-    if (content == null)
-      return ['head: cannot open \'$file\': No such file or directory'];
-    return content.split('\n').take(n).toList();
+    return lines;
   }
 
-  List<String> _tail(List<String> args) {
-    int n = 10;
-    String? file;
-    for (int i = 0; i < args.length; i++) {
-      if (args[i] == '-n' && i + 1 < args.length) {
-        n = int.tryParse(args[++i]) ?? 10;
-      } else if (!args[i].startsWith('-')) {
-        file = args[i];
+  List<String> _sortCmd(List<String> args, List<String>? stdin) {
+    final o = _options(args, valued: {'o', 't', 'k'});
+    final errors = <String>[];
+    final lines = _inputLines('sort', o.operands, stdin, errors,
+        missing: (f) => 'sort: cannot read: $f: No such file or directory');
+    if (lines == null) return [_err('sort: missing operand')];
+    if (errors.isNotEmpty) return errors;
+    final numeric = o.flags.contains('n');
+    final fold = o.flags.contains('f');
+    num key(String l) =>
+        num.tryParse(
+            RegExp(r'^\s*(-?\d+(\.\d+)?)').firstMatch(l)?.group(1) ?? '') ??
+        0;
+    int keyCompare(String a, String b) {
+      if (numeric) return key(a).compareTo(key(b));
+      if (fold) return a.toUpperCase().compareTo(b.toUpperCase());
+      return a.compareTo(b);
+    }
+
+    int compare(String a, String b) {
+      final k = keyCompare(a, b);
+      return k != 0 ? k : a.compareTo(b);
+    }
+
+    final sorted = List<String>.from(lines)..sort(compare);
+    final result = o.flags.contains('r') ? sorted.reversed.toList() : sorted;
+    if (!o.flags.contains('u')) return result;
+    final unique = <String>[];
+    for (final l in result) {
+      if (unique.isEmpty || keyCompare(unique.last, l) != 0) unique.add(l);
+    }
+    return unique;
+  }
+
+  List<String> _uniqCmd(List<String> args, List<String>? stdin) {
+    final o = _options(args);
+    final errors = <String>[];
+    final files = o.operands.take(1).toList();
+    final lines = _inputLines('uniq', files, stdin, errors);
+    if (lines == null) return [_err('uniq: missing operand')];
+    if (errors.isNotEmpty) return errors;
+    final ignoreCase = o.flags.contains('i');
+    final groupLines = <String>[];
+    final counts = <int>[];
+    for (final line in lines) {
+      final same = groupLines.isNotEmpty &&
+          (ignoreCase
+              ? groupLines.last.toLowerCase() == line.toLowerCase()
+              : groupLines.last == line);
+      if (same) {
+        counts[counts.length - 1]++;
+      } else {
+        groupLines.add(line);
+        counts.add(1);
       }
     }
-    if (file == null) return ['tail: missing operand'];
-    final path = _resolvePath(file);
-    final content = fs.readFile(path);
-    if (content == null)
-      return ['tail: cannot open \'$file\': No such file or directory'];
-    final lines = content.split('\n');
-    return lines.length > n ? lines.sublist(lines.length - n) : lines;
+    return [
+      for (var g = 0; g < groupLines.length; g++)
+        if ((!o.flags.contains('d') || counts[g] > 1) &&
+            (!o.flags.contains('u') || counts[g] == 1))
+          o.flags.contains('c')
+              ? '${counts[g].toString().padLeft(7)} ${groupLines[g]}'
+              : groupLines[g]
+    ];
   }
 
-  List<String> _wc(List<String> args) {
-    final file = args.where((a) => !a.startsWith('-')).firstOrNull;
-    if (file == null) return ['wc: missing operand'];
-    final path = _resolvePath(file);
-    final content = fs.readFile(path);
-    if (content == null) return ['wc: $file: No such file or directory'];
-    final lines = content.split('\n').length;
-    final words =
-        content.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
-    final bytes = content.length;
-    if (args.contains('-l')) return ['$lines $file'];
-    if (args.contains('-w')) return ['$words $file'];
-    if (args.contains('-c')) return ['$bytes $file'];
-    return ['  $lines  $words  $bytes $file'];
+  List<String> _cutCmd(List<String> args, List<String>? stdin) {
+    final o = _options(args, valued: {'d', 'f'});
+    final errors = <String>[];
+    final lines = _inputLines('cut', o.operands, stdin, errors);
+    if (lines == null) return [_err('cut: missing operand')];
+    final delimiter =
+        (o.values['d'] ?? '\t').isEmpty ? '\t' : o.values['d']![0];
+    final fields = <int>{};
+    for (final part in (o.values['f'] ?? '1').split(',')) {
+      final range = part.split('-');
+      final a = int.tryParse(range[0]) ?? 1;
+      final b = range.length > 1 ? (int.tryParse(range[1]) ?? 1 << 20) : a;
+      for (var k = a; k <= b && k <= a + 1000; k++) {
+        fields.add(k);
+      }
+    }
+    final sortedFields = fields.toList()..sort();
+    return [
+      ...errors,
+      for (final l in lines)
+        if (!l.contains(delimiter))
+          l
+        else
+          () {
+            final parts = l.split(delimiter);
+            return [
+              for (final f in sortedFields)
+                if (f >= 1 && f <= parts.length) parts[f - 1]
+            ].join(delimiter);
+          }()
+    ];
+  }
+
+  /// Affichage d'un chemin trouvé sous [typed] (tel que tapé) résolu en [resolved].
+  String _displayUnder(String typed, String resolved, String path) {
+    if (typed.isEmpty) {
+      if (path == resolved) return '.';
+      final rel = path.substring(resolved == '/' ? 1 : resolved.length + 1);
+      return rel;
+    }
+    if (typed.startsWith('/') || typed.startsWith('~')) return path;
+    final prefix = typed.length > 1 && typed.endsWith('/')
+        ? typed.substring(0, typed.length - 1)
+        : typed;
+    if (path == resolved) return prefix;
+    final rel = resolved == '/' ? path : path.substring(resolved.length);
+    return '$prefix$rel';
   }
 
   List<String> _find(List<String> args) {
-    String startPath = _cwd;
+    final starts = <String>[];
     String? namePattern;
-    for (int i = 0; i < args.length; i++) {
-      if (args[i] == '-name' && i + 1 < args.length) {
+    String? type;
+    var ignoreCase = false;
+    var i = 0;
+    while (i < args.length && !args[i].startsWith('-')) {
+      starts.add(args[i++]);
+    }
+    for (; i < args.length; i++) {
+      final a = args[i];
+      if ((a == '-name' || a == '-iname') && i + 1 < args.length) {
         namePattern = args[++i];
-      } else if (!args[i].startsWith('-')) {
-        startPath = _resolvePath(args[i]);
+        ignoreCase = a == '-iname';
+      } else if (a == '-type' && i + 1 < args.length) {
+        type = args[++i];
+        if (type != 'f' && type != 'd') {
+          return [_err('find: Unknown argument to -type: $type')];
+        }
+      } else if (a.startsWith('-')) {
+        return [_err('find: unknown predicate \'$a\'')];
+      } else {
+        return [_err('find: paths must precede expression: \'$a\'')];
       }
     }
-    return fs.find(startPath, name: namePattern);
+    if (starts.isEmpty) starts.add('.');
+    final out = <String>[];
+    for (final s in starts) {
+      final resolved = _resolvePath(s);
+      if (!fs.exists(resolved)) {
+        out.add(_err('find: \'$s\': No such file or directory'));
+        continue;
+      }
+      for (final p in fs.find(resolved,
+          name: namePattern, type: type, ignoreCase: ignoreCase)) {
+        out.add(_displayUnder(s, resolved, p));
+      }
+    }
+    return out;
   }
 
-  List<String> _grep(List<String> args) {
-    final recursive = args.contains('-r') || args.contains('-rn');
-    final numbered = args.contains('-n') || args.contains('-rn');
-    final positional = args.where((a) => !a.startsWith('-')).toList();
-    if (positional.isEmpty) return ['grep: missing pattern'];
-    final pattern = positional[0];
-    final target = positional.length > 1 ? _resolvePath(positional[1]) : _cwd;
+  List<String> _grepCmd(List<String> args, List<String>? stdin) {
+    final o = _options(args, valued: {'e'});
+    final pos = [
+      if (o.values['e'] != null) o.values['e']!,
+      ...o.operands,
+    ];
+    for (final f in o.flags) {
+      if (!'ivcnrRwFEHhlsq'.contains(f)) {
+        return [_err('grep: invalid option -- \'$f\'')];
+      }
+    }
+    if (pos.isEmpty) return [_err('grep: missing pattern')];
+    final pattern = pos.first;
+    final files = pos.sublist(1);
+    final recursive = o.flags.contains('r') || o.flags.contains('R');
+    final invert = o.flags.contains('v');
+    final RegExp regex;
     try {
-      final results = fs.grep(pattern, target, recursive: recursive);
-      if (!numbered && !recursive) {
-        return results.map((r) {
-          final colonIdx = r.indexOf(':');
-          return colonIdx > 0 ? r.substring(colonIdx + 1) : r;
-        }).toList();
-      }
-      return results;
+      var src = o.flags.contains('F') ? RegExp.escape(pattern) : pattern;
+      if (o.flags.contains('w')) src = r'(?<![\w])(?:' + src + r')(?![\w])';
+      regex = RegExp(src, caseSensitive: !o.flags.contains('i'));
     } on FormatException catch (e) {
-      return [e.message];
+      return [_err('grep: invalid regular expression: ${e.message}')];
     }
+
+    final sources = <_Source>[];
+    final out = <String>[];
+    if (files.isEmpty && !recursive) {
+      if (stdin == null) return [];
+      sources.add(_Source('(standard input)', stdin));
+    }
+    final targets = files.isEmpty && recursive ? [''] : files;
+    for (final f in targets) {
+      final path = f.isEmpty ? _cwd : _resolvePath(f);
+      if (!fs.exists(path)) {
+        out.add(_err('grep: $f: No such file or directory'));
+      } else if (fs.isDir(path)) {
+        if (!recursive) {
+          out.add(_err('grep: $f: Is a directory'));
+          continue;
+        }
+        for (final p in fs.find(path, type: 'f')) {
+          sources.add(_Source(
+              _displayUnder(f, path, p), _fileLines(fs.readFile(p) ?? '')));
+        }
+      } else {
+        sources.add(_Source(f, _fileLines(fs.readFile(path) ?? '')));
+      }
+    }
+    final many = (sources.length > 1 || recursive || o.flags.contains('H')) &&
+        !o.flags.contains('h');
+    for (final s in sources) {
+      final hits = <int>[
+        for (var k = 0; k < s.lines.length; k++)
+          if (regex.hasMatch(s.lines[k]) != invert) k
+      ];
+      if (o.flags.contains('q')) continue;
+      if (o.flags.contains('l')) {
+        if (hits.isNotEmpty) out.add(s.label);
+      } else if (o.flags.contains('c')) {
+        out.add(many ? '${s.label}:${hits.length}' : '${hits.length}');
+      } else {
+        for (final k in hits) {
+          out.add('${many ? '${s.label}:' : ''}'
+              '${o.flags.contains('n') ? '${k + 1}:' : ''}${s.lines[k]}');
+        }
+      }
+    }
+    return out;
   }
 
+  /// chmod : mode octal (644, 0755) ou symbolique (u+x, go-w, a=r, +x, u=rw,g=r,o=).
   List<String> _chmod(List<String> args) {
-    if (args.length < 2) return ['chmod: missing operand'];
-    return [];
+    final recursive = args.any((a) => a == '-R' || a == '--recursive');
+    final rest = args
+        .where((a) => a != '-R' && a != '--recursive' && a != '-v' && a != '-f')
+        .toList();
+    if (rest.isEmpty) return [_err('chmod: missing operand')];
+    if (rest.length < 2) {
+      return [_err('chmod: missing operand after \'${rest.first}\'')];
+    }
+    final modeArg = rest.first;
+    if (VirtualFileSystem.applyMode(modeArg, 0x1A4, isDir: false) == null) {
+      return [_err('chmod: invalid mode: \'$modeArg\'')];
+    }
+    final out = <String>[];
+    for (final arg in rest.skip(1)) {
+      final path = _resolvePath(arg);
+      if (!fs.exists(path)) {
+        out.add(
+            _err('chmod: cannot access \'$arg\': No such file or directory'));
+        continue;
+      }
+      final targets = recursive ? fs.find(path) : [path];
+      for (final p in targets) {
+        final current = fs.permissions(p)!;
+        fs.setPermissions(p,
+            VirtualFileSystem.applyMode(modeArg, current, isDir: fs.isDir(p))!);
+      }
+    }
+    return out;
   }
 
   List<String> _uname(List<String> args) {
@@ -1208,48 +2105,23 @@ class VirtualShell {
   }
 
   List<String> _stat(List<String> args) {
-    if (args.isEmpty) return ['stat: missing operand'];
+    if (args.isEmpty) return [_err('stat: missing operand')];
     final path = _resolvePath(args[0]);
-    if (!fs.exists(path))
-      return ['stat: cannot stat \'${args[0]}\': No such file or directory'];
+    if (!fs.exists(path)) {
+      return [
+        _err('stat: cannot stat \'${args[0]}\': No such file or directory')
+      ];
+    }
     final isDir = fs.isDir(path);
     final size = isDir ? 4096 : (fs.readFile(path) ?? '').length;
+    final mode = fs.permissions(path)!;
+    final octal = mode.toRadixString(8).padLeft(4, '0');
     return [
       '  File: ${args[0]}',
       '  Size: $size\t\tBlocks: ${(size / 512).ceil()}\t\tIO Block: 4096\t${isDir ? 'directory' : 'regular file'}',
-      'Access: (${isDir ? '0755/drwxr-xr-x' : '0644/-rw-r--r--'})\tUid: (1000/$_user)\tGid: (1000/$_user)',
+      'Access: ($octal/${VirtualFileSystem.modeString(mode, isDir: isDir)})\tUid: (1000/$_user)\tGid: (1000/$_user)',
       'Modify: 2025-06-12 08:00:00.000000000 +0000',
     ];
-  }
-
-  List<String> _sortCmd(List<String> args) {
-    final file = args.where((a) => !a.startsWith('-')).firstOrNull;
-    if (file == null) return ['sort: missing operand'];
-    final path = _resolvePath(file);
-    final content = fs.readFile(path);
-    if (content == null)
-      return ['sort: cannot read: $file: No such file or directory'];
-    final lines = content.split('\n');
-    if (args.contains('-r')) {
-      lines.sort((a, b) => b.compareTo(a));
-    } else {
-      lines.sort();
-    }
-    return lines;
-  }
-
-  List<String> _uniqCmd(List<String> args) {
-    final file = args.where((a) => !a.startsWith('-')).firstOrNull;
-    if (file == null) return ['uniq: missing operand'];
-    final path = _resolvePath(file);
-    final content = fs.readFile(path);
-    if (content == null) return ['uniq: $file: No such file or directory'];
-    final lines = content.split('\n');
-    final result = <String>[];
-    for (final line in lines) {
-      if (result.isEmpty || result.last != line) result.add(line);
-    }
-    return result;
   }
 
   List<String> _man(List<String> args) {
@@ -1331,15 +2203,16 @@ class VirtualShell {
   List<String> _help() => [
         'T2DECODE Virtual Shell — Commandes disponibles :',
         '',
-        ' Fichiers     : ls, cd, pwd, cat, cp, mv, rm, mkdir, touch, find, chmod',
-        '                head, tail, wc, sort, uniq, file, stat, tar',
-        ' Texte        : echo, grep, cut (via pipe)',
+        ' Fichiers     : ls, cd, pwd, cat, cp, mv, rm, mkdir, rmdir, touch, find',
+        '                chmod, head, tail, wc, sort, uniq, file, stat, tar',
+        ' Texte        : echo, grep, cut',
         ' Système      : ps, top, kill, df, du, free, uname, uptime, date, cal',
         '                whoami, hostname, id, env, export, history, which, man',
         ' Réseau       : ping, traceroute, ip, ss, ifconfig, dig, nslookup',
         '                curl, wget, ssh, scp',
         ' Contrôle     : sudo, su, clear, exit',
-        ' Pipes        : cmd1 | cmd2    Redirection : cmd > fichier',
+        ' Pipes        : cmd1 | cmd2',
+        ' Redirections : > fichier, >> fichier, < fichier, 2> fichier, 2>&1',
         '',
         'Tapez man <commande> pour plus de détails.',
       ];
@@ -1388,6 +2261,36 @@ class VirtualShell {
         _VirtualProcess(1150, 'admin', 'node server.js', 0.8, 1.8, 890000,
             65000, 'pts/1', 'Sl'),
       ];
+}
+
+class _SegResult {
+  _SegResult(this.pass, this.shown);
+  final List<String> pass;
+  final List<String> shown;
+}
+
+class _Redirects {
+  String command = '';
+  String? outFile, errFile, inFile, error;
+  bool outAppend = false, errAppend = false, errToOut = false;
+}
+
+class _Token {
+  _Token(this.text, this.quoted);
+  final String text;
+  final bool quoted;
+}
+
+class _Opts {
+  final Set<String> flags = {};
+  final Map<String, String> values = {};
+  final List<String> operands = [];
+}
+
+class _Source {
+  _Source(this.label, this.lines);
+  final String label;
+  final List<String> lines;
 }
 
 class _VirtualProcess {

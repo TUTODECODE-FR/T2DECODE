@@ -4,52 +4,109 @@ type: course
 course "Bash" {
   title: "Scripts Bash"
   description: """
-Cours Bash : écrire des scripts d'administration système
-
 Ce cours apprend à écrire des scripts Bash fiables, en partant d'un vrai projet : un script qui crée un dépôt GitHub privé, génère des dossiers Job01 à JobNN et fait le premier push. Il s'adresse aux débutants qui veulent automatiser des tâches d'administration système.
 
 À la fin, tu sauras :
 • écrire et lancer un script, et corriger les erreurs classiques (fins de ligne Windows, guillemets oubliés) ;
 • structurer un script en fonctions avec des codes de sortie clairs ;
+• rendre un script robuste (mode strict, fichiers temporaires, nettoyage automatique) ;
 • valider ce que tape l'utilisateur avant de l'utiliser ;
 • manipuler un secret (un token) sans le laisser fuiter ;
-• appeler une API web avec curl et lire sa réponse.
+• appeler une API web avec curl, lire sa réponse avec jq et automatiser git.
 
-Chaque chapitre suit le même rythme : une idée, un petit exemple sur un autre sujet que le projet, puis un quiz de 3 questions avec un corrigé expliqué. Les exemples sont volontairement courts : le but est que tu écrives ton propre script, pas que tu recopies le mien.
+Chaque chapitre suit le même rythme : une idée, un petit exemple sur un autre sujet que le projet, un exercice « À toi de jouer » avec sa correction, puis un questionnaire tiré d'une banque de questions. Le dernier chapitre assemble tout dans le script complet du projet.
 
-Environnement conseillé : Linux ou WSL/Ubuntu sous Windows. Les commandes du cours se tapent dans le terminal Ubuntu, pas dans PowerShell.
+Prérequis : savoir ouvrir un terminal et utiliser les commandes de base (cd, ls, mkdir, cat). Avoir un compte GitHub pour le dernier chapitre.
+
+Environnement conseillé : Debian/Ubuntu, ou WSL/Ubuntu sous Windows. Les commandes du cours se tapent dans le terminal Ubuntu, pas dans PowerShell. Paquets utilisés : sudo apt install git curl jq dialog shellcheck.
 """
   category: "linux"
   level: "intermediate"
-  duration: "5h05"
+  duration: "7h45"
   icon: "Terminal"
+  keywords: ["bash", "script", "shell", "linux", "wsl", "automatisation", "curl", "jq", "git", "api", "github", "sysadmin"]
 
   module "intro" {
     title: "Chapitre 1 : premier script"
-    duration: "20min"
+    duration: "30min"
     content: """
 Un script Bash est un fichier texte qui contient des commandes, exécutées l'une après l'autre. Rien de plus.
 ```bash
 #!/usr/bin/env bash
+# Mon premier script (cette ligne est un commentaire)
 echo "Bonjour, $USER"
 ```
-La première ligne, le **shebang**, dit au système quel programme doit lire le fichier. `env bash` cherche Bash dans le PATH, ce qui marche sur la plupart des machines.
+La première ligne, le **shebang**, dit au système quel programme doit lire le fichier. `env bash` cherche Bash dans le PATH, ce qui marche sur la plupart des machines. Les autres lignes qui commencent par `#` sont des commentaires : Bash les ignore.
 Il y a deux façons de lancer un script :
 • `bash script.sh` : Bash lit le fichier directement, aucun prérequis.
 • `./script.sh` : le système exécute le fichier lui-même, ce qui demande d'abord `chmod +x script.sh`.
-Le `chmod +x` ajoute le droit d'exécution. Sans lui, `./script.sh` répond `Permission denied`. Pendant que tu écris ton script, `bash script.sh` suffit.
+Le `chmod +x` ajoute le droit d'exécution. Sans lui, `./script.sh` répond `Permission denied` et le code de sortie vaut 126. Pendant que tu écris ton script, `bash script.sh` suffit.
+Le `./` devant le nom est obligatoire : le dossier courant ne fait pas partie du PATH, donc `script.sh` tout seul donne `command not found` (code 127).
+
+### Trois outils de contrôle
 Pour vérifier la syntaxe sans rien exécuter :
 ```bash
 bash -n script.sh
 ```
-Si rien ne s'affiche, la syntaxe est correcte. Prends l'habitude de lancer cette commande avant chaque test.
+Si rien ne s'affiche, la syntaxe est correcte. Prends l'habitude de lancer cette commande avant chaque test. Elle ne voit pas une commande mal orthographiée (`ecoh` au lieu de `echo`) : ce n'est pas une erreur de syntaxe.
+Pour suivre l'exécution pas à pas :
+```bash
+bash -x script.sh
+```
+Chaque commande est affichée, précédée d'un `+`, juste avant d'être exécutée. C'est l'outil de débogage le plus simple.
+Pour repérer les erreurs classiques (guillemets oubliés, variables mal utilisées), installe **ShellCheck**, un analyseur de scripts :
+```bash
+sudo apt install shellcheck
+shellcheck script.sh
+```
+Chaque remarque porte un code (par exemple `SC2086`) que tu peux chercher pour avoir l'explication.
+
+### À toi de jouer
+1. Crée le dossier `~/scripts` et, dedans, un fichier `infos.sh` qui affiche ton nom d'utilisateur, le nom de la machine (`hostname`), la date (`date`) et la version du noyau (`uname -r`).
+2. Vérifie la syntaxe avec `bash -n`, puis lance le script avec `bash infos.sh`.
+3. Lance-le avec `./infos.sh` avant tout `chmod`. Note le message, puis tape `echo $?`.
+4. Rends-le exécutable, relance `./infos.sh` et regarde les droits avec `ls -l infos.sh`.
+5. Ajoute à la fin une ligne fautive `echo "oubli` (guillemet non fermé) et relance `bash -n infos.sh`. Retire ensuite cette ligne.
+6. Lance `bash -x infos.sh` et observe les lignes qui commencent par `+`.
+
+### Correction
+Contenu de `~/scripts/infos.sh` :
+```bash
+#!/usr/bin/env bash
+# Affiche quelques informations sur la machine
+echo "Utilisateur : $USER"
+echo "Machine :"
+hostname
+echo "Date :"
+date
+echo "Noyau :"
+uname -r
+```
+Résultats attendus :
+• étape 2 : `bash -n` n'affiche rien, puis le script affiche les quatre informations ;
+• étape 3 : `bash: ./infos.sh: Permission denied`, et `echo $?` affiche `126` ;
+• étape 4 : après `chmod +x infos.sh`, `ls -l` montre `-rwxr-xr-x` (le `x` est apparu) et `./infos.sh` fonctionne ;
+• étape 5 : un message du type `infos.sh: line 10: unexpected EOF while looking for matching '"'` (le numéro de ligne dépend de ton fichier) ;
+• étape 6 : chaque commande apparaît précédée de `+`, par exemple `+ hostname`, avant son résultat.
 """
 
+    codeblock "bash" {
+      title: "Créer, contrôler et lancer un script"
+      code: """
+mkdir -p ~/scripts && cd ~/scripts
+bash -n infos.sh && echo "syntaxe correcte"
+chmod +x infos.sh
+./infos.sh
+"""
+    }
+
     quiz {
+      pick: 5
       question "Que fait la première ligne #!/usr/bin/env bash ?" {
         - "c'est un simple commentaire sans effet"
         + "elle indique quel programme doit lire le script"
         - "elle importe une bibliothèque"
+        - "elle active le mode débogage de Bash"
         explanation: "Quand tu lances ./script.sh, le système lit les deux premiers caractères du fichier. S'ils valent #!, il utilise le chemin qui suit comme programme chargé d'exécuter le script. La ligne ressemble à un commentaire (elle commence par #), c'est pourquoi on la croit sans effet, mais elle sert de consigne au système."
       }
 
@@ -57,6 +114,7 @@ Si rien ne s'affiche, la syntaxe est correcte. Prends l'habitude de lancer cette
         + "bash -n script.sh"
         - "chmod -n script.sh"
         - "bash --run script.sh"
+        - "bash -x script.sh"
         explanation: "L'option -n (pour « no exec ») fait lire le script par Bash sans rien exécuter, juste pour détecter les erreurs de syntaxe : un guillemet non fermé, un fi oublié. Elle ne détecte pas les erreurs de logique ni un programme absent. À ne pas confondre avec -x, qui exécute et affiche chaque commande."
       }
 
@@ -64,65 +122,244 @@ Si rien ne s'affiche, la syntaxe est correcte. Prends l'habitude de lancer cette
         - "oui, toujours"
         + "non, Bash lit le fichier directement"
         - "uniquement sous Windows"
+        - "uniquement si le script contient un shebang"
         explanation: "Avec bash script.sh, c'est Bash qui est lancé, et le script n'est qu'un fichier qu'il lit. Le droit d'exécution ne concerne que le lancement direct ./script.sh, où le système doit décider s'il a le droit de lancer le fichier."
+      }
+
+      question "Tu tapes ./infos.sh et tu obtiens « Permission denied ». Que vaut echo $? juste après ?" {
+        - "0"
+        - "1"
+        + "126"
+        - "127"
+        explanation: "Bash renvoie 126 quand il trouve le fichier mais n'a pas le droit de l'exécuter, et 127 quand la commande est introuvable. 0 signifierait un succès. Retenir 126 et 127 aide à comprendre un échec sans relire tout le message."
+      }
+
+      question "Tu tapes infos.sh (sans ./) dans le dossier du script et tu lis « command not found ». Pourquoi ?" {
+        + "le dossier courant ne fait pas partie du PATH"
+        - "le fichier n'a pas le droit d'exécution"
+        - "le shebang est mal écrit"
+        - "Bash refuse les noms qui finissent par .sh"
+        explanation: "Sans chemin, Bash cherche la commande uniquement dans les dossiers listés dans PATH, et le dossier courant n'y est pas (pour des raisons de sécurité). Il faut donc écrire ./infos.sh. Un droit manquant donnerait Permission denied, pas command not found."
+      }
+
+      question "Que fait bash -x script.sh ?" {
+        - "il vérifie la syntaxe sans rien exécuter"
+        + "il exécute le script en affichant chaque commande précédée de +"
+        - "il rend le script exécutable"
+        - "il exécute le script en ignorant les erreurs"
+        explanation: "L'option -x active la trace : chaque commande est affichée, précédée d'un +, avec les variables déjà remplacées par leur valeur, puis exécutée. C'est très utile pour déboguer. Attention : un secret contenu dans une variable apparaîtrait lui aussi dans la trace."
+      }
+
+      question "ls -l script.sh affiche -rw-r--r--. Que manque-t-il pour lancer ./script.sh ?" {
+        - "le droit de lecture"
+        - "le droit d'écriture"
+        + "le droit d'exécution (x)"
+        - "rien, il peut déjà être lancé"
+        explanation: "Les trois groupes rw-, r--, r-- montrent les droits du propriétaire, du groupe et des autres. Aucun x n'apparaît : personne ne peut exécuter le fichier directement. chmod +x script.sh ajoute ce droit et la ligne devient -rwxr-xr-x."
+      }
+
+      question "Dans env bash, où env cherche-t-il le programme bash ?" {
+        - "uniquement dans /bin"
+        + "dans les dossiers listés par la variable PATH"
+        - "dans le dossier du script"
+        - "sur Internet"
+        explanation: "env parcourt les dossiers de PATH dans l'ordre et lance le premier bash trouvé. C'est pratique quand Bash n'est pas installé au même endroit sur toutes les machines (par exemple /usr/local/bin/bash). Écrire #!/bin/bash marche aussi, mais suppose que Bash est exactement à cet endroit."
+      }
+
+      question "Un script contient la ligne ecoh Bonjour (faute de frappe sur echo). Que dit bash -n ?" {
+        + "rien : ce n'est pas une erreur de syntaxe"
+        - "command not found"
+        - "syntax error near unexpected token"
+        - "il corrige automatiquement en echo"
+        explanation: "bash -n vérifie seulement la grammaire du script. ecoh \"Bonjour\" est une ligne grammaticalement correcte : une commande et un argument. L'erreur command not found n'apparaîtra qu'à l'exécution. ShellCheck non plus ne connaît pas toutes les commandes : seul un test réel le révèle."
+      }
+
+      question "À quoi sert ShellCheck ?" {
+        - "à exécuter un script plus vite"
+        + "à repérer les erreurs classiques d'un script sans l'exécuter"
+        - "à chiffrer un script"
+        - "à convertir un script en programme compilé"
+        explanation: "ShellCheck lit le script et signale les pièges connus : variable non protégée par des guillemets, test mal écrit, commande inutile. Chaque remarque a un code (SC2086 par exemple) documenté en ligne. Il n'exécute rien et ne modifie pas le fichier."
+      }
+
+      question "Quel caractère commence un commentaire dans un script Bash ?" {
+        - "//"
+        + "#"
+        - ";"
+        - "--"
+        explanation: "Tout ce qui suit un # en début de mot est ignoré par Bash jusqu'à la fin de la ligne. // est utilisé en C ou JavaScript, -- en SQL. Le shebang #! est un cas particulier : il n'est lu que s'il est sur la toute première ligne."
+      }
+
+      question "Que doit afficher bash -n script.sh quand la syntaxe est correcte ?" {
+        - "Syntax OK"
+        - "0"
+        + "rien du tout"
+        - "le contenu du script"
+        explanation: "Comme beaucoup d'outils Unix, bash -n reste silencieux quand tout va bien. Le résultat se lit dans le code de sortie : echo $? affiche 0 si la syntaxe est bonne. On peut donc écrire bash -n script.sh && echo \"syntaxe correcte\"."
       }
     }
   }
 
   module "processes" {
     title: "Chapitre 2 : le piège Windows/WSL (fins de ligne)"
-    duration: "15min"
+    duration: "25min"
     content: """
 C'est l'erreur la plus fréquente quand on écrit du Bash sous Windows. Tu lances ton script et tu obtiens :
 ```text
 script.sh: line 2: $'\r': command not found
-: invalid option name
+script.sh: line 3: set: pipefail\r: invalid option name
 ```
-Cause : Windows termine chaque ligne par deux caractères invisibles, `\r\n` (CRLF). Linux n'attend que `\n` (LF). Bash lit le `\r` comme un caractère faisant partie de la commande, et ne la reconnaît plus.
-Correction : supprime les `\r` en fin de ligne :
+Cause : Windows termine chaque ligne par deux caractères invisibles, `\r\n` (CRLF, codes 0x0D 0x0A). Linux n'attend que `\n` (LF, code 0x0A). Bash lit le `\r` comme un caractère faisant partie de la commande, et ne la reconnaît plus.
+Si le shebang lui-même se termine par `\r`, `./script.sh` donne un message du type `/usr/bin/env: 'bash\r': No such file or directory` : le système cherche un programme nommé `bash\r`, qui n'existe pas.
+
+### Diagnostiquer
+• `file script.sh` affiche `with CRLF line terminators` si le fichier a des fins de ligne Windows.
+• `cat -A script.sh` montre les caractères invisibles : une fin de ligne Windows apparaît sous la forme `^M$`, une fin Linux sous la forme `$`.
+• `grep -c $'\r' script.sh` compte les lignes qui contiennent un `\r`. La forme `$'\r'` demande à Bash de fabriquer le vrai caractère retour chariot.
+
+### Corriger
+Supprime les `\r` en fin de ligne :
 
 ```bash
 sed -i 's/\r$//' script.sh
 ```
-Lecture de la commande : `sed -i` modifie le fichier sur place, `s/\r$//` remplace un `\r` situé en fin de ligne (`$`) par rien.
-Pour que ça ne revienne pas : Dans VS Code, regarde en bas à droite de la fenêtre : si tu lis `CRLF`, clique dessus et choisis `LF`, puis enregistre. Évite aussi de modifier un même script à deux endroits (Bureau Windows et dossier Linux) : tu risques de travailler sur deux copies différentes.
+Lecture de la commande : `sed -i` modifie le fichier sur place, `s/\r$//` remplace un `\r` situé en fin de ligne (`$`) par rien. Avec `sed -i.bak`, une copie de l'original est gardée dans `script.sh.bak`. Le programme `dos2unix` (paquet du même nom) fait la même chose.
+
+### Empêcher que ça revienne
+• Dans VS Code, regarde en bas à droite de la fenêtre : si tu lis `CRLF`, clique dessus et choisis `LF`, puis enregistre.
+• Dans un dépôt git, un fichier `.gitattributes` contenant la ligne `*.sh text eol=lf` impose des fins LF pour les scripts, quel que soit le système de la personne qui les récupère.
+• Travaille dans ton dossier Linux (`~/projet`) plutôt que dans `/mnt/c/...` : c'est plus rapide, et OneDrive ne risque pas d'interférer. Évite aussi de modifier un même script à deux endroits (Bureau Windows et dossier Linux) : tu risques de travailler sur deux copies différentes.
+
+### À toi de jouer
+1. Fabrique volontairement un script cassé, avec des fins de ligne Windows :
+```bash
+printf '#!/usr/bin/env bash\r\necho "Début"\r\nls\r\n' > casse.sh
+```
+2. Lance `bash casse.sh` et note les messages.
+3. Diagnostique avec `file casse.sh`, `cat -A casse.sh` et `grep -c $'\r' casse.sh`.
+4. Corrige avec `sed`, en gardant une copie de sauvegarde.
+5. Vérifie que le diagnostic est redevenu normal, puis relance le script.
+
+### Correction
+• Étape 2 : `echo "Début"\r` affiche `Début` suivi d'un retour chariot invisible, puis `casse.sh: line 3: $'ls\r': command not found`. Le `echo` semble marcher, ce qui rend le problème trompeur.
+• Étape 3 : `file` affiche `casse.sh: a /usr/bin/env bash script, Unicode text, UTF-8 text executable, with CRLF line terminators` (le é de « Début » donne `Unicode text, UTF-8` ; la formulation varie selon la version de `file`) ; `cat -A` montre `ls^M$` ; `grep -c` affiche `3`.
+• Étape 4 : `sed -i.bak 's/\r$//' casse.sh` (la copie d'origine est dans `casse.sh.bak`).
+• Étape 5 : `file` n'affiche plus `CRLF`, `grep -c $'\r' casse.sh` affiche `0` (et renvoie le code 1, car aucune ligne ne correspond), `cat -A` montre `ls$`, et le script liste bien le dossier.
 """
 
     codeblock "bash" {
-      title: "Repérer les fins de ligne Windows"
+      title: "Repérer et corriger les fins de ligne Windows"
       code: """
 file script.sh
 grep -c $'\r' script.sh
+cat -A script.sh | head -n 3
+sed -i.bak 's/\r$//' script.sh
 """
     }
 
     quiz {
+      pick: 5
       question "Quelle commande supprime les \\r de fin de ligne ?" {
         + "sed -i 's/\\r$//' script.sh"
         - "chmod -r script.sh"
         - "rm \\r script.sh"
-        explanation: "Dans s/\\r$//, s/ancien/nouveau/ remplace du texte, \\r désigne le caractère de retour chariot, et $ signifie « en fin de ligne ». La commande remplace donc un \\r situé en fin de ligne par rien. L'option -i applique la modification directement dans le fichier. chmod -r change des droits et ne touche pas au contenu."
+        - "grep -v '\\r' script.sh"
+        explanation: "Dans s/\\r$//, s/ancien/nouveau/ remplace du texte, \\r désigne le caractère de retour chariot, et $ signifie « en fin de ligne ». La commande remplace donc un \\r situé en fin de ligne par rien. L'option -i applique la modification directement dans le fichier. chmod -r change des droits, et grep -v affiche des lignes sans modifier le fichier."
       }
 
       question "Dans VS Code, quel format de fin de ligne choisir pour un script Bash ?" {
         - "CRLF"
         + "LF"
         - "peu importe"
-        explanation: "Linux termine une ligne par \\n (LF). Windows ajoute \\r avant (CRLF). Un éditeur réglé sur CRLF réintroduit le problème à chaque enregistrement, d'où l'intérêt de choisir LF une fois pour toutes pour les scripts Bash."
+        - "UTF-16"
+        explanation: "Linux termine une ligne par \\n (LF). Windows ajoute \\r avant (CRLF). Un éditeur réglé sur CRLF réintroduit le problème à chaque enregistrement, d'où l'intérêt de choisir LF une fois pour toutes pour les scripts Bash. UTF-16 est un encodage de caractères, pas un format de fin de ligne."
       }
 
       question "Pourquoi vaut-il mieux travailler dans ~/projet que dans /mnt/c/... ?" {
         + "c'est plus rapide et OneDrive (s'il y est) ne risque pas d'interférer"
         - "Bash refuse de s'exécuter sur /mnt/c"
         - "les fichiers y sont chiffrés"
+        - "/mnt/c est en lecture seule"
         explanation: "/mnt/c est le disque Windows, vu depuis Linux à travers une couche de traduction : les accès y sont plus lents. Le Bureau est en plus synchronisé par OneDrive, qui peut verrouiller ou modifier des fichiers au mauvais moment. Bash fonctionne très bien sur /mnt/c, ce n'est donc pas interdit, simplement moins fiable."
+      }
+
+      question "file script.sh affiche « ASCII text, with CRLF line terminators ». Qu’en conclus-tu ?" {
+        - "le fichier est corrompu et doit être réécrit"
+        + "le fichier a des fins de ligne Windows à convertir"
+        - "le fichier n'est pas un script"
+        - "le fichier est encodé en UTF-16"
+        explanation: "CRLF line terminators signifie que chaque ligne finit par \\r\\n, le format Windows. Le texte lui-même est intact : il suffit de retirer les \\r (sed ou dos2unix). Il n'y a rien à réécrire."
+      }
+
+      question "cat -A script.sh affiche « ls^M$ ». Que représente ^M ?" {
+        - "une erreur d'affichage du terminal"
+        + "le caractère retour chariot \\r"
+        - "la fin du fichier"
+        - "une tabulation"
+        explanation: "cat -A rend visibles les caractères invisibles : ^M est le retour chariot (\\r, code 0x0D), $ marque la fin de ligne, et une tabulation s'afficherait ^I. Une ligne propre sous Linux se termine seulement par $."
+      }
+
+      question "./script.sh répond « /usr/bin/env: ‘bash\\r’: No such file or directory ». Quelle est la cause ?" {
+        - "Bash n'est pas installé"
+        - "le script n'a pas le droit d'exécution"
+        + "le shebang se termine par un \\r (fin de ligne Windows)"
+        - "le PATH est vide"
+        explanation: "Le système lit le shebang jusqu'à la fin de la ligne, \\r compris. Il cherche donc un programme nommé bash\\r, qui n'existe pas. Bash est bien installé : il suffit de convertir les fins de ligne. Un droit manquant donnerait Permission denied."
+      }
+
+      question "La commande grep -c qui cherche le retour chariot dans script.sh affiche 0. Que peut-on dire ?" {
+        + "aucune ligne ne contient de retour chariot"
+        - "le fichier est vide"
+        - "la commande a échoué, il faut sudo"
+        - "toutes les lignes ont des fins Windows"
+        explanation: "grep -c compte les lignes qui contiennent le motif. 0 signifie qu'aucune ligne ne contient de \\r : les fins de ligne sont au format Linux. grep renvoie alors le code 1 (aucune correspondance), ce qui n'est pas une panne."
+      }
+
+      question "Dans la commande grep qui compte les retours chariot, pourquoi le motif \\r est-il précédé d’un $ (citation ANSI-C) ?" {
+        - "c'est la même chose, par habitude"
+        + "$'...' demande à Bash de fabriquer le vrai caractère retour chariot"
+        - "pour que grep ignore la casse"
+        - "pour lire une variable nommée r"
+        explanation: "Entre guillemets simples, '\\r' reste deux caractères : un antislash et la lettre r. La forme $'\\r' (citation ANSI-C) est convertie par Bash en un seul caractère, le retour chariot. Ainsi grep cherche le vrai caractère invisible."
+      }
+
+      question "À quoi sert la ligne *.sh text eol=lf dans un fichier .gitattributes ?" {
+        - "elle rend les scripts exécutables"
+        + "elle impose des fins de ligne LF pour les fichiers .sh du dépôt"
+        - "elle exclut les scripts du dépôt"
+        - "elle convertit les scripts en UTF-8"
+        explanation: "Le fichier .gitattributes donne à git des règles par type de fichier. eol=lf demande à git d'écrire ces fichiers avec des fins LF dans la copie de travail, même sur un poste Windows. C'est la protection la plus durable dans un projet partagé."
+      }
+
+      question "Que fait sed -i.bak avec le motif s/\\r$// sur script.sh ?" {
+        - "il crée un nouveau fichier script.sh.bak corrigé et laisse l'original intact"
+        + "il corrige script.sh et garde l'original dans script.sh.bak"
+        - "il supprime script.sh"
+        - "il affiche le résultat sans rien modifier"
+        explanation: "Avec -i suivi d'un suffixe, GNU sed modifie le fichier sur place et garde une copie de l'original avec ce suffixe. C'est une bonne habitude avant toute modification automatique : en cas d'erreur, il suffit de restaurer le .bak."
+      }
+
+      question "Quel est le code hexadécimal du caractère LF (saut de ligne) ?" {
+        - "0x0D"
+        + "0x0A"
+        - "0x20"
+        - "0x09"
+        explanation: "LF (line feed, \\n) vaut 0x0A et CR (carriage return, \\r) vaut 0x0D. Windows termine les lignes par 0x0D 0x0A, Linux par 0x0A seul. 0x20 est l'espace et 0x09 la tabulation."
+      }
+
+      question "Un script avec des fins CRLF contient echo Début. Que se passe-t-il à l’exécution de cette ligne ?" {
+        - "Bash affiche command not found"
+        + "le texte s'affiche, suivi d'un retour chariot invisible : l'erreur passe inaperçue"
+        - "le script s'arrête immédiatement"
+        - "Bash convertit la ligne tout seul"
+        explanation: "echo reçoit Début suivi de \\r comme argument et l'affiche, ce qui semble normal à l'écran. Le problème n'apparaît que sur d'autres lignes, par exemple une commande seule comme ls\\r qui devient introuvable. C'est pour cela que ce bug est trompeur."
       }
     }
   }
 
   module "services" {
     title: "Chapitre 3 : variables et guillemets"
-    duration: "25min"
+    duration: "35min"
     content: """
 Une variable se déclare sans espace autour du = et se lit avec $ :
 ```bash
@@ -139,19 +376,51 @@ dossier="Mes Documents"
 mkdir $dossier      # FAUX : crée deux dossiers, "Mes" et "Documents"
 mkdir "$dossier"    # JUSTE : crée un seul dossier "Mes Documents"
 ```
-Sans guillemets, Bash coupe la valeur à chaque espace. C'est la source n°1 de bugs, et parfois de failles de sécurité, dans les scripts.
+Sans guillemets, Bash coupe la valeur à chaque espace, puis remplace les caractères `*` et `?` par des noms de fichiers. C'est la source n°1 de bugs, et parfois de failles de sécurité, dans les scripts.
 • `"$var"` : la valeur, en un seul morceau.
 • `'$var'` : le texte littéral `$var`, rien n'est interprété.
-• `$var` : la valeur, découpée aux espaces (à éviter).
+• `$var` : la valeur, découpée aux espaces et soumise aux caractères jokers (à éviter).
 
 ### Récupérer le résultat d'une commande
 ```bash
 aujourdhui="$(date +%F)"
 echo "Nous sommes le $aujourdhui"
 ```
-`$(...)` exécute la commande et remplace l'expression par sa sortie.
+`$(...)` exécute la commande et remplace l'expression par sa sortie. Tu croiseras aussi l'ancienne forme avec des accents graves (`` `date` ``) : elle fait la même chose mais s'imbrique mal, préfère `$(...)`.
+
 ### Arguments du script
-`$1`, `$2`… sont les arguments donnés au lancement : `bash script.sh Marseille` met `Marseille` dans `$1`. `$#` donne leur nombre.
+`$1`, `$2`… sont les arguments donnés au lancement : `bash script.sh Marseille` met `Marseille` dans `$1`. `$#` donne leur nombre, `$0` le nom du script, et `"$@"` la liste de tous les arguments, chacun gardé intact.
+Attention : `"$9"` est le neuvième argument, mais le dixième s'écrit `"${10}"`.
+
+### Valeurs par défaut, longueur, calcul
+```bash
+ville="${1:-Marseille}"     # $1 s'il est fourni et non vide, sinon Marseille
+echo "${#ville}"            # longueur : 9
+echo "$(( 7 / 2 ))"         # calcul entier : 3
+```
+`$(( ... ))` fait des calculs sur des nombres entiers uniquement : la division ne garde pas de virgule.
+
+### À toi de jouer
+Écris `note.sh`, qui :
+1. prend un nom de dossier en premier argument, avec `Mes Documents` comme valeur par défaut ;
+2. affiche le nombre d'arguments reçus ;
+3. crée ce dossier, puis un fichier `note-AAAA-MM-JJ.txt` (date du jour) qui contient « Créé par » suivi de ton nom d'utilisateur ;
+4. liste le contenu du dossier.
+Teste ensuite `bash note.sh "Rapports TP"`, puis `bash note.sh` sans argument. Enfin, retire les guillemets autour de la variable dans la commande `mkdir`, supprime les dossiers créés et relance `bash note.sh "Rapports TP"` : observe ce qui se passe.
+
+### Correction
+```bash
+#!/usr/bin/env bash
+dossier="${1:-Mes Documents}"
+jour="$(date +%F)"
+echo "Arguments reçus : $#"
+mkdir -p "$dossier"
+echo "Créé par $USER" > "$dossier/note-$jour.txt"
+ls -l "$dossier"
+```
+• `bash note.sh "Rapports TP"` affiche `Arguments reçus : 1` et crée un seul dossier `Rapports TP` contenant `note-2026-11-26.txt` (avec la date du jour).
+• `bash note.sh` affiche `Arguments reçus : 0` et utilise `Mes Documents`.
+• Sans guillemets, `mkdir -p $dossier` crée deux dossiers, `Rapports` et `TP`, puis l'écriture de la note échoue avec `No such file or directory`, car le dossier `Rapports TP` n'existe pas. Remets les guillemets.
 """
 
     codeblock "bash" {
@@ -160,47 +429,127 @@ echo "Nous sommes le $aujourdhui"
 dossier="Mes Documents"
 mkdir "$dossier"
 ls -d "$dossier"
+echo "Longueur du nom : ${#dossier}"
 """
     }
 
     quiz {
-      question "Que provoque nom = \"Anna\" (avec des espaces) ?" {
+      pick: 5
+      question "Que provoque la ligne nom = Anna (avec des espaces autour du signe égal) ?" {
         - "la variable nom reçoit Anna"
         + "une erreur : Bash croit que nom est une commande"
         - "deux variables sont créées"
+        - "la variable nom reçoit \" Anna\" avec un espace"
         explanation: "Bash découpe une ligne en mots séparés par des espaces. Dans nom = \"Anna\", le premier mot, nom, est pris pour le nom d'une commande, et = et Anna pour ses arguments. Bash répond alors nom: command not found. Pour affecter une variable, il faut coller le nom, le = et la valeur : nom=\"Anna\"."
       }
 
-      question "Que contient la sortie de echo '$nom' (guillemets simples) ?" {
+      question "Que contient la sortie de echo suivi de $nom entre guillemets simples ?" {
         - "la valeur de la variable nom"
         + "le texte littéral $nom"
         - "une erreur"
+        - "une ligne vide"
         explanation: "Les guillemets simples protègent tout ce qu'ils contiennent : rien n'est remplacé, $nom reste le texte $nom. Les guillemets doubles, eux, laissent Bash remplacer les variables. C'est pour cela qu'on écrit \"$nom\" et non '$nom' quand on veut la valeur."
       }
 
       question "Que fait $(date +%F) ?" {
         + "il exécute la commande et la remplace par sa sortie"
         - "il affiche littéralement date +%F"
-        - " il crée un fichier date"
+        - "il crée un fichier date"
+        - "il lit une variable nommée date"
         explanation: "La forme $(commande) s'appelle la substitution de commande : Bash exécute la commande, récupère ce qu'elle affiche et le met à la place de l'expression. Ici, date +%F affiche une date du type 2026-10-17, qu'on range ensuite dans une variable."
+      }
+
+      question "La variable dossier vaut Mes Documents. Que fait mkdir $dossier (sans guillemets) ?" {
+        - "il crée un dossier Mes Documents"
+        + "il crée deux dossiers, Mes et Documents"
+        - "il affiche une erreur de syntaxe"
+        - "il crée un dossier nommé $dossier"
+        explanation: "Sans guillemets, Bash découpe la valeur aux espaces : mkdir reçoit deux arguments, Mes et Documents, et crée deux dossiers. Avec \"$dossier\", la valeur reste un seul argument. C'est l'erreur la plus courante des scripts."
+      }
+
+      question "Que vaut $# si on lance le script avec deux arguments : Jean Dupont (entre guillemets) puis 13 ?" {
+        - "3"
+        + "2"
+        - "1"
+        - "13"
+        explanation: "Les guillemets regroupent Jean Dupont en un seul argument. Le script reçoit donc deux arguments : $1 vaut Jean Dupont et $2 vaut 13. Sans les guillemets au lancement, il en recevrait trois."
+      }
+
+      question "Que vaut ville après ville=${1:-Marseille} si le script est lancé sans argument ?" {
+        - "une chaîne vide"
+        + "Marseille"
+        - "1"
+        - "le script s'arrête avec une erreur"
+        explanation: "${1:-Marseille} donne la valeur de $1 si elle existe et n'est pas vide, sinon le texte après :-. Sans argument, $1 est vide, donc ville reçoit Marseille. Pour arrêter le script quand l'argument manque, on utilise ${1:?message}."
+      }
+
+      question "Quelle est la différence entre $@ entre guillemets doubles et $* sans guillemets ?" {
+        + "\"$@\" garde chaque argument intact, $* les recolle puis les redécoupe aux espaces"
+        - "aucune différence"
+        - "\"$@\" ne contient que le premier argument"
+        - "$* contient aussi le nom du script"
+        explanation: "\"$@\" se développe en autant de mots qu'il y a d'arguments, sans toucher à leurs espaces internes : un argument \"Jean Dupont\" reste entier. $* sans guillemets redécoupe tout aux espaces. Pour transmettre les arguments à une autre commande, on écrit donc \"$@\"."
+      }
+
+      question "Que contient $0 dans un script ?" {
+        - "le code de sortie de la dernière commande"
+        - "le nombre d'arguments"
+        + "le nom (ou chemin) du script tel qu'il a été lancé"
+        - "le premier argument"
+        explanation: "$0 vaut le nom utilisé pour lancer le script, par exemple ./note.sh. On s'en sert souvent dans les messages d'aide : echo \"usage : $0 dossier\". Le code de sortie est dans $?, le nombre d'arguments dans $#, le premier argument dans $1."
+      }
+
+      question "Qu’affiche echo $(( 7 / 2 )) ?" {
+        - "3.5"
+        + "3"
+        - "4"
+        - "7 / 2"
+        explanation: "$(( ... )) calcule uniquement avec des nombres entiers : la partie décimale est supprimée, pas arrondie. 7 / 2 donne donc 3. Pour des calculs à virgule, il faut un autre outil, par exemple bc ou awk."
+      }
+
+      question "La variable mot vaut Bonjour. Qu’affiche echo ${#mot} ?" {
+        - "Bonjour"
+        + "7"
+        - "#Bonjour"
+        - "1"
+        explanation: "${#variable} donne le nombre de caractères de la valeur. Bonjour en compte 7. C'est pratique pour vérifier qu'une saisie n'est ni vide ni trop longue."
+      }
+
+      question "Dans un script lancé sans argument, qu’affiche echo avec le texte « Abonnement : $5 par mois » entre guillemets doubles ?" {
+        - "Abonnement : $5 par mois"
+        + "Abonnement :  par mois"
+        - "une erreur de syntaxe"
+        - "Abonnement : 5 par mois"
+        explanation: "Entre guillemets doubles, $5 est lu comme le cinquième argument du script, qui est vide ici. Le prix disparaît. Pour afficher un vrai symbole dollar, il faut l'échapper (\\$5) ou utiliser des guillemets simples."
+      }
+
+      question "La variable motif vaut * (une étoile). Que fait echo $motif (sans guillemets) dans un dossier qui contient des fichiers ?" {
+        - "il affiche *"
+        + "il affiche la liste des fichiers du dossier"
+        - "il affiche une ligne vide"
+        - "il supprime les fichiers"
+        explanation: "Sans guillemets, Bash applique les caractères jokers à la valeur : * est remplacé par les noms des fichiers du dossier courant. Avec echo \"$motif\", on obtient bien le caractère *. C'est une autre raison de toujours mettre les variables entre guillemets."
       }
     }
   }
 
   module "module-4" {
     title: "Chapitre 4 : fonctions, codes de sortie et messages d'erreur"
-    duration: "30min"
+    duration: "40min"
     content: """
 ### Les codes de sortie
-Chaque commande se termine avec un nombre : `0` signifie « succès », tout autre nombre signifie « échec ». Le code de la dernière commande est dans `$?`.
+Chaque commande se termine avec un nombre entre 0 et 255 : `0` signifie « succès », tout autre nombre signifie « échec ». Le code de la dernière commande est dans `$?`.
 ```bash
 ls /dossier-inexistant
-echo $?     # affiche 2 (échec)
+echo $?     # affiche 2 sous Linux (échec)
 ls /tmp
 echo $?     # affiche 0 (succès)
 ```
 
 Ton script peut produire son propre code avec `exit` : `exit 0` pour réussir, `exit 1` pour signaler une erreur. C'est ce que lisent les autres programmes (et les tests automatiques) pour savoir si ton script a fonctionné.
+Deux opérateurs s'appuient sur ces codes :
+• `a && b` : lance `b` seulement si `a` a réussi (`mkdir rapport && cd rapport`) ;
+• `a || b` : lance `b` seulement si `a` a échoué.
 
 ### Écrire des fonctions
 Une fonction regroupe des commandes sous un nom, pour ne pas les répéter :
@@ -212,10 +561,14 @@ saluer() {
 
 saluer "Anna"
 ```
-`local` limite la variable à la fonction. Sans lui, la variable devient globale et peut écraser une autre variable du script sans prévenir.
+Dans une fonction, `$1`, `$2`… sont les arguments **de la fonction**, pas ceux du script. `local` limite la variable à la fonction. Sans lui, la variable devient globale et peut écraser une autre variable du script sans prévenir.
+Une fonction se termine avec `return` (code de la fonction, le script continue), alors que `exit` arrête **tout le script**.
 
 ### Afficher les erreurs au bon endroit
-Bash a deux sorties : la **sortie standard** (résultats normaux) et l'**erreur standard** (messages d'erreur, numéro 2). Les messages d'information ou d'erreur d'un script vont sur l'erreur standard avec `>&2`, pour ne pas se mélanger aux résultats que d'autres programmes pourraient lire.
+Bash a deux sorties : la **sortie standard** (résultats normaux, numéro 1) et l'**erreur standard** (messages d'erreur, numéro 2). Les messages d'information ou d'erreur d'un script vont sur l'erreur standard avec `>&2`, pour ne pas se mélanger aux résultats que d'autres programmes pourraient lire.
+Redirections utiles :
+• `commande 2>/dev/null` : jette les messages d'erreur ;
+• `commande > sortie.txt 2>&1` : envoie les deux sorties dans le même fichier (l'ordre compte : `2>&1` après `>`).
 
 Un modèle très utile, à adapter avec tes propres mots :
 ```bash
@@ -228,35 +581,152 @@ info "Configuration trouvée"
 
 Lecture : `[[ -f config.txt ]]` teste si le fichier existe ; `||` signifie « sinon, fais ceci ». `die` affiche le message puis arrête tout le script avec le code 1.
 Pour tester `die`, lance le script puis tape `echo $?` : tu dois lire `1`. Si le test réussit, tu lis `0`.
+
+### Vérifier qu'un programme est installé
+`command -v git` affiche le chemin de `git` et réussit s'il est installé, sinon il échoue sans rien afficher. C'est la façon standard de vérifier les prérequis au début d'un script.
+
+### À toi de jouer
+Écris `prerequis.sh`, qui :
+1. définit les fonctions `info` et `die` ;
+2. définit une fonction `verifier_commande` qui prend un nom de programme, vérifie qu'il est installé avec `command -v`, affiche `[OK] git présent` s'il l'est, et arrête le script avec un message clair sinon ;
+3. vérifie `bash`, `git`, `curl`, puis un programme qui n'existe pas, `outil-imaginaire`.
+Teste ensuite : `bash prerequis.sh; echo $?`, puis `bash prerequis.sh 2>/dev/null`, puis `bash prerequis.sh 2> erreurs.log` suivi de `cat erreurs.log`.
+
+### Correction
+```bash
+#!/usr/bin/env bash
+info() { echo "[OK] $*" >&2; }
+die()  { echo "[ERREUR] $*" >&2; exit 1; }
+
+verifier_commande() {
+    local cmd="$1"
+    command -v "$cmd" >/dev/null 2>&1 || die "commande manquante : $cmd"
+    info "$cmd présent"
+}
+
+verifier_commande bash
+verifier_commande git
+verifier_commande curl
+verifier_commande outil-imaginaire
+info "tout est prêt"     # jamais atteint ici
+```
+• `bash prerequis.sh; echo $?` affiche `[OK] bash présent`, `[OK] git présent`, `[OK] curl présent`, `[ERREUR] commande manquante : outil-imaginaire`, puis `1`. Si git ou curl n'est pas installé, le script s'arrête plus tôt : installe-le avec `sudo apt install git curl`.
+• Avec `2>/dev/null`, rien ne s'affiche : tous les messages passent par l'erreur standard.
+• Avec `2> erreurs.log`, l'écran reste vide et `cat erreurs.log` montre les quatre lignes.
 """
 
+    codeblock "bash" {
+      title: "Lire les codes de sortie"
+      code: """
+grep -q "root" /etc/passwd; echo "code : $?"
+grep -q "utilisateur-absent" /etc/passwd; echo "code : $?"
+command -v git >/dev/null && echo "git installé" || echo "git absent"
+"""
+    }
+
     quiz {
+      pick: 5
       question "Que contient $? ?" {
         + "le code de sortie de la dernière commande"
         - "le numéro du processus"
         - "le nombre d'arguments du script"
-        explanation: "Après chaque commande, Bash note un nombre dans $? : 0 pour un succès, autre chose pour un échec. Les autres propositions existent aussi, mais sous d'autres noms : le numéro du processus est $$, et le nombre d'arguments est $#."
+        - "le nom du script"
+        explanation: "Après chaque commande, Bash note un nombre dans $? : 0 pour un succès, autre chose pour un échec. Les autres propositions existent aussi, mais sous d'autres noms : le numéro du processus est $$, le nombre d'arguments est $#, et le nom du script est $0."
       }
 
       question "À quoi sert local dans une fonction ?" {
         + "à limiter la variable à la fonction"
         - "à rendre le code plus lisible"
         - "à exporter la variable vers les autres programmes"
-        explanation: "Sans local, une variable créée dans une fonction est globale : elle existe encore après la fonction et peut écraser une variable de même nom ailleurs dans le script, ce qui provoque des bugs difficiles à trouver. Avec local, elle disparaît à la fin de la fonction. Elle n'est pas pour autant transmise aux autres programmes : cela, c'est le rôle de export."
+        - "à rendre la variable non modifiable"
+        explanation: "Sans local, une variable créée dans une fonction est globale : elle existe encore après la fonction et peut écraser une variable de même nom ailleurs dans le script, ce qui provoque des bugs difficiles à trouver. Avec local, elle disparaît à la fin de la fonction. Elle n'est pas pour autant transmise aux autres programmes (c'est le rôle de export), ni protégée contre la modification (c'est le rôle de readonly)."
       }
 
-      question "Dans [[ -f config.txt ]] || die \"introuvable\", quand die s'exécute-t-il ?" {
+      question "Dans [[ -f config.txt ]] || die introuvable, quand die s’exécute-t-il ?" {
         - "quand le fichier existe"
         + "quand le fichier n'existe pas"
         - "toujours"
+        - "jamais, || n'est pas valide dans Bash"
         explanation: "Le || se lit « sinon » : la commande de droite ne s'exécute que si celle de gauche a échoué. Le test [[ -f config.txt ]] réussit (code 0) quand le fichier existe, donc die ne se lance que lorsque le fichier est absent."
+      }
+
+      question "Dans une fonction, quelle est la différence entre return 1 et exit 1 ?" {
+        + "return termine la fonction, exit arrête tout le script"
+        - "aucune différence"
+        - "exit termine la fonction, return arrête tout le script"
+        - "return n'accepte pas de nombre"
+        explanation: "return quitte seulement la fonction, avec le code donné, et le script continue après l'appel. exit arrête le script entier, même s'il est appelé depuis une fonction. C'est pour cela que die utilise exit : une erreur grave doit tout stopper."
+      }
+
+      question "Que fait commande 2>/dev/null ?" {
+        - "elle jette la sortie normale"
+        + "elle jette les messages d'erreur"
+        - "elle enregistre les erreurs dans un fichier nommé 2"
+        - "elle arrête la commande en cas d'erreur"
+        explanation: "2> redirige l'erreur standard (numéro 2), et /dev/null est un fichier spécial qui jette tout ce qu'on y écrit. La sortie normale reste affichée. À utiliser avec prudence : un message d'erreur jeté peut cacher un vrai problème."
+      }
+
+      question "Que fait commande > sortie.txt 2>&1 ?" {
+        - "il envoie seulement les erreurs dans sortie.txt"
+        + "il envoie la sortie normale et les erreurs dans sortie.txt"
+        - "il crée deux fichiers, sortie.txt et 1"
+        - "il affiche les erreurs et enregistre le reste"
+        explanation: "> sortie.txt envoie la sortie standard dans le fichier, puis 2>&1 envoie l'erreur standard au même endroit que la sortie standard. L'ordre compte : écrit 2>&1 > sortie.txt, les erreurs resteraient à l'écran."
+      }
+
+      question "Que fait mkdir rapport && cd rapport si le dossier rapport existe déjà ?" {
+        - "il entre dans le dossier"
+        + "mkdir échoue, donc cd n'est pas exécuté"
+        - "il crée un dossier rapport1"
+        - "il supprime le dossier puis le recrée"
+        explanation: "Sans -p, mkdir échoue si le dossier existe déjà (File exists). Avec &&, la commande de droite ne s'exécute que si la gauche a réussi, donc cd n'est pas lancé. Avec mkdir -p, l'existence du dossier n'est pas une erreur."
+      }
+
+      question "Une fonction saluer est appelée avec saluer Anna. Que contient $1 dans la fonction ?" {
+        - "le premier argument du script"
+        + "Anna, le premier argument de la fonction"
+        - "le nom de la fonction"
+        - "rien, une fonction n'a pas d'arguments"
+        explanation: "Pendant l'exécution d'une fonction, $1, $2 et $# désignent ses propres arguments. Ceux du script sont temporairement masqués. Pour qu'une fonction utilise un argument du script, il faut le lui passer : saluer \"$1\"."
+      }
+
+      question "À quoi sert command -v git dans un script ?" {
+        - "à installer git"
+        + "à vérifier que git est installé, sans le lancer"
+        - "à afficher la version de git"
+        - "à lancer git en mode verbeux"
+        explanation: "command -v affiche le chemin d'un programme et réussit s'il le trouve, sinon il échoue. On l'utilise au début d'un script : command -v git >/dev/null || die \"git manquant\". Il n'installe rien et ne lance pas le programme."
+      }
+
+      question "grep -q mot fichier.txt ne trouve rien. Que vaut $? ?" {
+        - "0"
+        + "1"
+        - "2"
+        - "127"
+        explanation: "grep renvoie 0 s'il a trouvé au moins une ligne, 1 s'il n'a rien trouvé, et 2 en cas d'erreur (fichier illisible par exemple). L'option -q supprime l'affichage, ce qui en fait un test idéal pour un if ou un ||."
+      }
+
+      question "Pourquoi die écrit-il son message avec >&2 ?" {
+        + "pour que le message ne soit pas capturé avec les résultats, par exemple dans resultat=$(script)"
+        - "pour que le message s'affiche en rouge"
+        - "parce que exit l'exige"
+        - "pour écrire le message dans un fichier nommé 2"
+        explanation: "$(...) ne récupère que la sortie standard. Un message envoyé sur l'erreur standard reste visible à l'écran mais ne pollue pas la valeur capturée. >&2 ne change ni la couleur, ni le fonctionnement d'exit."
+      }
+
+      question "Un script se termine par exit 256. Quel code de sortie lit-on avec echo $? ?" {
+        + "0"
+        - "256"
+        - "1"
+        - "255"
+        explanation: "Un code de sortie tient sur 8 bits : de 0 à 255. 256 est ramené à 256 modulo 256, soit 0, ce qui annonce un succès alors que l'auteur voulait signaler une erreur. Garde donc des codes entre 1 et 125 pour tes erreurs."
       }
     }
   }
 
   module "module-5" {
     title: "Chapitre 5 : rendre le script robuste (set -euo pipefail, mktemp, trap)"
-    duration: "35min"
+    duration: "45min"
     content: """
 Par défaut, Bash continue après une erreur, ce qui est dangereux : un `cd` raté suivi d'un `rm -rf *` supprime les mauvais fichiers. On active donc au début du script un mode strict :
 ```bash
@@ -267,10 +737,12 @@ set -euo pipefail
 • `-u` : utiliser une variable non définie est une erreur, ce qui protège des fautes de frappe.
 • `-o pipefail` : un pipe `a | b` échoue si `a` échoue, pas seulement si `b` échoue.
 
+Avec `-u`, une variable facultative se lit avec une valeur par défaut : `"${NOM:-inconnu}"` ne déclenche pas d'erreur.
+
 ### Les limites de set -e
 `set -e` n'est pas une protection totale. Il est ignoré dans plusieurs situations :
-• dans la condition d'un `if`, ou à gauche d'un `&&` ou d'un `||` ;
-• dans une substitution de commande `$(...)`, sauf si tu actives `shopt -s inherit_errexit` ;
+• dans la condition d'un `if` ou d'un `while`, ou à gauche d'un `&&` ou d'un `||` ;
+• à l'intérieur d'une substitution de commande `$(...)`, sauf si tu actives `shopt -s inherit_errexit` (Bash 4.4 et plus) : la commande qui échoue ne coupe pas la suite de la substitution ;
 • dans une fonction appelée dans l'un de ces contextes.
 
 Exemple de piège : `local resultat="$(commande_qui_echoue)"` renvoie le code de `local`, qui réussit, et masque l'échec. Écris plutôt en deux temps :
@@ -278,10 +750,10 @@ Exemple de piège : `local resultat="$(commande_qui_echoue)"` renvoie le code de
 local resultat
 resultat="$(commande_qui_echoue)"   # ici l'échec est bien vu
 ```
-Règle pratique : ne compte pas uniquement sur `set -e`. Pour les étapes critiques, vérifie toi-même : `commande || die "message"`.
+Règle pratique : ne compte pas uniquement sur `set -e`. Pour les étapes critiques, vérifie toi-même : `cd "$dossier" || die "dossier introuvable"`.
 
 ### Fichiers temporaires et nettoyage
-Pour un fichier temporaire, ne choisis pas un nom à la main : utilise `mktemp`, qui crée un nom unique et non prévisible. Avec `trap`, le nettoyage s'exécute à la fin du script, même en cas d'erreur :
+Pour un fichier temporaire, ne choisis pas un nom à la main : utilise `mktemp`, qui crée un nom unique et non prévisible, avec des droits réservés à toi (0600 pour un fichier, 0700 pour un dossier avec `-d`). Avec `trap`, le nettoyage s'exécute à la fin du script, même en cas d'erreur :
 ```bash
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -289,38 +761,198 @@ trap 'rm -rf "$TMP"' EXIT
 echo "données" > "$TMP/fichier.txt"
 ```
 
-Lecture : `trap 'commande' EXIT` dit « exécute cette commande quand le script se termine, quelle que soit la raison ».
+Lecture : `trap 'commande' EXIT` dit « exécute cette commande quand le script se termine, quelle que soit la raison » (fin normale, `exit`, erreur avec `set -e`).
+
+### Protéger un rm -rf
+Attention : `rm -rf` supprime sans confirmation et sans corbeille. Si la variable était vide, `rm -rf "$DOSSIER/"` viserait `/`. La forme `"${DOSSIER:?}"` arrête le script si la variable est vide ou non définie :
+```bash
+rm -rf -- "${DOSSIER:?variable DOSSIER vide}"
+```
+Le `--` indique à `rm` que ce qui suit n'est plus une option, même si le nom commence par un tiret.
+
+### Savoir où une erreur s'est produite
+```bash
+trap 'echo "[ERREUR] ligne $LINENO, code $?" >&2' ERR
+```
+Le piège `ERR` s'exécute à chaque commande qui échoue (dans les cas où `set -e` réagirait) : pratique pour savoir quelle ligne a arrêté le script. Par défaut, il n'est pas transmis aux fonctions : ajoute `set -E` (errtrace) pour qu'il s'applique aussi aux erreurs survenues dans une fonction.
+
+### À toi de jouer
+Écris `robuste.sh` en mode strict, qui :
+1. crée un dossier temporaire avec `mktemp -d` et l'affiche ;
+2. installe un `trap ... EXIT` qui supprime ce dossier et affiche `[nettoyage] dossier supprimé` sur l'erreur standard ;
+3. écrit la date dans un fichier du dossier temporaire, puis l'affiche ;
+4. lance volontairement `ls /dossier-inexistant` ;
+5. se termine par `echo "fin normale"`.
+Lance-le, puis tape `echo $?`, puis vérifie avec `ls -d` que le dossier temporaire a disparu. Ensuite, remplace l'étape 4 par `echo "$INCONNU"`, relance, et observe. Enfin, dans un terminal, compare `false | true; echo $?` avant et après `set -o pipefail`.
+
+### Correction
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"; echo "[nettoyage] dossier supprimé" >&2' EXIT
+echo "Dossier temporaire : $TMP"
+
+date > "$TMP/horodatage.txt"
+cat "$TMP/horodatage.txt"
+
+ls /dossier-inexistant     # échec volontaire
+echo "fin normale"         # jamais affiché
+```
+• Le script affiche le chemin (par exemple `/tmp/tmp.k3Jd8sQw2L`), la date, l'erreur de `ls`, puis `[nettoyage] dossier supprimé`. `fin normale` n'apparaît pas.
+• `echo $?` affiche `2` : le code de `ls`, transmis par `set -e`.
+• `ls -d /tmp/tmp.k3Jd8sQw2L` répond `No such file or directory` : le `trap` a bien nettoyé.
+• Avec `echo "$INCONNU"`, Bash affiche `robuste.sh: line 11: INCONNU: unbound variable` (le numéro dépend de ton fichier), le nettoyage a lieu, et le code est différent de 0.
+• `false | true; echo $?` affiche `0` sans pipefail (seul le code de `true` compte) et `1` avec `set -o pipefail`.
 """
 
+    codeblock "bash" {
+      title: "Modèle de début de script robuste"
+      code: """
+#!/usr/bin/env bash
+set -euo pipefail
+
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+trap 'echo "[ERREUR] ligne $LINENO" >&2' ERR
+"""
+    }
+
     quiz {
-      question "Que fait l'option -u de set -euo pipefail ?" {
+      pick: 5
+      question "Que fait l’option -u de set -euo pipefail ?" {
         + "elle arrête le script si on lit une variable non définie"
         - "elle ignore toutes les erreurs"
         - "elle affiche chaque commande exécutée"
-        explanation: "Sans -u, une variable non définie est silencieusement remplacée par du vide. Si tu écris rm -rf \"$DOSSIR/\" avec une faute de frappe, la variable DOSSIR n'existe pas, le chemin devient / et la commande vise la racine du disque. Avec -u, le script s'arrête avant de causer des dégâts."
+        - "elle interdit les variables en majuscules"
+        explanation: "Sans -u, une variable non définie est silencieusement remplacée par du vide. Si tu écris rm -rf \"$DOSSIR/\" avec une faute de frappe, la variable DOSSIR n'existe pas, le chemin devient / et la commande vise la racine du disque. Avec -u, le script s'arrête avant de causer des dégâts. L'affichage de chaque commande, c'est -x."
       }
 
-      question "Avec set -e, que se passe-t-il pour local r=\"$(commande_qui_echoue)\" ?" {
+      question "Avec set -e, que se passe-t-il pour local r=$(commande_qui_echoue) ?" {
         - "le script s'arrête, comme prévu"
         + "l'échec est masqué, car local renvoie un succès"
         - "la commande n'est pas exécutée"
+        - "Bash affiche une erreur de syntaxe"
         explanation: "local est lui-même une commande, et il réussit presque toujours. Quand tu écris local r=\"$(commande)\", le code de retour que Bash voit est celui de local, pas celui de commande : l'échec disparaît. La solution est de séparer la déclaration (local r) et l'affectation (r=\"$(commande)\")."
       }
 
-      question "Pourquoi utiliser mktemp plutôt qu'un nom choisi à la main comme /tmp/fichier ?" {
+      question "Pourquoi utiliser mktemp plutôt qu’un nom choisi à la main comme /tmp/fichier ?" {
         + "le nom est unique et imprévisible"
         - "c'est plus rapide à taper"
         - "il supprime tout seul le fichier"
+        - "le fichier est chiffré"
         explanation: "Un nom fixe comme /tmp/fichier est prévisible : un autre utilisateur peut créer à l'avance un fichier de ce nom pour détourner ton script. mktemp choisit un nom unique et aléatoire, et crée le fichier avec des droits restreints. Il ne supprime rien tout seul : c'est trap ... EXIT qui s'en charge."
+      }
+
+      question "Que fait set -e ?" {
+        - "il affiche chaque commande avant de l'exécuter"
+        + "il arrête le script dès qu'une commande échoue (hors exceptions)"
+        - "il ignore les erreurs"
+        - "il chiffre les variables"
+        explanation: "Avec -e (errexit), un code de sortie non nul arrête le script. Il existe des exceptions : condition d'un if, partie gauche d'un && ou d'un ||, commande niée par !. C'est un filet de sécurité, pas une garantie : les étapes critiques méritent un test explicite."
+      }
+
+      question "Sans pipefail, que vaut $? après false | true ?" {
+        + "0"
+        - "1"
+        - "2"
+        - "127"
+        explanation: "Sans pipefail, le code d'un pipe est celui de la dernière commande, ici true, qui réussit : 0. L'échec de false est perdu. Avec set -o pipefail, le pipe renvoie le code de la dernière commande qui a échoué, donc 1."
+      }
+
+      question "Quand la commande enregistrée par trap ... EXIT s’exécute-t-elle ?" {
+        - "seulement si le script réussit"
+        - "seulement en cas d'erreur"
+        + "à la fin du script, quelle qu'en soit la raison"
+        - "au début du script"
+        explanation: "Le piège EXIT se déclenche quand le shell se termine : fin normale, exit, ou arrêt par set -e. C'est l'endroit idéal pour supprimer les fichiers temporaires. Un arrêt brutal par kill -9 l'empêche toutefois de s'exécuter."
+      }
+
+      question "Que fait rm -rf -- ${DOSSIER:?} (entre guillemets doubles) si DOSSIER est vide ?" {
+        - "il supprime le dossier courant"
+        - "il supprime la racine /"
+        + "il arrête le script avec une erreur, sans rien supprimer"
+        - "il ne fait rien et continue"
+        explanation: "${variable:?} provoque une erreur et arrête le script quand la variable est vide ou non définie, avant même que rm soit lancé. C'est une protection simple contre les suppressions catastrophiques. Le -- empêche aussi un nom commençant par un tiret d'être lu comme une option."
+      }
+
+      question "Avec set -euo pipefail, que fait echo ${NOM:-inconnu} si NOM n’est pas défini ?" {
+        - "le script s'arrête : unbound variable"
+        + "il affiche inconnu"
+        - "il affiche une ligne vide"
+        - "il affiche ${NOM:-inconnu}"
+        explanation: "La forme ${NOM:-valeur} fournit une valeur par défaut, et -u ne la considère pas comme une erreur. C'est la bonne façon de lire une variable facultative en mode strict. Seul $NOM sans valeur par défaut déclencherait unbound variable."
+      }
+
+      question "Avec set -e, le script s’arrête-t-il si la commande testée par if grep -q motif f.txt; then échoue ?" {
+        + "non, une commande dans la condition d'un if n'arrête pas le script"
+        - "oui, toujours"
+        - "oui, mais seulement avec pipefail"
+        - "seulement si le fichier n'existe pas"
+        explanation: "Dans la condition d'un if, un échec est une réponse attendue (« non »), pas une erreur. set -e l'ignore donc. Même chose à gauche d'un && ou d'un ||. C'est ce qui permet d'écrire des tests en mode strict."
+      }
+
+      question "Quels droits mktemp -d donne-t-il au dossier créé ?" {
+        - "777 : tout le monde peut écrire"
+        - "755 : tout le monde peut lire"
+        + "700 : seul le propriétaire peut y accéder"
+        - "644 : lecture pour tous"
+        explanation: "mktemp crée ses fichiers en 0600 et ses dossiers en 0700 : les autres utilisateurs de la machine ne peuvent ni lister ni lire le contenu. C'est important quand on y range des données sensibles, comme un petit programme qui manipule un token."
+      }
+
+      question "À quoi sert un piège trap posé sur ERR qui affiche $LINENO sur l’erreur standard ?" {
+        - "à ignorer les erreurs"
+        + "à afficher la ligne de chaque commande qui échoue"
+        - "à relancer la commande qui a échoué"
+        - "à supprimer les fichiers temporaires"
+        explanation: "Le piège ERR s'exécute quand une commande échoue, dans les mêmes cas où set -e réagirait. $LINENO donne le numéro de la ligne en cours. On sait ainsi où le script s'est arrêté, ce qui fait gagner du temps au débogage."
+      }
+
+      question "Un piège trap ... ERR est posé en haut du script, mais rien ne s’affiche quand une commande échoue dans une fonction. Que manque-t-il ?" {
+        - "set -x, pour activer la trace"
+        + "set -E (errtrace), pour que le piège ERR soit hérité par les fonctions"
+        - "un second trap ... EXIT dans la fonction"
+        - "shopt -s nullglob"
+        explanation: "Le manuel de Bash précise que le piège ERR n’est pas hérité par les fonctions, les substitutions de commande et les sous-shells, sauf avec set -E (option errtrace). On écrit donc souvent set -Eeuo pipefail. set -x n’affiche que la trace, et nullglob concerne les motifs de fichiers."
+      }
+
+      question "Pourquoi écrire cd $dossier || die introuvable (avec $dossier entre guillemets) ?" {
+        + "pour ne jamais continuer dans le mauvais dossier si cd échoue"
+        - "pour accélérer le changement de dossier"
+        - "parce que cd n'accepte pas les guillemets sans ||"
+        - "pour créer le dossier s'il n'existe pas"
+        explanation: "Si cd échoue sans que le script s'arrête, les commandes suivantes (rm, mv…) s'exécutent dans le dossier courant, qui n'est pas celui prévu. Le test explicite arrête le script tout de suite, même là où set -e ne réagirait pas."
+      }
+
+      question "Un script en set -u contient echo $DOSSIR (faute de frappe sur DOSSIER). Que se passe-t-il ?" {
+        - "une ligne vide s'affiche"
+        + "le script s'arrête avec DOSSIR: unbound variable"
+        - "Bash corrige en DOSSIER"
+        - "le script continue en affichant un avertissement"
+        explanation: "Avec -u, lire une variable jamais définie est une erreur fatale. Le message nomme la variable, ce qui révèle aussitôt la faute de frappe. Sans -u, la valeur vide passerait inaperçue."
       }
     }
   }
 
   module "module-6" {
     title: "Chapitre 6 : valider ce que tape l'utilisateur"
-    duration: "30min"
+    duration: "40min"
     content: """
 Une règle de sécurité simple : **ne jamais faire confiance à une entrée**. Un nom, un chemin ou un identifiant tapé par l'utilisateur peut contenir des espaces, des tirets en début de chaîne, des caractères spéciaux. Avant de l'utiliser (dans une URL, une commande, un nom de fichier), on vérifie qu'il ressemble à ce qu'on attend.
+
+### Les tests de base
+| Test | Vrai quand |
+|---|---|
+| `[[ -z "$x" ]]` | x est vide |
+| `[[ -n "$x" ]]` | x n'est pas vide |
+| `[[ -f "$x" ]]` | x est un fichier existant |
+| `[[ -d "$x" ]]` | x est un dossier existant |
+| `[[ -e "$x" ]]` | x existe (fichier, dossier ou autre) |
+| `[[ "$a" == "$b" ]]` | les deux textes sont égaux |
+| `(( n >= 1 && n <= 30 ))` | n est un nombre entre 1 et 30 |
+
+Pour comparer des **nombres**, utilise `(( ... ))` ou `-lt`, `-le`, `-gt`, `-ge`, `-eq`. Dans `[[ ... ]]`, les signes `<` et `>` comparent du **texte** dans l'ordre alphabétique : `[[ 10 < 9 ]]` est vrai, car le caractère 1 vient avant 9.
 
 ### Le test [[ ... =~ ... ]]
 `=~` demande : « cette chaîne correspond-elle à ce modèle ? ». Le modèle est une **expression régulière**.
@@ -331,63 +963,188 @@ cp="13000"
 • `^` : début de la chaîne.
 • `$` : fin de la chaîne.
 • `[0-9]` : un chiffre.
-• `[a-z]` : une lettre minuscule.
-• `{5}` : exactement 5 fois.
-• `+` : une fois ou plus.
+• `[a-z]` : une lettre minuscule ; `[a-z0-9-]` : une minuscule, un chiffre ou un tiret (placé à la fin, le tiret est un caractère normal).
+• `{5}` : exactement 5 fois ; `{2,19}` : de 2 à 19 fois.
+• `+` : une fois ou plus ; `?` : zéro ou une fois.
 • `.` : n'importe quel caractère (pour un point littéral, écris `\.`).
 Sans `^` au début et `$` à la fin, `13000abc` serait accepté, car le modèle se retrouve à *l'intérieur* de la chaîne.
+
+Piège : ne mets **pas** le modèle entre guillemets. `[[ "$cp" =~ "^[0-9]{5}$" ]]` cherche le texte littéral `^[0-9]{5}$`. Si le modèle est long, range-le dans une variable et utilise-la sans guillemets :
+```bash
+modele='^[0-9]{5}$'
+[[ "$cp" =~ $modele ]]
+```
 
 ### Une fonction de validation
 ```bash
 valider_departement() {
     local d="$1"
-    [[ "$d" =~ ^[0-9]{2}$ ]] || die "Département invalide : '$d'"
+    [[ "$d" =~ ^([0-9]{2}|2[AB])$ ]] || die "Département invalide : '$d'"
 }
 
 valider_departement "13"      # accepté
+valider_departement "2A"      # accepté (Corse-du-Sud)
 valider_departement "1; ls"   # refusé
 ```
 
-Le deuxième appel montre l'intérêt : une valeur piégée est arrêtée avant d'être utilisée ailleurs.
+Le troisième appel montre l'intérêt : une valeur piégée est arrêtée avant d'être utilisée ailleurs. `(a|b)` signifie « a ou b ».
+
+### Le tiret en début de valeur
+Un nom de fichier qui commence par `-` est pris pour une option par la plupart des commandes. Deux parades : refuser ce cas dans la validation, et écrire `--` avant les noms de fichiers (`rm -- "$fichier"`).
 
 ### Méthode pour écrire un bon modèle
 1. Lis la documentation du service concerné : quels caractères sont autorisés, quelle longueur maximale ?
 2. Écris trois exemples valides et trois exemples pièges (commence par -, contient un espace, est vide).
 3. Écris le modèle, puis teste les six exemples.
+
+### À toi de jouer
+Le lycée impose un format pour les noms de dossiers de TP : de 3 à 20 caractères, uniquement des minuscules, des chiffres et des tirets, et le premier caractère ne doit pas être un tiret.
+1. Écris une fonction `est_nom_valide` qui réussit (code 0) si son argument respecte ce format, et échoue sinon.
+2. Teste-la sur ces six valeurs, en affichant `accepté` ou `refusé` : `tp-reseau`, `tp01`, `bts-sio-2026`, `-rf`, `TP Réseau`, `ab`.
+3. Bonus : ajoute une fonction `est_nombre_tp` qui accepte un nombre de 1 à 30, sans zéro devant.
+
+### Correction
+```bash
+#!/usr/bin/env bash
+est_nom_valide() {
+    [[ "$1" =~ ^[a-z0-9][a-z0-9-]{2,19}$ ]]
+}
+
+est_nombre_tp() {
+    [[ "$1" =~ ^[1-9][0-9]?$ ]] && (( $1 <= 30 ))
+}
+
+est_nom_valide "tp-reseau"    && echo "accepté" || echo "refusé"
+est_nom_valide "tp01"         && echo "accepté" || echo "refusé"
+est_nom_valide "bts-sio-2026" && echo "accepté" || echo "refusé"
+est_nom_valide "-rf"          && echo "accepté" || echo "refusé"
+est_nom_valide "TP Réseau"    && echo "accepté" || echo "refusé"
+est_nom_valide "ab"           && echo "accepté" || echo "refusé"
+```
+Résultat attendu : accepté, accepté, accepté, refusé (commence par un tiret), refusé (majuscules et espace), refusé (2 caractères seulement).
+Le modèle se lit : un premier caractère minuscule ou chiffre, puis 2 à 19 caractères parmi minuscules, chiffres et tiret, soit 3 à 20 au total.
+Une fonction renvoie le code de sa dernière commande : ici le résultat du test, sans avoir besoin de `return`.
+Pour le bonus, le modèle `^[1-9][0-9]?$` refuse `0`, `08` et `abc` avant le calcul, ce qui évite aussi l'erreur de Bash sur `08` (lu comme un nombre octal invalide).
 """
 
+    codeblock "bash" {
+      title: "Tester un modèle sur plusieurs valeurs"
+      code: """
+modele='^[0-9]{5}$'
+for essai in 13000 1300 13000abc "13 000" ""; do
+    [[ "$essai" =~ $modele ]] && echo "'$essai' : accepté" || echo "'$essai' : refusé"
+done
+"""
+    }
+
     quiz {
-      question "Pourquoi valider une saisie avant de l'utiliser ?" {
+      pick: 5
+      question "Pourquoi valider une saisie avant de l’utiliser ?" {
         + "elle peut contenir des caractères piégés (espace, ;, tiret en début)"
         - "pour accélérer le script"
         - "Bash l'impose"
+        - "pour chiffrer la saisie"
         explanation: "Une saisie peut contenir n'importe quoi : un espace qui coupe un nom en deux, un ; qui enchaîne une autre commande, un tiret en début de mot que le programme prend pour une option. En vérifiant que la valeur ressemble à ce qu'on attend avant de l'utiliser, on arrête ces cas piégés à l'entrée. Bash n'impose rien : c'est une bonne pratique que tu t'imposes."
       }
 
-      question "[[ \"13000abc\" =~ ^[0-9]{5}$ ]] réussit-il ?" {
+      question "Le test [[ 13000abc =~ ^[0-9]{5}$ ]] réussit-il ?" {
         - "oui"
         + "non, la chaîne entière doit correspondre"
         - "c'est une erreur de syntaxe"
+        - "oui, mais seulement avec Bash 5"
         explanation: "Le modèle ^[0-9]{5}$ dit : début de chaîne, cinq chiffres, fin de chaîne. Dans 13000abc, les cinq chiffres sont suivis de trois lettres, donc la fin de chaîne n'arrive pas après le cinquième chiffre : le test échoue."
       }
 
-      question "Et [[ \"13000abc\" =~ [0-9]{5} ]], sans ^ ni $ ?" {
+      question "Et [[ 13000abc =~ [0-9]{5} ]], sans ^ ni $ ?" {
         + "oui, car le modèle se retrouve à l'intérieur de la chaîne"
         - "non"
         - "cela dépend de la version de Bash"
+        - "c'est une erreur de syntaxe"
         explanation: "Sans ^ ni $, le test demande seulement si la chaîne contient cinq chiffres de suite quelque part. 13000abc en contient (au début), donc le test réussit. C'est l'erreur classique qui laisse passer des valeurs invalides."
+      }
+
+      question "Pourquoi le test =~ échoue-t-il sur 13000 quand le modèle ^[0-9]{5}$ est écrit entre guillemets ?" {
+        + "le modèle entre guillemets est comparé comme un texte littéral"
+        - "les guillemets sont interdits dans [[ ]]"
+        - "13000 n'a que quatre chiffres"
+        - "il manque un espace avant ^"
+        explanation: "Dans [[ ... =~ ... ]], tout ce qui est entre guillemets à droite est pris au pied de la lettre : Bash cherche le texte ^[0-9]{5}$ dans la valeur. Il faut écrire le modèle sans guillemets, ou le ranger dans une variable utilisée sans guillemets."
+      }
+
+      question "Quel modèle accepte tp-01 mais refuse -tp ?" {
+        - "^[a-z0-9-]+$"
+        + "^[a-z0-9][a-z0-9-]*$"
+        - "[a-z0-9-]"
+        - "^-[a-z0-9]+$"
+        explanation: "^[a-z0-9][a-z0-9-]*$ impose un premier caractère minuscule ou chiffre, puis autorise des tirets ensuite. ^[a-z0-9-]+$ accepterait -tp, [a-z0-9-] sans ancres accepte presque tout, et ^-[a-z0-9]+$ exige au contraire un tiret au début."
+      }
+
+      question "Le test [[ -z $x ]] (avec $x entre guillemets) est vrai quand :" {
+        + "x est vide ou non définie"
+        - "x contient un nombre"
+        - "x est un fichier"
+        - "x contient des espaces"
+        explanation: "-z (zero length) teste une chaîne de longueur nulle. Son contraire est -n (non vide). Pour tester un fichier, on utilise -f, pour un dossier -d. Ces tests sont la base d'une validation : vide d'abord, format ensuite."
+      }
+
+      question "Que vaut le test [[ 10 < 9 ]] ?" {
+        + "vrai, car < compare du texte dans l'ordre alphabétique"
+        - "faux, car 10 est plus grand que 9"
+        - "erreur de syntaxe"
+        - "vrai, car Bash compare la longueur"
+        explanation: "Dans [[ ]], < et > comparent des chaînes caractère par caractère : 1 vient avant 9, donc 10 est « avant » 9. Pour comparer des nombres, il faut (( 10 < 9 )) ou [[ 10 -lt 9 ]], qui donnent bien faux."
+      }
+
+      question "Que signifie {2,19} dans un modèle comme ^[a-z]{2,19}$ ?" {
+        - "exactement 2 ou exactement 19 caractères"
+        + "de 2 à 19 répétitions de l'élément précédent"
+        - "les caractères 2 à 19 de la chaîne"
+        - "2 lettres suivies de 19 chiffres"
+        explanation: "{min,max} répète l'élément qui précède entre min et max fois. ^[a-z]{2,19}$ accepte donc un mot de 2 à 19 minuscules. {5} seul veut dire exactement 5, et {2,} au moins 2."
+      }
+
+      question "Pourquoi écrire rm -- $fichier plutôt que rm $fichier (variable entre guillemets dans les deux cas) ?" {
+        - "pour demander une confirmation"
+        + "pour qu'un nom commençant par un tiret ne soit pas lu comme une option"
+        - "pour supprimer aussi les sous-dossiers"
+        - "pour supprimer définitivement le fichier"
+        explanation: "-- signale la fin des options : tout ce qui suit est un nom de fichier. Sans lui, un fichier nommé -rf serait lu comme l'option -rf. Cette convention est reconnue par la plupart des commandes Linux."
+      }
+
+      question "Le test =~ ^[0-9]+$ appliqué à une chaîne vide réussit-il ?" {
+        - "oui, une chaîne vide ne contient aucun caractère interdit"
+        + "non, + exige au moins un chiffre"
+        - "c'est une erreur de syntaxe"
+        - "oui, si set -u est actif"
+        explanation: "+ signifie « une fois ou plus » : il faut au moins un chiffre entre le début et la fin. La chaîne vide est donc refusée. Avec * (zéro fois ou plus), elle serait acceptée, ce qui est rarement voulu."
+      }
+
+      question "Le modèle ^([0-9]{2}|2[AB])$ accepte-t-il la valeur 2A ?" {
+        + "oui, grâce à la deuxième possibilité 2[AB]"
+        - "non, il n'accepte que des chiffres"
+        - "non, les parenthèses sont interdites"
+        - "oui, mais aussi 2C"
+        explanation: "(a|b) signifie « a ou b ». 2A ne correspond pas à deux chiffres, mais correspond à 2 suivi de A ou B. 2C est refusé car [AB] n'accepte que A ou B. C'est le cas des départements de Corse, 2A et 2B."
+      }
+
+      question "Pourquoi tester un nombre saisi avec ^[1-9][0-9]?$ avant (( n <= 30 )) ?" {
+        - "pour accélérer le calcul"
+        + "pour refuser le texte et les zéros devant, comme 08 que Bash lit en octal"
+        - "parce que (( )) n'accepte pas les nombres"
+        - "pour autoriser les nombres négatifs"
+        explanation: "(( )) évalue son contenu comme une expression : un texte inattendu peut provoquer une erreur, et 08 est lu en octal, où 8 n'existe pas (value too great for base). Vérifier d'abord le format avec une expression régulière rend le calcul sûr."
       }
     }
   }
 
   module "module-7" {
     title: "Chapitre 7 : manipuler un secret sans le laisser fuiter"
-    duration: "30min"
+    duration: "40min"
     content: """
 Un **token d'API** est un mot de passe : qui le possède agit à ta place. Dans un script, il y a trois endroits où il fuit facilement.
 • **Dans le code du script.** Le script finit sur GitHub, dans une capture d'écran ou un message. Parade : ne jamais l'écrire dans le fichier.
 • **Dans la ligne de commande**. `curl -H "Authorization: Bearer abc123"` est visible par tous les utilisateurs de la machine avec `ps`, et reste dans l'historique du terminal. Parade : le passer par l'entrée standard.
-• **Dans l'affichage**. `echo "$TOKEN"`, ou `set -x` qui affiche chaque commande exécutée. Parade : ne jamais l'afficher.
+• **Dans l'affichage**. `echo "$TOKEN"`, ou `set -x` qui affiche chaque commande exécutée avec les valeurs des variables. Parade : ne jamais l'afficher, et ne pas activer `set -x` dans la partie qui manipule le secret.
 
 ### Demander le secret sans l'afficher
 ```bash
@@ -396,9 +1153,10 @@ echo                       # saut de ligne, car -s masque la saisie
 [[ -n "$TOKEN" ]] || die "Token vide"
 ```
 `-s` masque la saisie, `-r` empêche Bash d'interpréter les antislashs, `-p` affiche l'invite.
+Pour montrer à l'utilisateur quel token il a saisi sans le révéler, affiche seulement la fin : `"${TOKEN: -4}"` donne les 4 derniers caractères (l'espace avant le `-` est obligatoire).
 
 ### Le transmettre à `curl` sans qu'il apparaisse dans `ps`
-`printf` est une commande interne de Bash : elle n'apparaît pas dans la liste des processus. On lui fait écrire un fichier de configuration pour `curl`, lu sur l'entrée standard (`--config -`) :
+`printf` est une commande interne de Bash : elle ne crée pas de nouveau processus, donc ses arguments n'apparaissent pas dans la liste des processus. On lui fait écrire un fichier de configuration pour `curl`, lu sur l'entrée standard (`--config -`) :
 ```bash
 printf 'header = "Authorization: Bearer %s"\n' "$TOKEN" |
     curl --silent --config - https://api.example.com/me
@@ -406,24 +1164,72 @@ printf 'header = "Authorization: Bearer %s"\n' "$TOKEN" |
 Le token passe dans un tube (pipe) entre les deux commandes, jamais dans les arguments de `curl`.
 
 ### Autres règles
-• Ne fais pas `export TOKEN` si ce n'est pas nécessaire : une variable exportée est visible par tous les programmes lancés ensuite.
+• Ne fais pas `export TOKEN` si ce n'est pas nécessaire : une variable exportée est transmise à tous les programmes lancés ensuite.
 • Ne mets jamais le token dans une URL (`https://user:TOKEN@...`) : il se retrouve ensuite écrit en clair dans des fichiers comme `.git/config`.
+• Si tu dois garder un token dans un fichier, protège-le (`chmod 600 fichier`), garde-le hors de tout dépôt git et ajoute son nom au `.gitignore`.
+• Sous Ubuntu, une commande tapée avec une espace devant n'est pas gardée dans l'historique (réglage `HISTCONTROL=ignoreboth` par défaut). Elle reste visible dans `ps` pendant qu'elle tourne : ce n'est pas une parade suffisante.
 • Si un token a fuité (collé dans un chat, un message, un dépôt), **révoque-le tout de suite** dans les paramètres du service et crée-en un nouveau. Le supprimer du message ne suffit pas.
-• Donne au token le minimum de droits nécessaires.
+• Donne au token le minimum de droits nécessaires et une date d'expiration courte.
+• À la fin, `unset TOKEN` efface la variable.
+
+### À toi de jouer
+Partie 1, constater la fuite (sans vrai secret) :
+1. Dans un terminal, lance `bash -c 'sleep 60; true' faux-token-abc123 &`. Le `; true` empêche Bash de se remplacer directement par `sleep`, ce qui ferait disparaître l'argument de la liste des processus.
+2. Tape `ps -ef | grep faux-token`, puis `history | tail -n 3`.
+Partie 2, écrire `token.sh`, qui :
+1. demande un token sans l'afficher ;
+2. refuse un token vide ou de moins de 20 caractères ;
+3. affiche seulement ses 4 derniers caractères, sur l'erreur standard ;
+4. l'envoie à `https://api.github.com/user` par `printf ... | curl --config -` et affiche uniquement le code HTTP reçu (option `--write-out '%{http_code}'`, détaillée au chapitre suivant).
+Teste avec un faux token de 20 caractères ou plus, par exemple `ghp_ceci_est_un_faux_token_0000`.
+
+### Correction
+Partie 1 : `ps` affiche une ligne du type `bash -c sleep 60; true faux-token-abc123`, et `history` montre la commande complète. N'importe quel utilisateur de la machine pourrait lire la première, et la seconde reste sur le disque (`~/.bash_history`). Tape `kill %1` pour arrêter le `sleep`.
+Partie 2 :
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+die() { echo "[ERREUR] $*" >&2; exit 1; }
+
+read -r -s -p "Token : " TOKEN
+echo >&2
+[[ -n "$TOKEN" ]] || die "token vide"
+(( ${#TOKEN} >= 20 )) || die "token trop court (${#TOKEN} caractères)"
+echo "Token reçu, il se termine par ${TOKEN: -4}" >&2
+
+code="$(printf 'header = "Authorization: Bearer %s"\n' "$TOKEN" |
+    curl --silent --config - --output /dev/null --write-out '%{http_code}' \
+         https://api.github.com/user)"
+echo "Code HTTP : $code"
+unset TOKEN
+```
+Avec le faux token : `Token reçu, il se termine par 0000`, puis `Code HTTP : 401` (token refusé). Avec un vrai token GitHub, tu obtiendrais `200`. À aucun moment le token n'apparaît à l'écran, dans `ps` ou dans l'historique.
 """
 
+    codeblock "bash" {
+      title: "Vérifier qu'un secret ne fuit pas dans ps"
+      code: """
+bash -c 'sleep 30; true' faux-token-abc123 &
+ps -ef | grep faux-token
+kill %1
+"""
+    }
+
     quiz {
-      question "Pourquoi curl -H \"Authorization: Bearer abc123\" est-il dangereux ?" {
+      pick: 5
+      question "Pourquoi passer le token à curl avec -H suivi de Authorization: Bearer abc123 est-il dangereux ?" {
         + "le token est visible avec ps et reste dans l'historique"
         - "c'est plus lent"
         - "curl refuse cette option"
-        explanation: "Les arguments d'un programme sont visibles par tous les utilisateurs de la machine avec ps, et la ligne tapée est enregistrée dans l'historique du terminal. Le token y apparaîtrait en clair. Passer le secret par l'entrée standard (--config -) évite les deux problèmes."
+        - "le token est envoyé sans chiffrement même en HTTPS"
+        explanation: "Les arguments d'un programme sont visibles par tous les utilisateurs de la machine avec ps, et la ligne tapée est enregistrée dans l'historique du terminal. Le token y apparaîtrait en clair. En HTTPS, l'en-tête est bien chiffré sur le réseau : le problème est local. Passer le secret par l'entrée standard (--config -) évite les deux fuites."
       }
 
       question "Pourquoi faire un echo seul juste après read -r -s ?" {
         + "pour passer à la ligne, car la saisie masquée n'en affiche pas"
         - "pour vider la variable"
         - "pour effacer l'historique"
+        - "pour afficher le token saisi"
         explanation: "Quand tu tapes Entrée, le terminal affiche normalement un retour à la ligne. Avec -s, rien de ce que tu tapes n'est affiché, y compris ce retour. Sans l'echo, le message suivant du script s'afficherait collé à l'invite Token :."
       }
 
@@ -431,29 +1237,103 @@ Le token passe dans un tube (pipe) entre les deux commandes, jamais dans les arg
         - "tu supprimes le message, c'est suffisant"
         + "tu révoques le token et tu en crées un nouveau"
         - "tu attends de voir si quelqu'un l'utilise"
-        explanation: "Supprimer le message ne sert à rien : le token a pu être lu, copié, enregistré dans des journaux. Un secret exposé doit être considéré comme compromis. Il faut le révoquer chez le service concerné, puis en créer un nouveau."
+        - "tu changes le mot de passe de ton compte et tu gardes le token"
+        explanation: "Supprimer le message ne sert à rien : le token a pu être lu, copié, enregistré dans des journaux. Un secret exposé doit être considéré comme compromis. Il faut le révoquer chez le service concerné, puis en créer un nouveau. Changer le mot de passe du compte ne désactive pas forcément les tokens existants."
+      }
+
+      question "Que fait l’option -s de read ?" {
+        - "elle limite la saisie à une ligne"
+        + "elle masque ce que l'utilisateur tape"
+        - "elle enregistre la saisie dans un fichier"
+        - "elle supprime les espaces"
+        explanation: "-s (silent) désactive l'écho du terminal : les caractères tapés ne s'affichent pas. C'est indispensable pour un mot de passe ou un token, qui pourrait sinon être vu par-dessus l'épaule ou sur une capture d'écran."
+      }
+
+      question "Pourquoi printf ... $TOKEN | curl --config - n’expose-t-il pas le token dans ps ?" {
+        + "printf est une commande interne de Bash : aucun processus n'affiche ses arguments"
+        - "printf chiffre le token"
+        - "ps n'affiche jamais les tubes"
+        - "curl efface le token de la mémoire"
+        explanation: "ps liste les processus et leurs arguments. printf est intégré à Bash : il ne lance pas de nouveau programme, donc son argument n'est visible nulle part. Le token passe ensuite par le tube vers curl, qui le lit sur son entrée standard, pas dans ses arguments. Attention : /usr/bin/printf, le programme externe, serait lui visible."
+      }
+
+      question "La variable TOKEN vaut ghp_abcdefgh1234. Qu’affiche echo ${TOKEN: -4} ?" {
+        - "ghp_"
+        + "1234"
+        - "ghp_abcdefgh"
+        - "une erreur, -4 n'est pas valide"
+        explanation: "${variable: -4} extrait les 4 derniers caractères. L'espace avant le tiret est obligatoire : sans lui, ${TOKEN:-4} serait la syntaxe de la valeur par défaut. Afficher seulement la fin permet de vérifier quel token est utilisé sans le révéler."
+      }
+
+      question "Pourquoi éviter export TOKEN ?" {
+        - "export efface la variable"
+        + "une variable exportée est transmise à tous les programmes lancés ensuite"
+        - "export rend la variable visible sur Internet"
+        - "export écrit la variable dans .bashrc"
+        explanation: "export place la variable dans l'environnement des programmes que le script lance. Chacun d'eux, et leurs propres sous-programmes, pourrait la lire ou l'écrire dans un journal. Mieux vaut la transmettre seulement à la commande qui en a besoin."
+      }
+
+      question "Un script contient set -x et utilise le token. Quel est le risque ?" {
+        + "la trace affiche les commandes avec le token en clair"
+        - "aucun, set -x n'affiche que les noms de variables"
+        - "le script s'arrête dès qu'il lit le token"
+        - "le token est automatiquement révoqué"
+        explanation: "set -x affiche chaque commande après remplacement des variables : printf ... ghp_xxxx apparaîtrait en clair dans le terminal ou dans un journal. On désactive la trace (set +x) avant la partie qui manipule le secret."
+      }
+
+      question "Tu dois garder un token dans un fichier sur ta machine. Quelle précaution prendre ?" {
+        - "le mettre dans le dépôt git pour ne pas le perdre"
+        + "chmod 600 sur le fichier, et le garder hors de tout dépôt git"
+        - "chmod 777 pour que le script puisse le lire"
+        - "le nommer .token pour qu'il soit caché"
+        explanation: "chmod 600 réserve la lecture et l'écriture au propriétaire. Le fichier doit rester hors du dépôt (ou listé dans .gitignore) pour ne jamais être publié. Un nom commençant par un point est seulement masqué par ls, pas protégé."
+      }
+
+      question "Sous Ubuntu, une commande tapée avec une espace devant :" {
+        - "est invisible dans ps"
+        + "n'est pas gardée dans l'historique, mais reste visible dans ps pendant son exécution"
+        - "est chiffrée"
+        - "est refusée par Bash"
+        explanation: "Ubuntu règle HISTCONTROL=ignoreboth, qui ignore dans l'historique les commandes commençant par une espace. Mais pendant qu'elle tourne, la commande et ses arguments restent visibles avec ps. C'est une aide, pas une protection."
+      }
+
+      question "Pourquoi donner au token le minimum de droits nécessaires ?" {
+        + "s'il fuit, les dégâts possibles sont limités"
+        - "un token limité est plus rapide"
+        - "GitHub refuse les tokens avec tous les droits"
+        - "pour qu'il n'expire jamais"
+        explanation: "C'est le principe du moindre privilège : un token qui peut seulement créer des dépôts ne permet pas de supprimer ton compte ou de lire tes autres données. Ajoute aussi une date d'expiration courte : un token oublié finit par devenir inutilisable."
+      }
+
+      question "Que se passe-t-il si tu configures un dépôt avec https://anna:TOKEN@github.com/anna/tp.git ?" {
+        - "le token est chiffré par git"
+        + "le token est écrit en clair dans .git/config"
+        - "git refuse l'URL"
+        - "le token est effacé après le premier push"
+        explanation: "git enregistre l'URL du dépôt distant telle quelle dans .git/config, un simple fichier texte. Le token y reste en clair, et part avec le dossier s'il est copié, zippé ou partagé. Il faut une URL sans secret et un autre moyen de fournir le token."
       }
     }
   }
 
   module "module-8" {
     title: "Chapitre 8 : appeler une API avec curl et jq"
-    duration: "40min"
+    duration: "50min"
     content: """
-Une **API REST** est un service web qu'on pilote avec des requêtes HTTP. `curl` envoie la requête, `jq` lit la réponse (au format JSON).
+Une **API REST** est un service web qu'on pilote avec des requêtes HTTP. `curl` envoie la requête, `jq` lit la réponse (au format JSON). Installation : `sudo apt install curl jq`.
 
 ### Lire le code de statut HTTP
 Le code de statut dit si la requête a réussi. C'est lui qu'il faut tester, pas seulement le texte de la réponse.
 • **200** (OK) : lecture réussie.
 • **201** (Créé) : ressource créée.
-• **401** (Non authentifié) : token faux ou expiré.
-• **403** (Interdit) : token valide mais droits insuffisants.
-• **404** (Introuvable) : mauvaise URL, ou ressource privée non accessible.
-• **422** (Données refusées) : par exemple, un nom qui existe déjà.
+• **401** (Non authentifié) : token absent, faux ou expiré.
+• **403** (Interdit) : token valide mais droits insuffisants (GitHub l'utilise aussi, avec 429, quand la limite de requêtes est atteinte).
+• **404** (Introuvable) : mauvaise URL, ou ressource privée non accessible (GitHub répond 404 plutôt que 403 pour ne pas révéler qu'un dépôt privé existe).
+• **422** (Données refusées) : par exemple, un nom de dépôt qui existe déjà.
+Attention : sans l'option `--fail`, `curl` considère une réponse 404 ou 500 comme un succès (code de sortie 0), car il a bien reçu une réponse. C'est pour cela qu'on teste le code HTTP soi-même.
 On range la réponse dans un fichier temporaire et on récupère le code à part :
 ```bash
 code="$(curl --silent --output "$TMP/reponse.json" --write-out '%{http_code}' \
-    https://api.example.com/profil)"
+    https://api.example.com/profil)" || die "serveur injoignable"
 
 case "$code" in
     200) info "Connexion réussie" ;;
@@ -462,49 +1342,193 @@ case "$code" in
 esac
 ```
 
-`--silent` supprime la barre de progression, `--output` envoie la réponse dans un fichier, `--write-out '%{http_code}'` affiche le code de statut. Le `case` compare ce code à plusieurs valeurs, ce qui est plus lisible qu'une suite de `if`.
+`--silent` supprime la barre de progression, `--output` envoie la réponse dans un fichier, `--write-out '%{http_code}'` affiche le code de statut. Le `|| die` attrape les vrais échecs de `curl` (pas de réseau, nom de serveur inconnu). Le `case` compare le code à plusieurs valeurs, ce qui est plus lisible qu'une suite de `if` ; `*)` attrape tous les autres cas.
 
 ### Lire du JSON avec jq
 ```bash
 login="$(jq -r '.login' "$TMP/reponse.json")"
 ```
-`.login` désigne le champ `login`, et `-r` retire les guillemets autour de la valeur.
+`.login` désigne le champ `login`, et `-r` retire les guillemets autour de la valeur. Autres filtres utiles :
+• `.[0].name` : le champ `name` du premier élément d'un tableau ;
+• `.[].name` : le champ `name` de chaque élément ;
+• `length` : le nombre d'éléments d'un tableau ;
+• `jq .` seul : affiche le JSON indenté, pratique pour découvrir une réponse.
 
 ### Construire du JSON sans erreur
 N'assemble jamais du JSON avec des guillemets à la main : une valeur contenant un guillemet casserait le JSON, et un utilisateur malveillant pourrait y glisser d'autres champs. Laisse `jq` s'en charger :
 ```bash
 corps="$(jq -n --arg nom "$nom" '{name: $nom, private: true}')"
 ```
-Pour envoyer ce corps : `curl --data "$corps" ...` (curl choisit alors la méthode POST).
+Pour envoyer ce corps, précise qu'il s'agit de JSON :
+```bash
+curl --header "Content-Type: application/json" --data "$corps" ...
+```
+`--data` fait passer `curl` en méthode POST, mais annonce par défaut un formulaire web (`application/x-www-form-urlencoded`) : l'en-tête `Content-Type` corrige cela. Depuis curl 7.82, l'option `--json "$corps"` fait les deux à la fois ; elle n'existe pas sur des versions plus anciennes, comme celle d'Ubuntu 22.04.
+
+### À toi de jouer
+L'API publique de GitHub donne le profil d'un compte sans authentification : `https://api.github.com/users/NOM` (limite de 60 requêtes par heure sans token).
+Écris `profil.sh`, qui :
+1. prend un nom de compte en argument, et s'arrête avec un message d'usage s'il manque ;
+2. valide ce nom (lettres, chiffres et tirets, 1 à 39 caractères) ;
+3. interroge l'API, garde la réponse dans un fichier temporaire nettoyé par `trap` ;
+4. traite les codes 200, 404, 403 ou 429 (limite atteinte) et tous les autres ;
+5. affiche une ligne : `login : N dépôts publics, compte créé le AAAA-MM-JJ`.
+Teste avec `torvalds`, avec un nom qui n'existe pas (`compte-inexistant-tdc-1234567`), puis avec `"a;b"`.
+Bonus : avec `jq -n --arg`, fabrique le JSON `{"name": ...}` pour la valeur `Le "TP" d'Anna` et vérifie qu'il est valide avec `jq .`.
+
+### Correction
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+die() { echo "[ERREUR] $*" >&2; exit 1; }
+
+compte="${1:?usage : $0 nom_du_compte}"
+[[ "$compte" =~ ^[A-Za-z0-9-]{1,39}$ ]] || die "nom de compte invalide : '$compte'"
+
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+
+code="$(curl --silent --output "$TMP/profil.json" --write-out '%{http_code}' \
+    "https://api.github.com/users/$compte")" || die "API injoignable"
+
+case "$code" in
+    200) ;;
+    404) die "compte introuvable : $compte" ;;
+    403|429) die "limite de requêtes atteinte, réessaie plus tard" ;;
+    *)   die "erreur inattendue (code HTTP $code)" ;;
+esac
+
+jq -r '"\(.login) : \(.public_repos) dépôts publics, compte créé le \(.created_at[:10])"' \
+    "$TMP/profil.json"
+```
+• `bash profil.sh torvalds` affiche une ligne du type `torvalds : 9 dépôts publics, compte créé le 2011-09-03` (le nombre de dépôts change avec le temps).
+• Le compte inexistant donne `[ERREUR] compte introuvable : ...` et le code de sortie 1.
+• `"a;b"` est refusé avant tout appel réseau.
+• `bash profil.sh` sans argument affiche `profil.sh: line 5: 1: usage : profil.sh nom_du_compte` (la forme exacte dépend de la version de Bash).
+Dans le filtre `jq`, `\( ... )` insère une valeur dans le texte, et `[:10]` garde les 10 premiers caractères de la date.
+Bonus : `jq -n --arg nom "Le \"TP\" d'Anna" '{name: $nom}'` affiche `{"name": "Le \"TP\" d'Anna"}` sur plusieurs lignes : `jq` a échappé les guillemets tout seul.
 """
 
+    codeblock "bash" {
+      title: "Lire un code HTTP et un champ JSON"
+      code: """
+curl --silent --output /tmp/profil.json --write-out '%{http_code}\n' https://api.github.com/users/torvalds
+jq -r '.login, .public_repos' /tmp/profil.json
+jq -n --arg nom 'Le "TP"' '{name: $nom, private: true}'
+"""
+    }
+
     quiz {
+      pick: 5
       question "Une API répond 403. Que cela signifie-t-il en général ?" {
         - "le token est faux"
         + "le token est valide mais les droits sont insuffisants"
-        - " la ressource n'existe pas"
+        - "la ressource n'existe pas"
+        - "la ressource a été créée"
         explanation: "401 et 403 se ressemblent mais n'ont pas le même sens. Un 401 veut dire « je ne sais pas qui tu es » (token absent, faux ou expiré). Un 403 veut dire « je sais qui tu es, mais tu n'as pas le droit de faire ça » (token valide, droits insuffisants). Le message d'erreur du script doit les distinguer, car la correction n'est pas la même."
       }
 
-      question "Pourquoi construire du JSON avec jq -n --arg plutôt qu'à la main ?" {
+      question "Pourquoi construire du JSON avec jq -n --arg plutôt qu’à la main ?" {
         + "pour éviter un JSON cassé ou une injection de champs"
         - "c'est plus joli"
         - "curl l'exige"
+        - "pour compresser les données"
         explanation: "Si tu écris le JSON à la main avec \"{\\\"name\\\":\\\"$nom\\\"}\", un nom contenant un guillemet casse le JSON. Pire, une valeur malveillante peut y ajouter d'autres champs. jq -n --arg échappe correctement les caractères spéciaux et garantit un JSON valide."
       }
 
-      question "Que fait --write-out '%{http_code}' ?" {
+      question "Que fait l’option --write-out avec le format %{http_code} ?" {
         + "il affiche le code de statut HTTP de la réponse"
         - "il écrit la réponse dans un fichier"
         - "il masque les erreurs"
+        - "il réessaie la requête en cas d'échec"
         explanation: "Avec --output, le contenu de la réponse part dans un fichier. L'option --write-out '%{http_code}' affiche ensuite le code de statut sur la sortie standard, ce qui permet de le récupérer dans une variable avec $(...)."
+      }
+
+      question "Une requête de création de dépôt réussit. Quel code HTTP attends-tu ?" {
+        - "200"
+        + "201"
+        - "204"
+        - "302"
+        explanation: "201 (Created) indique qu'une ressource a été créée. 200 est la réponse habituelle d'une lecture réussie. Un script de création doit donc tester 201 : traiter 200 comme la seule réussite ferait croire à un échec."
+      }
+
+      question "Une API répond 401. Que dois-tu vérifier en premier ?" {
+        + "que le token est présent, correct et non expiré"
+        - "que l'URL est bien écrite"
+        - "que le serveur n'est pas en panne"
+        - "que le JSON envoyé est valide"
+        explanation: "401 signifie que le serveur ne t'a pas authentifié : token manquant, mal recopié, révoqué ou expiré. Une mauvaise URL donnerait plutôt 404, une panne 500 ou 503, et un JSON refusé 400 ou 422."
+      }
+
+      question "curl reçoit une réponse 404. Sans --fail, quel est son code de sortie ?" {
+        + "0, car curl a bien reçu une réponse"
+        - "4"
+        - "22"
+        - "404"
+        explanation: "Pour curl, une réponse HTTP reçue est un succès, quel que soit son code. Seule l'option --fail (ou --fail-with-body) lui fait renvoyer 22 pour un code 400 ou plus. Un code de sortie ne dépasse jamais 255, il ne peut donc pas valoir 404. D'où l'intérêt de lire le code HTTP avec --write-out."
+      }
+
+      question "Que fait l’option -r de jq ?" {
+        - "elle lit le fichier en mode récursif"
+        + "elle affiche les textes sans les guillemets JSON"
+        - "elle trie les résultats"
+        - "elle supprime les champs vides"
+        explanation: "Par défaut, jq affiche une chaîne au format JSON, entre guillemets : \"anna\". Avec -r (raw output), il affiche anna, prêt à être rangé dans une variable Bash. Sans -r, les guillemets se retrouveraient dans la variable."
+      }
+
+      question "Le fichier depots.json contient un tableau de 12 objets. Que renvoie jq length depots.json ?" {
+        - "le nombre de caractères du fichier"
+        + "12"
+        - "le premier objet"
+        - "une erreur"
+        explanation: "Appliqué à un tableau, length donne son nombre d'éléments. Sur une chaîne, il donne le nombre de caractères, et sur un objet le nombre de champs. C'est utile pour compter des résultats renvoyés par une API."
+      }
+
+      question "Quel filtre jq donne le champ name du premier élément d’un tableau ?" {
+        + ".[0].name"
+        - ".name[0]"
+        - ".[1].name"
+        - "name.first"
+        explanation: "Les indices commencent à 0 : .[0] est le premier élément, puis .name lit son champ. .[1] serait le deuxième élément, et .name[0] chercherait un champ name dans un objet, pas dans un tableau. Pour tous les éléments, on écrit .[].name."
+      }
+
+      question "Que produit jq -n --arg nom avec la valeur Le « TP » (guillemets compris) et le filtre {name: $nom} ?" {
+        + "un JSON valide où les guillemets de la valeur sont échappés"
+        - "une erreur à cause des guillemets"
+        - "le texte {name: $nom}"
+        - "un JSON où la valeur est coupée au premier guillemet"
+        explanation: "--arg transmet la valeur comme une chaîne, et jq l'écrit en échappant ce qu'il faut : {\"name\": \"Le \\\"TP\\\"\"}. C'est toute la différence avec un JSON assemblé à la main, que le premier guillemet aurait cassé."
+      }
+
+      question "Que fait curl --data $corps (entre guillemets) sans autre option ?" {
+        - "une requête GET avec le corps dans l'URL"
+        + "une requête POST annoncée comme formulaire web, pas comme JSON"
+        - "une requête PUT en JSON"
+        - "rien, il faut aussi --request POST"
+        explanation: "--data fait passer curl en POST et ajoute Content-Type: application/x-www-form-urlencoded. Pour du JSON, il faut ajouter --header \"Content-Type: application/json\", ou utiliser --json depuis curl 7.82. Certaines API refusent sinon le corps."
+      }
+
+      question "Dans un case sur $code, que signifie la ligne *) die inattendu ;; ?" {
+        + "elle traite toutes les valeurs qui n'ont pas été prévues avant"
+        - "elle traite uniquement le code 0"
+        - "elle multiplie le code"
+        - "elle est obligatoire en première position"
+        explanation: "Dans un case, les motifs sont testés dans l'ordre, et * correspond à n'importe quelle valeur. Placé en dernier, il attrape tous les codes non prévus. Placé en premier, il attraperait tout et les autres cas ne seraient jamais atteints."
+      }
+
+      question "Que fait l’option --silent de curl ?" {
+        + "elle supprime la barre de progression et les messages d'erreur"
+        - "elle masque la réponse du serveur"
+        - "elle chiffre la requête"
+        - "elle empêche curl d'échouer"
+        explanation: "--silent coupe la barre de progression, qui pollue la sortie d'un script, mais aussi les messages d'erreur de curl. On l'associe souvent à --show-error pour garder ces derniers. La réponse du serveur, elle, est toujours écrite (à l'écran ou dans le fichier de --output)."
       }
     }
   }
 
   module "module-9" {
     title: "Chapitre 9 : here-documents, boucles et formulaires dialog"
-    duration: "40min"
+    duration: "50min"
     content: """
 ### Les here-documents : écrire un fichier depuis le script
 Quand ton script doit créer un fichier de plusieurs lignes (un README, un petit script, une configuration), tu utilises un **here-document** :
@@ -518,8 +1542,8 @@ EOF
 Tout ce qui se trouve entre `<<'EOF'` et la ligne `EOF` est copié dans le fichier, sans être exécuté. Si tu vois un `#!/usr/bin/env bash` au milieu d'un script, ce n'est donc pas un doublon : c'est le contenu d'un autre fichier que le script est en train d'écrire.
 Les guillemets autour de `'EOF'` comptent :
 • `<<'EOF'` : le texte est copié tel quel, `$variable` reste littéral.
-• `<<EOF` : les `$variable` sont remplacées par leur valeur.
-La ligne de fin `EOF` doit être seule sur sa ligne, sans espace devant.
+• `<<EOF` : les `$variable` et les `$(commande)` sont remplacées par leur valeur.
+La ligne de fin `EOF` doit être seule sur sa ligne, sans espace devant ni après. La variante `<<-EOF` autorise des **tabulations** (pas des espaces) devant la ligne de fin et les lignes du texte.
 
 ### Les boucles
 Pour répéter une action, par exemple créer `Job01`, `Job02`… :
@@ -530,7 +1554,15 @@ for ((i = 1; i <= nombre; i++)); do
 done
 ```
 `printf -v nom` range le résultat dans la variable `nom` au lieu de l'afficher. `mkdir -p` ne se plaint pas si le dossier existe déjà.
-Pour parcourir une liste : `for fichier in *.txt; do ... done`. Pense toujours aux guillemets : `"$fichier"`.
+Autres formes :
+• `for fichier in *.txt; do ... done` : parcourt des fichiers. Pense toujours aux guillemets : `"$fichier"`. S'il n'y a aucun `.txt`, la boucle tourne une fois avec le texte `*.txt` lui-même (sauf avec `shopt -s nullglob`).
+• `for i in {1..5}; do ... done` : les nombres de 1 à 5 (les bornes ne peuvent pas être des variables).
+• Lire un fichier ligne par ligne :
+```bash
+while IFS= read -r ligne; do
+    echo "Ligne : $ligne"
+done < liste.txt
+```
 
 ### Un formulaire avec dialog
 `dialog` affiche des boîtes de dialogue dans le terminal (installation : `sudo apt install dialog`).
@@ -538,37 +1570,166 @@ Pour parcourir une liste : `for fichier in *.txt; do ... done`. Pense toujours a
 prenom="$(dialog --stdout --inputbox "Ton prénom :" 8 40)" || die "Annulé"
 clear
 ```
-`--stdout` renvoie la saisie sur la sortie standard, ce qui permet de la ranger dans une variable. Si l'utilisateur annule, `dialog` renvoie un code d'échec et le `|| die` arrête le script. `clear` nettoie l'écran ensuite.
+`--stdout` renvoie la saisie sur la sortie standard, ce qui permet de la ranger dans une variable. Les deux nombres sont la hauteur et la largeur de la boîte. Si l'utilisateur annule (code 1) ou appuie sur Échap (code 255), `dialog` renvoie un code d'échec et le `|| die` arrête le script. `clear` nettoie l'écran ensuite.
 Une saisie venant de `dialog` reste une saisie utilisateur : passe-la par ta fonction de validation du chapitre 6.
+
+### À toi de jouer
+Écris `jobs.sh`, qui :
+1. prend un nom de dossier et un nombre en arguments ;
+2. refuse un nombre qui n'est pas entre 1 et 30 (sans zéro devant) ;
+3. crée le dossier, puis les sous-dossiers `Job01` à `JobNN` ;
+4. dans chacun, écrit un `README.md` avec un here-document qui contient le titre `# JobNN` et la ligne `Créé le AAAA-MM-JJ par utilisateur` (valeurs réelles) ;
+5. affiche la liste des sous-dossiers créés.
+Teste `bash jobs.sh essai 3`, puis `cat essai/Job02/README.md`, puis `bash jobs.sh essai2 08` et `bash jobs.sh essai3 40`.
+Bonus : si le nombre n'est pas donné en argument, demande-le avec `dialog --inputbox`.
+
+### Correction
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+die() { echo "[ERREUR] $*" >&2; exit 1; }
+
+dossier="${1:?usage : $0 dossier nombre}"
+nombre="${2:-}"
+if [[ -z "$nombre" ]]; then
+    nombre="$(dialog --stdout --inputbox "Nombre de dossiers (1 à 30) :" 8 40)" || die "annulé"
+    clear
+fi
+[[ "$nombre" =~ ^[1-9][0-9]?$ ]] && (( nombre <= 30 )) || die "nombre invalide : '$nombre'"
+
+mkdir -p "$dossier"
+for ((i = 1; i <= nombre; i++)); do
+    printf -v nom 'Job%02d' "$i"
+    mkdir -p "$dossier/$nom"
+    cat > "$dossier/$nom/README.md" <<EOF
+# $nom
+Créé le $(date +%F) par $USER
+EOF
+done
+ls "$dossier"
+```
+• `bash jobs.sh essai 3` affiche `Job01  Job02  Job03`.
+• `cat essai/Job02/README.md` affiche `# Job02` puis `Créé le 2026-11-26 par anna` (ta date et ton nom) : le here-document sans guillemets a remplacé les variables.
+• `08` et `40` sont refusés avec `[ERREUR] nombre invalide`. Sans la vérification du format, `(( 08 <= 30 ))` provoquerait une erreur de Bash (`value too great for base`), car un nombre qui commence par 0 est lu en octal.
 """
 
+    codeblock "bash" {
+      title: "Boucles et here-document"
+      code: """
+for i in {1..3}; do printf 'Job%02d\n' "$i"; done
+nom="Anna"
+cat <<EOF
+Bonjour $nom
+EOF
+cat <<'EOF'
+Bonjour $nom
+EOF
+"""
+    }
+
     quiz {
-      question "Un #!/usr/bin/env bash apparaît au milieu d'un script, dans un here-document. Que faut-il en penser ?" {
+      pick: 5
+      question "Un #!/usr/bin/env bash apparaît au milieu d’un script, dans un here-document. Que faut-il en penser ?" {
         - "c'est un doublon à supprimer"
-        + " c'est le contenu d'un autre fichier que le script écrit"
+        + "c'est le contenu d'un autre fichier que le script écrit"
         - "cela relance Bash"
+        - "c'est une erreur de syntaxe"
         explanation: "Entre <<'EOF' et EOF, tout est du texte écrit tel quel dans un fichier, sans être exécuté. Si ce texte commence par un shebang, c'est que le script est en train de fabriquer un autre script. Le #! du milieu ne relance donc pas Bash et n'est pas un doublon."
       }
 
-      question "Que contient la variable nom après printf -v nom 'Job%02d' 3 ?" {
+      question "Que contient la variable nom après printf -v nom Job%02d 3 ?" {
         + "Job03"
         - "Job3"
         - "rien, le résultat est seulement affiché"
+        - "Job%02d"
         explanation: "Dans %02d, d désigne un nombre entier, 2 la largeur minimale et 0 le caractère de remplissage : 3 devient 03. L'option -v nom range le résultat dans la variable nom, au lieu de l'afficher."
       }
 
       question "À quoi sert dialog --stdout ?" {
         + "à renvoyer la saisie sur la sortie standard, pour la ranger dans une variable"
-        - " à afficher la boîte en plein écran"
+        - "à afficher la boîte en plein écran"
         - "à activer les couleurs"
+        - "à enregistrer la saisie dans un fichier stdout"
         explanation: "Par défaut, dialog écrit la réponse de l'utilisateur sur l'erreur standard, pour ne pas la mélanger avec l'affichage de la boîte. L'option --stdout l'envoie sur la sortie standard, ce qui permet de la récupérer avec $(...) dans une variable."
+      }
+
+      question "La variable nom vaut Anna. Qu’écrit cat <<EOF contenant Bonjour $nom (sans guillemets autour de EOF) ?" {
+        + "Bonjour Anna"
+        - "Bonjour $nom"
+        - "Bonjour"
+        - "une erreur"
+        explanation: "Sans guillemets autour du mot de fin, le here-document remplace les variables et les $(...) : on obtient Bonjour Anna. Avec <<'EOF', le texte serait copié tel quel : Bonjour $nom."
+      }
+
+      question "La ligne de fin d’un here-document est écrite «   EOF» (avec des espaces devant). Que se passe-t-il ?" {
+        - "rien de particulier, les espaces sont ignorés"
+        + "Bash ne la reconnaît pas comme la fin et continue à lire la suite du script comme du texte"
+        - "Bash supprime les espaces automatiquement"
+        - "le fichier est créé vide"
+        explanation: "La ligne de fin doit contenir exactement le mot choisi, seul. Avec des espaces devant, ce n'est plus la fin : la suite du script est copiée dans le fichier, et Bash avertit qu'il a atteint la fin du fichier sans trouver le délimiteur. Seule la variante <<- tolère des tabulations."
+      }
+
+      question "Dans un dossier sans aucun fichier .txt, combien de fois tourne for f in *.txt; do echo $f; done ?" {
+        - "zéro fois"
+        + "une fois, avec le texte *.txt lui-même"
+        - "une fois par fichier du dossier"
+        - "la boucle provoque une erreur"
+        explanation: "Quand un motif ne correspond à rien, Bash le laisse tel quel. La boucle tourne donc une fois avec f valant *.txt. Il faut tester [[ -e \"$f\" ]] dans la boucle, ou activer shopt -s nullglob pour que le motif disparaisse."
+      }
+
+      question "Quelle boucle lit correctement le fichier liste.txt ligne par ligne ?" {
+        + "while IFS= read -r ligne; do ... done < liste.txt"
+        - "for ligne in liste.txt; do ... done"
+        - "while ligne in liste.txt; do ... done"
+        - "for ligne < liste.txt; do ... done"
+        explanation: "read lit une ligne à chaque tour, depuis le fichier redirigé à la fin de la boucle. -r garde les antislashs, IFS= garde les espaces en début et fin de ligne. for ligne in liste.txt ne tournerait qu'une fois, avec le texte liste.txt."
+      }
+
+      question "Que fait mkdir -p essai/Job01 si essai n’existe pas encore ?" {
+        - "il échoue car essai n'existe pas"
+        + "il crée essai puis essai/Job01"
+        - "il crée un dossier nommé essai/Job01 avec une barre dans le nom"
+        - "il demande une confirmation"
+        explanation: "-p (parents) crée tous les dossiers manquants du chemin, et ne signale pas d'erreur si le dossier existe déjà. Sans -p, mkdir échouerait avec No such file or directory."
+      }
+
+      question "Pourquoi nombre=08 puis (( nombre <= 30 )) provoque-t-il une erreur ?" {
+        + "un nombre qui commence par 0 est lu en octal, où le chiffre 8 n'existe pas"
+        - "(( )) n'accepte pas les variables"
+        - "08 est plus grand que 30"
+        - "il manque des guillemets autour de nombre"
+        explanation: "Dans un calcul Bash, un 0 en tête annonce un nombre en base 8, qui n'utilise que les chiffres 0 à 7. Bash répond value too great for base. On évite le problème en refusant les zéros en tête avec une expression régulière, ou en écrivant 10#$nombre."
+      }
+
+      question "L’utilisateur appuie sur Annuler dans dialog --inputbox, lancé par x=$(dialog --stdout --inputbox ...) || die Annulé. Que se passe-t-il ?" {
+        + "dialog renvoie un code d'échec et die arrête le script"
+        - "x reçoit le texte Annulé"
+        - "le script continue avec x vide"
+        - "dialog redemande la saisie"
+        explanation: "dialog renvoie 0 pour OK, 1 pour Annuler et 255 pour Échap. Le code de l'affectation est celui de la substitution, donc || die s'exécute en cas d'annulation. Sans ce test, le script continuerait avec une valeur vide."
+      }
+
+      question "Qu’affiche for i in {1..3}; do echo $i; done ?" {
+        + "1, 2 et 3 sur trois lignes"
+        - "{1..3}"
+        - "1 et 3"
+        - "0, 1, 2 et 3"
+        explanation: "{1..3} est développé par Bash en 1 2 3 avant le lancement de la boucle. Attention : les bornes doivent être écrites en dur. {1..$n} ne fonctionne pas, d'où la forme for ((i = 1; i <= n; i++)) quand la borne est une variable."
+      }
+
+      question "Quelle différence entre printf -v nom Job%02d 3 et nom=$(printf Job%02d 3) ?" {
+        + "le résultat est le même, mais printf -v évite de lancer un sous-shell"
+        - "printf -v affiche le résultat en plus"
+        - "la seconde forme donne Job3"
+        - "printf -v n'existe pas dans Bash"
+        explanation: "Les deux rangent Job03 dans nom. $(...) crée un sous-shell pour capturer la sortie, ce qui coûte un peu de temps à chaque tour de boucle. printf -v, propre à Bash, écrit directement dans la variable."
       }
     }
   }
 
   module "module-10" {
     title: "Chapitre 10 : automatiser git sans laisser fuiter le token"
-    duration: "40min"
+    duration: "50min"
     content: """
 Pour publier un dossier sur un dépôt distant, un script enchaîne les mêmes commandes que toi à la main :
 
@@ -581,16 +1742,18 @@ git -C "$dossier" remote add origin "https://github.com/utilisateur/depot.git"
 git -C "$dossier" push --quiet -u origin main
 ```
 
-`git -C "$dossier"` exécute la commande dans ce dossier sans avoir à faire cd (donc sans risque d'oublier de revenir). Pour qu'un `commit` fonctionne, `git config user.name` et `git config user.email` doivent être définis : vérifie-le au début du script.
+`git -C "$dossier"` exécute la commande dans ce dossier sans avoir à faire cd (donc sans risque d'oublier de revenir). `branch -M main` renomme la branche en `main`, même si elle s'appelait `master`. `push -u` mémorise le lien entre la branche locale et la branche distante.
+Pour qu'un `commit` fonctionne, `git config user.name` et `git config user.email` doivent être définis, sinon git répond `Please tell me who you are`. Vérifie-le au début du script : `git config user.name >/dev/null || die "git config --global user.name non défini"`.
+Git ne versionne pas les dossiers vides : un dossier `Job01` sans fichier n'apparaîtra pas dans le dépôt. D'où le `README.md` dans chaque dossier.
 
 ### Le problème : git demande un mot de passe
-Le `push` vers un dépôt privé demande un identifiant. Les mauvaises solutions :
+Le `push` vers un dépôt privé demande un identifiant. GitHub n'accepte plus le mot de passe du compte pour git en HTTPS : il faut un token. Les mauvaises solutions :
 • mettre le token dans l'URL : il est alors enregistré en clair dans `.git/config` ;
 • le passer sur la ligne de commande : il est visible par `ps` ;
 • l'écrire dans un fichier oublié ensuite.
 
 ### Une solution propre : `GIT_ASKPASS`
-Git peut appeler un petit programme pour obtenir ses identifiants. Le script de ce programme lit les valeurs depuis des variables d'environnement, jamais depuis un fichier :
+Git peut appeler un petit programme pour obtenir ses identifiants : il lui passe la question en argument (par exemple `Username for 'https://github.com': `) et lit la réponse sur sa sortie standard. Le script de ce programme lit les valeurs depuis des variables d'environnement, jamais depuis un fichier :
 ```bash
 cat > "$TMP/askpass.sh" <<'EOF'
 #!/usr/bin/env bash
@@ -602,45 +1765,509 @@ EOF
 chmod 700 "$TMP/askpass.sh"
 
 GIT_ASKPASS="$TMP/askpass.sh" GIT_USER="$utilisateur" GIT_TOKEN="$TOKEN" \
-    git -C "$dossier" push --quiet -u origin main
+    git -C "$dossier" -c credential.helper= push --quiet -u origin main
 ```
 
 Points importants :
 • le `<<'EOF'` avec guillemets empêche Bash de remplacer `$GIT_USER` à l'écriture : les variables sont lues plus tard, au moment où git appelle le programme ;
 • les trois variables ne sont définies que pour cette seule commande `git` (écrites juste avant elle, sur la même ligne), donc pas de `export` ;
+• `-c credential.helper=` vide la liste des gestionnaires d'identifiants pour cette commande. Sans lui, si un gestionnaire est configuré (par exemple `credential.helper=store`, qui écrit en clair dans `~/.git-credentials`), git y **enregistrerait le token** après un push réussi ;
 • le dossier `$TMP` est créé avec `mktemp -d` et supprimé par `trap` (chapitre 5), donc le programme `askpass.sh` disparaît dès la fin du script ;
+• `chmod 700` rend `askpass.sh` exécutable par toi seul ;
 • l'URL du dépôt ne contient aucun secret.
 
 ### Vérifier le résultat
 ```bash
-cat "$dossier/.git/config"      # l'URL ne doit contenir aucun token
-git -C "$dossier" log --oneline # le commit doit apparaître
+cat "$dossier/.git/config"                 # l'URL ne doit contenir aucun token
+git -C "$dossier" log --oneline            # le commit doit apparaître
+git -C "$dossier" remote -v                # l'adresse du dépôt distant
+git config --show-origin --get-all credential.helper   # les gestionnaires configurés
 ```
 
 ### Alternative : le client officiel gh
 GitHub fournit un programme en ligne de commande, `gh`, qui gère l'authentification lui-même (`gh auth login`) et sait créer un dépôt en une commande. C'est plus court qu'un script `curl`, mais on apprend moins ce qui se passe réellement. Les deux approches valent la peine d'être connues.
+
+### À toi de jouer
+Tu vas tester toute la partie git **sans GitHub ni Internet**, avec un dépôt distant local. Un dépôt « nu » (bare) ne contient que l'historique, sans copie de travail : c'est exactement ce qu'il y a sur un serveur.
+1. Crée le dépôt distant : `git init --bare --quiet ~/depots/tp.git`.
+2. Écris `publier.sh`, qui prend un dossier en argument, vérifie que `user.name` et `user.email` sont définis, initialise le dépôt, fait le premier commit sur `main` et pousse vers `~/depots/tp.git`.
+3. Lance-le sur le dossier `essai` créé au chapitre 9.
+4. Vérifie : `git -C ~/depots/tp.git log --oneline main`, puis `git -C essai remote -v`.
+5. Relance le script sur le même dossier : que se passe-t-il, et pourquoi ?
+6. Affiche les gestionnaires d'identifiants configurés sur ta machine avec `git config --show-origin --get-all credential.helper`.
+
+### Correction
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+info() { echo "[OK] $*" >&2; }
+die()  { echo "[ERREUR] $*" >&2; exit 1; }
+
+dossier="${1:?usage : $0 dossier}"
+distant="$HOME/depots/tp.git"
+
+[[ -d "$dossier" ]] || die "dossier introuvable : $dossier"
+[[ ! -e "$dossier/.git" ]] || die "$dossier est déjà un dépôt git"
+git config user.name  >/dev/null || die "git config --global user.name non défini"
+git config user.email >/dev/null || die "git config --global user.email non défini"
+
+git -C "$dossier" init --quiet
+git -C "$dossier" add .
+git -C "$dossier" commit --quiet -m "Premier commit"
+git -C "$dossier" branch -M main
+git -C "$dossier" remote add origin "$distant"
+git -C "$dossier" push --quiet -u origin main
+info "publié vers $distant"
+```
+• Étape 4 : `log --oneline main` affiche une ligne du type `3f2a9c1 Premier commit`. Le nom `main` est nécessaire : sur Debian/Ubuntu, la branche par défaut d'un dépôt nu s'appelle encore `master`, et `log` sans nom de branche répondrait `does not have any commits yet` ; `remote -v` affiche deux lignes `origin  /home/anna/depots/tp.git (fetch)` et `(push)`.
+• Étape 5 : le script s'arrête avec `[ERREUR] essai est déjà un dépôt git`. Sans ce test, `remote add origin` échouerait (`remote origin already exists`) et `set -e` arrêterait le script avec un message moins clair.
+• Étape 6 : aucune ligne si aucun gestionnaire n'est configuré ; sous WSL, tu peux voir par exemple un gestionnaire Windows (`manager`). C'est justement ce que `-c credential.helper=` neutralise dans le vrai script.
+Pour un dépôt sur GitHub, seules l'adresse et l'étape `push` changent : c'est là que `GIT_ASKPASS` entre en jeu (chapitre 11).
 """
 
+    codeblock "bash" {
+      title: "Tester git avec un dépôt distant local"
+      code: """
+git init --bare --quiet ~/depots/tp.git
+git -C essai init --quiet
+git -C essai add .
+git -C essai commit --quiet -m "Premier commit"
+git -C essai branch -M main
+git -C essai remote add origin ~/depots/tp.git
+git -C essai push --quiet -u origin main
+git -C ~/depots/tp.git log --oneline main
+"""
+    }
+
     quiz {
-      question "Pourquoi écrire git -C \"$dossier\" commit ... ?" {
+      pick: 5
+      question "Pourquoi écrire git -C $dossier commit ... (avec $dossier entre guillemets) ?" {
         + "pour exécuter la commande dans ce dossier sans cd"
         - "pour cloner le dépôt"
         - "pour valider automatiquement sans message"
+        - "pour commiter tous les dossiers à la fois"
         explanation: "git -C dossier fait travailler git dans ce dossier, sans que le script change de dossier. C'est plus sûr qu'un cd : si le cd échoue, les commandes suivantes s'exécuteraient au mauvais endroit."
       }
 
-      question "Pourquoi ne pas mettre le token dans l'URL du dépôt distant ?" {
+      question "Pourquoi ne pas mettre le token dans l’URL du dépôt distant ?" {
         + "il serait enregistré en clair dans .git/config"
         - "l'URL serait trop longue"
         - "git refuse les URL avec un identifiant"
+        - "le push serait plus lent"
         explanation: "Quand on ajoute un dépôt distant, git enregistre son URL dans .git/config, qui est un simple fichier texte. Un token dans l'URL y resterait en clair, et partirait avec le dossier s'il est copié ou partagé. Git n'a pas de problème avec les URL contenant un identifiant : c'est simplement dangereux."
       }
 
-      question "Dans le script askpass.sh écrit par here-document, à quoi servent les guillemets de <<'EOF' ?" {
-        + "à ce que $GIT_TOKEN soit lu plus tard, par git, et non remplacé à l'écriture du fichier"
-        - "à accélérer l'écriture"
-        - "à rien de particulier"
+      question "Dans le script askpass.sh écrit par here-document, pourquoi le mot EOF est-il entre guillemets simples après << ?" {
+        + "pour que $GIT_TOKEN soit lu plus tard, par askpass.sh, et non remplacé à l'écriture du fichier"
+        - "pour accélérer l'écriture du fichier"
+        - "pour rendre le fichier exécutable"
+        - "pour chiffrer le contenu du fichier"
         explanation: "Sans guillemets, Bash remplacerait $GIT_TOKEN pendant l'écriture du fichier, par une valeur vide ou par le token lui-même, écrit en clair. Avec <<'EOF', le texte est copié tel quel, et la variable est lue plus tard par askpass.sh, quand git l'appelle."
+      }
+
+      question "git commit répond « Please tell me who you are ». Que manque-t-il ?" {
+        - "un dépôt distant"
+        + "user.name et user.email dans la configuration de git"
+        - "un token GitHub"
+        - "un fichier .gitignore"
+        explanation: "Chaque commit enregistre un auteur. Sans git config --global user.name \"Prénom Nom\" et git config --global user.email \"adresse\", git refuse de commiter. Un script doit le vérifier au début pour afficher un message clair."
+      }
+
+      question "À quoi sert -c credential.helper= dans git -c credential.helper= push ?" {
+        - "à supprimer les tokens déjà enregistrés"
+        + "à désactiver, pour cette commande, les gestionnaires d'identifiants qui pourraient enregistrer le token"
+        - "à forcer git à demander un mot de passe au clavier"
+        - "à chiffrer le token pendant le push"
+        explanation: "Configurer credential.helper avec une valeur vide remet à zéro la liste des gestionnaires. Sans cela, un gestionnaire comme store écrirait le token en clair dans ~/.git-credentials après un push réussi. L'option -c ne vaut que pour cette commande et ne modifie aucun fichier de configuration."
+      }
+
+      question "Que signifie écrire GIT_TOKEN=$TOKEN git push ... sur une seule ligne ?" {
+        + "la variable n'existe que pour cette commande git et les programmes qu'elle lance"
+        - "la variable est exportée pour toute la suite du script"
+        - "la variable est enregistrée dans .bashrc"
+        - "c'est une erreur de syntaxe"
+        explanation: "Une affectation placée juste avant une commande ne vaut que pour elle : git et askpass.sh la voient, mais pas les commandes suivantes du script. C'est plus sûr qu'un export, qui la transmettrait à tous les programmes lancés ensuite."
+      }
+
+      question "Avec quel argument git appelle-t-il le programme GIT_ASKPASS pour obtenir l’identifiant ?" {
+        - "aucun argument"
+        + "la question posée, par exemple Username for 'https://github.com': "
+        - "le nom du dépôt"
+        - "le token précédent"
+        explanation: "git passe le texte de la question en premier argument et lit la réponse sur la sortie standard du programme. C'est pour cela que askpass.sh teste $1 avec Username* pour l'identifiant, et renvoie le token dans les autres cas (question Password)."
+      }
+
+      question "Pourquoi un dossier Job01 vide n’apparaît-il pas sur GitHub après le push ?" {
+        - "GitHub supprime les dossiers commençant par une majuscule"
+        + "git ne versionne que des fichiers, pas les dossiers vides"
+        - "le push a échoué"
+        - "il faut l'option --all"
+        explanation: "git suit le contenu des fichiers ; un dossier n'existe pour lui que s'il contient au moins un fichier suivi. On place donc un fichier dans chaque dossier, par exemple un README.md ou un fichier vide .gitkeep."
+      }
+
+      question "Que fait git branch -M main ?" {
+        - "il crée une nouvelle branche main en gardant l'ancienne"
+        + "il renomme la branche courante en main, même si main existe déjà"
+        - "il fusionne la branche courante dans main"
+        - "il supprime la branche main"
+        explanation: "-m renomme une branche, et -M force le renommage même si le nom existe. Selon la configuration de git, la première branche peut s'appeler master ; branch -M main garantit le nom attendu par le push qui suit."
+      }
+
+      question "Qu’est-ce qu’un dépôt créé avec git init --bare ?" {
+        + "un dépôt sans copie de travail, qui ne contient que l'historique, comme sur un serveur"
+        - "un dépôt vide qui ne pourra jamais recevoir de commit"
+        - "un dépôt sans historique"
+        - "un dépôt chiffré"
+        explanation: "Un dépôt nu n'a pas de fichiers de travail : il sert uniquement de destination pour push et de source pour clone. C'est ce que GitHub héberge. En local, il permet de tester un script de publication sans réseau ni compte."
+      }
+
+      question "Pourquoi un token GitHub plutôt que le mot de passe du compte pour git push en HTTPS ?" {
+        + "GitHub n'accepte plus le mot de passe du compte pour git en HTTPS"
+        - "le mot de passe est plus long à taper"
+        - "le token est plus rapide"
+        - "git ne sait pas envoyer de mot de passe"
+        explanation: "Depuis 2021, GitHub refuse l'authentification par mot de passe pour les opérations git en HTTPS. On utilise un token, qui peut avoir des droits limités et une date d'expiration, et qui se révoque sans changer le mot de passe du compte."
+      }
+
+      question "Que fait git push -u origin main ?" {
+        + "il envoie la branche main et mémorise origin/main comme branche suivie"
+        - "il met à jour git lui-même"
+        - "il envoie seulement les fichiers non suivis"
+        - "il supprime la branche distante"
+        explanation: "-u (--set-upstream) enregistre le lien entre la branche locale et la branche distante. Ensuite, git push ou git pull sans argument savent où aller. C'est utile au premier push d'un nouveau dépôt."
+      }
+    }
+  }
+
+  module "module-11" {
+    title: "Chapitre 11 : synthèse, le script complet du projet"
+    duration: "60min"
+    content: """
+Tu as toutes les pièces. Il reste à les assembler dans `nouveau-depot.sh`, le script du projet fil rouge :
+```text
+bash nouveau-depot.sh nom_du_depot nombre_de_dossiers
+```
+Il doit, dans cet ordre :
+1. passer en mode strict, préparer un dossier temporaire nettoyé par `trap` (chapitre 5) ;
+2. vérifier les prérequis : `git`, `curl`, `jq`, et la configuration `user.name` / `user.email` (chapitres 4 et 10) ;
+3. valider les deux arguments, et refuser un dossier local qui existe déjà (chapitre 6) ;
+4. demander le token sans l'afficher (chapitre 7) ;
+5. appeler `GET /user` pour connaître le nom du compte, en distinguant 200 et 401 (chapitre 8) ;
+6. créer le dépôt privé avec `POST /user/repos`, en distinguant 201, 403 et 422 (chapitre 8) ;
+7. créer `Job01` à `JobNN`, chacun avec un `README.md` (chapitre 9) ;
+8. faire le premier commit et le push avec `GIT_ASKPASS`, sans gestionnaire d'identifiants (chapitre 10).
+
+### Le token à créer
+Sur GitHub : Settings, Developer settings, Personal access tokens. Un token classique (classic) a besoin de la portée `repo` pour créer un dépôt privé et y pousser. Un token à granularité fine (fine-grained) demande des permissions par dépôt : vérifie dans la documentation de GitHub celles qu'exige la création de dépôts (administration et contenu en écriture). Mets une date d'expiration courte : quelques jours suffisent pour ce TP.
+
+### Plan de test
+Un script n'est fini que lorsqu'il a été testé sur les cas qui échouent, pas seulement sur le cas qui marche :
+| Test | Résultat attendu |
+|---|---|
+| `bash -n` puis `shellcheck` | aucune remarque |
+| sans argument | message d'usage, code 1 |
+| nom `mon depot` | refusé (espace) |
+| nombre `0`, `08` ou `100` | refusé |
+| dossier local déjà présent | refusé avant toute requête |
+| faux token | `token refusé (401)` |
+| vrai token | dépôt créé, push fait |
+| même nom relancé (dossier local supprimé) | `un dépôt ... existe déjà (422)` |
+| `cat nom/.git/config` | aucune trace du token |
+
+### À toi de jouer
+Écris `nouveau-depot.sh` toi-même, étape par étape, en testant chaque étape avant de passer à la suivante (`bash -n`, puis un essai). Garde tes propres messages et tes propres noms de fonctions : le but est que tu comprennes chaque ligne. Déroule ensuite tout le plan de test ci-dessus.
+Quand c'est fini, supprime le dépôt de test sur GitHub depuis son onglet Settings (tout en bas, zone Danger Zone) et révoque le token.
+
+### Correction
+Une version de référence, à comparer avec la tienne :
+```bash
+#!/usr/bin/env bash
+# nouveau-depot.sh : crée un dépôt GitHub privé, les dossiers Job01 à JobNN
+# et fait le premier push, sans jamais écrire le token sur le disque.
+set -euo pipefail
+
+info() { echo "[OK] $*" >&2; }
+die()  { echo "[ERREUR] $*" >&2; exit 1; }
+
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+
+verifier_prerequis() {
+    local cmd
+    for cmd in git curl jq; do
+        command -v "$cmd" >/dev/null 2>&1 || die "commande manquante : $cmd"
+    done
+    git config user.name  >/dev/null || die "git config --global user.name non défini"
+    git config user.email >/dev/null || die "git config --global user.email non défini"
+}
+
+valider_nom() {
+    [[ "$1" =~ ^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$ ]] || die "nom de dépôt invalide : '$1'"
+}
+
+valider_nombre() {
+    [[ "$1" =~ ^[1-9][0-9]?$ ]] || die "nombre de dossiers invalide : '$1' (1 à 99)"
+}
+
+# Envoie la configuration curl contenant le token sur l'entrée standard.
+config_token() {
+    printf 'header = "Authorization: Bearer %s"\n' "$TOKEN"
+}
+
+verifier_prerequis
+nom="${1:?usage : $0 nom_du_depot nombre_de_dossiers}"
+nombre="${2:?usage : $0 nom_du_depot nombre_de_dossiers}"
+valider_nom "$nom"
+valider_nombre "$nombre"
+[[ ! -e "$nom" ]] || die "le dossier local $nom existe déjà"
+
+read -r -s -p "Token GitHub : " TOKEN
+echo >&2
+[[ -n "$TOKEN" ]] || die "token vide"
+
+# 1. Qui suis-je ?
+code="$(config_token | curl --config - --silent \
+    --output "$TMP/moi.json" --write-out '%{http_code}' \
+    https://api.github.com/user)" || die "API GitHub injoignable"
+case "$code" in
+    200) ;;
+    401) die "token refusé (401)" ;;
+    *)   die "erreur inattendue (HTTP $code)" ;;
+esac
+utilisateur="$(jq -r '.login' "$TMP/moi.json")"
+info "connecté en tant que $utilisateur"
+
+# 2. Créer le dépôt privé
+corps="$(jq -n --arg nom "$nom" '{name: $nom, private: true}')"
+code="$(config_token | curl --config - --silent \
+    --output "$TMP/depot.json" --write-out '%{http_code}' \
+    --header "Content-Type: application/json" --data "$corps" \
+    https://api.github.com/user/repos)" || die "API GitHub injoignable"
+case "$code" in
+    201) info "dépôt $utilisateur/$nom créé" ;;
+    403) die "droits insuffisants pour créer un dépôt (403)" ;;
+    422) die "un dépôt $nom existe déjà (422)" ;;
+    *)   die "erreur inattendue (HTTP $code)" ;;
+esac
+
+# 3. Dossiers Job01 à JobNN
+mkdir "$nom"
+for ((i = 1; i <= nombre; i++)); do
+    printf -v job 'Job%02d' "$i"
+    mkdir "$nom/$job"
+    cat > "$nom/$job/README.md" <<EOF
+# $job
+EOF
+done
+
+# 4. Premier commit et push
+git -C "$nom" init --quiet
+git -C "$nom" add .
+git -C "$nom" commit --quiet -m "Premier commit"
+git -C "$nom" branch -M main
+git -C "$nom" remote add origin "https://github.com/$utilisateur/$nom.git"
+
+cat > "$TMP/askpass.sh" <<'EOF'
+#!/usr/bin/env bash
+case "$1" in
+    Username*) printf '%s\n' "$GIT_USER" ;;
+    *)         printf '%s\n' "$GIT_TOKEN" ;;
+esac
+EOF
+chmod 700 "$TMP/askpass.sh"
+
+GIT_ASKPASS="$TMP/askpass.sh" GIT_USER="$utilisateur" GIT_TOKEN="$TOKEN" \
+GIT_TERMINAL_PROMPT=0 \
+    git -C "$nom" -c credential.helper= push --quiet -u origin main
+unset TOKEN
+info "premier push fait : https://github.com/$utilisateur/$nom"
+```
+Points à vérifier dans ta version :
+• le token n'apparaît dans aucun argument de commande, aucun fichier, aucun affichage ;
+• chaque appel `curl` teste à la fois l'échec réseau (`|| die`) et le code HTTP (`case`) ;
+• `GIT_TERMINAL_PROMPT=0` empêche git de demander quoi que ce soit au clavier si `askpass.sh` ne suffit pas : le push échoue proprement au lieu de bloquer ;
+• si le push échoue, le dépôt GitHub existe déjà : supprime-le avant de relancer, ou ajoute une option pour réutiliser un dépôt existant (bonne amélioration à essayer).
+
+### Pour aller plus loin
+• GNU Bash Reference Manual, Free Software Foundation : https://www.gnu.org/software/bash/manual/
+• ShellCheck, analyseur de scripts shell (explication de chaque code SC) : https://www.shellcheck.net/
+• Page de manuel de curl, projet curl : https://curl.se/docs/manpage.html
+• Manuel de jq, projet jq : https://jqlang.github.io/jq/manual/
+• Documentation de git : gitcredentials et la variable GIT_ASKPASS, projet Git : https://git-scm.com/docs/gitcredentials
+• Documentation de l'API REST de GitHub, section Repositories (créer un dépôt pour l'utilisateur authentifié) : https://docs.github.com/rest/repos/repos
+"""
+
+    codeblock "bash" {
+      title: "Contrôler le script avant de le lancer"
+      code: """
+bash -n nouveau-depot.sh && shellcheck nouveau-depot.sh
+bash nouveau-depot.sh "mon depot" 3; echo "code : $?"
+bash nouveau-depot.sh tp-bash 08; echo "code : $?"
+bash nouveau-depot.sh tp-bash 3
+cat tp-bash/.git/config
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Dans quel ordre le script doit-il faire les vérifications locales et l’appel à l’API ?" {
+        + "valider les arguments et le dossier local d'abord, appeler l'API ensuite"
+        - "appeler l'API d'abord, valider ensuite"
+        - "l'ordre n'a pas d'importance"
+        - "demander le token en tout premier, avant même les prérequis"
+        explanation: "Une erreur détectée localement ne coûte rien. Si le script crée d'abord le dépôt sur GitHub puis découvre que le dossier local existe déjà, il laisse un dépôt à moitié préparé qu'il faut supprimer à la main. On vérifie donc tout ce qui peut l'être avant le premier appel réseau."
+      }
+
+      question "Le script reçoit 422 lors de la création du dépôt. Que faut-il en conclure le plus souvent ?" {
+        - "le token est expiré"
+        + "un dépôt de ce nom existe déjà sur le compte"
+        - "le serveur GitHub est en panne"
+        - "le dépôt a bien été créé"
+        explanation: "422 signifie que les données envoyées ont été comprises mais refusées. Pour la création d'un dépôt, c'est en général un nom déjà utilisé. Un token expiré donnerait 401, une panne un code 5xx, et une création réussie 201."
+      }
+
+      question "Quelle ligne envoie le token à curl sans qu’il apparaisse dans ps ?" {
+        + "printf 'header = \"Authorization: Bearer %s\"\\n' \"$TOKEN\" | curl --config - ..."
+        - "curl -H \"Authorization: Bearer $TOKEN\" ..."
+        - "curl --user \"$TOKEN\" ..."
+        - "curl \"https://$TOKEN@api.github.com/user\""
+        explanation: "printf est interne à Bash, donc invisible dans ps, et curl lit sa configuration sur l'entrée standard. Les trois autres formes placent le token dans les arguments de curl, lisibles par tous les utilisateurs de la machine."
+      }
+
+      question "Pourquoi écrire local cmd puis for cmd in git curl jq dans verifier_prerequis ?" {
+        + "pour que la variable de boucle ne déborde pas sur le reste du script"
+        - "parce que for refuse les variables globales"
+        - "pour accélérer la boucle"
+        - "pour exporter cmd vers git"
+        explanation: "La variable d'une boucle for est une variable ordinaire : sans local, elle resterait définie après la fonction et pourrait écraser une variable du même nom. local la limite à la fonction."
+      }
+
+      question "Que se passe-t-il si on lance bash nouveau-depot.sh sans argument ?" {
+        - "le script crée un dépôt sans nom"
+        + "${1:?usage ...} affiche le message d'usage et arrête le script"
+        - "le script demande le nom avec dialog"
+        - "le script boucle à l'infini"
+        explanation: "${1:?message} arrête le script avec le message quand $1 est vide ou absent. C'est une façon compacte d'exiger un argument. Le code de sortie est alors différent de 0."
+      }
+
+      question "Le modèle ^[1-9][0-9]?$ accepte-t-il 08 ?" {
+        - "oui"
+        + "non, le premier caractère doit être entre 1 et 9"
+        - "oui, mais seulement avec set -u"
+        - "c'est une erreur de syntaxe"
+        explanation: "[1-9] interdit un 0 en tête, puis [0-9]? autorise un deuxième chiffre facultatif. Le modèle accepte donc 1 à 99 sans zéro devant, ce qui évite aussi le piège de l'octal dans les calculs Bash."
+      }
+
+      question "Le push affiche « remote: Repository not found » alors que l’URL est correcte. Quelle est la cause la plus probable ?" {
+        + "le token n'a pas accès au dépôt privé (droits insuffisants ou mauvais compte)"
+        - "le dossier local est vide"
+        - "la branche ne s'appelle pas main"
+        - "le fichier .gitattributes est absent"
+        explanation: "Pour un dépôt privé, GitHub répond « introuvable » plutôt qu'« interdit », afin de ne pas révéler son existence. Un token sans les bons droits, ou celui d'un autre compte, produit donc ce message. Il faut vérifier les droits du token."
+      }
+
+      question "Pourquoi ajouter GIT_TERMINAL_PROMPT=0 à la commande git push ?" {
+        - "pour masquer la barre de progression"
+        + "pour que git échoue au lieu d'attendre une saisie au clavier"
+        - "pour désactiver le chiffrement"
+        - "pour forcer l'utilisation de SSH"
+        explanation: "Si le programme GIT_ASKPASS ne fournit pas d'identifiant valide, git pourrait demander un mot de passe dans le terminal et bloquer le script. Avec GIT_TERMINAL_PROMPT=0, il échoue tout de suite avec un message, ce qui est préférable dans un script."
+      }
+
+      question "Que fait trap ... EXIT, chargé de supprimer $TMP, dans le script complet ?" {
+        + "il supprime le dossier temporaire, et donc askpass.sh, quelle que soit la fin du script"
+        - "il supprime le dépôt GitHub en cas d'erreur"
+        - "il efface le token de GitHub"
+        - "il annule le dernier commit"
+        explanation: "Le piège EXIT s'exécute à toute fin de script : succès, die ou erreur avec set -e. Les réponses JSON et le petit programme askpass.sh disparaissent avec le dossier. Il n'agit que sur la machine locale, pas sur GitHub."
+      }
+
+      question "Le script contient echo Token : $TOKEN pour déboguer. Que faut-il faire ?" {
+        - "le garder, il est utile en cas de problème"
+        + "le supprimer, et révoquer le token s'il a déjà été affiché ou partagé"
+        - "le remplacer par echo '$TOKEN'"
+        - "le déplacer à la fin du script"
+        explanation: "Un token affiché peut finir dans une capture d'écran, un journal ou un message d'aide. Il faut retirer la ligne, et considérer le token comme compromis s'il a été vu. Pour vérifier lequel est utilisé, on affiche seulement ses derniers caractères."
+      }
+
+      question "Pourquoi un fichier README.md est-il créé dans chaque dossier JobNN ?" {
+        + "git ne versionne pas les dossiers vides"
+        - "GitHub refuse les dépôts sans README à la racine"
+        - "pour que mkdir réussisse"
+        - "pour que le push soit plus rapide"
+        explanation: "git ne suit que des fichiers. Un dossier vide n'apparaîtrait pas dans le commit, ni donc sur GitHub. Un README par dossier garantit que toute l'arborescence est publiée, et donne une place pour décrire chaque exercice."
+      }
+
+      question "Pourquoi tester le code HTTP avec un case plutôt que de compter sur le code de sortie de curl ?" {
+        + "curl réussit (code 0) même quand le serveur répond 401 ou 422"
+        - "case est plus rapide qu'un if"
+        - "curl ne renvoie jamais de code de sortie"
+        - "le code HTTP est toujours 200"
+        explanation: "Sans --fail, curl considère toute réponse reçue comme un succès. Seul le code HTTP dit si l'action a réussi. Le || die autour de curl traite les vraies pannes (réseau), et le case traite les réponses du serveur."
+      }
+
+      question "Quelle commande vérifie qu’aucun token n’a été écrit dans la configuration du dépôt ?" {
+        + "cat nom/.git/config"
+        - "git log"
+        - "ls -l nom"
+        - "git status"
+        explanation: "L'URL du dépôt distant est enregistrée dans .git/config. Elle doit être de la forme https://github.com/compte/depot.git, sans identifiant ni token. git log montre les commits, et git status l'état des fichiers."
+      }
+
+      question "Que fait set -o pipefail pour la ligne config_token | curl --config - ... ?" {
+        + "si config_token ou curl échoue, toute la ligne est considérée comme un échec"
+        - "il envoie le token deux fois"
+        - "il empêche curl de lire l'entrée standard"
+        - "il rend la ligne plus rapide"
+        explanation: "Sans pipefail, seul le code de curl compte. Avec pipefail, un échec de n'importe quelle commande du tube est remonté, et le || die qui suit peut réagir."
+      }
+
+      question "Le script crée le dépôt sur GitHub, puis le push échoue. Quel est l’état après l’arrêt ?" {
+        + "le dépôt existe sur GitHub mais il est vide ; il faut le supprimer ou le réutiliser avant de relancer"
+        - "GitHub supprime automatiquement le dépôt"
+        - "le script recommence tout seul"
+        - "le dépôt contient quand même les dossiers"
+        explanation: "Les étapes réalisées sur le serveur ne sont pas annulées par l'arrêt du script. Relancer tel quel donnerait 422 (nom déjà pris). C'est une limite à connaître : une version améliorée peut détecter le dépôt existant et faire seulement le push."
+      }
+
+      question "Quelle portée doit avoir un token classique pour créer un dépôt privé et y pousser ?" {
+        - "aucune portée"
+        + "repo"
+        - "delete_repo"
+        - "admin:org"
+        explanation: "La documentation de GitHub indique que la création d'un dépôt privé avec un token classique demande la portée repo, qui permet aussi d'y pousser. delete_repo et admin:org donnent des droits dont le script n'a pas besoin : selon le principe du moindre privilège, on ne les coche pas."
+      }
+
+      question "Pourquoi utiliser jq -n --arg nom pour le corps de la requête plutôt que d’écrire le JSON à la main avec des guillemets échappés ?" {
+        + "jq échappe les caractères spéciaux et produit toujours un JSON valide"
+        - "GitHub n'accepte que du JSON produit par jq"
+        - "jq compresse le JSON"
+        - "la deuxième forme est interdite par Bash"
+        explanation: "Même si valider_nom limite déjà les caractères, construire le JSON avec jq est une bonne habitude : le jour où le modèle de validation change, aucun guillemet ne pourra casser le JSON ou ajouter un champ."
+      }
+
+      question "Le script affiche [ERREUR] token refusé (401). Que fais-tu ?" {
+        - "tu relances avec sudo"
+        + "tu vérifies que le token est bien recopié, non expiré et non révoqué"
+        - "tu changes le nom du dépôt"
+        - "tu supprimes le dossier .git"
+        explanation: "401 concerne uniquement l'authentification. Les causes habituelles sont un token mal collé (espace en trop, caractère manquant), expiré ou révoqué. sudo, le nom du dépôt ou le dossier local n'y changent rien."
+      }
+
+      question "Que doit afficher bash -n nouveau-depot.sh si la syntaxe est correcte ?" {
+        - "Syntax OK"
+        + "rien"
+        - "le contenu du script"
+        - "la liste des fonctions"
+        explanation: "bash -n reste silencieux quand tout va bien, et renvoie le code 0. C'est le premier contrôle à faire, avant shellcheck puis les tests réels. Il ne détecte pas les erreurs de logique."
+      }
+
+      question "Après le test, que faut-il faire du token utilisé ?" {
+        + "le révoquer, ou le laisser expirer s'il a une date d'expiration courte"
+        - "l'écrire dans le README pour la prochaine fois"
+        - "le mettre dans une variable d'environnement permanente dans .bashrc"
+        - "le garder sans expiration pour éviter d'en recréer"
+        explanation: "Un token qui ne sert plus est un risque sans contrepartie. Le révoquer (ou lui donner dès le départ une expiration courte) limite les dégâts en cas de fuite. Le stocker dans un README ou dans .bashrc le rendrait facile à voler."
       }
     }
   }

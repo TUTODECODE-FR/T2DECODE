@@ -1,0 +1,2304 @@
+tdc-version: 2
+type: course
+
+course "commutation-vlan" {
+  title: "Commutation et VLAN"
+  description: """
+Ce cours explique comment un switch fait circuler les trames dans un réseau local, puis comment on découpe ce réseau en VLAN, comment on les relie entre eux et comment on évite les boucles. Il s'adresse aux élèves de bac pro CIEL, BTS SIO SISR, BTS CIEL et BUT réseaux, et à toute personne qui doit configurer ou dépanner un réseau d'entreprise.
+
+À la fin, tu sauras :
+• expliquer ce que fait un switch quand il reçoit une trame (apprentissage, filtrage, inondation) et le vérifier toi-même ;
+• compter les domaines de collision et de broadcast d'un schéma ;
+• créer des VLAN, configurer des ports access et trunk 802.1Q, et choisir un VLAN natif ;
+• faire communiquer des VLAN par un routeur (router-on-a-stick) ou un switch de niveau 3 ;
+• lire l'état du Spanning Tree et prévoir quel port sera bloqué ;
+• agréger des liens avec LACP ;
+• sécuriser les ports d'un switch Cisco et dépanner une configuration avec les commandes show.
+
+Deux laboratoires sont utilisés tout au long du cours :
+• un labo Linux réel, gratuit, sur Debian ou Ubuntu : des espaces de noms réseau (network namespaces) jouent le rôle de PC et le bridge du noyau joue le rôle de switch. Tout ce que tu vois est vrai : vraies trames, vrais tags 802.1Q, vrai Spanning Tree ;
+• un labo Cisco IOS, dans Cisco Packet Tracer (gratuit avec un compte Cisco Networking Academy), GNS3 ou sur du matériel réel.
+
+Prérequis : adresses IPv4 et masques, notion d'adresse MAC, savoir ouvrir un terminal Linux.
+"""
+  category: "network"
+  level: "intermediate"
+  duration: "5h30"
+  icon: "Hub"
+  keywords: ["switch", "commutateur", "vlan", "802.1q", "trunk", "stp", "spanning-tree", "lacp", "etherchannel", "cisco", "port-security", "inter-vlan"]
+
+  module "switch-table-mac" {
+    title: "Chapitre 1 : ce que fait un switch"
+    duration: "30min"
+    content: """
+### La trame Ethernet, ce que le switch lit
+
+Un switch (commutateur) travaille au niveau 2 du modèle OSI : il ne regarde pas les adresses IP, il lit l'en-tête de la trame Ethernet.
+
+| Champ | Taille | Rôle |
+|---|---|---|
+| MAC destination | 6 octets | à qui est destinée la trame |
+| MAC source | 6 octets | qui l'a envoyée |
+| EtherType | 2 octets | ce que contient la trame (0x0800 = IPv4, 0x0806 = ARP, 0x86DD = IPv6) |
+| Données | 46 à 1500 octets | le paquet IP, ARP... |
+| FCS | 4 octets | contrôle d'erreur (CRC) |
+
+Une trame Ethernet classique fait donc entre 64 et 1518 octets. L'adresse MAC `ff:ff:ff:ff:ff:ff` est l'adresse de **diffusion** (broadcast) : la trame est pour tout le monde.
+
+### La table MAC
+
+Le switch tient une table qui associe une adresse MAC à un port. Cisco l'appelle **table d'adresses MAC** (MAC address table), on parle aussi de table CAM ; sous Linux c'est la **FDB** (forwarding database).
+
+Pour chaque trame reçue, le switch fait toujours la même chose, dans cet ordre :
+
+1. **Apprentissage** (learning) : il lit la MAC **source** et note « cette MAC est derrière le port d'arrivée ». Si l'entrée existait sur un autre port, il la déplace.
+2. **Décision** sur la MAC **destination** :
+   - destination connue sur un **autre** port : la trame part sur ce seul port (**commutation**, forwarding) ;
+   - destination connue sur le **même** port que l'arrivée : la trame est jetée (**filtrage**, filtering) ;
+   - destination inconnue (unicast inconnu) : la trame est copiée sur **tous les ports sauf celui d'arrivée** (**inondation**, flooding) ;
+   - destination broadcast ou multicast (sans configuration particulière) : inondation aussi.
+
+Une entrée apprise n'est pas éternelle : elle disparaît si la MAC n'est plus vue pendant un certain temps, le **vieillissement** (aging). La valeur par défaut est de **300 secondes** sur les switchs Cisco Catalyst comme sur le bridge Linux.
+
+### Exemple : le premier ping d'une journée
+
+PC1 (port 1) veut joindre PC2 (port 2). La table est vide.
+
+1. PC1 envoie une requête ARP en broadcast. Le switch apprend « MAC de PC1 sur port 1 » et inonde la trame sur tous les autres ports.
+2. PC2 répond en unicast à PC1. Le switch apprend « MAC de PC2 sur port 2 ». La MAC de PC1 est connue : la réponse part uniquement sur le port 1.
+3. Le ping (ICMP) qui suit ne va plus que de port 1 à port 2. PC3, sur le port 3, a vu la requête ARP, mais il ne voit pas le ping.
+
+### Deux façons de commuter
+
+- **Store-and-forward** : le switch reçoit toute la trame, vérifie le FCS, puis la transmet. Une trame abîmée est jetée. C'est le mode de la plupart des switchs d'accès.
+- **Cut-through** : le switch commence à transmettre dès qu'il a lu la MAC destination. Plus rapide, mais une trame abîmée est propagée.
+
+### Préparer le labo Linux
+
+Le labo utilise seulement des outils standards de Debian/Ubuntu. Il faut les droits `sudo`.
+
+```bash
+sudo apt install iproute2 tcpdump iputils-ping
+```
+
+Les commandes `ip netns` créent des espaces de noms réseau : chacun a ses propres interfaces, adresses et tables de routage, comme un petit PC isolé. Une paire `veth` est un câble virtuel avec deux bouts. Le bridge `br0` est le switch.
+
+Ces commandes ne touchent pas à ta carte réseau réelle. Pour tout effacer à la fin : `sudo ip netns del pc1` (et pc2, pc3), puis `sudo ip link del br0`.
+
+### À toi de jouer
+
+1. Crée le switch et trois PC avec le bloc de code « Labo 1 » ci-dessous.
+2. Dans un second terminal, lance une capture sur PC3 : `sudo ip netns exec pc3 tcpdump -n -e -i eth0`.
+3. Depuis PC1, fais `sudo ip netns exec pc1 ping -c 3 192.168.1.2`.
+4. Affiche la table du switch : `bridge fdb show br br0 dynamic`.
+5. Que voit PC3 ? Pourquoi ne voit-il pas les ping ?
+6. Désactive l'apprentissage sur le port de PC2 : `sudo bridge link set dev veth-pc2 learning off`. L'entrée déjà apprise resterait 300 secondes : vide les entrées dynamiques du switch (`sudo ip link set dev br0 type bridge fdb_flush`) et le cache ARP de PC1 (`sudo ip -n pc1 neigh flush all`), puis refais le ping. Que voit PC3 maintenant ?
+
+### Correction
+
+- À l'étape 2, PC3 affiche la requête ARP de PC1, avec la destination `ff:ff:ff:ff:ff:ff` : c'est un broadcast, le switch l'a inondée. Il ne voit ni la réponse ARP ni les ping, car ce sont des trames unicast dont la destination est connue du switch.
+- `bridge fdb show br br0 dynamic` affiche une ligne par MAC apprise, avec le port (`dev veth-pc1`, `dev veth-pc2`). Les adresses MAC changent à chaque création du labo.
+- Après `learning off` et le vidage de la table, le switch n'apprend plus la MAC de PC2 (sans `fdb_flush`, l'ancienne entrée servirait encore jusqu'à son expiration). Chaque trame vers PC2 est un unicast inconnu : elle est inondée, et PC3 voit passer les ping de PC1 vers PC2. C'est aussi ce qui arrive quand la table MAC d'un switch est saturée : le trafic est inondé et peut être lu par un autre poste.
+- Remets l'apprentissage : `sudo bridge link set dev veth-pc2 learning on`.
+- Bonus : `cat /sys/class/net/br0/bridge/ageing_time` affiche `30000`. L'unité est le centième de seconde, soit 300 secondes.
+
+Sur un switch Cisco, les équivalents sont `show mac address-table`, `show mac address-table aging-time` et `clear mac address-table dynamic`.
+"""
+
+    codeblock "bash" {
+      title: "Labo 1 : un switch et trois PC sous Linux"
+      code: """
+# Le switch
+sudo ip link add br0 type bridge
+sudo ip link set br0 up
+
+# Trois PC, chacun relié au switch par un câble virtuel
+for pc in pc1 pc2 pc3; do
+  sudo ip netns add "$pc"
+  sudo ip link add "veth-$pc" type veth peer name eth0 netns "$pc"
+  sudo ip link set "veth-$pc" master br0 up
+  sudo ip -n "$pc" link set lo up
+  sudo ip -n "$pc" link set eth0 up
+done
+
+# Adresses IP (même réseau)
+sudo ip -n pc1 addr add 192.168.1.1/24 dev eth0
+sudo ip -n pc2 addr add 192.168.1.2/24 dev eth0
+sudo ip -n pc3 addr add 192.168.1.3/24 dev eth0
+
+# Vérifications
+bridge link show
+sudo ip netns exec pc1 ping -c 3 192.168.1.2
+bridge fdb show br br0 dynamic
+"""
+    }
+
+    codeblock "text" {
+      title: "Équivalent Cisco IOS (mode privilégié)"
+      code: """
+Switch# show mac address-table dynamic
+          Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+   1    0050.7966.6800    DYNAMIC     Fa0/1
+   1    0050.7966.6801    DYNAMIC     Fa0/2
+Total Mac Addresses for this criterion: 2
+
+Switch# show mac address-table aging-time
+Switch# clear mac address-table dynamic
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle adresse le switch lit-il pour remplir sa table MAC ?" {
+        - "l'adresse MAC de destination"
+        + "l'adresse MAC source"
+        - "l'adresse IP source"
+        - "l'adresse IP de destination"
+        explanation: "Le switch apprend où se trouve un équipement en regardant qui envoie : la MAC source, associée au port d'arrivée. La MAC de destination sert à décider où envoyer la trame. Les adresses IP sont au niveau 3 : un switch de niveau 2 ne les utilise pas."
+      }
+
+      question "Que fait un switch d’une trame dont la MAC de destination est absente de sa table ?" {
+        - "il la jette"
+        - "il la renvoie à l'émetteur avec une erreur"
+        + "il l'envoie sur tous les ports sauf celui d'arrivée"
+        - "il la garde en mémoire jusqu'à ce que la destination se manifeste"
+        explanation: "C'est l'inondation (flooding) d'un unicast inconnu. Le switch ne sait pas où est la destination, il l'envoie partout sauf sur le port d'arrivée. La réponse de la destination lui apprendra ensuite son port. Un switch ne renvoie pas d'erreur et ne met pas les trames en attente."
+      }
+
+      question "Que fait le switch d’une trame dont la destination est connue sur le port même où elle est arrivée ?" {
+        - "il l'inonde"
+        + "il la jette (filtrage)"
+        - "il la renvoie sur ce même port"
+        - "il met à jour l'entrée vers un autre port"
+        explanation: "Si la destination est derrière le port d'arrivée (par exemple un hub ou un autre switch branché sur ce port), elle a déjà reçu la trame. Le switch la filtre, c'est-à-dire qu'il ne la transmet nulle part."
+      }
+
+      question "Quelle est la durée de vieillissement par défaut des entrées MAC sur un switch Cisco Catalyst ?" {
+        - "30 secondes"
+        - "60 secondes"
+        + "300 secondes"
+        - "elles ne vieillissent jamais"
+        explanation: "Le temps par défaut est de 300 secondes (5 minutes), sur Cisco comme sur le bridge Linux. Une MAC qui n'émet plus rien pendant ce délai est retirée de la table. On le vérifie avec show mac address-table aging-time."
+      }
+
+      question "Quelle adresse MAC désigne un broadcast Ethernet ?" {
+        - "00:00:00:00:00:00"
+        + "ff:ff:ff:ff:ff:ff"
+        - "01:00:5e:00:00:01"
+        - "255.255.255.255"
+        explanation: "ff:ff:ff:ff:ff:ff (tous les bits à 1) est la diffusion Ethernet : la trame est inondée sur tous les ports du réseau local. 01:00:5e:... est une MAC multicast IPv4. 255.255.255.255 est un broadcast IP, pas une adresse MAC."
+      }
+
+      question "Sous Linux, quelle commande affiche les adresses MAC apprises par le bridge br0 ?" {
+        - "ip addr show br0"
+        + "bridge fdb show br br0 dynamic"
+        - "arp -a br0"
+        - "ip route show dev br0"
+        explanation: "bridge fdb show affiche la forwarding database, l'équivalent de la table MAC Cisco. Le filtre dynamic garde les entrées apprises. ip addr affiche les adresses IP de l'interface, arp -a le cache ARP (IP vers MAC), pas la table du switch."
+      }
+
+      question "Le fichier /sys/class/net/br0/bridge/ageing_time contient 30000. Que vaut le vieillissement ?" {
+        - "30 000 secondes"
+        - "30 secondes"
+        + "300 secondes"
+        - "3 secondes"
+        explanation: "Dans sysfs, ce temps est exprimé en centièmes de seconde : 30000 / 100 = 300 secondes. C'est la même valeur par défaut que sur Cisco. Lire l'unité d'une valeur avant de conclure évite des erreurs de diagnostic."
+      }
+
+      question "PC3 voit passer le ping de PC1 vers PC2 alors qu’il est sur un autre port. Quelle cause est la plus probable ?" {
+        - "le switch fonctionne en store-and-forward"
+        + "le switch n'a pas la MAC de PC2 dans sa table et inonde les trames"
+        - "PC3 a la même adresse IP que PC2"
+        - "le câble de PC3 est en half duplex"
+        explanation: "Une trame unicast n'arrive sur un port tiers que si elle est inondée, donc si la destination est inconnue : table pleine, apprentissage désactivé, ou entrée expirée. Le mode store-and-forward ne change rien à la destination des trames."
+      }
+
+      question "Quelle est la taille d’une trame Ethernet classique, sans étiquette VLAN, en-tête et FCS compris ?" {
+        - "de 46 à 1500 octets"
+        + "de 64 à 1518 octets"
+        - "de 64 à 1522 octets"
+        - "de 0 à 9000 octets"
+        explanation: "14 octets d'en-tête + 46 à 1500 octets de données + 4 octets de FCS donnent 64 à 1518 octets. 46 à 1500 correspond aux données seules. 1522 est la taille maximale avec une étiquette 802.1Q, vue au chapitre 4."
+      }
+
+      question "Quelle différence entre store-and-forward et cut-through ?" {
+        + "store-and-forward vérifie le FCS avant de transmettre, cut-through transmet dès la lecture de la destination"
+        - "cut-through vérifie le FCS, store-and-forward non"
+        - "store-and-forward est réservé aux routeurs"
+        - "cut-through n'utilise pas de table MAC"
+        explanation: "En store-and-forward, la trame entière est reçue et contrôlée : une trame corrompue est jetée. En cut-through, la transmission commence dès que la MAC destination est lue, ce qui réduit le délai mais propage les trames abîmées. Les deux utilisent la table MAC."
+      }
+
+      question "Une MAC apprise sur le port 1 apparaît soudain comme source sur le port 5. Que fait le switch ?" {
+        - "il garde l'entrée sur le port 1 jusqu'à expiration"
+        - "il crée deux entrées, une par port"
+        + "il déplace l'entrée vers le port 5"
+        - "il bloque le port 5"
+        explanation: "La table associe une MAC à un seul port dans un VLAN. La dernière trame vue fait foi : l'entrée est mise à jour vers le port 5. C'est normal quand un portable change de prise. Si cela arrive en boucle très vite, c'est souvent le signe d'une boucle réseau (chapitre 6)."
+      }
+
+      question "Quelle commande Cisco vide les entrées dynamiques de la table MAC ?" {
+        - "erase mac-table"
+        - "no mac address-table"
+        + "clear mac address-table dynamic"
+        - "reload mac"
+        explanation: "clear mac address-table dynamic, en mode privilégié, efface les entrées apprises. Elles se reconstruisent dès que les équipements émettent. Les autres commandes n'existent pas sous cette forme."
+      }
+    }
+  }
+
+  module "domaines" {
+    title: "Chapitre 2 : domaines de collision et de broadcast"
+    duration: "20min"
+    content: """
+### Domaine de collision
+
+Un domaine de collision est la zone où deux équipements qui émettent en même temps se gênent. C'était le cas avec les **hubs** (concentrateurs) : un hub recopie chaque signal reçu sur tous ses ports, sans rien lire. Tous les postes branchés sur un hub partagent le même support et doivent attendre leur tour (méthode CSMA/CD, en half duplex).
+
+Un switch sépare les domaines de collision : **chaque port de switch est un domaine de collision**. En full duplex, le poste et le switch émettent et reçoivent en même temps sur des paires différentes : il n'y a plus de collision du tout. Un compteur de collisions qui augmente sur un port moderne signale presque toujours un problème de **duplex** mal négocié (un côté en full, l'autre en half).
+
+### Domaine de broadcast
+
+Un domaine de broadcast est l'ensemble des équipements qui reçoivent une trame envoyée à `ff:ff:ff:ff:ff:ff`. Un switch inonde les broadcasts : **tous ses ports sont dans le même domaine de broadcast** (tant qu'il n'y a pas de VLAN).
+
+Seul un équipement de niveau 3 (routeur, switch de niveau 3) arrête les broadcasts : **chaque interface de routeur est un domaine de broadcast**.
+
+| Équipement | Domaines de collision | Domaines de broadcast |
+|---|---|---|
+| Hub | 1 pour tout le hub | 1 |
+| Switch sans VLAN | 1 par port | 1 |
+| Switch avec N VLAN | 1 par port | N |
+| Routeur | 1 par interface | 1 par interface |
+
+### Pourquoi les broadcasts posent problème
+
+Chaque broadcast est traité par **toutes** les cartes réseau du domaine : ARP, DHCP, découverte de services (NetBIOS, mDNS, SSDP). Dans un réseau à plat de 500 postes, chaque poste reçoit les broadcasts des 499 autres. Ajoute à cela qu'un poste infecté ou mal configuré peut perturber tout le domaine. C'est la principale raison de découper un réseau : en sous-réseaux IP et, au niveau 2, en VLAN.
+
+### Exemple de calcul
+
+Le CDI du lycée : un routeur relie deux switchs. Le switch A a 10 postes, le switch B a 6 postes et un hub de 4 postes branché sur un de ses ports.
+
+- Collisions : switch A = 10 ports utilisés + 1 port vers le routeur = 11. Switch B : 6 ports vers les postes + 1 port vers le hub + 1 vers le routeur = 8 (les 4 postes du hub partagent le domaine du port du hub). Les liens routeur–switch sont déjà comptés côté switch. Total : 19.
+- Broadcast : le routeur a deux interfaces utilisées, donc 2 domaines.
+
+### À toi de jouer
+
+Une PME a un routeur à 3 interfaces Ethernet utilisées. Interface 1 : un switch 24 ports avec 20 postes. Interface 2 : un switch 8 ports avec 5 postes, sur lequel est branché un hub de 4 postes. Interface 3 : un seul serveur branché directement.
+
+1. Combien de domaines de broadcast ?
+2. Combien de domaines de collision ?
+3. Dans le labo Linux du chapitre 1, lance `sudo ip netns exec pc3 tcpdump -n -e -i eth0 arp` puis, depuis PC1, `sudo ip netns exec pc1 arping -c 2 -I eth0 192.168.1.2` (paquet `iputils-arping`). PC3 reçoit-il la requête ? Qu'est-ce que cela prouve ?
+
+### Correction
+
+1. **3** domaines de broadcast : un par interface de routeur.
+2. Domaines de collision :
+   - interface 1 : 20 ports postes + 1 port vers le routeur = 21 ;
+   - interface 2 : 5 ports postes + 1 port vers le hub + 1 port vers le routeur = 7 ;
+   - interface 3 : le lien routeur–serveur = 1 ;
+   - total : **29**.
+3. Oui, PC3 reçoit la requête ARP : elle est envoyée en broadcast et le bridge l'inonde. Les trois PC sont dans le même domaine de broadcast, alors qu'ils sont chacun dans leur propre domaine de collision.
+"""
+
+    quiz {
+      pick: 5
+      question "Combien de domaines de collision crée un switch de 24 ports dont 24 sont reliés à des postes ?" {
+        - "1"
+        - "2"
+        + "24"
+        - "48"
+        explanation: "Chaque port de switch est un domaine de collision à part. 24 ports utilisés donnent 24 domaines. 1 serait la réponse pour un hub, qui partage le même support entre tous ses ports."
+      }
+
+      question "Combien de domaines de broadcast forme un switch de 24 ports sans VLAN ?" {
+        + "1"
+        - "2"
+        - "12"
+        - "24"
+        explanation: "Sans VLAN, le switch inonde les broadcasts sur tous ses ports : ils forment un seul domaine de broadcast. Il faut un VLAN ou un équipement de niveau 3 pour en créer d'autres."
+      }
+
+      question "Quel équipement arrête la propagation des broadcasts ?" {
+        - "un hub"
+        - "un switch de niveau 2 sans VLAN"
+        + "un routeur"
+        - "un répéteur"
+        explanation: "Un routeur ne transmet pas les broadcasts d'une interface à l'autre : chaque interface est un domaine de broadcast. Hub et répéteur recopient tout, un switch de niveau 2 inonde les broadcasts."
+      }
+
+      question "Un hub de 8 ports avec 8 postes forme combien de domaines de collision ?" {
+        + "1"
+        - "4"
+        - "8"
+        - "aucun"
+        explanation: "Un hub recopie électriquement le signal sur tous ses ports : tous les postes partagent le même support et peuvent entrer en collision. Le hub entier forme un seul domaine de collision."
+      }
+
+      question "Pourquoi n’y a-t-il plus de collisions sur un port de switch en full duplex ?" {
+        - "le switch met les trames en file d'attente sur le câble"
+        + "l'émission et la réception se font en même temps sur des paires séparées, et un seul équipement est de chaque côté"
+        - "le CSMA/CD détecte toutes les collisions avant qu'elles arrivent"
+        - "le full duplex divise le débit par deux"
+        explanation: "En full duplex, chaque sens a ses propres paires de fils et le lien ne relie que deux équipements : personne ne parle sur la même voie. CSMA/CD n'est utilisé qu'en half duplex. Le full duplex double le débit utile total au lieu de le diviser."
+      }
+
+      question "Le compteur de collisions augmente sur un port de switch récent. Quelle cause rechercher en premier ?" {
+        - "une adresse IP en double"
+        + "un problème de duplex (un côté full, l'autre half)"
+        - "un VLAN natif différent"
+        - "une table MAC pleine"
+        explanation: "Un équipement resté en half duplex face à un port en full duplex détecte des collisions et des erreurs. On vérifie avec show interfaces sur Cisco ou ethtool sous Linux. Une IP en double ou un VLAN natif différent ne provoque pas de collisions physiques."
+      }
+
+      question "Un routeur à 4 interfaces utilisées, chacune reliée à un switch, crée combien de domaines de broadcast ?" {
+        - "1"
+        - "2"
+        + "4"
+        - "8"
+        explanation: "Chaque interface de routeur est un domaine de broadcast distinct. 4 interfaces utilisées donnent 4 domaines, tant que les switchs n'ont pas de VLAN supplémentaires."
+      }
+
+      question "Un switch a 3 VLAN configurés et utilisés. Combien de domaines de broadcast forme-t-il ?" {
+        - "1"
+        + "3"
+        - "autant que de ports"
+        - "aucun"
+        explanation: "Un VLAN est un domaine de broadcast : un broadcast reçu dans le VLAN 10 n'est inondé que sur les ports du VLAN 10. 3 VLAN donnent donc 3 domaines de broadcast sur le même switch."
+      }
+
+      question "Quelle méthode d’accès au support est utilisée en Ethernet half duplex ?" {
+        - "CSMA/CA"
+        + "CSMA/CD"
+        - "jeton (token)"
+        - "TDMA"
+        explanation: "CSMA/CD (Carrier Sense Multiple Access with Collision Detection) écoute le support, émet, détecte les collisions et réessaie après un délai aléatoire. CSMA/CA est la méthode du Wi-Fi, qui évite les collisions au lieu de les détecter."
+      }
+
+      question "Pourquoi un réseau à plat de 800 postes est-il une mauvaise idée ?" {
+        - "un switch ne peut pas dépasser 254 adresses MAC"
+        + "chaque poste reçoit et traite les broadcasts de tous les autres, et un incident touche tout le réseau"
+        - "Ethernet ne fonctionne pas au-delà de 512 postes"
+        - "les adresses IP privées sont limitées à 254 hôtes"
+        explanation: "Plus le domaine de broadcast est grand, plus chaque carte traite de broadcasts inutiles (ARP, DHCP, découverte de services), et plus une panne ou une infection se propage loin. Les switchs gèrent des milliers de MAC, et un /22 privé contient bien plus de 254 hôtes."
+      }
+
+      question "Dans le labo Linux, PC3 reçoit la requête ARP que PC1 envoie à PC2. Qu’est-ce que cela montre ?" {
+        - "le bridge est mal configuré"
+        - "PC3 a la même MAC que PC2"
+        + "les trois PC sont dans le même domaine de broadcast"
+        - "le bridge fonctionne comme un routeur"
+        explanation: "Une requête ARP est envoyée en broadcast. Le bridge l'inonde sur tous ses ports : c'est le comportement normal d'un switch. Les VLAN du chapitre 3 permettront justement d'empêcher PC3 de la recevoir."
+      }
+    }
+  }
+
+  module "vlan-access" {
+    title: "Chapitre 3 : VLAN et ports access"
+    duration: "35min"
+    content: """
+### L'idée
+
+Un **VLAN** (Virtual LAN, réseau local virtuel) découpe un switch physique en plusieurs switchs logiques. Les ports du VLAN 10 ne voient que les trames du VLAN 10 : même les broadcasts ne passent pas d'un VLAN à l'autre. Pour passer d'un VLAN à un autre, il faut un routeur.
+
+Règle pratique : **un VLAN = un sous-réseau IP = un domaine de broadcast**. Par exemple VLAN 10 = 192.168.10.0/24, VLAN 20 = 192.168.20.0/24.
+
+### Pourquoi faire des VLAN
+
+- **Sécurité et cloisonnement** : les postes élèves ne joignent pas directement les serveurs de l'administration ; les échanges passent par un routeur ou un pare-feu où l'on filtre.
+- **Performance** : des domaines de broadcast plus petits.
+- **Souplesse** : on regroupe les postes par fonction, pas par emplacement. Un poste de la vie scolaire au deuxième étage peut être dans le même VLAN que celui du rez-de-chaussée.
+- **Économie** : un seul switch, plusieurs réseaux, au lieu d'un switch par réseau.
+- **Services séparés** : téléphonie IP, Wi-Fi invités, caméras, administration des équipements, chacun dans son VLAN.
+
+### Numéros de VLAN
+
+La norme IEEE 802.1Q code le numéro sur 12 bits : de 0 à 4095. Les valeurs 0 et 4095 sont réservées, il reste **1 à 4094**.
+
+Sur un switch Cisco :
+- **VLAN 1** : VLAN par défaut. Tous les ports y sont au départ, il ne peut pas être supprimé ;
+- **1002 à 1005** : réservés (anciens FDDI et Token Ring), non supprimables ;
+- **1 à 1005** : plage normale, enregistrée dans le fichier `vlan.dat` de la mémoire flash, pas dans la running-config ;
+- **1006 à 4094** : plage étendue.
+
+### Port access
+
+Un port **access** appartient à un seul VLAN. Il reçoit et envoie des trames **sans étiquette** : le poste branché ne sait pas qu'il est dans un VLAN. C'est le switch qui associe le port au VLAN. C'est le cas des prises murales des postes, imprimantes, serveurs simples.
+
+Sous Linux, le même rôle s'appelle « PVID untagged » : le VLAN attribué aux trames non étiquetées qui entrent (PVID), et sortie sans étiquette (untagged).
+
+### Configuration Cisco IOS
+
+```text
+Switch> enable
+Switch# configure terminal
+Switch(config)# vlan 10
+Switch(config-vlan)# name ADMINISTRATION
+Switch(config-vlan)# vlan 20
+Switch(config-vlan)# name PEDAGOGIE
+Switch(config-vlan)# exit
+Switch(config)# interface range fastEthernet 0/1 - 12
+Switch(config-if-range)# switchport mode access
+Switch(config-if-range)# switchport access vlan 10
+Switch(config-if-range)# interface range fastEthernet 0/13 - 22
+Switch(config-if-range)# switchport mode access
+Switch(config-if-range)# switchport access vlan 20
+Switch(config-if-range)# end
+Switch# show vlan brief
+```
+
+Points à connaître :
+- `switchport mode access` force le port en access et coupe la négociation de trunk (voir chapitres 4 et 8) ;
+- si le VLAN n'existe pas, `switchport access vlan 30` le crée et affiche « % Access VLAN does not exist. Creating vlan 30 » ;
+- `no switchport access vlan` remet le port dans le VLAN 1 ;
+- si tu supprimes un VLAN (`no vlan 10`), les ports qui y étaient affectés deviennent **inactifs** : ils ne transmettent plus rien tant que tu ne les réaffectes pas.
+
+Lecture de `show vlan brief` :
+
+```text
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Fa0/23, Fa0/24, Gi0/1, Gi0/2
+10   ADMINISTRATION                   active    Fa0/1, Fa0/2, Fa0/3, Fa0/4
+                                                Fa0/5, Fa0/6, Fa0/7, Fa0/8
+                                                Fa0/9, Fa0/10, Fa0/11, Fa0/12
+20   PEDAGOGIE                        active    Fa0/13, Fa0/14, Fa0/15, Fa0/16
+                                                Fa0/17, Fa0/18, Fa0/19, Fa0/20
+                                                Fa0/21, Fa0/22
+1002 fddi-default                     act/unsup
+1003 token-ring-default               act/unsup
+1004 fddinet-default                  act/unsup
+1005 trnet-default                    act/unsup
+```
+
+Attention : les ports trunk n'apparaissent **pas** dans `show vlan brief`. Un port absent de cette liste est soit un trunk, soit un port routé.
+
+### À toi de jouer (labo Linux)
+
+Reprends le labo 1 (br0, pc1, pc2, pc3, tous en 192.168.1.0/24). Objectif : PC1 et PC2 dans le VLAN 10, PC3 dans le VLAN 20, sans changer les adresses IP.
+
+1. Active le filtrage VLAN du bridge et place les ports comme dans le bloc « Labo 3 ».
+2. Affiche `bridge vlan show`.
+3. Teste `ping` de PC1 vers PC2, puis de PC1 vers PC3. Lance aussi la capture ARP sur PC3 pendant le ping vers PC2.
+4. Explique pourquoi PC1 ne joint pas PC3 alors qu'ils sont dans le même sous-réseau IP.
+
+### Correction
+
+- `bridge vlan show` montre `veth-pc1` et `veth-pc2` avec `10 PVID Egress Untagged`, `veth-pc3` avec `20 PVID Egress Untagged`, et `br0` lui-même dans le VLAN 1.
+- PC1 joint PC2 : même VLAN.
+- PC1 ne joint pas PC3 : sa requête ARP, étiquetée VLAN 10 à l'entrée du bridge, n'est inondée que vers les ports du VLAN 10. PC3 ne la reçoit pas, donc ne répond pas : `ping` affiche `Destination Host Unreachable`.
+- La capture sur PC3 reste muette : le broadcast de PC1 ne sort plus de son VLAN.
+- Conclusion : le VLAN isole au niveau 2, indépendamment de l'IP. En pratique, on donne quand même un sous-réseau différent à chaque VLAN, sinon le routage entre eux est impossible.
+
+Pourquoi `bridge vlan del ... vid 1` ? Quand un port rejoint le bridge, Linux le met par défaut dans le VLAN 1 (PVID untagged). On le retire pour que le port n'appartienne qu'à son VLAN, comme un port access Cisco.
+"""
+
+    codeblock "bash" {
+      title: "Labo 3 : deux VLAN sur le bridge Linux"
+      code: """
+# Le bridge filtre maintenant selon les VLAN
+sudo ip link set br0 type bridge vlan_filtering 1
+
+# PC1 et PC2 : VLAN 10 en access (PVID + sortie sans étiquette)
+for p in veth-pc1 veth-pc2; do
+  sudo bridge vlan del dev "$p" vid 1
+  sudo bridge vlan add dev "$p" vid 10 pvid untagged
+done
+
+# PC3 : VLAN 20 en access
+sudo bridge vlan del dev veth-pc3 vid 1
+sudo bridge vlan add dev veth-pc3 vid 20 pvid untagged
+
+bridge vlan show
+sudo ip netns exec pc1 ping -c 2 192.168.1.2   # répond
+sudo ip netns exec pc1 ping -c 2 192.168.1.3   # ne répond pas
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Combien de numéros de VLAN sont utilisables selon IEEE 802.1Q ?" {
+        - "1024"
+        - "4096"
+        + "4094"
+        - "1005"
+        explanation: "Le VLAN ID est codé sur 12 bits, soit 4096 valeurs (0 à 4095). 0 et 4095 sont réservés, il reste 4094 VLAN utilisables (1 à 4094). 1005 est la limite de la plage normale Cisco, pas de la norme."
+      }
+
+      question "Que reçoit un poste branché sur un port access du VLAN 20 ?" {
+        + "des trames sans étiquette, uniquement celles du VLAN 20"
+        - "des trames étiquetées 20"
+        - "les trames de tous les VLAN, étiquetées"
+        - "des trames sans étiquette de tous les VLAN"
+        explanation: "Un port access appartient à un seul VLAN et retire l'étiquette en sortie. Le poste ne voit que le trafic de son VLAN, sous forme de trames Ethernet ordinaires. Les étiquettes ne circulent que sur les trunks."
+      }
+
+      question "Pourquoi PC1 (VLAN 10) ne joint-il pas PC3 (VLAN 20) alors qu’ils ont des IP du même sous-réseau ?" {
+        - "le masque est faux"
+        + "la requête ARP de PC1 n'est pas transmise hors du VLAN 10"
+        - "les VLAN bloquent le protocole ICMP"
+        - "il faut redémarrer le switch"
+        explanation: "Pour joindre une IP de son sous-réseau, PC1 envoie une requête ARP en broadcast. Ce broadcast reste dans le VLAN 10 : PC3 ne le reçoit jamais et ne répond pas. Les VLAN agissent au niveau 2, ils ne filtrent pas un protocole en particulier."
+      }
+
+      question "Quelle commande Cisco affecte l’interface sélectionnée au VLAN 30 ?" {
+        - "vlan 30 access"
+        - "switchport vlan 30"
+        + "switchport access vlan 30"
+        - "access-vlan 30"
+        explanation: "En mode configuration d'interface, switchport access vlan 30 associe le port au VLAN 30. On l'accompagne de switchport mode access pour fixer le mode du port. Les autres syntaxes n'existent pas."
+      }
+
+      question "Où un switch Cisco enregistre-t-il les VLAN 2 à 1001 qu’on a créés ?" {
+        - "uniquement dans la running-config"
+        + "dans le fichier vlan.dat de la mémoire flash"
+        - "dans la NVRAM, avec startup-config"
+        - "nulle part, ils sont perdus au redémarrage"
+        explanation: "Les VLAN de la plage normale sont stockés dans flash:vlan.dat. Effacer startup-config ne suffit donc pas à remettre un switch à zéro : il faut aussi supprimer vlan.dat (delete flash:vlan.dat) avant de redémarrer."
+      }
+
+      question "Après no vlan 10, que deviennent les ports qui étaient dans le VLAN 10 ?" {
+        - "ils passent automatiquement dans le VLAN 1"
+        - "ils deviennent des trunks"
+        + "ils restent affectés au VLAN 10 et ne transmettent plus de trafic"
+        - "ils sont éteints (shutdown)"
+        explanation: "Les ports gardent leur commande switchport access vlan 10 mais ce VLAN n'existe plus : ils sont inactifs. Il faut recréer le VLAN ou réaffecter les ports. C'est une panne classique après un ménage trop rapide."
+      }
+
+      question "Pourquoi un port configuré en trunk n’apparaît-il pas dans show vlan brief ?" {
+        - "parce qu'il est éteint"
+        - "parce qu'il est dans le VLAN natif"
+        + "parce que show vlan brief ne liste que les ports access"
+        - "parce qu'il est en erreur"
+        explanation: "show vlan brief affiche les ports access de chaque VLAN. Un trunk transporte plusieurs VLAN : on le vérifie avec show interfaces trunk. Un port routé (no switchport) n'apparaît pas non plus."
+      }
+
+      question "Quel VLAN ne peut pas être supprimé sur un switch Cisco ?" {
+        + "le VLAN 1"
+        - "le VLAN 99"
+        - "le VLAN 1006"
+        - "le dernier VLAN créé"
+        explanation: "Le VLAN 1 est le VLAN par défaut : il existe toujours et ne peut être ni renommé ni supprimé. Les VLAN 1002 à 1005 sont dans le même cas. Les autres VLAN se suppriment avec no vlan."
+      }
+
+      question "Sous Linux, quelle commande met le port veth-pc1 en access dans le VLAN 10 ?" {
+        - "ip link set veth-pc1 vlan 10"
+        + "bridge vlan add dev veth-pc1 vid 10 pvid untagged"
+        - "bridge vlan add dev veth-pc1 vid 10 tagged"
+        - "ip link add veth-pc1.10 type vlan id 10"
+        explanation: "pvid fait entrer les trames non étiquetées dans le VLAN 10, untagged retire l'étiquette en sortie : c'est un port access. Sans ces deux mots, le port serait membre étiqueté du VLAN 10, comme un trunk. ip link add ... type vlan crée une sous-interface, ce n'est pas un réglage de port de bridge."
+      }
+
+      question "Quelle option faut-il activer sur un bridge Linux pour qu’il tienne compte des VLAN ?" {
+        - "stp_state 1"
+        + "vlan_filtering 1"
+        - "vlan_protocol 802.1Q"
+        - "multicast_snooping 1"
+        explanation: "Par défaut, le bridge Linux ignore les VLAN et transmet tout. vlan_filtering 1 le fait appliquer les tables de VLAN de chaque port. stp_state active le Spanning Tree, multicast_snooping concerne le multicast."
+      }
+
+      question "Quel argument ne justifie pas la création de VLAN ?" {
+        - "séparer les postes élèves des serveurs de l'administration"
+        - "réduire la taille des domaines de broadcast"
+        + "augmenter le débit maximal de chaque port du switch"
+        - "isoler la téléphonie IP du reste du trafic"
+        explanation: "Un VLAN ne change pas la vitesse d'un port : un port à 1 Gbit/s reste à 1 Gbit/s. Les VLAN servent au cloisonnement, à la réduction des broadcasts et à la séparation des services."
+      }
+
+      question "Quelle règle de plan d’adressage suivre avec les VLAN ?" {
+        - "tous les VLAN partagent le même sous-réseau"
+        + "un sous-réseau IP par VLAN"
+        - "un sous-réseau IP par switch"
+        - "un sous-réseau IP par port"
+        explanation: "Chaque VLAN est un domaine de broadcast séparé, il lui faut son propre sous-réseau pour qu'un routeur puisse faire passer le trafic de l'un à l'autre. Par exemple VLAN 10 = 192.168.10.0/24, VLAN 20 = 192.168.20.0/24."
+      }
+    }
+  }
+
+  module "trunk-8021q" {
+    title: "Chapitre 4 : trunks, 802.1Q et VLAN natif"
+    duration: "35min"
+    content: """
+### Le problème
+
+Deux switchs, chacun avec des postes du VLAN 10 et du VLAN 20. Avec des ports access, il faudrait un câble par VLAN entre les deux switchs. Avec 15 VLAN, ce n'est plus possible. On utilise un seul lien, le **trunk** (on dit aussi lien étiqueté, tagged), qui transporte plusieurs VLAN.
+
+### L'étiquette 802.1Q
+
+Sur un trunk, chaque trame porte une **étiquette de 4 octets** (tag) insérée après la MAC source :
+
+| Champ | Taille | Contenu |
+|---|---|---|
+| TPID | 16 bits | toujours 0x8100 : « une étiquette 802.1Q suit » |
+| PCP | 3 bits | priorité (0 à 7), utilisée pour la qualité de service (802.1p) |
+| DEI | 1 bit | trame que l'on peut jeter en premier en cas de congestion |
+| VID | 12 bits | numéro du VLAN |
+
+La trame maximale passe de 1518 à **1522 octets**. Le switch qui ajoute ou retire l'étiquette recalcule le FCS. L'ancien protocole Cisco ISL, qui encapsulait la trame entière, est abandonné : on ne travaille qu'en 802.1Q.
+
+### Le VLAN natif
+
+Sur un trunk 802.1Q, **un** VLAN circule sans étiquette : le **VLAN natif** (native VLAN). Toute trame non étiquetée reçue sur le trunk est rangée dans ce VLAN. Par défaut, c'est le VLAN 1.
+
+Deux règles :
+- le VLAN natif doit être **le même des deux côtés** du trunk. Sinon, les trames non étiquetées du VLAN 99 d'un côté arrivent dans le VLAN 1 de l'autre : deux VLAN sont mélangés. Les switchs Cisco le signalent par CDP : `%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet0/1 (99), with SW2 GigabitEthernet0/1 (1).` ;
+- en bonne pratique, on choisit comme VLAN natif un VLAN **dédié et inutilisé** (par exemple 999), où aucun poste n'est branché. Cela limite l'attaque par double étiquette (chapitre 8).
+
+### Configuration Cisco IOS
+
+```text
+SW1(config)# interface gigabitEthernet 0/1
+SW1(config-if)# switchport trunk encapsulation dot1q
+SW1(config-if)# switchport mode trunk
+SW1(config-if)# switchport trunk native vlan 999
+SW1(config-if)# switchport trunk allowed vlan 10,20,99
+SW1(config-if)# switchport nonegotiate
+```
+
+- `switchport trunk encapsulation dot1q` : seulement sur les switchs qui connaissent encore ISL (par exemple Catalyst 3560). Sur les switchs qui ne connaissent que 802.1Q (2960, 3650...), la commande n'existe pas : 802.1Q est le seul choix. `show interfaces gi0/1 capabilities` indique les encapsulations possibles. Si le switch répond « Command rejected: An interface whose trunk encapsulation is Auto can not be configured to trunk mode », c'est qu'il faut cette ligne avant `switchport mode trunk`.
+- `switchport trunk allowed vlan` : liste des VLAN autorisés. Par défaut, tous les VLAN passent. Attention : `allowed vlan 30` **remplace** la liste ; pour ajouter, on écrit `switchport trunk allowed vlan add 30`. Oublier le mot `add` coupe tous les autres VLAN du trunk.
+- `switchport nonegotiate` : coupe DTP, le protocole Cisco qui négocie automatiquement les trunks (modes `dynamic auto` et `dynamic desirable`). Un trunk se configure à la main des deux côtés.
+
+Vérification :
+
+```text
+SW1# show interfaces trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Gi0/1       on               802.1q         trunking      999
+
+Port        Vlans allowed on trunk
+Gi0/1       10,20,99
+
+Port        Vlans allowed and active in management domain
+Gi0/1       10,20,99
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Gi0/1       10,20,99
+```
+
+La dernière section liste les VLAN qui passent réellement. Un VLAN autorisé mais absent du switch (non créé) apparaît dans la liste « allowed on trunk », mais pas dans les deux sections suivantes.
+
+### Côté serveur : un trunk vers Linux
+
+Un hyperviseur ou un serveur Linux peut recevoir un trunk et créer une sous-interface par VLAN :
+
+```bash
+sudo ip link add link eth0 name eth0.10 type vlan id 10
+sudo ip addr add 192.168.10.5/24 dev eth0.10
+sudo ip link set eth0.10 up
+```
+
+Les trames qui sortent par `eth0.10` partent avec l'étiquette 10 ; celles qui arrivent étiquetées 10 sur `eth0` sont livrées à `eth0.10`.
+
+### À toi de jouer (labo Linux)
+
+Reprends le labo 3. Ajoute un deuxième switch `br1`, relié à `br0` par un trunk qui transporte les VLAN 10 et 20, avec un VLAN natif 999. Branche PC4 (192.168.1.4) sur `br1` dans le VLAN 10. Utilise le bloc « Labo 4 ».
+
+1. PC1 joint-il PC4 ? PC3 joint-il PC4 ?
+2. Capture sur le trunk : `sudo tcpdump -n -e -i trunk-a` pendant un ping de PC1 vers PC4. Repère l'étiquette.
+3. Retire le VLAN 10 du trunk côté `br1` seulement (`sudo bridge vlan del dev trunk-b vid 10`). Que se passe-t-il ? Remets-le ensuite.
+
+### Correction
+
+1. PC1 joint PC4 (même VLAN 10, transporté par le trunk). PC3 (VLAN 20) ne joint pas PC4 (VLAN 10).
+2. La capture affiche des lignes de la forme `... ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 192.168.1.1 > 192.168.1.4: ICMP echo request ...`. On voit le TPID 0x8100, le VID 10 et la priorité 0. Sur le port de PC1, la même trame est sans étiquette.
+3. Le ping échoue : `br1` jette les trames du VLAN 10 qui arrivent sur `trunk-b`, puisque ce VLAN n'y est plus autorisé. C'est l'équivalent d'un `allowed vlan` incomplet d'un seul côté : une panne fréquente, que `show interfaces trunk` met en évidence. On répare avec `sudo bridge vlan add dev trunk-b vid 10`.
+"""
+
+    codeblock "bash" {
+      title: "Labo 4 : un trunk entre deux bridges"
+      code: """
+# Deuxième switch, avec filtrage VLAN dès la création
+sudo ip link add br1 type bridge vlan_filtering 1
+sudo ip link set br1 up
+
+# Le câble du trunk
+sudo ip link add trunk-a type veth peer name trunk-b
+sudo ip link set trunk-a master br0 up
+sudo ip link set trunk-b master br1 up
+
+# Trunk : 10 et 20 étiquetés, 999 natif (PVID, sans étiquette)
+for t in trunk-a trunk-b; do
+  sudo bridge vlan del dev "$t" vid 1
+  sudo bridge vlan add dev "$t" vid 10
+  sudo bridge vlan add dev "$t" vid 20
+  sudo bridge vlan add dev "$t" vid 999 pvid untagged
+done
+
+# PC4 sur br1, VLAN 10
+sudo ip netns add pc4
+sudo ip link add veth-pc4 type veth peer name eth0 netns pc4
+sudo ip link set veth-pc4 master br1 up
+sudo bridge vlan del dev veth-pc4 vid 1
+sudo bridge vlan add dev veth-pc4 vid 10 pvid untagged
+sudo ip -n pc4 link set lo up
+sudo ip -n pc4 link set eth0 up
+sudo ip -n pc4 addr add 192.168.1.4/24 dev eth0
+
+bridge vlan show dev trunk-a
+sudo ip netns exec pc1 ping -c 2 192.168.1.4
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle est la taille de l’étiquette 802.1Q insérée dans une trame ?" {
+        - "2 octets"
+        + "4 octets"
+        - "12 octets"
+        - "26 octets"
+        explanation: "L'étiquette fait 4 octets : 2 pour le TPID (0x8100) et 2 pour PCP, DEI et VID. 26 octets correspond à l'en-tête de l'ancien protocole ISL de Cisco, qui encapsulait toute la trame."
+      }
+
+      question "Quelle valeur du TPID indique une étiquette 802.1Q ?" {
+        - "0x0800"
+        - "0x0806"
+        + "0x8100"
+        - "0x86DD"
+        explanation: "0x8100 est placé là où l'on attend normalement l'EtherType : le récepteur sait qu'une étiquette VLAN suit. 0x0800 est IPv4, 0x0806 ARP, 0x86DD IPv6."
+      }
+
+      question "Sur combien de bits est codé le VLAN ID dans l’étiquette 802.1Q ?" {
+        - "8 bits"
+        + "12 bits"
+        - "16 bits"
+        - "3 bits"
+        explanation: "Le VID occupe 12 bits, d'où 4096 valeurs possibles. Les 3 bits sont ceux du champ PCP (priorité), et 16 bits la taille du TPID."
+      }
+
+      question "Que se passe-t-il pour une trame non étiquetée reçue sur un trunk 802.1Q ?" {
+        - "elle est jetée"
+        + "elle est placée dans le VLAN natif du port"
+        - "elle est envoyée dans tous les VLAN"
+        - "elle est placée dans le VLAN 4095"
+        explanation: "Sur un trunk, une trame sans étiquette appartient au VLAN natif (VLAN 1 par défaut). D'où l'importance d'avoir le même VLAN natif des deux côtés. Le VLAN 4095 est réservé et jamais utilisé."
+      }
+
+      question "Le message %CDP-4-NATIVE_VLAN_MISMATCH apparaît. Quelle est la conséquence ?" {
+        - "le trunk est désactivé automatiquement"
+        - "aucune, c'est un simple avertissement esthétique"
+        + "les trames non étiquetées passent d'un VLAN à un autre entre les deux switchs"
+        - "tous les VLAN sont étiquetés, y compris le natif"
+        explanation: "Si SW1 a le natif 99 et SW2 le natif 1, ce que SW1 envoie sans étiquette depuis le VLAN 99 arrive dans le VLAN 1 de SW2. Deux réseaux sont mélangés, ce qui casse l'isolement et peut perturber le Spanning Tree. Le trunk reste actif, d'où le danger."
+      }
+
+      question "Le trunk Gi0/1 autorise 10,20. Tu tapes switchport trunk allowed vlan 30. Quel est le résultat ?" {
+        - "10, 20 et 30 sont autorisés"
+        + "seul le VLAN 30 est autorisé"
+        - "la commande est refusée"
+        - "le VLAN 30 devient le VLAN natif"
+        explanation: "Sans le mot add, la commande remplace la liste entière. Les VLAN 10 et 20 sont coupés sur le trunk. Pour ajouter, il faut switchport trunk allowed vlan add 30. C'est une erreur fréquente en production."
+      }
+
+      question "Quelle commande vérifie les VLAN qui passent réellement sur les trunks d’un switch Cisco ?" {
+        - "show vlan brief"
+        + "show interfaces trunk"
+        - "show running-config vlan"
+        - "show mac address-table"
+        explanation: "show interfaces trunk affiche le mode, l'encapsulation, le VLAN natif, les VLAN autorisés, actifs et en forwarding. show vlan brief ne montre pas les trunks."
+      }
+
+      question "Quel rôle joue switchport nonegotiate sur un trunk Cisco ?" {
+        - "il bloque le VLAN natif"
+        - "il désactive le Spanning Tree"
+        + "il coupe l'envoi des messages DTP"
+        - "il interdit l'agrégation de liens"
+        explanation: "DTP (Dynamic Trunking Protocol) est le protocole Cisco qui négocie les trunks. Le couper évite qu'un équipement extérieur négocie un trunk avec le switch. Le trunk doit alors être configuré explicitement des deux côtés."
+      }
+
+      question "Quelle est la taille maximale d’une trame Ethernet étiquetée 802.1Q, sans jumbo frames ?" {
+        - "1500 octets"
+        - "1518 octets"
+        + "1522 octets"
+        - "9000 octets"
+        explanation: "1518 octets (trame classique) + 4 octets d'étiquette = 1522. Les données utiles restent limitées à 1500 octets (MTU). 9000 octets correspond aux jumbo frames, une extension non standard."
+      }
+
+      question "Sous Linux, quelle commande crée une sous-interface pour le VLAN 20 sur eth0 ?" {
+        - "ip addr add vlan 20 dev eth0"
+        + "ip link add link eth0 name eth0.20 type vlan id 20"
+        - "bridge vlan add dev eth0 vid 20"
+        - "vconfig eth0 20 trunk"
+        explanation: "ip link add link eth0 name eth0.20 type vlan id 20 crée l'interface eth0.20 : ce qui en sort est étiqueté 20. bridge vlan add règle un port de bridge, pas une sous-interface. vconfig est un ancien outil, remplacé par ip link."
+      }
+
+      question "Quelle ligne d’une capture tcpdump -e montre une trame du VLAN 10 ?" {
+        - "ethertype IPv4 (0x0800), length 98: 192.168.1.1 > 192.168.1.4"
+        + "ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800)"
+        - "ethertype ARP (0x0806), length 42: Request who-has 192.168.1.4"
+        - "ethertype IPv6 (0x86dd), length 118: vlan 10"
+        explanation: "La trame étiquetée annonce l'EtherType 0x8100, puis l'étiquette : vlan 10, priorité p 0, et enfin le vrai EtherType IPv4. Elle fait 4 octets de plus que la même trame sans étiquette (102 au lieu de 98)."
+      }
+
+      question "Quel choix de VLAN natif est conseillé sur les trunks ?" {
+        - "le VLAN 1, par défaut"
+        - "le VLAN des serveurs"
+        + "un VLAN dédié, sans aucun poste"
+        - "le VLAN le plus utilisé, pour éviter les étiquettes"
+        explanation: "Un VLAN natif inutilisé (par exemple 999) ne contient aucun poste : une trame non étiquetée qui y tombe par erreur ou par malveillance n'atteint personne. Cela limite notamment l'attaque par double étiquette."
+      }
+
+      question "Que signifie le champ PCP de l’étiquette 802.1Q ?" {
+        - "le numéro du VLAN"
+        + "la priorité de la trame, de 0 à 7"
+        - "le protocole encapsulé"
+        - "le numéro de port d'origine"
+        explanation: "PCP (Priority Code Point, 3 bits) indique la priorité 802.1p de la trame, utilisée par la qualité de service : la voix sur IP est souvent marquée 5. Le numéro du VLAN est dans le champ VID."
+      }
+    }
+  }
+
+  module "inter-vlan" {
+    title: "Chapitre 5 : routage inter-VLAN"
+    duration: "40min"
+    content: """
+### Le principe
+
+Les VLAN sont isolés au niveau 2. Pour qu'un poste du VLAN 10 parle à un serveur du VLAN 20, il faut un équipement de niveau 3 qui a **une adresse dans chaque VLAN**. Cette adresse est la **passerelle par défaut** (default gateway) des postes du VLAN.
+
+Trois méthodes :
+1. **Un routeur, une interface physique par VLAN** : simple mais coûteux en ports et en câbles. On ne l'utilise plus au-delà de deux ou trois VLAN.
+2. **Router-on-a-stick** : un routeur, un seul lien trunk, une sous-interface par VLAN.
+3. **Switch de niveau 3** : le switch route lui-même, avec une interface virtuelle par VLAN (SVI).
+
+### Router-on-a-stick
+
+Le port du switch vers le routeur est un trunk. Sur le routeur, l'interface physique est découpée en sous-interfaces, chacune liée à un VLAN par `encapsulation dot1Q`.
+
+```text
+R1(config)# interface gigabitEthernet 0/0
+R1(config-if)# no shutdown
+R1(config-if)# interface gigabitEthernet 0/0.10
+R1(config-subif)# description Passerelle VLAN 10
+R1(config-subif)# encapsulation dot1Q 10
+R1(config-subif)# ip address 192.168.10.254 255.255.255.0
+R1(config-subif)# interface gigabitEthernet 0/0.20
+R1(config-subif)# encapsulation dot1Q 20
+R1(config-subif)# ip address 192.168.20.254 255.255.255.0
+R1(config-subif)# interface gigabitEthernet 0/0.999
+R1(config-subif)# encapsulation dot1Q 999 native
+```
+
+- L'interface physique doit être allumée (`no shutdown`) : les sous-interfaces en dépendent.
+- Le numéro de sous-interface (`.10`) est un simple nom. C'est `encapsulation dot1Q 10` qui fixe le VLAN. Garder le même numéro évite les erreurs.
+- `encapsulation dot1Q 999 native` indique au routeur quel VLAN arrive sans étiquette ; il doit correspondre au VLAN natif du trunk côté switch.
+
+Côté switch :
+
+```text
+SW1(config)# interface gigabitEthernet 0/1
+SW1(config-if)# switchport mode trunk
+SW1(config-if)# switchport trunk native vlan 999
+SW1(config-if)# switchport trunk allowed vlan 10,20,999
+```
+
+Limite : tout le trafic entre VLAN monte au routeur et redescend par le même câble. Le lien devient un goulet d'étranglement si les échanges entre VLAN sont importants.
+
+### Switch de niveau 3
+
+Un switch de niveau 3 (Catalyst 3560, 3650, 9300...) sait router à la vitesse du matériel. On crée une **SVI** (Switch Virtual Interface) par VLAN :
+
+```text
+SW-COEUR(config)# ip routing
+SW-COEUR(config)# vlan 10
+SW-COEUR(config-vlan)# vlan 20
+SW-COEUR(config-vlan)# exit
+SW-COEUR(config)# interface vlan 10
+SW-COEUR(config-if)# ip address 192.168.10.254 255.255.255.0
+SW-COEUR(config-if)# no shutdown
+SW-COEUR(config-if)# interface vlan 20
+SW-COEUR(config-if)# ip address 192.168.20.254 255.255.255.0
+SW-COEUR(config-if)# no shutdown
+```
+
+- Sans `ip routing`, le switch a des adresses dans chaque VLAN mais ne fait pas passer le trafic de l'un à l'autre. C'est l'oubli numéro un.
+- Une SVI est `up/up` seulement si le VLAN existe **et** qu'au moins un port access ou trunk de ce VLAN est actif. Sinon elle reste `up/down`.
+- Un port du switch peut devenir un **port routé** pour aller vers le routeur d'accès à Internet : `no switchport` puis `ip address`. Il se comporte comme une interface de routeur.
+
+### Le DHCP entre VLAN
+
+Un client DHCP envoie un broadcast, qui ne sort pas de son VLAN. Si le serveur DHCP est dans un autre VLAN, on configure un **relais** sur la passerelle du VLAN des clients :
+
+```text
+SW-COEUR(config)# interface vlan 10
+SW-COEUR(config-if)# ip helper-address 192.168.20.10
+```
+
+La passerelle transforme le broadcast en unicast vers 192.168.20.10.
+
+### À toi de jouer (labo Linux)
+
+Reprends le labo 3 (br0 avec filtrage VLAN, PC1 et PC2 en VLAN 10, PC3 en VLAN 20). Change les adresses : PC1 = 192.168.10.1, PC2 = 192.168.10.2, PC3 = 192.168.20.3, avec chacun une route par défaut. Ajoute un routeur R1 en router-on-a-stick sur un trunk vers br0. Utilise le bloc « Labo 5 ».
+
+1. Avant d'activer le routage dans R1 (`ip_forward`), le ping de PC1 vers PC3 fonctionne-t-il ? Et le ping de PC1 vers sa passerelle 192.168.10.254 ?
+2. Active le routage, refais le ping. Lance `sudo tcpdump -n -e -i veth-r1` pendant le ping : combien de fois chaque paquet passe-t-il sur le trunk ?
+3. Fais `sudo ip netns exec pc1 traceroute -n 192.168.20.3` (paquet `traceroute`). Que montre le premier saut ?
+
+### Correction
+
+1. Avant `ip_forward=1`, PC1 joint sa passerelle (même VLAN, même sous-réseau) mais pas PC3 : R1 reçoit le paquet sur `eth0.10` et refuse de le transmettre. Le noyau Linux a `ip_forward` à 0 par défaut, comme un switch Cisco sans `ip routing`. Attention : un namespace neuf recopie la valeur IPv4 de la machine hôte, d'où la ligne qui la force à 0 dans le labo.
+2. Après activation, le ping passe. Sur le trunk, chaque requête apparaît **deux fois** : une fois étiquetée `vlan 10` (de PC1 vers R1) et une fois étiquetée `vlan 20` (de R1 vers PC3), avec des MAC différentes. C'est la limite du router-on-a-stick : le même câble est traversé deux fois.
+3. Le premier saut est `192.168.10.254`, la passerelle de PC1, puis la destination 192.168.20.3. Le paquet a bien été routé.
+"""
+
+    codeblock "bash" {
+      title: "Labo 5 : router-on-a-stick sous Linux"
+      code: """
+# Nouvelles adresses et routes par défaut
+sudo ip -n pc1 addr flush dev eth0
+sudo ip -n pc2 addr flush dev eth0
+sudo ip -n pc3 addr flush dev eth0
+sudo ip -n pc1 addr add 192.168.10.1/24 dev eth0
+sudo ip -n pc2 addr add 192.168.10.2/24 dev eth0
+sudo ip -n pc3 addr add 192.168.20.3/24 dev eth0
+sudo ip -n pc1 route add default via 192.168.10.254
+sudo ip -n pc2 route add default via 192.168.10.254
+sudo ip -n pc3 route add default via 192.168.20.254
+
+# Le routeur, relié à br0 par un trunk (VLAN 10 et 20 étiquetés)
+sudo ip netns add r1
+sudo ip link add veth-r1 type veth peer name eth0 netns r1
+sudo ip link set veth-r1 master br0 up
+sudo bridge vlan del dev veth-r1 vid 1
+sudo bridge vlan add dev veth-r1 vid 10
+sudo bridge vlan add dev veth-r1 vid 20
+
+# Sous-interfaces du routeur
+sudo ip -n r1 link set lo up
+sudo ip -n r1 link set eth0 up
+sudo ip -n r1 link add link eth0 name eth0.10 type vlan id 10
+sudo ip -n r1 link add link eth0 name eth0.20 type vlan id 20
+sudo ip -n r1 addr add 192.168.10.254/24 dev eth0.10
+sudo ip -n r1 addr add 192.168.20.254/24 dev eth0.20
+sudo ip -n r1 link set eth0.10 up
+sudo ip -n r1 link set eth0.20 up
+
+# Un nouveau namespace hérite de l'ip_forward de la machine (1 si Docker est installé, par exemple) : on part de 0
+sudo ip netns exec r1 sysctl -w net.ipv4.ip_forward=0
+sudo ip netns exec pc1 ping -c 2 192.168.20.3      # échoue
+sudo ip netns exec r1 sysctl -w net.ipv4.ip_forward=1
+sudo ip netns exec pc1 ping -c 2 192.168.20.3      # répond
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel équipement est indispensable pour faire communiquer deux VLAN ?" {
+        - "un hub"
+        - "un switch de niveau 2"
+        + "un équipement de niveau 3 (routeur ou switch de niveau 3)"
+        - "un point d'accès Wi-Fi"
+        explanation: "Les VLAN sont isolés au niveau 2. Il faut un équipement qui route, c'est-à-dire qui a une adresse IP dans chaque VLAN et qui transmet les paquets de l'un à l'autre."
+      }
+
+      question "Dans un router-on-a-stick, quelle commande associe la sous-interface Gi0/0.30 au VLAN 30 ?" {
+        - "switchport access vlan 30"
+        + "encapsulation dot1Q 30"
+        - "vlan 30"
+        - "ip vlan 30"
+        explanation: "encapsulation dot1Q 30 indique que cette sous-interface envoie et reçoit les trames étiquetées 30. Le numéro .30 de la sous-interface n'est qu'un nom : sans cette commande, elle n'est liée à aucun VLAN."
+      }
+
+      question "Les SVI d’un switch de niveau 3 ont une adresse, mais les VLAN ne communiquent pas. Quel oubli est le plus probable ?" {
+        - "switchport mode trunk"
+        + "ip routing"
+        - "spanning-tree portfast"
+        - "encapsulation dot1Q"
+        explanation: "Par défaut, un switch de niveau 3 Cisco ne route pas. ip routing en configuration globale active le routage entre ses interfaces. Chaque VLAN joint alors sa passerelle et les autres VLAN."
+      }
+
+      question "Pourquoi l’interface vlan 30 d’un switch reste-t-elle up/down ?" {
+        - "parce qu'il manque ip routing"
+        - "parce qu'elle n'a pas d'adresse IP"
+        + "parce qu'aucun port actif n'appartient au VLAN 30, ou que le VLAN n'existe pas"
+        - "parce que le VLAN natif est différent"
+        explanation: "Une SVI passe en up/up seulement si son VLAN existe et qu'au moins un port access ou trunk actif transporte ce VLAN. L'absence d'adresse IP ou de ip routing ne change pas l'état de l'interface."
+      }
+
+      question "Quelle limite principale a le router-on-a-stick ?" {
+        - "il ne gère que deux VLAN"
+        + "tout le trafic entre VLAN passe deux fois sur le même lien"
+        - "il impose le VLAN natif 1"
+        - "il ne fonctionne qu'avec ISL"
+        explanation: "Chaque paquet monte vers le routeur dans un VLAN et redescend dans un autre, sur le même câble. Le lien devient un goulet d'étranglement si le trafic entre VLAN est important. Un switch de niveau 3 évite ce problème."
+      }
+
+      question "Que doit-on configurer sur le switch en face d’un routeur en router-on-a-stick ?" {
+        - "un port access dans le VLAN 1"
+        + "un port trunk qui transporte les VLAN routés"
+        - "un port routé avec no switchport"
+        - "un EtherChannel obligatoire"
+        explanation: "Le routeur reçoit et envoie des trames étiquetées de plusieurs VLAN : le port en face doit être un trunk qui autorise ces VLAN. Un port access ne transporterait qu'un seul VLAN, sans étiquette."
+      }
+
+      question "Que fait ip helper-address 192.168.20.10 sur l’interface vlan 10 ?" {
+        - "il donne l'adresse 192.168.20.10 à la SVI"
+        + "il relaie les broadcasts DHCP des clients du VLAN 10 vers le serveur 192.168.20.10"
+        - "il définit la passerelle par défaut du switch"
+        - "il crée une route vers le VLAN 20"
+        explanation: "Les requêtes DHCP sont des broadcasts qui ne sortent pas du VLAN. Le relais DHCP les reçoit sur la passerelle du VLAN 10 et les transmet en unicast au serveur. Sans lui, les clients du VLAN 10 n'obtiennent pas d'adresse."
+      }
+
+      question "Quelle passerelle par défaut donner aux postes du VLAN 10 (192.168.10.0/24) avec une SVI en 192.168.10.254 ?" {
+        - "192.168.10.0"
+        - "192.168.20.254"
+        + "192.168.10.254"
+        - "l'adresse de l'interface vers Internet"
+        explanation: "La passerelle d'un poste doit être dans son propre sous-réseau : c'est l'adresse de la SVI ou de la sous-interface du VLAN 10. 192.168.10.0 est l'adresse du réseau, pas une adresse d'hôte."
+      }
+
+      question "Sous Linux, R1 a une adresse dans chaque VLAN mais ne transmet rien d’un VLAN à l’autre. Quelle commande manque ?" {
+        - "ip link set eth0 promisc on"
+        + "sysctl -w net.ipv4.ip_forward=1"
+        - "bridge vlan add dev eth0 vid 10"
+        - "ip route add default via 192.168.10.254"
+        explanation: "Linux ne route pas par défaut : net.ipv4.ip_forward vaut 0. Le passer à 1 autorise la transmission des paquets entre interfaces. C'est l'équivalent de ip routing sur un switch Cisco de niveau 3."
+      }
+
+      question "Que fait no switchport sur un port d’un switch de niveau 3 ?" {
+        - "il éteint le port"
+        - "il le passe en trunk"
+        + "il en fait un port routé, qui accepte une adresse IP comme une interface de routeur"
+        - "il le retire de tous les VLAN sauf le natif"
+        explanation: "no switchport transforme le port de commutation en port routé : il n'appartient plus à aucun VLAN et reçoit sa propre adresse IP. On l'utilise souvent vers le routeur d'accès ou entre deux switchs de cœur."
+      }
+
+      question "Dans une capture sur le trunk du router-on-a-stick, une requête ICMP de PC1 (VLAN 10) vers PC3 (VLAN 20) apparaît combien de fois ?" {
+        - "une fois, étiquetée 10"
+        + "deux fois, étiquetée 10 puis 20"
+        - "une fois, sans étiquette"
+        - "deux fois, étiquetée 10 à chaque fois"
+        explanation: "Le paquet monte vers le routeur dans le VLAN 10, puis le routeur le renvoie dans le VLAN 20 sur le même lien. On le voit donc deux fois, avec deux étiquettes et des MAC différentes, car le routeur réécrit l'en-tête Ethernet."
+      }
+
+      question "Pourquoi n’utilise-t-on plus une interface physique de routeur par VLAN ?" {
+        - "parce que les routeurs ne savent pas router entre leurs interfaces physiques"
+        + "parce qu'il faut un port de routeur et un câble par VLAN, ce qui ne passe pas à l'échelle"
+        - "parce que 802.1Q l'interdit"
+        - "parce que le VLAN natif n'est pas compatible"
+        explanation: "La méthode fonctionne, mais avec 10 VLAN il faudrait 10 interfaces et 10 câbles. Le router-on-a-stick et le switch de niveau 3 font la même chose avec un seul lien ou aucun lien supplémentaire."
+      }
+    }
+  }
+
+  module "spanning-tree" {
+    title: "Chapitre 6 : Spanning Tree"
+    duration: "40min"
+    content: """
+### Pourquoi un protocole contre les boucles
+
+Pour ne pas tout perdre quand un câble est coupé, on relie les switchs par plusieurs chemins. Mais au niveau 2, une boucle est catastrophique :
+
+- **Tempête de broadcast** : un broadcast est inondé, revient par l'autre chemin, est inondé de nouveau, sans fin. L'en-tête Ethernet n'a pas de durée de vie (pas de TTL comme en IP). En quelques secondes, les liens sont saturés et le réseau tombe.
+- **Table MAC instable** : la même MAC source arrive alternativement par deux ports, l'entrée change sans arrêt (sur Cisco : message `%SW_MATM-4-MACFLAP_NOTIF`).
+- **Trames en double** : un poste reçoit plusieurs copies de la même trame.
+
+Le **Spanning Tree Protocol** (STP, IEEE 802.1D) garde les liens redondants mais en **bloque** certains, pour obtenir un arbre sans boucle. Si un lien actif tombe, un lien bloqué est réactivé.
+
+### Comment STP construit l'arbre
+
+Les switchs échangent des **BPDU** (Bridge Protocol Data Units), toutes les 2 secondes par défaut (hello time).
+
+**1. Élection du pont racine (root bridge).** Chaque switch a un **Bridge ID** = priorité (2 octets) + adresse MAC (6 octets). Le plus petit Bridge ID gagne. Priorité par défaut : **32768**, modifiable par pas de **4096**. Sur Cisco (PVST+, un arbre par VLAN), la priorité affichée inclut le numéro de VLAN (extended system ID) : dans le VLAN 10, `32768 + 10 = 32778`. À priorité égale, la plus petite MAC gagne, souvent le switch le plus ancien : c'est pourquoi on **choisit** la racine au lieu de la laisser au hasard.
+
+**2. Port racine (root port)** : sur chaque switch non racine, le port qui a le plus petit **coût** jusqu'à la racine. Coûts par défaut sur Cisco (méthode courte, valeurs 802.1D révisées) :
+
+| Débit | Coût |
+|---|---|
+| 10 Mbit/s | 100 |
+| 100 Mbit/s | 19 |
+| 1 Gbit/s | 4 |
+| 10 Gbit/s | 2 |
+
+En cas d'égalité : plus petit Bridge ID du voisin, puis plus petit identifiant de port du voisin.
+
+**3. Port désigné (designated port)** : sur chaque segment, le port qui offre le meilleur chemin vers la racine. Tous les ports de la racine sont désignés.
+
+**4. Les autres ports sont bloqués.** En RSTP, on les appelle **alternate** (chemin de secours vers la racine) ou **backup** (secours sur un même segment, rare).
+
+### États des ports
+
+STP classique (802.1D) : **blocking** (20 s de max age), **listening** (15 s), **learning** (15 s), **forwarding**. Un port met jusqu'à 30 secondes (2 × forward delay) pour passer de listening à forwarding, et environ 50 secondes après une panne indirecte.
+
+**RSTP** (Rapid STP, IEEE 802.1w, intégré à 802.1D-2004) réduit cela à quelques secondes, avec trois états : **discarding**, **learning**, **forwarding**. Sur Cisco, `spanning-tree mode rapid-pvst` l'active (un arbre RSTP par VLAN). MSTP (802.1s) regroupe plusieurs VLAN par instance.
+
+### PortFast et BPDU Guard
+
+Un port de poste n'a pas besoin d'attendre 30 secondes : un poste qui démarre risquerait d'échouer son DHCP.
+
+```text
+SW1(config)# interface range fastEthernet 0/1 - 22
+SW1(config-if-range)# spanning-tree portfast
+SW1(config-if-range)# spanning-tree bpduguard enable
+```
+
+- **PortFast** : le port passe directement en forwarding. À réserver aux ports vers des postes, **jamais** vers un switch.
+- **BPDU Guard** : si un BPDU arrive (quelqu'un a branché un switch), le port passe en **err-disabled** (coupé). Cela protège contre les boucles accidentelles et contre un switch pirate qui voudrait devenir racine.
+
+### Choisir la racine
+
+```text
+SW-COEUR(config)# spanning-tree mode rapid-pvst
+SW-COEUR(config)# spanning-tree vlan 10,20 priority 4096
+```
+
+ou `spanning-tree vlan 10,20 root primary`, qui calcule une priorité plus faible que la racine actuelle. Vérification :
+
+```text
+SW-COEUR# show spanning-tree vlan 10
+
+VLAN0010
+  Spanning tree enabled protocol rstp
+  Root ID    Priority    4106
+             Address     0001.4321.aaaa
+             This bridge is the root
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    4106   (priority 4096 sys-id-ext 10)
+             Address     0001.4321.aaaa
+...
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Gi0/1               Desg FWD 4         128.25   P2p
+Gi0/2               Desg FWD 4         128.26   P2p
+```
+
+Colonnes : `Role` = Root, Desg, Altn, Back ; `Sts` = FWD (forwarding), BLK (blocking), LRN (learning), LIS (listening).
+
+### Exemple : trouver le port bloqué
+
+Trois switchs en triangle, liens à 1 Gbit/s (coût 4). Priorités par défaut. MAC : SW1 = 0000.0000.0001, SW2 = ...0002, SW3 = ...0003.
+
+1. Racine : SW1 (même priorité, plus petite MAC).
+2. Ports racine : SW2 et SW3 joignent SW1 en direct pour un coût de 4. Leur port vers SW1 est root.
+3. Lien SW2–SW3 : chaque côté annonce un coût de 4 vers la racine. Égalité : le plus petit Bridge ID (SW2) a le port désigné.
+4. Le port de SW3 vers SW2 est **bloqué** (alternate).
+
+### À toi de jouer (labo Linux)
+
+Le bridge Linux implémente STP 802.1D. Construis deux switchs `sw1` et `sw2` reliés par **deux** câbles (une boucle), avec le bloc « Labo 6 ».
+
+**Attention :** active STP **avant** de brancher le deuxième câble. Une boucle sans STP provoque une tempête de broadcast qui peut occuper le processeur de ta machine. Sur un vrai réseau, ne crée jamais de boucle sans protection.
+
+1. Attends 35 secondes, puis affiche `bridge link show`. Quel port est bloqué ?
+2. Qui est la racine ? Vérifie avec `ip -d link show sw1` (champs `root_id` et `bridge_id`).
+3. Supprime le câble actif (`sudo ip link del l1-a`). Mesure le temps avant que l'autre port passe en `forwarding`.
+
+### Correction
+
+1. Un des ports de `sw2` (`l2-b` en général) est en `state blocking`, les autres en `state forwarding`. La racine est le bridge de plus petite priorité : on a forcé `sw1` à 4096 (contre 32768 pour `sw2`), donc `sw1` est racine et ses deux ports sont désignés. Sur `sw2`, un port est racine (forwarding), l'autre bloqué. Le choix entre les deux dépend de l'identifiant de port de `sw1` en face, puisque les coûts sont égaux.
+2. Pour `sw1`, `root_id` et `bridge_id` sont identiques (priorité 0x1000 = 4096) : il est racine. Pour `sw2`, `root_id` est celui de `sw1`.
+3. Le port bloqué passe par `listening` puis `learning` avant `forwarding` : environ 30 secondes avec les temporisations par défaut (forward delay 15 s). C'est la lenteur de STP classique que RSTP corrige.
+
+Nettoyage : `sudo ip link del l2-a` (supprimer un bout d'une paire veth supprime aussi l'autre ; `l1-a` a déjà été supprimé à l'étape 3), puis `sudo ip link del sw1` et `sudo ip link del sw2`. Supprimer un bridge ne supprime pas les veth qui y sont branchés : il les détache seulement.
+"""
+
+    codeblock "bash" {
+      title: "Labo 6 : deux bridges, deux câbles, STP"
+      code: """
+# Deux switchs avec STP activé dès la création
+sudo ip link add sw1 type bridge stp_state 1 priority 4096
+sudo ip link add sw2 type bridge stp_state 1
+sudo ip link set sw1 up
+sudo ip link set sw2 up
+
+# Deux câbles entre sw1 et sw2 : une boucle volontaire
+sudo ip link add l1-a type veth peer name l1-b
+sudo ip link add l2-a type veth peer name l2-b
+sudo ip link set l1-a master sw1 up
+sudo ip link set l2-a master sw1 up
+sudo ip link set l1-b master sw2 up
+sudo ip link set l2-b master sw2 up
+
+sleep 35
+bridge link show
+ip -d link show sw2 | grep -o 'root_id [^ ]*\\|bridge_id [^ ]*\\|root_port [^ ]*'
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Pourquoi une boucle de niveau 2 sans STP fait-elle tomber le réseau ?" {
+        - "les paquets IP n'ont pas de TTL"
+        + "les broadcasts tournent sans fin, car l'en-tête Ethernet n'a pas de durée de vie"
+        - "les switchs s'éteignent en cas de boucle"
+        - "les adresses MAC sont supprimées des tables"
+        explanation: "Une trame Ethernet n'a pas de champ TTL : un broadcast inondé revient par l'autre chemin et est inondé à nouveau, indéfiniment. Les liens et les processeurs saturent. Les paquets IP ont un TTL, mais ce n'est pas lui qui circule ici au niveau 2."
+      }
+
+      question "Comment est élu le pont racine ?" {
+        - "le switch qui a le plus de ports"
+        - "le switch qui a la plus grande priorité"
+        + "le switch qui a le plus petit Bridge ID (priorité puis MAC)"
+        - "le premier switch allumé"
+        explanation: "Le Bridge ID combine la priorité et l'adresse MAC. Le plus petit l'emporte : d'abord la plus petite priorité, puis, à égalité, la plus petite MAC. D'où l'intérêt de baisser la priorité du switch de cœur."
+      }
+
+      question "Quelle est la priorité STP par défaut, et par quel pas se règle-t-elle ?" {
+        - "1, par pas de 1"
+        - "128, par pas de 16"
+        + "32768, par pas de 4096"
+        - "65535, par pas de 256"
+        explanation: "La priorité par défaut est 32768. Avec l'extended system ID, seuls les 4 bits de poids fort sont réglables : les valeurs possibles sont des multiples de 4096 (0, 4096, 8192...). 128 est la priorité par défaut d'un port, pas d'un switch."
+      }
+
+      question "Dans le VLAN 20, show spanning-tree affiche Priority 32788. Pourquoi pas 32768 ?" {
+        - "la priorité a été modifiée à la main"
+        + "Cisco ajoute le numéro de VLAN (extended system ID) à la priorité"
+        - "c'est le coût vers la racine"
+        - "c'est une erreur d'affichage"
+        explanation: "En PVST+, chaque VLAN a son arbre, et le numéro de VLAN est inclus dans le Bridge ID : 32768 + 20 = 32788. La sortie le précise : priority 32768 sys-id-ext 20."
+      }
+
+      question "Quel est le coût STP par défaut d’un lien à 1 Gbit/s sur un switch Cisco ?" {
+        - "1"
+        + "4"
+        - "19"
+        - "100"
+        explanation: "Avec la méthode courte de Cisco : 10 Mbit/s = 100, 100 Mbit/s = 19, 1 Gbit/s = 4, 10 Gbit/s = 2. Le chemin choisi vers la racine est celui dont la somme des coûts est la plus faible."
+      }
+
+      question "Quel port d’un switch non racine est le port racine ?" {
+        - "le port de plus petit numéro"
+        + "le port qui offre le plus petit coût total jusqu'à la racine"
+        - "le port relié au switch de plus grande MAC"
+        - "le port le plus rapide, quel que soit le chemin"
+        explanation: "Le port racine est celui qui mène à la racine au moindre coût cumulé. Un port rapide peut perdre s'il mène à un chemin plus long. En cas d'égalité, on compare le Bridge ID du voisin puis l'identifiant de port."
+      }
+
+      question "Quels sont les états d’un port en RSTP ?" {
+        - "blocking, listening, learning, forwarding"
+        + "discarding, learning, forwarding"
+        - "up, down, err-disabled"
+        - "root, designated, alternate"
+        explanation: "RSTP regroupe disabled, blocking et listening en un seul état : discarding. La première liste est celle de STP 802.1D classique. Root, designated et alternate sont des rôles, pas des états."
+      }
+
+      question "Que fait spanning-tree portfast sur un port ?" {
+        - "il augmente le débit du port"
+        + "il fait passer le port directement en forwarding, sans attendre les états intermédiaires"
+        - "il désactive les BPDU sur tout le switch"
+        - "il force le port à devenir racine"
+        explanation: "PortFast évite d'attendre les 30 secondes de listening et learning. Il est réservé aux ports vers des postes ou serveurs. Sur un port vers un switch, il peut créer une boucle temporaire."
+      }
+
+      question "Un port PortFast avec BPDU Guard reçoit un BPDU. Que se passe-t-il ?" {
+        - "le port devient racine"
+        - "le BPDU est ignoré"
+        + "le port passe en err-disabled"
+        - "le switch redémarre"
+        explanation: "BPDU Guard considère qu'un port de poste ne doit jamais recevoir de BPDU : s'il en reçoit, un switch a été branché. Le port est coupé (err-disabled) jusqu'à intervention ou récupération automatique configurée."
+      }
+
+      question "Triangle SW1-SW2-SW3, liens égaux, priorités égales, MAC SW1 < SW2 < SW3. Quel port est bloqué ?" {
+        - "le port de SW1 vers SW2"
+        - "le port de SW2 vers SW3"
+        + "le port de SW3 vers SW2"
+        - "aucun, il n'y a pas de boucle"
+        explanation: "SW1 est racine (plus petite MAC). SW2 et SW3 ont leur port racine vers SW1. Sur le lien SW2-SW3, les coûts sont égaux : SW2, au plus petit Bridge ID, a le port désigné. Le port de SW3 vers SW2 est bloqué."
+      }
+
+      question "Que signale le message %SW_MATM-4-MACFLAP_NOTIF sur un switch Cisco ?" {
+        - "une adresse IP en double"
+        + "une même MAC apprise alternativement sur deux ports, souvent signe de boucle"
+        - "un VLAN natif différent"
+        - "une table MAC vide"
+        explanation: "Ce message indique un battement d'adresse MAC (MAC flapping) : l'entrée change sans arrêt de port. C'est typique d'une boucle de niveau 2 ou d'un lien redondant mal géré."
+      }
+
+      question "Avec STP 802.1D et les temporisations par défaut, combien de temps faut-il à un port pour passer de listening à forwarding ?" {
+        - "2 secondes"
+        - "15 secondes"
+        + "30 secondes"
+        - "300 secondes"
+        explanation: "Le port reste 15 secondes en listening puis 15 secondes en learning (forward delay = 15 s), soit 30 secondes. Si le changement vient d'une panne indirecte, il faut ajouter le max age de 20 secondes. RSTP converge en quelques secondes."
+      }
+
+      question "Quelle commande rend un switch Cisco racine du VLAN 10 de façon prévisible ?" {
+        - "spanning-tree vlan 10 cost 1"
+        + "spanning-tree vlan 10 priority 4096"
+        - "spanning-tree portfast"
+        - "spanning-tree vlan 10 priority 65535"
+        explanation: "Une priorité de 4096, plus petite que les 32768 par défaut, garantit l'élection. On choisit ainsi le switch de cœur. 65535 n'est pas une valeur valide (multiples de 4096 jusqu'à 61440) et le coût concerne un port, pas l'élection."
+      }
+    }
+  }
+
+  module "agregation" {
+    title: "Chapitre 7 : agrégation de liens"
+    duration: "30min"
+    content: """
+### Le besoin
+
+Le lien entre le switch d'accès et le switch de cœur sature. Ajouter un deuxième câble ne sert à rien tout seul : STP le bloque, car il voit une boucle. L'**agrégation de liens** regroupe plusieurs liens physiques en **un seul lien logique** : STP ne voit qu'un lien, et le trafic se répartit sur tous les câbles. Si un câble tombe, le lien logique continue sur les autres.
+
+Noms selon les constructeurs : EtherChannel ou Port-channel (Cisco), LAG, trunk (HPE/Aruba, attention au faux ami), bond ou team (Linux), NIC teaming (Windows Server).
+
+### Les protocoles
+
+| Mode | Protocole | Forme un agrégat avec |
+|---|---|---|
+| `active` | LACP (IEEE 802.3ad, aujourd'hui 802.1AX) | `active` ou `passive` |
+| `passive` | LACP | `active` seulement |
+| `desirable` | PAgP (propriétaire Cisco) | `desirable` ou `auto` |
+| `auto` | PAgP | `desirable` seulement |
+| `on` | aucun | `on` seulement |
+
+- **LACP** est la norme : à utiliser, surtout entre marques différentes ou vers un serveur.
+- `passive`–`passive` et `auto`–`auto` ne forment **rien** : personne ne commence la négociation.
+- `on` force l'agrégat sans négociation. Si l'autre côté n'est pas configuré pareil, on risque une boucle ou des pertes. À éviter.
+- Sur Cisco, jusqu'à **8 liens actifs** par agrégat ; LACP accepte jusqu'à 16 liens, les 8 en plus restant en secours.
+
+### Conditions pour que les ports s'agrègent
+
+Tous les ports d'un agrégat doivent avoir **la même configuration** : même vitesse, même duplex, même mode (access ou trunk), même VLAN d'accès ou même liste de VLAN autorisés et même VLAN natif. Une seule différence et le port est suspendu (`s` dans `show etherchannel summary`).
+
+### Répartition de la charge
+
+Un agrégat de 2 × 1 Gbit/s ne donne pas 2 Gbit/s à **un** transfert. Le switch choisit le câble par un **calcul de hachage** sur des champs de la trame (MAC source et destination, ou IP, ou ports). Une même conversation passe toujours par le même câble, pour garder l'ordre des trames. Le gain apparaît quand il y a beaucoup de conversations différentes. Sur Cisco : `port-channel load-balance src-dst-ip` (options selon le modèle), vérifiable avec `show etherchannel load-balance`.
+
+### Configuration Cisco IOS
+
+```text
+SW1(config)# interface range gigabitEthernet 0/1 - 2
+SW1(config-if-range)# channel-group 1 mode active
+SW1(config-if-range)# exit
+SW1(config)# interface port-channel 1
+SW1(config-if)# switchport mode trunk
+SW1(config-if)# switchport trunk native vlan 999
+SW1(config-if)# switchport trunk allowed vlan 10,20,99
+```
+
+On configure ensuite l'interface logique `port-channel 1` : les réglages y sont appliqués aux ports membres. Vérification :
+
+```text
+SW1# show etherchannel summary
+Flags:  D - down        P - bundled in port-channel
+        I - stand-alone s - suspended
+        S - Layer2      U - in use
+...
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+----------------------------
+1      Po1(SU)           LACP   Gi0/1(P)    Gi0/2(P)
+```
+
+`Po1(SU)` : agrégat de niveau 2 en service. `(P)` : port intégré. Un `(I)` signifie que le port fonctionne seul (pas de négociation), `(s)` qu'il est suspendu (configuration différente), `(D)` qu'il est éteint.
+
+### Côté Linux : le bonding
+
+Un serveur Linux peut agréger deux cartes en LACP (mode `802.3ad`), à condition que le switch en face soit configuré en LACP :
+
+```bash
+sudo ip link add bond0 type bond mode 802.3ad miimon 100 lacp_rate fast
+sudo ip link set eno1 down
+sudo ip link set eno2 down
+sudo ip link set eno1 master bond0
+sudo ip link set eno2 master bond0
+sudo ip link set bond0 up
+cat /proc/net/bonding/bond0
+```
+
+Les noms `eno1` et `eno2` dépendent de ta machine (`ip link` pour les voir). Attention : faire cela à distance sur la carte qui porte ta session SSH coupe la connexion. Les valeurs par défaut du pilote sont `lacp_rate slow` (un LACPDU toutes les 30 secondes) et un hachage `layer2` (sur les MAC). Pour une configuration permanente, on passe par l'outil réseau de la distribution (netplan, systemd-networkd, ifupdown).
+
+### À toi de jouer
+
+1. Un switch A a `channel-group 1 mode passive` sur Gi0/1-2, le switch B `channel-group 1 mode passive` aussi. Que donne `show etherchannel summary` ? Corrige.
+2. Après correction, Gi0/2 apparaît `(s)`. `show run interface gi0/2` montre `switchport trunk allowed vlan 10,20` alors que Gi0/1 a `10,20,99`. Explique et corrige.
+3. Un utilisateur copie un fichier de 10 Go vers un serveur à travers un agrégat de 2 × 1 Gbit/s. Il constate environ 110 Mo/s, pas le double. Est-ce une panne ?
+
+### Correction
+
+1. Rien ne se forme : deux côtés `passive` attendent chacun que l'autre commence. Les ports apparaissent en `(I)` (stand-alone) ou l'agrégat reste `(SD)`. Correction : passer au moins un côté en `active` (de préférence les deux) : `channel-group 1 mode active`.
+2. Les membres doivent avoir la même liste de VLAN autorisés : Gi0/2 est suspendu. Correction : configurer l'interface `port-channel 1`, qui propage les réglages aux membres, ou aligner Gi0/2 : `switchport trunk allowed vlan 10,20,99`.
+3. Ce n'est pas une panne. Un seul transfert, entre deux mêmes adresses, est haché vers un seul câble : il est limité à 1 Gbit/s, soit environ 110 à 118 Mo/s utiles. L'agrégat améliore le débit total quand plusieurs postes travaillent en même temps, et la tolérance aux pannes.
+"""
+
+    quiz {
+      pick: 5
+      question "Pourquoi deux câbles simples entre deux switchs ne doublent-ils pas le débit ?" {
+        - "parce que les switchs ne gèrent qu'un câble par voisin"
+        + "parce que STP bloque l'un des deux pour éviter une boucle"
+        - "parce que 802.1Q l'interdit"
+        - "parce qu'il faut des câbles croisés"
+        explanation: "Deux liens entre les mêmes switchs forment une boucle de niveau 2 : STP en bloque un. L'agrégation présente les deux câbles comme un seul lien logique, que STP ne bloque pas."
+      }
+
+      question "Quel protocole d’agrégation est normalisé par l’IEEE ?" {
+        - "PAgP"
+        + "LACP"
+        - "DTP"
+        - "CDP"
+        explanation: "LACP (Link Aggregation Control Protocol) est défini par IEEE 802.3ad, aujourd'hui 802.1AX. PAgP, DTP et CDP sont des protocoles propriétaires Cisco."
+      }
+
+      question "Le switch A est en mode active, le switch B en mode passive. L’agrégat se forme-t-il ?" {
+        + "oui, active démarre la négociation et passive répond"
+        - "non, les deux doivent être en active"
+        - "non, il faut on des deux côtés"
+        - "oui, mais seulement avec PAgP"
+        explanation: "En LACP, active envoie des LACPDU et passive y répond : l'agrégat se forme. Seul passive-passive échoue, car personne n'envoie. active et passive sont des modes LACP, pas PAgP."
+      }
+
+      question "Quelle combinaison ne forme jamais d’agrégat ?" {
+        - "active - active"
+        - "desirable - auto"
+        + "auto - auto"
+        - "active - passive"
+        explanation: "auto (PAgP) attend la négociation sans la commencer. Deux côtés auto attendent chacun l'autre : rien ne se forme. Même chose pour passive-passive en LACP."
+      }
+
+      question "Combien de liens actifs au maximum dans un EtherChannel Cisco ?" {
+        - "2"
+        - "4"
+        + "8"
+        - "16"
+        explanation: "Un EtherChannel compte au plus 8 liens actifs. LACP accepte jusqu'à 16 liens configurés, mais les 8 supplémentaires restent en secours (hot standby) et ne prennent le relais qu'en cas de panne."
+      }
+
+      question "Dans show etherchannel summary, que signifie Gi0/2(s) ?" {
+        - "le port est en service"
+        + "le port est suspendu, souvent à cause d'une configuration différente des autres membres"
+        - "le port est en mode PAgP"
+        - "le port est un port de niveau 3"
+        explanation: "Le drapeau s minuscule signifie suspended. Il apparaît notamment quand un port n'a pas la même vitesse, le même mode ou les mêmes VLAN que les autres membres. P signifie intégré à l'agrégat, S majuscule agrégat de niveau 2."
+      }
+
+      question "Pourquoi un seul transfert ne dépasse-t-il pas 1 Gbit/s sur un agrégat de 2 × 1 Gbit/s ?" {
+        - "l'agrégat est mal configuré"
+        + "le hachage envoie toute une conversation sur le même câble"
+        - "LACP réserve un câble au secours"
+        - "le MTU est divisé par deux"
+        explanation: "Le switch choisit le câble par un calcul de hachage sur les adresses (et parfois les ports). Une même conversation suit toujours le même câble pour garder l'ordre des trames. Le gain apparaît avec de nombreuses conversations."
+      }
+
+      question "Quelle condition n’est pas exigée pour que des ports s’agrègent ?" {
+        - "même vitesse et même duplex"
+        - "même mode access ou trunk"
+        - "mêmes VLAN autorisés et même VLAN natif"
+        + "même description d'interface"
+        explanation: "La description est un simple commentaire, elle peut différer. Vitesse, duplex, mode et VLAN doivent être identiques, sinon le port est suspendu."
+      }
+
+      question "Quel est le risque du mode on ?" {
+        - "il consomme plus de bande passante"
+        + "sans négociation, une erreur de configuration en face peut créer une boucle ou des pertes"
+        - "il ne fonctionne qu'avec deux liens"
+        - "il impose PAgP"
+        explanation: "En mode on, aucun protocole ne vérifie que l'autre côté est bien configuré en agrégat. Si ce n'est pas le cas, les trames partent sur des liens que le voisin traite séparément : boucle ou trafic perdu. LACP détecte ces incohérences."
+      }
+
+      question "Sous Linux, quel mode de bonding correspond à LACP ?" {
+        - "active-backup"
+        - "balance-rr"
+        + "802.3ad"
+        - "broadcast"
+        explanation: "Le mode 802.3ad (mode 4) du pilote bonding utilise LACP et demande un switch configuré en LACP en face. active-backup n'utilise qu'une carte à la fois, balance-rr alterne sans protocole."
+      }
+
+      question "Après création de l’EtherChannel, où configure-t-on le trunk et les VLAN autorisés ?" {
+        - "sur chaque port membre séparément, jamais ailleurs"
+        + "sur l'interface port-channel, qui applique les réglages aux membres"
+        - "dans la configuration globale du switch"
+        - "sur le switch d'en face seulement"
+        explanation: "L'interface port-channel est le lien logique : sa configuration s'applique aux ports membres. Configurer chaque port à la main multiplie les risques de différence, donc de port suspendu."
+      }
+
+      question "Quel fichier affiche l’état détaillé d’un bonding Linux bond0 ?" {
+        - "/etc/bond0.conf"
+        + "/proc/net/bonding/bond0"
+        - "/sys/class/net/bond0/address"
+        - "/var/log/bond0"
+        explanation: "/proc/net/bonding/bond0 donne le mode, l'état MII de chaque carte, les informations LACP du partenaire et l'agrégateur utilisé. /sys/class/net/bond0/address ne contient que l'adresse MAC."
+      }
+    }
+  }
+
+  module "securite" {
+    title: "Chapitre 8 : sécurité de base d’un switch"
+    duration: "35min"
+    content: """
+Un switch mal configuré laisse un attaquant branché sur une prise murale lire du trafic, changer de VLAN ou couper le réseau. Les protections de base sont simples et ne coûtent rien. Les exercices d'attaque se font uniquement dans ton labo personnel, jamais sur un réseau qui ne t'appartient pas.
+
+### Ce que l'on protège
+
+| Attaque | Principe | Protection |
+|---|---|---|
+| Saturation de la table MAC (MAC flooding) | envoyer des milliers de MAC sources différentes pour remplir la table : le switch inonde alors tout, l'attaquant lit le trafic | port security |
+| Usurpation de switch (switch spoofing) | négocier un trunk par DTP depuis un poste et recevoir tous les VLAN | ports access forcés, DTP coupé |
+| Double étiquette (double tagging) | depuis le VLAN natif du trunk, envoyer une trame avec deux étiquettes : le premier switch retire la première, le second livre la trame dans le VLAN de la seconde (sens unique) | VLAN natif inutilisé, aucun poste dans le VLAN natif |
+| Switch pirate ou boucle | brancher un switch qui se déclare racine STP, ou une boucle | BPDU Guard, racine choisie |
+| Prise libre | brancher un poste non autorisé sur une prise inutilisée | ports inutilisés éteints et dans un VLAN poubelle |
+
+### Port security
+
+Port security limite le nombre de MAC autorisées sur un port access.
+
+```text
+SW1(config)# interface fastEthernet 0/5
+SW1(config-if)# switchport mode access
+SW1(config-if)# switchport access vlan 10
+SW1(config-if)# switchport port-security
+SW1(config-if)# switchport port-security maximum 2
+SW1(config-if)# switchport port-security mac-address sticky
+SW1(config-if)# switchport port-security violation restrict
+```
+
+- Le port doit être en `switchport mode access` (ou trunk explicite) : sur un port en mode dynamique, la commande est refusée.
+- Sans autre réglage : **1 MAC maximum**, violation **shutdown**.
+- `sticky` : les MAC apprises sont ajoutées à la running-config ; un `copy running-config startup-config` les rend permanentes.
+- Modes de violation :
+  - `protect` : les trames des MAC en trop sont jetées, sans alerte ni compteur ;
+  - `restrict` : jetées aussi, mais avec un message syslog, un trap SNMP et le compteur de violations ;
+  - `shutdown` (défaut) : le port passe en **err-disabled**, plus rien ne passe.
+- Pour relancer un port err-disabled : `shutdown` puis `no shutdown` sur l'interface, après avoir retiré l'équipement en cause. La relance automatique existe : `errdisable recovery cause psecure-violation`.
+
+Lecture, sur un port configuré avec les valeurs par défaut (1 MAC, violation shutdown) et `sticky` :
+
+```text
+SW1# show port-security interface fastEthernet 0/5
+Port Security              : Enabled
+Port Status                : Secure-shutdown
+Violation Mode             : Shutdown
+Aging Time                 : 0 mins
+Aging Type                 : Absolute
+SecureStatic Address Aging : Disabled
+Maximum MAC Addresses      : 1
+Total MAC Addresses        : 1
+Configured MAC Addresses   : 0
+Sticky MAC Addresses       : 1
+Last Source Address:Vlan   : 0050.7966.6802:10
+Security Violation Count   : 1
+```
+
+Port security n'authentifie pas : une MAC se falsifie facilement. Pour un vrai contrôle d'accès, on utilise **802.1X** avec un serveur RADIUS (l'ANSSI publie des recommandations sur le sujet).
+
+### Ports et VLAN inutilisés
+
+```text
+SW1(config)# vlan 998
+SW1(config-vlan)# name PARKING
+SW1(config-vlan)# exit
+SW1(config)# interface range fastEthernet 0/23 - 24
+SW1(config-if-range)# switchport mode access
+SW1(config-if-range)# switchport access vlan 998
+SW1(config-if-range)# shutdown
+```
+
+- Un port inutilisé est **éteint** et placé dans un VLAN « parking » qui n'est routé nulle part.
+- Le **VLAN 1** ne sert à rien en production : aucun poste, pas d'administration dedans.
+- Le **VLAN natif** des trunks est un VLAN dédié (999), sans poste, différent du VLAN parking.
+- Les trunks ne transportent que les VLAN nécessaires (`allowed vlan`).
+
+### Désactiver la négociation et les services inutiles
+
+- `switchport mode access` sur les ports de postes, `switchport mode trunk` + `switchport nonegotiate` sur les trunks. Le mode par défaut des ports dépend du modèle (`dynamic auto` sur beaucoup de Catalyst) : ne jamais le laisser.
+- `spanning-tree portfast` + `spanning-tree bpduguard enable` sur les ports de postes.
+- CDP (`no cdp enable` sur les ports de postes) : il annonce le modèle et la version du switch à qui écoute.
+
+### Administration du switch
+
+- Une SVI d'administration dans un VLAN dédié (par exemple 99), accessible seulement depuis le poste des administrateurs.
+- SSH au lieu de Telnet : `ip domain-name`, `crypto key generate rsa modulus 2048`, `ip ssh version 2`, `line vty 0 15` puis `transport input ssh` et `login local`.
+- `enable secret` (et non `enable password`), `service password-encryption`, une bannière légale.
+
+### À toi de jouer
+
+1. Lis la sortie `show port-security interface fastEthernet 0/5` ci-dessus. Que s'est-il passé ? Quelle MAC est en cause ? Comment remettre le port en service ?
+2. Écris la configuration d'un port Fa0/7 pour une imprimante du VLAN 20 : une seule MAC, apprise automatiquement et conservée, port coupé en cas de violation, PortFast et BPDU Guard.
+3. Repère les 4 problèmes de sécurité dans cet extrait :
+
+```text
+interface FastEthernet0/10
+ switchport access vlan 10
+!
+interface FastEthernet0/24
+ switchport access vlan 1
+!
+interface GigabitEthernet0/1
+ switchport mode trunk
+ switchport trunk native vlan 10
+!
+line vty 0 4
+ password cisco
+ login
+ transport input telnet
+```
+
+### Correction
+
+1. Le port est en `Secure-shutdown` (err-disabled) : un deuxième équipement, de MAC `0050.7966.6802`, a émis dans le VLAN 10 alors qu'une seule MAC était autorisée (sticky, déjà apprise). Compteur de violations : 1. On débranche l'équipement en cause, puis `interface fa0/5`, `shutdown`, `no shutdown`.
+2. Configuration :
+
+```text
+interface FastEthernet0/7
+ switchport mode access
+ switchport access vlan 20
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+```
+
+(`maximum 1` et `violation shutdown` sont les valeurs par défaut ; les écrire rend la configuration lisible.)
+
+3. Problèmes :
+   - Fa0/10 n'a pas `switchport mode access` : le port reste en mode dynamique et peut négocier un trunk (usurpation de switch) ;
+   - Fa0/24 est dans le VLAN 1 et allumé : un port inutilisé doit être éteint et dans un VLAN parking ;
+   - le trunk Gi0/1 a pour VLAN natif le VLAN 10, qui contient des postes : risque de double étiquette ; il manque aussi `switchport nonegotiate` et une liste `allowed vlan` ;
+   - l'accès distant se fait en Telnet (mot de passe en clair sur le réseau) avec un mot de passe faible et partagé : SSH, comptes locaux, `login local`.
+"""
+
+    quiz {
+      pick: 5
+      question "Quel est le mode de violation par défaut de port security ?" {
+        - "protect"
+        - "restrict"
+        + "shutdown"
+        - "aucun, il faut le choisir"
+        explanation: "Par défaut, une violation met le port en err-disabled (shutdown). restrict et protect jettent seulement les trames en trop ; restrict prévient (syslog, SNMP, compteur), protect non."
+      }
+
+      question "Quel mode de violation jette les trames sans aucune alerte ni compteur ?" {
+        + "protect"
+        - "restrict"
+        - "shutdown"
+        - "sticky"
+        explanation: "protect est silencieux : il ne génère ni journal ni compteur, ce qui rend le diagnostic difficile. restrict fait la même chose en prévenant. sticky n'est pas un mode de violation, c'est la mémorisation des MAC."
+      }
+
+      question "Combien de MAC un port accepte-t-il par défaut quand on active switchport port-security ?" {
+        + "1"
+        - "2"
+        - "8"
+        - "132"
+        explanation: "Sans commande maximum, une seule MAC est autorisée. Un poste avec un téléphone IP derrière, ou une machine virtuelle en mode pont, demande d'augmenter cette valeur."
+      }
+
+      question "Que fait switchport port-security mac-address sticky ?" {
+        - "il bloque toutes les MAC sauf la première"
+        + "il apprend les MAC autorisées et les écrit dans la running-config"
+        - "il rend l'adresse MAC du switch fixe"
+        - "il désactive le vieillissement de la table MAC"
+        explanation: "sticky transforme les MAC apprises en MAC sécurisées, écrites dans la running-config. Après sauvegarde, elles survivent au redémarrage. Le nombre maximal reste fixé par maximum."
+      }
+
+      question "Pourquoi la commande switchport port-security est-elle refusée sur un port ?" {
+        - "le port est éteint"
+        + "le port est en mode dynamique, sans switchport mode access"
+        - "le VLAN n'existe pas"
+        - "le port a PortFast"
+        explanation: "Port security ne s'active pas sur un port en mode dynamic auto ou desirable. Il faut d'abord fixer le mode avec switchport mode access. C'est une erreur fréquente en TP."
+      }
+
+      question "Comment remettre en service un port en err-disabled après une violation, sans relance automatique ?" {
+        - "no switchport port-security"
+        - "clear port-security"
+        + "retirer l'équipement en cause, puis shutdown et no shutdown sur l'interface"
+        - "redémarrer le poste"
+        explanation: "Un port err-disabled reste coupé jusqu'à une action manuelle : shutdown puis no shutdown. Il faut d'abord retirer la cause, sinon le port retombe. errdisable recovery cause psecure-violation automatise la relance."
+      }
+
+      question "En quoi consiste l’attaque par double étiquette (double tagging) ?" {
+        - "falsifier deux adresses MAC à la fois"
+        + "envoyer, depuis le VLAN natif, une trame à deux étiquettes pour atteindre un autre VLAN"
+        - "négocier deux trunks en même temps"
+        - "saturer deux tables MAC"
+        explanation: "Le premier switch retire l'étiquette extérieure (celle du VLAN natif) et transmet la trame sur le trunk sans étiquette native ; le switch suivant lit l'étiquette intérieure et livre la trame dans un autre VLAN. Elle ne marche qu'à sens unique. Parade : VLAN natif inutilisé, sans poste."
+      }
+
+      question "Que doit-on faire d’un port de switch inutilisé ?" {
+        - "le laisser dans le VLAN 1 pour pouvoir l'utiliser vite"
+        - "le passer en trunk"
+        + "le placer dans un VLAN parking non routé et l'éteindre"
+        - "lui activer PortFast"
+        explanation: "Un port éteint et rangé dans un VLAN inutilisé n'offre rien à un intrus qui s'y branche. Même si quelqu'un le rallume par erreur, il n'atteint aucun réseau utile."
+      }
+
+      question "Quelle attaque est contrée en forçant switchport mode access et nonegotiate ?" {
+        - "la saturation de la table MAC"
+        + "l'usurpation de switch par négociation DTP"
+        - "l'empoisonnement ARP"
+        - "le vol de mot de passe Telnet"
+        explanation: "Si un port reste en mode dynamique, un attaquant peut envoyer des messages DTP et monter un trunk : il reçoit alors le trafic de tous les VLAN. Fixer le mode et couper DTP empêche cette négociation."
+      }
+
+      question "Pourquoi port security ne remplace-t-il pas 802.1X ?" {
+        - "port security ne fonctionne qu'en IPv6"
+        + "une adresse MAC se falsifie facilement, alors que 802.1X authentifie l'utilisateur ou la machine"
+        - "802.1X est plus rapide"
+        - "port security est réservé aux trunks"
+        explanation: "Il suffit de copier la MAC d'un poste autorisé pour passer port security. 802.1X demande une authentification (certificat, identifiant) vérifiée par un serveur RADIUS avant d'ouvrir le port."
+      }
+
+      question "Pourquoi remplacer Telnet par SSH pour administrer un switch ?" {
+        - "Telnet ne fonctionne pas sur les switchs récents"
+        + "Telnet transmet identifiants et commandes en clair"
+        - "SSH est plus rapide"
+        - "SSH n'a pas besoin de mot de passe"
+        explanation: "Tout ce qui passe en Telnet, mot de passe compris, peut être lu par quelqu'un qui capture le trafic. SSH chiffre la session. On le configure avec un nom de domaine, une clé RSA, ip ssh version 2 et transport input ssh."
+      }
+
+      question "Que fait l’attaque par saturation de la table MAC si elle réussit ?" {
+        - "le switch s'éteint"
+        + "le switch inonde le trafic unicast sur tous les ports, que l'attaquant peut lire"
+        - "les VLAN sont supprimés"
+        - "le switch devient racine STP"
+        explanation: "Table pleine, le switch ne peut plus apprendre : les destinations inconnues sont inondées comme sur un hub. L'attaquant voit passer le trafic des autres postes. Port security limite le nombre de MAC par port et bloque l'attaque."
+      }
+
+      question "Quelle protection empêche un switch pirate de devenir racine STP via un port de poste ?" {
+        - "port security"
+        + "BPDU Guard sur les ports de postes"
+        - "switchport nonegotiate"
+        - "le VLAN natif 999"
+        explanation: "Le switch pirate envoie des BPDU avec une priorité faible. BPDU Guard coupe le port dès qu'un BPDU y arrive. On fixe aussi la priorité du switch de cœur pour qu'il reste racine."
+      }
+    }
+  }
+
+  module "config-depannage" {
+    title: "Chapitre 9 : configuration type et dépannage"
+    duration: "30min"
+    content: """
+### Une configuration de switch d'accès commentée
+
+Contexte : un switch Cisco 2960 de 24 ports dans une salle du lycée. VLAN 10 (administration), 20 (pédagogie), 99 (gestion des équipements), 998 (parking), 999 (natif). Le trunk Gi0/1 monte vers le switch de cœur, qui fait le routage.
+
+```text
+! --- Identité et accès ---
+hostname SW-SALLE-B12
+no ip domain-lookup                       ! une commande mal tapée n'est pas prise pour un nom DNS
+enable secret UnSecretLongEtUnique        ! mot de passe du mode privilégié, haché
+service password-encryption               ! masque les autres mots de passe dans la config
+username admin privilege 15 secret UnAutreSecretLong
+ip domain-name lycee.lan
+crypto key generate rsa modulus 2048      ! commande exécutée une fois, pas enregistrée telle quelle
+ip ssh version 2
+banner motd #Acces reserve au personnel autorise.#
+!
+! --- VLAN ---
+vlan 10
+ name ADMINISTRATION
+vlan 20
+ name PEDAGOGIE
+vlan 99
+ name GESTION
+vlan 998
+ name PARKING
+vlan 999
+ name NATIF
+!
+spanning-tree mode rapid-pvst
+!
+! --- Ports des postes ---
+interface range FastEthernet0/1 - 8
+ description Postes administration
+ switchport mode access
+ switchport access vlan 10
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+interface range FastEthernet0/9 - 20
+ description Postes pedagogie
+ switchport mode access
+ switchport access vlan 20
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+! --- Ports inutilisés ---
+interface range FastEthernet0/21 - 24 , GigabitEthernet0/2
+ description Inutilise
+ switchport mode access
+ switchport access vlan 998
+ shutdown
+!
+! --- Trunk vers le cœur ---
+interface GigabitEthernet0/1
+ description Trunk vers SW-COEUR Gi1/0/5
+ switchport mode trunk
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,99
+ switchport nonegotiate
+!
+! --- Administration ---
+interface Vlan1
+ no ip address
+ shutdown
+interface Vlan99
+ ip address 192.168.99.12 255.255.255.0
+ no shutdown
+ip default-gateway 192.168.99.254          ! un switch de niveau 2 a besoin d'une passerelle pour être joint d'un autre réseau
+!
+line con 0
+ login local
+line vty 0 15
+ login local
+ transport input ssh
+!
+end
+```
+
+Les commentaires placés après `!` en fin de ligne servent à l'explication : IOS ne reconnaît `!` comme commentaire qu'en début de ligne. Retire-les avant de coller cette configuration dans un switch.
+
+Puis `copy running-config startup-config` (ou `write memory`) pour sauvegarder.
+
+### Les commandes de diagnostic
+
+| Question | Commande |
+|---|---|
+| Quels ports dans quel VLAN ? | `show vlan brief` |
+| Quels trunks, quels VLAN y passent, quel natif ? | `show interfaces trunk` |
+| Mode réel d'un port (access, trunk, négocié) ? | `show interfaces fa0/5 switchport` |
+| Port up ? erreurs ? duplex ? | `show interfaces status`, `show interfaces fa0/5` |
+| Où est telle MAC ? | `show mac address-table address 0050.7966.6801` |
+| Qui est racine, quels ports bloqués ? | `show spanning-tree vlan 10` |
+| Agrégats ? | `show etherchannel summary` |
+| Ports err-disabled et cause ? | `show interfaces status err-disabled` |
+| Port security ? | `show port-security`, `show port-security interface fa0/5` |
+| Voisins Cisco ? | `show cdp neighbors` |
+| Routage (switch de niveau 3) ? | `show ip interface brief`, `show ip route` |
+
+### Une méthode : du bas vers le haut
+
+Quand un poste ne joint pas sa passerelle :
+
+1. **Physique** : le port est-il `connected` dans `show interfaces status` ? `err-disabled` ? `notconnect` ?
+2. **VLAN du port** : le port est-il dans le bon VLAN (`show vlan brief`) ? Le VLAN existe-t-il ?
+3. **Trunk** : le VLAN est-il autorisé et actif sur **chaque** trunk du chemin, des deux côtés (`show interfaces trunk`) ? Même VLAN natif ?
+4. **STP** : le VLAN est-il en forwarding sur le trunk (`show spanning-tree vlan X`) ?
+5. **MAC** : le switch a-t-il appris la MAC du poste, sur le bon port et dans le bon VLAN ?
+6. **Niveau 3** : la SVI ou la sous-interface est-elle `up/up` ? Le poste a-t-il la bonne adresse, le bon masque, la bonne passerelle ? `ip routing` est-il actif ?
+
+### À toi de jouer
+
+Le poste de la salle B12 sur Fa0/3 (VLAN 10, 192.168.10.23/24, passerelle 192.168.10.254) ne joint pas sa passerelle. Voici des extraits :
+
+```text
+SW-SALLE-B12# show interfaces status
+Port      Name               Status       Vlan       Duplex  Speed Type
+Fa0/3     Postes administrat connected    10         a-full  a-100 10/100BaseTX
+
+SW-SALLE-B12# show interfaces trunk
+Port        Mode             Encapsulation  Status        Native vlan
+Gi0/1       on               802.1q         trunking      999
+
+Port        Vlans allowed on trunk
+Gi0/1       10,20,99
+
+SW-COEUR# show interfaces trunk
+Port        Mode             Encapsulation  Status        Native vlan
+Gi1/0/5     on               802.1q         trunking      999
+
+Port        Vlans allowed on trunk
+Gi1/0/5     20,99
+```
+
+1. À quelle étape de la méthode se trouve la panne ? Quelle commande la corrige ?
+2. Pourquoi la commande `switchport trunk allowed vlan 10` serait-elle une mauvaise correction ?
+3. Après correction, le poste joint sa passerelle mais pas un serveur du VLAN 20. `show ip interface brief` sur SW-COEUR montre `Vlan10 up up` et `Vlan20 up up`. Que vérifier ?
+
+### Correction
+
+1. Étape 3 (trunk) : côté cœur, le trunk Gi1/0/5 n'autorise pas le VLAN 10. Les trames du VLAN 10 envoyées par SW-SALLE-B12 sont jetées en arrivant. Correction sur SW-COEUR : `interface gi1/0/5` puis `switchport trunk allowed vlan add 10`.
+2. Sans `add`, la liste serait remplacée par le seul VLAN 10 : les VLAN 20 et 99 seraient coupés, toute la salle B12 perdrait la pédagogie et l'administration du switch.
+3. Les deux SVI sont actives : vérifier `ip routing` sur SW-COEUR (`show running-config | include ip routing` ; `show ip route` doit lister les deux réseaux en `C`). Vérifier ensuite la passerelle du serveur (il doit répondre via 192.168.20.254) et un éventuel pare-feu sur le serveur.
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle commande montre si un port est err-disabled et pour quelle raison ?" {
+        - "show vlan brief"
+        + "show interfaces status err-disabled"
+        - "show mac address-table"
+        - "show cdp neighbors"
+        explanation: "show interfaces status err-disabled liste les ports coupés et la cause (psecure-violation, bpduguard...). show vlan brief n'indique pas l'état err-disabled."
+      }
+
+      question "Un switch de niveau 2 a une SVI d’administration en 192.168.99.12. Que lui faut-il pour être joint depuis un autre réseau ?" {
+        - "ip routing"
+        + "ip default-gateway 192.168.99.254"
+        - "un trunk natif 99"
+        - "spanning-tree portfast"
+        explanation: "Un switch de niveau 2 ne route pas : pour répondre à un poste d'un autre réseau, il doit connaître sa passerelle, donnée par ip default-gateway. ip routing concerne les switchs de niveau 3."
+      }
+
+      question "Quelle commande indique le mode réel (access, trunk, négocié) d’un port précis ?" {
+        - "show vlan brief"
+        + "show interfaces fa0/5 switchport"
+        - "show running-config"
+        - "show spanning-tree"
+        explanation: "show interfaces fa0/5 switchport affiche le mode administratif (configuré) et opérationnel (réel), le VLAN d'accès, le VLAN natif et l'état de la négociation. La running-config ne montre que la configuration, pas l'état réel."
+      }
+
+      question "Pourquoi écrire no ip domain-lookup sur un switch ?" {
+        - "pour désactiver le DNS des postes"
+        + "pour qu'une commande mal tapée ne déclenche pas une longue recherche DNS"
+        - "pour sécuriser SSH"
+        - "pour empêcher le switch d'avoir un nom"
+        explanation: "En mode exec, un mot inconnu est interprété comme un nom d'hôte à joindre en Telnet : le switch tente de le résoudre et bloque la console quelques secondes. no ip domain-lookup supprime cette attente."
+      }
+
+      question "Pourquoi éteindre l’interface Vlan1 sur un switch en production ?" {
+        - "parce qu'elle empêche les autres VLAN de fonctionner"
+        + "parce que le VLAN 1 ne doit pas servir à l'administration ni contenir de postes"
+        - "parce qu'elle consomme de la bande passante"
+        - "parce qu'elle bloque STP"
+        explanation: "Le VLAN 1 est celui où tout atterrit par défaut. On administre le switch depuis un VLAN dédié (ici 99) et on retire toute adresse du VLAN 1, pour ne pas offrir d'accès au switch depuis ce VLAN."
+      }
+
+      question "Un poste ne joint pas sa passerelle. Le port est connected et dans le bon VLAN. Quelle est l’étape suivante de la méthode ?" {
+        - "vérifier l'adresse IP du serveur DNS"
+        + "vérifier que le VLAN est autorisé et actif sur chaque trunk du chemin"
+        - "redémarrer le switch de cœur"
+        - "changer le câble"
+        explanation: "La méthode du bas vers le haut passe ensuite aux trunks : le VLAN doit être autorisé, actif et en forwarding des deux côtés de chaque lien jusqu'à la passerelle. Le DNS n'intervient pas pour joindre une passerelle par son adresse."
+      }
+
+      question "Que montre show interfaces status pour un port coupé par port security ?" {
+        - "connected"
+        - "notconnect"
+        + "err-disabled"
+        - "disabled"
+        explanation: "Un port coupé par une protection (port security, BPDU Guard) est en err-disabled. notconnect signifie aucun câble ou équipement éteint en face ; disabled, un port éteint par la commande shutdown."
+      }
+
+      question "Quelle commande enregistre la configuration pour qu’elle survive à un redémarrage ?" {
+        - "save all"
+        + "copy running-config startup-config"
+        - "copy startup-config running-config"
+        - "reload"
+        explanation: "copy running-config startup-config (ou write memory) copie la configuration active dans la NVRAM. Le sens inverse recharge l'ancienne configuration, et reload redémarre sans rien enregistrer."
+      }
+
+      question "Comment savoir sur quel port et dans quel VLAN se trouve la MAC 0050.7966.6801 ?" {
+        - "show arp 0050.7966.6801"
+        + "show mac address-table address 0050.7966.6801"
+        - "show vlan id 0050.7966.6801"
+        - "ping 0050.7966.6801"
+        explanation: "show mac address-table address affiche le VLAN, le type d'entrée et le port où la MAC a été apprise. Si le port est un trunk, on suit le voisin (show cdp neighbors) jusqu'au switch d'accès."
+      }
+
+      question "Le trunk est trunking des deux côtés, mais avec Native vlan 999 d’un côté et 1 de l’autre. Que faire ?" {
+        - "rien, les trunks fonctionnent quand même correctement"
+        + "aligner le VLAN natif sur 999 des deux côtés"
+        - "passer les deux ports en access"
+        - "désactiver CDP pour supprimer le message"
+        explanation: "Un VLAN natif différent mélange deux VLAN pour les trames non étiquetées. Il faut le même natif des deux côtés : switchport trunk native vlan 999. Désactiver CDP cacherait le message sans corriger le problème."
+      }
+
+      question "Sur un switch de niveau 3, show ip route ne montre pas le réseau 192.168.20.0/24 alors que la SVI Vlan20 a une adresse. Pourquoi ?" {
+        - "la SVI est en up/up"
+        + "la SVI est en up/down ou down, par exemple aucun port actif dans le VLAN 20"
+        - "le VLAN natif est 999"
+        - "port security est actif"
+        explanation: "Un réseau directement connecté n'apparaît dans la table de routage que si l'interface est up/up. Une SVI sans port actif dans son VLAN reste up/down. show ip interface brief permet de le vérifier."
+      }
+
+      question "Quel est l’intérêt de la commande description sur les interfaces ?" {
+        - "elle améliore les performances"
+        - "elle est obligatoire pour les trunks"
+        + "elle documente le rôle du port et le voisin, ce qui accélère le dépannage"
+        - "elle crée automatiquement le VLAN"
+        explanation: "La description apparaît dans show interfaces status et dans la configuration. Écrire « Trunk vers SW-COEUR Gi1/0/5 » évite de chercher pendant une panne où va le câble."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse et mini-projet"
+    duration: "40min"
+    content: """
+### Ce qu'il faut retenir
+
+- Un switch apprend les MAC sources, commute vers le port connu, filtre si la destination est derrière le port d'arrivée, et inonde les broadcasts et les unicast inconnus.
+- Chaque port de switch est un domaine de collision ; chaque VLAN est un domaine de broadcast ; seul le niveau 3 relie les domaines de broadcast.
+- Un VLAN = un sous-réseau. Port access : un VLAN, sans étiquette. Trunk : plusieurs VLAN, étiquette 802.1Q de 4 octets (TPID 0x8100, VID sur 12 bits), sauf le VLAN natif.
+- Le routage inter-VLAN se fait par router-on-a-stick (sous-interfaces `encapsulation dot1Q`) ou par switch de niveau 3 (SVI + `ip routing`).
+- STP bloque les liens redondants. Racine = plus petit Bridge ID. On choisit la racine. PortFast et BPDU Guard sur les ports de postes. RSTP converge vite.
+- LACP agrège des liens identiques en un lien logique ; un flux unique ne dépasse pas la vitesse d'un câble.
+- Sécurité : ports en mode fixe, DTP coupé, port security, ports inutilisés éteints dans un VLAN parking, VLAN natif dédié, VLAN 1 inutilisé, administration en SSH dans un VLAN dédié.
+
+### Mini-projet : le réseau du bâtiment B
+
+Le lycée équipe le bâtiment B. Matériel : un switch de cœur de niveau 3 (SW-COEUR, Catalyst 3650 dans Packet Tracer), deux switchs d'accès 2960 (SW-B1 et SW-B2), un serveur DHCP, des postes.
+
+| VLAN | Nom | Réseau | Passerelle (SVI de SW-COEUR) |
+|---|---|---|---|
+| 10 | ADMINISTRATION | 192.168.10.0/24 | 192.168.10.254 |
+| 20 | PEDAGOGIE | 192.168.20.0/24 | 192.168.20.254 |
+| 30 | SERVEURS | 192.168.30.0/24 | 192.168.30.254 |
+| 99 | GESTION | 192.168.99.0/24 | 192.168.99.254 |
+| 998 | PARKING | aucun | aucune |
+| 999 | NATIF | aucun | aucune |
+
+Liens : SW-B1 est relié à SW-COEUR par **deux** câbles (Gi0/1 et Gi0/2 de SW-B1 vers Gi1/0/1 et Gi1/0/2 de SW-COEUR), agrégés en LACP. SW-B2 est relié à SW-COEUR par Gi0/1 vers Gi1/0/3, et à SW-B1 par Fa0/24 de part et d'autre (lien de secours). Le serveur DHCP (192.168.30.10) est sur Gi1/0/10 de SW-COEUR.
+
+**Étape 1 : VLAN.** Crée les six VLAN sur les trois switchs, avec leurs noms.
+
+**Étape 2 : agrégat SW-B1 vers SW-COEUR.** `channel-group 1 mode active` sur les deux ports de chaque côté, puis trunk sur `port-channel 1` : natif 999, VLAN autorisés 10,20,99, `nonegotiate`.
+
+**Étape 3 : autres trunks.** SW-B2 Gi0/1 vers SW-COEUR Gi1/0/3, et Fa0/24 entre SW-B1 et SW-B2, avec les mêmes réglages.
+
+**Étape 4 : ports d'accès.** Sur SW-B1 et SW-B2 : Fa0/1-10 en VLAN 10, Fa0/11-20 en VLAN 20, avec port security (2 MAC, restrict), PortFast et BPDU Guard. Les ports libres en VLAN 998, éteints.
+
+**Étape 5 : routage.** Sur SW-COEUR : `ip routing`, SVI des VLAN 10, 20, 30, 99 ; port Gi1/0/10 en access VLAN 30 pour le serveur ; `ip helper-address 192.168.30.10` sur les SVI 10 et 20.
+
+**Étape 6 : Spanning Tree.** Mode `rapid-pvst` partout ; SW-COEUR racine de tous les VLAN (`spanning-tree vlan 10,20,30,99 priority 4096`).
+
+**Étape 7 : administration.** SVI Vlan99 sur SW-B1 (192.168.99.11) et SW-B2 (192.168.99.12), `ip default-gateway 192.168.99.254`, SSH seulement, Vlan1 éteinte.
+
+### À toi de jouer
+
+Réalise le projet dans Packet Tracer (ou GNS3), puis réponds :
+1. Quel port est bloqué par STP dans le VLAN 20, et pourquoi ?
+2. Un poste du VLAN 20 obtient-il une adresse par DHCP ? Quelle commande sur SW-COEUR le permet ?
+3. Débranche un des deux câbles de l'agrégat pendant un `ping -t` depuis un poste. Que se passe-t-il ?
+4. Branche un switch supplémentaire sur Fa0/5 de SW-B1. Que se passe-t-il, et comment remettre le port en service ?
+
+### Correction
+
+Configuration de SW-COEUR (extrait essentiel) :
+
+```text
+hostname SW-COEUR
+ip routing
+spanning-tree mode rapid-pvst
+spanning-tree vlan 10,20,30,99 priority 4096
+vlan 10
+ name ADMINISTRATION
+vlan 20
+ name PEDAGOGIE
+vlan 30
+ name SERVEURS
+vlan 99
+ name GESTION
+vlan 998
+ name PARKING
+vlan 999
+ name NATIF
+!
+interface range GigabitEthernet1/0/1 - 2
+ channel-group 1 mode active
+interface Port-channel1
+ switchport mode trunk
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,99
+ switchport nonegotiate
+interface GigabitEthernet1/0/3
+ switchport mode trunk
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,99
+ switchport nonegotiate
+interface GigabitEthernet1/0/10
+ switchport mode access
+ switchport access vlan 30
+ spanning-tree portfast
+!
+interface Vlan10
+ ip address 192.168.10.254 255.255.255.0
+ ip helper-address 192.168.30.10
+interface Vlan20
+ ip address 192.168.20.254 255.255.255.0
+ ip helper-address 192.168.30.10
+interface Vlan30
+ ip address 192.168.30.254 255.255.255.0
+interface Vlan99
+ ip address 192.168.99.254 255.255.255.0
+```
+
+Sur un 3650, `switchport trunk encapsulation dot1q` n'existe pas ; sur un 3560, il faut l'ajouter avant `switchport mode trunk`. Le serveur DHCP doit avoir une étendue (pool) par VLAN, avec la bonne passerelle.
+
+Réponses :
+1. SW-COEUR est racine. SW-B1 et SW-B2 ont leur port racine vers SW-COEUR (Po1 pour SW-B1, Gi0/1 pour SW-B2). Sur le lien Fa0/24 entre SW-B1 et SW-B2, le côté dont le coût vers la racine est le plus faible est désigné : SW-B1 passe par un agrégat de 2 × 1 Gbit/s, dont le coût est plus faible que celui d'un seul lien à 1 Gbit/s (la valeur exacte dépend du modèle). Le port Fa0/24 de **SW-B2** est donc en `Altn BLK`. Vérification : `show spanning-tree vlan 20` sur SW-B2.
+2. Oui, grâce au relais : `ip helper-address 192.168.30.10` sur `interface Vlan20`. Sans lui, le broadcast DHCP DISCOVER resterait dans le VLAN 20.
+3. Le ping continue, avec au plus une ou deux pertes : l'agrégat reste en service sur le câble restant (`show etherchannel summary` montre un port `(D)`), et STP ne recalcule rien puisque le lien logique Po1 n'est pas tombé.
+4. Le nouveau switch envoie des BPDU : BPDU Guard met Fa0/5 en `err-disabled` (message `%SPANTREE-2-BLOCK_BPDUGUARD`). On retire le switch, puis `interface fa0/5`, `shutdown`, `no shutdown`.
+
+### Version Linux du mini-projet (facultatif)
+
+Tu peux reproduire le cœur du projet avec les labos 3, 4 et 5 : deux bridges reliés par un trunk, un namespace routeur avec une sous-interface par VLAN, `ip_forward=1`. Le switch de niveau 3 se simule aussi sur le bridge lui-même : `sudo bridge vlan add dev br0 vid 10 self` puis `sudo ip link add link br0 name br0.10 type vlan id 10` donne au bridge une interface dans le VLAN 10, l'équivalent d'une SVI.
+
+### Pour aller plus loin
+
+- IEEE 802.1Q, Bridges and Bridged Networks (VLAN, étiquette, Spanning Tree, MSTP), et IEEE 802.1AX, Link Aggregation (LACP) ; IEEE.
+- Cisco, guides de configuration des Catalyst (Layer 2 : VLAN, trunks, EtherChannel, STP, port security), cisco.com.
+- Pages de manuel Linux bridge(8) et ip-link(8) (iproute2), man7.org ; documentation du noyau Linux, Linux Ethernet Bonding Driver HOWTO, docs.kernel.org.
+- ANSSI, note technique sur la sécurisation des commutateurs et guide sur le contrôle d'accès réseau 802.1X, cyber.gouv.fr.
+- Cisco Packet Tracer, cours gratuits Cisco Networking Academy (netacad.com), pour pratiquer sans matériel.
+"""
+
+    quiz {
+      pick: 10
+      question "Un switch reçoit une trame dont la MAC destination est inconnue. Que fait-il ?" {
+        - "il la jette"
+        + "il l'inonde sur tous les ports du VLAN sauf celui d'arrivée"
+        - "il la renvoie à l'émetteur"
+        - "il l'envoie au routeur"
+        explanation: "Un unicast inconnu est inondé, mais seulement dans le VLAN de la trame. Le switch apprendra le port de la destination quand elle répondra."
+      }
+
+      question "Combien de domaines de broadcast forment 2 switchs reliés par un trunk et portant chacun les VLAN 10, 20 et 30 ?" {
+        - "2"
+        + "3"
+        - "6"
+        - "1"
+        explanation: "Le trunk prolonge chaque VLAN d'un switch à l'autre : le VLAN 10 des deux switchs forme un seul domaine de broadcast, de même pour 20 et 30. Total : 3."
+      }
+
+      question "Quelle affirmation sur un port access est juste ?" {
+        - "il transporte plusieurs VLAN étiquetés"
+        + "il appartient à un seul VLAN et envoie des trames sans étiquette"
+        - "il n'existe que sur les routeurs"
+        - "il doit avoir le même VLAN natif que le port en face"
+        explanation: "Un port access est membre d'un seul VLAN. Le poste branché reçoit des trames ordinaires. Le VLAN natif est une notion de trunk."
+      }
+
+      question "Quel champ de l’étiquette 802.1Q porte le numéro de VLAN ?" {
+        - "TPID"
+        - "PCP"
+        - "DEI"
+        + "VID"
+        explanation: "Le VID (VLAN Identifier, 12 bits) porte le numéro du VLAN. Le TPID vaut 0x8100, le PCP est la priorité et le DEI indique une trame que l'on peut jeter en premier."
+      }
+
+      question "Pourquoi choisir un VLAN natif dédié sans poste ?" {
+        - "pour augmenter le débit du trunk"
+        + "pour limiter l'attaque par double étiquette et les mélanges de VLAN"
+        - "parce que le VLAN 1 ne peut pas être natif"
+        - "pour activer DTP"
+        explanation: "Si aucun poste n'est dans le VLAN natif, personne ne peut y injecter de trames à double étiquette, et une trame non étiquetée égarée n'atteint aucun poste. Le VLAN 1 peut être natif, c'est même le défaut, mais ce n'est pas conseillé."
+      }
+
+      question "Tu ajoutes le VLAN 40 au trunk qui autorise 10,20,99. Quelle commande utiliser ?" {
+        - "switchport trunk allowed vlan 40"
+        + "switchport trunk allowed vlan add 40"
+        - "switchport access vlan 40"
+        - "vlan 40 trunk"
+        explanation: "add ajoute le VLAN à la liste existante. Sans add, la liste devient 40 seul et les autres VLAN sont coupés."
+      }
+
+      question "Quelle commande associe la sous-interface d’un routeur au VLAN 20 ?" {
+        - "switchport access vlan 20"
+        - "ip vlan 20"
+        + "encapsulation dot1Q 20"
+        - "vlan 20 native"
+        explanation: "Sur un routeur, encapsulation dot1Q 20 dans la sous-interface traite les trames étiquetées 20. Les commandes switchport sont réservées aux ports de switch."
+      }
+
+      question "Les SVI de SW-COEUR sont up/up, mais les VLAN ne se joignent pas. Que manque-t-il ?" {
+        - "spanning-tree mode rapid-pvst"
+        - "switchport nonegotiate"
+        + "ip routing"
+        - "ip default-gateway"
+        explanation: "Sans ip routing, le switch de niveau 3 ne transmet pas les paquets d'une SVI à une autre. ip default-gateway ne sert que lorsque le routage est désactivé, pour l'administration."
+      }
+
+      question "Les postes du VLAN 20 n’obtiennent pas d’adresse ; le serveur DHCP est dans le VLAN 30. Quelle commande manque sur l’interface Vlan20 ?" {
+        - "ip dhcp pool 20"
+        + "ip helper-address 192.168.30.10"
+        - "ip address dhcp"
+        - "switchport access vlan 30"
+        explanation: "Le relais DHCP transforme le broadcast des clients en unicast vers le serveur, dans un autre VLAN. ip address dhcp ferait de la SVI un client DHCP, ce qui n'est pas le but."
+      }
+
+      question "Quel switch devient racine si les priorités sont égales ?" {
+        - "celui qui a la plus grande MAC"
+        + "celui qui a la plus petite MAC"
+        - "celui qui a le plus de ports"
+        - "celui qui a démarré en dernier"
+        explanation: "À priorité égale, la plus petite adresse MAC départage. C'est souvent le switch le plus ancien, d'où l'intérêt de fixer la priorité du switch de cœur."
+      }
+
+      question "Dans show spanning-tree, que signifie un port Altn BLK ?" {
+        - "un port désigné en forwarding"
+        + "un port de secours vers la racine, bloqué"
+        - "un port err-disabled"
+        - "un port racine en apprentissage"
+        explanation: "Altn (alternate) est un chemin de secours vers la racine. BLK signifie qu'il ne transmet pas de trafic. Il passera en forwarding si le port racine tombe."
+      }
+
+      question "Pourquoi activer PortFast uniquement sur les ports de postes ?" {
+        - "parce qu'il ralentit les trunks"
+        + "parce que sur un lien entre switchs il peut créer une boucle temporaire"
+        - "parce qu'il désactive les VLAN"
+        - "parce qu'il est incompatible avec le DHCP"
+        explanation: "PortFast saute les états d'attente qui servent à détecter une boucle. Sur un lien vers un switch, le port pourrait transmettre avant que STP ait bloqué le chemin redondant."
+      }
+
+      question "Deux côtés d’un EtherChannel sont en mode passive. Quel est le résultat ?" {
+        - "l'agrégat se forme en LACP"
+        - "l'agrégat se forme en PAgP"
+        + "aucun agrégat ne se forme"
+        - "les ports passent en err-disabled"
+        explanation: "En mode passive, un port répond aux LACPDU mais n'en envoie pas. Deux côtés passifs ne négocient jamais. Au moins un côté doit être active."
+      }
+
+      question "Un port d’un EtherChannel apparaît (s) après une modification. Quelle cause est la plus probable ?" {
+        - "un câble débranché"
+        + "sa configuration diffère des autres membres (VLAN, vitesse, mode)"
+        - "STP l'a bloqué"
+        - "port security l'a coupé"
+        explanation: "s signifie suspended : le port n'a pas les mêmes paramètres que les autres. Un câble débranché donnerait D, un port coupé par port security serait err-disabled."
+      }
+
+      question "Que se passe-t-il quand un câble d’un agrégat LACP de deux liens tombe ?" {
+        - "STP recalcule tout l'arbre"
+        + "le lien logique reste en service sur le câble restant"
+        - "l'agrégat entier tombe"
+        - "le VLAN natif change"
+        explanation: "L'agrégat continue avec les membres restants. Pour STP, le lien logique n'a pas changé d'état, il n'y a donc pas de reconvergence. Le débit total est simplement réduit."
+      }
+
+      question "Que fait le mode de violation restrict de port security ?" {
+        - "il coupe le port"
+        + "il jette les trames en trop, journalise et incrémente le compteur"
+        - "il jette les trames en trop sans rien signaler"
+        - "il autorise les MAC en trop mais les journalise"
+        explanation: "restrict laisse le port actif pour les MAC autorisées, jette les autres et le signale (syslog, SNMP, compteur). protect ne signale rien, shutdown coupe le port."
+      }
+
+      question "Quel réglage n’est pas une bonne pratique de sécurité sur un switch ?" {
+        - "éteindre les ports inutilisés"
+        - "administrer le switch en SSH depuis un VLAN dédié"
+        + "laisser les ports de postes en mode dynamique pour faciliter les changements"
+        - "activer BPDU Guard sur les ports de postes"
+        explanation: "Un port en mode dynamique peut négocier un trunk avec un poste malveillant. Les ports de postes sont forcés en switchport mode access."
+      }
+
+      question "Sous Linux, que fait bridge vlan add dev trunk-a vid 20 sans pvid ni untagged ?" {
+        - "le port devient access dans le VLAN 20"
+        + "le port transporte le VLAN 20 avec étiquette, comme un trunk"
+        - "le VLAN 20 devient natif"
+        - "le VLAN 20 est supprimé"
+        explanation: "Sans pvid ni untagged, le port est membre étiqueté du VLAN 20 : les trames y sortent avec l'étiquette 20. Plusieurs VLAN ajoutés ainsi en font un trunk."
+      }
+
+      question "Sur un trunk, combien de fois un paquet routé en router-on-a-stick traverse-t-il le lien routeur-switch ?" {
+        - "une fois"
+        + "deux fois"
+        - "trois fois"
+        - "jamais"
+        explanation: "Il monte vers le routeur dans le VLAN d'origine et redescend dans le VLAN de destination, sur le même câble. C'est la limite principale de cette méthode."
+      }
+
+      question "Quelle commande Linux active le Spanning Tree sur le bridge br0 ?" {
+        - "ip link set br0 type bridge vlan_filtering 1"
+        + "ip link set br0 type bridge stp_state 1"
+        - "bridge stp on br0"
+        - "sysctl -w net.bridge.stp=1"
+        explanation: "stp_state 1 active STP sur le bridge. vlan_filtering concerne les VLAN. Les deux autres commandes n'existent pas sous cette forme."
+      }
+    }
+  }
+}

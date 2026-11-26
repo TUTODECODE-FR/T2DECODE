@@ -136,15 +136,24 @@ class Course {
     return course;
   }
 
-  /// Cours au format .tdc : assets/courses/<langue>/*.tdc (une version par langue,
+  /// Cours au format .tdc : `assets/courses/<langue>/*.tdc` (une version par langue,
   /// même nom de fichier). Un cours absent dans la langue demandée est pris en français.
   static Future<List<Course>> loadAll([String locale = 'fr']) async {
-    final tdc = await _loadTdc(locale);
-    if (tdc.isNotEmpty) return tdc;
-    return _loadLegacyJson(locale); // anciens cours, le temps de la transition
+    final remplaces = <String>{};
+    final tdc = await _loadTdc(locale, remplaces);
+    // Transition : un ancien cours JSON reste affiché tant qu'aucun .tdc ne le
+    // remplace (même identifiant de cours, ou fichier .tdc portant son identifiant).
+    List<Course> anciens;
+    try {
+      anciens = await _loadLegacyJson(locale);
+    } catch (_) {
+      anciens = const [];
+    }
+    return [...tdc, ...anciens.where((c) => !remplaces.contains(c.id))];
   }
 
-  static Future<List<Course>> _loadTdc(String locale) async {
+  static Future<List<Course>> _loadTdc(
+      String locale, Set<String> remplaces) async {
     final List<String> tous;
     try {
       final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
@@ -161,7 +170,8 @@ class Course {
         nom(a): a,
     };
     if (locale != 'fr') {
-      for (final a in tous.where((a) => a.startsWith('assets/courses/$locale/'))) {
+      for (final a
+          in tous.where((a) => a.startsWith('assets/courses/$locale/'))) {
         parLangue[nom(a)] = a;
       }
     }
@@ -170,7 +180,11 @@ class Course {
     for (final n in noms) {
       try {
         final texte = await rootBundle.loadString(parLangue[n]!);
-        cours.add(Course.fromMap(TdcDslParser.parse(texte)));
+        final c = Course.fromMap(TdcDslParser.parse(texte));
+        cours.add(c);
+        remplaces
+          ..add(c.id)
+          ..add(n.substring(0, n.length - '.tdc'.length));
       } catch (_) {
         // un cours mal formé ne doit pas empêcher d'ouvrir les autres
       }

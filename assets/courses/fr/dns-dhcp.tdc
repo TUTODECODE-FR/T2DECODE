@@ -1,0 +1,2243 @@
+tdc-version: 2
+type: course
+
+course "dns-dhcp" {
+  title: "Services réseau : DNS et DHCP"
+  description: """
+Ce cours explique comment un poste obtient son adresse IP (DHCP) et comment il transforme un nom en adresse (DNS), puis te fait installer, configurer, dépanner et sécuriser ces deux services sur un vrai petit réseau. Il s'adresse aux élèves de bac pro CIEL, BTS SIO SISR, BTS CIEL et BUT réseaux, et à toute personne qui administre un réseau de quelques dizaines de postes.
+
+À la fin, tu sauras :
+• expliquer la hiérarchie du DNS et suivre pas à pas une résolution récursive et itérative ;
+• lire et écrire les enregistrements A, AAAA, CNAME, MX, NS, TXT, PTR et SOA, et prévoir l'effet d'un TTL ;
+• diagnostiquer une panne de nom avec dig, nslookup, Resolve-DnsName et resolvectl ;
+• monter un serveur DNS Bind9 (zone directe, zone inverse, secondaire, récursion limitée) et son équivalent sous Windows Server ;
+• décrire l'échange DORA, calculer les temporisations d'un bail et choisir les bonnes options DHCP ;
+• installer un serveur DHCP Kea (ou Windows Server) avec réservations, exclusions et relais entre VLAN ;
+• dépanner un client sans adresse avec une capture tcpdump et les journaux ;
+• expliquer DNSSEC dans ses principes, fermer un résolveur ouvert et activer le DHCP snooping.
+
+Le cours est construit autour d'un labo que tu montes toi-même : deux ou trois machines virtuelles Debian 12 (et une machine Windows si tu en as une), reliées par un réseau interne. Chaque chapitre contient au moins un exercice pratique avec sa correction, et une banque de questions tirées au hasard.
+
+Prérequis : adressage IPv4 et masques (savoir ce qu'est 192.168.10.0/24), notions de modèle TCP/IP (UDP, ports), utilisation courante du terminal Linux (sudo, éditer un fichier, systemctl).
+"""
+  category: "network"
+  level: "intermediate"
+  duration: "7h"
+  icon: "Dns"
+  keywords: ["dns", "dhcp", "bind9", "kea", "dig", "nslookup", "dora", "bail", "relais dhcp", "ip helper-address", "dnssec", "dhcp snooping", "windows server", "zone", "enregistrement"]
+
+  module "dns-hierarchie" {
+    title: "Chapitre 1 : à quoi sert le DNS et comment il est organisé"
+    duration: "30min"
+    content: """
+### Le problème que le DNS résout
+Les machines communiquent avec des adresses IP (`192.168.10.20`, `2001:db8::20`). Les humains retiennent des noms (`intranet.lycee.internal`, `www.example.com`). Le **DNS** (Domain Name System) est une base de données répartie dans le monde entier qui fait la correspondance entre les deux, et bien plus : il indique aussi quel serveur reçoit le courrier d'un domaine, quels serveurs font autorité, quelles clés publiques utiliser, etc.
+
+Sans DNS, un navigateur ne sait pas où envoyer sa requête. C'est pourquoi la phrase « Internet ne marche plus » cache très souvent une panne DNS : le réseau fonctionne (le `ping 9.9.9.9` répond), mais aucun nom n'est résolu.
+
+Le DNS utilise le **port 53**, en **UDP** pour la plupart des questions et en **TCP** pour les grosses réponses et les transferts de zone. Un serveur DNS doit accepter les deux (le support de TCP est obligatoire, RFC 7766). Un pare-feu qui ne laisse passer que l'UDP 53 provoque donc des pannes intermittentes, sur les réponses volumineuses seulement.
+
+### Un arbre de noms
+L'espace des noms est un **arbre** inversé. Chaque nœud porte une **étiquette** (label) de 63 caractères au plus ; un nom complet fait au plus 255 octets.
+
+```text
+                         . (racine)
+            ┌────────────┼──────────────┐
+           fr           com            arpa
+      ┌─────┴─────┐      │               │
+  gouv          afnic  example        in-addr
+    │                    │               │
+ education              www             192 ...
+```
+
+Un nom se lit de gauche (le plus précis) à droite (le plus général) : dans `www.example.com.`, `com` est un domaine de premier niveau (TLD, top-level domain), `example` un domaine de deuxième niveau, `www` un nom d'hôte. Le point final représente la **racine**. On l'omet dans un navigateur, mais il compte dans les fichiers de zone : un nom qui se termine par un point est un **FQDN** (fully qualified domain name), complet et sans ambiguïté.
+
+### Domaine, zone et délégation
+• Un **domaine** est une branche de l'arbre (`example.com` et tout ce qui est en dessous).
+• Une **zone** est la partie de cette branche gérée par un même ensemble de serveurs. Le gestionnaire de `com` ne connaît pas le détail de `example.com` : il **délègue** la zone, c'est-à-dire qu'il publie seulement les noms des serveurs qui en ont la charge (enregistrements NS).
+• Un serveur **faisant autorité** (authoritative) pour une zone détient ses données officielles. Ses réponses portent le drapeau `aa` (authoritative answer).
+
+La délégation est ce qui permet au DNS de tenir à l'échelle mondiale : aucun serveur ne connaît tout, chacun sait seulement à qui demander la suite.
+
+### Les serveurs racine
+Au sommet, la zone racine est servie par **13 identités de serveurs**, nommées `a.root-servers.net` à `m.root-servers.net`, exploitées par 12 organisations différentes. Chaque identité est en réalité un ensemble de nombreuses machines réparties dans le monde et partageant la même adresse (anycast) : il y a plus d'un millier d'instances physiques. Leur seule mission est de répondre « pour `.fr`, va voir tels serveurs », jamais de résoudre `www.example.com` en entier.
+
+### Qui fait quoi
+| Acteur | Rôle | Exemple |
+|---|---|---|
+| Registre (registry) | gère un TLD et sa zone | Afnic pour `.fr` |
+| Bureau d'enregistrement (registrar) | vend les noms aux clients, transmet au registre | un hébergeur ou un vendeur de noms |
+| Titulaire | possède le nom pour une durée | le lycée, une PME |
+| Hébergeur DNS | fait tourner les serveurs faisant autorité de la zone | le registrar ou un serveur interne |
+| Résolveur | interroge l'arbre pour le compte des clients | celui de la box, de l'entreprise, ou 9.9.9.9 |
+
+### Noms internes : lequel choisir ?
+Dans un réseau d'entreprise, on crée souvent une zone interne. Évite d'inventer un TLD au hasard (`.lan`, `.local`, `.corp`) : `.local` est réservé au mDNS (RFC 6762) et crée des conflits avec les imprimantes et les Mac, et un TLD inventé peut un jour être ouvert au public. Deux choix propres :
+• un sous-domaine d'un nom que tu possèdes : `ad.mon-lycee.fr` ;
+• le TLD `.internal`, réservé en 2024 par l'ICANN pour un usage privé et qui ne sera jamais délégué sur Internet.
+
+Dans ce cours, la zone du labo s'appelle `lycee.internal`.
+
+### À toi de jouer
+1. Décompose `intranet.sio.lycee-exemple.fr.` : quelle est l'étiquette de la racine, le TLD, le domaine de deuxième niveau, et combien de délégations un résolveur doit-il au plus traverser pour arriver au serveur qui connaît `intranet` ?
+2. Sur ta machine (Linux ou Windows), vérifie que le DNS fonctionne et distingue une panne réseau d'une panne DNS : fais un `ping` vers une adresse IP publique connue (`9.9.9.9`), puis un `ping` vers un nom (`example.com`). Note ce que tu observes.
+3. Explique pourquoi un pare-feu qui bloque le TCP 53 peut laisser passer `dig example.com` mais faire échouer une requête qui renvoie une très longue liste d'enregistrements TXT.
+
+### Correction
+1. Étiquettes, de droite à gauche : la racine (le point final, étiquette vide), `fr` (TLD), `lycee-exemple` (deuxième niveau), `sio`, puis `intranet` (l'hôte). Le résolveur part de la racine, qui délègue `fr` ; les serveurs de `fr` délèguent `lycee-exemple.fr` ; si `sio.lycee-exemple.fr` est une zone à part, ses serveurs sont encore délégués. Au plus trois délégations, donc quatre serveurs interrogés (racine, `fr`, `lycee-exemple.fr`, `sio.lycee-exemple.fr`). Si `sio` n'est pas délégué, la troisième étape suffit.
+2. Si `ping 9.9.9.9` répond et `ping example.com` affiche `Temporary failure in name resolution` (Linux) ou « La requête Ping n'a pas pu trouver l'hôte » (Windows), la couche réseau marche et la panne est dans la résolution de noms. Si aucun des deux ne répond, le problème est plus bas (câble, IP, passerelle, pare-feu). Attention : certains réseaux bloquent l'ICMP ; dans ce cas, teste plutôt avec `dig @9.9.9.9 example.com` : une réponse prouve que le réseau fonctionne jusqu'à Internet et que ce serveur DNS-là répond.
+3. Une petite réponse tient dans un datagramme UDP. Quand la réponse est trop grande, le serveur renvoie une réponse tronquée (drapeau `tc`) et le client doit reposer la question en TCP. Si le TCP 53 est bloqué, cette deuxième tentative échoue : la panne ne touche que les réponses volumineuses (beaucoup de TXT, DNSSEC, transferts de zone).
+"""
+
+    quiz {
+      pick: 5
+      question "Quel port et quels protocoles de transport utilise le DNS classique ?" {
+        - "port 53 en UDP seulement"
+        + "port 53 en UDP et en TCP"
+        - "port 67 en UDP"
+        - "port 853 en TCP seulement"
+        explanation: "Le DNS utilise le port 53. L'UDP sert pour la majorité des questions, le TCP pour les réponses tronquées et les transferts de zone ; son support est obligatoire (RFC 7766). Le port 67 est celui du serveur DHCP, et 853 celui de DNS over TLS, une variante chiffrée."
+      }
+      question "Que représente le point final dans « www.example.com. » ?" {
+        - "une faute de frappe sans effet"
+        - "le domaine de premier niveau"
+        + "la racine de l'arbre DNS"
+        - "la fin de la zone locale"
+        explanation: "Le point final est la racine, dont l'étiquette est vide. Un nom qui se termine par un point est un FQDN : il est complet et ne sera complété par aucun suffixe. Dans un fichier de zone, oublier ce point change complètement le nom."
+      }
+      question "Qu’est-ce qu’une délégation DNS ?" {
+        - "la copie complète d'une zone vers un autre serveur"
+        + "la publication, dans la zone parente, des serveurs NS chargés d'une zone enfant"
+        - "la redirection de toutes les requêtes vers un résolveur public"
+        - "l'achat d'un nom de domaine chez un registrar"
+        explanation: "La zone parente (par exemple com) ne garde pas le contenu de example.com : elle publie seulement des enregistrements NS qui disent quels serveurs font autorité pour la zone enfant. La copie d'une zone vers un autre serveur est un transfert de zone, une autre notion."
+      }
+      question "Combien d’identités de serveurs racine existe-t-il ?" {
+        - "une seule, aux États-Unis"
+        - "7"
+        + "13, de a à m.root-servers.net"
+        - "plus de 1 000 identités distinctes"
+        explanation: "Il y a 13 identités (a à m), exploitées par 12 organisations. Chacune est servie par de nombreuses machines partageant la même adresse (anycast), ce qui fait plus d'un millier d'instances physiques. Le chiffre de plus de 1 000 compte les machines, pas les identités."
+      }
+      question "Un serveur racine reçoit la question « adresse de www.example.com ? ». Que répond-il ?" {
+        - "l'adresse IP de www.example.com"
+        + "la liste des serveurs faisant autorité pour com"
+        - "une erreur NXDOMAIN"
+        - "la liste des serveurs de example.com"
+        explanation: "La racine ne connaît que les TLD. Elle renvoie un renvoi (referral) vers les serveurs de com. Ce sont ensuite les serveurs de com qui renverront vers ceux de example.com. Elle ne répond NXDOMAIN que si le TLD lui-même n'existe pas."
+      }
+      question "Quelle est la longueur maximale d’une étiquette DNS (entre deux points) ?" {
+        - "15 caractères"
+        - "32 caractères"
+        + "63 caractères"
+        - "255 caractères"
+        explanation: "Une étiquette fait au plus 63 octets et un nom complet au plus 255 octets (RFC 1035). La limite de 15 caractères vient des anciens noms NetBIOS de Windows, pas du DNS."
+      }
+      question "Que signifie le drapeau aa dans une réponse DNS ?" {
+        + "la réponse vient d'un serveur qui fait autorité pour la zone"
+        - "la réponse a été authentifiée par DNSSEC"
+        - "la réponse est issue du cache du résolveur"
+        - "le client a demandé une résolution récursive"
+        explanation: "aa (authoritative answer) indique que le serveur détient officiellement la zone. Une réponse sortie du cache d'un résolveur n'a pas ce drapeau. L'authentification DNSSEC est signalée par un autre drapeau, ad, et la demande de récursion par rd."
+      }
+      question "Pourquoi éviter le suffixe .local pour une zone DNS interne ?" {
+        - "il est trop long"
+        - "il est payant auprès de l'Afnic"
+        + "il est réservé au mDNS et crée des conflits avec les appareils qui l'utilisent"
+        - "Bind9 refuse de charger une zone qui s'appelle local"
+        explanation: "La RFC 6762 réserve .local au DNS multicast (mDNS), utilisé par les Mac, les imprimantes et Avahi. Une zone DNS classique en .local produit des résolutions incohérentes. Pour un usage privé, on préfère un sous-domaine d'un nom possédé ou .internal."
+      }
+      question "Quel acteur gère la zone d’un TLD comme .fr ?" {
+        - "le bureau d'enregistrement (registrar)"
+        + "le registre (registry)"
+        - "le titulaire du nom"
+        - "le résolveur du fournisseur d'accès"
+        explanation: "Le registre (l'Afnic pour .fr) gère la zone du TLD et publie les délégations. Le registrar vend les noms aux clients et transmet les demandes au registre. Le titulaire possède un nom, il ne gère pas le TLD."
+      }
+      question "Un poste répond à « ping 9.9.9.9 » mais pas à « ping example.com » (nom introuvable). Quelle est la cause la plus probable ?" {
+        - "la carte réseau est débranchée"
+        - "la passerelle par défaut est fausse"
+        + "la résolution de noms ne fonctionne pas (serveur DNS absent ou injoignable)"
+        - "le serveur web de example.com est en panne"
+        explanation: "Si une adresse IP publique répond, le câble, l'adresse et la passerelle sont bons. Le message « nom introuvable » montre que le nom n'a pas été traduit : c'est la résolution DNS qui échoue. Un serveur web en panne donnerait une résolution réussie puis un échec de connexion."
+      }
+      question "Une réponse DNS trop grande pour l’UDP arrive avec le drapeau tc. Que fait le client ?" {
+        - "il abandonne et affiche une erreur"
+        - "il fusionne plusieurs réponses UDP"
+        + "il repose la même question en TCP"
+        - "il passe automatiquement en DNS over HTTPS"
+        explanation: "Le drapeau tc (truncated) signale une réponse tronquée. Le client doit reposer la question en TCP sur le port 53. Si un pare-feu bloque le TCP 53, ces requêtes échouent alors que les petites passent."
+      }
+      question "Quel nom est un FQDN correctement écrit pour un fichier de zone ?" {
+        - "srv-web"
+        - "srv-web.lycee.internal"
+        + "srv-web.lycee.internal."
+        - ".srv-web.lycee.internal"
+        explanation: "Seul le nom terminé par un point est complet. Sans point, le serveur ajoute le nom de la zone à la fin : srv-web.lycee.internal deviendrait srv-web.lycee.internal.lycee.internal. Un point au début n'a pas de sens."
+      }
+    }
+  }
+
+  module "dns-resolution" {
+    title: "Chapitre 2 : la résolution pas à pas, le cache, le TTL et le fichier hosts"
+    duration: "35min"
+    content: """
+### Les trois acteurs d'une résolution
+1. Le **résolveur de souche** (stub resolver) : la petite bibliothèque intégrée au système du poste. Il ne sait pas parcourir l'arbre ; il pose la question à un serveur et attend une réponse complète.
+2. Le **résolveur récursif** (ou serveur cache) : celui de la box, du lycée, de l'entreprise, ou un public comme `9.9.9.9`. Il fait tout le travail.
+3. Les **serveurs faisant autorité** : racine, TLD, puis serveurs de la zone visée.
+
+### Récursif ou itératif ?
+• Une requête **récursive** demande « donne-moi la réponse finale ». Le client met le drapeau `rd` (recursion desired). Le poste interroge son résolveur de cette façon.
+• Une requête **itérative** accepte un renvoi : « je ne sais pas, mais va voir tels serveurs ». C'est ainsi que le résolveur récursif interroge la racine, puis le TLD, puis la zone.
+
+Déroulé pour `www.example.com` avec un cache vide :
+```text
+Poste ──(récursive, rd)──▶ Résolveur 192.168.10.10
+Résolveur ──▶ racine (a.root-servers.net)   : « va voir les serveurs de com »
+Résolveur ──▶ serveur de com                : « va voir a.iana-servers.net »
+Résolveur ──▶ serveur de example.com        : « www.example.com A 203.0.113.80 » (aa)
+Résolveur ──(réponse + mise en cache)──▶ Poste
+```
+
+Le résolveur connaît les adresses des serveurs racine grâce à un fichier fourni avec le logiciel (root hints), par exemple `/usr/share/dns/root.hints` sur Debian. Il le met à jour lui-même au démarrage (priming).
+
+### Le cache et le TTL
+Chaque enregistrement est publié avec un **TTL** (time to live), en secondes. Un résolveur qui reçoit `www.example.com 3600 IN A 203.0.113.80` peut garder la réponse en cache 3600 secondes (1 heure) et la resservir sans rien redemander. Lors d'une nouvelle question, il renvoie le TTL **restant** : c'est ainsi qu'on voit un TTL décroître d'une requête à l'autre.
+
+Conséquences pratiques :
+• TTL long (1 jour) : moins de trafic, réponses rapides, mais un changement d'adresse met jusqu'à un jour à être vu partout.
+• TTL court (60 à 300 s) : changements rapides, mais plus de requêtes vers les serveurs faisant autorité.
+• Méthode classique avant une migration : baisser le TTL plusieurs jours avant (au moins la durée de l'ancien TTL), changer l'adresse, puis remonter le TTL.
+
+Les réponses négatives (« ce nom n'existe pas », NXDOMAIN) sont aussi mises en cache. Leur durée vient de l'enregistrement **SOA** de la zone (RFC 2308) : c'est le plus petit entre le TTL du SOA et son dernier champ. Créer un nom juste après l'avoir demandé peut donc sembler « ne pas marcher » pendant quelques minutes.
+
+### Le cache du poste
+Le poste a souvent son propre cache :
+• Windows : service Client DNS. `ipconfig /displaydns` affiche le cache, `ipconfig /flushdns` le vide. En PowerShell : `Get-DnsClientCache`, `Clear-DnsClientCache`.
+• Ubuntu et Debian avec systemd-resolved : le stub écoute sur `127.0.0.53`. `resolvectl statistics` donne les statistiques du cache (taille, réponses trouvées ou non), `resolvectl flush-caches` le vide, `resolvectl status` affiche les serveurs utilisés par interface.
+• Les navigateurs ont parfois un cache interne en plus.
+
+### Le fichier hosts et l'ordre de résolution
+Avant d'interroger le DNS, le système lit un fichier local de correspondances :
+• Linux : `/etc/hosts` ; l'ordre de consultation est fixé par la ligne `hosts:` de `/etc/nsswitch.conf` (par exemple `hosts: files dns` : fichier d'abord, DNS ensuite).
+• Windows : `C:\Windows\System32\drivers\etc\hosts` (édition en administrateur).
+
+```text
+# /etc/hosts
+127.0.0.1       localhost
+192.168.10.20   intranet.lycee.internal intranet
+```
+
+Le fichier hosts est pratique pour un test rapide (vérifier un site avant de changer le DNS), mais il ne passe pas à l'échelle et il est une cible classique des logiciels malveillants qui redirigent un nom vers un faux site. Pense à le vérifier lors d'un diagnostic : une entrée oubliée l'emporte sur le DNS.
+
+Attention : `nslookup` et `dig` interrogent directement le serveur DNS et **ignorent** le fichier hosts. `ping`, un navigateur, `getent hosts` (Linux) ou `Resolve-DnsName` sans option particulière passent par le mécanisme complet du système. Deux outils peuvent donc donner deux réponses différentes, et cette différence est souvent la clé du diagnostic.
+
+### Les suffixes de recherche
+Si tu tapes `ping intranet`, le système essaie d'ajouter un suffixe de recherche (ligne `search lycee.internal` dans `/etc/resolv.conf`, ou suffixe DNS de la connexion sous Windows, souvent fourni par DHCP). La question réellement posée est alors `intranet.lycee.internal`.
+
+### À toi de jouer
+1. À 10 h 00, un résolveur met en cache `intranet.lycee.internal 3600 IN A 192.168.10.20`. À 10 h 20, l'administrateur change l'adresse en `192.168.10.21`. Jusqu'à quelle heure, au plus tard, les postes qui utilisent ce résolveur peuvent-ils encore recevoir l'ancienne adresse ? Que verra un poste qui interroge à 10 h 45, et avec quel TTL ?
+2. Sur Linux, ajoute dans `/etc/hosts` la ligne `192.0.2.1 example.com` (pense à la retirer après). Compare ensuite `getent hosts example.com` et `dig +short example.com`. Explique la différence.
+3. Sous Windows, ouvre un navigateur sur un site, puis lance `ipconfig /displaydns | findstr /i "nom"` en remplaçant `nom` par le site. Vide le cache, recommence. Que constates-tu ?
+
+### Correction
+1. Le cache garde l'ancienne réponse jusqu'à 11 h 00 (10 h 00 + 3600 s). À 10 h 45, le résolveur répond `192.168.10.20` (ancienne valeur) avec un TTL restant de 900 secondes (15 minutes). Pour un changement sans attente, il aurait fallu baisser le TTL à 300 au moins une heure avant la modification. Sur un serveur que tu administres, tu peux aussi vider le cache du résolveur (`rndc flush` avec Bind9).
+2. `getent hosts example.com` affiche `192.0.2.1 example.com` : il suit l'ordre de `nsswitch.conf` et lit d'abord `/etc/hosts`. `dig +short example.com` affiche la vraie adresse publique, car dig interroge directement le serveur DNS. Retire la ligne ensuite (`sudo nano /etc/hosts`).
+3. Après la visite, le nom apparaît dans le cache avec sa durée de vie restante (« Durée de vie »). Après `ipconfig /flushdns`, la commande ne renvoie plus rien jusqu'à la prochaine résolution. C'est la première chose à faire sur un poste après une correction DNS côté serveur.
+"""
+
+    codeblock "bash" {
+      title: "Observer le cache et l'ordre de résolution sous Linux"
+      code: """
+# Serveurs DNS utilisés et domaines de recherche (systemd-resolved)
+resolvectl status
+
+# Ordre de consultation : fichier hosts puis DNS ?
+grep '^hosts:' /etc/nsswitch.conf
+
+# Résolution par le système (lit /etc/hosts) puis par le DNS seul
+getent hosts example.com
+dig +short example.com
+
+# Le TTL décroît entre deux requêtes au même résolveur
+dig example.com | grep -A1 'ANSWER SECTION'
+sleep 5
+dig example.com | grep -A1 'ANSWER SECTION'
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle requête un poste envoie-t-il normalement à son résolveur ?" {
+        + "une requête récursive, avec le drapeau rd"
+        - "une requête itérative, en acceptant les renvois"
+        - "un transfert de zone AXFR"
+        - "une requête multicast sur 224.0.0.251"
+        explanation: "Le résolveur de souche du poste ne sait pas parcourir l'arbre : il demande une réponse finale avec rd (recursion desired). Les requêtes itératives sont celles du résolveur vers la racine, le TLD puis la zone. 224.0.0.251 est l'adresse du mDNS."
+      }
+      question "Comment un résolveur récursif connaît-il les adresses des serveurs racine au démarrage ?" {
+        - "il les demande au serveur DHCP"
+        + "grâce à un fichier de root hints livré avec le logiciel, puis il les rafraîchit"
+        - "il les obtient de son fournisseur d'accès par diffusion"
+        - "il interroge le serveur de com"
+        explanation: "Le logiciel fournit une liste initiale (root hints). Au démarrage, le résolveur interroge un de ces serveurs pour obtenir la liste à jour (priming). Le DHCP fournit au poste l'adresse de son résolveur, pas celle des serveurs racine."
+      }
+      question "Un enregistrement a un TTL de 3600. Il est mis en cache à 14 h 00. À 14 h 40, quel TTL le résolveur annonce-t-il ?" {
+        - "3600"
+        - "2400"
+        + "1200"
+        - "0"
+        explanation: "Le résolveur renvoie le TTL restant : 3600 - 40 × 60 = 3600 - 2400 = 1200 secondes. 2400 est le temps écoulé, pas le temps restant."
+      }
+      question "Tu dois changer l’adresse IP d’un site dont le TTL vaut 86400. Quelle méthode limite la période où les clients voient l’ancienne adresse ?" {
+        - "changer l'adresse puis mettre le TTL à 0"
+        + "baisser le TTL à 300 au moins un jour avant, changer l'adresse, puis remonter le TTL"
+        - "redémarrer le serveur faisant autorité après le changement"
+        - "supprimer puis recréer l'enregistrement"
+        explanation: "Les caches gardent l'ancienne réponse pendant l'ancien TTL, quoi qu'on fasse ensuite côté serveur. Il faut donc baisser le TTL à l'avance, attendre l'expiration de l'ancien TTL, puis faire le changement. Redémarrer le serveur faisant autorité ne vide pas les caches des autres."
+      }
+      question "D’où vient la durée de mise en cache d’une réponse NXDOMAIN ?" {
+        - "du TTL de l'enregistrement demandé"
+        - "d'une valeur fixe de 5 minutes dans tous les logiciels"
+        + "de l'enregistrement SOA de la zone (le plus petit entre son TTL et son dernier champ)"
+        - "du bail DHCP du client"
+        explanation: "Un nom qui n'existe pas n'a pas de TTL propre. La RFC 2308 fixe la durée du cache négatif à partir du SOA joint à la réponse : le minimum entre le TTL du SOA et son champ MINIMUM."
+      }
+      question "Quelle commande vide le cache DNS d’un poste Windows ?" {
+        - "ipconfig /release"
+        - "nslookup -flush"
+        + "ipconfig /flushdns"
+        - "netsh dns reset"
+        explanation: "ipconfig /flushdns vide le cache du service Client DNS (équivalent PowerShell : Clear-DnsClientCache). ipconfig /release libère l'adresse IP obtenue par DHCP, ce qui n'a rien à voir."
+      }
+      question "Sur Ubuntu avec systemd-resolved, sur quelle adresse écoute le stub local indiqué dans /etc/resolv.conf ?" {
+        - "127.0.0.1"
+        + "127.0.0.53"
+        - "0.0.0.0"
+        - "169.254.0.53"
+        explanation: "systemd-resolved écoute sur 127.0.0.53 et c'est cette adresse qui figure dans /etc/resolv.conf. Pour connaître les vrais serveurs DNS utilisés, il faut lancer resolvectl status."
+      }
+      question "Sur Linux, quel fichier fixe l’ordre entre le fichier hosts et le DNS ?" {
+        - "/etc/resolv.conf"
+        - "/etc/hostname"
+        + "/etc/nsswitch.conf"
+        - "/etc/dns.conf"
+        explanation: "La ligne hosts: de /etc/nsswitch.conf liste les sources dans l'ordre (files = /etc/hosts, dns = serveurs DNS). /etc/resolv.conf indique quels serveurs DNS interroger, pas l'ordre des sources."
+      }
+      question "/etc/hosts contient « 192.0.2.1 example.com ». Que renvoie « dig +short example.com » ?" {
+        - "192.0.2.1"
+        + "l'adresse publiée dans le DNS, car dig ignore le fichier hosts"
+        - "une erreur, car le nom est en conflit"
+        - "les deux adresses"
+        explanation: "dig et nslookup envoient directement une requête au serveur DNS : ils ne lisent pas le fichier hosts. getent hosts, ping ou un navigateur, eux, passent par nsswitch et verraient 192.0.2.1."
+      }
+      question "Un utilisateur tape « ping intranet » et la requête DNS envoyée est « intranet.lycee.internal ». Pourquoi ?" {
+        - "le serveur DNS a ajouté le domaine tout seul"
+        + "le poste a ajouté son suffixe de recherche (search) au nom court"
+        - "le fichier hosts contient une redirection"
+        - "ping ajoute toujours .internal"
+        explanation: "Un nom court est complété par les suffixes de recherche du poste (search dans resolv.conf, suffixe DNS de connexion sous Windows, souvent fourni par DHCP option 15 ou 119). Le serveur, lui, répond seulement à la question posée."
+      }
+      question "Lors d’un diagnostic, nslookup donne la bonne adresse mais le navigateur ouvre un mauvais site. Quel élément vérifier en priorité ?" {
+        - "le TTL de la zone"
+        + "le fichier hosts du poste et les caches locaux"
+        - "la configuration des serveurs racine"
+        - "le bail DHCP"
+        explanation: "nslookup ignore le fichier hosts et le cache du système, le navigateur non. Une entrée dans hosts ou une ancienne réponse en cache explique la différence. C'est aussi un indice classique de logiciel malveillant qui modifie hosts."
+      }
+      question "Qui pose les requêtes itératives vers la racine, puis vers le TLD ?" {
+        - "le navigateur"
+        - "le serveur DHCP"
+        + "le résolveur récursif"
+        - "le serveur faisant autorité de la zone"
+        explanation: "C'est le résolveur récursif qui parcourt l'arbre en suivant les renvois. Le navigateur passe par le résolveur de souche du système, et les serveurs faisant autorité ne font que répondre pour leurs zones."
+      }
+    }
+  }
+
+  module "dns-enregistrements" {
+    title: "Chapitre 3 : les enregistrements DNS et le fichier de zone"
+    duration: "40min"
+    content: """
+### Forme générale d'un enregistrement
+Chaque donnée du DNS est un **enregistrement de ressource** (resource record, RR) :
+```text
+nom                      TTL   classe  type   donnée
+srv-web.lycee.internal.  3600  IN      A      192.168.10.20
+```
+La classe vaut presque toujours `IN` (Internet). Un ensemble d'enregistrements de même nom et de même type (par exemple deux `A` pour un même nom) forme un **RRset**.
+
+### Les types à connaître
+| Type | Rôle | Exemple de donnée |
+|---|---|---|
+| A | adresse IPv4 d'un nom | `192.168.10.20` |
+| AAAA | adresse IPv6 d'un nom | `2001:db8:10::20` |
+| CNAME | alias : ce nom est un autre nom | `srv-web.lycee.internal.` |
+| MX | serveur de courrier du domaine, avec une préférence | `10 mail.lycee.internal.` |
+| NS | serveur faisant autorité pour la zone | `ns1.lycee.internal.` |
+| TXT | texte libre (SPF, DMARC, preuves de propriété) | `"v=spf1 mx -all"` |
+| PTR | résolution inverse : adresse vers nom | `srv-web.lycee.internal.` |
+| SOA | en-tête de la zone (un seul par zone) | voir plus bas |
+| SRV | service : priorité, poids, port, cible | `0 100 389 dc1.lycee.internal.` |
+
+### Les règles qui piègent
+• **CNAME exclusif** : un nom qui porte un CNAME ne peut porter aucun autre enregistrement. On ne peut donc pas mettre de CNAME à la racine de la zone (`@`), qui porte déjà le SOA et les NS.
+• **MX et NS pointent vers un nom qui a un A ou AAAA**, jamais vers un CNAME (RFC 2181) ni vers une adresse IP.
+• **MX : la plus petite préférence gagne**. Avec `10 mail1` et `20 mail2`, les serveurs expéditeurs essaient `mail1` d'abord ; `mail2` sert de secours.
+• **Le point final** : dans un fichier de zone, un nom sans point final est complété par l'origine de la zone. `mail.lycee.internal` (sans point) dans la zone `lycee.internal` devient `mail.lycee.internal.lycee.internal.`. C'est l'erreur la plus courante.
+• `@` désigne l'origine de la zone (son nom lui-même).
+
+### L'enregistrement SOA
+```text
+@ IN SOA ns1.lycee.internal. admin.lycee.internal. (
+        2026112601 ; SERIAL  numéro de version de la zone
+        3600       ; REFRESH le secondaire vérifie le serial toutes les heures
+        900        ; RETRY   nouvel essai après 15 min en cas d'échec
+        604800     ; EXPIRE  le secondaire cesse de répondre après 7 jours sans contact
+        300 )      ; MINIMUM durée du cache négatif
+```
+• Le premier nom est le serveur primaire (MNAME).
+• Le second est l'adresse de contact, avec le `@` remplacé par un point : `admin.lycee.internal.` signifie `admin@lycee.internal`.
+• Le **serial** doit augmenter à chaque modification, sinon les serveurs secondaires ne voient pas le changement. La convention `AAAAMMJJnn` (date + numéro du jour) facilite la lecture : `2026112601`, puis `2026112602` pour la modification suivante du même jour.
+
+### La résolution inverse (PTR)
+Pour retrouver le nom d'une adresse, on cherche un PTR dans une zone spéciale sous `arpa` :
+• IPv4 : on inverse les octets et on ajoute `in-addr.arpa`. `192.168.10.20` devient `20.10.168.192.in-addr.arpa.`. La zone d'un réseau `/24` comme `192.168.10.0/24` s'appelle `10.168.192.in-addr.arpa`.
+• IPv6 : on écrit les 32 chiffres hexadécimaux, on les inverse un par un, séparés par des points, sous `ip6.arpa`.
+
+Les PTR servent aux journaux (noms au lieu d'adresses), à certains contrôles anti-spam (un serveur de courrier dont l'adresse n'a pas de PTR cohérent est mal noté) et à des outils comme `traceroute`.
+
+### TXT : le couteau suisse
+Le TXT transporte des politiques lues par d'autres programmes :
+• **SPF** : quels serveurs ont le droit d'envoyer du courrier pour le domaine (`v=spf1 mx -all`) ;
+• **DMARC** : sur le nom `_dmarc.domaine`, la politique à appliquer aux courriers qui échouent aux contrôles ;
+• **DKIM** : clés publiques de signature des courriers, sur `selecteur._domainkey.domaine` ;
+• preuves de propriété demandées par des services en ligne ou des autorités de certification.
+
+### Un fichier de zone complet
+```text
+$TTL 3600
+$ORIGIN lycee.internal.
+@        IN SOA ns1.lycee.internal. admin.lycee.internal. (
+                2026112601 3600 900 604800 300 )
+@        IN NS    ns1.lycee.internal.
+@        IN NS    ns2.lycee.internal.
+@        IN MX 10 mail.lycee.internal.
+@        IN TXT   "v=spf1 mx -all"
+ns1      IN A     192.168.10.10
+ns2      IN A     192.168.10.11
+srv-web  IN A     192.168.10.20
+srv-web  IN AAAA  2001:db8:10::20
+www      IN CNAME srv-web
+intranet IN CNAME srv-web
+mail     IN A     192.168.10.25
+imprimante-cdi 300 IN A 192.168.10.50
+```
+`$TTL` fixe le TTL par défaut ; `imprimante-cdi` a son propre TTL de 300 s. `www IN CNAME srv-web` est correct : `srv-web` sans point est complété en `srv-web.lycee.internal.`, ce qui est voulu ici.
+
+### À toi de jouer
+Le fichier suivant contient cinq erreurs. Trouve-les et corrige-les.
+```text
+$TTL 3600
+$ORIGIN lycee.internal.
+@      IN SOA ns1.lycee.internal. admin@lycee.internal. (
+              2026112601 3600 900 604800 300 )
+@      IN NS    ns1
+@      IN CNAME srv-web.lycee.internal.
+@      IN MX 10 192.168.10.25
+ns1    IN A     192.168.10.10
+srv-web IN A    192.168.10.20
+smtp   IN CNAME mail.lycee.internal
+```
+Ensuite : écris le nom complet du PTR de `192.168.10.25`, et le nom de la zone inverse du réseau `172.16.0.0/16`.
+
+### Correction
+1. `admin@lycee.internal.` : le `@` est interdit dans le SOA ; il faut écrire `admin.lycee.internal.`.
+2. `@ IN CNAME ...` : un CNAME à la racine de la zone est interdit (le nom porte déjà SOA et NS). Il faut un `A` : `@ IN A 192.168.10.20`.
+3. `@ IN MX 10 192.168.10.25` : un MX pointe vers un nom, pas une adresse. Ajoute `mail IN A 192.168.10.25` et écris `@ IN MX 10 mail.lycee.internal.`.
+4. `smtp IN CNAME mail.lycee.internal` : il manque le point final, le nom deviendrait `mail.lycee.internal.lycee.internal.`. Écris `mail.lycee.internal.` ou simplement `mail`.
+5. `mail` n'existait pas : la cible du CNAME était introuvable. La ligne `mail IN A 192.168.10.25` ajoutée au point 3 règle aussi ce problème.
+(`@ IN NS ns1` est correct, car `ns1` est complété en `ns1.lycee.internal.` et ce nom a bien un A.)
+
+Le PTR de `192.168.10.25` s'appelle `25.10.168.192.in-addr.arpa.`. La zone inverse de `172.16.0.0/16` s'appelle `16.172.in-addr.arpa` : on ne garde que les octets du préfixe, inversés.
+"""
+
+    quiz {
+      pick: 5
+      question "Quel type d’enregistrement associe un nom à une adresse IPv6 ?" {
+        - "A"
+        + "AAAA"
+        - "PTR"
+        - "A6"
+        explanation: "AAAA (RFC 3596) porte une adresse IPv6 de 128 bits, quatre fois la taille d'une adresse IPv4, d'où les quatre A. A porte une IPv4. A6 a existé mais il est abandonné."
+      }
+      question "Une zone contient « @ IN MX 10 mx1.lycee.internal. » et « @ IN MX 20 mx2.lycee.internal. ». Quel serveur reçoit le courrier en temps normal ?" {
+        + "mx1, car la plus petite préférence est prioritaire"
+        - "mx2, car la plus grande valeur est prioritaire"
+        - "les deux à parts égales"
+        - "celui qui répond le plus vite"
+        explanation: "La préférence MX la plus basse est essayée en premier. mx2 n'est utilisé que si mx1 ne répond pas. Pour répartir à parts égales, il faudrait donner la même préférence aux deux."
+      }
+      question "Pourquoi ne peut-on pas mettre un CNAME sur le nom de la zone (@) ?" {
+        - "parce qu'un CNAME doit toujours commencer par www"
+        + "parce qu'un nom portant un CNAME ne peut porter aucun autre enregistrement, et @ porte déjà SOA et NS"
+        - "parce que Bind9 ne gère pas les CNAME"
+        - "parce qu'un CNAME ne peut pointer que vers une adresse IP"
+        explanation: "Un CNAME dit « ce nom est un autre nom » : il exclut tout autre enregistrement sur le même nom. Or l'origine de la zone porte obligatoirement SOA et NS. Un CNAME pointe vers un nom, jamais vers une adresse."
+      }
+      question "Dans la zone lycee.internal, la ligne « web IN CNAME srv1.lycee.internal » (sans point final) désigne quelle cible ?" {
+        - "srv1.lycee.internal."
+        + "srv1.lycee.internal.lycee.internal."
+        - "srv1."
+        - "la ligne est refusée au chargement"
+        explanation: "Sans point final, le nom est relatif et le serveur ajoute l'origine de la zone. La ligne est syntaxiquement valide, donc acceptée, mais la cible n'existe pas. named-checkzone ne signale pas toujours ce cas : c'est à toi de relire."
+      }
+      question "Quel est le nom du PTR de l’adresse 10.1.2.3 ?" {
+        - "10.1.2.3.in-addr.arpa."
+        + "3.2.1.10.in-addr.arpa."
+        - "3.2.1.10.ip6.arpa."
+        - "arpa.in-addr.10.1.2.3."
+        explanation: "On inverse les octets (du plus précis au plus général, comme les noms) puis on ajoute in-addr.arpa. ip6.arpa sert aux adresses IPv6."
+      }
+      question "Dans le SOA, que se passe-t-il si tu modifies la zone sans augmenter le serial ?" {
+        - "le serveur primaire refuse de redémarrer"
+        + "les serveurs secondaires ne récupèrent pas la modification"
+        - "le TTL de tous les enregistrements passe à 0"
+        - "les clients reçoivent une erreur SERVFAIL"
+        explanation: "Le secondaire compare le serial du primaire au sien. S'il n'a pas augmenté, il considère qu'il n'y a rien de nouveau et garde l'ancienne copie. Le primaire, lui, sert bien la nouvelle version : la zone devient incohérente entre serveurs."
+      }
+      question "Comment s’écrit l’adresse de contact technique admin@lycee.internal dans un SOA ?" {
+        - "admin@lycee.internal."
+        - "<admin@lycee.internal>"
+        + "admin.lycee.internal."
+        - "mailto:admin.lycee.internal"
+        explanation: "Le SOA ne connaît que des noms DNS : le @ est remplacé par un point. Un point situé dans la partie avant le @ doit être protégé par une barre oblique inverse, c'est pourquoi on choisit souvent un contact simple comme admin ou hostmaster."
+      }
+      question "Quel enregistrement indique les serveurs faisant autorité d’une zone ?" {
+        - "SOA"
+        + "NS"
+        - "MX"
+        - "SRV"
+        explanation: "Les NS listent les serveurs faisant autorité, et la zone parente en publie une copie pour la délégation. Le SOA ne nomme que le primaire (MNAME). MX concerne le courrier, SRV les services comme LDAP ou Kerberos."
+      }
+      question "Une zone a « $TTL 3600 » et la ligne « imprimante 300 IN A 192.168.10.50 ». Quel TTL a l’imprimante ?" {
+        + "300 secondes"
+        - "3600 secondes"
+        - "3900 secondes"
+        - "le TTL du SOA"
+        explanation: "$TTL fixe la valeur par défaut, utilisée seulement quand une ligne n'indique pas son propre TTL. Ici la ligne en précise un : 300 secondes."
+      }
+      question "Quel est le nom de la zone inverse d’un réseau 192.168.20.0/24 ?" {
+        - "192.168.20.in-addr.arpa"
+        + "20.168.192.in-addr.arpa"
+        - "0.20.168.192.in-addr.arpa"
+        - "192.168.20.0.arpa"
+        explanation: "Pour un /24, on garde les trois octets du préfixe dans l'ordre inverse, puis in-addr.arpa. Les PTR de la zone sont ensuite nommés par le dernier octet seul (par exemple 25)."
+      }
+      question "À quoi sert un enregistrement TXT « v=spf1 mx -all » à la racine d’un domaine ?" {
+        - "à chiffrer les courriers du domaine"
+        + "à dire que seuls les serveurs MX du domaine peuvent envoyer du courrier en son nom"
+        - "à rediriger le courrier vers un autre domaine"
+        - "à publier la clé DNSSEC de la zone"
+        explanation: "SPF liste les expéditeurs autorisés : mx autorise les serveurs listés dans les MX, -all demande de rejeter les autres. SPF ne chiffre rien et ne redirige rien ; les clés DNSSEC sont des DNSKEY."
+      }
+      question "Un MX peut-il pointer vers un nom qui est un CNAME ?" {
+        - "oui, c'est la méthode recommandée"
+        + "non, un MX doit pointer vers un nom qui possède directement un A ou un AAAA"
+        - "oui, mais seulement en IPv6"
+        - "non, un MX doit contenir une adresse IP"
+        explanation: "La RFC 2181 interdit qu'un MX ou un NS désigne un alias. Beaucoup de serveurs de courrier le tolèrent, mais ce n'est pas fiable. Un MX ne contient jamais d'adresse IP : il contient un nom."
+      }
+      question "Combien d’enregistrements SOA une zone contient-elle ?" {
+        - "un par serveur NS"
+        + "exactement un"
+        - "aucun pour une zone inverse"
+        - "un par sous-domaine"
+        explanation: "Chaque zone a un seul SOA, à son origine. Les zones inverses en ont un aussi, comme toute zone."
+      }
+    }
+  }
+
+  module "dns-diagnostic" {
+    title: "Chapitre 4 : diagnostiquer avec dig, nslookup et Resolve-DnsName"
+    duration: "40min"
+    content: """
+### Installer les outils
+• Debian/Ubuntu : `sudo apt install bind9-dnsutils` fournit `dig`, `nslookup`, `host` et `delv`.
+• Windows : `nslookup` est intégré ; en PowerShell, `Resolve-DnsName` est plus complet.
+
+### Lire une sortie de dig
+```text
+$ dig srv-web.lycee.internal @192.168.10.10
+
+; <<>> DiG 9.18 <<>> srv-web.lycee.internal @192.168.10.10
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 41187
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; QUESTION SECTION:
+;srv-web.lycee.internal.          IN      A
+
+;; ANSWER SECTION:
+srv-web.lycee.internal.   3600    IN      A       192.168.10.20
+
+;; Query time: 1 msec
+;; SERVER: 192.168.10.10#53(192.168.10.10) (UDP)
+```
+• `status` : le code de retour (tableau ci-dessous).
+• `flags` : `qr` réponse, `aa` réponse faisant autorité, `rd` récursion demandée, `ra` récursion disponible sur ce serveur, `ad` données validées par DNSSEC, `tc` réponse tronquée.
+• `ANSWER` : les données ; `AUTHORITY` : le SOA (réponse négative) ou les NS (renvoi) ; `SERVER` : qui a répondu. Vérifie toujours cette ligne : beaucoup d'erreurs viennent du fait qu'on n'interroge pas le serveur qu'on croit.
+
+| status | Sens | Piste |
+|---|---|---|
+| NOERROR avec réponse | tout va bien | |
+| NOERROR sans réponse (NODATA) | le nom existe, pas ce type | demander le bon type (A ou AAAA ?) |
+| NXDOMAIN | le nom n'existe pas | faute de frappe, enregistrement absent, mauvaise zone |
+| SERVFAIL | le serveur n'a pas pu répondre | zone non chargée, serveurs faisant autorité injoignables, échec DNSSEC |
+| REFUSED | le serveur refuse | récursion interdite pour ton adresse, zone non servie |
+
+### Les options utiles de dig
+```bash
+dig example.com                    # type A par défaut, serveur de /etc/resolv.conf
+dig @192.168.10.10 lycee.internal SOA   # serveur et type choisis
+dig +short example.com MX          # réponse seule
+dig -x 192.168.10.20               # résolution inverse (PTR)
+dig +trace example.com             # suit la délégation depuis la racine
+dig +norecurse @ns1.lycee.internal www.lycee.internal   # question sans récursion
+dig @192.168.10.10 lycee.internal AXFR  # demande un transfert de zone (doit être refusé)
+dig +tcp example.com               # force le TCP
+```
+`dig +trace` est très parlant : il affiche la racine, puis les serveurs du TLD, puis ceux de la zone, exactement les étapes du chapitre 2. Si la chaîne s'arrête à un niveau, tu sais où chercher.
+
+### nslookup
+```text
+C:\> nslookup srv-web.lycee.internal 192.168.10.10
+Serveur :   ns1.lycee.internal
+Address:  192.168.10.10
+
+Nom :    srv-web.lycee.internal
+Address:  192.168.10.20
+```
+• `nslookup -type=MX lycee.internal` : choisir le type ;
+• « Réponse ne faisant pas autorité » (Non-authoritative answer) : la réponse vient d'un cache ;
+• Si nslookup affiche `Serveur : UnKnown`, c'est seulement qu'il n'a pas trouvé le PTR de l'adresse de ton serveur DNS : la zone inverse manque, ce n'est pas une panne de la résolution.
+• Comme dig, nslookup ignore le fichier hosts.
+
+### PowerShell : Resolve-DnsName
+```powershell
+Resolve-DnsName srv-web.lycee.internal -Server 192.168.10.10
+Resolve-DnsName lycee.internal -Type MX
+Resolve-DnsName 192.168.10.20            # inverse
+Resolve-DnsName example.com -NoHostsFile # ignore le fichier hosts
+Resolve-DnsName example.com -DnsOnly     # DNS seulement, sans LLMNR ni NetBIOS
+Get-DnsClientServerAddress               # serveurs DNS configurés par interface
+```
+
+### Une méthode de diagnostic en six étapes
+1. **Quel serveur le poste utilise-t-il ?** `resolvectl status` ou `ipconfig /all`. Un serveur DNS public sur un poste de domaine Active Directory, par exemple, empêche de trouver les noms internes.
+2. **Ce serveur répond-il ?** `dig @serveur example.com`. Un délai dépassé (`connection timed out; no servers could be reached`) indique un problème réseau, un pare-feu, ou un service arrêté.
+3. **Le nom est-il dans la zone ?** Interroge directement le serveur faisant autorité avec `+norecurse` : si lui ne connaît pas le nom, le problème est dans la zone.
+4. **Le cache est-il en cause ?** Compare la réponse du résolveur et celle du serveur faisant autorité. Si elles diffèrent, regarde le TTL restant.
+5. **Le poste voit-il autre chose que dig ?** Compare `getent hosts nom` (ou `Resolve-DnsName nom` sans option, face à `Resolve-DnsName nom -NoHostsFile` après `Clear-DnsClientCache`) et `dig nom` : un écart désigne le fichier hosts, un cache local, ou un suffixe de recherche.
+6. **L'adresse obtenue est-elle la bonne ?** Une résolution correcte vers une ancienne adresse ressemble à une panne du service.
+
+### À toi de jouer
+Lis ces trois sorties et donne pour chacune le diagnostic et l'action à mener.
+
+Sortie A :
+```text
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 5521
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+;; AUTHORITY SECTION:
+lycee.internal.  300  IN  SOA  ns1.lycee.internal. admin.lycee.internal. 2026112601 3600 900 604800 300
+;; SERVER: 192.168.10.10#53(192.168.10.10) (UDP)
+```
+Question posée : `intarnet.lycee.internal A`.
+
+Sortie B : `dig @192.168.10.10 example.com` depuis un poste du réseau Wi-Fi invités `192.168.50.0/24` :
+```text
+;; ->>HEADER<<- opcode: QUERY, status: REFUSED, id: 8102
+;; flags: qr rd; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 1
+;; WARNING: recursion requested but not available
+```
+
+Sortie C : `dig srv-web.lycee.internal AAAA` :
+```text
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 3310
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+```
+
+### Correction
+A. NXDOMAIN avec `aa` : le serveur faisant autorité affirme que le nom n'existe pas. La question contient une faute (`intarnet` au lieu de `intranet`). La réponse négative sera gardée en cache 300 secondes (valeur du SOA). Action : corriger la saisie ; si le nom était vraiment manquant, l'ajouter, augmenter le serial, recharger la zone.
+
+B. REFUSED et `ra` absent : le serveur refuse la récursion à ce réseau. C'est sans doute volontaire (`allow-recursion` limité aux réseaux internes, voir chapitre 5). Action : donner aux invités un autre résolveur (celui de la box, ou un résolveur dédié), surtout pas ouvrir la récursion à tous.
+
+C. NOERROR sans réponse (NODATA) : `srv-web` existe mais n'a pas d'enregistrement AAAA. Ce n'est pas une panne si le serveur n'a pas d'IPv6 ; sinon, ajouter l'AAAA.
+
+### À toi de jouer (2)
+Lance `dig +trace www.afnic.fr` et repère dans la sortie : le serveur racine qui a répondu, les serveurs du TLD `fr`, et les serveurs qui font autorité pour `afnic.fr`.
+
+### Correction (2)
+La sortie présente quatre blocs. Le premier liste les 13 NS de `.` (récupérés auprès de ton résolveur). Le deuxième, renvoyé par un serveur `x.root-servers.net`, liste les NS de `fr.`. Le troisième, renvoyé par un serveur de `fr`, liste les NS de `afnic.fr.`. Le dernier contient la réponse finale (A ou CNAME de `www.afnic.fr`), renvoyée par un des serveurs de `afnic.fr`, avec en fin de bloc la mention `from <serveur>` qui indique lequel a répondu. Les noms exacts des serveurs changent avec le temps : l'important est de reconnaître les trois niveaux.
+"""
+
+    quiz {
+      pick: 5
+      question "Que signifie un status NXDOMAIN dans une réponse dig ?" {
+        - "le serveur est injoignable"
+        + "le nom demandé n'existe pas"
+        - "le nom existe mais pas pour ce type"
+        - "le serveur refuse la requête"
+        explanation: "NXDOMAIN (non-existent domain) affirme que le nom n'existe pas du tout. Un nom qui existe sans le type demandé donne NOERROR sans réponse (NODATA). Un refus donne REFUSED, et un serveur injoignable donne un délai dépassé, sans status."
+      }
+      question "dig affiche « status: NOERROR » et « ANSWER: 0 ». Comment l’interpréter ?" {
+        - "le serveur est en panne"
+        + "le nom existe mais n'a pas d'enregistrement du type demandé"
+        - "la réponse est en cours de calcul"
+        - "le nom n'existe pas"
+        explanation: "C'est une réponse NODATA : le nom existe (sinon ce serait NXDOMAIN) mais pas avec ce type. Cas classique : demander un AAAA pour un hôte qui n'a qu'une IPv4."
+      }
+      question "Quelle commande affiche la résolution inverse de 192.168.10.20 ?" {
+        - "dig 192.168.10.20"
+        + "dig -x 192.168.10.20"
+        - "dig +reverse 192.168.10.20"
+        - "dig PTR 192.168.10.20"
+        explanation: "dig -x construit lui-même le nom 20.10.168.192.in-addr.arpa et demande un PTR. dig 192.168.10.20 chercherait un nom de domaine littéral 192.168.10.20. Avec PTR, il faudrait écrire le nom inversé complet."
+      }
+      question "Une réponse contient les drapeaux « qr rd » sans « ra », et le status REFUSED. Que comprendre ?" {
+        - "la zone n'est pas chargée"
+        + "le serveur ne fournit pas la récursion à ce client"
+        - "la réponse a été tronquée"
+        - "le nom a été validé par DNSSEC"
+        explanation: "ra (recursion available) absent et REFUSED : le serveur interrogé refuse de résoudre pour toi, souvent à cause d'une liste allow-recursion. C'est le comportement voulu d'un serveur bien configuré pour les clients extérieurs."
+      }
+      question "Quelle option de dig suit la chaîne de délégation depuis la racine ?" {
+        - "+short"
+        - "+norecurse"
+        + "+trace"
+        - "+tcp"
+        explanation: "+trace interroge la racine, puis les serveurs du TLD, puis ceux de la zone, en affichant chaque étape. +short réduit l'affichage, +norecurse demande une réponse sans récursion, +tcp force le transport TCP."
+      }
+      question "nslookup affiche « Serveur : UnKnown » puis une réponse correcte. Quelle en est la cause ?" {
+        - "le serveur DNS est en panne"
+        - "la réponse est fausse"
+        + "l'adresse du serveur DNS n'a pas de PTR, ce qui n'empêche pas la résolution"
+        - "le poste n'a pas de passerelle"
+        explanation: "nslookup cherche d'abord le nom de son serveur par une résolution inverse. Sans zone inverse, il affiche UnKnown. La réponse qui suit reste valable ; créer la zone inverse fait disparaître le message."
+      }
+      question "Quel status attend-on quand un résolveur n’arrive pas à joindre les serveurs faisant autorité d’une zone ?" {
+        - "NXDOMAIN"
+        - "REFUSED"
+        + "SERVFAIL"
+        - "NOERROR"
+        explanation: "SERVFAIL indique que le serveur a essayé mais n'a pas pu produire de réponse : serveurs faisant autorité injoignables, zone mal chargée, ou validation DNSSEC en échec. Ce n'est pas une affirmation que le nom n'existe pas."
+      }
+      question "Quel paramètre de Resolve-DnsName fait ignorer le fichier hosts du poste ?" {
+        - "-DnsOnly"
+        + "-NoHostsFile"
+        - "-CacheOnly"
+        - "-NoRecursion"
+        explanation: "D'après la documentation Microsoft, -NoHostsFile saute le fichier hosts. -DnsOnly n'utilise que le protocole DNS, c'est-à-dire sans LLMNR ni NetBIOS ; -CacheOnly répond seulement depuis le cache local ; -NoRecursion demande au serveur de ne pas faire de récursion."
+      }
+      question "Dans la sortie de dig, quelle ligne indique quel serveur a réellement répondu ?" {
+        - "QUESTION SECTION"
+        - "flags"
+        + "SERVER"
+        - "global options"
+        explanation: "La ligne SERVER donne l'adresse et le port du serveur qui a répondu, et le transport (UDP ou TCP). C'est la première chose à vérifier : on croit souvent interroger son serveur alors que le poste en utilise un autre."
+      }
+      question "dig srv-web.lycee.internal @ns1 renvoie 192.168.10.20, mais un ping du même nom depuis le poste vise 192.168.10.99. Quelle cause est la plus probable ?" {
+        - "le serveur DNS ns1 est corrompu"
+        + "une entrée du fichier hosts ou un cache local sur le poste"
+        - "le TTL de la zone est trop court"
+        - "la passerelle par défaut est fausse"
+        explanation: "dig interroge le serveur et obtient la bonne valeur. ping passe par le mécanisme du système, qui consulte d'abord hosts et le cache. L'écart désigne donc le poste, pas le serveur."
+      }
+      question "Un « dig @192.168.10.10 lycee.internal AXFR » depuis un poste quelconque renvoie toute la zone. Que faut-il en conclure ?" {
+        - "c'est le fonctionnement normal d'un serveur DNS"
+        + "les transferts de zone ne sont pas restreints, ce qui expose l'inventaire du réseau"
+        - "le poste est un serveur secondaire"
+        - "la zone est protégée par DNSSEC"
+        explanation: "Un transfert de zone (AXFR) doit être réservé aux serveurs secondaires. Ouvert à tous, il donne à un attaquant la liste complète des machines et services. On le ferme avec allow-transfer sur Bind9."
+      }
+      question "Tu veux savoir si un nom est bien publié dans la zone, sans passer par un cache. Que fais-tu ?" {
+        - "dig nom +short sur ton résolveur habituel"
+        + "dig +norecurse nom @serveur-faisant-autorite, et tu vérifies le drapeau aa"
+        - "ping nom"
+        - "ipconfig /displaydns"
+        explanation: "Interroger directement le serveur faisant autorité, sans demander de récursion, montre le contenu réel de la zone ; le drapeau aa le confirme. Un résolveur peut répondre depuis son cache avec une valeur ancienne."
+      }
+      question "Quel paquet Debian fournit dig ?" {
+        - "dig"
+        - "bind9-server"
+        + "bind9-dnsutils"
+        - "net-tools"
+        explanation: "Sur Debian et Ubuntu récents, dig, nslookup, host et delv sont dans bind9-dnsutils (l'ancien nom dnsutils est un paquet de transition). net-tools fournit ifconfig et netstat."
+      }
+    }
+  }
+
+  module "dns-serveur" {
+    title: "Chapitre 5 : monter un serveur DNS avec Bind9 (et sous Windows Server)"
+    duration: "45min"
+    content: """
+### Le labo
+Monte deux machines virtuelles Debian 12 sur un même réseau interne (VirtualBox « Réseau interne », ou un pont isolé sur Proxmox ou VMware) :
+| Machine | Rôle | Adresse |
+|---|---|---|
+| `ns1` | DNS primaire, plus tard DHCP | `192.168.10.10/24` |
+| `ns2` | DNS secondaire | `192.168.10.11/24` |
+| `client` | poste de test | adresse DHCP (chapitre 8) ou `192.168.10.100/24` en attendant |
+
+Pour que les machines accèdent à Internet pendant l'installation des paquets, ajoute une seconde carte en NAT, ou installe tout avant de les isoler. Adresse fixe sur Debian avec ifupdown, dans `/etc/network/interfaces` (le nom de l'interface, ici `enp0s3`, se lit avec `ip -br a`) :
+```text
+auto enp0s3
+iface enp0s3 inet static
+    address 192.168.10.10/24
+    gateway 192.168.10.254
+```
+Puis `sudo systemctl restart networking` (en console, pas à travers une session SSH sur cette même interface).
+
+### Installer Bind9
+```bash
+sudo apt update
+sudo apt install bind9 bind9-dnsutils
+systemctl status named
+```
+Sur Debian 12, le service s'appelle `named` (`bind9` est un alias). Les fichiers sont dans `/etc/bind/` :
+• `named.conf` : inclut les deux suivants (et `named.conf.default-zones`), à ne pas modifier ;
+• `named.conf.options` : options générales (récursion, redirecteurs, écoute) ;
+• `named.conf.local` : déclaration de tes zones.
+
+### Étape 1 : le résolveur interne, fermé aux autres
+`/etc/bind/named.conf.options` :
+```text
+acl "interne" {
+    127.0.0.1;
+    192.168.10.0/24;
+    192.168.20.0/24;
+};
+
+options {
+    directory "/var/cache/bind";
+    listen-on { 127.0.0.1; 192.168.10.10; };
+    listen-on-v6 { none; };
+
+    recursion yes;
+    allow-recursion { interne; };
+    allow-query { interne; };
+    allow-transfer { none; };
+
+    // facultatif : passer par des résolveurs en amont
+    // forwarders { 9.9.9.9; 149.112.112.112; };
+
+    dnssec-validation auto;
+};
+```
+• `allow-recursion` limite la récursion aux réseaux internes : un résolveur ouvert à Internet sert à des attaques par amplification (chapitre 9).
+• `allow-transfer { none; }` interdit les transferts par défaut ; on les ouvre zone par zone.
+• Sans `forwarders`, Bind9 résout lui-même depuis la racine. Avec, il envoie ses questions à ces résolveurs. Les deux fonctionnent ; les redirecteurs sont utiles quand le pare-feu de sortie n'autorise le DNS que vers certains serveurs.
+• `dnssec-validation auto` active la validation DNSSEC des réponses venues d'Internet.
+
+### Étape 2 : déclarer les zones
+`/etc/bind/named.conf.local` :
+```text
+zone "lycee.internal" {
+    type primary;
+    file "/etc/bind/db.lycee.internal";
+    allow-transfer { 192.168.10.11; };
+    also-notify { 192.168.10.11; };
+};
+
+zone "10.168.192.in-addr.arpa" {
+    type primary;
+    file "/etc/bind/db.192.168.10";
+    allow-transfer { 192.168.10.11; };
+    also-notify { 192.168.10.11; };
+};
+```
+`primary` et `secondary` remplacent les anciens mots `master` et `slave`, encore acceptés et très présents dans les tutoriels.
+
+### Étape 3 : les fichiers de zone
+`/etc/bind/db.lycee.internal` : reprends le fichier complet du chapitre 3.
+
+`/etc/bind/db.192.168.10` :
+```text
+$TTL 3600
+@   IN SOA ns1.lycee.internal. admin.lycee.internal. (
+            2026112601 3600 900 604800 300 )
+@   IN NS  ns1.lycee.internal.
+@   IN NS  ns2.lycee.internal.
+10  IN PTR ns1.lycee.internal.
+11  IN PTR ns2.lycee.internal.
+20  IN PTR srv-web.lycee.internal.
+25  IN PTR mail.lycee.internal.
+```
+Ici le point final est indispensable dans les cibles des PTR : sans lui, `ns1.lycee.internal` deviendrait `ns1.lycee.internal.10.168.192.in-addr.arpa.`.
+
+### Étape 4 : vérifier avant de recharger
+```bash
+sudo named-checkconf
+sudo named-checkzone lycee.internal /etc/bind/db.lycee.internal
+sudo named-checkzone 10.168.192.in-addr.arpa /etc/bind/db.192.168.10
+sudo rndc reload
+sudo journalctl -u named --since "5 min ago" | tail -n 20
+```
+`named-checkconf` ne dit rien si la configuration est correcte. `named-checkzone` affiche `loaded serial 2026112601` puis `OK`. Ne recharge jamais sans ces vérifications : une zone en erreur n'est pas chargée, et le serveur répond SERVFAIL pour tout son contenu.
+
+Après une modification d'une seule zone : augmente le serial, puis `sudo rndc reload lycee.internal`. Pour vider le cache du résolveur : `sudo rndc flush`.
+
+### Étape 5 : le serveur secondaire
+Sur `ns2`, même `named.conf.options` (avec `listen-on { 127.0.0.1; 192.168.10.11; };`), et dans `named.conf.local` :
+```text
+zone "lycee.internal" {
+    type secondary;
+    primaries { 192.168.10.10; };
+    file "/var/cache/bind/db.lycee.internal";
+};
+zone "10.168.192.in-addr.arpa" {
+    type secondary;
+    primaries { 192.168.10.10; };
+    file "/var/cache/bind/db.192.168.10";
+};
+```
+Le fichier du secondaire est dans `/var/cache/bind`, où named a le droit d'écrire (AppArmor et les permissions l'empêchent d'écrire dans `/etc/bind`). Depuis Bind 9.9, la copie est enregistrée en format binaire par défaut : c'est normal qu'elle soit illisible avec `cat`.
+
+Test : modifie la zone sur `ns1`, augmente le serial, `rndc reload`. Grâce à `also-notify`, `ns2` reçoit un NOTIFY et récupère la zone en quelques secondes. Vérifie : `dig @192.168.10.11 lycee.internal SOA +short` doit afficher le nouveau serial.
+
+### Étape 6 : utiliser le serveur
+Sur le client : `nameserver 192.168.10.10` et `nameserver 192.168.10.11` (dans `/etc/resolv.conf`, ou via DHCP au chapitre 8). Sur `ns1` lui-même, pointe aussi vers `127.0.0.1`.
+
+### Le même travail sous Windows Server
+Sous Windows Server 2022, le rôle DNS s'installe avec le Gestionnaire de serveur ou en PowerShell (session administrateur) :
+```powershell
+Install-WindowsFeature DNS -IncludeManagementTools
+
+# Zone directe et zone inverse stockées dans des fichiers
+Add-DnsServerPrimaryZone -Name "lycee.internal" -ZoneFile "lycee.internal.dns"
+Add-DnsServerPrimaryZone -NetworkId "192.168.10.0/24" -ZoneFile "10.168.192.in-addr.arpa.dns"
+
+# Enregistrements
+Add-DnsServerResourceRecordA -ZoneName "lycee.internal" -Name "srv-web" -IPv4Address "192.168.10.20" -CreatePtr
+Add-DnsServerResourceRecordCName -ZoneName "lycee.internal" -Name "www" -HostNameAlias "srv-web.lycee.internal"
+Add-DnsServerResourceRecordMX -ZoneName "lycee.internal" -Name "." -MailExchange "mail.lycee.internal" -Preference 10
+
+# Redirecteurs et vérification
+Set-DnsServerForwarder -IPAddress 9.9.9.9
+Get-DnsServerResourceRecord -ZoneName "lycee.internal"
+```
+• `-CreatePtr` crée le PTR en même temps que le A (la zone inverse doit exister).
+• Sur un contrôleur de domaine Active Directory, on remplace `-ZoneFile` par `-ReplicationScope "Domain"` : la zone est stockée dans l'annuaire et répliquée entre contrôleurs, et les postes du domaine y enregistrent leurs noms (mise à jour dynamique sécurisée).
+• La console graphique est `dnsmgmt.msc`.
+
+### À toi de jouer
+Sur ton labo :
+1. Configure `ns1` comme ci-dessus, avec la zone directe et la zone inverse.
+2. Depuis le client, vérifie : le A de `srv-web`, le CNAME `www`, le MX de la zone, et la résolution inverse de `192.168.10.25`.
+3. Ajoute `nas IN A 192.168.10.30` et son PTR, sans redémarrer named, et vérifie que `ns2` a bien reçu la modification.
+4. Depuis le client, vérifie qu'un transfert de zone est refusé.
+
+### Correction
+1. `sudo named-checkconf` sans message, `named-checkzone` affiche `OK` pour les deux zones, `sudo rndc reload` répond `server reload successful`.
+2. Depuis le client :
+```bash
+dig @192.168.10.10 srv-web.lycee.internal +short     # 192.168.10.20
+dig @192.168.10.10 www.lycee.internal +short         # srv-web.lycee.internal. puis 192.168.10.20
+dig @192.168.10.10 lycee.internal MX +short          # 10 mail.lycee.internal.
+dig @192.168.10.10 -x 192.168.10.25 +short           # mail.lycee.internal.
+```
+3. Dans `db.lycee.internal` : ajoute la ligne `nas IN A 192.168.10.30` et passe le serial à `2026112602`. Dans `db.192.168.10` : ajoute `30 IN PTR nas.lycee.internal.` et passe aussi le serial à `2026112602` (chaque zone a son propre serial). Puis `named-checkzone` sur les deux et `sudo rndc reload`. Sur le client : `dig @192.168.10.11 nas.lycee.internal +short` renvoie `192.168.10.30`. Si `ns2` renvoie NXDOMAIN, le serial n'a pas été augmenté ou `allow-transfer` ne contient pas `192.168.10.11` (voir `journalctl -u named` sur les deux serveurs).
+4. `dig @192.168.10.10 lycee.internal AXFR` depuis le client affiche `; Transfer failed.` ; le journal de `ns1` contient une ligne `zone transfer 'lycee.internal/AXFR/IN' denied`.
+"""
+
+    codeblock "bash" {
+      title: "Contrôles à lancer après chaque modification de Bind9"
+      code: """
+sudo named-checkconf && echo "configuration OK"
+sudo named-checkzone lycee.internal /etc/bind/db.lycee.internal
+sudo named-checkzone 10.168.192.in-addr.arpa /etc/bind/db.192.168.10
+sudo rndc reload
+# serial vu par le primaire et le secondaire : ils doivent être égaux
+dig @192.168.10.10 lycee.internal SOA +short
+dig @192.168.10.11 lycee.internal SOA +short
+sudo journalctl -u named -n 20 --no-pager
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Sur Debian 12, dans quel fichier déclare-t-on ses propres zones Bind9 ?" {
+        - "/etc/bind/named.conf"
+        - "/etc/bind/named.conf.options"
+        + "/etc/bind/named.conf.local"
+        - "/var/cache/bind/zones.conf"
+        explanation: "Debian sépare la configuration : named.conf inclut options et local. Les zones locales vont dans named.conf.local, les options générales (récursion, redirecteurs) dans named.conf.options."
+      }
+      question "Quelle option limite la résolution récursive aux réseaux internes ?" {
+        - "allow-transfer"
+        + "allow-recursion"
+        - "listen-on"
+        - "also-notify"
+        explanation: "allow-recursion indique quels clients peuvent obtenir une résolution complète. allow-transfer concerne les copies de zone, listen-on les adresses d'écoute, also-notify les serveurs à prévenir d'un changement."
+      }
+      question "Quelle commande vérifie un fichier de zone sans le charger ?" {
+        - "named-checkconf /etc/bind/db.lycee.internal"
+        + "named-checkzone lycee.internal /etc/bind/db.lycee.internal"
+        - "rndc check lycee.internal"
+        - "dig +check lycee.internal"
+        explanation: "named-checkzone prend le nom de la zone puis le fichier, et affiche le serial chargé puis OK. named-checkconf vérifie la configuration générale, pas le contenu d'une zone."
+      }
+      question "Tu as modifié une zone sur le primaire et rechargé, mais le secondaire garde l’ancienne version. Quelle cause est la plus probable ?" {
+        - "le TTL est trop long"
+        + "le serial n'a pas été augmenté"
+        - "le client a un cache"
+        - "la zone inverse manque"
+        explanation: "Le secondaire ne transfère la zone que si le serial du primaire est plus grand que le sien. Le TTL concerne les caches des résolveurs, pas la synchronisation entre serveurs faisant autorité."
+      }
+      question "Pourquoi le fichier d’une zone secondaire est-il placé dans /var/cache/bind ?" {
+        - "parce que c'est plus rapide"
+        + "parce que named doit pouvoir y écrire, ce qui n'est pas permis dans /etc/bind"
+        - "parce que Bind9 refuse les fichiers dans /etc"
+        - "pour qu'il soit effacé au redémarrage"
+        explanation: "Le secondaire écrit lui-même la copie reçue. Les permissions et le profil AppArmor de Debian lui permettent d'écrire dans /var/cache/bind, pas dans /etc/bind. Le dossier n'est pas vidé au redémarrage."
+      }
+      question "Quelle commande recharge une seule zone sans redémarrer Bind9 ?" {
+        - "systemctl reload-zone lycee.internal"
+        + "rndc reload lycee.internal"
+        - "named -r lycee.internal"
+        - "rndc flush lycee.internal"
+        explanation: "rndc reload nomdelazone relit le fichier de cette zone. rndc flush vide le cache du résolveur, ce qui n'a pas de lien avec le chargement d'une zone."
+      }
+      question "Que permet also-notify dans la déclaration d’une zone primaire ?" {
+        - "d'envoyer un courriel à l'administrateur à chaque erreur"
+        + "de prévenir immédiatement les secondaires qu'une nouvelle version existe"
+        - "d'autoriser les mises à jour dynamiques"
+        - "de journaliser toutes les requêtes"
+        explanation: "À chaque rechargement avec un nouveau serial, le primaire envoie un message NOTIFY aux serveurs listés, qui demandent alors le transfert sans attendre le délai REFRESH du SOA."
+      }
+      question "Dans un fichier de zone inverse, la ligne « 20 IN PTR srv-web.lycee.internal » (sans point final) donne quelle cible ?" {
+        - "srv-web.lycee.internal."
+        + "srv-web.lycee.internal.10.168.192.in-addr.arpa."
+        - "20.lycee.internal."
+        - "la ligne est refusée"
+        explanation: "Sans point final, l'origine de la zone, ici 10.168.192.in-addr.arpa, est ajoutée. La résolution inverse renverrait un nom absurde. Dans une zone inverse, les cibles PTR doivent presque toujours se terminer par un point."
+      }
+      question "Sous Windows Server, quel paramètre de Add-DnsServerResourceRecordA crée aussi l’enregistrement inverse ?" {
+        - "-Reverse"
+        - "-AddPtr"
+        + "-CreatePtr"
+        - "-ReplicationScope"
+        explanation: "-CreatePtr ajoute le PTR correspondant dans la zone inverse, qui doit déjà exister. -ReplicationScope sert à Add-DnsServerPrimaryZone pour stocker une zone dans Active Directory."
+      }
+      question "Sur un contrôleur de domaine, quel avantage apporte une zone intégrée à Active Directory ?" {
+        - "elle n'a plus besoin de SOA"
+        + "elle est répliquée avec l'annuaire entre contrôleurs et accepte les mises à jour dynamiques sécurisées"
+        - "elle devient accessible depuis Internet"
+        - "elle désactive le cache des postes"
+        explanation: "La zone est stockée dans l'annuaire : chaque contrôleur de domaine en a une copie modifiable, et seuls les membres authentifiés du domaine peuvent y enregistrer leurs noms. Elle garde un SOA comme toute zone."
+      }
+      question "Que fait la directive forwarders dans named.conf.options ?" {
+        - "elle transfère les zones vers d'autres serveurs"
+        + "elle envoie les questions récursives à des résolveurs en amont au lieu de partir de la racine"
+        - "elle redirige les requêtes refusées vers un autre serveur"
+        - "elle publie la zone sur Internet"
+        explanation: "Avec forwarders, Bind9 pose ses questions à ces résolveurs plutôt que de parcourir l'arbre lui-même. C'est utile quand le pare-feu de sortie ne laisse passer le DNS que vers certaines adresses. Les transferts sont une autre notion (allow-transfer)."
+      }
+      question "named-checkconf ne renvoie rien. Qu’est-ce que cela signifie ?" {
+        - "la commande a échoué silencieusement"
+        + "la configuration ne contient pas d'erreur de syntaxe"
+        - "aucune zone n'est déclarée"
+        - "le service named est arrêté"
+        explanation: "Comme beaucoup d'outils Unix, named-checkconf ne dit rien quand tout va bien et affiche l'erreur avec son numéro de ligne sinon. Le code de sortie (echo $?) vaut alors 0."
+      }
+      question "Pourquoi déclarer un serveur DNS secondaire ?" {
+        - "pour accélérer les mises à jour de la zone"
+        + "pour que la zone reste servie si le primaire tombe"
+        - "pour pouvoir modifier la zone depuis deux endroits"
+        - "parce que les clients refusent un serveur unique"
+        explanation: "Le secondaire détient une copie et répond si le primaire est indisponible. Les modifications se font toujours sur le primaire ; le secondaire est en lecture seule."
+      }
+    }
+  }
+
+  module "dhcp-principes" {
+    title: "Chapitre 6 : DHCP, l'échange DORA et le bail"
+    duration: "35min"
+    content: """
+### Pourquoi DHCP
+Configurer à la main l'adresse, le masque, la passerelle et les serveurs DNS de 200 postes est long, et chaque faute de frappe crée une panne ou un conflit d'adresses. Le **DHCP** (Dynamic Host Configuration Protocol, RFC 2131 pour IPv4) distribue automatiquement ces paramètres, pour une durée limitée appelée **bail** (lease).
+
+DHCP utilise l'**UDP** : le serveur écoute sur le **port 67**, le client sur le **port 68**. Au départ, le client n'a pas d'adresse : il envoie depuis `0.0.0.0` vers la diffusion `255.255.255.255`. C'est pourquoi DHCP ne traverse pas un routeur sans aide (chapitre 7).
+
+### Les quatre messages : DORA
+```text
+Client (MAC 08:00:27:aa:bb:cc)                 Serveur 192.168.10.10
+  │ 1. DHCPDISCOVER  0.0.0.0:68 → 255.255.255.255:67        │
+  │    « y a-t-il un serveur DHCP ? »                         │
+  │◀─────────────── 2. DHCPOFFER  « je te propose .101 » ───│
+  │ 3. DHCPREQUEST  (toujours en diffusion)                   │
+  │    « je prends .101, offre du serveur 192.168.10.10 »     │
+  │◀─────────────── 4. DHCPACK  « .101 est à toi 8 h » ─────│
+```
+1. **Discover** : le client cherche un serveur.
+2. **Offer** : chaque serveur présent propose une adresse et des options.
+3. **Request** : le client choisit une offre et l'annonce, en diffusion, pour que les autres serveurs sachent que leur offre est déclinée. Le message contient l'identifiant du serveur choisi (option 54).
+4. **Ack** : le serveur confirme. Le client peut encore vérifier que personne n'utilise l'adresse (une requête ARP) ; s'il y a conflit, il envoie un **DHCPDECLINE** et recommence.
+
+Autres messages :
+• **DHCPNAK** : le serveur refuse (le client demande une adresse qui n'est pas valable sur ce réseau, par exemple un portable qui revient d'un autre site) ; le client repart de zéro.
+• **DHCPRELEASE** : le client rend son adresse (`ipconfig /release`).
+• **DHCPINFORM** : un client à adresse fixe demande seulement les options (DNS, domaine).
+
+### Le bail et son renouvellement
+Le bail a une durée (option 51). Le client ne la laisse pas expirer : il renouvelle avant, selon deux temporisations (RFC 2131, section 4.4.5) :
+• **T1** (option 58), par défaut à **50 %** du bail : le client envoie un DHCPREQUEST **en unicast** au serveur qui lui a donné l'adresse (état RENEWING). En général, celui-ci répond ACK et le bail repart pour une durée complète.
+• **T2** (option 59), par défaut à **87,5 %** du bail : si le serveur d'origine n'a pas répondu, le client envoie un DHCPREQUEST **en diffusion**, à n'importe quel serveur (état REBINDING).
+• À **100 %** sans réponse, le client doit cesser d'utiliser l'adresse et recommencer par un DISCOVER.
+
+Exemple pour un bail de 8 jours (valeur par défaut d'un serveur DHCP Windows) : renouvellement à 4 jours, rebinding à 7 jours.
+
+### Choisir la durée du bail
+| Réseau | Durée typique | Raison |
+|---|---|---|
+| Wi-Fi invités, salle de conférence | 1 à 4 heures | beaucoup d'appareils de passage, l'étendue se vide vite |
+| Salle informatique de lycée | 8 à 24 heures | les mêmes postes chaque jour |
+| Postes fixes d'une PME | 1 à 8 jours | peu de mouvements |
+
+Un bail trop long sur un réseau de passage épuise l'étendue : chaque téléphone qui est passé une fois garde une adresse réservée pendant des jours. Un bail très court multiplie le trafic et rend le réseau dépendant de la disponibilité permanente du serveur.
+
+### Quand il n'y a pas de serveur : APIPA
+Un poste Windows (et beaucoup d'autres systèmes) qui n'obtient aucune réponse se donne une adresse **link-local** dans `169.254.0.0/16` (RFC 3927, appelée APIPA chez Microsoft). Il peut parler aux voisins dans le même cas, mais n'a ni passerelle ni DNS.
+
+Réflexe de diagnostic : **une adresse en 169.254.x.x signifie « aucun serveur DHCP n'a répondu »**. On cherche alors : câble ou Wi-Fi, VLAN du port de commutateur, serveur arrêté, étendue pleine, relais absent.
+
+### Voir le DHCP depuis un client
+Windows :
+```text
+C:\> ipconfig /all
+   Adresse IPv4. . . . . . . . . . . . . .: 192.168.10.101(préféré)
+   Bail obtenu. . . . . . . . . . . . . . : mercredi 26 novembre 2026 08:00:12
+   Bail expirant. . . . . . . . . . . . . : mercredi 26 novembre 2026 16:00:12
+   Passerelle par défaut. . . . . . . . . : 192.168.10.254
+   Serveur DHCP . . . . . . . . . . . . . : 192.168.10.10
+   Serveurs DNS. . . . . . . . . . . . . .: 192.168.10.10
+C:\> ipconfig /release
+C:\> ipconfig /renew
+```
+Linux (Debian 12 avec ifupdown et le client `dhclient`) :
+```bash
+sudo dhclient -r enp0s3     # rend le bail
+sudo dhclient -v enp0s3     # affiche DHCPDISCOVER, DHCPOFFER, DHCPREQUEST, DHCPACK
+cat /var/lib/dhcp/dhclient.enp0s3.leases
+```
+Ubuntu avec systemd-networkd ou NetworkManager : `networkctl status enp0s3`, `sudo networkctl renew enp0s3`, ou `nmcli device show enp0s3`.
+
+### À toi de jouer
+1. Un serveur donne des baux de 12 heures. Un poste reçoit son ACK à 8 h 00. À quelle heure tente-t-il le renouvellement (T1), le rebinding (T2), et à quelle heure perd-il son adresse si aucun serveur ne répond ?
+2. Sur ton client Debian, capture un échange DORA complet : dans un premier terminal, `sudo tcpdump -ni enp0s3 -v 'udp port 67 or udp port 68'` ; dans un second, rends le bail puis redemande-le. Note les adresses source et destination de chaque message. Si tu n'as pas encore de serveur DHCP (chapitre 8), fais l'exercice sur un réseau domestique avec une box.
+3. Un utilisateur signale : « ipconfig affiche 169.254.12.7 ». Donne trois causes possibles et la vérification correspondante.
+
+### Correction
+1. T1 = 50 % de 12 h = 6 h, donc à 14 h 00 (requête unicast au serveur). T2 = 87,5 % de 12 h = 10 h 30, donc à 18 h 30 (requête en diffusion). Fin du bail à 20 h 00 : le poste abandonne l'adresse et recommence par un DISCOVER.
+2. Sortie attendue (simplifiée) :
+```text
+0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request ... DHCP-Message (53), length 1: Discover
+192.168.10.10.67 > 255.255.255.255.68: BOOTP/DHCP, Reply ... DHCP-Message (53), length 1: Offer
+0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request ... DHCP-Message (53), length 1: Request
+192.168.10.10.67 > 255.255.255.255.68: BOOTP/DHCP, Reply ... DHCP-Message (53), length 1: ACK
+```
+Le client émet toujours depuis `0.0.0.0` tant qu'il n'a pas d'adresse. Selon le client et le drapeau broadcast, l'Offer et l'Ack peuvent être envoyés en unicast vers la nouvelle adresse au lieu de `255.255.255.255`. Le `dhclient -r` initial apparaît comme un `Release` en unicast vers le serveur.
+3. Causes et vérifications :
+• lien physique ou Wi-Fi coupé : voyant du port, `ipconfig` indique « Média déconnecté » ;
+• port du commutateur dans le mauvais VLAN, ou VLAN sans relais DHCP : vérifier la configuration du port et le `ip helper-address` du routeur (chapitre 7) ;
+• serveur DHCP arrêté ou étendue pleine : état du service, nombre de baux libres, journaux du serveur.
+"""
+
+    quiz {
+      pick: 5
+      question "Dans quel ordre circulent les messages d’une attribution DHCP normale ?" {
+        - "Request, Offer, Discover, Ack"
+        + "Discover, Offer, Request, Ack"
+        - "Discover, Request, Offer, Ack"
+        - "Offer, Discover, Ack, Request"
+        explanation: "DORA : le client cherche (Discover), le serveur propose (Offer), le client choisit (Request), le serveur confirme (Ack). Le Request vient après l'Offer, parce que le client doit d'abord recevoir les propositions."
+      }
+      question "Quels ports UDP utilise DHCP pour IPv4 ?" {
+        - "53 pour le serveur, 54 pour le client"
+        + "67 pour le serveur, 68 pour le client"
+        - "68 pour le serveur, 67 pour le client"
+        - "546 pour le serveur, 547 pour le client"
+        explanation: "Le serveur écoute sur 67, le client sur 68 (héritage de BOOTP). 546 et 547 sont les ports de DHCPv6 (client 546, serveur 547), et 53 celui du DNS."
+      }
+      question "Pourquoi le DHCPREQUEST initial est-il envoyé en diffusion et non directement au serveur choisi ?" {
+        - "parce que le client ne connaît pas l'adresse du serveur"
+        + "pour que tous les serveurs sachent quelle offre a été retenue et libèrent les autres"
+        - "parce que l'unicast est interdit en UDP"
+        - "pour vérifier que l'adresse est libre"
+        explanation: "Le client connaît l'adresse du serveur (elle est dans l'Offer) mais n'a pas encore le droit d'utiliser sa propre adresse. La diffusion informe aussi les autres serveurs que leurs offres sont refusées. La vérification d'adresse libre se fait par ARP après l'Ack."
+      }
+      question "Avec un bail de 8 jours et des valeurs par défaut, quand le client tente-t-il le premier renouvellement ?" {
+        - "après 1 jour"
+        + "après 4 jours"
+        - "après 7 jours"
+        - "à la fin des 8 jours"
+        explanation: "T1 vaut par défaut 50 % du bail : 4 jours. T2, à 87,5 %, tombe à 7 jours. Attendre la fin du bail couperait la connexion."
+      }
+      question "Que fait le client au moment T2 (87,5 % du bail) si son serveur n’a pas répondu ?" {
+        - "il libère immédiatement son adresse"
+        - "il envoie un DHCPDISCOVER"
+        + "il envoie un DHCPREQUEST en diffusion à n'importe quel serveur"
+        - "il passe en adresse 169.254.x.x"
+        explanation: "À T2, le client entre dans l'état REBINDING : il diffuse sa demande pour qu'un autre serveur puisse prolonger le bail. Il ne recommence par un DISCOVER qu'à l'expiration complète."
+      }
+      question "Un poste Windows affiche l’adresse 169.254.33.10. Que peux-tu en déduire ?" {
+        - "le serveur DHCP lui a donné une adresse de secours"
+        + "aucun serveur DHCP n'a répondu à ses demandes"
+        - "le poste a une adresse IPv6"
+        - "le DNS ne répond pas"
+        explanation: "169.254.0.0/16 est la plage link-local (APIPA) que le poste s'attribue seul quand aucun DHCP ne répond. Elle n'est jamais distribuée par un serveur DHCP. Le DNS n'a aucun rôle dans l'obtention de l'adresse."
+      }
+      question "Quand un client envoie-t-il un DHCPDECLINE ?" {
+        - "quand il refuse la durée du bail"
+        + "quand il découvre que l'adresse proposée est déjà utilisée sur le réseau"
+        - "quand il s'éteint"
+        - "quand il reçoit deux offres"
+        explanation: "Après l'Ack, le client peut tester l'adresse (ARP). Si une autre machine répond, il décline l'adresse et recommence. Avant de s'éteindre, il envoie éventuellement un DHCPRELEASE ; deux offres sont un cas normal où il choisit l'une d'elles."
+      }
+      question "Un portable revient d’un autre site et redemande son ancienne adresse 10.5.0.42 sur un réseau 192.168.10.0/24. Que répond le serveur ?" {
+        - "DHCPACK"
+        + "DHCPNAK"
+        - "DHCPOFFER avec la même adresse"
+        - "rien"
+        explanation: "Le serveur sait que l'adresse demandée n'est pas valable sur ce réseau : il envoie un NAK, et le client recommence par un DISCOVER. Le silence est le comportement d'un serveur qui n'a pas autorité sur ce réseau."
+      }
+      question "Pourquoi un bail court est-il conseillé pour un Wi-Fi invités ?" {
+        - "pour améliorer le débit"
+        + "pour que les adresses des appareils partis reviennent vite dans l'étendue"
+        - "pour que les invités ne puissent pas utiliser le DNS"
+        - "parce que les téléphones refusent les baux longs"
+        explanation: "Chaque appareil qui passe garde son adresse jusqu'à la fin du bail. Avec des baux longs et beaucoup de passage, l'étendue s'épuise et les nouveaux arrivants n'obtiennent plus d'adresse. Le bail n'a pas d'effet sur le débit."
+      }
+      question "Quelle commande Windows rend l’adresse obtenue par DHCP ?" {
+        - "ipconfig /flushdns"
+        + "ipconfig /release"
+        - "ipconfig /renew"
+        - "ipconfig /registerdns"
+        explanation: "/release envoie un DHCPRELEASE et retire l'adresse. /renew en redemande une. /flushdns vide le cache DNS, /registerdns réenregistre le nom du poste dans le DNS."
+      }
+      question "Quelle est l’adresse source d’un DHCPDISCOVER ?" {
+        - "l'adresse IP précédente du client"
+        - "255.255.255.255"
+        + "0.0.0.0"
+        - "l'adresse de la passerelle"
+        explanation: "Le client n'a pas encore d'adresse : il émet depuis 0.0.0.0, port 68, vers la diffusion 255.255.255.255, port 67. 255.255.255.255 est la destination, pas la source."
+      }
+      question "Quel message utilise un poste à adresse fixe qui veut seulement recevoir les options (DNS, domaine) ?" {
+        - "DHCPDISCOVER"
+        - "DHCPREQUEST"
+        + "DHCPINFORM"
+        - "DHCPRELEASE"
+        explanation: "DHCPINFORM demande les paramètres sans adresse. Le serveur répond par un Ack sans durée de bail. Les autres messages servent à obtenir, renouveler ou rendre une adresse."
+      }
+    }
+  }
+
+  module "dhcp-options-relais" {
+    title: "Chapitre 7 : étendues, options, réservations et relais DHCP"
+    duration: "40min"
+    content: """
+### L'étendue (scope) et le pool
+Pour chaque réseau, le serveur connaît :
+• le **réseau** et son masque (`192.168.10.0/24`) ;
+• le **pool** : la plage d'adresses qu'il peut distribuer (`192.168.10.100` à `192.168.10.199`) ;
+• les **exclusions** : adresses du pool à ne jamais donner ;
+• les **options** à envoyer ;
+• les **réservations**.
+
+Règle de base : les adresses fixes (serveurs, routeur, imprimantes configurées à la main, bornes Wi-Fi) sont **hors du pool**. Une adresse fixe dans le pool finit par être donnée à un autre poste, ce qui crée un conflit. Un plan d'adressage clair évite ce problème :
+| Plage | Usage |
+|---|---|
+| `.1` à `.49` | serveurs et équipements à adresse fixe |
+| `.50` à `.99` | réservations DHCP (imprimantes, copieurs, caméras) |
+| `.100` à `.199` | pool dynamique (100 adresses) |
+| `.254` | passerelle |
+
+### Les options les plus utilisées
+| Code | Nom | Contenu |
+|---|---|---|
+| 1 | masque de sous-réseau | `255.255.255.0` |
+| 3 | routeur (passerelle par défaut) | `192.168.10.254` |
+| 6 | serveurs DNS | `192.168.10.10, 192.168.10.11` |
+| 15 | nom de domaine | `lycee.internal` |
+| 42 | serveurs NTP | `192.168.10.10` |
+| 51 | durée du bail | en secondes |
+| 66 / 67 | serveur TFTP / fichier de démarrage | démarrage réseau (PXE), téléphones IP |
+| 119 | liste de domaines de recherche | `lycee.internal, sio.lycee.internal` |
+| 121 | routes statiques sans classe | routes supplémentaires vers d'autres réseaux |
+
+Les options se définissent à plusieurs niveaux : **global** (tout le serveur), **étendue** (un réseau), **réservation** (un seul poste). Le niveau le plus précis l'emporte. On met souvent les DNS et le domaine en global, la passerelle par étendue (elle change d'un réseau à l'autre).
+
+L'option 6 est celle qui fait le lien avec la première partie du cours : c'est elle qui dit au poste quel résolveur DNS utiliser. Une erreur ici, et tous les postes du réseau « n'ont plus Internet ».
+
+### Les réservations
+Une **réservation** associe une adresse à un client précis, reconnu par son adresse MAC (ou par son identifiant client DHCP, option 61). Le poste reste en DHCP, mais reçoit toujours la même adresse et les mêmes options. Avantages par rapport à une adresse fixe saisie sur l'appareil :
+• tout est centralisé sur le serveur : changer le DNS de l'imprimante ne demande pas d'aller la configurer ;
+• l'adresse ne peut pas entrer en conflit avec le pool si elle est placée hors du pool.
+
+Attention aux identifiants : Android et iOS récents utilisent par défaut une **adresse MAC aléatoire (privée) par réseau Wi-Fi**, et Windows le fait si l'option « adresses matérielles aléatoires » est activée. Une réservation par MAC ne marche alors que si l'option est désactivée pour ce réseau sur l'appareil.
+
+### Le problème des réseaux multiples
+DHCP repose sur la diffusion, qui ne franchit pas les routeurs. Dans un lycée avec un VLAN par usage (`10` administration, `20` élèves, `30` Wi-Fi), il faudrait un serveur DHCP par VLAN, sauf si l'on utilise un **relais DHCP** (DHCP relay agent).
+
+### Le relais DHCP
+Le relais est une fonction du routeur (ou du commutateur de niveau 3) qui fait office de passerelle pour le VLAN :
+1. il reçoit le DISCOVER diffusé par un client du VLAN 20 ;
+2. il le renvoie **en unicast** au serveur DHCP, en remplissant le champ **giaddr** avec sa propre adresse dans le VLAN 20 (`192.168.20.254`) ;
+3. le serveur lit `giaddr`, en déduit le réseau du client et choisit l'étendue `192.168.20.0/24` ;
+4. le serveur répond au relais (port 67), qui transmet la réponse au client dans le VLAN 20.
+
+Sur un routeur Cisco, une seule ligne par interface :
+```text
+interface GigabitEthernet0/0.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.254 255.255.255.0
+ ip helper-address 192.168.10.10
+```
+Par défaut, `ip helper-address` relaie aussi d'autres services UDP diffusés (TFTP, DNS, NetBIOS, entre autres) : c'est à savoir lors d'un diagnostic.
+
+Le relais peut ajouter l'**option 82** (Relay Agent Information, RFC 3046) : identifiant du commutateur et du port d'arrivée. Le serveur peut s'en servir pour choisir l'adresse ou appliquer une politique par port.
+
+Sous Linux, le paquet `isc-dhcp-relay` (commande `dhcrelay`) existe encore, mais il fait partie d'ISC DHCP, qui n'est plus maintenu depuis fin 2022. En pratique, le relais est presque toujours configuré sur le routeur ou le pare-feu (pfSense, OPNsense, commutateur de niveau 3).
+
+Points à vérifier quand un VLAN relayé ne reçoit rien :
+• l'étendue de ce réseau existe-t-elle sur le serveur ? Sans étendue correspondant à `giaddr`, le serveur ignore la demande ;
+• le serveur a-t-il une route de retour vers `192.168.20.0/24` ? Il répond à l'adresse du relais ;
+• un pare-feu entre le relais et le serveur bloque-t-il l'UDP 67 ?
+
+### Plusieurs serveurs pour la tolérance de panne
+Deux serveurs qui distribuent la même plage sans se coordonner donnent la même adresse à deux postes. Solutions :
+• **partage de plage** (split scope) : chaque serveur a une partie différente du pool, souvent 80 % / 20 % ;
+• **basculement** (failover) : les deux serveurs synchronisent leurs baux (fonction intégrée à Windows Server, « haute disponibilité » dans Kea).
+
+### À toi de jouer
+Le lycée a trois VLAN : administration `192.168.10.0/24` (serveurs en `.10` et `.11`), élèves `192.168.20.0/24`, Wi-Fi invités `192.168.30.0/23`. La passerelle de chaque réseau est la dernière adresse utilisable. Le serveur DHCP et DNS est `192.168.10.10`.
+1. Pour chaque VLAN, propose : un pool, la passerelle (option 3), les DNS (option 6), la durée du bail.
+2. Combien d'adresses peut contenir au maximum le pool du Wi-Fi invités ?
+3. Écris la configuration du relais sur les sous-interfaces du routeur Cisco pour les VLAN 20 et 30.
+4. Le copieur du CDI (MAC `00:1b:a9:4c:22:10`) doit toujours avoir `192.168.20.60`. Que fais-tu, et pourquoi pas une adresse fixe sur le copieur ?
+
+### Correction
+1. Proposition (d'autres choix sont valables s'ils respectent la logique) :
+| VLAN | Pool | Option 3 | Option 6 | Bail |
+|---|---|---|---|---|
+| 10 admin | `.100` à `.199` | `192.168.10.254` | `192.168.10.10, 192.168.10.11` | 8 jours |
+| 20 élèves | `.100` à `.249` | `192.168.20.254` | idem | 12 heures |
+| 30 invités | `192.168.30.10` à `192.168.31.250` | `192.168.31.254` | un résolveur dédié aux invités, pas les DNS internes | 2 heures |
+Pour les invités, `192.168.30.0/23` va de `192.168.30.0` à `192.168.31.255` : la dernière adresse utilisable est `192.168.31.254`. Leur donner un résolveur distinct évite d'ouvrir la récursion des serveurs internes et de leur exposer les noms internes.
+2. Un /23 contient 512 adresses, dont 510 utilisables (on retire le réseau et la diffusion). Avec la passerelle, il en reste 509 au maximum pour le pool ; le pool proposé contient 497 adresses.
+3. Configuration :
+```text
+interface GigabitEthernet0/0.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.254 255.255.255.0
+ ip helper-address 192.168.10.10
+interface GigabitEthernet0/0.30
+ encapsulation dot1Q 30
+ ip address 192.168.31.254 255.255.254.0
+ ip helper-address 192.168.10.10
+```
+Le VLAN 10 n'a pas besoin de relais : le serveur y est directement présent.
+4. Une réservation `00:1b:a9:4c:22:10` vers `192.168.20.60`, adresse hors du pool (`.100` à `.249`). Le copieur reste en DHCP : si le DNS ou la passerelle changent, il reçoit les nouvelles valeurs automatiquement, et l'adresse est documentée au même endroit que toutes les autres.
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle option DHCP indique la passerelle par défaut ?" {
+        - "option 1"
+        + "option 3"
+        - "option 6"
+        - "option 15"
+        explanation: "L'option 3 (Router) donne la passerelle. 1 est le masque, 6 les serveurs DNS, 15 le nom de domaine."
+      }
+      question "Quelle option DHCP indique au poste les serveurs DNS à utiliser ?" {
+        - "option 3"
+        + "option 6"
+        - "option 42"
+        - "option 51"
+        explanation: "L'option 6 (Domain Name Server) liste les résolveurs. 42 donne les serveurs NTP et 51 la durée du bail."
+      }
+      question "Pourquoi placer les adresses fixes des serveurs hors du pool DHCP ?" {
+        - "parce que les serveurs refusent le DHCP"
+        + "pour que le serveur DHCP ne puisse jamais distribuer ces adresses à un autre poste"
+        - "pour accélérer le démarrage des serveurs"
+        - "parce que le pool doit toujours commencer à .1"
+        explanation: "Le serveur DHCP ignore qu'une adresse du pool est configurée à la main sur un équipement : il finira par la donner, d'où un conflit. Hors du pool, ou en exclusion, elle est protégée."
+      }
+      question "Quel champ le relais DHCP remplit-il pour que le serveur choisisse la bonne étendue ?" {
+        - "ciaddr"
+        - "yiaddr"
+        + "giaddr"
+        - "chaddr"
+        explanation: "giaddr (gateway IP address) contient l'adresse de l'interface du relais côté client. Le serveur choisit l'étendue qui contient cette adresse. yiaddr est l'adresse proposée au client, chaddr son adresse matérielle, ciaddr son adresse actuelle."
+      }
+      question "Quelle commande Cisco active le relais DHCP sur une interface ?" {
+        - "ip dhcp relay 192.168.10.10"
+        + "ip helper-address 192.168.10.10"
+        - "ip dhcp snooping trust"
+        - "ip forward-protocol dhcp"
+        explanation: "ip helper-address, placée sur l'interface côté clients, relaie les diffusions DHCP vers le serveur indiqué. ip dhcp snooping trust est une commande de sécurité de commutateur, sans lien avec le relais."
+      }
+      question "Un VLAN relayé ne reçoit aucune adresse, alors que le relais est configuré. Quel oubli côté serveur est le plus fréquent ?" {
+        - "le serveur n'a pas d'option 6"
+        + "aucune étendue n'existe pour le réseau de ce VLAN"
+        - "le bail est trop court"
+        - "la zone DNS inverse manque"
+        explanation: "Le serveur cherche une étendue qui contient giaddr. S'il n'en trouve pas, il ignore la demande sans répondre. L'absence d'option 6 donnerait une adresse sans DNS, pas une absence d'adresse."
+      }
+      question "Combien d’adresses utilisables contient un réseau /23 ?" {
+        - "254"
+        - "256"
+        + "510"
+        - "512"
+        explanation: "Un /23 laisse 9 bits pour les hôtes : 2 puissance 9 = 512 adresses, moins l'adresse du réseau et celle de diffusion, soit 510 utilisables."
+      }
+      question "Une option DNS est définie au niveau global et une autre au niveau d’une réservation. Laquelle reçoit le poste réservé ?" {
+        - "celle du niveau global"
+        + "celle de la réservation, le niveau le plus précis"
+        - "les deux, concaténées"
+        - "aucune, il y a conflit"
+        explanation: "Le niveau le plus précis l'emporte : réservation, puis étendue, puis global. Cela permet par exemple de donner un DNS différent à un seul équipement."
+      }
+      question "Pourquoi une réservation par MAC peut-elle échouer avec un téléphone récent en Wi-Fi ?" {
+        - "les téléphones ne gèrent pas DHCP"
+        + "le téléphone peut utiliser une adresse MAC aléatoire différente pour chaque réseau Wi-Fi"
+        - "les réservations ne marchent qu'en filaire"
+        - "le téléphone demande toujours une adresse IPv6"
+        explanation: "Android, iOS et Windows proposent des adresses MAC privées. Le serveur voit une MAC qui ne correspond pas à la réservation. Il faut désactiver cette option pour ce réseau sur l'appareil, ou réserver selon un autre identifiant."
+      }
+      question "Quelle information l’option 82 ajoutée par un relais transporte-t-elle ?" {
+        - "le nom d'hôte du client"
+        + "l'identifiant du relais et du port par lequel la demande est arrivée"
+        - "la durée de bail souhaitée"
+        - "l'adresse du serveur DNS"
+        explanation: "L'option 82 (Relay Agent Information, RFC 3046) contient notamment Circuit ID et Remote ID, qui désignent le commutateur et le port. Le serveur peut s'en servir pour des politiques par port."
+      }
+      question "Deux serveurs DHCP distribuent la même plage sans coordination. Quel risque ?" {
+        - "aucun, les clients choisissent le plus rapide"
+        + "deux postes peuvent recevoir la même adresse"
+        - "les clients reçoivent deux adresses chacun"
+        - "les baux deviennent permanents"
+        explanation: "Chaque serveur ignore les baux de l'autre et peut proposer la même adresse. On partage la plage (split scope) ou on active un vrai basculement (failover) qui synchronise les baux."
+      }
+      question "Le serveur DHCP reçoit bien les demandes relayées du VLAN 20 mais ses réponses n’arrivent pas. Que vérifier ?" {
+        - "l'option 15"
+        + "la route de retour du serveur vers le réseau du relais et le filtrage de l'UDP 67"
+        - "le TTL de la zone DNS"
+        - "la durée du bail"
+        explanation: "Le serveur répond en unicast à l'adresse du relais (giaddr), sur le port 67. Sans route vers ce réseau, ou avec un pare-feu qui bloque, la réponse se perd."
+      }
+      question "Dans la règle de partage de plage classique, comment répartit-on le pool entre deux serveurs ?" {
+        - "50 % / 50 %, avec les mêmes adresses"
+        + "80 % / 20 %, sur des parties différentes du pool"
+        - "100 % chacun, le premier qui répond gagne"
+        - "par ordre alphabétique des noms de postes"
+        explanation: "La règle 80/20 donne la majorité des adresses au serveur principal et une réserve au second, sans recouvrement. Les mêmes adresses sur deux serveurs non coordonnés créent des doublons."
+      }
+    }
+  }
+
+  module "dhcp-serveur" {
+    title: "Chapitre 8 : installer un serveur DHCP (Kea ou Windows) et le dépanner"
+    duration: "45min"
+    content: """
+### Quel logiciel sous Linux ?
+Pendant vingt ans, le serveur de référence était `isc-dhcp-server` (programme `dhcpd`). L'ISC, qui le développait, a annoncé sa fin de maintenance en 2022 et recommande son successeur **Kea**. Tu trouveras encore `isc-dhcp-server` dans beaucoup de cours et d'installations ; il fonctionne, mais ne reçoit plus de correctifs. Ce chapitre utilise Kea ; l'annexe en fin de chapitre montre l'équivalent `dhcpd` pour lire une configuration existante.
+
+Kea se configure en **JSON**. Debian 12 fournit le paquet `kea-dhcp4-server`.
+
+### Installer Kea sur ns1
+```bash
+sudo apt install kea-dhcp4-server
+sudo cp /etc/kea/kea-dhcp4.conf /etc/kea/kea-dhcp4.conf.origine
+```
+
+### Une configuration complète
+`/etc/kea/kea-dhcp4.conf` (remplace tout le contenu) :
+```json
+{
+  "Dhcp4": {
+    "interfaces-config": {
+      "interfaces": [ "enp0s3" ]
+    },
+    "lease-database": {
+      "type": "memfile",
+      "persist": true,
+      "lfc-interval": 3600
+    },
+    "valid-lifetime": 43200,
+    "renew-timer": 21600,
+    "rebind-timer": 37800,
+
+    "option-data": [
+      { "name": "domain-name-servers", "data": "192.168.10.10, 192.168.10.11" },
+      { "name": "domain-name", "data": "lycee.internal" },
+      { "name": "domain-search", "data": "lycee.internal" }
+    ],
+
+    "subnet4": [
+      {
+        "id": 10,
+        "subnet": "192.168.10.0/24",
+        "pools": [ { "pool": "192.168.10.100 - 192.168.10.199" } ],
+        "option-data": [
+          { "name": "routers", "data": "192.168.10.254" }
+        ],
+        "reservations": [
+          {
+            "hw-address": "00:1b:a9:4c:22:10",
+            "ip-address": "192.168.10.60",
+            "hostname": "copieur-admin"
+          }
+        ]
+      },
+      {
+        "id": 20,
+        "subnet": "192.168.20.0/24",
+        "pools": [ { "pool": "192.168.20.100 - 192.168.20.249" } ],
+        "option-data": [
+          { "name": "routers", "data": "192.168.20.254" }
+        ]
+      }
+    ],
+
+    "loggers": [
+      {
+        "name": "kea-dhcp4",
+        "output_options": [ { "output": "stdout" } ],
+        "severity": "INFO"
+      }
+    ]
+  }
+}
+```
+Lecture :
+• `interfaces` : la carte sur laquelle Kea écoute. Le sous-réseau 20 n'est pas directement branché : ses demandes arrivent par le relais, et Kea choisit l'étendue grâce à `giaddr`.
+• `valid-lifetime` : durée du bail en secondes (43200 = 12 h). `renew-timer` et `rebind-timer` : T1 et T2 (50 % et 87,5 %).
+• `option-data` au niveau `Dhcp4` : options globales ; dans `subnet4` : options de l'étendue.
+• `id` : identifiant stable et unique de chaque sous-réseau (il sert à rattacher les baux) ; ne le change pas une fois en production.
+• La réservation `192.168.10.60` est hors du pool, comme le recommande la documentation de Kea.
+• Les baux sont enregistrés dans un fichier CSV (`/var/lib/kea/kea-leases4.csv` sur Debian).
+• Avec la sortie `stdout`, les messages arrivent dans le journal systemd. La clé s'écrit `output_options` dans Kea 2.2 (Debian 12) ; les versions récentes préfèrent `output-options` mais acceptent encore l'ancienne écriture.
+
+### Vérifier et démarrer
+```bash
+sudo kea-dhcp4 -t /etc/kea/kea-dhcp4.conf
+sudo systemctl restart kea-dhcp4-server
+sudo systemctl status kea-dhcp4-server --no-pager
+sudo journalctl -u kea-dhcp4-server -f
+```
+`kea-dhcp4 -t` analyse le fichier sans démarrer le service : code de sortie 0 si la configuration est correcte, message d'erreur avec numéro de ligne sinon. L'erreur classique est une virgule en trop ou en moins dans le JSON.
+
+Quand un client obtient une adresse, le journal affiche des lignes `DHCP4_LEASE_ALLOC` (nouvelle attribution) avec la MAC et l'adresse. Pour lister les baux : `sudo cat /var/lib/kea/kea-leases4.csv`.
+
+### Le même travail sous Windows Server
+```powershell
+Install-WindowsFeature DHCP -IncludeManagementTools
+
+# Seulement dans un domaine Active Directory : autoriser le serveur
+Add-DhcpServerInDC -DnsName "dhcp1.lycee.internal" -IPAddress 192.168.10.10
+
+# Étendue, exclusion, options, réservation
+Add-DhcpServerv4Scope -Name "Administration" -StartRange 192.168.10.100 -EndRange 192.168.10.199 -SubnetMask 255.255.255.0 -LeaseDuration 0.12:00:00
+Set-DhcpServerv4OptionValue -ScopeId 192.168.10.0 -Router 192.168.10.254
+Set-DhcpServerv4OptionValue -DnsServer 192.168.10.10,192.168.10.11 -DnsDomain "lycee.internal"
+Add-DhcpServerv4Reservation -ScopeId 192.168.10.0 -IPAddress 192.168.10.60 -ClientId "00-1b-a9-4c-22-10" -Description "Copieur administration"
+
+# Contrôles
+Get-DhcpServerv4Scope
+Get-DhcpServerv4Lease -ScopeId 192.168.10.0
+Get-DhcpServerv4ScopeStatistics
+```
+• Dans un domaine, un serveur DHCP Windows non autorisé dans Active Directory ne distribue aucune adresse : c'est une protection contre les serveurs installés par erreur. Hors domaine, on saute cette commande.
+• `Set-DhcpServerv4OptionValue` sans `-ScopeId` définit les options au niveau du serveur.
+• `-DnsServer` vérifie par défaut que les serveurs indiqués répondent ; dans un labo encore incomplet, ajoute `-Force` pour passer outre.
+• La MAC s'écrit avec des tirets dans `-ClientId`.
+• `-LeaseDuration` utilise le format `jours.heures:minutes:secondes`.
+• Console graphique : `dhcpmgmt.msc`.
+
+### Méthode de diagnostic d'un client sans adresse
+1. **Côté client** : adresse en `169.254.x.x` ou aucune ? Lien actif ? (`ip -br a`, `ipconfig /all`)
+2. **Le DISCOVER part-il ?** Capture sur le client : `sudo tcpdump -ni enp0s3 -v 'udp port 67 or udp port 68'`.
+3. **Le DISCOVER arrive-t-il au serveur ?** Même capture sur le serveur (ou sur le relais). S'il n'arrive pas : VLAN, relais, pare-feu.
+4. **Le serveur répond-il ?** Journal du service. Messages typiques chez Kea : `DHCP4_PACKET_NAK_0001` (aucune étendue ne correspond au réseau du client), `ALLOC_ENGINE_V4_ALLOC_FAIL` (pool épuisé).
+5. **Le client reçoit-il l'Offer ?** Sinon : route de retour, pare-feu, snooping (chapitre 9).
+6. **Adresse obtenue mais « pas d'Internet »** : vérifie les options reçues (passerelle, DNS). C'est souvent l'option 6 ou l'option 3.
+
+Pour détecter un serveur DHCP inconnu sur un réseau de test, `nmap` fournit un script qui diffuse un DISCOVER et liste les réponses :
+```bash
+sudo nmap --script broadcast-dhcp-discover -e enp0s3
+```
+N'utilise ce type d'outil que sur un réseau que tu administres ou ton labo.
+
+### Annexe : lire une ancienne configuration isc-dhcp-server
+```text
+# /etc/dhcp/dhcpd.conf
+option domain-name "lycee.internal";
+option domain-name-servers 192.168.10.10, 192.168.10.11;
+default-lease-time 43200;
+authoritative;
+
+subnet 192.168.10.0 netmask 255.255.255.0 {
+  range 192.168.10.100 192.168.10.199;
+  option routers 192.168.10.254;
+}
+host copieur-admin {
+  hardware ethernet 00:1b:a9:4c:22:10;
+  fixed-address 192.168.10.60;
+}
+```
+Les notions sont les mêmes ; seule la syntaxe change. L'ISC propose un outil de conversion vers Kea (Kea Migration Assistant).
+
+### À toi de jouer
+1. Installe Kea sur `ns1` avec la configuration ci-dessus (adapte le nom d'interface). Passe le client en DHCP et vérifie qu'il obtient une adresse du pool, la passerelle, les deux DNS et le domaine.
+2. Ajoute une réservation pour le client lui-même (sa MAC se lit avec `ip link`) vers `192.168.10.61`, et vérifie qu'il reçoit cette adresse au renouvellement.
+3. Panne à résoudre : après une modification, `systemctl status kea-dhcp4-server` affiche `failed`. Le journal contient `syntax error, unexpected }, expecting ...` avec un numéro de ligne. Que s'est-il passé et comment éviter que cela arrive en production ?
+4. Panne à résoudre : les clients obtiennent une adresse, mais `ping example.com` échoue alors que `ping 9.9.9.9` répond. Que vérifies-tu en premier sur le client et sur le serveur ?
+
+### Correction
+1. Sur le client Debian, dans `/etc/network/interfaces` : `iface enp0s3 inet dhcp`, puis `sudo dhclient -v enp0s3`. Vérification : `ip -br a` (adresse en `192.168.10.1xx`), `ip route` (`default via 192.168.10.254`), `cat /etc/resolv.conf` (`search lycee.internal`, `nameserver 192.168.10.10`, `nameserver 192.168.10.11`). Sur le serveur, le journal montre `DHCP4_LEASE_ALLOC` avec la MAC du client.
+2. Ajoute dans `reservations` : `{ "hw-address": "<mac du client>", "ip-address": "192.168.10.61" }` (attention à la virgule entre deux réservations), `kea-dhcp4 -t`, redémarre Kea, puis sur le client `sudo dhclient -r enp0s3 && sudo dhclient -v enp0s3`. Le client reçoit `192.168.10.61`.
+3. Le JSON est invalide (virgule manquante ou en trop avant le `}` indiqué). Le service a refusé de démarrer : plus aucun nouveau client n'obtient d'adresse (les baux en cours continuent jusqu'à leur renouvellement). Règle : toujours lancer `kea-dhcp4 -t` avant le redémarrage, et garder une copie de la dernière configuration valide pour revenir en arrière.
+4. Sur le client : `resolvectl status` ou `cat /etc/resolv.conf` (quels serveurs DNS ont été reçus ?), puis `dig @192.168.10.10 example.com`. Sur le serveur : l'option `domain-name-servers` dans `kea-dhcp4.conf`, puis l'état de Bind9 (`systemctl status named`) et sa configuration `allow-recursion` (le réseau du client y figure-t-il ?).
+"""
+
+    codeblock "bash" {
+      title: "Vérifications rapides côté serveur Kea"
+      code: """
+sudo kea-dhcp4 -t /etc/kea/kea-dhcp4.conf && echo "configuration valide"
+sudo systemctl restart kea-dhcp4-server
+sudo journalctl -u kea-dhcp4-server -n 30 --no-pager
+# baux en cours (adresse, MAC, durée, fin du bail en secondes depuis 1970, sous-réseau...)
+sudo tail -n 5 /var/lib/kea/kea-leases4.csv
+# échange DHCP en direct sur l'interface du serveur
+sudo tcpdump -ni enp0s3 -v 'udp port 67 or udp port 68'
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel est aujourd’hui le successeur recommandé par l’ISC de isc-dhcp-server ?" {
+        - "dnsmasq"
+        + "Kea"
+        - "Bind9"
+        - "dhclient"
+        explanation: "L'ISC a annoncé la fin de maintenance d'ISC DHCP en 2022 et recommande Kea. dnsmasq est un autre logiciel, léger, d'un autre auteur. Bind9 est un serveur DNS et dhclient un client DHCP."
+      }
+      question "Quelle commande vérifie la configuration de Kea sans démarrer le service ?" {
+        - "kea-dhcp4 --check"
+        + "kea-dhcp4 -t /etc/kea/kea-dhcp4.conf"
+        - "systemctl check kea-dhcp4-server"
+        - "named-checkconf /etc/kea/kea-dhcp4.conf"
+        explanation: "kea-dhcp4 -t teste le fichier et renvoie 0 s'il est correct. named-checkconf vérifie la configuration de Bind9, pas celle de Kea."
+      }
+      question "Dans Kea, quelle valeur de valid-lifetime correspond à un bail de 12 heures ?" {
+        - "12"
+        - "720"
+        + "43200"
+        - "86400"
+        explanation: "La durée est en secondes : 12 × 3600 = 43200. 720 correspond à 12 heures en minutes, et 86400 à 24 heures."
+      }
+      question "Dans Kea, quel nom d’option correspond à la passerelle par défaut ?" {
+        - "gateway"
+        - "default-route"
+        + "routers"
+        - "domain-name-servers"
+        explanation: "Kea reprend les noms standard des options : routers pour l'option 3, domain-name-servers pour l'option 6. gateway et default-route n'existent pas."
+      }
+      question "Kea écoute seulement sur l’interface du réseau 192.168.10.0/24. Comment peut-il servir le réseau 192.168.20.0/24 ?" {
+        - "c'est impossible, il faut une deuxième carte réseau"
+        + "grâce au relais : les demandes arrivent en unicast avec giaddr, et Kea choisit le sous-réseau correspondant"
+        - "en ajoutant 192.168.20.0 dans interfaces"
+        - "en mettant le serveur en mode diffusion"
+        explanation: "Le relais transmet les demandes du VLAN 20 en unicast à l'adresse du serveur. Kea lit giaddr et choisit le sous-réseau 192.168.20.0/24 déclaré dans subnet4. Il n'a pas besoin d'être branché sur ce réseau."
+      }
+      question "Dans un domaine Active Directory, un nouveau serveur DHCP Windows ne distribue aucune adresse. Quelle étape manque probablement ?" {
+        - "l'activation de la zone inverse"
+        + "l'autorisation du serveur dans Active Directory (Add-DhcpServerInDC)"
+        - "le redémarrage des clients"
+        - "la création d'un enregistrement MX"
+        explanation: "Dans un domaine, un serveur DHCP Windows doit être autorisé dans l'annuaire avant de servir. C'est une protection contre les serveurs installés par erreur. La zone inverse et le MX n'ont aucun rôle dans l'attribution d'adresses."
+      }
+      question "Quel format attend -ClientId dans Add-DhcpServerv4Reservation pour une MAC ?" {
+        - "001ba94c2210"
+        - "00:1b:a9:4c:22:10"
+        + "00-1b-a9-4c-22-10"
+        - "001b.a94c.2210"
+        explanation: "La documentation Microsoft utilise des tirets entre les octets (format de Windows). Les deux-points sont le format habituel de Linux et de Kea, les points celui de Cisco."
+      }
+      question "Le service Kea refuse de démarrer après une modification et le journal parle de « syntax error ». Quelle est la cause la plus probable ?" {
+        - "un pool trop petit"
+        + "une erreur de syntaxe JSON, comme une virgule en trop ou manquante"
+        - "un bail trop court"
+        - "une réservation hors du pool"
+        explanation: "Kea lit un fichier JSON : une virgule mal placée ou une accolade manquante empêche tout chargement. Un pool petit ou une réservation hors du pool sont des choix valides, qui ne bloquent pas le démarrage."
+      }
+      question "Les clients obtiennent une adresse mais aucun nom n’est résolu. Quelle option faut-il vérifier en premier ?" {
+        - "l'option 1 (masque)"
+        - "l'option 51 (bail)"
+        + "l'option 6 (serveurs DNS)"
+        - "l'option 82"
+        explanation: "Si la connectivité IP fonctionne et pas les noms, le poste a sans doute reçu un mauvais serveur DNS, ou aucun. On vérifie ensuite que ce serveur répond et accepte la récursion pour ce réseau."
+      }
+      question "Quel message de Kea indique qu’aucun sous-réseau ne correspond au client ?" {
+        - "DHCP4_LEASE_ALLOC"
+        + "DHCP4_PACKET_NAK_0001"
+        - "DHCP4_STARTED"
+        - "DHCP4_CONFIG_COMPLETE"
+        explanation: "DHCP4_PACKET_NAK_0001 signale qu'aucun sous-réseau n'a pu être choisi pour ce client (souvent un relais mal réglé ou une étendue manquante). DHCP4_LEASE_ALLOC est une attribution réussie ; les deux autres apparaissent au démarrage."
+      }
+      question "Sous Windows Server, quelle cmdlet affiche les baux d’une étendue ?" {
+        - "Get-DhcpServerv4Scope"
+        + "Get-DhcpServerv4Lease -ScopeId 192.168.10.0"
+        - "Get-DnsClientCache"
+        - "Get-NetIPAddress"
+        explanation: "Get-DhcpServerv4Lease liste les baux d'une étendue. Get-DhcpServerv4Scope liste les étendues elles-mêmes, Get-NetIPAddress les adresses de la machine locale."
+      }
+      question "Dans une ancienne configuration dhcpd.conf, quelle directive correspond au pool d’une étendue ?" {
+        - "pool-start"
+        + "range"
+        - "fixed-address"
+        - "subnet-mask"
+        explanation: "range début fin définit la plage distribuée dans un bloc subnet. fixed-address sert aux réservations (bloc host)."
+      }
+      question "Quelle capture permet de voir l’échange DHCP sur l’interface enp0s3 ?" {
+        - "sudo tcpdump -ni enp0s3 port 53"
+        + "sudo tcpdump -ni enp0s3 -v 'udp port 67 or udp port 68'"
+        - "sudo tcpdump -ni enp0s3 icmp"
+        - "sudo tcpdump -ni enp0s3 tcp port 67"
+        explanation: "DHCP utilise l'UDP sur les ports 67 et 68 ; l'option -v décode le type de message (Discover, Offer...). Le port 53 est celui du DNS, et DHCP n'utilise pas le TCP."
+      }
+    }
+  }
+
+  module "securite-dns-dhcp" {
+    title: "Chapitre 9 : sécuriser le DNS et le DHCP (DNSSEC, résolveur fermé, DHCP snooping)"
+    duration: "40min"
+    content: """
+### Deux protocoles conçus sans sécurité
+DNS (1987) et DHCP (1993) sont nés sur des réseaux où tout le monde se faisait confiance. Ni l'un ni l'autre n'authentifie, dans son usage courant, qui répond. Les attaques classiques en découlent :
+
+| Attaque | Protocole | Principe | Conséquence |
+|---|---|---|---|
+| Empoisonnement de cache (cache poisoning) | DNS | un attaquant fait accepter une fausse réponse à un résolveur | tous les postes qui utilisent ce résolveur partent vers une fausse adresse |
+| Amplification | DNS | des requêtes à adresse source usurpée envoyées à un résolveur ouvert | la victime reçoit des réponses beaucoup plus grosses que les questions |
+| Transfert de zone ouvert | DNS | `dig AXFR` accepté depuis n'importe où | l'attaquant obtient la liste de toutes les machines de la zone |
+| Serveur DHCP pirate (rogue DHCP) | DHCP | un second serveur répond plus vite que le vrai | les postes reçoivent une fausse passerelle ou un faux DNS : interception du trafic |
+| Épuisement (DHCP starvation) | DHCP | des milliers de DISCOVER avec des MAC inventées | le pool est vide, les vrais postes n'obtiennent plus d'adresse |
+
+Le serveur pirate n'est pas toujours malveillant : une box ou un petit routeur Wi-Fi branché par erreur dans une salle produit exactement le même effet.
+
+### DNSSEC : le principe
+DNSSEC (RFC 4033, 4034 et 4035) ajoute des **signatures** aux réponses DNS. Il ne chiffre rien : il permet au résolveur de vérifier que la réponse a bien été produite par le détenteur de la zone et n'a pas été modifiée en route.
+
+Les nouveaux enregistrements :
+• **DNSKEY** : les clés publiques de la zone ;
+• **RRSIG** : la signature d'un ensemble d'enregistrements (par exemple tous les A d'un nom) ;
+• **DS** (Delegation Signer) : empreinte de la clé de la zone fille, publiée **dans la zone parente** ;
+• **NSEC** ou **NSEC3** (RFC 5155) : preuve signée qu'un nom n'existe pas.
+
+La **chaîne de confiance** suit la hiérarchie du chapitre 1. Le résolveur connaît la clé de la racine (signée depuis 2010, cette clé est fournie avec Bind9). La racine publie le DS de `fr`, signé par la racine. La zone `fr` publie le DS de `afnic.fr`, signé par `fr`. Le résolveur peut ainsi remonter de la racine jusqu'à la réponse, maillon par maillon.
+
+Ce que DNSSEC ne fait pas :
+• il ne rend pas les requêtes confidentielles : ton fournisseur d'accès voit toujours les noms demandés. La confidentialité entre le poste et le résolveur relève de DNS over TLS (RFC 7858, port 853) ou DNS over HTTPS (RFC 8484) ;
+• il ne protège que les zones signées et seulement si le résolveur **valide** ;
+• il ne protège pas le dernier tronçon entre le poste et le résolveur, sauf si le poste valide lui-même.
+
+Une zone privée comme `lycee.internal` ne peut pas s'accrocher à la chaîne de confiance : `.internal` n'existe pas dans la racine, donc aucun DS ne peut être publié pour elle.
+
+### Vérifier qu'un résolveur valide
+Bind9 sur Debian valide par défaut (`dnssec-validation auto;`). Pour le constater :
+```text
+$ dig @192.168.10.10 +dnssec afnic.fr A
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 4127
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+...
+;; ANSWER SECTION:
+afnic.fr.   600   IN   A       <adresse>
+afnic.fr.   600   IN   RRSIG   A <algorithme> 2 600 <expiration> <création> <id de clé> afnic.fr. <signature>
+```
+• `+dnssec` demande les enregistrements RRSIG avec la réponse.
+• Le drapeau **`ad`** (Authenticated Data) signifie : « j'ai validé cette réponse ». Sans `ad`, la réponse n'est pas signée ou le résolveur ne valide pas.
+• Une zone dont la signature est cassée donne **`SERVFAIL`** sur un résolveur qui valide : il préfère ne rien répondre plutôt que de donner une réponse falsifiable. Avec `dig +cd` (checking disabled), tu demandes la réponse sans validation : si elle revient alors, le problème est bien DNSSEC.
+
+L'outil `delv` (paquet `bind9-dnsutils`) fait la validation lui-même et l'écrit en clair : `; fully validated` pour une réponse signée et correcte, `; unsigned answer` pour une zone non signée.
+
+### Signer une zone avec Bind9 (aperçu)
+Depuis Bind 9.16, la signature est automatique avec `dnssec-policy`. Sur Debian 12 (Bind 9.18), il faut aussi activer la signature « en ligne » :
+```text
+zone "exemple-asso.fr" {
+    type primary;
+    file "/etc/bind/db.exemple-asso.fr";
+    dnssec-policy default;
+    inline-signing yes;
+};
+```
+Bind9 crée la clé, signe la zone, renouvelle les signatures. Il reste une étape hors du serveur : transmettre le DS (ou la clé) au bureau d'enregistrement pour qu'il le publie dans la zone parente. Sans ce DS, la zone est signée mais personne ne peut la valider. Un retrait mal fait (supprimer les clés en laissant le DS chez le parent) rend le domaine injoignable pour tous les résolveurs qui valident : c'est l'incident DNSSEC le plus courant.
+
+### Durcir le serveur DNS
+Les réglages du chapitre 5 sont déjà des mesures de sécurité. Récapitulatif :
+• **Récursion fermée** : `allow-recursion { interne; };`. Un résolveur ouvert répond à tout Internet et sert de relais aux attaques par amplification.
+• **Transferts limités** : `allow-transfer` ne liste que les secondaires. Mieux, on exige une clé partagée **TSIG** (RFC 8945), qui authentifie le transfert.
+• **Limitation du débit des réponses** (Response Rate Limiting) sur un serveur exposé à Internet : `rate-limit { responses-per-second 10; };` dans `options`.
+• **Séparer les rôles** quand c'est possible : un serveur faisant autorité pour les zones publiques, un résolveur pour les postes internes. L'ANSSI le recommande dans son guide sur les architectures des services DNS.
+• Mises à jour régulières de Bind9 (`apt upgrade`) : les failles de serveurs DNS sont fréquentes et activement exploitées.
+
+Mettre en place TSIG entre `ns1` et `ns2` :
+```bash
+# sur ns1 : générer la clé (la sortie est un bloc key { ... } à copier)
+tsig-keygen -a hmac-sha256 transfert-ns2 | sudo tee /etc/bind/transfert-ns2.key
+sudo chown root:bind /etc/bind/transfert-ns2.key
+sudo chmod 640 /etc/bind/transfert-ns2.key
+```
+Sur `ns1`, dans `named.conf.local` : `include "/etc/bind/transfert-ns2.key";` puis, dans chaque zone, `allow-transfer { key transfert-ns2; };`.
+Sur `ns2` : le même fichier de clé (copié par un canal sûr, par exemple `scp`), le même `include`, et :
+```text
+server 192.168.10.10 {
+    keys { transfert-ns2; };
+};
+```
+Les deux machines doivent être à l'heure (NTP) : une signature TSIG contient l'heure et est refusée si l'écart dépasse la tolérance (300 secondes par défaut).
+
+### Sous Windows Server
+```powershell
+# Résolveur réservé aux usages internes : désactiver la récursion sur un serveur faisant autorité exposé
+Set-DnsServerRecursion -Enable $false
+# Transferts limités aux serveurs de noms de la zone
+Set-DnsServerPrimaryZone -Name "lycee.internal" -SecureSecondaries TransferToZoneNameServer
+# Signer une zone avec les paramètres par défaut
+Invoke-DnsServerZoneSign -ZoneName "exemple-asso.fr" -SignWithDefault
+```
+Côté DHCP, l'autorisation dans Active Directory (chapitre 8) empêche un autre serveur **Windows** du domaine de distribuer des adresses. Elle n'arrête ni une box ni un serveur Linux : pour cela, il faut agir sur le commutateur.
+
+### Le DHCP snooping
+Le **DHCP snooping** est une fonction des commutateurs administrables. Chaque port est classé :
+• **de confiance** (trusted) : le port qui mène au vrai serveur DHCP ou au relais (souvent le lien montant vers le routeur) ;
+• **non fiable** (untrusted) : tous les autres, par défaut.
+
+Le commutateur **jette les messages de serveur** (OFFER, ACK, NAK) qui arrivent sur un port non fiable : une box branchée dans une salle ne peut plus répondre. Il peut aussi limiter le nombre de messages DHCP par seconde sur un port, ce qui freine l'épuisement du pool.
+
+Au passage, il construit une **table de correspondances** (binding table) : MAC, adresse IP, VLAN, port, durée du bail. D'autres protections s'appuient dessus : l'inspection ARP dynamique (Dynamic ARP Inspection, contre l'usurpation ARP) et IP Source Guard (un poste ne peut émettre qu'avec l'adresse qu'il a reçue).
+
+Exemple sur un commutateur Cisco Catalyst, VLAN 10 et 20, lien montant vers le routeur sur `Gi1/0/48` :
+```text
+ip dhcp snooping
+ip dhcp snooping vlan 10,20
+!
+interface GigabitEthernet1/0/48
+ description Lien vers le routeur (relais DHCP)
+ ip dhcp snooping trust
+!
+interface range GigabitEthernet1/0/1 - 46
+ ip dhcp snooping limit rate 15
+```
+Vérification :
+```text
+show ip dhcp snooping
+show ip dhcp snooping binding
+show ip dhcp snooping statistics
+```
+Deux pièges fréquents :
+• activer le snooping **sans** déclarer le port de confiance : plus aucun poste n'obtient d'adresse ;
+• l'**option 82** : en mode snooping, un Catalyst ajoute par défaut l'option 82 aux demandes. Certains serveurs ou relais rejettent une demande qui porte l'option 82 sans `giaddr`. Si tout tombe en panne juste après l'activation, essaie `no ip dhcp snooping information option` et observe à nouveau.
+
+Contre l'épuisement, on ajoute la **sécurité de port** (port security), qui limite le nombre de MAC apprises par port :
+```text
+interface range GigabitEthernet1/0/1 - 46
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+```
+Sur les hyperviseurs, l'équivalent existe : « DHCP Guard » sur une carte réseau virtuelle Hyper-V, pare-feu par VM sur Proxmox.
+
+### À toi de jouer
+1. Sur ton résolveur `ns1`, lance `dig +dnssec afnic.fr` puis `dig +dnssec lycee.internal SOA`. Dans quel cas vois-tu le drapeau `ad` ? Explique pourquoi.
+2. Prends une machine dont l'adresse n'est pas dans l'ACL `interne` (par exemple ton poste hôte sur un autre réseau, en route vers le labo) et lance `dig @192.168.10.10 example.com`. Quel statut obtiens-tu, et pourquoi est-ce la bonne réponse ?
+3. Mets en place TSIG entre `ns1` et `ns2`. Comment prouves-tu qu'un transfert sans clé est refusé ?
+4. Panne à résoudre : lundi matin, une salle de cours entière reçoit des adresses en `192.168.1.x` avec la passerelle `192.168.1.1`, alors que le VLAN 20 utilise `192.168.20.0/24`. Les autres salles fonctionnent. Trouve la cause probable, la méthode pour localiser l'appareil, et la mesure qui évite que cela recommence.
+
+### Correction
+1. `afnic.fr` revient avec `flags: qr rd ra ad` et des enregistrements RRSIG : la zone est signée, la chaîne racine → `fr` → `afnic.fr` est complète et `ns1` l'a validée. `lycee.internal` revient sans `ad` : la zone n'est pas signée, et même signée elle ne pourrait pas être validée, car aucun DS ne peut exister pour `.internal` dans la racine. `delv @192.168.10.10 afnic.fr` affiche `; fully validated`.
+2. Le statut est `REFUSED`, souvent accompagné de `WARNING: recursion requested but not available`. C'est voulu : le client n'est pas dans `allow-query` ni `allow-recursion`, donc le serveur ne travaille pas pour lui. Un résolveur ouvert aurait répondu `NOERROR` avec l'adresse.
+3. Configuration décrite plus haut, puis `sudo named-checkconf`, `sudo rndc reload` sur les deux serveurs. Preuve du refus : depuis le client, `dig @192.168.10.10 lycee.internal AXFR` renvoie `; Transfer failed.`. Preuve que la clé fonctionne : augmente le serial sur `ns1`, recharge, puis `dig @192.168.10.11 lycee.internal SOA +short` affiche le nouveau serial ; le journal de `ns1` (`journalctl -u named`) montre le transfert avec le nom de la clé `transfert-ns2`.
+4. Un serveur DHCP pirate : une box ou un routeur Wi-Fi branché sur une prise de la salle (`192.168.1.1` est l'adresse par défaut de nombreux matériels grand public). Localisation : sur un poste touché, `ipconfig /all` (Windows) affiche la ligne « Serveur DHCP » ; sur Linux, une capture `sudo tcpdump -ni enp0s3 -v 'udp port 67 or udp port 68'` montre l'adresse et la MAC source de l'OFFER. Sur le commutateur, `show mac address-table address <mac>` donne le port. Débranche l'appareil, puis fais renouveler les baux (`ipconfig /release` puis `ipconfig /renew`). Prévention : DHCP snooping sur les VLAN 10 et 20, seul le lien montant en `trust` ; les OFFER venant des prises de salle sont alors jetés.
+"""
+
+    codeblock "bash" {
+      title: "Contrôles de sécurité depuis un poste Linux du labo"
+      code: """
+# Le résolveur valide-t-il DNSSEC ? (chercher le drapeau ad)
+dig @192.168.10.10 +dnssec afnic.fr A | grep flags
+delv @192.168.10.10 afnic.fr A
+
+# Le transfert de zone est-il refusé sans clé ? (attendu : Transfer failed)
+dig @192.168.10.10 lycee.internal AXFR
+
+# Qui répond aux demandes DHCP sur ce réseau ? (une seule adresse source attendue)
+sudo tcpdump -ni enp0s3 -v 'udp port 67 or udp port 68'
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que garantit DNSSEC à un résolveur qui valide ?" {
+        - "que les requêtes DNS sont chiffrées entre le poste et le serveur"
+        + "que la réponse vient bien du détenteur de la zone et n’a pas été modifiée"
+        - "que le serveur faisant autorité ne peut pas tomber en panne"
+        - "que le nom demandé n’apparaît pas dans les journaux du fournisseur"
+        explanation: "DNSSEC apporte l'authenticité et l'intégrité grâce aux signatures. Il ne chiffre rien : la confidentialité relève de DNS over TLS ou DNS over HTTPS. Il n'a aucun effet sur la disponibilité."
+      }
+      question "Dans quelle zone est publié l’enregistrement DS de lycee-exemple.fr ?" {
+        - "dans la zone lycee-exemple.fr elle-même"
+        + "dans la zone parente fr"
+        - "dans la zone racine"
+        - "dans la zone inverse du serveur"
+        explanation: "Le DS est l'empreinte de la clé de la zone fille, publiée et signée par la zone parente. C'est ce qui relie les maillons de la chaîne de confiance. La racine publie le DS de fr, pas celui des domaines en dessous."
+      }
+      question "Quel type d’enregistrement contient la signature d’un ensemble d’enregistrements ?" {
+        - "DNSKEY"
+        - "DS"
+        + "RRSIG"
+        - "NSEC"
+        explanation: "RRSIG porte la signature. DNSKEY contient les clés publiques, DS l'empreinte de la clé publiée chez le parent, NSEC la preuve qu'un nom n'existe pas."
+      }
+      question "Dans la sortie de dig, quel drapeau indique que le résolveur a validé la réponse DNSSEC ?" {
+        - "aa"
+        - "rd"
+        - "ra"
+        + "ad"
+        explanation: "ad (Authenticated Data) signifie que le résolveur a vérifié les signatures. aa indique une réponse faisant autorité, rd que la récursion était demandée, ra qu'elle est disponible."
+      }
+      question "Un domaine renvoie SERVFAIL sur ton résolveur, mais répond avec « dig +cd ». Quelle est la cause la plus probable ?" {
+        - "le domaine n’existe pas"
+        + "la signature DNSSEC du domaine est invalide ou expirée"
+        - "le pare-feu bloque le port 53"
+        - "le TTL de l’enregistrement est à zéro"
+        explanation: "+cd désactive la validation. Si la réponse arrive sans validation et échoue avec, le problème est DNSSEC. Un domaine inexistant donne NXDOMAIN, et un port bloqué empêche toute réponse, avec ou sans +cd."
+      }
+      question "Pourquoi un résolveur ouvert à tout Internet est-il dangereux ?" {
+        - "il consomme trop de mémoire pour le cache"
+        + "il peut servir à amplifier une attaque vers une victime dont l’adresse est usurpée"
+        - "il publie automatiquement les zones internes"
+        - "il désactive la validation DNSSEC"
+        explanation: "L'attaquant envoie de petites requêtes avec l'adresse source de la victime ; le résolveur envoie à la victime des réponses beaucoup plus grosses. D'où la règle : allow-recursion limité aux réseaux internes."
+      }
+      question "Un client hors de l’ACL interne interroge ton Bind9 sur un nom externe. Quel statut est attendu ?" {
+        - "NOERROR"
+        - "NXDOMAIN"
+        + "REFUSED"
+        - "SERVFAIL"
+        explanation: "Le serveur refuse de travailler pour un client non autorisé : REFUSED. NOERROR voudrait dire que le résolveur est ouvert. NXDOMAIN signifierait que le nom n'existe pas, SERVFAIL un échec de résolution."
+      }
+      question "À quoi sert TSIG entre un serveur DNS primaire et un secondaire ?" {
+        - "à chiffrer les requêtes des clients"
+        - "à signer la zone pour DNSSEC"
+        + "à authentifier les transferts de zone avec une clé partagée"
+        - "à répartir la charge entre les deux serveurs"
+        explanation: "TSIG (RFC 8945) ajoute une signature fondée sur une clé secrète partagée aux messages, ce qui authentifie le transfert. Il ne signe pas la zone (c'est DNSSEC) et ne chiffre pas les requêtes des postes."
+      }
+      question "Une salle reçoit des adresses en 192.168.1.x au lieu du réseau prévu. Quelle est la cause la plus probable ?" {
+        - "le bail du vrai serveur est trop long"
+        + "un serveur DHCP non prévu, comme une box branchée sur une prise de la salle"
+        - "la zone inverse est absente"
+        - "le relais DHCP ajoute l’option 82"
+        explanation: "Des adresses d'un autre réseau, avec une passerelle 192.168.1.1, signent un serveur DHCP pirate, souvent un matériel grand public. La zone inverse n'a pas de rôle dans l'attribution d'adresses."
+      }
+      question "Sur un commutateur avec DHCP snooping, quel port doit être déclaré de confiance ?" {
+        - "tous les ports des postes clients"
+        + "le port qui mène au serveur DHCP légitime ou au relais"
+        - "aucun, le snooping fonctionne seul"
+        - "le port de l’imprimante réseau"
+        explanation: "Seul le chemin vers le vrai serveur (ou le routeur qui relaie) doit pouvoir transporter des OFFER et des ACK. Sans port de confiance, plus aucun poste n'obtient d'adresse ; avec tous les ports de confiance, la protection ne sert à rien."
+      }
+      question "Que fait le commutateur d’un OFFER reçu sur un port non fiable ?" {
+        - "il le transmet en ajoutant l’option 82"
+        - "il le transmet seulement aux postes du même VLAN"
+        + "il le jette"
+        - "il le renvoie au serveur légitime"
+        explanation: "Un message de serveur (OFFER, ACK, NAK) n'a rien à faire sur un port client : le commutateur le supprime. C'est ce qui neutralise un serveur DHCP pirate."
+      }
+      question "Quelle fonction s’appuie sur la table du DHCP snooping pour bloquer l’usurpation ARP ?" {
+        - "Spanning Tree Protocol"
+        + "Dynamic ARP Inspection"
+        - "le relais DHCP"
+        - "le split scope"
+        explanation: "Dynamic ARP Inspection compare chaque réponse ARP à la table MAC/IP construite par le snooping. Le Spanning Tree évite les boucles ; le relais et le split scope concernent la distribution d'adresses."
+      }
+      question "Quelle mesure limite le mieux une attaque par épuisement du pool DHCP depuis une prise de salle ?" {
+        - "allonger la durée des baux"
+        - "ajouter un second serveur DNS"
+        + "limiter le débit DHCP par port et le nombre de MAC par port"
+        - "désactiver la zone inverse"
+        explanation: "L'épuisement repose sur un grand nombre de demandes avec des MAC inventées : ip dhcp snooping limit rate et port-security le freinent. Des baux plus longs aggravent au contraire le problème, car les adresses volées restent occupées plus longtemps."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse, mini-projet guidé"
+    duration: "60min"
+    content: """
+### Le projet
+Tu reprends le labo des chapitres précédents et tu livres un service complet pour un petit établissement : un VLAN 10 « administration » (`192.168.10.0/24`) et un VLAN 20 « élèves » (`192.168.20.0/24`), reliés par un routeur qui fait passerelle `.254` dans chaque VLAN.
+
+À livrer :
+• un DNS interne `lycee.internal` en primaire (`ns1`) et secondaire (`ns2`), avec zones inverses ;
+• un DHCP Kea sur `ns1` qui sert les deux VLAN, le VLAN 20 par le relais du routeur ;
+• une imprimante à adresse réservée et nommée dans le DNS ;
+• les protections du chapitre 9 ;
+• une fiche de recette (tests et résultats) et une courte documentation.
+
+Si tu n'as pas de routeur, un pfSense ou un OPNsense en machine virtuelle fait l'affaire (relais DHCP dans Services > DHCP Relay), ou une machine Debian qui route entre deux cartes.
+
+### Étape 1 : le plan d'adressage et de nommage
+Commence sur papier. Exemple :
+
+| Nom | Adresse | Origine |
+|---|---|---|
+| `ns1` | `192.168.10.10` | fixe |
+| `ns2` | `192.168.10.11` | fixe |
+| `routeur` | `192.168.10.254` et `192.168.20.254` | fixe |
+| `imp-cdi` | `192.168.20.50` | réservation DHCP |
+| postes administration | `192.168.10.100` à `.199` | pool |
+| postes élèves | `192.168.20.100` à `.249` | pool |
+
+Règles : les adresses fixes et les réservations sont **hors des pools** ; chaque nom fixe a un A et un PTR.
+
+### Étape 2 : le DNS
+• Zone directe `lycee.internal` : SOA, deux NS, A de `ns1`, `ns2`, `routeur`, `imp-cdi`.
+• Deux zones inverses : `10.168.192.in-addr.arpa` et `20.168.192.in-addr.arpa`.
+• `allow-recursion` et `allow-query` couvrent les deux réseaux.
+• Transferts vers `ns2` protégés par TSIG.
+Contrôle : `named-checkconf`, `named-checkzone` sur chaque zone, puis `rndc reload`.
+
+### Étape 3 : le DHCP
+• Deux `subnet4` dans Kea (`id` 10 et 20), chacun avec son pool et son option `routers`.
+• Options globales : `domain-name-servers` = `192.168.10.10, 192.168.10.11`, `domain-name` = `lycee.internal`.
+• Réservation de `imp-cdi` par sa MAC dans le sous-réseau 20.
+• Bail de 8 heures pour les élèves (`valid-lifetime` 28800 dans le sous-réseau 20), 12 heures pour l'administration. Redéfinis aussi dans le sous-réseau 20 `renew-timer` 14400 et `rebind-timer` 25200 (50 % et 87,5 % de 8 h) : les valeurs globales (21600 et 37800) dépasseraient la durée du bail, et Kea n'enverrait alors pas ces temporisations.
+Contrôle : `kea-dhcp4 -t`, puis redémarrage.
+
+### Étape 4 : le relais
+Sur le routeur, relais DHCP sur l'interface du VLAN 20 vers `192.168.10.10` (`ip helper-address 192.168.10.10` sur Cisco). Vérifie que `ns1` a une route de retour vers `192.168.20.0/24` (sa passerelle est le routeur, c'est donc le cas).
+
+### Étape 5 : la sécurité
+• Récursion fermée et transferts protégés (déjà faits).
+• Sur le commutateur (ou dans la console de l'hyperviseur) : DHCP snooping sur les VLAN 10 et 20, lien montant en `trust`.
+• Pare-feu du routeur : depuis le VLAN 20, autoriser l'UDP et le TCP 53 seulement vers `ns1` et `ns2`, pour que les élèves ne contournent pas le résolveur interne.
+
+### Étape 6 : la recette
+Une recette, c'est une liste de tests écrits **avant** de les lancer, avec le résultat attendu, puis le résultat obtenu.
+
+| Test | Commande | Attendu |
+|---|---|---|
+| Bail VLAN 10 | `ip -br a` sur un client du VLAN 10 | adresse dans `.100`–`.199` |
+| Bail VLAN 20 | `ipconfig /all` sur un client du VLAN 20 | adresse dans `.100`–`.249`, serveur DHCP `192.168.10.10` |
+| Réservation | page d'état de l'imprimante, ou `grep 192.168.20.50 /var/lib/kea/kea-leases4.csv` sur `ns1` | `192.168.20.50` |
+| Nom direct | `dig @192.168.10.10 imp-cdi.lycee.internal +short` | `192.168.20.50` |
+| Nom inverse | `dig @192.168.10.10 -x 192.168.20.50 +short` | `imp-cdi.lycee.internal.` |
+| Secondaire | `dig @192.168.10.11 lycee.internal SOA +short` | même serial que `ns1` |
+| Récursion | `dig @192.168.10.10 afnic.fr +dnssec` depuis le VLAN 20 | `NOERROR`, drapeau `ad` |
+| Transfert sans clé | `dig @192.168.10.10 lycee.internal AXFR` | `Transfer failed.` |
+| Serveur pirate | un second Kea ou une box sur une prise client | aucun client ne reçoit d'adresse de ce serveur |
+
+### Étape 7 : la documentation
+Une page suffit : plan d'adressage, emplacement des fichiers (`/etc/bind/`, `/etc/kea/kea-dhcp4.conf`), procédure pour ajouter une machine (A + PTR + serial, réservation + `kea-dhcp4 -t`), commandes de diagnostic, emplacement des sauvegardes de configuration. La personne qui te remplacera doit pouvoir ajouter une imprimante sans te téléphoner.
+
+### À toi de jouer
+Réalise le projet, étapes 1 à 7. Puis réponds à ces trois situations :
+1. Après l'ajout de l'imprimante, `ns1` la résout mais `ns2` répond `NXDOMAIN`.
+2. Les postes élèves restent en `169.254.x.x`, ceux de l'administration fonctionnent.
+3. Les postes élèves ont une adresse correcte, mais aucun site ne s'affiche ; `ping 9.9.9.9` fonctionne.
+
+### Correction
+Points de contrôle du projet :
+• étape 1 : aucune réservation ni adresse fixe dans un pool ; deux zones inverses, une par réseau ;
+• étape 2 : dans la zone inverse du VLAN 20, la ligne `50 IN PTR imp-cdi.lycee.internal.` (point final indispensable) ; serial augmenté à chaque modification de chaque zone ;
+• étape 3 : la réservation est placée dans le `subnet4` d'`id` 20, avec `"ip-address": "192.168.20.50"` ; le `valid-lifetime` du sous-réseau 20 remplace la valeur globale, avec `renew-timer` 14400 et `rebind-timer` 25200 dans ce même sous-réseau ;
+• étape 6 : chaque ligne de la recette a un résultat obtenu, et chaque écart est expliqué.
+
+Situations :
+1. Le serial n'a pas été augmenté (ou la zone n'a pas été rechargée) : `ns2` compare les serials et ne fait aucun transfert. Autre cause : la clé TSIG différente sur les deux serveurs ; le journal de `ns2` le dit (`journalctl -u named`). Correction : augmenter le serial, `rndc reload` sur `ns1`, puis `dig @192.168.10.11 lycee.internal SOA +short`.
+2. Les demandes du VLAN 20 n'arrivent pas au serveur ou restent sans réponse. Dans l'ordre : relais absent ou mal adressé sur l'interface VLAN 20 du routeur ; pas de `subnet4` correspondant à `giaddr` `192.168.20.254` (le journal de Kea montre alors `DHCP4_PACKET_NAK_0001`) ; pare-feu entre le routeur et `ns1` qui bloque l'UDP 67 ; port du routeur non déclaré `trust` alors que le snooping est actif. Une capture `tcpdump` sur `ns1` tranche entre « rien n'arrive » et « le serveur ne répond pas ».
+3. La connectivité IP est bonne, c'est la résolution. Vérifie l'option `domain-name-servers` reçue (`ipconfig /all`), puis `nslookup afnic.fr 192.168.10.10` depuis le poste. Si la réponse est `REFUSED`, le réseau `192.168.20.0/24` manque dans l'ACL `interne` de Bind9. Si rien ne répond, la règle de pare-feu du routeur bloque le port 53 vers `ns1`.
+
+### Pour aller plus loin
+• RFC 1034 et RFC 1035, Domain Names, IETF : https://www.rfc-editor.org/rfc/rfc1034
+• RFC 2131, Dynamic Host Configuration Protocol, IETF : https://www.rfc-editor.org/rfc/rfc2131
+• RFC 4033, DNS Security Introduction and Requirements, IETF : https://www.rfc-editor.org/rfc/rfc4033
+• BIND 9 Administrator Reference Manual et Kea Administrator Reference Manual, ISC : https://bind9.readthedocs.io et https://kea.readthedocs.io
+• Documentation des rôles serveur DNS et DHCP de Windows Server, Microsoft Learn : https://learn.microsoft.com/windows-server/networking/
+• Bonnes pratiques pour l'acquisition et l'exploitation de noms de domaine (ANSSI-BP-038) et Recommandations relatives aux architectures des services DNS (ANSSI-PA-105), ANSSI : https://cyber.gouv.fr
+"""
+
+    codeblock "bash" {
+      title: "Recette rapide depuis un client du VLAN 20"
+      code: """
+ip -br a                                              # adresse dans 192.168.20.100-249
+ip route | grep default                               # default via 192.168.20.254
+resolvectl status | grep -i 'dns servers'             # 192.168.10.10 192.168.10.11
+dig @192.168.10.10 imp-cdi.lycee.internal +short      # 192.168.20.50
+dig @192.168.10.10 -x 192.168.20.50 +short            # imp-cdi.lycee.internal.
+dig @192.168.10.11 lycee.internal SOA +short          # même serial que ns1
+dig @192.168.10.10 afnic.fr +dnssec | grep flags      # drapeau ad présent
+dig @192.168.10.10 lycee.internal AXFR                # Transfer failed.
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Dans quel ordre un résolveur récursif interroge-t-il les serveurs pour www.afnic.fr, cache vide ?" {
+        - "serveurs de afnic.fr, puis fr, puis racine"
+        + "racine, puis serveurs de fr, puis serveurs de afnic.fr"
+        - "serveurs de fr, puis racine, puis afnic.fr"
+        - "uniquement la racine, qui connaît toutes les adresses"
+        explanation: "Le résolveur descend la hiérarchie : la racine renvoie vers fr, fr renvoie vers afnic.fr, qui donne la réponse. La racine ne connaît que les délégations des TLD."
+      }
+      question "Un enregistrement a un TTL de 3600. Tu le modifies à 9 h 00 ; un résolveur l’avait mis en cache à 8 h 30. Jusqu’à quand peut-il servir l’ancienne valeur ?" {
+        - "9 h 00"
+        + "9 h 30"
+        - "10 h 00"
+        - "10 h 30"
+        explanation: "Le cache garde la réponse pendant le TTL à partir de sa mise en cache : 8 h 30 + 1 h = 9 h 30. L'heure de la modification sur le serveur faisant autorité ne change rien au cache déjà rempli."
+      }
+      question "Quel enregistrement indique le serveur qui reçoit le courrier d’un domaine ?" {
+        - "CNAME"
+        - "TXT"
+        + "MX"
+        - "SOA"
+        explanation: "MX donne un nom de serveur de courrier et une priorité. TXT porte du texte (SPF par exemple), CNAME un alias, SOA les paramètres de la zone."
+      }
+      question "Quel enregistrement associe un nom à une adresse IPv6 ?" {
+        - "A"
+        + "AAAA"
+        - "PTR"
+        - "NS"
+        explanation: "AAAA est le pendant IPv6 de A. PTR sert à la résolution inverse, NS désigne les serveurs faisant autorité."
+      }
+      question "Dans une zone, quelle est l’erreur dans la ligne « www IN CNAME srv-web.lycee.internal » ?" {
+        - "un CNAME ne peut pas pointer vers un nom de la même zone"
+        + "il manque le point final : le nom devient srv-web.lycee.internal.lycee.internal"
+        - "IN doit être remplacé par CNAME"
+        - "www est un nom réservé"
+        explanation: "Sans point final, Bind9 ajoute l'origine de la zone au nom. C'est l'erreur la plus courante dans un fichier de zone ; named-checkzone ne la signale pas, car la syntaxe reste correcte."
+      }
+      question "Tu modifies la zone sur le primaire mais le secondaire garde l’ancienne version. Quel oubli est le plus probable ?" {
+        - "le TTL n’a pas été baissé"
+        + "le serial du SOA n’a pas été augmenté"
+        - "le cache du client n’a pas été vidé"
+        - "l’enregistrement PTR est absent"
+        explanation: "Le secondaire compare les serials : sans augmentation, il considère qu'il a déjà la bonne version. Le TTL et le cache concernent les résolveurs, pas le transfert de zone."
+      }
+      question "Quelle commande Linux résout un nom en suivant le fichier /etc/hosts puis le DNS ?" {
+        - "dig nom"
+        - "nslookup nom"
+        + "getent hosts nom"
+        - "host nom"
+        explanation: "getent passe par la bibliothèque système et suit l'ordre de nsswitch.conf (fichier hosts puis DNS). dig, nslookup et host interrogent directement un serveur DNS et ignorent /etc/hosts."
+      }
+      question "Quel nom faut-il interroger pour la résolution inverse de 192.168.20.50 ?" {
+        - "192.168.20.50.in-addr.arpa"
+        + "50.20.168.192.in-addr.arpa"
+        - "20.168.192.in-addr.arpa"
+        - "50.in-addr.arpa"
+        explanation: "Les octets sont écrits à l'envers sous in-addr.arpa, du plus précis au plus général. 20.168.192.in-addr.arpa est le nom de la zone inverse, pas celui de l'adresse."
+      }
+      question "Dans quel ordre se déroulent les messages DHCP lors d’une première attribution ?" {
+        - "Request, Offer, Discover, Ack"
+        + "Discover, Offer, Request, Ack"
+        - "Offer, Discover, Ack, Request"
+        - "Discover, Request, Offer, Ack"
+        explanation: "DORA : le client cherche (Discover), le serveur propose (Offer), le client demande l'adresse proposée (Request), le serveur confirme (Ack)."
+      }
+      question "Un bail dure 8 heures. À quel moment le client tente-t-il un premier renouvellement auprès de son serveur (T1) ?" {
+        - "après 1 heure"
+        + "après 4 heures"
+        - "après 7 heures"
+        - "à la fin du bail"
+        explanation: "T1 vaut par défaut 50 % du bail : 4 heures. T2 (87,5 %, soit 7 heures) est le moment où le client s'adresse à n'importe quel serveur."
+      }
+      question "Un poste Windows a l’adresse 169.254.12.7. Que peux-tu en conclure ?" {
+        - "le serveur DNS est injoignable"
+        + "le poste n’a reçu aucune réponse DHCP et s’est attribué une adresse APIPA"
+        - "le bail a été renouvelé normalement"
+        - "le poste a une réservation"
+        explanation: "La plage 169.254.0.0/16 est utilisée quand aucun serveur DHCP n'a répondu. Le problème est en amont : câble, VLAN, relais ou serveur."
+      }
+      question "Quelle option DHCP transmet la passerelle par défaut ?" {
+        - "option 1"
+        + "option 3"
+        - "option 6"
+        - "option 51"
+        explanation: "Option 3 : routeurs (passerelle). Option 1 : masque, option 6 : serveurs DNS, option 51 : durée du bail."
+      }
+      question "Pourquoi une réservation se place-t-elle de préférence hors du pool ?" {
+        - "parce que Kea refuse toute réservation dans le pool"
+        + "pour éviter qu’un autre client obtienne cette adresse avant l’appareil réservé"
+        - "pour que l’appareil garde l’adresse même sans serveur DHCP"
+        - "parce que les réservations n’ont pas de bail"
+        explanation: "Une adresse réservée dans le pool peut être déjà attribuée à un autre poste. La placer hors du pool supprime ce conflit ; c'est la recommandation de la documentation de Kea."
+      }
+      question "Quel champ le relais DHCP remplit-il pour que le serveur choisisse la bonne étendue ?" {
+        - "ciaddr"
+        - "yiaddr"
+        + "giaddr"
+        - "chaddr"
+        explanation: "giaddr contient l'adresse du relais dans le réseau du client. ciaddr est l'adresse actuelle du client, yiaddr l'adresse proposée, chaddr la MAC du client."
+      }
+      question "Quelle commande Cisco active le relais DHCP sur une interface de VLAN ?" {
+        - "ip dhcp relay enable"
+        + "ip helper-address 192.168.10.10"
+        - "ip dhcp snooping trust"
+        - "ip dhcp pool relais"
+        explanation: "ip helper-address relaie les diffusions DHCP en unicast vers le serveur indiqué. ip dhcp snooping trust déclare un port de confiance, ip dhcp pool crée un serveur DHCP sur le routeur."
+      }
+      question "Quelle commande vérifie la configuration de Kea avant de redémarrer le service ?" {
+        - "named-checkconf"
+        - "systemctl reload kea-dhcp4-server"
+        + "kea-dhcp4 -t /etc/kea/kea-dhcp4.conf"
+        - "kea-dhcp4 --dry-run"
+        explanation: "kea-dhcp4 -t analyse le fichier JSON et signale les erreurs avec leur ligne. named-checkconf concerne Bind9 ; --dry-run n'existe pas."
+      }
+      question "Les postes ont une adresse et pingent 9.9.9.9, mais aucun nom ne se résout. Que vérifies-tu en premier ?" {
+        - "la passerelle reçue (option 3)"
+        + "les serveurs DNS reçus (option 6) et leur réponse"
+        - "la durée du bail"
+        - "la table du DHCP snooping"
+        explanation: "Le ping vers une adresse prouve que la passerelle et l'adressage fonctionnent. Il reste la résolution : serveur DNS reçu, puis réponse de ce serveur (REFUSED si le réseau manque dans allow-recursion)."
+      }
+      question "Ton Bind9 renvoie REFUSED aux postes du VLAN 20 mais répond au VLAN 10. Quelle est la cause la plus probable ?" {
+        - "la zone inverse du VLAN 20 manque"
+        + "le réseau 192.168.20.0/24 ne figure pas dans l’ACL utilisée par allow-recursion"
+        - "le serial n’a pas été augmenté"
+        - "DNSSEC est mal configuré"
+        explanation: "REFUSED signifie que le serveur ne veut pas répondre à ce client. Une zone inverse absente ou un problème DNSSEC donneraient NXDOMAIN ou SERVFAIL."
+      }
+      question "Quel effet produit DHCP snooping activé sans aucun port de confiance ?" {
+        - "aucun, tous les messages passent"
+        - "seuls les serveurs pirates sont bloqués"
+        + "plus aucun client n’obtient d’adresse, car tous les OFFER sont jetés"
+        - "le commutateur devient serveur DHCP"
+        explanation: "Tous les ports sont non fiables par défaut : les réponses du vrai serveur sont jetées comme les autres. Il faut toujours déclarer le chemin vers le serveur ou le relais en trust."
+      }
+      question "Une zone privée lycee.internal peut-elle être validée par DNSSEC depuis la racine ?" {
+        - "oui, si Bind9 la signe avec dnssec-policy default"
+        - "oui, à condition d’activer dnssec-validation auto"
+        + "non, car aucun DS ne peut être publié pour elle dans une zone parente signée"
+        - "non, car DNSSEC ne fonctionne qu’en IPv6"
+        explanation: "La chaîne de confiance part de la racine. .internal n'y est pas délégué, donc le maillon DS manque : la zone peut être signée, mais un résolveur ne peut pas la valider sans configuration particulière."
+      }
+    }
+  }
+}

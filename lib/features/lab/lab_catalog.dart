@@ -11,6 +11,12 @@ import 'package:tutodecode/features/lab/simulators/network_simulator.dart';
 import 'package:tutodecode/features/lab/simulators/security_simulator.dart';
 import 'package:tutodecode/features/lab/simulators/system_simulator.dart';
 
+import 'package:tutodecode/features/training/conversion_trainer.dart';
+import 'package:tutodecode/features/training/packet_decoder_trainer.dart';
+import 'package:tutodecode/features/training/permissions_trainer.dart';
+import 'package:tutodecode/features/training/routing_trainer.dart';
+import 'package:tutodecode/features/training/subnet_trainer.dart';
+import 'package:tutodecode/features/training/terminal_missions.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 
 class LabCatalogEntry {
@@ -34,6 +40,61 @@ class LabCatalogEntry {
 }
 
 final List<LabCatalogEntry> labCatalog = <LabCatalogEntry>[
+  // Entraînements : exercices générés à chaque fois, vérifiés et corrigés.
+  LabCatalogEntry(
+    id: 'training-terminal',
+    label: 'Terminal : missions',
+    subtitle: 'Entraînement · commandes Linux vérifiées',
+    icon: Icons.terminal,
+    color: TdcColors.system,
+    hasOwnHeader: true,
+    build: () => const TerminalMissions(),
+  ),
+  LabCatalogEntry(
+    id: 'training-subnet',
+    label: 'Sous-réseaux IPv4',
+    subtitle: 'Entraînement · calcul, même réseau, VLSM',
+    icon: Icons.calculate,
+    color: TdcColors.network,
+    hasOwnHeader: true,
+    build: () => const SubnetTrainer(),
+  ),
+  LabCatalogEntry(
+    id: 'training-routing',
+    label: 'Tables de routage',
+    subtitle: 'Entraînement · préfixe le plus long',
+    icon: Icons.alt_route,
+    color: TdcColors.network,
+    hasOwnHeader: true,
+    build: () => const RoutingTrainer(),
+  ),
+  LabCatalogEntry(
+    id: 'training-packets',
+    label: 'Décoder une trame',
+    subtitle: 'Entraînement · Ethernet, IPv4, TCP, UDP',
+    icon: Icons.data_object,
+    color: TdcColors.network,
+    hasOwnHeader: true,
+    build: () => const PacketDecoderTrainer(),
+  ),
+  LabCatalogEntry(
+    id: 'training-permissions',
+    label: 'Droits Linux',
+    subtitle: 'Entraînement · chmod, ls -l, umask',
+    icon: Icons.lock_outline,
+    color: TdcColors.security,
+    hasOwnHeader: true,
+    build: () => const PermissionsTrainer(),
+  ),
+  LabCatalogEntry(
+    id: 'training-conversions',
+    label: 'Binaire et hexadécimal',
+    subtitle: 'Entraînement · conversions, masques',
+    icon: Icons.swap_horiz,
+    color: TdcColors.algorithms,
+    hasOwnHeader: true,
+    build: () => const ConversionTrainer(),
+  ),
   LabCatalogEntry(
     id: 'network',
     label: 'Reseau',
