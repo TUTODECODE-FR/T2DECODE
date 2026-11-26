@@ -74,8 +74,11 @@ mkdir -p fastlane/metadata/android/en-US/changelogs
 printf '%s\n' "$message" > "fastlane/metadata/android/en-US/changelogs/$nbuild.txt"
 
 # Vérifications avant de publier (Flutter du projet si présent)
-flutter=$(command -v flutter || true)
-[ -x "$racine/.flutter-sdk/bin/flutter" ] && flutter="$racine/.flutter-sdk/bin/flutter"
+# Flutter : $FLUTTER, sinon ~/.flutter-3.44.1 (hors iCloud), sinon celui du projet, sinon le PATH
+flutter=${FLUTTER:-}
+[ -z "$flutter" ] && [ -x "$HOME/.flutter-3.44.1/bin/flutter" ] && flutter="$HOME/.flutter-3.44.1/bin/flutter"
+[ -z "$flutter" ] && [ -x "$racine/.flutter-sdk/bin/flutter" ] && flutter="$racine/.flutter-sdk/bin/flutter"
+[ -z "$flutter" ] && flutter=$(command -v flutter || true)
 if [ -n "$flutter" ]; then
 	"$flutter" test --dart-define=SKIP_GOLDENS=true test/unit/app_version_test.dart >/dev/null ||
 		{ echo "❌ test de version en échec : rien n'est publié (git checkout . pour annuler)"; exit 1; }
