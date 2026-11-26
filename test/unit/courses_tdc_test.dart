@@ -9,12 +9,14 @@ import 'package:tutodecode/features/courses/data/course_repository.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('loadAll : cours .tdc + anciens cours JSON non encore remplacés', () async {
+  test('loadAll : cours .tdc + anciens cours JSON non encore remplacés',
+      () async {
     final cours = await Course.loadAll('fr');
     final ids = cours.map((c) => c.id).toList();
     expect(ids.toSet().length, ids.length, reason: 'aucun cours en double');
     expect(ids, contains('ipv6'));
-    expect(ids, contains('linux-basics'), reason: 'ancien cours pas encore réécrit');
+    expect(ids, contains('linux-basics'),
+        reason: 'ancien cours pas encore réécrit');
     expect(ids, isNot(contains('bash-scripting')),
         reason: 'remplacé par assets/courses/fr/bash-scripting.tdc');
   });
@@ -41,7 +43,8 @@ void main() {
       for (final ch in course.chapters) {
         expect(ch.content.trim(), isNotEmpty, reason: 'chapitre ${ch.id} vide');
         final quiz = ch.quiz ?? const <QuizQuestion>[];
-        expect(quiz, isNotEmpty, reason: 'chapitre ${ch.id} sans questionnaire');
+        expect(quiz, isNotEmpty,
+            reason: 'chapitre ${ch.id} sans questionnaire');
         if (ch.quizPick != null) {
           expect(quiz.length, greaterThanOrEqualTo(ch.quizPick!),
               reason: 'chapitre ${ch.id} : banque plus petite que pick');
