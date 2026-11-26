@@ -313,6 +313,7 @@ class _DslParser {
     String content = '';
     final quizQuestions = <Map<String, dynamic>>[];
     final codeBlocks = <Map<String, dynamic>>[];
+    int? quizPick;
 
     while (!_match(_TokenType.braceClose) && _current != null) {
       if (_match(_TokenType.identifier, 'codeblock')) {
@@ -335,6 +336,11 @@ class _DslParser {
         while (!_match(_TokenType.braceClose) && _current != null) {
           if (_match(_TokenType.identifier, 'question')) {
             quizQuestions.add(_parseQuestion());
+          } else if (_match(_TokenType.identifier, 'pick')) {
+            // pick: N -> N questions tirées au hasard à chaque tentative
+            _consume();
+            _optionalColon();
+            quizPick = int.tryParse(_consume().value);
           } else {
             _consume();
           }
@@ -356,6 +362,7 @@ class _DslParser {
       'content': content,
       if (codeBlocks.isNotEmpty) 'codeBlocks': codeBlocks,
       if (quizQuestions.isNotEmpty) 'quiz': quizQuestions,
+      if (quizPick != null) 'quizPick': quizPick,
     };
   }
 

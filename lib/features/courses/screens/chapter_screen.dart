@@ -168,6 +168,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
                     ? null
                     : QcmWidget(
                         questions: chapter.quiz!,
+                        pick: chapter.quizPick,
                         chapterContent: chapter.content,
                         onComplete: (ok) {
                           if (!ok) return;

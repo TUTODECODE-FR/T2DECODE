@@ -9,11 +9,16 @@ import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 
 class QcmWidget extends StatefulWidget {
   final List<QuizQuestion> questions;
+
+  /// Nombre de questions tirées au hasard dans la banque à chaque tentative
+  /// (`pick: N` dans le bloc `quiz` d'un .tdc). Null : toutes les questions.
+  final int? pick;
   final String? chapterContent;
   final void Function(bool success)? onComplete;
 
   const QcmWidget({
     required this.questions,
+    this.pick,
     this.chapterContent,
     this.onComplete,
     super.key,
@@ -33,7 +38,9 @@ class _QcmWidgetState extends State<QcmWidget> {
   List<QuizQuestion> _activeQuestions = [];
 
   List<QuizQuestion> _prepareShuffledQuestions(List<QuizQuestion> input) {
-    final list = List<QuizQuestion>.from(input)..shuffle();
+    var list = List<QuizQuestion>.from(input)..shuffle();
+    final n = widget.pick;
+    if (n != null && n > 0 && n < list.length) list = list.take(n).toList();
     return list.map((q) {
       if (q.choices.isEmpty) return q;
       final correctChoice = q.correctIndex < q.choices.length
@@ -183,6 +190,9 @@ class _QcmWidgetState extends State<QcmWidget> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () => setState(() {
+                    // nouveau tirage : autres questions, autre ordre
+                    _activeQuestions =
+                        _prepareShuffledQuestions(widget.questions);
                     _current = 0;
                     _score = 0;
                     _selected = null;

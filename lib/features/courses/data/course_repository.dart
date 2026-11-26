@@ -3,7 +3,8 @@
 // Feature: courses — Data layer
 // Loads and owns the Course/Chapter data model.
 import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show AssetManifest, rootBundle;
+import '../../../core/services/tdc_dsl_parser.dart';
 import '../../../utils/course_expansion.dart';
 
 class QuizQuestion {
@@ -37,6 +38,9 @@ class CourseChapter {
   final List<Map<String, dynamic>>? codeBlocks;
   final List<QuizQuestion>? quiz;
 
+  /// Nombre de questions tirées dans la banque `quiz` à chaque tentative.
+  final int? quizPick;
+
   const CourseChapter({
     required this.id,
     required this.title,
@@ -44,6 +48,7 @@ class CourseChapter {
     required this.duration,
     this.codeBlocks,
     this.quiz,
+    this.quizPick,
   });
 }
 
@@ -125,12 +130,55 @@ class Course {
         duration: c['duration'] ?? '',
         codeBlocks: codeBlocks,
         quiz: quiz,
+        quizPick: c['quizPick'] is int ? c['quizPick'] as int : null,
       ));
     }
     return course;
   }
 
+  /// Cours au format .tdc : assets/courses/<langue>/*.tdc (une version par langue,
+  /// même nom de fichier). Un cours absent dans la langue demandée est pris en français.
   static Future<List<Course>> loadAll([String locale = 'fr']) async {
+    final tdc = await _loadTdc(locale);
+    if (tdc.isNotEmpty) return tdc;
+    return _loadLegacyJson(locale); // anciens cours, le temps de la transition
+  }
+
+  static Future<List<Course>> _loadTdc(String locale) async {
+    final List<String> tous;
+    try {
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      tous = manifest
+          .listAssets()
+          .where((a) => a.startsWith('assets/courses/') && a.endsWith('.tdc'))
+          .toList();
+    } catch (_) {
+      return const [];
+    }
+    String nom(String a) => a.substring(a.lastIndexOf('/') + 1);
+    final parLangue = <String, String>{
+      for (final a in tous.where((a) => a.startsWith('assets/courses/fr/')))
+        nom(a): a,
+    };
+    if (locale != 'fr') {
+      for (final a in tous.where((a) => a.startsWith('assets/courses/$locale/'))) {
+        parLangue[nom(a)] = a;
+      }
+    }
+    final noms = parLangue.keys.toList()..sort();
+    final cours = <Course>[];
+    for (final n in noms) {
+      try {
+        final texte = await rootBundle.loadString(parLangue[n]!);
+        cours.add(Course.fromMap(TdcDslParser.parse(texte)));
+      } catch (_) {
+        // un cours mal formé ne doit pas empêcher d'ouvrir les autres
+      }
+    }
+    return cours;
+  }
+
+  static Future<List<Course>> _loadLegacyJson(String locale) async {
     String filename = 'assets/courses/courses_$locale.json';
     try {
       final data = await rootBundle.loadString(filename);
@@ -139,7 +187,6 @@ class Course {
           .map((m) => Course.fromMap(m as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      // Fallback
       final fallback =
           await rootBundle.loadString('assets/courses/courses_en.json');
       final list = json.decode(fallback) as List<dynamic>;
