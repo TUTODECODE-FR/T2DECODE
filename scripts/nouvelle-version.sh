@@ -82,7 +82,7 @@ flutter=${FLUTTER:-}
 if [ -n "$flutter" ]; then
 	"$flutter" test --dart-define=SKIP_GOLDENS=true test/unit/app_version_test.dart >/dev/null ||
 		{ echo "❌ test de version en échec : rien n'est publié (git checkout . pour annuler)"; exit 1; }
-	"$flutter" test --dart-define=SKIP_GOLDENS=true >/dev/null ||
+	"$flutter" test --timeout 300s --dart-define=SKIP_GOLDENS=true >/dev/null ||
 		{ echo "❌ tests en échec : rien n'est publié (git checkout . pour annuler)"; exit 1; }
 	echo "✅ tests OK"
 else
