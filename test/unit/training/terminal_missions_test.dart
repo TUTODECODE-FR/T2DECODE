@@ -323,12 +323,13 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
-        const MaterialApp(home: Scaffold(body: TerminalMissions())));
+        const MaterialApp(home: Scaffold(body: TerminalMissions(seed: 1))));
     expect(find.text('Terminal Linux : missions'), findsOneWidget);
     await tester.enterText(find.byType(TextField), 'pwd');
     await tester.testTextInput.receiveAction(TextInputAction.done);
     await tester.pump();
-    expect(find.text('/home/admin'), findsWidgets);
+    // certaines missions démarrent dans un sous-dossier du répertoire personnel
+    expect(find.textContaining('/home/admin'), findsWidgets);
     expect(
         tester
             .widget<OutlinedButton>(

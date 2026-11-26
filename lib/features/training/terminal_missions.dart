@@ -1520,7 +1520,10 @@ TerminalMission _mChmodR(TrainingRandom r) {
 // ---------------------------------------------------------------------------
 
 class TerminalMissions extends StatefulWidget {
-  const TerminalMissions({super.key});
+  const TerminalMissions({super.key, this.seed});
+
+  /// Graine facultative : même suite de missions à chaque fois (tests).
+  final int? seed;
 
   @override
   State<TerminalMissions> createState() => _TerminalMissionsState();
@@ -1536,7 +1539,7 @@ class _TerminalMissionsState extends State<TerminalMissions> {
   final _input = TextEditingController();
   final _inputFocus = FocusNode();
   final _scroll = ScrollController();
-  final _random = TrainingRandom();
+  late final TrainingRandom _random = TrainingRandom(widget.seed);
 
   MissionLevel? _level;
   late TerminalMission _mission;
