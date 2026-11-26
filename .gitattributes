@@ -1,0 +1,4 @@
+# Les fichiers embarqués dans l'application sont vérifiés par empreinte SHA-256
+# (assets/asset_checksums.json) : Git ne doit jamais convertir leurs fins de ligne,
+# sinon la compilation Windows (CRLF) déclenche une fausse « alerte intégrité ».
+assets/** -text
