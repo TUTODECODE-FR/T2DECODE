@@ -9,6 +9,7 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/features/courses/data/course_repository.dart';
 import 'package:tutodecode/utils/markdown_sanitizer.dart';
+import 'lesson_interactive.dart';
 
 /// Comfortable measure for a lesson column (about 70 characters at 16px).
 const double kLessonColumnWidth = 720;
@@ -194,12 +195,16 @@ class OfficialLessonBody extends StatelessWidget {
     required this.chapter,
     this.scrollController,
     this.quiz,
+    this.quizKey,
   });
 
   final Course course;
   final CourseChapter chapter;
   final ScrollController? scrollController;
   final Widget? quiz;
+
+  /// Clé du cadre du quiz, pour y aller directement (« Je connais déjà »).
+  final GlobalKey? quizKey;
 
   @override
   Widget build(BuildContext context) {
@@ -231,15 +236,58 @@ class OfficialLessonBody extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         if (opening.bodyMarkdown.trim().isNotEmpty)
-          _LessonMarkdown(data: opening.bodyMarkdown),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: _interactiveBody(opening.bodyMarkdown, chapter),
+          ),
         ..._examplePanels(chapter),
+        PracticeLinks(
+          targets: practiceTargetsFor('${chapter.title}\n${chapter.content}'),
+        ),
         if (quiz != null) ...[
           const SizedBox(height: 28),
-          _QuizFrame(child: quiz!),
+          _QuizFrame(key: quizKey, child: quiz!),
         ],
       ],
     );
   }
+}
+
+/// Corps du chapitre découpé : corrections masquées, questions de contrôle
+/// après certaines parties.
+List<Widget> _interactiveBody(String markdown, CourseChapter chapter) {
+  final segments = splitLessonSegments(markdown);
+  final checks = checkpointQuestions(chapter.quiz);
+  final proseWithHeading = [
+    for (var i = 0; i < segments.length; i++)
+      if (segments[i].kind == LessonSegmentKind.prose &&
+          segments[i].heading != null)
+        i,
+  ];
+  // Questions réparties sur les parties de cours (pas après la dernière).
+  final checkAfter = <int, QuizQuestion>{};
+  if (checks.isNotEmpty && proseWithHeading.length > 1) {
+    final slots = proseWithHeading.sublist(0, proseWithHeading.length - 1);
+    final step = slots.length / checks.length;
+    for (var k = 0; k < checks.length && k < slots.length; k++) {
+      checkAfter[slots[(k * step).floor()]] = checks[k];
+    }
+  }
+  final widgets = <Widget>[];
+  for (var i = 0; i < segments.length; i++) {
+    final s = segments[i];
+    final body = _LessonMarkdown(data: s.markdown);
+    widgets.add(
+      s.kind == LessonSegmentKind.correction
+          ? RevealCorrection(key: ValueKey('correction-$i'), child: body)
+          : body,
+    );
+    final q = checkAfter[i];
+    if (q != null) {
+      widgets.add(CheckpointQuestion(key: ValueKey('check-$i'), question: q));
+    }
+  }
+  return widgets;
 }
 
 bool _isIncident(Course course) {
@@ -509,7 +557,7 @@ class _Eyebrow extends StatelessWidget {
 }
 
 class _QuizFrame extends StatelessWidget {
-  const _QuizFrame({required this.child});
+  const _QuizFrame({super.key, required this.child});
 
   final Widget child;
 

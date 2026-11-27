@@ -146,7 +146,10 @@ ls -la
       await tester.pump(const Duration(milliseconds: 50));
 
       expect(find.text(apiTitle), findsOneWidget);
-      expect(find.text('Quiz obligatoire'), findsOneWidget);
+      // Parcours libre : plus de verrou, accès direct au quiz.
+      expect(find.text('Quiz obligatoire'), findsNothing);
+      expect(find.byKey(const Key('skip-to-quiz')), findsOneWidget);
+      expect(find.byKey(const Key('open-chapter-map')), findsOneWidget);
       expect(find.text('Chapitre 1 sur 1'), findsOneWidget);
       expect(find.textContaining('Chapitre 1 / 0'), findsNothing);
       expect(find.textContaining('Chapitre 1 /'), findsNothing);

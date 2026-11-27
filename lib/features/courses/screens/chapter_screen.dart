@@ -17,7 +17,79 @@ class ChapterScreen extends StatefulWidget {
 
 class _ChapterScreenState extends State<ChapterScreen> {
   final ScrollController _scroll = ScrollController();
-  bool _quizPassed = false;
+  final GlobalKey _quizKey = GlobalKey();
+
+  void _goTo(course, CoursesProvider prov, int index) {
+    prov.selectChapter(course.id, course.chapters[index].id);
+    if (_scroll.hasClients) _scroll.jumpTo(0);
+  }
+
+  void _jumpToQuiz() {
+    final ctx = _quizKey.currentContext;
+    if (ctx != null) {
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  void _openMap(course, CoursesProvider prov) {
+    final current = course.chapters.indexOf(prov.currentChapter);
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: TdcColors.surface,
+      builder: (sheet) => SafeArea(
+        child: ListView(
+          key: const Key('chapter-map'),
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(20, 4, 20, 8),
+              child: Text(
+                'CHAPITRES : va où tu veux',
+                style: TextStyle(
+                  color: TdcColors.accent,
+                  fontFamily: 'Aileron',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.4,
+                ),
+              ),
+            ),
+            for (var i = 0; i < course.chapters.length; i++)
+              ListTile(
+                selected: i == current,
+                leading: Icon(
+                  prov.completed
+                          .contains('${course.id}:${course.chapters[i].id}')
+                      ? Icons.check_circle
+                      : Icons.radio_button_unchecked,
+                  color: prov.completed
+                          .contains('${course.id}:${course.chapters[i].id}')
+                      ? TdcColors.success
+                      : TdcColors.textMuted,
+                ),
+                title: Text(
+                  course.chapters[i].title,
+                  style: const TextStyle(color: TdcColors.textPrimary),
+                ),
+                subtitle: Text(
+                  course.chapters[i].duration,
+                  style: const TextStyle(color: TdcColors.textMuted),
+                ),
+                onTap: () {
+                  Navigator.pop(sheet);
+                  _goTo(course, prov, i);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -65,7 +137,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
         // Barre d'engagement & XP
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: TdcColors.surfaceAlt,
             border: Border(bottom: BorderSide(color: TdcColors.border)),
           ),
@@ -83,13 +155,13 @@ class _ChapterScreenState extends State<ChapterScreen> {
                     color: TdcColors.accent.withValues(alpha: 0.3),
                   ),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
-                    const Icon(Icons.star, size: 14, color: TdcColors.accent),
-                    const SizedBox(width: 4),
+                    Icon(Icons.star, size: 14, color: TdcColors.accent),
+                    SizedBox(width: 4),
                     Text(
                       '+50 XP',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: TdcColors.accent,
                         fontFamily: 'Aileron',
                         fontSize: 11,
@@ -119,6 +191,22 @@ class _ChapterScreenState extends State<ChapterScreen> {
                 ],
               ),
               const Spacer(),
+              IconButton(
+                key: const Key('open-chapter-map'),
+                tooltip: 'Chapitres',
+                onPressed: () => _openMap(course, prov),
+                icon: const Icon(Icons.list_alt,
+                    size: 20, color: TdcColors.textSecondary),
+              ),
+              if (chapter.quiz != null && chapter.quiz!.isNotEmpty)
+                TextButton.icon(
+                  key: const Key('skip-to-quiz'),
+                  onPressed: _jumpToQuiz,
+                  icon: const Icon(Icons.fast_forward, size: 16),
+                  label: const Text('Je connais déjà',
+                      style: TextStyle(fontSize: 11)),
+                ),
+              const SizedBox(width: 8),
               Flexible(
                 child: ElevatedButton.icon(
                   onPressed: () {
@@ -162,6 +250,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
               constraints: const BoxConstraints(maxWidth: kLessonColumnWidth),
               child: OfficialLessonBody(
                 scrollController: _scroll,
+                quizKey: _quizKey,
                 course: course,
                 chapter: chapter,
                 quiz: chapter.quiz == null || chapter.quiz!.isEmpty
@@ -199,8 +288,6 @@ class _ChapterScreenState extends State<ChapterScreen> {
   Widget _nav(course, chapter, prov) {
     final idx = course.chapters.indexOf(chapter);
     final hasNext = idx < course.chapters.length - 1;
-    final isCompleted = prov.completed.contains('${course.id}:${chapter.id}');
-    final isLocked = chapter.quiz != null && !_quizPassed && !isCompleted;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -214,11 +301,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
           if (idx > 0)
             Expanded(
               child: TextButton.icon(
-                onPressed: () {
-                  setState(() => _quizPassed = false);
-                  prov.selectChapter(course.id, course.chapters[idx - 1].id);
-                  _scroll.jumpTo(0);
-                },
+                onPressed: () => _goTo(course, prov, idx - 1),
                 icon: const Icon(Icons.chevron_left, size: 18),
                 label: const Text('Précédent'),
               ),
@@ -228,44 +311,20 @@ class _ChapterScreenState extends State<ChapterScreen> {
           const SizedBox(width: 16),
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: isLocked
-                  ? () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          backgroundColor: TdcColors.warning,
-                          content: Text(
-                            'Réussissez le quiz en bas du chapitre pour continuer.',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                  : () {
-                      setState(() => _quizPassed = false);
-                      if (hasNext) {
-                        prov.selectChapter(
-                          course.id,
-                          course.chapters[idx + 1].id,
-                        );
-                        _scroll.jumpTo(0);
-                      } else {
-                        Navigator.pop(context);
-                      }
-                    },
+              onPressed: () {
+                if (hasNext) {
+                  _goTo(course, prov, idx + 1);
+                } else {
+                  Navigator.pop(context);
+                }
+              },
               icon: Icon(
-                isLocked
-                    ? Icons.lock_outline
-                    : (hasNext ? Icons.chevron_right : Icons.check),
+                hasNext ? Icons.chevron_right : Icons.check,
                 size: 18,
                 color: Colors.black,
               ),
               label: Text(
-                isLocked
-                    ? 'Quiz obligatoire'
-                    : (hasNext ? 'Suivant' : 'Terminer'),
+                hasNext ? 'Suivant' : 'Terminer',
                 style: const TextStyle(
                   color: Colors.black,
                   fontFamily: 'Aileron',
@@ -273,8 +332,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    isLocked || hasNext ? TdcColors.accent : TdcColors.success,
+                backgroundColor: hasNext ? TdcColors.accent : TdcColors.success,
                 foregroundColor: Colors.black,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 14),
